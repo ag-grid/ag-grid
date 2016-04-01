@@ -326,6 +326,14 @@ include '../documentation-main/documentation_header.php';
             <th>enableStatusBar</th>
             <td>When true, the status bar will be displayed at the bottom of the grid.</td>
         </tr>
+        <tr>
+            <th>viewportRowModelPageSize</th>
+            <td>When using viewport row model, sets the pages size for the viewport.</td>
+        </tr>
+        <tr>
+            <th>viewportRowModelBufferSize</th>
+            <td>When using viewport row model, sets the buffer size for the viewport.</td>
+        </tr>
 
     </table>
 </div>
