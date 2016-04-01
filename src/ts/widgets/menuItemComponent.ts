@@ -8,7 +8,7 @@ import {SvgFactory} from "../svgFactory";
 
 var svgFactory = SvgFactory.getInstance();
 
-export class CMenuItem extends Component {
+export class MenuItemComponent extends Component {
 
     @Autowired('popupService') private popupService: PopupService;
 
@@ -25,7 +25,7 @@ export class CMenuItem extends Component {
     private params: MenuItem;
 
     constructor(params: MenuItem) {
-        super(CMenuItem.TEMPLATE);
+        super(MenuItemComponent.TEMPLATE);
 
         this.params = params;
 
@@ -63,7 +63,7 @@ export class CMenuItem extends Component {
     }
 
     private onOptionSelected(): void {
-        this.dispatchEvent(CMenuItem.EVENT_ITEM_SELECTED, this.params);
+        this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, this.params);
         if (this.params.action) {
             this.params.action();
         }

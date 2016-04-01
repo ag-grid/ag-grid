@@ -1,9 +1,7 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
 import {PaginationController} from "./rowControllers/paginationController";
-import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {SelectionController} from "./selectionController";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
@@ -42,10 +40,12 @@ import {Utils as _} from "./utils";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
-import {ViewportRowController} from "./rowControllers/viewportRowController";
 import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditors/cellEditorFactory";
 import {Events} from "./events";
+import {ViewportRowModel} from "./rowControllers/viewportRowModel";
+import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
+import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 
 export class Grid {
 
@@ -104,11 +104,11 @@ export class Grid {
 
     private getRowModelClass(gridOptions:GridOptions): any {
         if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-            return ViewportRowController;
+            return ViewportRowModel;
         } else if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL) {
-            return VirtualPageRowController;
+            return VirtualPageRowModel;
         } else {
-            return InMemoryRowController;
+            return InMemoryRowModel;
         }
     };
 

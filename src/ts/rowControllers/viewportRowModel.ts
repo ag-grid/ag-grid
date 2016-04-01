@@ -10,7 +10,7 @@ import {SelectionController} from "../selectionController";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 
 @Bean('rowModel')
-export class ViewportRowController implements IRowModel {
+export class ViewportRowModel implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;

@@ -23,12 +23,12 @@ import {FocusedCellController} from "./focusedCellController";
 import {IRangeController, RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController";
 import {GridCell} from "./entities/gridCell";
 import {IClipboardService} from "./interfaces/iClipboardService";
-import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
-import {ViewportRowController} from "./rowControllers/viewportRowController";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
+import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
+import {ViewportRowModel} from "./rowControllers/viewportRowModel";
 
 @Bean('gridApi')
 export class GridApi {
@@ -89,7 +89,7 @@ export class GridApi {
         if (this.gridOptionsWrapper.isRowModelPagination()) {
             this.paginationController.setDatasource(datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
-            (<VirtualPageRowController>this.rowModel).setDatasource(datasource);
+            (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
         } else {
             console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIRTUAL}' or '${Constants.ROW_MODEL_TYPE_PAGINATION}'`)
         }
@@ -97,7 +97,7 @@ export class GridApi {
 
     public setViewportDatasource(viewportDatasource: IViewportDatasource) {
         if (this.gridOptionsWrapper.isRowModelViewport()) {
-            (<ViewportRowController>this.rowModel).setViewportDatasource(viewportDatasource);
+            (<ViewportRowModel>this.rowModel).setViewportDatasource(viewportDatasource);
         } else {
             console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
         }

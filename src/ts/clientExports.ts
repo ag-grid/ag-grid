@@ -13,7 +13,6 @@ import {Column} from "./entities/column";
 import {FocusedCellController} from "./focusedCellController";
 import {defaultGroupComparator} from "./functions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {CMenuItem} from "./widgets/cMenuItem";
 import {groupCellRendererFactory} from "./rendering/cellRenderers/groupCellRendererFactory";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
@@ -45,11 +44,9 @@ import {RenderedRow} from "./rendering/renderedRow";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
-import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {PaginationController} from "./rowControllers/paginationController";
-import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
 import {Component} from "./widgets/component";
 import {MenuList} from "./widgets/menuList";
 import {CellNavigationService} from "./cellNavigationService";
@@ -70,6 +67,9 @@ import {Utils} from "./utils";
 import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
 import {GridRow} from "./entities/gridRow";
+import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
+import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
+import {MenuItemComponent} from "./widgets/menuItemComponent";
 
 export function populateClientExports(exports: any): void {
 
@@ -143,17 +143,17 @@ export function populateClientExports(exports: any): void {
     // rowControllers/inMemory
     exports.FilterStage = FilterStage;
     exports.FlattenStage = FlattenStage;
-    exports.InMemoryRowController = InMemoryRowController;
+    exports.InMemoryRowModel = InMemoryRowModel;
     exports.SortStage = SortStage;
 
     // rowControllers
     exports.FloatingRowModel = FloatingRowModel;
     exports.PaginationController = PaginationController;
-    exports.VirtualPageRowController = VirtualPageRowController;
+    exports.VirtualPageRowModel = VirtualPageRowModel;
 
     // widgets
     exports.PopupService = PopupService;
-    exports.CMenuItem = CMenuItem;
+    exports.MenuItemComponent = MenuItemComponent;
     exports.Component = Component;
     exports.MenuList = MenuList;
 

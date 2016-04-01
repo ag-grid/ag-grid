@@ -18,7 +18,7 @@ import {Constants} from "../constants";
 var logging = false;
 
 @Bean('rowModel')
-export class VirtualPageRowController implements IRowModel {
+export class VirtualPageRowModel implements IRowModel {
 
     @Autowired('rowRenderer') private rowRenderer: any;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
