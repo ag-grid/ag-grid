@@ -1,138 +1,63 @@
-import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
-import {RichListItem} from "./virtualList";
+import {Utils as _, Component, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 
-export interface RichListModel {
-    getRowCount(): number;
-    getRow(index: number): any;
-    isRowSelected(row: any): boolean;
-}
+export class RichListItem extends Component {
 
-export class RichList extends Component {
-
-    public static EVENT_SELECTED = 'itemSelected';
+    public static EVENT_SELECTED = 'selected';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('context') private context: Context;
 
     private static TEMPLATE =
-        '<div class="ag-filter-list-viewport">'+
-            '<div class="ag-filter-list-container">'+
-            '</div>'+
+        '<div id="itemForRepeat" class="ag-filter-item">' +
+        '<label>'+
+        '<input type="checkbox" class="ag-filter-checkbox"/>'+
+        '<span class="ag-filter-value"></span>'+
+        '</label>' +
         '</div>';
 
-    private model: RichListModel;
+    private eCheckbox: HTMLInputElement;
 
-    private eListContainer: HTMLElement;
-    private rowsInBodyContainer: any = {};
-    private cellRenderer: Function;
+    constructor(value: any, cellRenderer: Function) {
+        super(RichListItem.TEMPLATE);
+        this.render(value, cellRenderer);
 
-    private rowHeight = 10;
+        this.eCheckbox = this.queryForHtmlInputElement("input");
 
-    constructor() {
-        super(null);
+        this.addDestroyableEventListener(this.eCheckbox, 'click', ()=> this.dispatchEvent(RichListItem.EVENT_SELECTED) );
     }
 
-    @PostConstruct
-    private init(): void {
-        this.setTemplate(RichList.TEMPLATE);
-
-        this.eListContainer = this.queryForHtmlElement(".ag-filter-list-container");
-
-        this.addScrollListener();
+    public isSelected(): boolean {
+        return this.eCheckbox.checked;
     }
 
-    public setCellRenderer(cellRenderer: Function): void {
-        this.cellRenderer = cellRenderer;
+    public setSelected(selected: boolean): void {
+        this.eCheckbox.checked = selected;
     }
 
-    public setRowHeight(rowHeight: number): void {
-        this.rowHeight = rowHeight;
-        this.refresh();
-    }
+    public render(value: any, cellRenderer: Function): void {
 
-    public refresh(): void {
-        if (_.missing(this.model)) {
-            return;
-        }
-        this.eListContainer.style.height = (this.model.getRowCount() * this.rowHeight) + "px";
-        this.clearVirtualRows();
-        this.drawVirtualRows();
-    }
+        var valueElement = this.queryForHtmlElement(".ag-filter-value");
 
-    private clearVirtualRows() {
-        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
-        this.removeVirtualRows(rowsToRemove);
-    }
+        // var valueElement = eFilterValue.querySelector(".ag-filter-value");
+        if (cellRenderer) {
+            // renderer provided, so use it
+            var resultFromRenderer = cellRenderer({ value: value });
 
-    private drawVirtualRows() {
-        var topPixel = this.getGui().scrollTop;
-        var bottomPixel = topPixel + this.getGui().offsetHeight;
-
-        var firstRow = Math.floor(topPixel / this.rowHeight);
-        var lastRow = Math.floor(bottomPixel / this.rowHeight);
-
-        this.ensureRowsRendered(firstRow, lastRow);
-    }
-
-    private ensureRowsRendered(start: any, finish: any) {
-
-        // at the end, this array will contain the items we need to remove
-        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
-
-        // add in new rows
-        for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
-            // see if item already there, and if yes, take it out of the 'to remove' array
-            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
-                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
-                continue;
+            if (_.isNode(resultFromRenderer)) {
+                // a dom node or element was returned, so add child
+                valueElement.appendChild(resultFromRenderer);
+            } else {
+                // otherwise assume it was html, so just insert
+                valueElement.innerHTML = resultFromRenderer;
             }
-            // check this row actually exists (in case overflow buffer window exceeds real data)
-            if (this.model.getRowCount() > rowIndex) {
-                var value = this.model.getRow(rowIndex);
-                this.insertRow(value, rowIndex);
-            }
+
+        } else {
+            // otherwise display as a string
+            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            var blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
+            var displayNameOfValue = value === null ? blanksText : value;
+            valueElement.innerHTML = displayNameOfValue;
         }
 
-        // at this point, everything in our 'rowsToRemove' . . .
-        this.removeVirtualRows(rowsToRemove);
     }
 
-    // takes array of row id's
-    private removeVirtualRows(rowsToRemove: any) {
-        rowsToRemove.forEach( (index: number) => {
-            var richListItem = this.rowsInBodyContainer[index];
-            this.eListContainer.removeChild(richListItem.getGui());
-            delete this.rowsInBodyContainer[index];
-        });
-    }
-
-    private insertRow(value: any, rowIndex: any) {
-
-        var richListItem = new RichListItem(value, this.cellRenderer);
-        richListItem.setSelected(this.model.isRowSelected(value));
-
-        this.addDestroyableEventListener(
-            richListItem, 
-            RichListItem.EVENT_SELECTED,
-            () => this.dispatchEvent(RichList.EVENT_SELECTED, {
-                    value: value, 
-                    selected: richListItem.isSelected()
-            })
-        );
-
-        richListItem.getGui().style.top = (this.rowHeight * rowIndex) + "px";
-
-        this.eListContainer.appendChild(richListItem.getGui());
-        this.rowsInBodyContainer[rowIndex] = richListItem;
-    }
-
-    private addScrollListener() {
-        this.addGuiEventListener('scroll', () => {
-            this.drawVirtualRows();
-        });
-    }
-    
-    public setModel(model: RichListModel): void {
-        this.model = model;
-    }
 }

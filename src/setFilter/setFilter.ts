@@ -1,7 +1,7 @@
 import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
-import {RichList, RichListModel} from "../components/virtualListItem";
+import {RichList, RichListModel} from "../components/virtualList";
 
 export class SetFilter extends Component implements Filter {
 
