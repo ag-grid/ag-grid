@@ -70,11 +70,16 @@ import {GridRow} from "./entities/gridRow";
 import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
 import {MenuItemComponent} from "./widgets/menuItemComponent";
+import {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCellRenderer";
+import {CellEditorFactory} from "./rendering/cellEditors/cellEditorFactory";
+import {PopupEditorWrapper} from "./rendering/cellEditors/popupEditorWrapper";
+import {PopupSelectCellEditor} from "./rendering/cellEditors/popupSelectCellEditor";
+import {PopupTextCellEditor} from "./rendering/cellEditors/popupTextCellEditor";
+import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
+import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
+import {CellRendererFactory} from "./rendering/cellRenderers/cellRendererFactory";
 
 export function populateClientExports(exports: any): void {
-
-    // cellRenderers
-    exports.groupCellRendererFactory = groupCellRendererFactory;
 
     // columnController
     exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;
@@ -133,6 +138,19 @@ export function populateClientExports(exports: any): void {
     exports.BorderLayout = BorderLayout;
     exports.TabbedLayout = TabbedLayout;
     exports.VerticalStack = VerticalStack;
+
+    // rendering / cellEditors
+    exports.CellEditorFactory = CellEditorFactory;
+    exports.PopupEditorWrapper = PopupEditorWrapper;
+    exports.PopupSelectCellEditor = PopupSelectCellEditor;
+    exports.PopupTextCellEditor = PopupTextCellEditor;
+    exports.SelectCellEditor = SelectCellEditor;
+    exports.TextCellEditor = TextCellEditor;
+
+    // rendering / cellRenderers
+    exports.groupCellRendererFactory = groupCellRendererFactory;
+    exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
+    exports.CellRendererFactory = CellRendererFactory;
 
     // rendering
     exports.AutoWidthCalculator = AutoWidthCalculator;

@@ -12,7 +12,7 @@ import {EventService} from "../eventService";
 import {Constants} from "../constants";
 import {Events} from "../events";
 import {RenderedRow} from "./renderedRow";
-import {Autowired, PostConstruct, Optional} from "../context/context";
+import {Autowired, PostConstruct, Optional, Context} from "../context/context";
 import {GridApi} from "../gridApi";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
@@ -24,9 +24,12 @@ import {CellEditorFactory} from "./cellEditors/cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
+import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {CellRendererFactory} from "./cellRenderers/cellRendererFactory";
 
 export class RenderedCell extends Component {
 
+    @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -43,6 +46,7 @@ export class RenderedCell extends Component {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
+    @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') private popupService: PopupService;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
@@ -69,6 +73,7 @@ export class RenderedCell extends Component {
     private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
     private cellEditor: ICellEditor;
+    private cellRenderer: ICellRenderer;
 
     private value: any;
     private checkboxSelection: boolean;
@@ -95,7 +100,17 @@ export class RenderedCell extends Component {
         this.scope = scope;
         this.renderedRow = renderedRow;
 
-        this.gridCell = new GridCell(rowIndex, node.floating, column)
+        this.gridCell = new GridCell(rowIndex, node.floating, column);
+    }
+
+    public destroy(): void {
+        super.destroy();
+        if (this.cellEditor && this.cellEditor.destroy) {
+            this.cellEditor.destroy();
+        }
+        if (this.cellRenderer && this.cellRenderer.destroy) {
+            this.cellRenderer.destroy();
+        }
     }
 
     private setPinnedClasses(): void {
@@ -533,7 +548,9 @@ export class RenderedCell extends Component {
                 _.assign(params, colDef.cellEditorParams);
             }
 
-            cellEditor.init(params);
+            if (cellEditor.init) {
+                cellEditor.init(params);
+            }
         }
 
         return cellEditor;
@@ -902,16 +919,29 @@ export class RenderedCell extends Component {
 
     public refreshCell(animate = false) {
 
-        _.removeAllChildren(this.eParentOfValue);
         this.value = this.getValue();
 
-        this.populateCell();
+        if (this.cellRenderer && this.cellRenderer.refresh) {
+            // if the cell renderer has a refresh method, we call this instead of doing a refresh
+            this.cellRenderer.refresh(this.value);
+        } else {
+            // otherwise we rip out the cell and replace it
+            _.removeAllChildren(this.eParentOfValue);
 
-        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(this.eGridCell)(this.scope);
+            // remove old renderer component if it exists
+            if (this.cellRenderer && this.cellRenderer.destroy) {
+                this.cellRenderer.destroy();
+            }
+            this.cellRenderer = null;
+
+            this.populateCell();
+
+            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+            if (this.gridOptionsWrapper.isAngularCompileRows()) {
+                this.$compile(this.eGridCell)(this.scope);
+            }
         }
-        
+
         if (animate) {
             this.animateCellWithDataChanged();
         }
@@ -928,9 +958,9 @@ export class RenderedCell extends Component {
                 this.eParentOfValue.innerHTML = template;
             }
         } else if (colDef.floatingCellRenderer && this.node.floating) {
-            this.useCellRenderer(colDef.floatingCellRenderer);
+            this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams);
         } else if (colDef.cellRenderer) {
-            this.useCellRenderer(colDef.cellRenderer);
+            this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams);
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             if (this.value !== undefined && this.value !== null && this.value !== '') {
@@ -939,11 +969,11 @@ export class RenderedCell extends Component {
         }
     }
 
-    private useCellRenderer(cellRenderer: Function | {}) {
+    private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}) {
 
         var colDef = this.column.getColDef();
 
-        var rendererParams = {
+        var params = {
             value: this.value,
             valueGetter: this.getValue,
             data: this.node.data,
@@ -959,32 +989,52 @@ export class RenderedCell extends Component {
             eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
-        // start duplicated code
-        var actualCellRenderer: Function;
-        if (typeof cellRenderer === 'object' && cellRenderer !== null) {
-            var cellRendererObj = <{ renderer: string }> cellRenderer;
-            actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
-            if (!actualCellRenderer) {
-                throw 'Cell renderer ' + cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
-            }
-        } else if (typeof cellRenderer === 'function') {
-            actualCellRenderer = <Function>cellRenderer;
-        } else {
-            throw 'Cell Renderer must be String or Function';
+
+        if (cellRendererParams) {
+            _.assign(params, colDef.cellEditorParams);
         }
 
-        var resultFromRenderer = actualCellRenderer(rendererParams);
+        var cellRenderer: {new(): ICellRenderer} | ICellRendererFunc;
+        // if it's a string, then we look the cellRenderer up
+        if (typeof cellRendererKey === 'string') {
+            cellRenderer = this.cellRendererFactory.getCellRenderer(<string> cellRendererKey);
+            if (_.missing(cellRenderer)) {
+                // this is a bug in users config, they specified a cellRenderer that doesn't exist,
+                // the factory already printed to console, so here we just skip
+                return;
+            }
+        } else {
+            cellRenderer = <{new(): ICellRenderer} | ICellRendererFunc> cellRendererKey;
+        }
 
-        // end duplicated code
+        var resultFromRenderer: HTMLElement | string;
+        // if it's a component, we create and initialise it
+        if ('getGui' in cellRenderer) {
+            var CellRendererComponent = <{new(): ICellRenderer}> cellRenderer;
+            this.cellRenderer = new CellRendererComponent();
+            this.context.wireBean(this.cellRenderer);
+            
+            if (this.cellRenderer.init) {
+                this.cellRenderer.init(params);
+            }
+
+            resultFromRenderer = this.cellRenderer.getGui();
+        } else {
+            // otherwise it's a function, so we just use it
+            var cellRendererFunc = <ICellRendererFunc> cellRenderer;
+            resultFromRenderer = cellRendererFunc(params);
+        }
+
         if (resultFromRenderer===null || resultFromRenderer==='') {
             return;
         }
+
         if (_.isNodeOrElement(resultFromRenderer)) {
             // a dom node or element was returned, so add child
-            this.eParentOfValue.appendChild(resultFromRenderer);
+            this.eParentOfValue.appendChild( <HTMLElement> resultFromRenderer);
         } else {
             // otherwise assume it was html, so just insert
-            this.eParentOfValue.innerHTML = resultFromRenderer;
+            this.eParentOfValue.innerHTML = <string> resultFromRenderer;
         }
     }
 

@@ -69,6 +69,9 @@ export * from './dist/lib/rendering/cellEditors/selectCellEditor';
 export * from './dist/lib/rendering/cellEditors/textCellEditor';
 
 export * from './dist/lib/rendering/cellRenderers/groupCellRendererFactory';
+export * from './dist/lib/rendering/cellRenderers/iCellRenderer';
+export * from './dist/lib/rendering/cellRenderers/animateSlideCellRenderer';
+export * from './dist/lib/rendering/cellRenderers/cellRendererFactory';
 
 export * from './dist/lib/rendering/autoWidthCalculator';
 export * from './dist/lib/rendering/renderedCell';

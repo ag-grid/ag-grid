@@ -1096,9 +1096,7 @@ export class ColumnController {
                     },
                     suppressAggregation: true,
                     suppressRowGroup: true,
-                    cellRenderer: {
-                        renderer: 'group'
-                    }
+                    cellRenderer: 'group'
                 };
             }
             // we never allow moving the group column

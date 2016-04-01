@@ -2,6 +2,7 @@ import {RowNode} from "./rowNode";
 import {SetFilterParameters} from "../filter/setFilterParameters";
 import {TextAndNumberFilterParameters} from "../filter/textAndNumberFilterParameters";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
+import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -76,14 +77,16 @@ export interface ColDef extends AbstractColDef {
     cellStyle?: {} | ((params:any) => {});
 
     /** A function for rendering a cell. */
-    cellRenderer?: Function | {};
+    cellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    cellRendererParams?: {};
 
     /** Cell editor */
     cellEditor?: {new(): ICellEditor};
     cellEditorParams?: {};
 
     /** A function for rendering a floating cell. */
-    floatingCellRenderer?: Function | {};
+    floatingCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    floatingCellRendererParams?: {};
 
     /** Name of function to use for aggregation. One of [sum,min,max]. */
     aggFunc?: string;

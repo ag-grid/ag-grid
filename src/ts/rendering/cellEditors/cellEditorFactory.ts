@@ -1,4 +1,4 @@
-import {Bean, PostConstruct} from "../../context/context";
+import {Bean, PostConstruct, Autowired, Context} from "../../context/context";
 import {Utils as _} from '../../utils';
 import {ICellEditor} from "./iCellEditor";
 import {TextCellEditor} from "./textCellEditor";
@@ -15,6 +15,8 @@ export class CellEditorFactory {
     private static POPUP_TEXT = 'popupText';
     private static POPUP_SELECT = 'popupSelect';
 
+    @Autowired('context') private context: Context;
+    
     private cellEditorMap: {[key: string]: {new(): ICellEditor}} = {};
 
     @PostConstruct
@@ -46,6 +48,7 @@ export class CellEditorFactory {
         }
 
         var cellEditor = new CellEditorClass();
+        this.context.wireBean(cellEditor);
         
         if (cellEditor.isPopup && cellEditor.isPopup()) {
             cellEditor = new PopupEditorWrapper(cellEditor);

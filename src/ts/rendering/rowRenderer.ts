@@ -81,13 +81,6 @@ export class RowRenderer {
 
     @PostConstruct
     public init(): void {
-        this.cellRendererMap = {
-            'group': groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService),
-            'default': function(params: any) {
-                return params.value;
-            }
-        };
-
         this.getContainersFromGridPanel();
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnEvent.bind(this));
