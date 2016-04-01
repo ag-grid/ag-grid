@@ -1,6 +1,6 @@
 import {Utils as _, Component, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 
-export class RichListItem extends Component {
+export class VirtualListItem extends Component {
 
     public static EVENT_SELECTED = 'selected';
 
@@ -17,12 +17,12 @@ export class RichListItem extends Component {
     private eCheckbox: HTMLInputElement;
 
     constructor(value: any, cellRenderer: Function) {
-        super(RichListItem.TEMPLATE);
+        super(VirtualListItem.TEMPLATE);
         this.render(value, cellRenderer);
 
         this.eCheckbox = this.queryForHtmlInputElement("input");
 
-        this.addDestroyableEventListener(this.eCheckbox, 'click', ()=> this.dispatchEvent(RichListItem.EVENT_SELECTED) );
+        this.addDestroyableEventListener(this.eCheckbox, 'click', ()=> this.dispatchEvent(VirtualListItem.EVENT_SELECTED) );
     }
 
     public isSelected(): boolean {

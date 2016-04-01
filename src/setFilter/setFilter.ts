@@ -1,7 +1,7 @@
 import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
-import {RichList, RichListModel} from "../components/virtualList";
+import {VirtualList, VirtualListModel} from "../components/virtualList";
 
 export class SetFilter extends Component implements Filter {
 
@@ -38,7 +38,7 @@ export class SetFilter extends Component implements Filter {
     private applyActive: any;
     private eApplyButton: any;
 
-    private richList: RichList;
+    private richList: VirtualList;
     
     constructor() {
         super();
@@ -49,7 +49,7 @@ export class SetFilter extends Component implements Filter {
 
         this.setTemplate(this.createTemplate());
 
-        this.richList = new RichList();
+        this.richList = new VirtualList();
         this.context.wireBean(this.richList);
 
         this.getGui().querySelector('#richList').appendChild(this.richList.getGui());
@@ -73,7 +73,7 @@ export class SetFilter extends Component implements Filter {
         this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter);
         this.richList.setModel(new ModelWrapper(this.model));
 
-        this.richList.addEventListener(RichList.EVENT_SELECTED, this.onItemSelected.bind(this));
+        this.richList.addEventListener(VirtualList.EVENT_SELECTED, this.onItemSelected.bind(this));
 
         this.createGui();
         this.createApi();
@@ -282,7 +282,7 @@ export class SetFilter extends Component implements Filter {
     }
 }
 
-class ModelWrapper implements RichListModel {
+class ModelWrapper implements VirtualListModel {
     constructor(private model: SetFilterModel) {}
     public getRowCount(): number {
         return this.model.getDisplayedValueCount();

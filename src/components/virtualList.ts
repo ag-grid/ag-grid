@@ -1,13 +1,13 @@
 import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
-import {RichListItem} from "./virtualListItem";
+import {VirtualListItem} from "./virtualListItem";
 
-export interface RichListModel {
+export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
     isRowSelected(row: any): boolean;
 }
 
-export class RichList extends Component {
+export class VirtualList extends Component {
 
     public static EVENT_SELECTED = 'itemSelected';
 
@@ -20,7 +20,7 @@ export class RichList extends Component {
         '</div>'+
         '</div>';
 
-    private model: RichListModel;
+    private model: VirtualListModel;
 
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
@@ -34,7 +34,7 @@ export class RichList extends Component {
 
     @PostConstruct
     private init(): void {
-        this.setTemplate(RichList.TEMPLATE);
+        this.setTemplate(VirtualList.TEMPLATE);
 
         this.eListContainer = this.queryForHtmlElement(".ag-filter-list-container");
 
@@ -108,13 +108,13 @@ export class RichList extends Component {
 
     private insertRow(value: any, rowIndex: any) {
 
-        var richListItem = new RichListItem(value, this.cellRenderer);
+        var richListItem = new VirtualListItem(value, this.cellRenderer);
         richListItem.setSelected(this.model.isRowSelected(value));
 
         this.addDestroyableEventListener(
             richListItem,
-            RichListItem.EVENT_SELECTED,
-            () => this.dispatchEvent(RichList.EVENT_SELECTED, {
+            VirtualListItem.EVENT_SELECTED,
+            () => this.dispatchEvent(VirtualList.EVENT_SELECTED, {
                 value: value,
                 selected: richListItem.isSelected()
             })
@@ -132,7 +132,7 @@ export class RichList extends Component {
         });
     }
 
-    public setModel(model: RichListModel): void {
+    public setModel(model: VirtualListModel): void {
         this.model = model;
     }
 }
