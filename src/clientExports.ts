@@ -7,13 +7,13 @@ import {SetFilter} from "./setFilter/setFilter";
 import {SetFilterModel} from "./setFilter/setFilterModel";
 import {StatusBar} from "./statusBar/statusBar";
 import {StatusItem} from "./statusBar/statusItem";
-import {ContextMenuFactory} from "./cContextMenu";
 import {ClipboardService} from "./clipboardService";
 import {EnterpriseBoot} from "./enterpriseBoot";
 import {EnterpriseMenu} from "./enterpriseMenu";
 import {RangeController} from "./rangeController";
 import {RowGroupPanel} from "./rowGroupPanel";
 import {ToolPanel} from "./toolPanel";
+import {ContextMenuFactory} from "./contextMenu";
 
 export function populateClientExports(exports: any): void {
 

@@ -1,18 +1,19 @@
-import {Component} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {EventService} from "ag-grid/main";
-import {Context} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
-import {Events} from "ag-grid/main";
-import {OriginalColumnGroup} from "ag-grid/main";
-import {Column} from "ag-grid/main";
-import {Utils as _} from "ag-grid/main";
+import {
+    Component,
+    Autowired,
+    ColumnController,
+    EventService,
+    Context,
+    PostConstruct,
+    Events,
+    OriginalColumnGroup,
+    Column,
+    Utils as _,
+    OriginalColumnGroupChild
+} from "ag-grid/main";
 import {RenderedItem} from "./renderedItem";
 import {RenderedGroup} from "./renderedGroup";
 import {RenderedColumn} from "./renderedColumn";
-import {IRangeController} from "ag-grid/main";
-import {OriginalColumnGroupChild} from "ag-grid/main";
 
 export class ColumnSelectPanel extends Component {
 

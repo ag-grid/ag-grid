@@ -1,23 +1,25 @@
-import {Utils as _} from "ag-grid/main";
-import {SvgFactory} from "ag-grid/main";
-import {Bean} from "ag-grid/main";
-import {IMenuFactory} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {Context} from "ag-grid/main";
-import {PopupService} from "ag-grid/main";
-import {GridOptionsWrapper} from "ag-grid/main";
-import {Column} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {FilterManager} from "ag-grid/main";
-import {GridApi} from "ag-grid/main";
-import {TabbedLayout} from "ag-grid/main";
-import {MenuList} from "ag-grid/main";
+import {
+    Utils as _,
+    SvgFactory,
+    Bean,
+    IMenuFactory,
+    Autowired,
+    Context,
+    PopupService,
+    GridOptionsWrapper,
+    Column,
+    ColumnController,
+    FilterManager,
+    GridApi,
+    TabbedLayout,
+    MenuList,
+    EventService,
+    TabbedItem,
+    PostConstruct,
+    MenuItemComponent,
+    MenuItem
+} from "ag-grid/main";
 import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
-import {EventService} from "ag-grid/main";
-import {TabbedItem} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
-import {MenuItem} from "ag-grid/main";
-import {CMenuItem} from "ag-grid/main";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -395,7 +397,7 @@ export class EnterpriseMenu {
         var builtInOptions = this.createBuiltInMenuOptions();
         this.mainMenuList.addMenuItems(menuItems, builtInOptions);
 
-        this.mainMenuList.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: svgFactory.createMenuSvg(),

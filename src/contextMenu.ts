@@ -1,20 +1,21 @@
-import {Utils as _} from "ag-grid/main";
-import {SvgFactory} from "ag-grid/main";
-import {Bean} from "ag-grid/main";
-import {IContextMenuFactory} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {Context} from "ag-grid/main";
-import {PopupService} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
-import {Component} from "ag-grid/main";
+import {
+    SvgFactory,
+    MenuItemComponent,
+    Bean,
+    IContextMenuFactory,
+    Autowired,
+    Context,
+    PopupService,
+    PostConstruct,
+    Component,
+    MenuList,
+    GridOptionsWrapper,
+    RowNode,
+    Column,
+    MenuItem,
+    GridApi
+} from "ag-grid/main";
 import {ClipboardService} from "./clipboardService";
-import {MenuList} from "ag-grid/main";
-import {CMenuItem} from "ag-grid/main";
-import {GridOptionsWrapper} from "ag-grid/main";
-import {RowNode} from "ag-grid/main";
-import {Column} from "ag-grid/main";
-import {MenuItem} from "ag-grid/main";
-import {GridApi} from "ag-grid/main";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -53,7 +54,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         var menuItems = this.getMenuItems(node, column, value);
 
-        var menu = new CContextMenu(menuItems);
+        var menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
 
         var eMenuGui =  menu.getGui();
@@ -76,7 +77,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
 }
 
-class CContextMenu extends Component {
+class ContextMenu extends Component {
 
     @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
@@ -131,7 +132,7 @@ class CContextMenu extends Component {
         this.menuList.addMenuItems(this.menuItems, defaultMenuItems);
         this.getGui().appendChild(this.menuList.getGui());
 
-        this.menuList.addEventListener(CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
     }
 
     private onHidePopup(): void {
