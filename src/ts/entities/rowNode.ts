@@ -72,7 +72,13 @@ export class RowNode {
         var oldData = this.data;
         this.data = data;
         var event = {oldData: oldData, newData: data};
-        this.eventService.dispatchEvent(RowNode.EVENT_DATA_CHANGED, event);
+        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    }
+
+    private dispatchLocalEvent(eventName: string, event?: any): void {
+        if (this.eventService) {
+            this.eventService.dispatchEvent(eventName, event);
+        }
     }
 
     // we also allow editing the value via the editors. when it is done via
@@ -84,9 +90,9 @@ export class RowNode {
         var column = this.columnController.getColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         var event = {column: column, newValue: newValue};
-        this.eventService.dispatchEvent(RowNode.EVENT_CELL_CHANGED, event);
+        this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
     }
-    
+
     public resetQuickFilterAggregateText(): void {
         this.quickFilterAggregateText = null;
     }
@@ -199,7 +205,7 @@ export class RowNode {
             this.selected = newValue;
 
             if (this.eventService) {
-                this.eventService.dispatchEvent(RowNode.EVENT_ROW_SELECTED);
+                this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
             }
 
             var event:any = {node: this};

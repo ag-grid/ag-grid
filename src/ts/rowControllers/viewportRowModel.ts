@@ -29,7 +29,7 @@ export class ViewportRowModel implements IRowModel {
     private rowHeight: number;
 
     private viewportDatasource: IViewportDatasource;
-
+    
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
@@ -53,13 +53,42 @@ export class ViewportRowModel implements IRowModel {
             this.viewportDatasource.destroy();
         }
     }
-    
+
+    private calculateFirstRow(firstRenderedRow: number): number {
+        var bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
+        var pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
+        var afterBuffer = firstRenderedRow - bufferSize;
+
+        if (afterBuffer < 0) {
+            return 0;
+        } else {
+            return Math.floor(afterBuffer / pageSize) * pageSize;
+        }
+    }
+
+    private calculateLastRow(lastRenderedRow: number): number {
+        var bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
+        var pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
+        var afterBuffer = lastRenderedRow + bufferSize;
+
+        var result = Math.ceil(afterBuffer / pageSize) * pageSize;
+        if (result <= this.rowCount) {
+            return result;
+        } else {
+            return this.rowCount;
+        }
+    }
+
     private onViewportChanged(event: any): void {
-        this.firstRow = event.firstRow;
-        this.lastRow = event.lastRow;
-        this.purgeRowsNotInViewport();
-        if (this.viewportDatasource) {
-            this.viewportDatasource.setViewportRange(this.firstRow, this.lastRow);
+        var newFirst = this.calculateFirstRow(event.firstRow);
+        var newLast = this.calculateLastRow(event.lastRow);
+        if (this.firstRow !== newFirst || this.lastRow !== newLast) {
+            this.firstRow = newFirst;
+            this.lastRow = newLast;
+            this.purgeRowsNotInViewport();
+            if (this.viewportDatasource) {
+                this.viewportDatasource.setViewportRange(this.firstRow, this.lastRow);
+            }
         }
     }
 
@@ -142,7 +171,7 @@ export class ViewportRowModel implements IRowModel {
         });
     }
 
-    // this is duplicated in virtualPageRowController, need to refactor
+    // this is duplicated in virtualPageRowModel, need to refactor
     private createNode(data: any, rowIndex: number): RowNode {
         var rowHeight = this.rowHeight;
         var top = rowHeight * rowIndex;

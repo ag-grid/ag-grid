@@ -18,9 +18,20 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 
 var DEFAULT_ROW_HEIGHT = 25;
+var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
+var DEFAULT_VIEWPORT_ROW_MODEL_BUFER_SIZE = 5;
 
-function isTrue(value: any) {
+function isTrue(value: any): boolean {
     return value === true || value === 'true';
+}
+
+function positiveNumberOrZero(value: any, defaultValue: number): number {
+    if (value > 0) {
+        return value;
+    } else {
+        // zero gets returned if number is missing or the wrong type
+        return defaultValue;
+    }
 }
 
 @Bean('gridOptionsWrapper')
@@ -142,6 +153,8 @@ export class GridOptionsWrapper {
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
+    public getViewportRowModelPageSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
+    public getViewportRowModelBufferSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFER_SIZE); }
 
     public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
         if (this.gridOptions.processRowPostCreate) {

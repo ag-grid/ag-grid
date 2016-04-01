@@ -58,6 +58,8 @@ export interface GridOptions {
     suppressMenuMainPanel?: boolean;
     suppressMenuColumnPanel?: boolean;
     rememberGroupStateWhenNewData?: boolean;
+    viewportRowModelPageSize?: number;
+    viewportRowModelBufferSize?: number;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

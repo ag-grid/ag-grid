@@ -1,9 +1,6 @@
 import {RowNode} from "../entities/rowNode";
 export interface IViewportDatasource {
 
-    // setRowCount: this.setRowCount.bind(this),
-    // setRowData: this.setRowData.bind(this)
-
     init(
         params: {
             /** datasource calls this method when the total row count changes */
