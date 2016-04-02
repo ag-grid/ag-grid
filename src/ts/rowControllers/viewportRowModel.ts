@@ -160,11 +160,18 @@ export class ViewportRowModel implements IRowModel {
     private setRowData(rowData: {[key: number]: any}): void {
         _.iterateObject(rowData, (indexStr: string, dataItem: any) => {
             var index = parseInt(indexStr);
+            // we should never keep rows that we didn't specifically ask for, this
+            // guarantees the contract we have with the server.
             if (index >= this.firstRow && index <= this.lastRow) {
                 var nodeAlreadyExists = !!this.rowNodesByIndex[index];
                 if (nodeAlreadyExists) {
+                    // if the grid already asked for this row (the normal case), then we would
+                    // of put a placeholder node in place.
                     this.rowNodesByIndex[index].setData(dataItem);
                 } else {
+                    // the abnormal case is we requested a row even though the grid didn't need it
+                    // as a result of the paging and buffer (ie the row is off screen), in which
+                    // case we need to create a new node now
                     this.rowNodesByIndex[index] = this.createNode(dataItem, index);
                 }
             }

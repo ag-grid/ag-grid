@@ -60,6 +60,7 @@ export interface GridOptions {
     rememberGroupStateWhenNewData?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
+    enableCellChangeFlash?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

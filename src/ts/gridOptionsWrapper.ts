@@ -80,6 +80,7 @@ export class GridOptionsWrapper {
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
+    public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupHideGroupColumns() { return isTrue(this.gridOptions.groupHideGroupColumns); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }

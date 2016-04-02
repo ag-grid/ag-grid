@@ -272,7 +272,9 @@ export class RenderedCell extends Component {
     }
 
     private animateCellWithDataChanged(): void {
-        this.animateCell('data-changed');
+        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
+            this.animateCell('data-changed');
+        }
     }
 
     private animateCellWithHighlight(): void {
@@ -1008,8 +1010,10 @@ export class RenderedCell extends Component {
         }
 
         var resultFromRenderer: HTMLElement | string;
+        // we check if the class has the 'getGui' method to know if it's a component
+        var rendererIsAComponent = ('getGui' in (<any>cellRenderer).prototype);
         // if it's a component, we create and initialise it
-        if ('getGui' in cellRenderer) {
+        if (rendererIsAComponent) {
             var CellRendererComponent = <{new(): ICellRenderer}> cellRenderer;
             this.cellRenderer = new CellRendererComponent();
             this.context.wireBean(this.cellRenderer);
