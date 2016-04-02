@@ -205,6 +205,10 @@ include '../documentation-main/documentation_header.php';
             <th>suppressAggregation</th>
             <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to aggregate by this column (via column menu).</td>
         </tr>
+        <tr>
+            <td>enableCellChangeFlash</td>
+            <td>Set to true to get grid to flash the cell when it's refreshed.</td>
+        </tr>
     </table>
 
     <h2>Properties for Column Groups</h2>

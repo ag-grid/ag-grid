@@ -53,8 +53,15 @@ MockServer.prototype.init = function(allData) {
 MockServer.prototype.connect = function(listener) {
     var connectionId = this.nextConnectionId;
     this.nextConnectionId++;
+    // keep a record of the connection
     this.connections[connectionId] = {
+        // the client callback that receives the events
         listener: listener,
+        // we keep track of the rows in the client, so when the viewport changes,
+        // we only send rows that are new, eg if viewport is length 10, and moves 2
+        // positions, we only send the 2 new rows, as the client already has 8 of them
+        rowsInClient: {},
+        // keep track of range, so when data items change, we know what to send
         firstRow: 0,
         lastRow: -1 // first row after last row, range doesn't exist
     };
@@ -83,7 +90,20 @@ MockServer.prototype.setViewportRange = function(connectionId, firstRow, lastRow
     connection.firstRow = firstRow;
     connection.lastRow = lastRow;
 
+    // because the client has moved it's viewport, it will have disregarded rows outside the range
+    this.purgeFromClientRows(connection.rowsInClient, firstRow, lastRow);
+    // send rows newly in the range
     this.sendResultsToClient(connectionId, firstRow, lastRow);
+};
+
+// removes any entries outside the viewport (firstRow to lastRow)
+MockServer.prototype.purgeFromClientRows = function(rowsInClient, firstRow, lastRow) {
+    Object.keys(rowsInClient).forEach( function(rowIndexStr) {
+        var rowIndex = parseInt(rowIndexStr);
+        if (rowIndex < firstRow || rowIndex > lastRow) {
+            delete rowsInClient[rowIndex];
+        }
+    });
 };
 
 MockServer.prototype.sendResultsToClient = function(connectionId, firstRow, lastRow) {
@@ -92,10 +112,18 @@ MockServer.prototype.sendResultsToClient = function(connectionId, firstRow, last
         return;
     }
 
+    // we want to keep track of what rows the client has
+    var rowsInClient = this.connections[connectionId].rowsInClient;
+
     // the map contains row indexes mapped to rows
     var rowDataMap = {};
     for (var i = firstRow; i<=lastRow; i++) {
+        // if client already has this row, don't send it again
+        if (rowsInClient[i]) { continue; }
+        // otherwise send the row
         rowDataMap[i] = this.allData[i];
+        // and record that the client has this row
+        rowsInClient[i] = true;
     }
 
     this.sendEventAsync(

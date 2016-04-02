@@ -9,9 +9,9 @@ var columnDefs = [
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
+    {headerName: "Gold", field: "gold", width: 100, cellRenderer: 'animateSlide'},
+    {headerName: "Silver", field: "silver", width: 100, cellRenderer: 'animateSlide'},
+    {headerName: "Bronze", field: "bronze", width: 100, cellRenderer: 'animateSlide'},
     {headerName: "Total", field: "total", width: 100}
 ];
 
@@ -66,11 +66,15 @@ ViewportDatasource.prototype.onDataUpdated = function(event) {
     var that = this;
     event.changes.forEach( function(change) {
         var rowNode = that.params.getRow(change.rowIndex);
-        if (rowNode.data) {
-            // rowNode.data[change.columnId] = change.newValue;
-            // this is a trick, it gets the row to refresh
-            rowNode.setDataValue(change.columnId, change.newValue);
+        // if the rowNode is missing, it means the grid is not displaying that row.
+        // if the data is missing, it means the rowNode is there, but that data has not
+        // loaded into it yet, so to early to set delta changes.
+        if (!rowNode || !rowNode.data) {
+            return;
         }
+        // rowNode.data[change.columnId] = change.newValue;
+        // this is a trick, it gets the row to refresh
+        rowNode.setDataValue(change.columnId, change.newValue);
     });
 };
 

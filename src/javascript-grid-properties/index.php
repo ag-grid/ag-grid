@@ -278,6 +278,10 @@ include '../documentation-main/documentation_header.php';
             <th>headerCellTemplate</th>
             <td>String for HTML header template to use.</td>
         </tr>
+        <tr>
+            <th>enableCellChangeFlash</th>
+            <td>Set to true to have cells flash after data changes.</td>
+        </tr>
 
     </table>
 
