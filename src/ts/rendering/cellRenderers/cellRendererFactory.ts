@@ -1,17 +1,19 @@
 import {Bean, PostConstruct, Autowired} from "../../context/context";
 import {Utils as _} from '../../utils';
 import {ICellRenderer, ICellRendererFunc} from "./iCellRenderer";
-import {AnimateSlideCellRenderer} from "./animateSlideCellRenderer";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {EventService} from "../../eventService";
 import {ExpressionService} from "../../expressionService";
 import {SelectionRendererFactory} from "../../selectionRendererFactory";
 import {groupCellRendererFactory} from "./groupCellRendererFactory";
+import {AnimateShowChangedCellRenderer} from "./valueMovementCellRenderer";
+import {AnimateSlideCellRenderer} from "./animateShowChangedCellRenderer";
 
 @Bean('cellRendererFactory')
 export class CellRendererFactory {
 
     private static ANIMATE_SLIDE = 'animateSlide';
+    private static ANIMATE_SHOW_CHANGE = 'animateShowChange';
     private static GROUP = 'group';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -24,6 +26,7 @@ export class CellRendererFactory {
     @PostConstruct
     private init(): void {
         this.cellRendererMap[CellRendererFactory.ANIMATE_SLIDE] = AnimateSlideCellRenderer;
+        this.cellRendererMap[CellRendererFactory.ANIMATE_SHOW_CHANGE] = AnimateShowChangedCellRenderer;
         this.cellRendererMap[CellRendererFactory.GROUP] = groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService);
     }
 

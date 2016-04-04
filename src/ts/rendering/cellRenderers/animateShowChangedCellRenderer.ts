@@ -14,7 +14,6 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
     }
 
     public removeCell(eCell: HTMLElement): void {
-
         _.addCssClass(eCell, 'ag-fade-out');
         setTimeout( ()=> _.addCssClass(eCell, 'ag-fade-out-end'), 0);
         setTimeout( ()=> this.params.eParentOfValue.removeChild(eCell), 3000);
@@ -22,9 +21,6 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
 
     public refresh(value: any): void {
 
-        if (this.params.node.id===10) {
-            console.log('refreshing 10');
-        }
         if (_.missing(value)) {
             value = '';
         }

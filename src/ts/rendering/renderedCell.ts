@@ -925,6 +925,7 @@ export class RenderedCell extends Component {
 
         if (this.cellRenderer && this.cellRenderer.refresh) {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
+            // note: should pass in params here instead of value?? so that client has formattedValue
             this.cellRenderer.refresh(this.value);
         } else {
             // otherwise we rip out the cell and replace it
