@@ -63,6 +63,10 @@ export class AnimateShowChangeCellRenderer implements ICellRenderer {
     public refresh(params: any): void {
         var value = params.value;
 
+        if (value === this.lastValue) {
+            return;
+        }
+
         if (_.exists(params.valueFormatted)) {
             this.eValue.innerHTML = params.valueFormatted;
         } else if (_.exists(params.value)) {

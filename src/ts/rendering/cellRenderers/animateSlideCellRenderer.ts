@@ -7,6 +7,7 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
     private params: any;
 
     private eLastCell: HTMLElement;
+    private lastValue: any;
 
     public init(params: any): void {
         this.params = params;
@@ -26,6 +27,11 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
         if (_.missing(value)) {
             value = '';
         }
+
+        if (value === this.lastValue) {
+            return;
+        }
+        this.lastValue = value;
 
         var newCell = document.createElement('span');
 
