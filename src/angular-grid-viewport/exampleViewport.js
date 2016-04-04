@@ -9,9 +9,9 @@ var columnDefs = [
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, cellRenderer: 'animateShowChange'},
-    {headerName: "Silver", field: "silver", width: 100, cellRenderer: 'animateShowChange'},
-    {headerName: "Bronze", field: "bronze", width: 100, cellRenderer: 'animateShowChange'},
+    {headerName: "Gold", field: "gold", width: 100, cellRenderer: 'animateShowChange', cellFormatter: numberFormatter},
+    {headerName: "Silver", field: "silver", width: 100, cellRenderer: 'animateShowChange', cellFormatter: numberFormatter},
+    {headerName: "Bronze", field: "bronze", width: 100, cellRenderer: 'animateSlide', cellFormatter: numberFormatter},
     {headerName: "Total", field: "total", width: 100}
 ];
 
@@ -22,6 +22,14 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'viewport'
 };
+
+function numberFormatter(params) {
+    if (params.value!=null && params.value!==undefined) {
+        return params.value.toFixed(1);
+    } else {
+        return null;
+    }
+}
 
 // client code (ie your code) will call this constructor, pass in whatever you need for the
 // viewport to do it's job

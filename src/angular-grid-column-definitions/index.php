@@ -112,9 +112,18 @@ include '../documentation-main/documentation_header.php';
             <td>A function for rendering a cell.</td>
         </tr>
         <tr>
+            <th>cellFormatter</th>
+            <td>A function for formatting a cell.</td>
+        </tr>
+        <tr>
             <th>floatingCellRenderer(params)</th>
-            <td>A function for rendering floating cells. If both cellRenderer and floatingCellRenderer are
-            provided, frozen cells will use floatingCellRenderer if available, if not then cellRenderer.</td>
+            <td>A function for rendering floating cells. Floating cells will use floatingCellRenderer if available,
+                if not then cellRenderer.</td>
+        </tr>
+        <tr>
+            <th>floatingCellFormatter</th>
+            <td>A function for formatting a floating cell. Floating cells will use floatingCellRenderer if available,
+                if not then cellFormatter.</td>
         </tr>
         <tr>
             <th>onCellClicked(params)</th>

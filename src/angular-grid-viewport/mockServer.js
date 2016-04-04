@@ -15,7 +15,8 @@ MockServer.prototype.periodicallyUpdateData = function() {
         var index = Math.floor(this.allData.length * Math.random());
         var columnId = columnIds[i%3];
         var dataItem = this.allData[index];
-        var move = Math.floor(3 * Math.random()) - 1;
+        // change by a value between -1 and 2 with one decimal place
+        var move = (Math.floor(30 * Math.random()))/10 - 1;
         var newValue = dataItem[columnId] + move;
         dataItem[columnId] = newValue;
 

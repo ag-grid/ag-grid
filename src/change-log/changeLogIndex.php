@@ -17,6 +17,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: New api methods: showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterMouseClick(colKey, mouseEvent)</li>
     <li>Bugfix: api.setFocusedCell() method now sets browser focus (previous was just graphically highlighting the cell)</li>
     <li>Breaking Change: colDef.cellRenderer can no longer be an object, must be function, class or string. please see section on cellRendering. ##### Give example for this</li>
+    <li>Enhancement: new function colDef.valueFormatter - value formatting responsibility used to lie in cellRenderer, now it's broken out into valueFormatter, allows reusing cellRenderer's against different formats.</li>
 
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
