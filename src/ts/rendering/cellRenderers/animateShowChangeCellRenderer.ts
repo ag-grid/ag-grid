@@ -41,14 +41,8 @@ export class AnimateShowChangeCellRenderer implements ICellRenderer {
             _.addCssClass(eSpan, 'ag-value-change-delta-down');
         }
 
-        // if other delta values, put this one at the start
-        if (this.eDeltaValues.length > 0) {
-            this.params.eParentOfValue.insertBefore(eSpan, this.eDeltaValues[0]);
-        } else {
-            // otherwise just add after the real value
-            this.params.eParentOfValue.appendChild(eSpan);
-        }
-        
+        this.params.eParentOfValue.insertBefore(eSpan, this.eValue);
+
         this.eDeltaValues.push(eSpan);
 
         // highlight the current value

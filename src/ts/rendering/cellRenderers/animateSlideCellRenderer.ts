@@ -36,12 +36,11 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
         } else {
             newCell.innerHTML = '';
         }
-        
+
+        this.params.eParentOfValue.appendChild(newCell);
+
         if (this.eLastCell) {
-            this.params.eParentOfValue.insertBefore(newCell, this.eLastCell);
             this.removeCell(this.eLastCell);
-        } else {
-            this.params.eParentOfValue.appendChild(newCell);
         }
 
         this.eLastCell = newCell;
