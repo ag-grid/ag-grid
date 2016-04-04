@@ -9,9 +9,9 @@ var columnDefs = [
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, cellRenderer: 'animateSlide'},
-    {headerName: "Silver", field: "silver", width: 100, cellRenderer: 'animateSlide'},
-    {headerName: "Bronze", field: "bronze", width: 100, cellRenderer: 'animateSlide'},
+    {headerName: "Gold", field: "gold", width: 100, cellRenderer: 'animateShowChange'},
+    {headerName: "Silver", field: "silver", width: 100, cellRenderer: 'animateShowChange'},
+    {headerName: "Bronze", field: "bronze", width: 100, cellRenderer: 'animateShowChange'},
     {headerName: "Total", field: "total", width: 100}
 ];
 
