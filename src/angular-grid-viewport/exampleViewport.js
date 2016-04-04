@@ -9,10 +9,21 @@ var columnDefs = [
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, cellRenderer: 'animateShowChange', cellFormatter: numberFormatter},
-    {headerName: "Silver", field: "silver", width: 100, cellRenderer: 'animateShowChange', cellFormatter: numberFormatter},
-    {headerName: "Bronze", field: "bronze", width: 100, cellRenderer: 'animateSlide', cellFormatter: numberFormatter},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: "Gold", field: "gold", width: 100, 
+        cellRenderer: 'animateShowChange', 
+        cellFormatter: numberFormatter,
+        cellClass: 'cell-number'
+    },
+    {headerName: "Silver", field: "silver", width: 100, 
+        cellRenderer: 'animateShowChange', 
+        cellFormatter: numberFormatter,
+        cellClass: 'cell-number'},
+    {headerName: "Bronze", field: "bronze", width: 100, 
+        cellRenderer: 'animateSlide', 
+        cellFormatter: numberFormatter,
+        cellClass: 'cell-number'},
+    {headerName: "Total", field: "total", width: 100,
+        cellClass: 'cell-number'}
 ];
 
 var gridOptions = {
