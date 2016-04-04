@@ -88,6 +88,11 @@ export interface ColDef extends AbstractColDef {
     floatingCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     floatingCellRendererParams?: {};
 
+    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    cellFormatter?: (params: any) => string;
+    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    floatingCellFormatter?: (params: any) => string;
+        
     /** Name of function to use for aggregation. One of [sum,min,max]. */
     aggFunc?: string;
 

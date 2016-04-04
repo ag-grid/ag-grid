@@ -1,13 +1,10 @@
-
 import {ICellRenderer} from "./iCellRenderer";
 import {Utils as _} from "../../utils";
 
 var ARROW_UP = '&#65514;';
 var ARROW_DOWN = '&#65516;';
-// var ARROW_UP = '&#x25B2;';
-// var ARROW_DOWN = '&#x25BC;';
 
-export class AnimateShowChangedCellRenderer implements ICellRenderer {
+export class AnimateShowChangeCellRenderer implements ICellRenderer {
 
     private params: any;
     private lastValue: number;
@@ -17,28 +14,31 @@ export class AnimateShowChangedCellRenderer implements ICellRenderer {
     public init(params: any): void {
         this.params = params;
         this.createValueSpan(params);
-        this.refresh(params.value);
+        this.refresh(params);
     }
 
     private createValueSpan(params: any): void {
         // this is the span we update with the current value, it is always visible
         this.eValue = document.createElement('span');
+        _.addCssClass(this.eValue, 'ag-value-change-value');
         params.eParentOfValue.appendChild(this.eValue);
     }
 
-    public showDelta(delta: number): void {
+    public showDelta(params: any, delta: number): void {
         var eSpan = document.createElement('span');
-        _.addCssClass(eSpan, 'ag-value-movement');
+        _.addCssClass(eSpan, 'ag-value-change-delta');
+
+        var valueFormatted = params.formatValue(Math.abs(delta));
 
         if (delta >= 0) {
-            eSpan.innerHTML = ARROW_UP + delta;
+            eSpan.innerHTML = ARROW_UP + valueFormatted;
             // class makes it green (in ag-fresh)
-            _.addCssClass(eSpan, 'ag-value-movement-up');
+            _.addCssClass(eSpan, 'ag-value-change-delta-up');
         } else {
             // because negative, use ABS to remove sign
-            eSpan.innerHTML = ARROW_DOWN + Math.abs(delta);
+            eSpan.innerHTML = ARROW_DOWN + valueFormatted;
             // class makes it red (in ag-fresh)
-            _.addCssClass(eSpan, 'ag-value-movement-down');
+            _.addCssClass(eSpan, 'ag-value-change-delta-down');
         }
 
         // if other delta values, put this one at the start
@@ -52,7 +52,7 @@ export class AnimateShowChangedCellRenderer implements ICellRenderer {
         this.eDeltaValues.push(eSpan);
 
         // highlight the current value
-        _.addCssClass(this.eValue, 'ag-value-movement-changed');
+        _.addCssClass(this.eValue, 'ag-value-change-value-highlight');
 
         // add in timer, so we remove the delta value after 2 seconds
         setTimeout(this.removeDeltaValue.bind(this, eSpan), 2000);
@@ -62,21 +62,24 @@ export class AnimateShowChangedCellRenderer implements ICellRenderer {
         this.params.eParentOfValue.removeChild(eSpan);
         this.eDeltaValues.splice(this.eDeltaValues.indexOf(eSpan), 1);
         if (this.eDeltaValues.length===0) {
-            _.removeCssClass(this.eValue, 'ag-value-movement-changed');
+            _.removeCssClass(this.eValue, 'ag-value-change-value-highlight');
         }
     }
 
-    public refresh(value: any): void {
+    public refresh(params: any): void {
+        var value = params.value;
 
-        if (_.exists(value)) {
-            this.eValue.innerHTML = value.toString();
+        if (_.exists(params.valueFormatted)) {
+            this.eValue.innerHTML = params.valueFormatted;
+        } else if (_.exists(params.value)) {
+            this.eValue.innerHTML = value;
         } else {
             this.eValue.innerHTML = '';
         }
 
         if (typeof value === 'number' && typeof this.lastValue === 'number') {
             var delta = value - this.lastValue;
-            this.showDelta(delta);
+            this.showDelta(params, delta);
         }
 
         this.lastValue = value;

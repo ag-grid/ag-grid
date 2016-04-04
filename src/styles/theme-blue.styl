@@ -111,14 +111,21 @@
     transition: background-color 1s;
 
   // used by the animateShowChangedCellRenderer
-  .ag-value-movement
+  .ag-value-change-delta
     padding-left: 2px;
-  .ag-value-movement-up
+  .ag-value-change-delta-up
     color: darkgreen;
-  .ag-value-movement-down
+  .ag-value-change-delta-down
     color: darkred;
-  .ag-value-movement-changed
-    font-weight: bold;
+  .ag-value-change-value
+    background-color: transparent;
+    border-radius: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    transition: background-color 1s;
+  .ag-value-change-value-highlight
+    background-color: lightblue;
+    transition: background-color 0.1s;
 
   .ag-header
     background-color: #5B9BD5;

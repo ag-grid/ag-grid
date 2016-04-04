@@ -10,7 +10,7 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
 
     public init(params: any): void {
         this.params = params;
-        this.refresh(params.value);
+        this.refresh(params);
     }
 
     public removeCell(eCell: HTMLElement): void {
@@ -19,15 +19,24 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
         setTimeout( ()=> this.params.eParentOfValue.removeChild(eCell), 3000);
     }
 
-    public refresh(value: any): void {
+    public refresh(params: any): void {
+
+        var value = params.value;
 
         if (_.missing(value)) {
             value = '';
         }
 
         var newCell = document.createElement('span');
-        newCell.innerHTML = value;
 
+        if (_.exists(params.valueFormatted)) {
+            newCell.innerHTML = params.valueFormatted;
+        } else if (_.exists(params.value)) {
+            newCell.innerHTML = value;
+        } else {
+            newCell.innerHTML = '';
+        }
+        
         if (this.eLastCell) {
             this.params.eParentOfValue.insertBefore(newCell, this.eLastCell);
             this.removeCell(this.eLastCell);

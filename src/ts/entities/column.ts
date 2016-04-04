@@ -118,7 +118,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
             }
         }
     }
-
+    
     public addEventListener(eventType: string, listener: Function): void {
         this.eventService.addEventListener(eventType, listener);
     }

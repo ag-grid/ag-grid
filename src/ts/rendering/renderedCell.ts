@@ -795,12 +795,12 @@ export class RenderedCell extends Component {
         // populate
         this.putDataIntoCell();
         // style
-        this.addStylesFromCollDef();
-        this.addClassesFromCollDef();
+        this.addStylesFromColDef();
+        this.addClassesFromColDef();
         this.addClassesFromRules();
     }
 
-    private addStylesFromCollDef() {
+    private addStylesFromColDef() {
         var colDef = this.column.getColDef();
         if (colDef.cellStyle) {
             var cssToUse: any;
@@ -827,7 +827,7 @@ export class RenderedCell extends Component {
         }
     }
 
-    private addClassesFromCollDef() {
+    private addClassesFromColDef() {
         var colDef = this.column.getColDef();
         if (colDef.cellClass) {
           var classToUse: any;
@@ -926,7 +926,10 @@ export class RenderedCell extends Component {
         if (this.cellRenderer && this.cellRenderer.refresh) {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
-            this.cellRenderer.refresh(this.value);
+            var params = this.createRendererAndRefreshParams(this.formatValue(this.value));
+            this.cellRenderer.refresh(params);
+            // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
+            this.addClassesFromRules();
         } else {
             // otherwise we rip out the cell and replace it
             _.removeAllChildren(this.eParentOfValue);
@@ -950,9 +953,36 @@ export class RenderedCell extends Component {
         }
     }
 
+    private formatValue(value: any): string {
+        var formatter: (value:any)=>string;
+        var colDef = this.column.getColDef();
+        // if floating, give preference to the floating formatter
+        if (this.node.floating) {
+            formatter = colDef.floatingCellFormatter ? colDef.floatingCellFormatter : colDef.cellFormatter;
+        } else {
+            formatter = colDef.cellFormatter;
+        }
+        var result: string = null;
+        if (formatter) {
+            var params = {
+                value: value,
+                node: this.node,
+                column: this.column,
+                $scope: this.scope,
+                rowIndex: this.rowIndex,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+            result = formatter(params);
+        }
+        return result;
+    }
+
     private putDataIntoCell() {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
+        var valueFormatted = this.formatValue(this.value);
+
         if (colDef.template) {
             this.eParentOfValue.innerHTML = colDef.template;
         } else if (colDef.templateUrl) {
@@ -961,27 +991,27 @@ export class RenderedCell extends Component {
                 this.eParentOfValue.innerHTML = template;
             }
         } else if (colDef.floatingCellRenderer && this.node.floating) {
-            this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams);
+            this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
         } else if (colDef.cellRenderer) {
-            this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams);
+            this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams, valueFormatted);
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
-            if (this.value !== undefined && this.value !== null && this.value !== '') {
+            var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;
+            if (_.exists(valueToRender) && valueToRender !== '') {
                 this.eParentOfValue.innerHTML = this.value.toString();
             }
         }
     }
 
-    private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}) {
-
-        var colDef = this.column.getColDef();
-
+    private createRendererAndRefreshParams(valueFormatted: string): any {
         var params = {
             value: this.value,
+            valueFormatted: valueFormatted,
             valueGetter: this.getValue,
+            formatValue: this.formatValue.bind(this),
             data: this.node.data,
             node: this.node,
-            colDef: colDef,
+            colDef: this.column.getColDef(),
             column: this.column,
             $scope: this.scope,
             rowIndex: this.rowIndex,
@@ -992,6 +1022,14 @@ export class RenderedCell extends Component {
             eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
+        return params;
+    }
+    
+    private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string) {
+
+        var colDef = this.column.getColDef();
+
+        var params = this.createRendererAndRefreshParams(valueFormatted);
 
         if (cellRendererParams) {
             _.assign(params, colDef.cellEditorParams);
