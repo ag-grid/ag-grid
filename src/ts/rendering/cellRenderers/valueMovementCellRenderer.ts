@@ -28,6 +28,7 @@ export class AnimateShowChangedCellRenderer implements ICellRenderer {
 
     public showDelta(delta: number): void {
         var eSpan = document.createElement('span');
+        _.addCssClass(eSpan, 'ag-value-movement');
 
         if (delta >= 0) {
             eSpan.innerHTML = ARROW_UP + delta;

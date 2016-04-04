@@ -279,10 +279,13 @@ ag-grid-ng2
     //float: left
     position absolute
 
+// this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
+// however it is not tied to color, only placement and visiblity, which is behaviour and not style,
+// thus belongs here, besides it doesn't change wih the themes
 .ag-fade-out
     opacity: 1.0;
     margin-left: 5px;
-    transition: opacity 3s, margin-left 3s;
+    transition: opacity 3s, margin-left 3s; // as value fades, it also moves to the right via the margin setting
     transition-timing-function: linear;
 
 .ag-fade-out-end
