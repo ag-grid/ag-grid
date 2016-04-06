@@ -67,6 +67,7 @@ export * from './dist/lib/rendering/cellEditors/popupSelectCellEditor';
 export * from './dist/lib/rendering/cellEditors/popupTextCellEditor';
 export * from './dist/lib/rendering/cellEditors/selectCellEditor';
 export * from './dist/lib/rendering/cellEditors/textCellEditor';
+export * from './dist/lib/rendering/cellEditors/richSelectCellEditor';
 
 export * from './dist/lib/rendering/cellRenderers/groupCellRendererFactory';
 export * from './dist/lib/rendering/cellRenderers/iCellRenderer';
@@ -92,6 +93,8 @@ export * from './dist/lib/widgets/menuItemComponent';
 export * from './dist/lib/widgets/component';
 export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
+export * from './dist/lib/widgets/virtualList';
+export * from './dist/lib/widgets/virtualListItem';
 
 export * from './dist/lib/cellNavigationService';
 export * from './dist/lib/clientExports';
