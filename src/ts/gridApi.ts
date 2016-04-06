@@ -320,9 +320,18 @@ export class GridApi {
 
     public getFilterApi(key: string|Column|ColDef) {
         var column = this.columnController.getColumn(key);
-        return this.filterManager.getFilterApi(column);
+        if (column) {
+            return this.filterManager.getFilterApi(column);
+        }
     }
 
+    public destroyFilter(key: string|Column|ColDef) {
+        var column = this.columnController.getColumn(key);
+        if (column) {
+            return this.filterManager.destroyFilter(column);
+        }
+    }
+    
     public getColumnDef(key: string|Column|ColDef) {
         var column = this.columnController.getColumn(key);
         if (column) {

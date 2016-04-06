@@ -298,6 +298,19 @@ export class FilterManager {
         return filterWrapper;
     }
 
+    // destroys the filter, so it not longer takes par
+    public destroyFilter(column: Column): void {
+        var filterWrapper = this.allFilters[column.getColId()];
+        if (filterWrapper) {
+            if (filterWrapper.destroy) {
+                filterWrapper.destroy();
+            }
+            delete this.allFilters[column.getColId()];
+            this.onFilterChanged();
+            filterWrapper.column.setFilterActive(false);
+        }
+    }
+
     private createFilterWrapper(column: Column): FilterWrapper {
         var colDef = column.getColDef();
 

@@ -1,5 +1,5 @@
 import {Component} from "./component";
-import {Autowired} from "../context/context";
+import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Utils as _} from '../utils';
 
@@ -19,9 +19,18 @@ export class VirtualListItem extends Component {
 
     private eCheckbox: HTMLInputElement;
 
+    private value: any;
+    private cellRenderer: Function;
+
     constructor(value: any, cellRenderer: Function) {
         super(VirtualListItem.TEMPLATE);
-        this.render(value, cellRenderer);
+        this.value = value;
+        this.cellRenderer = cellRenderer;
+    }
+
+    @PostConstruct
+    private init(): void {
+        this.render();
 
         this.eCheckbox = this.queryForHtmlInputElement("input");
 
@@ -36,14 +45,14 @@ export class VirtualListItem extends Component {
         this.eCheckbox.checked = selected;
     }
 
-    public render(value: any, cellRenderer: Function): void {
+    public render(): void {
 
         var valueElement = this.queryForHtmlElement(".ag-filter-value");
 
         // var valueElement = eFilterValue.querySelector(".ag-filter-value");
-        if (cellRenderer) {
+        if (this.cellRenderer) {
             // renderer provided, so use it
-            var resultFromRenderer = cellRenderer({ value: value });
+            var resultFromRenderer = this.cellRenderer({ value: this.value });
 
             if (_.isNode(resultFromRenderer)) {
                 // a dom node or element was returned, so add child
@@ -57,7 +66,7 @@ export class VirtualListItem extends Component {
             // otherwise display as a string
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             var blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            var displayNameOfValue = value === null ? blanksText : value;
+            var displayNameOfValue = this.value === null ? blanksText : this.value;
             valueElement.innerHTML = displayNameOfValue;
         }
 

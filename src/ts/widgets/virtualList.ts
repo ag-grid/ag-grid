@@ -1,6 +1,6 @@
 import {VirtualListItem} from "./virtualListItem";
 import {Component} from "./component";
-import {PostConstruct} from "../context/context";
+import {PostConstruct, Autowired, Context} from "../context/context";
 import {Utils as _} from '../utils';
 
 export interface VirtualListModel {
@@ -19,13 +19,15 @@ export class VirtualList extends Component {
         '</div>'+
         '</div>';
 
+    @Autowired('context') private context: Context;
+
     private model: VirtualListModel;
 
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
     private cellRenderer: Function;
 
-    private rowHeight = 10;
+    private rowHeight = 20;
 
     constructor() {
         super(null);
@@ -108,6 +110,7 @@ export class VirtualList extends Component {
     private insertRow(value: any, rowIndex: any) {
 
         var richListItem = new VirtualListItem(value, this.cellRenderer);
+        this.context.wireBean(richListItem);
         richListItem.setSelected(this.model.isRowSelected(value));
 
         this.addDestroyableEventListener(
