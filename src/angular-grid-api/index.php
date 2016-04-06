@@ -258,6 +258,10 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <td>destroyFilter()</td>
+            <td>Destroys a filter, useful to create get a particular filter created from scratch again.</td>
+        </tr>
+        <tr>
             <th>setSortModel(model)</th>
             <td>Sets the sort state of the grid.
             </td>

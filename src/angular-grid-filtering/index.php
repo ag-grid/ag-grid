@@ -375,6 +375,11 @@ columnDefinition = {
     </p>
 
     <p>
+        The example also shows 'gridApi.destroyFilter(col)' which completly destroys a filter. Use this is if you want
+        a filter to be created again with new initialisation values.
+    </p>
+    
+    <p>
         (Note: the example uses the <a href="../angular-grid-set-filtering/">enterprise set filter</a>).
     </p>
 

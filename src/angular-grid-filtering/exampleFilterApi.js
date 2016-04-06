@@ -39,6 +39,10 @@ function clearCountryFilter() {
     gridOptions.api.onFilterChanged();
 }
 
+function destroyCountryFilter() {
+    gridOptions.api.destroyFilter('country');
+}
+
 function endingStan() {
     var filterApi = gridOptions.api.getFilterApi('country');
     filterApi.selectNothing();
