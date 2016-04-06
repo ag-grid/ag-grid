@@ -201,12 +201,16 @@ include '../documentation-main/documentation_header.php';
             <td>Returns the row group columns.</td>
         </tr>
         <tr>
-            <th>addRowGroupColumn(column)</th>
-            <td>Removes a row group column.</td>
+            <th>addRowGroupColumn(colKey), addRowGroupColumns(colKeys)</th>
+            <td>Adds a row group column or list of columns.</td>
         </tr>
         <tr>
-            <th>removeRowGroupColumn(column)</th>
-            <td>Removes a row group column.</td>
+            <th>removeRowGroupColumn(colKey), removeRowGroupColumns(colKeys)</th>
+            <td>Removes a row group column or list of columns.</td>
+        </tr>
+        <tr>
+            <th>setRowGroupColumns(colKeys)</th>
+            <td>Clears the row group columns, then sets to the provided set.</td>
         </tr>
         <tr>
             <th>moveRowGroupColumn(fromIndex, toIndex)</th>
