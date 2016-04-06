@@ -10,6 +10,7 @@ export class AnimateShowChangeCellRenderer implements ICellRenderer {
     private lastValue: number;
     private eValue: HTMLElement;
     private eDeltaValues: HTMLElement[] = [];
+    private destroyed = false;
 
     public init(params: any): void {
         this.params = params;
@@ -53,7 +54,14 @@ export class AnimateShowChangeCellRenderer implements ICellRenderer {
     }
 
     public removeDeltaValue(eSpan: HTMLElement): void {
+        // if destroyed, then don't continue, it's possible that the rowRenderer has
+        // already cleared out this cell (if rowNode.setData() for example was called).
+        // if rowNode.setData() was called, the rowRenderer will have already removed
+        // all the elements from the cell
+        if (this.destroyed) { return; }
+
         this.params.eParentOfValue.removeChild(eSpan);
+
         this.eDeltaValues.splice(this.eDeltaValues.indexOf(eSpan), 1);
         if (this.eDeltaValues.length===0) {
             _.removeCssClass(this.eValue, 'ag-value-change-value-highlight');
@@ -86,5 +94,9 @@ export class AnimateShowChangeCellRenderer implements ICellRenderer {
     // returning null, as we want full control
     public getGui(): HTMLElement {
         return null;
+    }
+
+    public destroy(): void {
+        this.destroyed = true;
     }
 }
