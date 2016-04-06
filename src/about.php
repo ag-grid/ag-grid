@@ -32,7 +32,61 @@
 
         <div class="col-md-12">
 
-            About content goes here.
+            <div class="PageContent">
+                <p class="PageContent-intro">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <h3 id="team" class="head text-center">Meet The Team</h3>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4">                         
+                        <div class="teamWrapper teamWrapper-1 text-center">
+                            <div class="teamWrapper-img">
+                                <img src="images/team_TEST.jpg" class="circle img-responsive"> 
+                                <span class="teamWrapper-mulitplyEffect teamWrapper-mulitplyEffect-1 circle"></span>
+                            </div>
+                            <div class="teamWrapper-desc">
+                                <h3>Niall</h3>
+                                <h5> <strong> Software Engineer &amp; ag-Grid founder</strong></h5>
+                                <p>
+                                    Pellentesque elementum dapibus convallis. 
+                                    Vivamus eget finibus massa.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">                 
+                        <div class="teamWrapper teamWrapper-2 text-center">
+                            <div class="teamWrapper-img">
+                                <img src="images/team_TEST2.jpg" class="circle img-responsive"> 
+                                <span class="teamWrapper-mulitplyEffect teamWrapper-mulitplyEffect-2 circle"></span>
+                            </div>
+                            <div class="teamWrapper-desc">
+                               <h3>Sean</h3>
+                                <h5><strong> Software Engineer </strong></h5>
+                                <p>
+                                    Pellentesque elementum dapibus convallis. 
+                                    Vivamus eget finibus massa.
+                                </p>
+                            </div>
+                         </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <div class="teamWrapper teamWrapper-3 text-center">
+                            <div class="teamWrapper-img">
+                                <img src="images/team_TEST3.jpg" class="circle img-responsive"> 
+                                <span class="teamWrapper-mulitplyEffect teamWrapper-mulitplyEffect-3 circle"></span>
+                            </div>
+                            <div class="teamWrapper-desc">
+                               <h3>Will</h3>
+                                <h5><strong>Frontend Developer </strong></h5>
+                                <p>
+                                    Pellentesque elementum dapibus convallis. 
+                                    Vivamus eget finibus massa.
+                                </p>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+            </div>
 
         </div> <!-- end col -->
 
@@ -41,6 +95,8 @@
 </div>
 
 <?php include("footer.php"); ?>
+
+<script inline src="/dist/frontend/team.js"></script>
 
 </body>
 

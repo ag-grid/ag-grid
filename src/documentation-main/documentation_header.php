@@ -48,7 +48,7 @@ if (strcmp($version , 'latest') == 0) {
     </nav>
 <?php } ?>
 
-<?php $headerTitle = "Documentation"; include '../headerRow.php'; ?>
+<?php $headerTitle = "<span class='glyphicons glyphicon glyphicon-folder-open'></span>&nbsp;&nbsp;Documentation"; include '../headerRow.php'; ?>
 
 
     <div class="container" style="margin-top: 20px">
@@ -68,33 +68,33 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Javascript") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/javascript_small.png" width="20px"> Javascript</span>
+                    <span class="sidebarLinkSelected childItem">Javascript</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/index.php"><img inline src="/images/javascript_small.png" width="20px"> Javascript</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/index.php">Javascript</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started React") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/react_small.png" width="20px"> React</span>
+                    <span class="sidebarLinkSelected childItem">React</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/index.php"><img inline src="/images/react_small.png" width="20px"> React</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/index.php">React</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> AngularJS 1.x</span>
+                    <span class="sidebarLinkSelected childItem">AngularJS 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php"><img inline src="/images/angularjs_small.png" width="20px"> AngularJS 1.x</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php">AngularJS 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> AngularJS 2.0</span>
+                    <span class="sidebarLinkSelected childItem">AngularJS 2.0</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php"><img inline src="/images/angular2_small.png" width="20px"> AngularJS 2.0</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php">AngularJS 2.0</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</span>
+                    <span class="sidebarLinkSelected childItem">Web Components</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/index.php"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/index.php">Web Components</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>

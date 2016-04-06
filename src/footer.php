@@ -2,17 +2,26 @@
 	<div class="Footer-grid">
 		<div class="container">
 		    <div class="row">
-		            <div class="col-xs-2">
+		            <div class="col-xs-12 col-md-4">
+		                <ul class="list-unstyled">
+		                    <li><h2 class="Footer-h2">Welcome to ag-Grid</h2></li>
+		                    <li><p class="Footer-intro"><img src="images/niall_small.jpg" width="74" height="74" class="Footer-thumb circle pull-left img-responsive" />
+		                    	Niall started ag-Grid as a side project. It grew in adoption, then grew some more, news spread, and is today one of the most widely used grid components. 
+		                    	<a href="/about.php">Read more about ag-Grid &rarr;</a></p></li>
+		                </ul>
+		            </div>
+
+		            <div class="col-xs-12 col-md-2 col-md-offset-1">
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Content</h2></li>
-		                    <li><a href="/licenseAndPricing.php">License &amp; Pricing</a></li>
-		                    <li><a href="/team.php">Team</a></li>
-		                    <li><a href="/about.php">About</a></li>
+		                    <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
+		                   	<li><a href="/about.php">About ag-Grid</a></li>
+		                    <li><a href="/team.php#team">Meet The Team</a></li>
 		                    <li><a href="/media.php">Media</a></li>
 		                    <li><a href="/testimonials.php">Testimonials</a></li>
 		                </ul>
 		            </div>
-		            <div class="col-xs-3">
+		            <div class="col-xs-12 col-md-3">
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Documentation</h2></li>
 		                    <li><a href="/angular-grid-getting-started/index.php">Getting Started</a></li>
@@ -23,7 +32,7 @@
 		                    <li><a href="/best-web-component-data-grid/index.php">Web Components</a></li>
 		                </ul>
 		            </div>
-		            <div class="col-xs-3">
+		            <div class="col-xs-12 col-md-2">
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Support</h2></li>
 		                    <li><a href="https://www.ag-grid.com/forum/forumdisplay.php?fid=4">Free Forum</a></li>
@@ -33,13 +42,15 @@
 		            </div>
 		    </div>
 		    <div class="row Footer-copyright">
-		        <div class="col-xs-8">
+		        <div class="col-xs-12 col-md-6">
 		            <p class="text-muted">ag-Grid LTD registered in the United Kingdom. Company No 07318192</p>
 		        </div>
-		        <div class="col-xs-4">
+		        <div class="col-xs-12 col-md-6">
 		            <p class="text-muted pull-right">&copy; ag-Grid Ltd 2015-2016</p>
 		        </div>
 		    </div>
 		</div>
 	</div>
 </footer>
+
+<script inline src="/dist/frontend/frontend.js"></script>

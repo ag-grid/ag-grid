@@ -57,7 +57,8 @@
             </p>
 
             <p>
-                <a href="payments/payments.php" class="bigLink">
+                <a href="payments/payments.php" class="btn btn-primary btn-large">
+                    <span class="glyphicon glyphicon-shopping-cart"></span>
                     Go to Online Payments
                 </a>
             </p>

@@ -23,7 +23,7 @@
 
 <?php $navKey = "team"; include 'navbar.php'; ?>
 
-<?php $headerTitle = "Team"; include 'headerRow.php'; ?>
+<?php $headerTitle = "Meet The Team"; include 'headerRow.php'; ?>
 
 
 <div class="container">

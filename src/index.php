@@ -3,19 +3,13 @@
     <head lang="en">
     <meta charset="UTF-8">
         <title>ag-Grid - Enterprise Javascript Data Grid</title>
-        <meta name="description"
-              content=
-              "Enterprise Javascript data grid that's feature rich, blazing fast and with a brilliant API. Supports Plain Javascript, React, AngularJS 1 & 2 and Web Components.">
+        <meta name="description" content="Enterprise Javascript data grid that's feature rich, blazing fast and with a brilliant API. Supports Plain Javascript, React, AngularJS 1 & 2 and Web Components.">
         <meta name="keywords" content="javascript data grid react angularjs angular 2 web components"/>
         <meta property="og:image" content="https://www.ag-grid.com/images/ag-Grid2-200.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         <link inline rel="stylesheet" href="dist/bootstrap/css/bootstrap.css">
-
         <link inline rel="stylesheet" type="text/css" href="style.css">
-
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
-
     </head>
 
     <body class="big-text">
@@ -50,12 +44,12 @@
 
         
 
-        <div class="HomeDemo">
+        <div class="HomeDemo hidden-xs">
 
             <div class="container">
                 <div class="row">
                     <h2 class="text-center">ag-Grid in action&hellip;</h2>
-                    <div class="row hide-when-small HomeDemo-main">
+                    <div class="row HomeDemo-main">
                         <div class="col-md-12">
                             <div style="padding: 4px;">
                                 <div style="width: 40%; display: inline-block;">
@@ -75,9 +69,9 @@
                         </div>
                     </div>
 
-                    <div class="HomeDemo-sub row hide-when-small">
+                    <div class="HomeDemo-sub row">
                         <div class="col-md-4">
-                            <h2 class="text-right pull-right">Bake your own look and feel to get differently styled grids</h2>
+                            <h2 class="text-right pull-right">Create your own unique look &amp; feel&hellip;</h2>
                         </div>
                         <div class="col-md-8">
                             <div id="exampleAccountGrid" class="ag-account" style="display: inline-block; padding: 4px;"></div>
@@ -85,8 +79,8 @@
                         </div>
                     </div>
 
-                    <div class="HomeDemo-sub row hide-when-small">
-                        <div class="col-md-8 hide-when-small">
+                    <div class="HomeDemo-sub row">
+                        <div class="col-md-8">
                             <div style="border: 1px solid darkgrey;
                                     width: 800px;
                                     background-color: lightgrey;
@@ -114,7 +108,7 @@
         <div class="HomeFeatures">
             <div class="container">
                 <div class="row">
-                    <h2 class="text-center">ag-Grid has every feature under the sun&hellip;</h2>
+                    <h2 class="text-center">ag-Grid is packed with features&hellip;</h2>
                     <div class="row text-center">
                         <div class="col-md-4 col-sm-4 col-xs-12">
                             <span class="glyphicon glyphicon-star gi-5x"></span>
@@ -197,24 +191,24 @@
             </div>
         </div>
 
-        <div class="HomeTestimonials">
+        <div class="Testimonials">
             <div class="container">
                 <div class="row">
                     <h2 class="text-center">Testimonials&hellip;</h2>
 
-                    <figure class="HomeTestimonials-item col-md-4 col-sm-4 col-xs-12">
+                    <figure class="Testimonials-item col-md-4 col-sm-4 col-xs-12">
                       <blockquote>We love Ag-grid for its simple integration, blazing-fast performance, and friendly community.</blockquote>
                       <div class="author">
                         <h5>Lucas Val</h5><span>VP of Product Development at Hexonet Services Inc</span>
                       </div>
                     </figure>
-                    <figure class="HomeTestimonials-item col-md-4 col-sm-4 col-xs-12">
+                    <figure class="Testimonials-item col-md-4 col-sm-4 col-xs-12">
                       <blockquote>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</blockquote>
                       <div class="author">
                         <h5>Joe Bloggs</h5><span>Disney World</span>
                       </div>
                     </figure>
-                    <figure class="HomeTestimonials-item col-md-4 col-sm-4 col-xs-12">
+                    <figure class="Testimonials-item col-md-4 col-sm-4 col-xs-12">
                       <blockquote>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</blockquote>
                       <div class="author">
                         <h5>John Smith</h5><span>Disney World</span>
@@ -241,18 +235,3 @@
 <script inline src="example-file-browser/fileBrowser.js"></script>
 
 <?php include_once("analytics.php"); ?>
-
-<!-- UI JavaScript (will move into seperate file later) -->
-<script>
-
-var navToggle = document.getElementById('nav-toggle');
-
-var toggleClass = function() {
-    console.log('Open Menu.');
-    navToggle.classList.toggle('open');
-};
-
-navToggle.addEventListener('click', toggleClass, false);
-
-
-</script>

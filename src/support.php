@@ -32,10 +32,8 @@
 
         <div class="col-md-12">
 
-            <div style="float: right;">
-                <a href="https://www.ag-grid.com/forum/" class="bigLink">
-                    Go to Forum
-                </a>
+            <div class="pull-right">
+                <a class="btn btn-primary btn-large bigLink" href="https://www.ag-grid.com/forum/"><span class="glyphicon glyphicon-comment"></span> Go to Forum</a>
             </div>
 
             <h2>Free Support</h2>
