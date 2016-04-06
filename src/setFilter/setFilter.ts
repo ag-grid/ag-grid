@@ -84,6 +84,10 @@ export class SetFilter extends Component implements Filter {
         this.virtualList.refresh();
     }
 
+    public getApi() {
+        return this.api;
+    }
+
     public isFilterActive(): boolean {
         return this.model.isFilterActive();
     }
