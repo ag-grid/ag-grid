@@ -919,11 +919,11 @@ export class RenderedCell extends Component {
         return this.column.getColDef().volatile;
     }
 
-    public refreshCell(animate = false) {
+    public refreshCell(animate = false, newData = false) {
 
         this.value = this.getValue();
 
-        if (this.cellRenderer && this.cellRenderer.refresh) {
+        if (!newData && this.cellRenderer && this.cellRenderer.refresh) {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
             var params = this.createRendererAndRefreshParams(this.formatValue(this.value));

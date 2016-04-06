@@ -265,7 +265,9 @@ export class RenderedRow {
 
     private addNodeDataChangedListener(): void {
         var nodeDataChangedListener = () => {
-            this.forEachRenderedCell( renderedCell => renderedCell.refreshCell() );
+            var animate = false;
+            var newData = true;
+            this.forEachRenderedCell( renderedCell => renderedCell.refreshCell(animate, newData) );
         };
         this.rowNode.addEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
         this.destroyFunctions.push(()=> {
