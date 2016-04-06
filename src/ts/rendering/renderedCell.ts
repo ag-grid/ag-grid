@@ -1019,6 +1019,7 @@ export class RenderedCell extends Component {
             $scope: this.scope,
             rowIndex: this.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.eGridCell,

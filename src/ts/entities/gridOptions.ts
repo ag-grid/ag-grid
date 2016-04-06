@@ -77,7 +77,6 @@ export interface GridOptions {
 
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
-    groupHideGroupColumns?: boolean;
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
     groupSuppressRow?: boolean;
