@@ -9,4 +9,5 @@ export interface Filter {
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
     onNewRowsLoaded?(): void;
     destroy?(): void;
+    getApi?(): any;
 }

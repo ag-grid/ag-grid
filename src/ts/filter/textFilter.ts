@@ -215,7 +215,7 @@ export class TextFilter implements Filter {
         };
     }
 
-    private getApi() {
+    public getApi() {
         return this.api;
     }
 }

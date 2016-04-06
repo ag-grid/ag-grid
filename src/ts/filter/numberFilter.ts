@@ -227,7 +227,7 @@ export class NumberFilter implements Filter {
         };
     }
 
-    private getApi() {
+    public getApi() {
         return this.api;
     }
 }
