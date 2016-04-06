@@ -4,9 +4,6 @@ export * from './dist/lib/columnSelect/renderedColumn';
 export * from './dist/lib/columnSelect/renderedGroup';
 export * from './dist/lib/columnSelect/renderedItem';
 
-export * from './dist/lib/components/virtualList';
-export * from './dist/lib/components/virtualListItem';
-
 export * from './dist/lib/rowStages/aggregationStage';
 export * from './dist/lib/rowStages/groupStage';
 

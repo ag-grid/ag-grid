@@ -1,7 +1,6 @@
-import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
+import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper, VirtualList, VirtualListModel} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
-import {VirtualList, VirtualListModel} from "../components/virtualList";
 
 export class SetFilter extends Component implements Filter {
 
@@ -38,7 +37,7 @@ export class SetFilter extends Component implements Filter {
     private applyActive: any;
     private eApplyButton: any;
 
-    private richList: VirtualList;
+    private virtualList: VirtualList;
     
     constructor() {
         super();
@@ -49,16 +48,16 @@ export class SetFilter extends Component implements Filter {
 
         this.setTemplate(this.createTemplate());
 
-        this.richList = new VirtualList();
-        this.context.wireBean(this.richList);
+        this.virtualList = new VirtualList();
+        this.context.wireBean(this.virtualList);
 
-        this.getGui().querySelector('#richList').appendChild(this.richList.getGui());
+        this.getGui().querySelector('#richList').appendChild(this.virtualList.getGui());
     }
 
     public init(params: any): void {
         this.filterParams = params.filterParams;
         if (this.filterParams && this.filterParams.cellHeight) {
-            this.richList.setRowHeight(this.filterParams.cellHeight);
+            this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }
         this.applyActive = this.filterParams && this.filterParams.apply === true;
         this.filterChangedCallback = params.filterChangedCallback;
@@ -67,13 +66,13 @@ export class SetFilter extends Component implements Filter {
         this.colDef = params.colDef;
 
         if (this.filterParams) {
-            this.richList.setCellRenderer(this.filterParams.cellRenderer);
+            this.virtualList.setCellRenderer(this.filterParams.cellRenderer);
         }
 
         this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter);
-        this.richList.setModel(new ModelWrapper(this.model));
+        this.virtualList.setModel(new ModelWrapper(this.model));
 
-        this.richList.addEventListener(VirtualList.EVENT_SELECTED, this.onItemSelected.bind(this));
+        this.virtualList.addEventListener(VirtualList.EVENT_SELECTED, this.onItemSelected.bind(this));
 
         this.createGui();
         this.createApi();
@@ -82,7 +81,7 @@ export class SetFilter extends Component implements Filter {
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     public afterGuiAttached(params: any): void  {
-        this.richList.refresh();
+        this.virtualList.refresh();
     }
 
     public isFilterActive(): boolean {
@@ -120,12 +119,12 @@ export class SetFilter extends Component implements Filter {
         var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
-        this.richList.refresh();
+        this.virtualList.refresh();
     }
 
     public onAnyFilterChanged(): void {
         this.model.refreshAfterAnyFilterChanged();
-        this.richList.refresh();
+        this.virtualList.refresh();
     }
 
     private createTemplate() {
@@ -159,7 +158,7 @@ export class SetFilter extends Component implements Filter {
         }
 
         this.setupApply();
-        this.richList.refresh();
+        this.virtualList.refresh();
     }
 
     private setupApply() {
@@ -183,7 +182,7 @@ export class SetFilter extends Component implements Filter {
     private onMiniFilterChanged() {
         var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
-            this.richList.refresh();
+            this.virtualList.refresh();
         }
     }
 
@@ -194,7 +193,7 @@ export class SetFilter extends Component implements Filter {
         } else {
             this.model.selectNothing();
         }
-        this.richList.refresh();
+        this.virtualList.refresh();
         this.filterChanged();
     }
 
@@ -250,11 +249,11 @@ export class SetFilter extends Component implements Filter {
             },
             unselectValue: function (value: any) {
                 model.unselectValue(value);
-                that.richList.refresh();
+                that.virtualList.refresh();
             },
             selectValue: function (value: any) {
                 model.selectValue(value);
-                that.richList.refresh();
+                that.virtualList.refresh();
             },
             isValueSelected: function (value: any) {
                 return model.isValueSelected(value);
@@ -276,7 +275,7 @@ export class SetFilter extends Component implements Filter {
             },
             setModel: function (dataModel: any) {
                 model.setModel(dataModel);
-                that.richList.refresh();
+                that.virtualList.refresh();
             }
         };
     }
