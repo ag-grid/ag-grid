@@ -157,7 +157,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>groupUseEntireRow<br/>
                 groupDefaultExpanded<br/>
-                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupHideGroupColumns <br/> groupSuppressBlankHeader</th>
+                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupSuppressBlankHeader</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>

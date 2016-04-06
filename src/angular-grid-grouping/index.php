@@ -77,13 +77,7 @@ include '../documentation-main/documentation_header.php';
             <th>groupSuppressAutoColumn</th>
             <td>If true, the grid will not swap in the grouping column when grouping is enabled. Use this if you
                 want complete control on the column displayed and don't want the grids help. In other words,
-                you alreay have a column in your column definitions that is responsible for displaying the groups.
-            </td>
-        </tr>
-        <tr>
-            <th>groupHideGroupColumns</th>
-            <td>If true, when a column is row grouped, it is not displayed as a normal column. Useful when you
-                don't want the data appearing twice, once in the group column and once in the normal column.
+                you already have a column in your column definitions that is responsible for displaying the groups.
             </td>
         </tr>
         <tr>
