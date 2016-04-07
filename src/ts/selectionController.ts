@@ -62,7 +62,7 @@ export class SelectionController {
 
     public removeGroupsFromSelection(): void {
         _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
-            if (rowNode) {
+            if (rowNode && rowNode.group) {
                 this.selectedNodes[rowNode.id] = undefined;
             }
         });
