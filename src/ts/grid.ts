@@ -82,7 +82,7 @@ export class Grid {
                 quickFilterOnScope: quickFilterOnScope,
                 globalEventListener: globalEventListener
             },
-            beans: [rowModelClass, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+            beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, SelectionRendererFactory, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
@@ -91,7 +91,7 @@ export class Grid {
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
-                CellEditorFactory, CellRendererFactory],
+                CellEditorFactory],
             debug: !!gridOptions.debug
         });
 

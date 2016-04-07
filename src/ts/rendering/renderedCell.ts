@@ -1031,12 +1031,10 @@ export class RenderedCell extends Component {
     
     private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string) {
 
-        var colDef = this.column.getColDef();
-
         var params = this.createRendererAndRefreshParams(valueFormatted);
 
         if (cellRendererParams) {
-            _.assign(params, colDef.cellEditorParams);
+            _.assign(params, cellRendererParams);
         }
 
         var cellRenderer: {new(): ICellRenderer} | ICellRendererFunc;
@@ -1054,7 +1052,7 @@ export class RenderedCell extends Component {
 
         var resultFromRenderer: HTMLElement | string;
         // we check if the class has the 'getGui' method to know if it's a component
-        var rendererIsAComponent = ('getGui' in (<any>cellRenderer).prototype);
+        var rendererIsAComponent = ((<any>cellRenderer).prototype && 'getGui' in (<any>cellRenderer).prototype);
         // if it's a component, we create and initialise it
         if (rendererIsAComponent) {
             var CellRendererComponent = <{new(): ICellRenderer}> cellRenderer;

@@ -25,14 +25,14 @@ export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
             addExpandAndContract(eGroupCell, params);
         }
 
-        var checkboxNeeded = params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.checkbox && !node.footer;
+        var checkboxNeeded = params.checkbox && !node.footer;
         if (checkboxNeeded) {
             var eCheckbox = selectionRendererFactory.createSelectionCheckbox(node, params.rowIndex, params.addRenderedRowListener);
             eGroupCell.appendChild(eCheckbox);
         }
 
-        if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.innerRenderer) {
-            createFromInnerRenderer(eGroupCell, params, params.colDef.cellRenderer.innerRenderer);
+        if (params.innerRenderer) {
+            createFromInnerRenderer(eGroupCell, params, params.innerRenderer);
         } else if (node.footer) {
             createFooterCell(eGroupCell, params);
         } else if (node.group) {
@@ -44,12 +44,11 @@ export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        var suppressPadding = params.colDef && params.colDef.cellRenderer
-            && params.colDef.cellRenderer.suppressPadding;
+        var suppressPadding = params.suppressPadding;
         if (!suppressPadding && (node.footer || node.level > 0)) {
             var paddingFactor: any;
-            if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.padding >= 0) {
-                paddingFactor = params.colDef.cellRenderer.padding;
+            if (params.colDef && params.padding >= 0) {
+                paddingFactor = params.padding;
             } else {
                 paddingFactor = 10;
             }
@@ -136,8 +135,8 @@ export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
     function createFooterCell(eGroupCell: any, params: any) {
         var footerValue: string;
         var groupName = getGroupName(params);
-        if (params.colDef && params.colDef.cellRenderer && params.colDef.cellRenderer.footerValueGetter) {
-            var footerValueGetter = params.colDef.cellRenderer.footerValueGetter;
+        if (params.footerValueGetter) {
+            var footerValueGetter = params.footerValueGetter;
             // params is same as we were given, except we set the value as the item to display
             var paramsClone: any = _.cloneObject(params);
             paramsClone.value = groupName;
@@ -157,10 +156,8 @@ export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
     }
 
     function getGroupName(params: any) {
-        var cellRenderer = params.colDef.cellRenderer;
-        if (cellRenderer && cellRenderer.keyMap
-            && typeof cellRenderer.keyMap === 'object' && params.colDef.cellRenderer !== null) {
-            var valueFromMap = cellRenderer.keyMap[params.node.key];
+        if (params.keyMap && typeof params.keyMap === 'object') {
+            var valueFromMap = params.keyMap[params.node.key];
             if (valueFromMap) {
                 return valueFromMap;
             } else {
@@ -175,6 +172,8 @@ export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
     function createGroupCell(eGroupCell: any, params: any) {
         var groupName = getGroupName(params);
 
+        // NOTE: this all needs to be revisited
+
         var colDefOfGroupedCol = params.api.getColumnDef(params.node.field);
         if (colDefOfGroupedCol && typeof colDefOfGroupedCol.cellRenderer === 'function') {
             params.value = groupName;
@@ -185,7 +184,7 @@ export function groupCellRendererFactory(gridOptionsWrapper: GridOptionsWrapper,
 
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
-        var suppressCount = params.colDef.cellRenderer && params.colDef.cellRenderer.suppressCount;
+        var suppressCount = params.suppressCount;
         if (!suppressCount && params.node.allChildrenCount >= 0) {
             eGroupCell.appendChild(document.createTextNode(" (" + params.node.allChildrenCount + ")"));
         }
