@@ -52,14 +52,14 @@
 
         <div class="header-row" style="position: fixed; top: 0px; left: 0px; width: 100%; padding-bottom: 0px;">
 
-            <?php $navKey = "demo"; include 'navbar.php'; ?>
+            <?php $navKey = "demo"; include 'includes/navbar.php'; ?>
 
             <div class="container">
 
                 <div class="row">
                     <div class="col-md-12">
 
-                        <div style="padding: 10px;">
+                        <div style="padding: 5px 5px 6px 5px;">
 
                             <!-- First row of header, has table options -->
                             <div style="padding: 4px;">
@@ -104,6 +104,6 @@
 
     </body>
 
-    <?php include_once("analytics.php"); ?>
+    <?php include_once("includes/analytics.php"); ?>
 
 </html>

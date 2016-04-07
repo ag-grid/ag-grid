@@ -21,9 +21,9 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "about"; include 'navbar.php'; ?>
+<?php $navKey = "about"; include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "About"; include 'headerRow.php'; ?>
+<?php $headerTitle = "About"; include 'includes/headerRow.php'; ?>
 
 
 <div class="container">
@@ -94,12 +94,12 @@
 
 </div>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 <script inline src="/dist/frontend/team.js"></script>
 
 </body>
 
-<?php include_once("analytics.php"); ?>
+<?php include_once("includes/analytics.php"); ?>
 
 </html>

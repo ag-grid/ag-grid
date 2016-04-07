@@ -238,7 +238,7 @@
                     <td class="tableHighlightCell tableCell">
 
                         <a href="order.php" class="btn btn-primary btn-large bigLink">
-                            <span class="glyphicon glyphicon-shopping-cart"></span> Continue to Ordering
+                            Continue to Ordering
                         </a>
 
                     </td>
@@ -379,10 +379,10 @@
 
 </div>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("analytics.php"); ?>
+<?php include_once("includes/analytics.php"); ?>
 
 </html>

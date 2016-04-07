@@ -21,9 +21,9 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "testimonials"; include 'navbar.php'; ?>
+<?php $navKey = "testimonials"; include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "Testimonials"; include 'headerRow.php'; ?>
+<?php $headerTitle = "Testimonials"; include 'includes/headerRow.php'; ?>
 
 
 <div class="container">
@@ -77,10 +77,10 @@
 
 
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("analytics.php"); ?>
+<?php include_once("includes/analytics.php"); ?>
 
 </html>

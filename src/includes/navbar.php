@@ -32,12 +32,12 @@
 
                     <li class="dropdown <?php if ($navKey == "about") { ?>active<?php }?>">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="/about.php">About <b class="caret hidden-xs"></b></a>
-                        <ul class="dropdown-menu hidden-xs">
+                        <ul class="dropdown-menu">
                             <li>
-                                <a href="/about.php">About ag-Grid</a>
+                                <a href="/about.php">About</a>
                             </li>
                             <li>
-                                <a href="/about.php#team">Meet The Team</a>
+                                <a href="/about.php#team">Team</a>
                             </li>
                              <li>
                                 <a href="/media.php">Media</a>
@@ -49,8 +49,7 @@
                     </li>
 
                     <li class="Header-cta <?php if ($navKey == "licenseAndPricing") { ?> active<?php }?>">
-                        <a href="/license-pricing.php"><span class="glyphicon glyphicon-shopping-cart"></span>
-                            Pricing</a>
+                        <a href="/license-pricing.php">Pricing</a>
                     </li>
                 </ul>
             </div>

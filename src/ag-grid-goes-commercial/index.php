@@ -4,7 +4,7 @@ $pageTitle = "ag-Grid Goes Commercial";
 $pageDescription = "A discussion on the release of ag-Grid and it's commercial plans.";
 $pageKeyboards = "ag-Grid javascritp script ag-grid-enterprise Commercial";
 
-include('../mediaHeader.php');
+include('../includes/mediaHeader.php');
 ?>
 
 
@@ -215,5 +215,5 @@ include('../mediaHeader.php');
 </footer>
 
 <?php
-include('../mediaFooter.php');
+include('../includes/mediaFooter.php');
 ?>

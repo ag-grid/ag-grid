@@ -32,7 +32,7 @@ if (strcmp($version , 'latest') == 0) {
 
 <?php if ($version=='latest') {
     $navKey = "documentation";
-    include '../navbar.php';
+    include '../includes/navbar.php';
 } else { ?>
     <nav class="navbar-inverse">
         <div class="container">
@@ -57,6 +57,7 @@ if (strcmp($version , 'latest') == 0) {
 
             <div class="col-sm-2">
 
+
                 <h4>
                     The Basics
                 </h4>
@@ -64,43 +65,43 @@ if (strcmp($version , 'latest') == 0) {
                 <?php if ($key == "Getting Started") { ?>
                     <span class="sidebarLinkSelected">Getting Started</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-getting-started/index.php">Getting Started</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-getting-started/index.php">Getting Started</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Javascript") { ?>
-                    <span class="sidebarLinkSelected childItem">Javascript</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/javascript_small.png" width="20px"> Javascript</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/index.php">Javascript</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/index.php"><img inline src="/images/svg/javascript.svg" width="20px"> Javascript</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started React") { ?>
-                    <span class="sidebarLinkSelected childItem">React</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/react_small.png" width="20px"> React</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/index.php">React</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/index.php"><img inline src="/images/svg/react.svg" width="20px"> React</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem">AngularJS 1.x</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> AngularJS 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php">AngularJS 1.x</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php"><img inline src="/images/svg/angular.svg" width="20px"> AngularJS 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem">AngularJS 2.0</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> AngularJS 2.0</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php">AngularJS 2.0</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php"><img inline src="/images/svg/angular.svg" width="20px"> AngularJS 2.0</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>
-                    <span class="sidebarLinkSelected childItem">Web Components</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/index.php">Web Components</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/index.php"><img inline src="/images/svg/web-components.svg" width="20px"> Web Components</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>
                     <span class="sidebarLinkSelected">Width & Height</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-width-and-height/index.php">Width & Height</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-width-and-height/index.php">Width & Height</a>
                 <?php } ?>
 
                 <h4>
@@ -134,13 +135,13 @@ if (strcmp($version , 'latest') == 0) {
                 <?php if ($key == "Grid API") { ?>
                     <span class="sidebarLinkSelected">Grid API</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-api/index.php">Grid API</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-api/index.php">Grid API</a>
                 <?php } ?>
 
                 <?php if ($key == "Column API") { ?>
                     <span class="sidebarLinkSelected">Column API</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-column-api/index.php">Column API</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-api/index.php">Column API</a>
                 <?php } ?>
 
                 <h4>
@@ -150,187 +151,187 @@ if (strcmp($version , 'latest') == 0) {
                 <?php if ($key == "Column Definitions") { ?>
                     <span class="sidebarLinkSelected">Column Definitions</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-column-definitions/index.php">Column Definitions</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-definitions/index.php">Column Definitions</a>
                 <?php } ?>
 
                 <?php if ($key == "Sorting") { ?>
                     <span class="sidebarLinkSelected">Sorting</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-sorting/index.php">Sorting</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-sorting/index.php">Sorting</a>
                 <?php } ?>
 
                 <?php if ($key == "Filtering") { ?>
                     <span class="sidebarLinkSelected">Filtering</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-filtering/index.php">Filtering</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/index.php">Filtering</a>
                 <?php } ?>
 
                 <?php if ($key == "Resizing") { ?>
                     <span class="sidebarLinkSelected">Resizing</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-resizing/index.php">Resizing</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-resizing/index.php">Resizing</a>
                 <?php } ?>
 
                 <?php if ($key == "Pinning") { ?>
                     <span class="sidebarLinkSelected">Pinning</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-pinning/index.php">Pinning</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pinning/index.php">Pinning</a>
                 <?php } ?>
 
                 <?php if ($key == "Grouping Columns") { ?>
                     <span class="sidebarLinkSelected">Grouping Columns</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping-headers/index.php">Grouping Columns</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping-headers/index.php">Grouping Columns</a>
                 <?php } ?>
 
                 <?php if ($key == "Tree Data") { ?>
                     <span class="sidebarLinkSelected">Tree Data</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-tree/index.php">Tree Data</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tree/index.php">Tree Data</a>
                 <?php } ?>
 
                 <?php if ($key == "Row Height") { ?>
                     <span class="sidebarLinkSelected">Row Height</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-row-height/index.php">Row Height</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-height/index.php">Row Height</a>
                 <?php } ?>
 
                 <?php if ($key == "Floating") { ?>
                     <span class="sidebarLinkSelected">Floating Rows</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-floating/index.php">Floating Rows</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-floating/index.php">Floating Rows</a>
                 <?php } ?>
 
                 <?php if ($key == "Selection") { ?>
                     <span class="sidebarLinkSelected">Selection</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-selection/index.php">Selection</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-selection/index.php">Selection</a>
                 <?php } ?>
 
                 <?php if ($key == "Value Getters") { ?>
                     <span class="sidebarLinkSelected">Value Getters</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-value-getters/index.php">Value Getters</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-value-getters/index.php">Value Getters</a>
                 <?php } ?>
 
                 <?php if ($key == "Cell Expressions") { ?>
                     <span class="sidebarLinkSelected">Cell Expressions</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-cell-expressions/index.php">Cell Expressions</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-expressions/index.php">Cell Expressions</a>
                 <?php } ?>
 
                 <?php if ($key == "Cell Styling") { ?>
                     <span class="sidebarLinkSelected">Cell Styling</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-cell-styling/index.php">Cell Styling</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-styling/index.php">Cell Styling</a>
                 <?php } ?>
 
                 <?php if ($key == "Cell Rendering") { ?>
                     <span class="sidebarLinkSelected">Cell Rendering</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-cell-rendering/index.php">Cell Rendering</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/index.php">Cell Rendering</a>
                 <?php } ?>
 
                 <?php if ($key == "Cell Templates") { ?>
                     <span class="sidebarLinkSelected">Cell Templates</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-cell-template/index.php">Cell Templates</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-template/index.php">Cell Templates</a>
                 <?php } ?>
 
                 <?php if ($key == "Editing") { ?>
                     <span class="sidebarLinkSelected">Editing Cells</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-editing/index.php">Editing Cells</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-editing/index.php">Editing Cells</a>
                 <?php } ?>
 
                 <?php if ($key == "Context") { ?>
                     <span class="sidebarLinkSelected">Context</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-context/index.php">Context</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context/index.php">Context</a>
                 <?php } ?>
 
                 <?php if ($key == "Refresh") { ?>
                     <span class="sidebarLinkSelected">Refresh</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-refresh/index.php">Refresh</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-refresh/index.php">Refresh</a>
                 <?php } ?>
 
                 <?php if ($key == "Header Rendering") { ?>
                     <span class="sidebarLinkSelected">Header Templates & Rendering</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-header-rendering/index.php">Header Templates & Rendering</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/index.php">Header Templates & Rendering</a>
                 <?php } ?>
 
                 <?php if ($key == "Keyboard Navigation") { ?>
                     <span class="sidebarLinkSelected">Keyboard Navigation</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-keyboard-navigation/index.php">Keyboard Navigation</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-keyboard-navigation/index.php">Keyboard Navigation</a>
                 <?php } ?>
 
                 <?php if ($key == "Internationalisation") { ?>
                     <span class="sidebarLinkSelected">Internationalisation</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-internationalisation/index.php">Internationalisation</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-internationalisation/index.php">Internationalisation</a>
                 <?php } ?>
 
                 <?php if ($key == "Master / Slave") { ?>
                     <span class="sidebarLinkSelected">Master / Slave</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-master-slave/index.php">Master / Slave</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-master-slave/index.php">Master / Slave</a>
                 <?php } ?>
 
                 <?php if ($key == "Row Model") { ?>
                     <span class="sidebarLinkSelected">Row Model</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-model/index.php">Row Model</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-model/index.php">Row Model</a>
                 <?php } ?>
 
                 <?php if ($key == "Data Export") { ?>
                     <span class="sidebarLinkSelected">Data Export</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-export/index.php">Data Export</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/index.php">Data Export</a>
                 <?php } ?>
 
                 <?php if ($key == "Datasource") { ?>
                     <span class="sidebarLinkSelected">Datasource</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-datasource/index.php">Datasource</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-datasource/index.php">Datasource</a>
                 <?php } ?>
 
                 <?php if ($key == "Pagination") { ?>
                     <span class="sidebarLinkSelected">Pagination</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-pagination/index.php">Pagination</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pagination/index.php">Pagination</a>
                 <?php } ?>
 
                 <?php if ($key == "Virtual Paging / Infinite Scrolling") { ?>
                     <span class="sidebarLinkSelected">Virtual Paging / Infinite Scrolling</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-virtual-paging/index.php">Virtual Paging<br/>& Infinite Scrolling</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-virtual-paging/index.php">Virtual Paging<br/>& Infinite Scrolling</a>
                 <?php } ?>
 
                 <?php if ($key == "Styling") { ?>
                     <span class="sidebarLinkSelected">Layout & Styling</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-styling/index.php">Layout & Styling</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-styling/index.php">Layout & Styling</a>
                 <?php } ?>
 
                 <?php if ($key == "Icons") { ?>
                     <span class="sidebarLinkSelected">Icons</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-icons/index.php">Icons</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-icons/index.php">Icons</a>
                 <?php } ?>
 
                 <?php if ($key == "Overlays") { ?>
                     <span class="sidebarLinkSelected">Overlays</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-overlays/index.php">Overlays</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-overlays/index.php">Overlays</a>
                 <?php } ?>
 
                 <?php if ($key == "For Print") { ?>
                     <span class="sidebarLinkSelected">For Print</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-for-print/index.php">For Print</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-for-print/index.php">For Print</a>
                 <?php } ?>
 
                 <h4>
@@ -340,49 +341,49 @@ if (strcmp($version , 'latest') == 0) {
                 <?php if ($key == "Grouping") { ?>
                     <span class="sidebarLinkSelected">Grouping Rows & Aggregating</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-grouping/index.php">Grouping Rows & Aggregating</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/index.php">Grouping Rows & Aggregating</a>
                 <?php } ?>
 
                 <?php if ($key == "Tool Panel") { ?>
                     <span class="sidebarLinkSelected">Tool Panel</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-tool-panel/index.php">Tool Panel</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tool-panel/index.php">Tool Panel</a>
                 <?php } ?>
 
                 <?php if ($key == "Clipboard") { ?>
                     <span class="sidebarLinkSelected">Clipboard</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-clipboard/index.php">Clipboard</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-clipboard/index.php">Clipboard</a>
                 <?php } ?>
 
                 <?php if ($key == "Column Menu") { ?>
                     <span class="sidebarLinkSelected">Column Menu</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-column-menu/index.php">Column Menu</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-menu/index.php">Column Menu</a>
                 <?php } ?>
 
                 <?php if ($key == "Context Menu") { ?>
                     <span class="sidebarLinkSelected">Context Menu</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-context-menu/index.php">Context Menu</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context-menu/index.php">Context Menu</a>
                 <?php } ?>
 
                 <?php if ($key == "Range Selection") { ?>
                     <span class="sidebarLinkSelected">Range Selection</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-range-selection/index.php">Range Selection</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-range-selection/index.php">Range Selection</a>
                 <?php } ?>
 
                 <?php if ($key == "Status Bar") { ?>
                     <span class="sidebarLinkSelected">Status Bar</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-status-bar/index.php">Status Bar</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-status-bar/index.php">Status Bar</a>
                 <?php } ?>
 
                 <?php if ($key == "Set Filtering") { ?>
                     <span class="sidebarLinkSelected">Set Filtering</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>angular-grid-set-filtering/index.php">Set Filtering</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-filtering/index.php">Set Filtering</a>
                 <?php } ?>
 
                 <h4>

@@ -21,7 +21,7 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = ""; include 'navbar.php'; ?>
+<?php $navKey = ""; include 'includes/navbar.php'; ?>
 
 <?php $headerTitle = "Order ag-Grid Enterprise"; include 'headerRow.php'; ?>
 
@@ -58,7 +58,6 @@
 
             <p>
                 <a href="payments/payments.php" class="btn btn-primary btn-large">
-                    <span class="glyphicon glyphicon-shopping-cart"></span>
                     Go to Online Payments
                 </a>
             </p>
@@ -68,10 +67,10 @@
 
 </div>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("analytics.php"); ?>
+<?php include_once("includes/analytics.php"); ?>
 
 </html>

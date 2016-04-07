@@ -5,9 +5,9 @@
 		            <div class="col-xs-12 col-md-4">
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Welcome to ag-Grid</h2></li>
-		                    <li><p class="Footer-intro"><img src="images/niall_small.jpg" width="74" height="74" class="Footer-thumb circle pull-left img-responsive" />
+		                    <li><p class="Footer-intro"><img src="/images/niall_small.jpg" width="74" height="74" class="Footer-thumb circle pull-left img-responsive" />
 		                    	Niall started ag-Grid as a side project. It grew in adoption, then grew some more, news spread, and is today one of the most widely used grid components. 
-		                    	<a href="/about.php">Read more about ag-Grid &rarr;</a></p></li>
+		                    	<a href="/media.php">Read more about ag-Grid &rarr;</a></p></li>
 		                </ul>
 		            </div>
 
@@ -15,8 +15,8 @@
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Content</h2></li>
 		                    <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
-		                   	<li><a href="/about.php">About ag-Grid</a></li>
-		                    <li><a href="/team.php#team">Meet The Team</a></li>
+		                   	<li><a href="/about.php">About</a></li>
+		                    <li><a href="/about.php#team">Team</a></li>
 		                    <li><a href="/media.php">Media</a></li>
 		                    <li><a href="/testimonials.php">Testimonials</a></li>
 		                </ul>

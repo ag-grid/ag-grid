@@ -4,7 +4,7 @@ $pageTitle = "Embracing the Future with AngularJS 2.0, Web Components and ag-Gri
 $pageDescription = "A discussion on how ag-Grid is positioning itself to take advantage of AngularJS 2.0 and Web Components.";
 $pageKeyboards = "web components angularjs 2 ag-grid grid";
 
-include('../mediaHeader.php');
+include('../includes/mediaHeader.php');
 ?>
 
 <div class="row">
@@ -173,5 +173,5 @@ include('../mediaHeader.php');
 </footer>
 
 <?php
-include('../mediaFooter.php');
+include('../includes/mediaFooter.php');
 ?>
