@@ -29,10 +29,10 @@
 
 <?php
     $navKey = "";
-    include '../navbar.php';
+    include '../includes/navbar.php';
 
     $headerTitle = "Online Payments";
-    include '../headerRow.php';
+    include '../includes/headerRow.php';
 
     include './setupSecrets.php';
 

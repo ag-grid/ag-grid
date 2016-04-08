@@ -21,9 +21,9 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "support"; include 'navbar.php'; ?>
+<?php $navKey = "support"; include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "Support"; include 'headerRow.php'; ?>
+<?php $headerTitle = "Support"; include 'includes/headerRow.php'; ?>
 
 
 <div class="container info-page">
@@ -32,10 +32,8 @@
 
         <div class="col-md-12">
 
-            <div style="float: right;">
-                <a href="https://www.ag-grid.com/forum/" class="bigLink">
-                    Go to Forum
-                </a>
+            <div class="pull-right">
+                <a class="btn btn-primary btn-large bigLink" href="https://www.ag-grid.com/forum/"><span class="glyphicon glyphicon-comment"></span> Go to Forum</a>
             </div>
 
             <h2>Free Support</h2>
@@ -199,10 +197,10 @@
 
 </div>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("analytics.php"); ?>
+<?php include_once("includes/analytics.php"); ?>
 
 </html>

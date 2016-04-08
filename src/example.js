@@ -73,8 +73,8 @@ var groupColumn = {
     comparator: agGrid.defaultGroupComparator,
     suppressAggregation: true,
     suppressRowGroup: true,
-    cellRenderer: 'group',
-    cellRendererParams: {
+    cellRenderer: {
+        renderer: "group",
         checkbox: true
     }
 };
@@ -189,29 +189,29 @@ var gridOptions = {
     },
     // isScrollLag: function() { return false; },
     //suppressScrollLag: true,
-    // floatingTopRowData: [{},{},{}],
-    // floatingBottomRowData: [{},{},{}],
+    //floatingTopRowData: [{},{},{}],
+    //floatingBottomRowData: [{},{},{}],
     // callback when row clicked
     onRowClicked: function(params) {
-        // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
+        console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
     onRowDoubleClicked: function(params) {
-        // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
+        console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
     // callback when cell clicked
     onCellClicked: function(params) {
-        // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     // callback when cell double clicked
     onCellDoubleClicked:  function(params) {
-        // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     // callback when cell right clicked
     onCellContextMenu:  function(params) {
         console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     onCellFocused: function(params) {
-        // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
+        console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
     onGridReady: function(event) {
         console.log('Callback onGridReady: api = ' + event.api);
@@ -281,7 +281,6 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: countryCellRenderer,
-                cellEditor: 'popupText',
                 //pinned: 'left',
                 floatCell: true,
                 filterParams: {
@@ -296,10 +295,6 @@ var defaultCols = [
             },
             {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,
-                cellEditor: 'select',
-                cellEditorParams: {
-                    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
-                },
                 //pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {newRowsAction: 'keep'},

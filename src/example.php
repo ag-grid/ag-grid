@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height: 100%;">
+<html class="height-100">
 
     <head>
         <title>ag-Grid Data Grid Example</title>
@@ -20,16 +20,8 @@
         <style>
             label { font-weight: normal !important; }
             .blue { background-color: darkblue; color: lightblue; }
-            /*.good-score { background-color: #0a0; }*/
-
-            .ag-fresh .good-score { background-color: #beb; }
-            .ag-blue .good-score { background-color: #beb; }
-            .ag-dark .good-score { background-color: #0a0; }
-
-            .ag-fresh .bad-score { background-color: #faa; }
-            .ag-blue .bad-score { background-color: #faa; }
-            .ag-dark .bad-score { background-color: #a00; }
-
+            .good-score { background-color: #0a0; }
+            .bad-score { background-color: lightcoral; }
         </style>
 
 
@@ -52,6 +44,7 @@
 
     <body class="no-user-select" style="height: 100%; margin: 0px; padding: 0px;">
 
+
         <!-- The table div -->
         <div style="padding: 5px; padding-top: 102px; height: 100%; width: 100%;">
             <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
@@ -59,14 +52,14 @@
 
         <div class="header-row" style="position: fixed; top: 0px; left: 0px; width: 100%; padding-bottom: 0px;">
 
-            <div class="container">
+            <?php $navKey = "demo"; include 'includes/navbar.php'; ?>
 
-                <?php $navKey = "demo"; include 'navbar.php'; ?>
+            <div class="container">
 
                 <div class="row">
                     <div class="col-md-12">
 
-                        <div style="padding: 10px;">
+                        <div style="padding: 5px 5px 6px 5px;">
 
                             <!-- First row of header, has table options -->
                             <div style="padding: 4px;">
@@ -111,6 +104,6 @@
 
     </body>
 
-    <?php include_once("analytics.php"); ?>
+    <?php include_once("includes/analytics.php"); ?>
 
 </html>

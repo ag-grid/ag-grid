@@ -4,7 +4,7 @@ $pageTitle = "Building Components for Javascript, React, Angular and Everything 
 $pageDescription = "ag-Grid is a reusable component that is used in many frameworks including AngularJS and JavaReact. This article describes the build process that was used.";
 $pageKeyboards = "javascript build gulp typescript react angularjs";
 
-include('../mediaHeader.php');
+include('../includes/mediaHeader.php');
 ?>
 
 <div class="row">
@@ -455,5 +455,5 @@ import {Grid} from 'ag-grid/main';</pre>
 </footer>
 
 <?php
-include('../mediaFooter.php');
+include('../includes/mediaFooter.php');
 ?>
