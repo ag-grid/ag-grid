@@ -1,6 +1,7 @@
 import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper, VirtualList, VirtualListModel} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
+import {SetFilterListItem} from "./setFilterListItem";
 
 export class SetFilter extends Component implements Filter {
 
@@ -65,17 +66,30 @@ export class SetFilter extends Component implements Filter {
         this.valueGetter = params.valueGetter;
         this.colDef = params.colDef;
 
-        if (this.filterParams) {
-            this.virtualList.setCellRenderer(this.filterParams.cellRenderer);
-        }
+        this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 
         this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter);
         this.virtualList.setModel(new ModelWrapper(this.model));
 
-        this.virtualList.addEventListener(VirtualList.EVENT_SELECTED, this.onItemSelected.bind(this));
-
         this.createGui();
         this.createApi();
+    }
+
+    private createSetListItem(value: any): Component {
+        var cellRenderer: Function;
+        if (this.filterParams) {
+            cellRenderer = this.filterParams.cellRenderer;
+        }
+
+        var listItem = new SetFilterListItem(value, cellRenderer);
+        this.context.wireBean(listItem);
+        listItem.setSelected(this.model.isValueSelected(value));
+
+        listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, ()=> {
+            this.onItemSelected(value, listItem.isSelected())
+        });
+
+        return listItem;
     }
 
     // we need to have the gui attached before we can draw the virtual rows, as the
@@ -201,9 +215,9 @@ export class SetFilter extends Component implements Filter {
         this.filterChanged();
     }
 
-    private onItemSelected(event: any) {
-        if (event.selected) {
-            this.model.selectValue(event.value);
+    private onItemSelected(value: any, selected: boolean) {
+        if (selected) {
+            this.model.selectValue(value);
             if (this.model.isEverythingSelected()) {
                 this.eSelectAll.indeterminate = false;
                 this.eSelectAll.checked = true;
@@ -211,7 +225,7 @@ export class SetFilter extends Component implements Filter {
                 this.eSelectAll.indeterminate = true;
             }
         } else {
-            this.model.unselectValue(event.value);
+            this.model.unselectValue(value);
             //if set is empty, nothing is selected
             if (this.model.isNothingSelected()) {
                 this.eSelectAll.indeterminate = false;
@@ -292,8 +306,5 @@ class ModelWrapper implements VirtualListModel {
     }
     public getRow(index: number): any {
         return this.model.getDisplayedValue(index);
-    }
-    public isRowSelected(value: any): boolean {
-        return this.model.isValueSelected(value);
     }
 }
