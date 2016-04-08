@@ -72,8 +72,8 @@ myGrid.setGridOptions(gridOptions);</code></pre>
     <h2>Complex Web Components Example</h2>
 
     <p>
-        The complex example for Web Components is similar to that for AngularJS 2. This is on purpose as
-        AngularJS 2 components are based on Web Components. The example demonstrates the following:
+        The complex example for Web Components is similar to that for Angular 2. This is on purpose as
+        Angular 2 components are based on Web Components. The example demonstrates the following:
     </p>
 
     <ul>

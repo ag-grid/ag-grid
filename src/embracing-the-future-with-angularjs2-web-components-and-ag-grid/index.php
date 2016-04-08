@@ -1,15 +1,15 @@
 <?php
 
-$pageTitle = "Embracing the Future with AngularJS 2.0, Web Components and ag-Grid";
-$pageDescription = "A discussion on how ag-Grid is positioning itself to take advantage of AngularJS 2.0 and Web Components.";
-$pageKeyboards = "web components angularjs 2 ag-grid grid";
+$pageTitle = "Embracing the Future with Angular 2.0, Web Components and ag-Grid";
+$pageDescription = "A discussion on how ag-Grid is positioning itself to take advantage of Angular 2.0 and Web Components.";
+$pageKeyboards = "web components Angular 2 ag-grid grid";
 
-include('../mediaHeader.php');
+include('../includes/mediaHeader.php');
 ?>
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>Embracing the Future with AngularJS 2.0, Web Components and ag-Grid</h2>
+        <h2>Embracing the Future with Angular 2.0, Web Components and ag-Grid</h2>
     </div>
 </div>
 
@@ -29,8 +29,8 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            AngularJS 2 turns this problem right around. Rather than having a closed system for modularising AngularJS applications,
-            AngularJS 2’s foundations lie on the emerging Web Components standard. What this means is that AngularJS will be able to
+            Angular 2 turns this problem right around. Rather than having a closed system for modularising AngularJS applications,
+            Angular 2’s foundations lie on the emerging Web Components standard. What this means is that AngularJS will be able to
             directly use, without any wrapper coding, any component written as a Web Component.
             That is easy to understand - when I first heard it I understood technically what it meant - but it took me some time to really appreciate the implications of what it meant.
         </p>
@@ -41,7 +41,7 @@ include('../mediaHeader.php');
 
         <ul>
             <li>
-                Right now AngularJS 1.x has a large following. It is probable that a large majority of that following will migrate onto AngularJS 2 when it is ready.
+                Right now AngularJS 1.x has a large following. It is probable that a large majority of that following will migrate onto Angular 2 when it is ready.
             </li>
             <li>
                 This migration of followers will start hunting for Web Components to include in their AngularJS applications.
@@ -50,17 +50,17 @@ include('../mediaHeader.php');
                 Web Components will receive a significant wave of interest from these followers.
             </li>
             <li>
-                Web Component developers will not have to worry that it’s AngularJS 2 is their client, no wrapper code will be needed.
+                Web Component developers will not have to worry that it’s Angular 2 is their client, no wrapper code will be needed.
                 This is what's called a framework-agnostic model for Web Components.
             </li>
             <li>
-                The sea of non-functional wrapper components for AngularJS 1.x will have no role in the new AngularJS 2 & Web Components world and will be washed away.
+                The sea of non-functional wrapper components for AngularJS 1.x will have no role in the new Angular 2 & Web Components world and will be washed away.
             </li>
             <li>
-                Some reusable components will be better suited to AngularJS 2 over Web Components. Components that solve business functions to be reused within an organisation probably fit here.
+                Some reusable components will be better suited to Angular 2 over Web Components. Components that solve business functions to be reused within an organisation probably fit here.
             </li>
             <li>
-                Some reusable components will be better suited to Web Components over AngularJS 2 Components. Low level UI widgets (date pickers, grids etc) probably fit here.
+                Some reusable components will be better suited to Web Components over Angular 2 Components. Low level UI widgets (date pickers, grids etc) probably fit here.
             </li>
             <li>
                 Low level components that are currently implemented in AngularJS 1.x probably won’t have a place in the new world as Web Components framework-agnostic pattern will be favored. These will also wash away.
@@ -72,7 +72,7 @@ include('../mediaHeader.php');
         </p>
 
         <p>
-            So in the future, when AngularJS 2 is out, it will bring more choice. Component developers will
+            So in the future, when Angular 2 is out, it will bring more choice. Component developers will
             have the choice to provide Web Components that work with AngularJS as well as with other platforms.
             AngularJS developers will have wider choice when selecting components for their application, not
             being restricted with ‘only AngularJS’ components. The binding between application technology choice
@@ -82,9 +82,9 @@ include('../mediaHeader.php');
 
         <p>
             So where does this leave components like ag-Grid? ag-Grid has worked with AngularJS 1.x and native
-            Javascript since version 1. Version 2 has extended to AngularJS 2 and Web Components
-            (these are two separate things, one depends on AngularJS 2, one depends on Web Components, however
-            an AngularJS 2 application can talk to both). The positioning of ag-Grid, to support this new technology
+            Javascript since version 1. Version 2 has extended to Angular 2 and Web Components
+            (these are two separate things, one depends on Angular 2, one depends on Web Components, however
+            an Angular 2 application can talk to both). The positioning of ag-Grid, to support this new technology
             choice, was evolutionary. Google and the Web Components community laid the breadcrumbs. Now that ag-Grid
             is available in all these flavours, it will be applicable whichever way the community goes.
         </p>
@@ -94,7 +94,7 @@ include('../mediaHeader.php');
         </p>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with AngularJS 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with Angular 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -104,7 +104,7 @@ include('../mediaHeader.php');
         <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
 
         <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with AngularJS 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/" data-text="Embracing the Future with Angular 2.0, Web Components and ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -173,5 +173,5 @@ include('../mediaHeader.php');
 </footer>
 
 <?php
-include('../mediaFooter.php');
+include('../includes/mediaFooter.php');
 ?>

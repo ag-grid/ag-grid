@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        AngularJS 2
+        Angular 2
     </h4>
     <p>
         Add callbacks to the gridOptions or set as AngularJS properties.

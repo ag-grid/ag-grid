@@ -18,7 +18,7 @@ include 'documentation_header.php';
         .separator { text-align: center; }
     </style>
 
-    <div class="news-box">
+<!--    <div class="news-box">
         <div class="news-header">24th March 2016</div>
         <div>ag-grid-ng2 updated to Angular 2 Beta 12.</div>
     </div>
@@ -27,7 +27,7 @@ include 'documentation_header.php';
         <div class="news-header">22th March 2016</div>
         <div>Patch for 4.0.x released with bug fixes and minor changes.
             Check <a href="../change-log/changeLogIndex.php">change log</a>.</div>
-    </div>
+    </div>-->
 
 </div>
 

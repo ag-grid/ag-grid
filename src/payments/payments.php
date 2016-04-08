@@ -29,10 +29,10 @@
 
 <?php
     $navKey = "";
-    include '../navbar.php';
+    include '../includes/navbar.php';
 
     $headerTitle = "Online Payments";
-    include '../headerRow.php';
+    include '../includes/headerRow.php';
 
     include './setupSecrets.php';
 
@@ -71,10 +71,10 @@
 </div>
 
 
-<?php include("../footer.php"); ?>
+<?php include("../includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("../analytics.php"); ?>
+<?php include_once("../includes/analytics.php"); ?>
 
 </html>

@@ -4,7 +4,7 @@ $pageTitle = "Building Components for Javascript, React, Angular and Everything 
 $pageDescription = "ag-Grid is a reusable component that is used in many frameworks including AngularJS and JavaReact. This article describes the build process that was used.";
 $pageKeyboards = "javascript build gulp typescript react angularjs";
 
-include('../mediaHeader.php');
+include('../includes/mediaHeader.php');
 ?>
 
 <div class="row">
@@ -332,7 +332,7 @@ import {Grid} from 'ag-grid/main';</pre>
 
         <h3>Dependencies for Other Libraries (eg Angular 2.0 and React)</h3>
 
-        <p>AngularJS 2.0 and React components have dependencies on their associated libraries. If you want to use either
+        <p>Angular 2.0 and React components have dependencies on their associated libraries. If you want to use either
             of these libraries, you have to make them as dependencies in your project. The best way to do this is as
             peer dependencies (peerDependencies in package.json) so that the client can control what version of the library
             to use and your component will use what's provided to it. This has the following impacts:
@@ -455,5 +455,5 @@ import {Grid} from 'ag-grid/main';</pre>
 </footer>
 
 <?php
-include('../mediaFooter.php');
+include('../includes/mediaFooter.php');
 ?>

@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
         feel to already existing DOM elements (nice for everyone). It also has the added benefit
-        of fitting nicely into Web Components, React and AngularJS 2.
+        of fitting nicely into Web Components, React and Angular 2.
     </p>
     <p>
         Each interaction with the grid can be broken down into the following categories:
@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The gridOptions is a 'one stop shop' for the entire interface into the grid. The
         grid options can be used regardless of the framework you are using, however if you
-        are using React, AngularJS 2 or Web Components, you can achieve what grid options
+        are using React, Angular 2 or Web Components, you can achieve what grid options
         provides you with in other ways.
     </p>
 
@@ -161,7 +161,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <p>
         The API's are accessible through the component. This is useful in two situations.
-        The first us by using an AngularJS 2 ID. In the example above, the ID is given
+        The first us by using an Angular 2 ID. In the example above, the ID is given
         as '#myGrid' which then allows something like this:
     </p>
 
@@ -169,25 +169,25 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <h2>
         <img src="/images/angular2.png" height="50px"/>
-        AngularJS 2
+        Angular 2
     </h2>
 
     <p>
-        The gridOptions are fully available as stated above for AngularJS 2. However you can take
-        advantage of AngularJS 2's properties and events provided by ag-Grids AngularJS 2's Component.
+        The gridOptions are fully available as stated above for Angular 2. However you can take
+        advantage of Angular 2's properties and events provided by ag-Grids Angular 2's Component.
         This is done as follows:
     </p>
 
     <ul>
         <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
         <li><b>Properties</b>: Properties are defined as HTML attributes enclosed in square
-            brackets and are AngularJS 2 bound values.</li>
+            brackets and are Angular 2 bound values.</li>
         <li><b>Callbacks</b>: Callbacks are actually a type of property, but by convention they are
             always functions and are not for relaying event information. They are bound as properties
-            using square brackets. As callbacks are not events, they do not impact the AngularJS 2
+            using square brackets. As callbacks are not events, they do not impact the Angular 2
             event cycle, and as such should not change the state of anything.</li>
         <li><b>Event Handlers</b>: Event handlers are defined as HTML attributes enclosed in
-            normal brackets and are AngularJS 2 bound functions.</li>
+            normal brackets and are Angular 2 bound functions.</li>
         <li><b>API</b>: The grid API and column API are accessible through the component.</li>
     </ul>
 
@@ -226,7 +226,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <p>
         The API's are accessible through the component. This is useful in two situations.
-        The first us by using an AngularJS 2 ID. In the example above, the ID is given
+        The first us by using an Angular 2 ID. In the example above, the ID is given
         as '#myGrid' which then allows something like this:
     </p>
 
@@ -269,7 +269,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <p>
         This example shows setting up as a Web Component in HTML. Notice it's simliar
-        to AngularJS 2, however no binding of properties or event handling.
+        to Angular 2, however no binding of properties or event handling.
     </p>
 
     <pre><code>&lt;ag-grid-ng2

@@ -21,82 +21,11 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "licenseAndPricing"; include 'navbar.php'; ?>
+<?php $navKey = "licenseAndPricing"; include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "License and Pricing"; include 'headerRow.php'; ?>
+<?php $headerTitle = "License and Pricing"; include 'includes/headerRow.php'; ?>
 
 <div class="container info-page">
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                Choosing a License
-            </h2>
-
-            <p>
-                ag-Grid free edition comes with standard features is released under MIT. There is no warranty or support.
-                ag-Grid-Enterprise comes with a commercial license, extra enterprise features and support. If you want
-                to use ag-Grid-Enterprise, you must purchase an ag-Grid-Enterprise license.
-            </p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                Enterprise Evaluation License
-            </h2>
-
-            <p>
-                An evaluation license for ag-Grid-Enterprise is granted to anyone wishing evaluate ag-Grid-Enterprise.
-                All we ask in return is the following:
-            <ul>
-                <li>
-                    You agree to use the Evaluation License only for evaluation of ag-Grid-Enterprise. You do not enter production with ag-Grid-Enterprise.
-                </li>
-                <li>
-                    You limit your trial to two months (after that, either uninstall or purchase).
-                </li>
-                <li>
-                    You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
-                    and inform us you are taking a trial.
-                </li>
-            </ul>
-            </p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                Enterprise Non-Commercial License
-            </h2>
-
-            <p>
-                If you wish to use ag-Grid-Enterprise within a non-profit organisation or for educational purposes,
-                then you can use ag-Grid-Enterprise for free. All we ask in return is the following:
-                <ul>
-                    <li>
-                        If you are hosting ag-Grid-Enterprise on a website, you provide a link back to the ag-Grid website.
-                    </li>
-                    <li>
-                        You do not alter any of the copyright headers in the javascript files.
-                    </li>
-                    <li>
-                        Your users are aware that ag-Grid-Enterprise is not free for commercial use.
-                    </li>
-                    <li>
-                        You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
-                        and inform us you are using ag-Grid-Enterprise for non-commercial use.
-                    </li>
-                </ul>
-                The non-commercial license is for using ag-Grid-Enterprise only. It does not cover any warranty or support.
-            </p>
-        </div>
-    </div>
 
     <style>
         .theTable {
@@ -308,7 +237,7 @@
                     <td class="gapCol"/>
                     <td class="tableHighlightCell tableCell">
 
-                        <a href="order.php" class="bigLink">
+                        <a href="order.php" class="btn btn-primary btn-large bigLink">
                             Continue to Ordering
                         </a>
 
@@ -316,6 +245,77 @@
                 </tr>
             </table>
 
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Choosing a License
+            </h2>
+
+            <p>
+                ag-Grid free edition comes with standard features is released under MIT. There is no warranty or support.
+                ag-Grid-Enterprise comes with a commercial license, extra enterprise features and support. If you want
+                to use ag-Grid-Enterprise, you must purchase an ag-Grid-Enterprise license.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Enterprise Evaluation License
+            </h2>
+
+            <p>
+                An evaluation license for ag-Grid-Enterprise is granted to anyone wishing evaluate ag-Grid-Enterprise.
+                All we ask in return is the following:
+            <ul>
+                <li>
+                    You agree to use the Evaluation License only for evaluation of ag-Grid-Enterprise. You do not enter production with ag-Grid-Enterprise.
+                </li>
+                <li>
+                    You limit your trial to two months (after that, either uninstall or purchase).
+                </li>
+                <li>
+                    You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
+                    and inform us you are taking a trial.
+                </li>
+            </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <h2>
+                Enterprise Non-Commercial License
+            </h2>
+
+            <p>
+                If you wish to use ag-Grid-Enterprise within a non-profit organisation or for educational purposes,
+                then you can use ag-Grid-Enterprise for free. All we ask in return is the following:
+                <ul>
+                    <li>
+                        If you are hosting ag-Grid-Enterprise on a website, you provide a link back to the ag-Grid website.
+                    </li>
+                    <li>
+                        You do not alter any of the copyright headers in the javascript files.
+                    </li>
+                    <li>
+                        Your users are aware that ag-Grid-Enterprise is not free for commercial use.
+                    </li>
+                    <li>
+                        You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
+                        and inform us you are using ag-Grid-Enterprise for non-commercial use.
+                    </li>
+                </ul>
+                The non-commercial license is for using ag-Grid-Enterprise only. It does not cover any warranty or support.
+            </p>
         </div>
     </div>
 
@@ -379,10 +379,10 @@
 
 </div>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("analytics.php"); ?>
+<?php include_once("includes/analytics.php"); ?>
 
 </html>

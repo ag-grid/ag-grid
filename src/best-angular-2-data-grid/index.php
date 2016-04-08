@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Best Angular 2 Data Grid</h2>
 
     <p>
-        When using AngularJS 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
+        When using Angular 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
         already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
         are, then don't worry, you will be none the wiser).
     </p>
@@ -195,7 +195,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Destroy</h2>
 
     <p>
-        You do not need to manually clean up the grid. The grid ties in with the AngularJS 2 lifecycle
+        You do not need to manually clean up the grid. The grid ties in with the Angular 2 lifecycle
         and releases all resources when the directive is destroyed. The example above demonstrates this
         by taking the element out of the DOM via *ngIf (which, unlike *ng-show, destroys the directives).
     </p>
