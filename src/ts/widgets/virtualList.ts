@@ -1,4 +1,3 @@
-import {VirtualListItem} from "./virtualListItem";
 import {Component} from "./component";
 import {PostConstruct, Autowired, Context} from "../context/context";
 import {Utils as _} from '../utils';
@@ -6,12 +5,9 @@ import {Utils as _} from '../utils';
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
-    isRowSelected(row: any): boolean;
 }
 
 export class VirtualList extends Component {
-
-    public static EVENT_SELECTED = 'itemSelected';
 
     private static TEMPLATE =
         '<div class="ag-filter-list-viewport">'+
@@ -26,7 +22,7 @@ export class VirtualList extends Component {
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
 
-    private cellRenderer: Function;
+    private componentCreator: (value:any)=>Component;
 
     private rowHeight = 20;
 
@@ -43,8 +39,8 @@ export class VirtualList extends Component {
         this.addScrollListener();
     }
 
-    public setCellRenderer(cellRenderer: Function): void {
-        this.cellRenderer = cellRenderer;
+    public setComponentCreator(componentCreator: (value:any)=>Component): void {
+        this.componentCreator = componentCreator;
     }
 
     public setRowHeight(rowHeight: number): void {
@@ -102,31 +98,36 @@ export class VirtualList extends Component {
     // takes array of row id's
     private removeVirtualRows(rowsToRemove: any) {
         rowsToRemove.forEach( (index: number) => {
-            var richListItem = this.rowsInBodyContainer[index];
-            this.eListContainer.removeChild(richListItem.getGui());
+            var component = this.rowsInBodyContainer[index];
+            this.eListContainer.removeChild(component.getGui());
+            if (component.destroy) {
+                component.destroy();
+            }
             delete this.rowsInBodyContainer[index];
         });
     }
 
     private insertRow(value: any, rowIndex: any) {
 
-        var richListItem = new VirtualListItem(value, this.cellRenderer);
-        this.context.wireBean(richListItem);
-        richListItem.setSelected(this.model.isRowSelected(value));
+        // var richListItem = new SetFilterListItem(value, this.cellRenderer);
 
-        this.addDestroyableEventListener(
-            richListItem,
-            VirtualListItem.EVENT_SELECTED,
-            () => this.dispatchEvent(VirtualList.EVENT_SELECTED, {
-                value: value,
-                selected: richListItem.isSelected()
-            })
-        );
+        var rowComponent = this.componentCreator(value);
 
-        richListItem.getGui().style.top = (this.rowHeight * rowIndex) + "px";
+        // richListItem.setSelected(this.model.isRowSelected(value));
 
-        this.eListContainer.appendChild(richListItem.getGui());
-        this.rowsInBodyContainer[rowIndex] = richListItem;
+        // this.addDestroyableEventListener(
+        //     richListItem,
+        //     SetFilterListItem.EVENT_SELECTED,
+        //     () => this.dispatchEvent(VirtualList.EVENT_SELECTED, {
+        //         value: value,
+        //         selected: richListItem.isSelected()
+        //     })
+        // );
+
+        rowComponent.getGui().style.top = (this.rowHeight * rowIndex) + "px";
+
+        this.eListContainer.appendChild(rowComponent.getGui());
+        this.rowsInBodyContainer[rowIndex] = rowComponent;
     }
 
     private addScrollListener() {

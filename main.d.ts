@@ -94,7 +94,6 @@ export * from './dist/lib/widgets/component';
 export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
 export * from './dist/lib/widgets/virtualList';
-export * from './dist/lib/widgets/virtualListItem';
 
 export * from './dist/lib/cellNavigationService';
 export * from './dist/lib/clientExports';

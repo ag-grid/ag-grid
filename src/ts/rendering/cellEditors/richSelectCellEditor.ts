@@ -30,8 +30,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         
         this.virtualList.setModel( {
             getRowCount: function() { return values.length; },
-            getRow(index: number) { return values[index]; },
-            isRowSelected(row: any) { return false; }
+            getRow(index: number) { return values[index]; }
         });
     }
 

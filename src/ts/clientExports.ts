@@ -79,7 +79,6 @@ import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
 import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
 import {CellRendererFactory} from "./rendering/cellRenderers/cellRendererFactory";
 import {VirtualList} from "./widgets/virtualList";
-import {VirtualListItem} from "./widgets/virtualListItem";
 import {RichSelectCellEditor} from "./rendering/cellEditors/richSelectCellEditor";
 
 export function populateClientExports(exports: any): void {
@@ -179,7 +178,6 @@ export function populateClientExports(exports: any): void {
     exports.Component = Component;
     exports.MenuList = MenuList;
     exports.VirtualList = VirtualList;
-    exports.VirtualListItem = VirtualListItem;
 
     // root
     exports.CellNavigationService = CellNavigationService;
