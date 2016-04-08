@@ -23,7 +23,7 @@
 
 <?php $navKey = ""; include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "Order ag-Grid Enterprise"; include 'headerRow.php'; ?>
+<?php $headerTitle = "Order ag-Grid Enterprise"; include 'includes/headerRow.php'; ?>
 
 <div class="container info-page">
 

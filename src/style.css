@@ -216,7 +216,6 @@ h4 {
 .header-row {
     background: #101010;
     color: #eee;
-    padding: 20px 0px;
 }
 
 .header-row h2 {
@@ -326,13 +325,8 @@ h1, h2, h3, h4, h5 {
     z-index: 1;
 }
 
-.Header--demo {
-    margin-top: -20px;
-}
-
 .Header-logo {
     font-size: 30px; 
-    font-weight: bold; 
     font-family: Impact, Charcoal, sans-serif;
     color: #FFF;
     line-height: 50px;
@@ -452,7 +446,7 @@ h1, h2, h3, h4, h5 {
 
 /* thanks to Jason Delia - https://codepen.io/jasonadelia/pen/DnrAe */
 .Hero-grid {
-    background-color: transparent;
+    background-color: rgba(20,20,20,0.6);;
     background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent);
     height:100%;
     background-size:50px 50px;

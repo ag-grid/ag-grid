@@ -28,7 +28,7 @@
 		                    <li><a href="/best-javascript-data-grid/index.php">JavaScript</a></li>
 		                    <li><a href="/best-react-data-grid/index.php">React</a></li>
 		                    <li><a href="/best-angularjs-data-grid/index.php">AngularJS 1.x</a></li>
-		                    <li><a href="/best-angular-2-data-grid/index.php">AngularJS 2.0</a></li>
+		                    <li><a href="/best-angular-2-data-grid/index.php">Angular 2</a></li>
 		                    <li><a href="/best-web-component-data-grid/index.php">Web Components</a></li>
 		                </ul>
 		            </div>

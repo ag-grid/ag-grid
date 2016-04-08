@@ -68,11 +68,11 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        AngularJS 2
+        Angular 2
     </h4>
     <p>
         Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-        use columnApi directly on the AngularJS 2 grid component.
+        use columnApi directly on the Angular 2 grid component.
     </p>
 
     <h4>

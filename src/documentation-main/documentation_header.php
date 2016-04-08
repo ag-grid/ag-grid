@@ -48,7 +48,7 @@ if (strcmp($version , 'latest') == 0) {
     </nav>
 <?php } ?>
 
-<?php $headerTitle = "<span class='glyphicons glyphicon glyphicon-folder-open'></span>&nbsp;&nbsp;Documentation"; include '../headerRow.php'; ?>
+<?php $headerTitle = "Documentation"; include '../includes/headerRow.php'; ?>
 
 
     <div class="container" style="margin-top: 20px">
@@ -87,9 +87,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> AngularJS 2.0</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular 2</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php"><img inline src="/images/svg/angular.svg" width="20px"> AngularJS 2.0</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/index.php"><img inline src="/images/svg/angular.svg" width="20px"> Angular 2</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>

@@ -4,7 +4,7 @@ $pageTitle = "ag-Grid Media";
 $pageDescription = "A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid";
 $pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
 
-include('mediaHeader.php');
+include('includes/mediaHeader.php');
 ?>
 
 <div class="row">
@@ -169,7 +169,7 @@ include('mediaHeader.php');
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
             <a href="embracing-the-future-with-angularjs2-web-components-and-ag-grid/">
-                Embracing the Future with AngularJS 2.0, Web Components and ag-Grid
+                Embracing the Future with Angular 2.0, Web Components and ag-Grid
             </a>
         </div>
         <div style="float: right;  color: #767676;">
@@ -242,5 +242,5 @@ include('mediaHeader.php');
 </div>
 
 <?php
-include('mediaFooter.php');
+include('./includes/mediaFooter.php');
 ?>

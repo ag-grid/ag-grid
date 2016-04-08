@@ -21,9 +21,9 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "licenseAndPricing"; include 'navbar.php'; ?>
+<?php $navKey = "licenseAndPricing"; include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "License and Pricing"; include 'headerRow.php'; ?>
+<?php $headerTitle = "License and Pricing"; include 'includes/headerRow.php'; ?>
 
 <div class="container info-page">
 

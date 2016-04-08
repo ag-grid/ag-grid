@@ -71,10 +71,10 @@
 </div>
 
 
-<?php include("../footer.php"); ?>
+<?php include("../includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("../analytics.php"); ?>
+<?php include_once("../includes/analytics.php"); ?>
 
 </html>

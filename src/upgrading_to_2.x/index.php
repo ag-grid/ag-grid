@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         Previous the interface into ag-Grid was modelled around ui-Grid. This was done as I wanted
         a low barrier to entry for my 'new on the scene' grid. Now that ag-Grid has a very large following, plus
         I have learnt a lot recently, I believe the new interface to be better suited to the
-        future (Web Components and AngularJS 2).
+        future (Web Components and Angular 2).
     </p>
 
     <p>
@@ -123,7 +123,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        Data coming out of the grid via Events, and not via shared scope, is the way of the future (cough AngularJS 2
+        Data coming out of the grid via Events, and not via shared scope, is the way of the future (cough Angular 2
         and Web Components).
     </p>
 
@@ -166,7 +166,7 @@ include '../documentation-main/documentation_header.php';
         The methods <i>onNewRows(), onNewCols()</i> and <i>onNewDatasource()</i> are now gone. The correct way to tell the grid
         that there are new rows, cols or datasource is to use the <i>setRowData(), setColumnDefs()</i> and <i>setDatasource()</i>.
         The old way was my attempt to mimic how ui-Grid works by sharing $scope items, however I'm no longer interested in that.
-        The new way allows Web Component and AngularJS 2 bound properties (yeeah haa!!!).
+        The new way allows Web Component and Angular 2 bound properties (yeeah haa!!!).
     </p>
 
     <h3>Web Component agile-grid</h3>

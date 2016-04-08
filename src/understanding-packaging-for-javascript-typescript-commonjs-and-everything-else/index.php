@@ -332,7 +332,7 @@ import {Grid} from 'ag-grid/main';</pre>
 
         <h3>Dependencies for Other Libraries (eg Angular 2.0 and React)</h3>
 
-        <p>AngularJS 2.0 and React components have dependencies on their associated libraries. If you want to use either
+        <p>Angular 2.0 and React components have dependencies on their associated libraries. If you want to use either
             of these libraries, you have to make them as dependencies in your project. The best way to do this is as
             peer dependencies (peerDependencies in package.json) so that the client can control what version of the library
             to use and your component will use what's provided to it. This has the following impacts:

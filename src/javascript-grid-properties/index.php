@@ -34,10 +34,10 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        AngularJS 2
+        Angular 2
     </h4>
     <p>
-        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or AngularJS 2 bound properties.
+        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or Angular 2 bound properties.
     </p>
 
     <h4>
