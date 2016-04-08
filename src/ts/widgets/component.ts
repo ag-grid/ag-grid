@@ -12,10 +12,20 @@ export class Component implements IEventEmitter {
 
     private childComponents: Component[] = [];
 
+    private state: any;
+
     constructor(template?: string) {
         if (template) {
             this.eGui = _.loadTemplate(<string>template);
         }
+    }
+
+    public getState(): any {
+        return this.state;
+    }
+
+    public setState(state: any): void {
+        this.state = state;
     }
 
     public setTemplate(template: string): void {

@@ -25,6 +25,7 @@ export class VirtualList extends Component {
 
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
+
     private cellRenderer: Function;
 
     private rowHeight = 20;

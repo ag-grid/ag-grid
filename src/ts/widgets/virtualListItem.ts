@@ -10,7 +10,7 @@ export class VirtualListItem extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE =
-        '<div id="itemForRepeat" class="ag-filter-item">' +
+        '<div class="ag-filter-item">' +
         '<label>'+
         '<input type="checkbox" class="ag-filter-checkbox"/>'+
         '<span class="ag-filter-value"></span>'+

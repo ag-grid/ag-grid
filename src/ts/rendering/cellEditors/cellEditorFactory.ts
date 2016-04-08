@@ -6,6 +6,7 @@ import {SelectCellEditor} from "./selectCellEditor";
 import {PopupEditorWrapper} from "./popupEditorWrapper";
 import {PopupTextCellEditor} from "./popupTextCellEditor";
 import {PopupSelectCellEditor} from "./popupSelectCellEditor";
+import {RichSelectCellEditor} from "./richSelectCellEditor";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
@@ -14,6 +15,7 @@ export class CellEditorFactory {
     private static SELECT = 'select';
     private static POPUP_TEXT = 'popupText';
     private static POPUP_SELECT = 'popupSelect';
+    private static RICH_SELECT = 'richSelect';
 
     @Autowired('context') private context: Context;
     
@@ -25,6 +27,7 @@ export class CellEditorFactory {
         this.cellEditorMap[CellEditorFactory.SELECT] = SelectCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
+        this.cellEditorMap[CellEditorFactory.RICH_SELECT] = RichSelectCellEditor;
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
