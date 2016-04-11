@@ -1,4 +1,4 @@
-ag-Grid-Enterprise Software Licence Agreement Version 1.1
+ag-Grid-Enterprise Software Licence Agreement Version 1.2
 
 THIS DOCUMENT IS A LEGAL AGREEMENT (the “Agreement”) BETWEEN AG GRID LTD. (“We,” “Us”) AND YOU OR THE 
 ORGANISATION ON WHOSE BEHALF YOU ARE ENTERING INTO THIS AGREEMENT (“You”) IN RELATION TO AG-GRID-ENTERPRISE SOFTWARE.
@@ -113,8 +113,6 @@ We shall not be responsible for providing support via the Support Services to th
 The licence granted herein applies only to the version of the Software available when purchased in connection with the terms of this Agreement, and to any updates and/or upgrades to which You may be entitled. Any previous or subsequent licence granted to You for use of the Software shall be governed by the terms and conditions of the agreement entered in connection with purchase or download of that version of the Software. You agree that You will comply with all applicable laws and regulations with respect to the Software, including without limitation all export and re-export control laws and regulations.
 
 While redistributing the ag-Grid-Enterprise Support and Maintenance Agreement code or Modifications thereof as part of Your Application, You may choose to offer support, warranties, indemnities, or other liability obligations and/or rights which are consistent with this Agreement. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on our behalf. You shall indemnify Us or at Our option, defend Us against any claim, suit or proceeding brought against Us or our resellers: (i) arising by reason of Your agreeing to provide any such support, warranty, indemnity or accepting any additional liability; or (ii) arising out of the use, reproduction or distribution of Your Application, except to the extent such claim is solely based on the inclusion of the Software therein. Further, You agree only to distribute the Software pursuant to an enforceable written agreement for Our benefit that includes all the limitations and restrictions of this Agreement and is as protective of Us and Software as is this Agreement.
-
-You agree to be identified as a customer of Ours and You agree that We may refer to You by name, trade name and trademark, if applicable, and may briefly describe Your business in our marketing materials and on Our website.
 
 You may not sub-contract, assign or transfer this Agreement without Our prior written consent. Any attempted sub-contracting, assignment or transfer in violation of this Section shall be null and void. This Agreement may be assigned by Us in whole or part and will inure to the benefit of Our successors and assigns. 
 
