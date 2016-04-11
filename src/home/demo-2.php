@@ -1,31 +1,12 @@
-<section class="HomeSection HomeDemo hidden-xs">
+<section class="HomeSection HomeSection--alt HomeDemo hidden-xs">
 
     <div class="container">
         <div class="row">
-            <h2 class="text-center">ag-Grid in Action&hellip;</h2>
-            <div class="row HomeDemo-main">
-                <div class="col-md-12">
-                    <div style="padding: 4px;">
-                        <div style="width: 40%; display: inline-block;">
-                            <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
-                        </div>
-                        <div style="width: 40%; display: inline-block; padding: 4px;">
-                            Example Dataset Showing <span id="rowCount"></span> rows(s)
-                        </div>
-                    </div>
-                    <div style="width: 100%; height: 400px;"
-                         id="bestHtml5Grid"
-                         class="ag-fresh ag-basic">
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <span style="float: right;"><a href="./best-javascript-data-grid/">(view code)</a></span>
-                </div>
-            </div>
 
             <div class="HomeDemo-sub row">
                 <div class="col-md-4">
-                    <h2 class="text-right pull-right">Create your own unique look &amp; feel&hellip;</h2>
+                    <h4 class="text-right pull-right">Provide your own look and feel, create something specific
+                    for a particular report, or create a style that matches the rest of your application and brand.</h4>
                 </div>
                 <div class="col-md-8">
                     <div id="exampleAccountGrid" class="ag-account" style="display: inline-block; padding: 4px;"></div>
@@ -49,7 +30,8 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <h2 style="padding-left: 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h2>
+                    <h4 style="padding-left: 30px;">ag-Grid is designed to be extensible, create components with specific
+                    behaviour beyond what is typically expected from grids.</h4>
                 </div>
             </div>
 

@@ -1,12 +1,14 @@
 <footer class="Footer <?php if ($navKey == "home") { ?>Footer--home<?php }?>">
 	<div class="Footer-grid">
 		<div class="container">
-		    <div class="row">
+		    <div class="row" style="padding-top: 20px;">
 		            <div class="col-xs-12 col-md-4">
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Welcome to ag-Grid</h2></li>
 		                    <li><p class="Footer-intro"><img src="/images/niall_small.jpg" width="74" height="74" class="Footer-thumb circle pull-left img-responsive" />
-		                    	Niall started ag-Grid as a side project. It grew in adoption, then grew some more, news spread, and is today one of the most widely used grid components. 
+		                    	Niall Crosby spent years building Enterprise Web Applications and found the JavaScript
+								data grid choice frustrating. That frustration led to Niall quitting his job and
+								setting up the ag-Grid project.
 		                    	<a href="/media.php">Read more about ag-Grid &rarr;</a></p></li>
 		                </ul>
 		            </div>

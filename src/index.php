@@ -50,17 +50,19 @@
             </div>
         </div>
 
-        <?php include 'includes/home/intro.php'; ?>
+        <?php include 'home/intro.php'; ?>
 
-        <?php include 'includes/home/demo.php'; ?>
+        <?php include 'home/testimonials-1.php'; ?>
 
-        <?php include 'includes/home/benefits.php'; ?>
+        <?php include 'home/demo-1.php'; ?>
 
-        <?php include 'includes/home/features.php'; ?>
+        <?php include 'home/testimonials-2.php'; ?>
 
-        <?php include 'includes/home/free_vs_enterprise.php'; ?>
+        <?php include 'home/demo-2.php'; ?>
 
-        <?php include 'includes/home/testimonials.php'; ?>
+        <?php include 'home/features.php'; ?>
+
+        <?php include 'home/free_vs_enterprise.php'; ?>
 
         <?php $navKey = "home"; include './includes/footer.php'; ?>
 

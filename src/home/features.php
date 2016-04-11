@@ -1,7 +1,7 @@
 <section class="HomeSection HomeBenefits">
     <div class="container">
         <div class="row">
-            <h2 class="text-center">ag-Grid is Packed with Features&hellip;</h2>
+            <h3 class="text-center">Extensive Feature List</h3>
             <ul class="list-unstyled text-center">
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> Column Pinning Left & Right</li>
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> Column Resizing</li>
