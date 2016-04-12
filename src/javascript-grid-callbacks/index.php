@@ -129,9 +129,12 @@ include '../documentation-main/documentation_header.php';
             <th>Attribute</th>
             <th>Description</th>
         </tr>
-
         <tr>
             <th>getContextMenuItems(params)</th>
+            <td>For customising the context menu.</td>
+        </tr>
+        <tr>
+            <th>getMainMenuItems(params)</th>
             <td>For customising the context menu.</td>
         </tr>
         <tr>

@@ -20,8 +20,15 @@
         <style>
             label { font-weight: normal !important; }
             .blue { background-color: darkblue; color: lightblue; }
-            .good-score { background-color: #0a0; }
-            .bad-score { background-color: lightcoral; }
+
+            .ag-fresh .good-score { background-color: #beb; }
+            .ag-blue .good-score { background-color: #beb; }
+            .ag-dark .good-score { background-color: #0a0; }
+
+            .ag-fresh .bad-score { background-color: #faa; }
+            .ag-blue .bad-score { background-color: #faa; }
+            .ag-dark .bad-score { background-color: #a00; }
+
         </style>
 
 
