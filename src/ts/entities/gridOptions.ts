@@ -113,7 +113,7 @@ export interface GridOptions {
     showToolPanel?: boolean;
     columnDefs?: any[]; // change to typed
     datasource?: any; // should be typed
-    viewportDatasource: IViewportDatasource;
+    viewportDatasource?: IViewportDatasource;
     // in properties
     headerHeight?: number;
 
