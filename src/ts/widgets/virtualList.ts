@@ -109,21 +109,7 @@ export class VirtualList extends Component {
 
     private insertRow(value: any, rowIndex: any) {
 
-        // var richListItem = new SetFilterListItem(value, this.cellRenderer);
-
         var rowComponent = this.componentCreator(value);
-
-        // richListItem.setSelected(this.model.isRowSelected(value));
-
-        // this.addDestroyableEventListener(
-        //     richListItem,
-        //     SetFilterListItem.EVENT_SELECTED,
-        //     () => this.dispatchEvent(VirtualList.EVENT_SELECTED, {
-        //         value: value,
-        //         selected: richListItem.isSelected()
-        //     })
-        // );
-
         rowComponent.getGui().style.top = (this.rowHeight * rowIndex) + "px";
 
         this.eListContainer.appendChild(rowComponent.getGui());
