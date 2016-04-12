@@ -16,7 +16,7 @@ export class SetFilterModel {
     private selectedValuesCount: any;
     private selectedValuesMap: any;
 
-    // so make code more readable, we work these out once, and
+    // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
     private showingAvailableOnly: boolean;
     private usingProvidedSet: boolean;
