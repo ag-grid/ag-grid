@@ -55,6 +55,7 @@ export * from './dist/lib/interfaces/iMenuFactory';
 export * from './dist/lib/interfaces/iRangeController';
 export * from './dist/lib/interfaces/iRowModel';
 export * from './dist/lib/interfaces/iRowNodeStage';
+export * from './dist/lib/interfaces/iViewportDatasource';
 
 export * from './dist/lib/layout/borderLayout';
 export * from './dist/lib/layout/tabbedLayout';
