@@ -281,7 +281,12 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: countryCellRenderer,
-                cellEditor: 'popupText',
+                cellEditor: 'richSelect',
+                cellEditorParams: {
+                    values: [ "Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
+                        "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
+                        "Uruguay", "Venezuela"]
+                },
                 //pinned: 'left',
                 floatCell: true,
                 filterParams: {

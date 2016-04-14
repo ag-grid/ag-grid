@@ -21,6 +21,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: added 'destroyFilter' api</li>
     <li>Enhancement: columnApi.addRowGroupColumn() and columnApi.removeRowGroupColumn() now work of colKey and not columns, so you can pass in colDefs, colIds or columns (previously was just columns)</li>
     <li>Enhancement: New methods: columnApi.addRowGroupColumns(), columnApi.removeRowGroupColumns(), columnApi.setRowGroupColumns()</li>
+<!--    <li>Styles: ag-filter-list-container and ag-filter-item renamed to ag-virtual-list-container and ag-virtual-item</li>-->
 
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
