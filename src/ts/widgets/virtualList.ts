@@ -30,7 +30,6 @@ export class VirtualList extends Component {
 
     constructor() {
         super(null);
-        console.log('with changes');
     }
 
     @PostConstruct
@@ -42,10 +41,46 @@ export class VirtualList extends Component {
         this.addScrollListener();
     }
 
+    public ensureIndexVisible(index: number): void {
+        var lastRow = this.model.getRowCount();
+        if (typeof index !== 'number' || index < 0 || index >= lastRow) {
+            console.warn('invalid row index for ensureIndexVisible: ' + index);
+            return;
+        }
+
+        // var nodeAtIndex = this.rowModel.getRow(index);
+        var rowTopPixel = index * this.rowHeight;
+        var rowBottomPixel = rowTopPixel + this.rowHeight;
+
+        var viewportTopPixel = this.getGui().scrollTop;
+        var viewportHeight = this.getGui().offsetHeight;
+        var viewportBottomPixel = viewportTopPixel + viewportHeight;
+
+        var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
+        var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+
+        if (viewportScrolledPastRow) {
+            // if row is before, scroll up with row at top
+            this.getGui().scrollTop = rowTopPixel;
+        } else if (viewportScrolledBeforeRow) {
+            // if row is below, scroll down with row at bottom
+            var newScrollPosition = rowBottomPixel - viewportHeight;
+            this.getGui().scrollTop = newScrollPosition;
+        }
+    }
+    
     public setComponentCreator(componentCreator: (value:any)=>Component): void {
         this.componentCreator = componentCreator;
     }
 
+    public getRowHeight(): number {
+        return this.rowHeight;
+    }
+    
+    public getScrollTop(): number {
+        return this.getGui().scrollTop;
+    }
+    
     public setRowHeight(rowHeight: number): void {
         this.rowHeight = rowHeight;
         this.refresh();
