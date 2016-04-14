@@ -283,6 +283,7 @@ var defaultCols = [
                 cellRenderer: countryCellRenderer,
                 cellEditor: 'richSelect',
                 cellEditorParams: {
+                    cellRenderer: countryCellRenderer,
                     values: [ "Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela"]
@@ -819,7 +820,7 @@ function countryCellRenderer(params) {
     if (params.value==="" || params.value===undefined || params.value===null) {
         return null;
     } else {
-        var flag = "<img border='0' width='15' height='10' src='https://flags.fmcdn.net/data/flags/mini/"+COUNTRY_CODES[params.value]+".png'>";
-        return flag + " " + params.value;
+        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/'+COUNTRY_CODES[params.value]+'.png">';
+        return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
     }
 }
