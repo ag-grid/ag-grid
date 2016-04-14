@@ -1,3 +1,7 @@
+import {Column} from "../../entities/column";
+import {RowNode} from "../../entities/rowNode";
+import {GridApi} from "../../gridApi";
+import {ColumnApi} from "../../columnController/columnController";
 export interface ICellEditor {
     /** Gets called once after editor is created. Params contains teh following:
      value: current value of the cell
@@ -14,7 +18,7 @@ export interface ICellEditor {
                 you are preventing event propogation
      stopEditing: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
      */
-    init?(params: any): void;
+    init?(params: ICellEditorParams): void;
 
     /** Gets called once after GUI is attached to DOM. Useful if you want to focus or highlight a component (this is not possible when the element is not attached)*/
     afterGuiAttached?(): void;
@@ -32,4 +36,17 @@ export interface ICellEditor {
      *  to the boundaries of the cell. This is great if you want to, for example, provide you own custom dropdown list
      *  for selection. Default is false (ie if you don't provide the method). */
     isPopup?(): boolean;
+}
+
+export interface ICellEditorParams {
+    value: any;
+    keyPress: number;
+    charPress: string;
+    column: Column;
+    node: RowNode;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+    onKeyDown: (event: KeyboardEvent)=>void;
+    stopEditing: ()=>void;
 }

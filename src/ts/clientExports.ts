@@ -79,7 +79,7 @@ import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
 import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
 import {CellRendererFactory} from "./rendering/cellRenderers/cellRendererFactory";
 import {VirtualList} from "./widgets/virtualList";
-import {RichSelectCellEditor} from "./rendering/cellEditors/richSelectCellEditor";
+import {RichSelectCellEditor} from "./rendering/cellEditors/richSelect/richSelectCellEditor";
 
 export function populateClientExports(exports: any): void {
 

@@ -6,7 +6,7 @@ import {SelectCellEditor} from "./selectCellEditor";
 import {PopupEditorWrapper} from "./popupEditorWrapper";
 import {PopupTextCellEditor} from "./popupTextCellEditor";
 import {PopupSelectCellEditor} from "./popupSelectCellEditor";
-import {RichSelectCellEditor} from "./richSelectCellEditor";
+import {RichSelectCellEditor} from "./richSelect/richSelectCellEditor";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {

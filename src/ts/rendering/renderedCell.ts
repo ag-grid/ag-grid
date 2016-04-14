@@ -23,7 +23,6 @@ import {ICellEditor} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditors/cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
-import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRenderers/cellRendererFactory";
 

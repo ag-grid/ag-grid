@@ -359,20 +359,31 @@ ag-grid-ng2
 .ag-filter {}
     //z-index: 100
 
-.ag-filter-list-viewport
+.ag-virtual-list-viewport
     overflow-x: auto
-    height: 200px
-    width: 200px
+    height: 100%
+    width: 100%
 
-.ag-filter-list-container
+.ag-virtual-list-container
     position: relative
     overflow: hidden
 
-.ag-filter-item
+.ag-rich-select-list
+    width: 200px;
+    height: 200px;
+
+.ag-set-filter-list
+    width: 200px;
+    height: 200px;
+
+.ag-set-filter-item
     text-overflow: ellipsis
     overflow: hidden
     white-space: nowrap
+
+.ag-virtual-list-item
     position: absolute
+    width: 100%;
 
 .ag-filter-filter
     width: 170px

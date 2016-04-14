@@ -10,10 +10,12 @@ export interface VirtualListModel {
 export class VirtualList extends Component {
 
     private static TEMPLATE =
-        '<div class="ag-filter-list-viewport">'+
-        '<div class="ag-filter-list-container">'+
+        '<div class="ag-virtual-list-viewport">'+
+        '<div class="ag-virtual-list-container">'+
         '</div>'+
         '</div>';
+
+    // '<div class="ag-filter-item">' +
 
     @Autowired('context') private context: Context;
 
@@ -28,13 +30,14 @@ export class VirtualList extends Component {
 
     constructor() {
         super(null);
+        console.log('with changes');
     }
 
     @PostConstruct
     private init(): void {
         this.setTemplate(VirtualList.TEMPLATE);
 
-        this.eListContainer = this.queryForHtmlElement(".ag-filter-list-container");
+        this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
     }
@@ -99,9 +102,9 @@ export class VirtualList extends Component {
     private removeVirtualRows(rowsToRemove: any) {
         rowsToRemove.forEach( (index: number) => {
             var component = this.rowsInBodyContainer[index];
-            this.eListContainer.removeChild(component.getGui());
-            if (component.destroy) {
-                component.destroy();
+            this.eListContainer.removeChild(component.eDiv);
+            if (component.rowComponent.destroy) {
+                component.rowComponent.destroy();
             }
             delete this.rowsInBodyContainer[index];
         });
@@ -109,11 +112,18 @@ export class VirtualList extends Component {
 
     private insertRow(value: any, rowIndex: any) {
 
-        var rowComponent = this.componentCreator(value);
-        rowComponent.getGui().style.top = (this.rowHeight * rowIndex) + "px";
+        var eDiv = document.createElement('div');
+        _.addCssClass(eDiv, 'ag-virtual-list-item');
+        eDiv.style.top = (this.rowHeight * rowIndex) + "px";
 
-        this.eListContainer.appendChild(rowComponent.getGui());
-        this.rowsInBodyContainer[rowIndex] = rowComponent;
+        var rowComponent = this.componentCreator(value);
+        eDiv.appendChild(rowComponent.getGui());
+
+        this.eListContainer.appendChild(eDiv);
+        this.rowsInBodyContainer[rowIndex] = {
+            rowComponent: rowComponent,
+            eDiv: eDiv
+        };
     }
 
     private addScrollListener() {

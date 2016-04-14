@@ -1,11 +1,9 @@
-import {Bean} from "./context/context";
+import {Bean, Autowired} from "./context/context";
 import {Constants} from "./constants";
-import {Autowired} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {IRowModel} from "./interfaces/iRowModel";
-import {Column} from "./entities/column";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
-import {Utils as _} from './utils';
+import {Utils as _} from "./utils";
 import {GridRow} from "./entities/gridRow";
 import {GridCell} from "./entities/gridCell";
 
