@@ -16,7 +16,7 @@ export class SetFilter extends Component implements Filter {
                     '([SELECT ALL])'+
                 '</label>'+
             '</div>'+
-            '<div id="richList"></div>'+
+            '<div id="richList" class="ag-set-filter-list"></div>'+
             '<div class="ag-filter-apply-panel" id="applyPanel">'+
                 '<button type="button" id="applyButton">[APPLY FILTER]</button>' +
             '</div>'+

@@ -7,12 +7,10 @@ export class SetFilterListItem extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE =
-        '<div class="ag-filter-item">' +
-        '<label>'+
+        '<label class="ag-set-filter-item">'+
         '<input type="checkbox" class="ag-filter-checkbox"/>'+
         '<span class="ag-filter-value"></span>'+
-        '</label>' +
-        '</div>';
+        '</label>';
 
     private eCheckbox: HTMLInputElement;
 

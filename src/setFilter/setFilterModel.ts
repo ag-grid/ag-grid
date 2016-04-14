@@ -77,7 +77,8 @@ export class SetFilterModel {
         if (this.usingProvidedSet) {
             this.allUniqueValues = _.toStrings(this.filterParams.values);
         } else {
-            this.allUniqueValues = _.toStrings(this.getUniqueValues(false));
+            var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
+            this.allUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
         }
 
         this.sortValues(this.allUniqueValues);
@@ -90,7 +91,8 @@ export class SetFilterModel {
             return;
         }
 
-        this.availableUniqueValues = _.toStrings(this.getUniqueValues(true));
+        var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
+        this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
         this.sortValues(this.availableUniqueValues);
     }
 
