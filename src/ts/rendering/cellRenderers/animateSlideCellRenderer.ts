@@ -1,23 +1,67 @@
 
 import {ICellRenderer} from "./iCellRenderer";
 import {Utils as _} from "../../utils";
+import {Component} from "../../widgets/component";
 
-export class AnimateSlideCellRenderer implements ICellRenderer {
+export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
+
+    private static TEMPLATE =
+        '<span>' +
+        '<span class="ag-value-slide-previous"></span>' +
+        '<span class="ag-value-slide-current"></span>' +
+        '</span>';
 
     private params: any;
 
-    private eLastCell: HTMLElement;
+    private eCurrent: HTMLElement;
+    private ePrevious: HTMLElement;
+
     private lastValue: any;
+
+    private refreshCount = 0;
+
+    constructor() {
+        super(AnimateSlideCellRenderer.TEMPLATE);
+
+        this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
+        this.ePrevious = this.queryForHtmlElement('.ag-value-slide-previous');
+    }
 
     public init(params: any): void {
         this.params = params;
         this.refresh(params);
     }
 
-    public removeCell(eCell: HTMLElement): void {
-        _.addCssClass(eCell, 'ag-fade-out');
-        setTimeout( ()=> _.addCssClass(eCell, 'ag-fade-out-end'), 0);
-        setTimeout( ()=> this.params.eParentOfValue.removeChild(eCell), 3000);
+    public addSlideAnimation(): void {
+        this.refreshCount++;
+
+        // below we keep checking this, and stop working on the animation
+        // if it no longer matches - this means another animation has started
+        // and this one is stale.
+        var refreshCountCopy = this.refreshCount;
+
+        _.setVisible(this.ePrevious, true);
+
+        // remove all the animation classes
+        _.removeCssClass(this.ePrevious, 'ag-fade-out');
+        _.removeCssClass(this.ePrevious, 'ag-fade-out-end');
+
+        // having timeout of 0 allows use to skip to the next css turn,
+        // so we know the previous css classes have been applied. so the
+        // complex set of setTimeout below creates the animation
+        setTimeout( ()=> {
+            if (refreshCountCopy !== this.refreshCount) { return; }
+            _.addCssClass(this.ePrevious, 'ag-fade-out');
+            setTimeout( ()=> {
+                if (refreshCountCopy !== this.refreshCount) { return; }
+                _.addCssClass(this.ePrevious, 'ag-fade-out-end');
+            }, 0);
+        }, 0);
+
+        setTimeout( ()=> {
+            if (refreshCountCopy !== this.refreshCount) { return; }
+            _.setVisible(this.ePrevious, false);
+        }, 3000);
     }
 
     public refresh(params: any): void {
@@ -31,29 +75,19 @@ export class AnimateSlideCellRenderer implements ICellRenderer {
         if (value === this.lastValue) {
             return;
         }
+
+        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
+
         this.lastValue = value;
 
-        var newCell = document.createElement('span');
-
         if (_.exists(params.valueFormatted)) {
-            newCell.innerHTML = params.valueFormatted;
+            this.eCurrent.innerHTML = params.valueFormatted;
         } else if (_.exists(params.value)) {
-            newCell.innerHTML = value;
+            this.eCurrent.innerHTML = value;
         } else {
-            newCell.innerHTML = '';
+            this.eCurrent.innerHTML = '';
         }
 
-        this.params.eParentOfValue.appendChild(newCell);
-
-        if (this.eLastCell) {
-            this.removeCell(this.eLastCell);
-        }
-
-        this.eLastCell = newCell;
-    }
-
-    // returning null, as we want full control
-    public getGui(): HTMLElement {
-        return null;
+        this.addSlideAnimation();
     }
 }

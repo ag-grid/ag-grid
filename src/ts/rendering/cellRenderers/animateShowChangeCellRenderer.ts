@@ -1,71 +1,79 @@
 import {ICellRenderer} from "./iCellRenderer";
 import {Utils as _} from "../../utils";
+import {Component} from "../../widgets/component";
 
 var ARROW_UP = '&#65514;';
 var ARROW_DOWN = '&#65516;';
 
-export class AnimateShowChangeCellRenderer implements ICellRenderer {
+export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
+
+    private static TEMPLATE =
+        '<span>' +
+        '<span class="ag-value-change-delta"></span>' +
+        '<span class="ag-value-change-value"></span>' +
+        '</span>';
 
     private params: any;
     private lastValue: number;
+
     private eValue: HTMLElement;
-    private eDeltaValues: HTMLElement[] = [];
-    private destroyed = false;
+    private eDelta: HTMLElement;
+
+    private refreshCount = 0;
+
+    constructor() {
+        super(AnimateShowChangeCellRenderer.TEMPLATE);
+    }
 
     public init(params: any): void {
         this.params = params;
-        this.createValueSpan(params);
+
+        this.eValue = this.queryForHtmlElement('.ag-value-change-value');
+        this.eDelta = this.queryForHtmlElement('.ag-value-change-delta');
+
         this.refresh(params);
     }
 
-    private createValueSpan(params: any): void {
-        // this is the span we update with the current value, it is always visible
-        this.eValue = document.createElement('span');
-        _.addCssClass(this.eValue, 'ag-value-change-value');
-        params.eParentOfValue.appendChild(this.eValue);
-    }
-
     public showDelta(params: any, delta: number): void {
-        var eSpan = document.createElement('span');
-        _.addCssClass(eSpan, 'ag-value-change-delta');
 
         var valueFormatted = params.formatValue(Math.abs(delta));
 
-        if (delta >= 0) {
-            eSpan.innerHTML = ARROW_UP + valueFormatted;
-            // class makes it green (in ag-fresh)
-            _.addCssClass(eSpan, 'ag-value-change-delta-up');
+        var deltaUp = (delta >= 0);
+
+        if (deltaUp) {
+            this.eDelta.innerHTML = ARROW_UP + valueFormatted;
         } else {
             // because negative, use ABS to remove sign
-            eSpan.innerHTML = ARROW_DOWN + valueFormatted;
-            // class makes it red (in ag-fresh)
-            _.addCssClass(eSpan, 'ag-value-change-delta-down');
+            this.eDelta.innerHTML = ARROW_DOWN + valueFormatted;
         }
 
-        this.params.eParentOfValue.insertBefore(eSpan, this.eValue);
-
-        this.eDeltaValues.push(eSpan);
+        // class makes it green (in ag-fresh)
+        _.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
+        // class makes it red (in ag-fresh)
+        _.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
 
         // highlight the current value
         _.addCssClass(this.eValue, 'ag-value-change-value-highlight');
 
-        // add in timer, so we remove the delta value after 2 seconds
-        setTimeout(this.removeDeltaValue.bind(this, eSpan), 2000);
+        this.setTimerToRemoveDelta();
     }
 
-    public removeDeltaValue(eSpan: HTMLElement): void {
-        // if destroyed, then don't continue, it's possible that the rowRenderer has
-        // already cleared out this cell (if rowNode.setData() for example was called).
-        // if rowNode.setData() was called, the rowRenderer will have already removed
-        // all the elements from the cell
-        if (this.destroyed) { return; }
+    private setTimerToRemoveDelta(): void {
+        // the refreshCount makes sure that if the value updates again while
+        // the below timer is waiting, then the below timer will realise it
+        // is not the most recent and will not try to remove the delta value.
+        this.refreshCount++;
+        var refreshCountCopy = this.refreshCount;
+        setTimeout( ()=> {
+            if (refreshCountCopy === this.refreshCount) {
+                this.hideDeltaValue();
+            }
+        }, 2000);
+    }
 
-        this.params.eParentOfValue.removeChild(eSpan);
-
-        this.eDeltaValues.splice(this.eDeltaValues.indexOf(eSpan), 1);
-        if (this.eDeltaValues.length===0) {
-            _.removeCssClass(this.eValue, 'ag-value-change-value-highlight');
-        }
+    private hideDeltaValue(): void {
+        _.removeCssClass(this.eValue, 'ag-value-change-value-highlight');
+        this.eDelta.innerHTML = '';
     }
 
     public refresh(params: any): void {
@@ -89,14 +97,5 @@ export class AnimateShowChangeCellRenderer implements ICellRenderer {
         }
 
         this.lastValue = value;
-    }
-
-    // returning null, as we want full control
-    public getGui(): HTMLElement {
-        return null;
-    }
-
-    public destroy(): void {
-        this.destroyed = true;
     }
 }
