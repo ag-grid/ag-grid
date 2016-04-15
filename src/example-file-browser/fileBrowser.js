@@ -126,10 +126,11 @@
 
     var columnDefs = [
         {headerName: "Name", field: "name", width: 250,
-            cellRenderer: {
-                renderer: 'group',
+            cellRenderer: 'group',
+            cellRendererParams: {
                 innerRenderer: innerCellRenderer
-            }},
+            }
+        },
         {headerName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
         {headerName: "Type", field: "type", width: 150},
         {headerName: "Date Modified", field: "dateModified", width: 150}

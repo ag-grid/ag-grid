@@ -338,6 +338,12 @@ if (strcmp($version , 'latest') == 0) {
                     Enterprise Features
                 </h4>
 
+                <?php if ($key == "Viewport") { ?>
+                    <span class="sidebarLinkSelected">Viewport</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/index.php">Viewport</a>
+                <?php } ?>
+
                 <?php if ($key == "Grouping") { ?>
                     <span class="sidebarLinkSelected">Grouping Rows & Aggregating</span>
                 <?php } else { ?>

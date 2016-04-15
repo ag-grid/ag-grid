@@ -3,27 +3,27 @@ var columnDefs = [
     {headerName: "#", width: 50, cellRenderer: function(params) {
         return params.node.id + 1;
     } },
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, 
-        cellRenderer: 'animateShowChange', 
+    {headerName: "Code", field: "code", width: 70},
+    {headerName: "Name", field: "name", width: 300},
+    {headerName: "Bid", field: "bid", width: 100,
+        cellClass: 'cell-number',
         cellFormatter: numberFormatter,
-        cellClass: 'cell-number'
+        cellRenderer: 'animateShowChange'
     },
-    {headerName: "Silver", field: "silver", width: 100, 
-        cellRenderer: 'animateShowChange', 
+    {headerName: "Mid", field: "mid", width: 100,
+        cellClass: 'cell-number',
         cellFormatter: numberFormatter,
-        cellClass: 'cell-number'},
-    {headerName: "Bronze", field: "bronze", width: 100, 
-        cellRenderer: 'animateSlide', 
+        cellRenderer: 'animateShowChange'
+    },
+    {headerName: "Ask", field: "ask", width: 100,
+        cellClass: 'cell-number',
         cellFormatter: numberFormatter,
-        cellClass: 'cell-number'},
-    {headerName: "Total", field: "total", width: 100,
-        cellClass: 'cell-number'}
+        cellRenderer: 'animateShowChange'
+    },
+    {headerName: "Volume", field: "volume", width: 80,
+        cellClass: 'cell-number',
+        cellRenderer: 'animateSlide'
+    }
 ];
 
 var gridOptions = {
@@ -36,7 +36,7 @@ var gridOptions = {
 
 function numberFormatter(params) {
     if (params.value!=null && params.value!==undefined) {
-        return params.value.toFixed(1);
+        return params.value.toFixed(2);
     } else {
         return null;
     }
@@ -112,17 +112,21 @@ function setRowData(rowData) {
     
     var viewportDatasource = new ViewportDatasource(mockServer);
     gridOptions.api.setViewportDatasource(viewportDatasource);
+    // put the 'size cols to fit' into a timeout, so that the scroll is taken into consideration
+    setTimeout(function(){
+        gridOptions.api.sizeColumnsToFit();
+    }, 100);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#liveStreamExample');
     new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.open('GET', '../stocks.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {

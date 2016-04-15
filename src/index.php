@@ -74,9 +74,12 @@
 <link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
 <link inline href="best-angularjs-data-grid/basic.css" rel="stylesheet">
 <link inline href="example-account-report/account.css" rel="stylesheet">
+<link inline href="javascript-grid-viewport/exampleViewport.css" rel="stylesheet">
 
 <script inline src="best-javascript-data-grid/html5grid.js"></script>
 <script inline src="example-account-report/account.js"></script>
 <script inline src="example-file-browser/fileBrowser.js"></script>
+<script inline src="javascript-grid-viewport/mockServer.js"></script>
+<script inline src="javascript-grid-viewport/exampleViewport.js"></script>
 
 <?php include_once("includes/analytics.php"); ?>

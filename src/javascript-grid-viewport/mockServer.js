@@ -6,33 +6,26 @@ function MockServer() {
 
 MockServer.prototype.periodicallyUpdateData = function() {
 
-    var columnIds = ['gold','silver','bronze'];
-
+    // keep a record of all the items that changed
     var changes = [];
 
-    // randomly update data for some rows
-    for (var i = 0; i<100; i++) {
-        var index = Math.floor(this.allData.length * Math.random());
-        var columnId = columnIds[i%3];
-        var dataItem = this.allData[index];
-        // change by a value between -1 and 2 with one decimal place
-        var move = (Math.floor(30 * Math.random()))/10 - 1;
-        var newValue = dataItem[columnId] + move;
-        dataItem[columnId] = newValue;
-
-        changes.push({
-            rowIndex: index,
-            columnId: columnId,
-            newValue: newValue
-        });
-    }
+    // make some mock changes to the data
+    this.makeSomePriceChanges(changes);
+    this.makeSomeVolumeChanges(changes);
 
     // inform the connections of the changes where appropriate
+    this.informConnectionsOfChanges(changes);
+};
+
+MockServer.prototype.informConnectionsOfChanges = function(changes) {
     var that = this;
+    // go through each connection
     Object.keys(this.connections).forEach( function(connectionId) {
         var connection = that.connections[connectionId];
+        // create a list of changes that are applicable to this connection only
         var changesThisConnection = [];
         changes.forEach( function(change) {
+            // see if the index of this change is within the connections viewport
             var changeInRange = change.rowIndex >= connection.firstRow && change.rowIndex <= connection.lastRow;
             if (changeInRange) {
                 changesThisConnection.push(change);
@@ -47,8 +40,76 @@ MockServer.prototype.periodicallyUpdateData = function() {
     });
 };
 
+MockServer.prototype.makeSomeVolumeChanges = function(changes) {
+    for (var i = 0; i<10; i++) {
+        // pick a data item at random
+        var index = Math.floor(this.allData.length * Math.random());
+        var dataItem = this.allData[index];
+
+        // change by a value between -5 and 5
+        var move = (Math.floor(10 * Math.random())) - 5;
+        var newValue = dataItem.volume + move;
+        dataItem.volume = newValue;
+
+        changes.push({
+            rowIndex: index,
+            columnId: 'volume',
+            newValue: dataItem.volume
+        });
+    }
+};
+
+MockServer.prototype.makeSomePriceChanges = function(changes) {
+    // randomly update data for some rows
+    for (var i = 0; i<10; i++) {
+        var index = Math.floor(this.allData.length * Math.random());
+
+        var dataItem = this.allData[index];
+        // change by a value between -1 and 2 with one decimal place
+        var move = (Math.floor(30 * Math.random()))/10 - 1;
+        var newValue = dataItem.mid + move;
+        dataItem.mid = newValue;
+
+        this.setBidAndAsk(dataItem);
+
+        changes.push({
+            rowIndex: index,
+            columnId: 'mid',
+            newValue: dataItem.mid
+        });
+        changes.push({
+            rowIndex: index,
+            columnId: 'bid',
+            newValue: dataItem.bid
+        });
+        changes.push({
+            rowIndex: index,
+            columnId: 'ask',
+            newValue: dataItem.ask
+        });
+    }
+};
+
 MockServer.prototype.init = function(allData) {
     this.allData = allData;
+
+    // the sample data has just name and code, we need to add in dummy figures
+    var that = this;
+    this.allData.forEach( function(dataItem) {
+
+        // have volume a random between 100 and 10,000
+        dataItem.volume = Math.floor( (Math.random() * 10000) + 100);
+
+        // have mid random from 20 to 300
+        dataItem.mid = (Math.random() * 300) + 20;
+
+        that.setBidAndAsk(dataItem);
+    });
+};
+
+MockServer.prototype.setBidAndAsk = function(dataItem) {
+    dataItem.bid = dataItem.mid * 0.98;
+    dataItem.ask = dataItem.mid * 1.02;
 };
 
 MockServer.prototype.connect = function(listener) {

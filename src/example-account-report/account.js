@@ -51,9 +51,7 @@
         width: 200,
         field: 'item',
         comparator: agGrid.defaultGroupComparator,
-        cellRenderer: {
-            renderer: "group"
-        }
+        cellRenderer: "group"
     };
 
     var gridOptions = {

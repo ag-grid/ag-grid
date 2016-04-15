@@ -17,7 +17,7 @@
             <div class="HomeDemo-sub row">
                 <div class="col-md-8">
                     <div style="border: 1px solid darkgrey;
-                            width: 800px;
+                            width: 100%;
                             background-color: lightgrey;
                             border-radius: 5px;
                             padding: 3px;">
