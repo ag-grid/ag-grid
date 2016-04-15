@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Sorting</h2>
 
     <p>
-        This page describes how get your grid data soring.
+        This page describes how to get your grid data sorting.
     </p>
 
     <note>
