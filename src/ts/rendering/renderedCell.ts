@@ -898,7 +898,7 @@ export class RenderedCell extends Component {
             this.eGridCell.appendChild(this.eCellWrapper);
 
             //this.createSelectionCheckbox();
-            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex, this.renderedRow.addEventListener.bind(this.renderedRow));
+            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.renderedRow.addEventListener.bind(this.renderedRow));
             this.eCellWrapper.appendChild(this.eCheckbox);
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span

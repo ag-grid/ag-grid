@@ -8,6 +8,7 @@ import {SelectionRendererFactory} from "../../selectionRendererFactory";
 import {groupCellRendererFactory} from "./groupCellRendererFactory";
 import {AnimateSlideCellRenderer} from "./animateSlideCellRenderer";
 import {AnimateShowChangeCellRenderer} from "./animateShowChangeCellRenderer";
+import {GroupCellRenderer} from "./groupCellRenderer";
 
 @Bean('cellRendererFactory')
 export class CellRendererFactory {
@@ -27,7 +28,7 @@ export class CellRendererFactory {
     private init(): void {
         this.cellRendererMap[CellRendererFactory.ANIMATE_SLIDE] = AnimateSlideCellRenderer;
         this.cellRendererMap[CellRendererFactory.ANIMATE_SHOW_CHANGE] = AnimateShowChangeCellRenderer;
-        this.cellRendererMap[CellRendererFactory.GROUP] = groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService);
+        this.cellRendererMap[CellRendererFactory.GROUP] = GroupCellRenderer;
     }
 
     public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {

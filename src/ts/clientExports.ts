@@ -13,7 +13,6 @@ import {Column} from "./entities/column";
 import {FocusedCellController} from "./focusedCellController";
 import {defaultGroupComparator} from "./functions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {groupCellRendererFactory} from "./rendering/cellRenderers/groupCellRendererFactory";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";
@@ -80,6 +79,7 @@ import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
 import {CellRendererFactory} from "./rendering/cellRenderers/cellRendererFactory";
 import {VirtualList} from "./widgets/virtualList";
 import {RichSelectCellEditor} from "./rendering/cellEditors/richSelect/richSelectCellEditor";
+import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 
 export function populateClientExports(exports: any): void {
 
@@ -151,9 +151,9 @@ export function populateClientExports(exports: any): void {
     exports.RichSelectCellEditor = RichSelectCellEditor;
 
     // rendering / cellRenderers
-    exports.groupCellRendererFactory = groupCellRendererFactory;
     exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
     exports.CellRendererFactory = CellRendererFactory;
+    exports.GroupCellRenderer = GroupCellRenderer;
 
     // rendering
     exports.AutoWidthCalculator = AutoWidthCalculator;

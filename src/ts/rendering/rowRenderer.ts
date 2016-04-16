@@ -23,7 +23,6 @@ import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
-import {groupCellRendererFactory} from "./cellRenderers/groupCellRendererFactory";
 
 @Bean('rowRenderer')
 export class RowRenderer {
