@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <h4 class="text-center">Connect to Live Data Streams</h4>
+        <h4 class="text-center">Connect to Live Data Streams and provide Visual Highlights to Changes</h4>
 
         <div class="row HomeDemo-main">
             <div class="col-md-12">
