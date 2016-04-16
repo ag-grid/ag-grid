@@ -7,7 +7,6 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
     private static TEMPLATE =
         '<span>' +
-        '<span class="ag-value-slide-previous"></span>' +
         '<span class="ag-value-slide-current"></span>' +
         '</span>';
 
@@ -24,7 +23,6 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         super(AnimateSlideCellRenderer.TEMPLATE);
 
         this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
-        this.ePrevious = this.queryForHtmlElement('.ag-value-slide-previous');
     }
 
     public init(params: any): void {
@@ -40,27 +38,27 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // and this one is stale.
         var refreshCountCopy = this.refreshCount;
 
-        _.setVisible(this.ePrevious, true);
+        // if old animation, remove it
+        if (this.ePrevious) {
+            this.getGui().removeChild(this.ePrevious);
+        }
 
-        // remove all the animation classes
-        _.removeCssClass(this.ePrevious, 'ag-fade-out');
-        _.removeCssClass(this.ePrevious, 'ag-fade-out-end');
+        this.ePrevious = _.loadTemplate('<span class="ag-value-slide-previous ag-fade-out"></span>');
+        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
+        this.getGui().insertBefore(this.ePrevious, this.eCurrent);
 
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
         setTimeout( ()=> {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            _.addCssClass(this.ePrevious, 'ag-fade-out');
-            setTimeout( ()=> {
-                if (refreshCountCopy !== this.refreshCount) { return; }
-                _.addCssClass(this.ePrevious, 'ag-fade-out-end');
-            }, 0);
-        }, 0);
+            _.addCssClass(this.ePrevious, 'ag-fade-out-end');
+        }, 50);
 
         setTimeout( ()=> {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            _.setVisible(this.ePrevious, false);
+            this.getGui().removeChild(this.ePrevious);
+            this.ePrevious = null;
         }, 3000);
     }
 
@@ -76,7 +74,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             return;
         }
 
-        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
+        this.addSlideAnimation();
 
         this.lastValue = value;
 
@@ -87,7 +85,5 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         } else {
             this.eCurrent.innerHTML = '';
         }
-
-        this.addSlideAnimation();
     }
 }
