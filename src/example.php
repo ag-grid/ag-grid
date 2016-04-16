@@ -53,7 +53,7 @@
 
 
         <!-- The table div -->
-        <div style="padding: 5px; padding-top: 102px; height: 100%; width: 100%;">
+        <div style="padding-top: 98px; height: 100%; width: 100%;">
             <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
         </div>
 
