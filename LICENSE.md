@@ -1,4 +1,4 @@
-ag-Grid-Enterprise Software Licence Agreement Version 1.2
+ag-Grid-Enterprise Software Licence Agreement Version 1.3
 
 THIS DOCUMENT IS A LEGAL AGREEMENT (the “Agreement”) BETWEEN AG GRID LTD. (“We,” “Us”) AND YOU OR THE 
 ORGANISATION ON WHOSE BEHALF YOU ARE ENTERING INTO THIS AGREEMENT (“You”) IN RELATION TO AG-GRID-ENTERPRISE SOFTWARE.
@@ -33,7 +33,7 @@ THIS LICENCE AGREEMENT DESCRIBES YOUR RIGHTS AND RESTRICTIONS WITH RESPECT TO TH
 
 2.LICENCE GRANT
 
-A) Full Licence: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-exclusive, non-transferable and non-sublicensable licence: (i) for Licensed Developer(s) to use the Software to create Modifications and Applications; (ii) for You to market, reproduce and distribute ag-Grid-Enterprise and/or Modifications to End Users, Distributors and Resellers solely as integrated into Your Applications; (iii) to include ag-Grid-Enterprise and/or Modifications within hosted environments solely as integrated into Your Applications and (iv) for End Users to use ag-Grid-Enterprise as integrated into Your Applications in accordance with this Agreement.
+A) Full Licence: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sublicensable licence: (i) for Licensed Developer(s) to use the Software to create Modifications and Applications; (ii) for You to market, reproduce and distribute ag-Grid-Enterprise and/or Modifications to End Users, Distributors and Resellers solely as integrated into Your Applications; (iii) to include ag-Grid-Enterprise and/or Modifications within hosted environments solely as integrated into Your Applications and (iv) for End Users to use ag-Grid-Enterprise as integrated into Your Applications in accordance with this Agreement.
 
 All developers modifying JavaScript code as part of Your Modifications and Applications are required to be covered by the set of Licensed Developers. It is not permissible to only include a subset of such developers that will be directly using the Software. For example, if you have 5 developers working with JavaScript on your application, but only 2 directly working with ag-Grid, all 5 are required to be Licenced Developers.
 
@@ -83,7 +83,7 @@ WE WARRANT THAT WE HAVE THE POWER AND AUTHORITY TO ENTER INTO AND PERFORM THIS A
 
 8.LIMITATION OF LIABILITIES
 
-A) TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW AND SUBJECT TO SECTION 7(B), IN NO EVENT SHALL WE BE LIABLE UNDER ANY LEGAL OR EQUITABLE THEORY FOR ANY: 
+A) TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW AND SUBJECT TO SECTION 8(B), IN NO EVENT SHALL WE BE LIABLE UNDER ANY LEGAL OR EQUITABLE THEORY FOR ANY: 
 (i)	SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER; NOR, WITHOUT LIMITATION; NOR
 (ii) DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, LOSS OF DATA OR ANY OTHER PECUNIARY LOSS, 
 ARISING OUT OF THE USE OF OR INABILITY TO USE THE SOFTWARE OR THE CODE IT PRODUCES OR ANY OTHER SUBJECT MATTER RELATING TO THIS AGREEMENT, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. IN ANY CASE, OUR ENTIRE LIABILITY WITH RESPECT TO ANY SUBJECT MATTER RELATING TO THIS AGREEMENT SHALL BE LIMITED TO THE GREATER OF: (I) THE AMOUNT ACTUALLY PAID BY YOU FOR THE SOFTWARE; OR (II) FIVE HUNDRED POUNDS STERLING (GBP £500). 
@@ -97,7 +97,7 @@ If credit has been extended to You by Us, all payments under this Agreement are 
 
 10.SUPPORT AND MAINTENANCE
 
-We will supply the Support Services  to You as described in section 9(A) below and for whom any applicable maintenance and support fee has been paid, should we choose (at our discretion) to charge such fees.
+We will supply the Support Services  to You as described in section 10(A) below and for whom any applicable maintenance and support fee has been paid, should we choose (at our discretion) to charge such fees.
 
 (A) Support Services
 
