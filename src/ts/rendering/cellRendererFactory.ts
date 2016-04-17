@@ -1,14 +1,13 @@
-import {Bean, PostConstruct, Autowired} from "../../context/context";
-import {Utils as _} from '../../utils';
-import {ICellRenderer, ICellRendererFunc} from "./iCellRenderer";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {EventService} from "../../eventService";
-import {ExpressionService} from "../../expressionService";
-import {SelectionRendererFactory} from "../../selectionRendererFactory";
-import {groupCellRendererFactory} from "./groupCellRendererFactory";
-import {AnimateSlideCellRenderer} from "./animateSlideCellRenderer";
-import {AnimateShowChangeCellRenderer} from "./animateShowChangeCellRenderer";
-import {GroupCellRenderer} from "./groupCellRenderer";
+import {Bean, PostConstruct, Autowired} from "../context/context";
+import {Utils as _} from '../utils';
+import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {EventService} from "../eventService";
+import {ExpressionService} from "../expressionService";
+import {SelectionRendererFactory} from "../selectionRendererFactory";
+import {AnimateSlideCellRenderer} from "./cellRenderers/animateSlideCellRenderer";
+import {AnimateShowChangeCellRenderer} from "./cellRenderers/animateShowChangeCellRenderer";
+import {GroupCellRenderer} from "./cellRenderers/groupCellRenderer";
 
 @Bean('cellRendererFactory')
 export class CellRendererFactory {

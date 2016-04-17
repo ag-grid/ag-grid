@@ -12,6 +12,7 @@ import {Component} from "../../widgets/component";
 import {ICellRenderer} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
 import {GridApi} from "../../gridApi";
+import {CellRendererService} from "../cellRendererService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -30,6 +31,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
 
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
@@ -98,7 +100,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private createFromInnerRenderer(params: any): void {
-        _.useRenderer(this.eValue, params.innerRenderer, params);
+        this.cellRendererService.useCellRenderer(params.innerRenderer, this.eValue, params);
     }
 
     private createFooterCell(params: any): void {
@@ -126,12 +128,16 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private createGroupCell(params: any): void {
         var groupName = this.getGroupName(params);
 
-        // NOTE: this all needs to be revisited
-
         var colDefOfGroupedCol = params.api.getColumnDef(params.node.field);
         if (colDefOfGroupedCol && typeof colDefOfGroupedCol.cellRenderer === 'function') {
+            // reuse the params but change the value
             params.value = groupName;
-            _.useRenderer(this.eValue, colDefOfGroupedCol.cellRenderer, params);
+            // because we are talking about the different column to the original, any user provided params
+            // are for the wrong column, so need to copy them in again.
+            if (colDefOfGroupedCol.cellRendererParams) {
+                _.assign(params, colDefOfGroupedCol.cellRendererParams);
+            }
+            this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
         } else {
             this.eValue.appendChild(document.createTextNode(groupName));
         }

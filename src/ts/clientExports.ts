@@ -76,10 +76,11 @@ import {PopupSelectCellEditor} from "./rendering/cellEditors/popupSelectCellEdit
 import {PopupTextCellEditor} from "./rendering/cellEditors/popupTextCellEditor";
 import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
 import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
-import {CellRendererFactory} from "./rendering/cellRenderers/cellRendererFactory";
+import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {VirtualList} from "./widgets/virtualList";
 import {RichSelectCellEditor} from "./rendering/cellEditors/richSelect/richSelectCellEditor";
 import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
+import {CellRendererService} from "./rendering/cellRendererService";
 
 export function populateClientExports(exports: any): void {
 
@@ -152,12 +153,13 @@ export function populateClientExports(exports: any): void {
 
     // rendering / cellRenderers
     exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
-    exports.CellRendererFactory = CellRendererFactory;
     exports.GroupCellRenderer = GroupCellRenderer;
 
     // rendering
     exports.AutoWidthCalculator = AutoWidthCalculator;
     exports.RenderedHeaderCell = RenderedHeaderCell;
+    exports.CellRendererFactory = CellRendererFactory;
+    exports.CellRendererService = CellRendererService;
     exports.RenderedRow = RenderedRow;
     exports.RowRenderer = RowRenderer;
 

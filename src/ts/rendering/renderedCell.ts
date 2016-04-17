@@ -24,7 +24,8 @@ import {CellEditorFactory} from "./cellEditors/cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
-import {CellRendererFactory} from "./cellRenderers/cellRendererFactory";
+import {CellRendererFactory} from "./cellRendererFactory";
+import {CellRendererService} from "./cellRendererService";
 
 export class RenderedCell extends Component {
 
@@ -47,6 +48,7 @@ export class RenderedCell extends Component {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
@@ -1028,7 +1030,7 @@ export class RenderedCell extends Component {
         return params;
     }
     
-    private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string) {
+    private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string): void {
 
         var params = this.createRendererAndRefreshParams(valueFormatted);
 
@@ -1036,50 +1038,7 @@ export class RenderedCell extends Component {
             _.assign(params, cellRendererParams);
         }
 
-        var cellRenderer: {new(): ICellRenderer} | ICellRendererFunc;
-        // if it's a string, then we look the cellRenderer up
-        if (typeof cellRendererKey === 'string') {
-            cellRenderer = this.cellRendererFactory.getCellRenderer(<string> cellRendererKey);
-            if (_.missing(cellRenderer)) {
-                // this is a bug in users config, they specified a cellRenderer that doesn't exist,
-                // the factory already printed to console, so here we just skip
-                return;
-            }
-        } else {
-            cellRenderer = <{new(): ICellRenderer} | ICellRendererFunc> cellRendererKey;
-        }
-
-        var resultFromRenderer: HTMLElement | string;
-        // we check if the class has the 'getGui' method to know if it's a component
-        var rendererIsAComponent = ((<any>cellRenderer).prototype && 'getGui' in (<any>cellRenderer).prototype);
-        // if it's a component, we create and initialise it
-        if (rendererIsAComponent) {
-            var CellRendererComponent = <{new(): ICellRenderer}> cellRenderer;
-            this.cellRenderer = new CellRendererComponent();
-            this.context.wireBean(this.cellRenderer);
-            
-            if (this.cellRenderer.init) {
-                this.cellRenderer.init(params);
-            }
-
-            resultFromRenderer = this.cellRenderer.getGui();
-        } else {
-            // otherwise it's a function, so we just use it
-            var cellRendererFunc = <ICellRendererFunc> cellRenderer;
-            resultFromRenderer = cellRendererFunc(params);
-        }
-
-        if (resultFromRenderer===null || resultFromRenderer==='') {
-            return;
-        }
-
-        if (_.isNodeOrElement(resultFromRenderer)) {
-            // a dom node or element was returned, so add child
-            this.eParentOfValue.appendChild( <HTMLElement> resultFromRenderer);
-        } else {
-            // otherwise assume it was html, so just insert
-            this.eParentOfValue.innerHTML = <string> resultFromRenderer;
-        }
+        this.cellRenderer = this.cellRendererService.useCellRenderer(cellRendererKey, this.eParentOfValue, params);
     }
 
     private addClasses() {

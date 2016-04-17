@@ -72,13 +72,14 @@ export * from './dist/lib/rendering/cellEditors/richSelectCellEditor';
 
 export * from './dist/lib/rendering/cellRenderers/iCellRenderer';
 export * from './dist/lib/rendering/cellRenderers/animateSlideCellRenderer';
-export * from './dist/lib/rendering/cellRenderers/cellRendererFactory';
 export * from './dist/lib/rendering/cellRenderers/groupCellRenderer';
 
 export * from './dist/lib/rendering/autoWidthCalculator';
 export * from './dist/lib/rendering/renderedCell';
 export * from './dist/lib/rendering/renderedRow';
 export * from './dist/lib/rendering/rowRenderer';
+export * from './dist/lib/rendering/cellRendererFactory';
+export * from './dist/lib/rendering/cellRendererService';
 
 export * from './dist/lib/rowControllers/inMemory/fillterStage';
 export * from './dist/lib/rowControllers/inMemory/flattenStage';
