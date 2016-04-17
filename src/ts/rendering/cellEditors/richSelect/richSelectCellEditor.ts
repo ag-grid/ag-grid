@@ -6,10 +6,12 @@ import {Autowired, Context} from "../../../context/context";
 import {RichSelectRow} from "./richSelectRow";
 import {Utils as _} from '../../../utils';
 import {Constants} from "../../../constants";
+import {ICellRenderer, ICellRendererFunc} from "../../cellRenderers/iCellRenderer";
+import {CellRendererService} from "../../cellRendererService";
 
 export interface IRichCellEditorParams extends ICellEditorParams {
     values: string[];
-    cellRenderer: Function;
+    cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
 }
 
 export class RichSelectCellEditor extends Component implements ICellEditor {
@@ -22,13 +24,14 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         '</div>';
 
     @Autowired('context') context: Context;
+    @Autowired('cellRendererService') cellRendererService: CellRendererService;
 
     private params: IRichCellEditorParams;
     private virtualList: VirtualList;
 
     private selectedValue: any;
 
-    private renderer: Function;
+    private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
 
     constructor() {
         super(RichSelectCellEditor.TEMPLATE);
@@ -37,7 +40,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     public init(params: IRichCellEditorParams): void {
         this.params = params;
         this.selectedValue = params.value;
-        this.renderer = render.bind(window, this.params.cellRenderer);
+        this.cellRenderer = this.params.cellRenderer;
 
         this.virtualList = new VirtualList();
         this.context.wireBean(this.virtualList);
@@ -98,7 +101,19 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
     private renderSelectedValue(): void {
         var eValue = <HTMLElement> this.getGui().querySelector('.ag-rich-select-value');
-        this.renderer(eValue, this.selectedValue);
+
+        if (this.cellRenderer) {
+            var result = this.cellRendererService.useCellRenderer(this.cellRenderer, eValue, {value: this.selectedValue});
+            if (result && result.destroy) {
+                this.addDestroyFunc( ()=> result.destroy() );
+            }
+        } else {
+            if (_.exists(this.selectedValue)) {
+                eValue.innerHTML = this.selectedValue.toString();
+            } else {
+                eValue.innerHTML = '';
+            }
+        }
     }
 
     private setSelectedValue(value: any): void {
@@ -118,7 +133,8 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private createRowComponent(value: any): Component {
-        var row = new RichSelectRow(this.renderer);
+        var row = new RichSelectRow(this.cellRenderer);
+        this.context.wireBean(row);
         row.setState(value, value===this.selectedValue);
         return row;
     }
@@ -166,27 +182,4 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     public isPopup(): boolean {
         return true;
     }
-}
-
-function render(cellRenderer: Function, eElement: HTMLElement, value: any): void {
-
-    if (_.exists(cellRenderer)) {
-        // renderer provided, so use it
-        var resultFromRenderer = cellRenderer({ value: value });
-
-        if (_.isNode(resultFromRenderer)) {
-            // a dom node or element was returned, so add child
-            eElement.appendChild(resultFromRenderer);
-        } else {
-            // otherwise assume it was html, so just insert
-            eElement.innerHTML = resultFromRenderer;
-        }
-    } else {
-        if (_.exists(value)) {
-            eElement.innerHTML = value.toString();
-        } else {
-            eElement.innerHTML = '';
-        }
-    }
-
 }

@@ -61,6 +61,8 @@ export * from './dist/lib/layout/borderLayout';
 export * from './dist/lib/layout/tabbedLayout';
 export * from './dist/lib/layout/verticalStack';
 
+export * from './dist/lib/rendering/cellEditors/richSelect/richSelectCellEditor';
+
 export * from './dist/lib/rendering/cellEditors/iCellEditor';
 export * from './dist/lib/rendering/cellEditors/cellEditorFactory';
 export * from './dist/lib/rendering/cellEditors/popupEditorWrapper';
@@ -68,7 +70,6 @@ export * from './dist/lib/rendering/cellEditors/popupSelectCellEditor';
 export * from './dist/lib/rendering/cellEditors/popupTextCellEditor';
 export * from './dist/lib/rendering/cellEditors/selectCellEditor';
 export * from './dist/lib/rendering/cellEditors/textCellEditor';
-export * from './dist/lib/rendering/cellEditors/richSelectCellEditor';
 
 export * from './dist/lib/rendering/cellRenderers/iCellRenderer';
 export * from './dist/lib/rendering/cellRenderers/animateSlideCellRenderer';

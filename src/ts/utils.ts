@@ -326,26 +326,6 @@ export class Utils {
     }
 
     /**
-     * Tries to use the provided renderer.
-     */
-    static useRenderer<TParams>(eParent: Element, eRenderer: (params:TParams) => Node | string, params: TParams) {
-        var resultFromRenderer = eRenderer(params);
-        //TypeScript type inference magic
-        if (typeof resultFromRenderer === 'string') {
-            var eTextSpan = document.createElement('span');
-            eTextSpan.innerHTML = resultFromRenderer;
-            eParent.appendChild(eTextSpan);
-        } else if (this.isNodeOrElement(resultFromRenderer)) {
-            //a dom node or element was returned, so add child
-            eParent.appendChild(<Node>resultFromRenderer);
-        } else {
-            if (this.exists(resultFromRenderer)) {
-                console.warn('ag-Grid: result from render should be either a string or a DOM object, got ' + typeof resultFromRenderer);
-            }
-        }
-    }
-
-    /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
      */
