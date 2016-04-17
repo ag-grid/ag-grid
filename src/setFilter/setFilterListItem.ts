@@ -1,10 +1,11 @@
-import {Component, Autowired, PostConstruct, GridOptionsWrapper, Utils as _} from "ag-grid/main";
+import {Component, ICellRenderer, ICellRendererFunc, CellRendererService, Autowired, PostConstruct, GridOptionsWrapper, Utils as _} from "ag-grid/main";
 
 export class SetFilterListItem extends Component {
 
     public static EVENT_SELECTED = 'selected';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
 
     private static TEMPLATE =
         '<label class="ag-set-filter-item">'+
@@ -15,9 +16,9 @@ export class SetFilterListItem extends Component {
     private eCheckbox: HTMLInputElement;
 
     private value: any;
-    private cellRenderer: Function;
+    private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
 
-    constructor(value: any, cellRenderer: Function) {
+    constructor(value: any, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string) {
         super(SetFilterListItem.TEMPLATE);
         this.value = value;
         this.cellRenderer = cellRenderer;
@@ -46,17 +47,10 @@ export class SetFilterListItem extends Component {
 
         // var valueElement = eFilterValue.querySelector(".ag-filter-value");
         if (this.cellRenderer) {
-            // renderer provided, so use it
-            var resultFromRenderer = this.cellRenderer({ value: this.value });
-
-            if (_.isNode(resultFromRenderer)) {
-                // a dom node or element was returned, so add child
-                valueElement.appendChild(resultFromRenderer);
-            } else {
-                // otherwise assume it was html, so just insert
-                valueElement.innerHTML = resultFromRenderer;
+            var component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, {value: this.value});
+            if (component && component.destroy) {
+                this.addDestroyFunc( component.destroy.bind(component) );
             }
-
         } else {
             // otherwise display as a string
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();

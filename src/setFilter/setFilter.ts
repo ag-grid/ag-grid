@@ -1,4 +1,4 @@
-import {Utils as _, Component, Context, Autowired, PostConstruct, GridOptionsWrapper, VirtualList, VirtualListModel} from "ag-grid/main";
+import {Utils as _, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper, VirtualList, VirtualListModel} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
 import {SetFilterListItem} from "./setFilterListItem";
@@ -76,7 +76,7 @@ export class SetFilter extends Component implements Filter {
     }
 
     private createSetListItem(value: any): Component {
-        var cellRenderer: Function;
+        var cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
         if (this.filterParams) {
             cellRenderer = this.filterParams.cellRenderer;
         }
