@@ -280,10 +280,10 @@ var defaultCols = [
         children: [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: countryCellRenderer,
+                cellRenderer: CountryCellRenderer,
                 cellEditor: 'richSelect',
                 cellEditorParams: {
-                    cellRenderer: countryCellRenderer,
+                    cellRenderer: CountryCellRenderer,
                     values: [ "Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela"]
@@ -291,7 +291,7 @@ var defaultCols = [
                 //pinned: 'left',
                 floatCell: true,
                 filterParams: {
-                    cellRenderer: countryCellRenderer,
+                    cellRenderer: CountryCellRenderer,
                     cellHeight: 20,
                     newRowsAction: 'keep'
                 },
@@ -825,7 +825,6 @@ function countryCellRenderer(params) {
     }
 }
 
-/*
 function CountryCellRenderer() {
 }
 
@@ -841,4 +840,4 @@ CountryCellRenderer.prototype.init = function(params) {
 
 CountryCellRenderer.prototype.getGui = function(params) {
     return this.eGui;
-};*/
+};
