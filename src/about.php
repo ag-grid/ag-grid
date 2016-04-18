@@ -66,7 +66,8 @@
             <p>
                 Niall has 16 years building greenfield software projects in Telecommunications, Government, Insurance
                 and most recently Investment Banking. Oracle and Java used to be his bread and butter but is now
-                focusing on front end JavaScript.
+                focusing on front end JavaScript, bringing his skill and knowledge from prevoius domains to the
+                emerging JavaScript platform.
             </p>
         </div>
 
@@ -76,17 +77,17 @@
             </div>
             <h3>Sean Landsman</h3>
             <p>
-                Sean is a dick
+                Lead Developer
             </p>
         </div>
 
         <div class="col-md-4">
             <div>
-                <img src='images/alberto.png'/>
+                <img src='images/will.png'/>
             </div>
-            <h3>Alberto Gutierrez</h3>
+            <h3>Will Halling</h3>
             <p>
-                Alberto is a Mexican
+                Front End Developer
             </p>
         </div>
 

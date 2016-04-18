@@ -189,8 +189,8 @@ var gridOptions = {
     },
     // isScrollLag: function() { return false; },
     //suppressScrollLag: true,
-    // floatingTopRowData: [{},{},{}],
-    // floatingBottomRowData: [{},{},{}],
+    floatingTopRowData: [{},{},{}],
+    floatingBottomRowData: [{},{},{}],
     // callback when row clicked
     onRowClicked: function(params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
@@ -831,13 +831,13 @@ function CountryCellRenderer() {
 CountryCellRenderer.prototype.init = function(params) {
     //get flags from here: http://www.freeflagicons.com/
     if (params.value==="" || params.value===undefined || params.value===null) {
-        return null;
+        this.eGui = '';
     } else {
         var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/'+COUNTRY_CODES[params.value]+'.png">';
         this.eGui = '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
     }
 };
 
-CountryCellRenderer.prototype.getGui = function(params) {
+CountryCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
