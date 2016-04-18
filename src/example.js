@@ -322,6 +322,7 @@ var defaultCols = [
         children: [
             {headerName: "Game of Choice", field: "game.name", width: 180, editable: true, filter: 'set',
                 cellClass: function() { return 'alphabet'; },
+                cellFormatter: gameCellFormatter,
                 //pinned: 'right',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -822,6 +823,14 @@ function countryCellRenderer(params) {
     } else {
         var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/'+COUNTRY_CODES[params.value]+'.png">';
         return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
+    }
+}
+
+function gameCellFormatter(params) {
+    if (params.value) {
+        return params.value.toUpperCase();
+    } else {
+        return null;
     }
 }
 
