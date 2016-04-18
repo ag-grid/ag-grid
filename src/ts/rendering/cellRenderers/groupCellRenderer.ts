@@ -13,6 +13,7 @@ import {ICellRenderer} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
 import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
+import {ValueFormatterService} from "../valueFormatterService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -32,6 +33,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
@@ -126,12 +128,18 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private createGroupCell(params: any): void {
-        var groupName = this.getGroupName(params);
+        var columnOfGroupedCol = params.columnApi.getColumn(params.node.field);
+        var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
 
-        var colDefOfGroupedCol = params.api.getColumnDef(params.node.field);
+        var groupName = this.getGroupName(params);
+        var valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, this.rowIndex, groupName);
+
+        // reuse the params but change the value
         if (colDefOfGroupedCol && typeof colDefOfGroupedCol.cellRenderer === 'function') {
             // reuse the params but change the value
             params.value = groupName;
+            params.valueFormatted = valueFormatted;
+
             // because we are talking about the different column to the original, any user provided params
             // are for the wrong column, so need to copy them in again.
             if (colDefOfGroupedCol.cellRendererParams) {
@@ -139,7 +147,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             }
             this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
         } else {
-            this.eValue.appendChild(document.createTextNode(groupName));
+            var valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
+            if (_.exists(valueToRender) && valueToRender !== '') {
+                this.eValue.appendChild(document.createTextNode(valueToRender));
+            }
         }
     }
 

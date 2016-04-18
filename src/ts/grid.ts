@@ -48,6 +48,7 @@ import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
 import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
+import {ValueFormatterService} from "./rendering/valueFormatterService";
 
 export class Grid {
 
@@ -92,7 +93,7 @@ export class Grid {
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
-                CellEditorFactory, CellRendererService],
+                CellEditorFactory, CellRendererService, ValueFormatterService],
             debug: !!gridOptions.debug
         });
 

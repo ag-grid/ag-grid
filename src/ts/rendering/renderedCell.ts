@@ -26,6 +26,7 @@ import {PopupService} from "../widgets/popupService";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
+import {ValueFormatterService} from "./valueFormatterService";
 
 export class RenderedCell extends Component {
 
@@ -49,6 +50,7 @@ export class RenderedCell extends Component {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
@@ -930,7 +932,7 @@ export class RenderedCell extends Component {
         if (!newData && this.cellRenderer && this.cellRenderer.refresh) {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
-            var params = this.createRendererAndRefreshParams(this.formatValue(this.value));
+            var params = this.createRendererAndRefreshParams(this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value));
             this.cellRenderer.refresh(params);
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
             this.addClassesFromRules();
@@ -957,35 +959,10 @@ export class RenderedCell extends Component {
         }
     }
 
-    private formatValue(value: any): string {
-        var formatter: (value:any)=>string;
-        var colDef = this.column.getColDef();
-        // if floating, give preference to the floating formatter
-        if (this.node.floating) {
-            formatter = colDef.floatingCellFormatter ? colDef.floatingCellFormatter : colDef.cellFormatter;
-        } else {
-            formatter = colDef.cellFormatter;
-        }
-        var result: string = null;
-        if (formatter) {
-            var params = {
-                value: value,
-                node: this.node,
-                column: this.column,
-                $scope: this.scope,
-                rowIndex: this.rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
-            result = formatter(params);
-        }
-        return result;
-    }
-
     private putDataIntoCell() {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
-        var valueFormatted = this.formatValue(this.value);
+        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
 
         if (colDef.template) {
             this.eParentOfValue.innerHTML = colDef.template;
@@ -1002,7 +979,7 @@ export class RenderedCell extends Component {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;
             if (_.exists(valueToRender) && valueToRender !== '') {
-                this.eParentOfValue.innerHTML = this.value.toString();
+                this.eParentOfValue.innerHTML = valueToRender.toString();
             }
         }
     }
@@ -1012,7 +989,7 @@ export class RenderedCell extends Component {
             value: this.value,
             valueFormatted: valueFormatted,
             valueGetter: this.getValue,
-            formatValue: this.formatValue.bind(this),
+            formatValue: this.valueFormatterService.formatValue.bind(this),
             data: this.node.data,
             node: this.node,
             colDef: this.column.getColDef(),
