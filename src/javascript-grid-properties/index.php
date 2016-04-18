@@ -57,7 +57,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>columnDefs</th>
-            <td>Array of Column Definitions..</td>
+            <td>Array of Column Definitions.</td>
         </tr>
         <tr>
             <th>headerHeight</th>
@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressAutoSize</th>
-            <td>If enableColResize=true suppressAutoSize suppressAutoSize=false, then double clicking the resize
+            <td>If enableColResize=true suppressAutoSize and suppressAutoSize=false, then double clicking the resize
                 bar in the header will not auto-size the column.</td>
         </tr>
         <tr>
@@ -113,7 +113,7 @@ include '../documentation-main/documentation_header.php';
                 and show sort icons, but the sorting will be deferred to your datasource.</td>
         </tr>
         <tr>
-            <td>suppressFieldDotNotation</td>
+            <th>suppressFieldDotNotation</th>
             <td>If true, then dots (eg address.firstline) in field names are not treated as deep references.
             Allows you to use dots in your field name if you prefer.</td>
         </tr>
