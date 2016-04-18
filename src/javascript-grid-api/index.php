@@ -81,7 +81,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>selectAll()</th>
-            <td>Select all rows (even rows that are not visible due to grouping being and their groups not expanded).</td>
+            <td>Select all rows (even rows that are not visible due to grouping being enabled and their groups not expanded).</td>
         </tr>
         <tr>
             <th>deselectAll()</th>
@@ -106,7 +106,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>refreshView()</th>
-            <td>Rip out and re-insert all visible rows. Handy has a blanket 'redraw all' if changes have been made to the row data.</td>
+            <td>Rip out and re-insert all visible rows. Handy as a blanket 'redraw all' if changes have been made to the row data.</td>
         </tr>
         <tr>
             <th>softRefreshView()</th>
