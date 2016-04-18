@@ -1,6 +1,6 @@
 import {Utils as _} from '../utils';
 import {Constants} from "../constants";
-import {Bean} from "../context/context";
+import {Bean, Autowired} from "../context/context";
 import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 
@@ -9,16 +9,18 @@ export class PopupService {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    private ePopupParent: any;
+    @Autowired('gridCore') private gridCore: GridCore;
 
-    public setPopupParent(ePopupParent: any): void {
-        this.ePopupParent = ePopupParent;
+    // this.popupService.setPopupParent(this.eRootPanel.getGui());
+
+    private getPopupParent(): HTMLElement {
+        return this.gridCore.getRootGui();
     }
 
     public positionPopupForMenu(params: {eventSource: any, ePopup: HTMLElement}) {
 
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
 
         var x = sourceRect.right - parentRect.left - 2;
         var y = sourceRect.top - parentRect.top;
@@ -48,7 +50,7 @@ export class PopupService {
                             mouseEvent: MouseEvent,
                             ePopup: HTMLElement}): void {
 
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -67,7 +69,7 @@ export class PopupService {
                             keepWithinBounds?: boolean}) {
 
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -89,7 +91,7 @@ export class PopupService {
         keepWithinBounds?: boolean}) {
 
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -111,7 +113,7 @@ export class PopupService {
                         y: number,
                         keepWithinBounds?: boolean}): void {
 
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
 
         var x = params.x;
         var y = params.y;
@@ -163,7 +165,7 @@ export class PopupService {
             return;
         }
 
-        this.ePopupParent.appendChild(eChild);
+        this.getPopupParent().appendChild(eChild);
 
         var that = this;
 
@@ -203,7 +205,7 @@ export class PopupService {
             }
             popupHidden = true;
 
-            that.ePopupParent.removeChild(eChild);
+            that.getPopupParent().removeChild(eChild);
             eBody.removeEventListener('keydown', hidePopupOnEsc);
             //eBody.removeEventListener('mousedown', hidePopupOnEsc);
             eBody.removeEventListener('click', hidePopup);

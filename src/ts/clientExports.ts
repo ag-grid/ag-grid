@@ -70,7 +70,7 @@ import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
 import {MenuItemComponent} from "./widgets/menuItemComponent";
 import {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCellRenderer";
-import {CellEditorFactory} from "./rendering/cellEditors/cellEditorFactory";
+import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {PopupEditorWrapper} from "./rendering/cellEditors/popupEditorWrapper";
 import {PopupSelectCellEditor} from "./rendering/cellEditors/popupSelectCellEditor";
 import {PopupTextCellEditor} from "./rendering/cellEditors/popupTextCellEditor";
@@ -81,6 +81,8 @@ import {VirtualList} from "./widgets/virtualList";
 import {RichSelectCellEditor} from "./rendering/cellEditors/richSelect/richSelectCellEditor";
 import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 import {CellRendererService} from "./rendering/cellRendererService";
+import {ValueFormatterService} from "./rendering/valueFormatterService";
+import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 
 export function populateClientExports(exports: any): void {
 
@@ -143,7 +145,7 @@ export function populateClientExports(exports: any): void {
     exports.VerticalStack = VerticalStack;
 
     // rendering / cellEditors
-    exports.CellEditorFactory = CellEditorFactory;
+    exports.DateCellEditor = DateCellEditor;
     exports.PopupEditorWrapper = PopupEditorWrapper;
     exports.PopupSelectCellEditor = PopupSelectCellEditor;
     exports.PopupTextCellEditor = PopupTextCellEditor;
@@ -157,11 +159,13 @@ export function populateClientExports(exports: any): void {
 
     // rendering
     exports.AutoWidthCalculator = AutoWidthCalculator;
+    exports.CellEditorFactory = CellEditorFactory;
     exports.RenderedHeaderCell = RenderedHeaderCell;
     exports.CellRendererFactory = CellRendererFactory;
     exports.CellRendererService = CellRendererService;
     exports.RenderedRow = RenderedRow;
     exports.RowRenderer = RowRenderer;
+    exports.ValueFormatterService = ValueFormatterService;
 
     // rowControllers/inMemory
     exports.FilterStage = FilterStage;

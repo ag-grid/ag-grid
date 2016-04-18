@@ -1,6 +1,5 @@
 import {Column} from "./column";
-import {Constants} from "../constants";
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {GridRow} from "./gridRow";
 
 export class GridCell {

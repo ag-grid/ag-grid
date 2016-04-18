@@ -99,8 +99,6 @@ export class GridCore {
         this.finished = false;
         this.periodicallyDoLayout();
 
-        this.popupService.setPopupParent(this.eRootPanel.getGui());
-
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onRowGroupChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
 
@@ -109,6 +107,10 @@ export class GridCore {
         this.logger.log('ready');
     }
 
+    public getRootGui(): HTMLElement {
+        return this.eRootPanel.getGui();
+    }
+    
     private createSouthPanel(): HTMLElement {
 
         if (!this.statusBar && this.gridOptionsWrapper.isEnableStatusBar()) {

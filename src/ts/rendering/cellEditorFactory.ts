@@ -1,18 +1,20 @@
-import {Bean, PostConstruct, Autowired, Context} from "../../context/context";
-import {Utils as _} from '../../utils';
-import {ICellEditor} from "./iCellEditor";
-import {TextCellEditor} from "./textCellEditor";
-import {SelectCellEditor} from "./selectCellEditor";
-import {PopupEditorWrapper} from "./popupEditorWrapper";
-import {PopupTextCellEditor} from "./popupTextCellEditor";
-import {PopupSelectCellEditor} from "./popupSelectCellEditor";
-import {RichSelectCellEditor} from "./richSelect/richSelectCellEditor";
+import {Bean, PostConstruct, Autowired, Context} from "../context/context";
+import {Utils as _} from '../utils';
+import {ICellEditor} from "./cellEditors/iCellEditor";
+import {TextCellEditor} from "./cellEditors/textCellEditor";
+import {SelectCellEditor} from "./cellEditors/selectCellEditor";
+import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
+import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
+import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
+import {RichSelectCellEditor} from "./cellEditors/richSelect/richSelectCellEditor";
+import {DateCellEditor} from "./cellEditors/dateCellEditor";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
 
     private static TEXT = 'text';
     private static SELECT = 'select';
+    private static DATE = 'date';
     private static POPUP_TEXT = 'popupText';
     private static POPUP_SELECT = 'popupSelect';
     private static RICH_SELECT = 'richSelect';
@@ -28,6 +30,7 @@ export class CellEditorFactory {
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
         this.cellEditorMap[CellEditorFactory.RICH_SELECT] = RichSelectCellEditor;
+        this.cellEditorMap[CellEditorFactory.DATE] = DateCellEditor;
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {

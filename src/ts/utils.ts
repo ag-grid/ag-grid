@@ -260,6 +260,40 @@ export class Utils {
         }
     }
 
+    static containsClass(element: any, className: string): boolean {
+        if (element.classList) {
+            // for modern browsers
+            return element.classList.contains(className);
+        } else if (element.className) {
+            // for older browsers, check against the string of class names
+            // if only one class, can check for exact match
+            var onlyClass = element.className === className;
+            // if many classes, check for class name, we have to pad with ' ' to stop other
+            // class names that are a substring of this class
+            var contains = element.className.indexOf(' ' + className + ' ') >= 0;
+            // the padding above then breaks when it's the first or last class names
+            var startsWithClass = element.className.indexOf(className + ' ')===0;
+            var endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length -1);
+            return onlyClass || contains || startsWithClass || endsWithClass;
+        } else {
+            // if item is not a node
+            return false;
+        }
+    }
+
+    static getElementAttribute(element: any, attributeName: string): string {
+        if (element.attributes) {
+            if (element.attributes[attributeName]) {
+                var attribute = element.attributes[attributeName];
+                return attribute.value;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    
     static offsetHeight(element: HTMLElement) {
         return element && element.clientHeight ? element.clientHeight : 0;
     }

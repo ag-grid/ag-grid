@@ -41,7 +41,7 @@ import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {FocusService} from "./misc/focusService";
-import {CellEditorFactory} from "./rendering/cellEditors/cellEditorFactory";
+import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events} from "./events";
 import {ViewportRowModel} from "./rowControllers/viewportRowModel";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";

@@ -20,7 +20,7 @@ import {IRangeController} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
 import {FocusService} from "../misc/focusService";
 import {ICellEditor} from "./cellEditors/iCellEditor";
-import {CellEditorFactory} from "./cellEditors/cellEditorFactory";
+import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
@@ -306,13 +306,22 @@ export class RenderedCell extends Component {
         var cellFocusedLastTime: boolean = null;
         var cellFocusedListener = (event?: any) => {
             var cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
+            // see if we need to change the classes on this cell
             if (cellFocused !== cellFocusedLastTime) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
                 cellFocusedLastTime = cellFocused;
             }
+
+            // if this cell was just focused, see if we need to force browser focus, his can
+            // happen if focus is programmatically set.
             if (cellFocused && event && event.forceBrowserFocus) {
                 this.eGridCell.focus();
+            }
+
+            // if another cell was focused, and we are editing, then stop editing
+            if (this.editingCell && !cellFocused) {
+                this.stopEditing();
             }
         };
         this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
@@ -349,7 +358,7 @@ export class RenderedCell extends Component {
         this.addCellFocusedListener();
         this.addKeyDownListener();
         this.addKeyPressListener();
-        this.addFocusListener();
+        // this.addFocusListener();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -438,36 +447,23 @@ export class RenderedCell extends Component {
         event.preventDefault();
     }
 
+/*
     private addFocusListener(): void {
         var that = this;
-        var focusListener = function(event: FocusEvent) {
-            if (that.editingCell &&!that.cellEditorInPopup && that.hasFocusLeftCell(event)) {
-                that.stopEditing();
-            }
+        var focusListener = (event: any) => {
+
+            // if the focus went into another cell, then we stop editing this cell
+            // if (that.editingCell &&!that.cellEditorInPopup && !that.gridCell.eq hasFocusLeftCell(event)) {
+            //     that.stopEditing();
+            // }
         };
-        this.focusService.addListener(focusListener);
-        this.addDestroyFunc( () => {
-            this.focusService.removeListener(focusListener);
-        });
+        // this.eventService.
+        // this.focusService.addListener(focusListener);
+        // this.addDestroyFunc( () => {
+        //     this.focusService.removeListener(focusListener);
+        // });
     }
-
-    private hasFocusLeftCell(event: FocusEvent): boolean {
-        // if the user clicks outside this cell, then relatedTarget
-        // will be the new cell (or outside the grid completely).
-        // to check if inside this cell, we walk up the DOM tree
-        // looking for our eGridCell, and if we don't find it,
-        // we know focus was lost to outside the cell.
-        var eTarget = <Node> event.target;
-        var found = false;
-        while (eTarget) {
-            if (eTarget === this.eGridCell) {
-                found = true;
-            }
-            eTarget = eTarget.parentNode;
-        }
-
-        return !found;
-    }
+*/
 
     private addKeyPressListener(): void {
         var that = this;

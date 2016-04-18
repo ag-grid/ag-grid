@@ -63,8 +63,8 @@ export * from './dist/lib/layout/verticalStack';
 
 export * from './dist/lib/rendering/cellEditors/richSelect/richSelectCellEditor';
 
+export * from './dist/lib/rendering/cellEditors/dateCellEditor';
 export * from './dist/lib/rendering/cellEditors/iCellEditor';
-export * from './dist/lib/rendering/cellEditors/cellEditorFactory';
 export * from './dist/lib/rendering/cellEditors/popupEditorWrapper';
 export * from './dist/lib/rendering/cellEditors/popupSelectCellEditor';
 export * from './dist/lib/rendering/cellEditors/popupTextCellEditor';
@@ -81,6 +81,8 @@ export * from './dist/lib/rendering/renderedRow';
 export * from './dist/lib/rendering/rowRenderer';
 export * from './dist/lib/rendering/cellRendererFactory';
 export * from './dist/lib/rendering/cellRendererService';
+export * from './dist/lib/rendering/cellEditorFactory';
+export * from './dist/lib/rendering/valueFormatterService';
 
 export * from './dist/lib/rowControllers/inMemory/fillterStage';
 export * from './dist/lib/rowControllers/inMemory/flattenStage';
