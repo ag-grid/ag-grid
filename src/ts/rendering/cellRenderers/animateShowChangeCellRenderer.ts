@@ -36,15 +36,18 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     public showDelta(params: any, delta: number): void {
 
-        var valueFormatted = params.formatValue(Math.abs(delta));
+        var absDelta = Math.abs(delta);
+        var valueFormatted = params.formatValue(absDelta);
+
+        var valueToUse = _.exists(valueFormatted) ? valueFormatted : absDelta;
 
         var deltaUp = (delta >= 0);
 
         if (deltaUp) {
-            this.eDelta.innerHTML = ARROW_UP + valueFormatted;
+            this.eDelta.innerHTML = ARROW_UP + valueToUse;
         } else {
             // because negative, use ABS to remove sign
-            this.eDelta.innerHTML = ARROW_DOWN + valueFormatted;
+            this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
         }
 
         // class makes it green (in ag-fresh)

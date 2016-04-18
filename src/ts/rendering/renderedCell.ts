@@ -928,7 +928,8 @@ export class RenderedCell extends Component {
         if (!newData && this.cellRenderer && this.cellRenderer.refresh) {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
-            var params = this.createRendererAndRefreshParams(this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value));
+            var valueFormatted = this.formatValue(this.value);
+            var params = this.createRendererAndRefreshParams(valueFormatted);
             this.cellRenderer.refresh(params);
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
             this.addClassesFromRules();
@@ -980,12 +981,16 @@ export class RenderedCell extends Component {
         }
     }
 
+    private formatValue(value: any): any {
+        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, value);
+    }
+
     private createRendererAndRefreshParams(valueFormatted: string): any {
         var params = {
             value: this.value,
             valueFormatted: valueFormatted,
             valueGetter: this.getValue,
-            formatValue: this.valueFormatterService.formatValue.bind(this),
+            formatValue: this.formatValue.bind(this),
             data: this.node.data,
             node: this.node,
             colDef: this.column.getColDef(),
