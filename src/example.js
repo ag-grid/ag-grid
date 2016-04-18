@@ -189,8 +189,8 @@ var gridOptions = {
     },
     // isScrollLag: function() { return false; },
     //suppressScrollLag: true,
-    floatingTopRowData: [{},{},{}],
-    floatingBottomRowData: [{},{},{}],
+    // floatingTopRowData: [{},{},{}],
+    // floatingBottomRowData: [{},{},{}],
     // callback when row clicked
     onRowClicked: function(params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
@@ -273,12 +273,12 @@ var firstColumn = {
 //};
 
 var defaultCols = [
-    {
-        headerName: 'Test Date',
-        editable: true,
-        cellEditor: 'date',
-        field: 'testDate'
-    },
+    // {
+    //     headerName: 'Test Date',
+    //     editable: true,
+    //     cellEditor: 'date',
+    //     field: 'testDate'
+    // },
     //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
     {
         // column group 'Participant
