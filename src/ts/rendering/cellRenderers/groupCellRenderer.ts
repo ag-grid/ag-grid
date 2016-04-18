@@ -172,7 +172,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private addCheckboxIfNeeded(params: any): void {
-        var checkboxNeeded = params.checkbox && !this.rowNode.footer;
+        var checkboxNeeded = params.checkbox && !this.rowNode.footer &&!this.rowNode.floating;
         if (checkboxNeeded) {
             var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.rowNode, params.addRenderedRowListener);
             this.eCheckbox.appendChild(eCheckbox);
