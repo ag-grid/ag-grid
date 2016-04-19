@@ -90,22 +90,25 @@
   padding: 16px 24px;
   font-weight: 500;
 }
-.ag-material .ag-root .ag-selection-checkbox {
+.ag-material .ag-root .ag-body .ag-cell:first-child {
+  padding-right: 0px;
+}
+.ag-material .ag-selection-checkbox {
   margin: -1px 0px;
   cursor: pointer;
   height: 18px;
   width: 18px;
 }
-.ag-material .ag-root .ag-selection-checkbox:focus {
+.ag-material .ag-selection-checkbox:focus {
   outline: none;
 }
-.ag-material .ag-root .ag-selection-checkbox + .ag-cell-value {
+.ag-material .ag-selection-checkbox + .ag-cell-value {
   position: absolute;
   left: 24px;
   top: 15px;
   pointer-events: none;
 }
-.ag-material .ag-root .ag-selection-checkbox + .ag-cell-value:before {
+.ag-material .ag-selection-checkbox + .ag-cell-value:before {
   width: 18px;
   height: 18px;
   border: 2px solid #757575;
@@ -123,11 +126,11 @@
   -ms-transition: 0.2s all ease-in;
   transition: 0.2s all ease-in;
 }
-.ag-material .ag-root .ag-selection-checkbox:checked + .ag-cell-value:before {
+.ag-material .ag-selection-checkbox:checked + .ag-cell-value:before {
   background: #ff4081;
   border-color: #ff4081;
 }
-.ag-material .ag-root .ag-selection-checkbox:checked + .ag-cell-value:after {
+.ag-material .ag-selection-checkbox:checked + .ag-cell-value:after {
   border-bottom: 2px solid #fff;
   border-left: 2px solid #fff;
   border-bottom-left-radius: 1px;
@@ -144,4 +147,7 @@
   -o-transform: rotate(-45deg);
   -ms-transform: rotate(-45deg);
   transform: rotate(-45deg);
+}
+.ag-material .ag-header .ag-selection-checkbox + .ag-cell-value {
+  top: 19px;
 }

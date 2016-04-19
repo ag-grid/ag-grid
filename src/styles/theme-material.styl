@@ -80,45 +80,55 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
               outline: none
               padding: 16px 24px 
               font-weight: 500
+          
+          .ag-cell:first-child
+              padding-right: 0px
               
-      .ag-selection-checkbox
-          margin: -1px 0px
-          cursor: pointer
-          height: 18px;
-          width: 18px;
-          
-      .ag-selection-checkbox:focus
-          outline: none
-          
-      .ag-selection-checkbox + .ag-cell-value
-          position: absolute;
-          left: 24px;
-          top: 15px;
-          pointer-events: none;  
-          
-      .ag-selection-checkbox + .ag-cell-value:before 
-          width: 18px
-          height: 18px
-          border: 2px solid #757575
-          border-radius: 2px
-          content: ''
-          background: #fff
-          position: absolute
-          box-sizing: border-box
-          transition: 0.2s all ease-in
-          
-        .ag-selection-checkbox:checked + .ag-cell-value:before 
-          background: secondary-color
-          border-color: secondary-color
+    .ag-selection-checkbox
+        margin: -1px 0px
+        cursor: pointer
+        height: 18px;
+        width: 18px;
         
-        .ag-selection-checkbox:checked + .ag-cell-value:after 
-          border-bottom : 2px solid #fff
-          border-left: 2px solid #fff
-          border-bottom-left-radius: 1px
-          content: ''
-          position: absolute
-          box-sizing: border-box
-          width: 12px;
-          height: 6px;
-          margin: 5px 3px;
-          transform: rotate(-45deg)
+    .ag-selection-checkbox:focus
+        outline: none
+        
+    .ag-selection-checkbox + .ag-cell-value
+        position: absolute;
+        left: 24px;
+        top: 15px;
+        pointer-events: none;  
+        
+    .ag-selection-checkbox + .ag-cell-value:before 
+        width: 18px
+        height: 18px
+        border: 2px solid #757575
+        border-radius: 2px
+        content: ''
+        background: #fff
+        position: absolute
+        box-sizing: border-box
+        transition: 0.2s all ease-in
+        
+    .ag-selection-checkbox:checked + .ag-cell-value:before 
+        background: secondary-color
+        border-color: secondary-color
+    
+    .ag-selection-checkbox:checked + .ag-cell-value:after 
+        border-bottom : 2px solid #fff
+        border-left: 2px solid #fff
+        border-bottom-left-radius: 1px
+        content: ''
+        position: absolute
+        box-sizing: border-box
+        width: 12px
+        height: 6px
+        margin: 5px 3px
+        transform: rotate(-45deg)
+        
+     .ag-header
+     
+        .ag-selection-checkbox + .ag-cell-value
+            top: 19px
+            
+     
