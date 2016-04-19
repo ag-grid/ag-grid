@@ -49,6 +49,7 @@ include '../documentation-main/documentation_header.php';
     api: GridApi, // the grid API
     columnApi: ColumnAPI, // the column API
     context: any // the grid context
+    defaultItems: 
 }</pre>
     </p>
 
