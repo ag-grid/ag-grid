@@ -76,22 +76,13 @@
             </div>
             <h3>Sean Landsman</h3>
             <p>
-                Sean is a dick
+                Sean is an experienced full stack developer with an extensive background in enterprise solutions. Over
+                19 years in the industry has taught him the value of quality code and good team collaboration. The bulk
+                of his background is on the server side, but like Niall is increasingly switching focus to include front end
+                technologies.
             </p>
         </div>
-
-        <div class="col-md-4">
-            <div>
-                <img src='images/alberto.png'/>
-            </div>
-            <h3>Alberto Gutierrez</h3>
-            <p>
-                Alberto is a Mexican
-            </p>
-        </div>
-
     </div> <!-- end row -->
-
 </div>
 
 
