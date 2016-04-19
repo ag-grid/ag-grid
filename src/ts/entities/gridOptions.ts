@@ -202,6 +202,7 @@ export interface NodeChildDetails {
 }
 
 export interface GetContextMenuItemsParams {
+    defaultItems: [string],
     column: Column,
     node: RowNode,
     value: any,
