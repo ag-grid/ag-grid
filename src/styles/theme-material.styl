@@ -90,7 +90,13 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
       .ag-selection-checkbox:focus
           outline: none
           
-      .ag-selection-checkbox:before
+      .ag-selection-checkbox + .ag-cell-value
+          position: absolute;
+          left: 24px;
+          top: 15px;
+          pointer-events: none;  
+          
+      .ag-selection-checkbox + .ag-cell-value:before 
           width: 18px
           height: 18px
           border: 2px solid #757575
@@ -101,11 +107,11 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
           box-sizing: border-box
           transition: 0.2s all ease-in
           
-        .ag-selection-checkbox:checked:before
+        .ag-selection-checkbox:checked + .ag-cell-value:before 
           background: secondary-color
           border-color: secondary-color
         
-        .ag-selection-checkbox:checked:after
+        .ag-selection-checkbox:checked + .ag-cell-value:after 
           border-bottom : 2px solid #fff
           border-left: 2px solid #fff
           border-bottom-left-radius: 1px

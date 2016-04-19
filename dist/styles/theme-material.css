@@ -99,7 +99,13 @@
 .ag-material .ag-root .ag-selection-checkbox:focus {
   outline: none;
 }
-.ag-material .ag-root .ag-selection-checkbox:before {
+.ag-material .ag-root .ag-selection-checkbox + .ag-cell-value {
+  position: absolute;
+  left: 24px;
+  top: 15px;
+  pointer-events: none;
+}
+.ag-material .ag-root .ag-selection-checkbox + .ag-cell-value:before {
   width: 18px;
   height: 18px;
   border: 2px solid #757575;
@@ -117,11 +123,11 @@
   -ms-transition: 0.2s all ease-in;
   transition: 0.2s all ease-in;
 }
-.ag-material .ag-root .ag-selection-checkbox:checked:before {
+.ag-material .ag-root .ag-selection-checkbox:checked + .ag-cell-value:before {
   background: #ff4081;
   border-color: #ff4081;
 }
-.ag-material .ag-root .ag-selection-checkbox:checked:after {
+.ag-material .ag-root .ag-selection-checkbox:checked + .ag-cell-value:after {
   border-bottom: 2px solid #fff;
   border-left: 2px solid #fff;
   border-bottom-left-radius: 1px;
