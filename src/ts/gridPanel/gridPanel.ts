@@ -1,30 +1,24 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {MasterSlaveService} from "../masterSlaveService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {RowRenderer} from "../rendering/rowRenderer";
 import {FloatingRowModel} from "../rowControllers/floatingRowModel";
 import {BorderLayout} from "../layout/borderLayout";
-import {Logger} from "../logger";
-import {LoggerFactory} from "../logger";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {Autowired} from "../context/context";
+import {Logger, LoggerFactory} from "../logger";
+import {Bean, Qualifier, Autowired, PostConstruct, Optional} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {MoveColumnController} from "../headerRendering/moveColumnController";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
-import {PostConstruct} from "../context/context";
 import {DragService} from "../dragAndDrop/dragService";
-import {Column} from "../entities/column";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {SelectionController} from "../selectionController";
 import {CsvCreator} from "../csvCreator";
-import {Optional} from "../context/context";
 import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
+import {FocusedCellController} from "../focusedCellController";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -109,6 +103,7 @@ export class GridPanel {
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
+    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -212,8 +207,10 @@ export class GridPanel {
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
     private disableBrowserDragging(): void {
         this.eRoot.addEventListener('dragstart', (event: MouseEvent)=> {
-            event.preventDefault();
-            return false;
+            if (event.target instanceof HTMLImageElement) {
+                event.preventDefault();
+                return false;
+            }
         });
     }
 
@@ -256,18 +253,22 @@ export class GridPanel {
 
     private addCellListeners(): void {
         var eventNames = ['click','mousedown','dblclick','contextmenu'];
+        var that = this;
         eventNames.forEach( eventName => {
             this.eAllCellContainers.forEach( container =>
-                container.addEventListener(eventName, this.processMouseEvent.bind(this, eventName))
+                container.addEventListener(eventName, function(mouseEvent: MouseEvent) {
+                    var eventSource: HTMLElement = this;
+                    that.processMouseEvent(eventName, mouseEvent, eventSource);
+                })
             )
         });
     }
 
-    private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+    private processMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
         if (_.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
-            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
+            this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
         }
     }
 
@@ -279,6 +280,7 @@ export class GridPanel {
                         case Constants.KEY_A: return this.onCtrlAndA(event);
                         case Constants.KEY_C: return this.onCtrlAndC(event);
                         case Constants.KEY_V: return this.onCtrlAndV(event);
+                        case Constants.KEY_D: return this.onCtrlAndD(event);
                     }
                 }
             });
@@ -322,18 +324,36 @@ export class GridPanel {
 
     private onCtrlAndC(event: KeyboardEvent): boolean {
         if (!this.clipboardService) { return; }
+
+        var focusedCell = this.focusedCellController.getFocusedCell();
+
         this.clipboardService.copyToClipboard();
         event.preventDefault();
+
+        // the copy operation results in loosing focus on the cell,
+        // because of the trickery the copy logic uses with a temporary
+        // widget. so we set it back again.
+        if (focusedCell) {
+            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        }
+
         return false;
     }
 
     private onCtrlAndV(event: KeyboardEvent): boolean {
-        if (!this.clipboardService) { return; }
+        if (!this.rangeController) { return; }
+
         this.clipboardService.pasteFromClipboard();
-        //event.preventDefault();
         return false;
     }
 
+    private onCtrlAndD(event: KeyboardEvent): boolean {
+        if (!this.clipboardService) { return; }
+        this.clipboardService.copyRangeDown();
+        event.preventDefault();
+        return false;
+    }
+    
     public getPinnedLeftFloatingTop(): HTMLElement {
         return this.ePinnedLeftFloatingTop;
     }
@@ -703,23 +723,19 @@ export class GridPanel {
     }
 
     private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
-        var delta: number;
-        if (event.deltaY && event.deltaX != 0) {
-            // tested on chrome
-            delta = event.deltaY;
-        } else if (event.wheelDelta && event.wheelDelta != 0) {
-            // tested on IE
-            delta = -event.wheelDelta;
-        } else if (event.detail && event.detail != 0) {
-            // tested on Firefox. Firefox appears to be slower, 20px rather than the 100px in Chrome and IE
-            delta = event.detail * 20;
-        } else {
-            // couldn't find delta
-            return;
-        }
+        var wheelEvent = _.normalizeWheel(event);
 
-        var newTopPosition = this.eBodyViewport.scrollTop + delta;
-        targetPanel.scrollTop = newTopPosition;
+        // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally
+        // horizontal scroll
+        if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
+            var newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
+            this.eBodyViewport.scrollLeft = newLeftPosition;
+        }
+        // vertical scroll
+        else {
+            var newTopPosition = this.eBodyViewport.scrollTop + wheelEvent.pixelY;
+            targetPanel.scrollTop = newTopPosition;
+        }
 
         // if we don't prevent default, then the whole browser will scroll also as well as the grid
         event.preventDefault();

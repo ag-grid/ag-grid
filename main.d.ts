@@ -1,6 +1,4 @@
 
-export * from './dist/lib/cellRenderers/groupCellRendererFactory';
-
 export * from './dist/lib/columnController/balancedColumnTreeBuilder';
 export * from './dist/lib/columnController/columnController';
 export * from './dist/lib/columnController/columnKeyCreator';
@@ -57,29 +55,50 @@ export * from './dist/lib/interfaces/iMenuFactory';
 export * from './dist/lib/interfaces/iRangeController';
 export * from './dist/lib/interfaces/iRowModel';
 export * from './dist/lib/interfaces/iRowNodeStage';
+export * from './dist/lib/interfaces/iViewportDatasource';
 
 export * from './dist/lib/layout/borderLayout';
 export * from './dist/lib/layout/tabbedLayout';
 export * from './dist/lib/layout/verticalStack';
 
+export * from './dist/lib/rendering/cellEditors/richSelect/richSelectCellEditor';
+
+export * from './dist/lib/rendering/cellEditors/dateCellEditor';
+export * from './dist/lib/rendering/cellEditors/iCellEditor';
+export * from './dist/lib/rendering/cellEditors/popupEditorWrapper';
+export * from './dist/lib/rendering/cellEditors/popupSelectCellEditor';
+export * from './dist/lib/rendering/cellEditors/popupTextCellEditor';
+export * from './dist/lib/rendering/cellEditors/selectCellEditor';
+export * from './dist/lib/rendering/cellEditors/textCellEditor';
+
+export * from './dist/lib/rendering/cellRenderers/iCellRenderer';
+export * from './dist/lib/rendering/cellRenderers/animateSlideCellRenderer';
+export * from './dist/lib/rendering/cellRenderers/groupCellRenderer';
+
 export * from './dist/lib/rendering/autoWidthCalculator';
 export * from './dist/lib/rendering/renderedCell';
 export * from './dist/lib/rendering/renderedRow';
 export * from './dist/lib/rendering/rowRenderer';
+export * from './dist/lib/rendering/cellRendererFactory';
+export * from './dist/lib/rendering/cellRendererService';
+export * from './dist/lib/rendering/cellEditorFactory';
+export * from './dist/lib/rendering/valueFormatterService';
 
 export * from './dist/lib/rowControllers/inMemory/fillterStage';
 export * from './dist/lib/rowControllers/inMemory/flattenStage';
-export * from './dist/lib/rowControllers/inMemory/inMemoryRowController';
+export * from './dist/lib/rowControllers/inMemory/inMemoryRowModel';
 export * from './dist/lib/rowControllers/inMemory/sortStage';
 
 export * from './dist/lib/rowControllers/floatingRowModel';
 export * from './dist/lib/rowControllers/paginationController';
-export * from './dist/lib/rowControllers/virtualPageRowController';
+export * from './dist/lib/rowControllers/viewportRowModel';
+export * from './dist/lib/rowControllers/virtualPageRowModel';
 
-export * from './dist/lib/widgets/popupService';
-export * from './dist/lib/widgets/cMenuItem';
+export * from './dist/lib/widgets/menuItemComponent';
 export * from './dist/lib/widgets/component';
 export * from './dist/lib/widgets/menuList';
+export * from './dist/lib/widgets/popupService';
+export * from './dist/lib/widgets/virtualList';
 
 export * from './dist/lib/cellNavigationService';
 export * from './dist/lib/clientExports';

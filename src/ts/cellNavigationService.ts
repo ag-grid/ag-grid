@@ -1,11 +1,9 @@
-import {Bean} from "./context/context";
+import {Bean, Autowired} from "./context/context";
 import {Constants} from "./constants";
-import {Autowired} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {IRowModel} from "./interfaces/iRowModel";
-import {Column} from "./entities/column";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
-import {Utils as _} from './utils';
+import {Utils as _} from "./utils";
 import {GridRow} from "./entities/gridRow";
 import {GridCell} from "./entities/gridCell";
 
@@ -75,7 +73,11 @@ export class CellNavigationService {
 
     private getCellBelow(lastCell: GridCell): GridCell {
         var rowBelow = this.getRowBelow(lastCell.getGridRow());
-        return new GridCell(rowBelow.rowIndex, rowBelow.floating, lastCell.column);
+        if (rowBelow) {
+            return new GridCell(rowBelow.rowIndex, rowBelow.floating, lastCell.column);
+        } else {
+            return null;
+        }
     }
 
     private isLastRowInContainer(gridRow: GridRow): boolean {
@@ -121,7 +123,11 @@ export class CellNavigationService {
 
     private getCellAbove(lastCell: GridCell): GridCell {
         var rowAbove = this.getRowAbove(lastCell.getGridRow());
-        return new GridCell(rowAbove.rowIndex, rowAbove.floating, lastCell.column);
+        if (rowAbove) {
+            return new GridCell(rowAbove.rowIndex, rowAbove.floating, lastCell.column);
+        } else {
+            return null;
+        }
     }
 
     private getLastBodyCell(): GridRow {
@@ -134,6 +140,14 @@ export class CellNavigationService {
         return new GridRow(lastFloatingRow, Constants.FLOATING_TOP);
     }
 
+    public getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell {
+        if (backwards) {
+            return this.getNextTabbedCellBackwards(gridCell);
+        } else {
+            return this.getNextTabbedCellForwards(gridCell);
+        }
+    }
+    
     public getNextTabbedCellForwards(gridCell: GridCell): GridCell {
 
         var displayedColumns = this.columnController.getAllDisplayedColumns();

@@ -1,6 +1,5 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Grid} from "../grid";
 import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ExpressionService} from "../expressionService";
@@ -9,27 +8,19 @@ import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {FloatingRowModel} from "../rowControllers/floatingRowModel";
 import {RenderedRow} from "./renderedRow";
-import {groupCellRendererFactory} from "../cellRenderers/groupCellRendererFactory";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events} from "../events";
 import {Constants} from "../constants";
-import {ColDef} from "../entities/colDef";
 import {RenderedCell} from "./renderedCell";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
+import {Bean, PreDestroy, Qualifier, Context, Autowired, PostConstruct, Optional} from "../context/context";
 import {GridCore} from "../gridCore";
 import {ColumnController} from "../columnController/columnController";
-import {Context} from "../context/context";
-import {Autowired} from "../context/context";
-import {Logger} from "../logger";
-import {LoggerFactory} from "../logger";
+import {Logger, LoggerFactory} from "../logger";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
-import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
-import {Optional} from "../context/context";
 import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
 
@@ -56,8 +47,8 @@ export class RowRenderer {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
 
     private cellRendererMap: {[key: string]: any};
-    private firstVirtualRenderedRow: number;
-    private lastVirtualRenderedRow: number;
+    private firstRenderedRow: number;
+    private lastRenderedRow: number;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
@@ -82,17 +73,13 @@ export class RowRenderer {
 
     private logger: Logger;
 
+    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = this.loggerFactory.create('RowRenderer');
+        this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
+    }
+
     @PostConstruct
     public init(): void {
-        this.logger = this.loggerFactory.create('RowRenderer');
-
-        this.cellRendererMap = {
-            'group': groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService),
-            'default': function(params: any) {
-                return params.value;
-            }
-        };
-
         this.getContainersFromGridPanel();
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnEvent.bind(this));
@@ -267,7 +254,7 @@ export class RowRenderer {
         this.drawVirtualRows();
     }
 
-    public refreshCells(rowNodes: RowNode[], colIds: string[]): void {
+    public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
         if (!rowNodes || rowNodes.length==0) {
             return;
         }
@@ -276,7 +263,7 @@ export class RowRenderer {
         _.iterateObject(this.renderedRows, (key: string, renderedRow: RenderedRow)=> {
             var rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode)>=0) {
-                renderedRow.refreshCells(colIds);
+                renderedRow.refreshCells(colIds, animate);
             }
         });
     }
@@ -299,7 +286,8 @@ export class RowRenderer {
         this.drawVirtualRows();
     }
 
-    public agDestroy() {
+    @PreDestroy
+    private destroy() {
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRow(rowsToRemove);
     }
@@ -359,50 +347,61 @@ export class RowRenderer {
 
     public workOutFirstAndLastRowsToRender(): void {
 
+        var newFirst: number;
+        var newLast: number;
+
         if (!this.rowModel.isRowsToRender()) {
-            this.firstVirtualRenderedRow = 0;
-            this.lastVirtualRenderedRow = -1; // setting to -1 means nothing in range
-            return;
-        }
-
-        var rowCount = this.rowModel.getRowCount();
-
-        if (this.gridOptionsWrapper.isForPrint()) {
-            this.firstVirtualRenderedRow = 0;
-            this.lastVirtualRenderedRow = rowCount;
+            newFirst = 0;
+            newLast = -1; // setting to -1 means nothing in range
         } else {
+            var rowCount = this.rowModel.getRowCount();
 
-            var topPixel = this.eBodyViewport.scrollTop;
-            var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
+            if (this.gridOptionsWrapper.isForPrint()) {
+                newFirst = 0;
+                newLast = rowCount;
+            } else {
 
-            var first = this.rowModel.getRowAtPixel(topPixel);
-            var last = this.rowModel.getRowAtPixel(bottomPixel);
+                var topPixel = this.eBodyViewport.scrollTop;
+                var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
 
-            //add in buffer
-            var buffer = this.gridOptionsWrapper.getRowBuffer();
-            first = first - buffer;
-            last = last + buffer;
+                var first = this.rowModel.getRowIndexAtPixel(topPixel);
+                var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
 
-            // adjust, in case buffer extended actual size
-            if (first < 0) {
-                first = 0;
+                //add in buffer
+                var buffer = this.gridOptionsWrapper.getRowBuffer();
+                first = first - buffer;
+                last = last + buffer;
+
+                // adjust, in case buffer extended actual size
+                if (first < 0) {
+                    first = 0;
+                }
+                if (last > rowCount - 1) {
+                    last = rowCount - 1;
+                }
+
+                newFirst = first;
+                newLast = last;
             }
-            if (last > rowCount - 1) {
-                last = rowCount - 1;
-            }
-
-            this.firstVirtualRenderedRow = first;
-            this.lastVirtualRenderedRow = last;
         }
 
+        var firstDiffers = newFirst !== this.firstRenderedRow;
+        var lastDiffers = newLast !== this.lastRenderedRow;
+        if (firstDiffers || lastDiffers) {
+            this.firstRenderedRow = newFirst;
+            this.lastRenderedRow = newLast;
+
+            var event = {firstRow: newFirst, lastRow: newLast};
+            this.eventService.dispatchEvent(Events.EVENT_VIEWPORT_CHANGED, event);
+        }
     }
 
     public getFirstVirtualRenderedRow() {
-        return this.firstVirtualRenderedRow;
+        return this.firstRenderedRow;
     }
 
     public getLastVirtualRenderedRow() {
-        return this.lastVirtualRenderedRow;
+        return this.lastRenderedRow;
     }
 
     private ensureRowsRendered() {
@@ -413,7 +412,7 @@ export class RowRenderer {
         var rowsToRemove = Object.keys(this.renderedRows);
 
         // add in new rows
-        for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
+        for (var rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
@@ -439,7 +438,7 @@ export class RowRenderer {
         //console.log(end-start);
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void {
         var renderedRow: RenderedRow;
         switch (cell.floating) {
             case Constants.FLOATING_TOP:
@@ -453,7 +452,7 @@ export class RowRenderer {
                 break;
         }
         if (renderedRow) {
-            renderedRow.onMouseEvent(eventName, mouseEvent, cell);
+            renderedRow.onMouseEvent(eventName, mouseEvent, eventSource, cell);
         }
     }
 
@@ -515,7 +514,10 @@ export class RowRenderer {
             this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
         }
 
-        this.gridPanel.ensureColumnVisible(nextCell.column);
+        if (!nextCell.column.isPinned()) {
+            this.gridPanel.ensureColumnVisible(nextCell.column);
+        }
+
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
         this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
@@ -526,57 +528,74 @@ export class RowRenderer {
         }
     }
 
+    private getComponentForCell(gridCell: GridCell): RenderedCell {
+        var rowComponent: RenderedRow;
+        switch (gridCell.floating) {
+            case Constants.FLOATING_TOP:
+                rowComponent = this.renderedTopFloatingRows[gridCell.rowIndex];
+                break;
+            case Constants.FLOATING_BOTTOM:
+                rowComponent = this.renderedBottomFloatingRows[gridCell.rowIndex];
+                break;
+            default:
+                rowComponent = this.renderedRows[gridCell.rowIndex];
+                break;
+        }
+
+        if (!rowComponent) {
+            return null;
+        }
+
+        var cellComponent: RenderedCell = rowComponent.getRenderedCellForColumn(gridCell.column);
+        return cellComponent;
+    }
+
     // called by the cell, when tab is pressed while editing
-    public startEditingNextCell(rowIndex: any, column: any, floating: string, shiftKey: any) {
+    public moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean) {
 
         var nextCell = new GridCell(rowIndex, floating, column);
 
         while (true) {
 
-            if (shiftKey) {
-                nextCell = this.cellNavigationService.getNextTabbedCellBackwards(nextCell);
-            } else {
-                nextCell = this.cellNavigationService.getNextTabbedCellForwards(nextCell);
-            }
+            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
+            var nextRenderedCell = this.getComponentForCell(nextCell);
 
-            var nextRenderedRow: RenderedRow;
-            switch (nextCell.floating) {
-                case Constants.FLOATING_TOP:
-                    nextRenderedRow = this.renderedTopFloatingRows[nextCell.rowIndex];
-                    break;
-                case Constants.FLOATING_BOTTOM:
-                    nextRenderedRow = this.renderedBottomFloatingRows[nextCell.rowIndex];
-                    break;
-                default:
-                    nextRenderedRow = this.renderedRows[nextCell.rowIndex];
-                    break;
-            }
-            if (!nextRenderedRow) {
-                // this happens if we are on floating row and try to jump to body
+            // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
+            // so bottom right cell going forwards, or top left going backwards
+            if (!nextRenderedCell) {
                 return;
             }
 
-            var nextRenderedCell: RenderedCell = nextRenderedRow.getRenderedCellForColumn(nextCell.column);
+            // if editing, but cell not editable, skip cell
+            if (startEditing && !nextRenderedCell.isCellEditable()) {
+                continue;
+            }
 
-            if (nextRenderedCell.isCellEditable()) {
+            // this scrolls the row into view
+            var cellIsNotFloating = _.missing(nextCell.floating);
+            if (cellIsNotFloating) {
+                this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
+            }
 
-                // this scrolls the row into view
-                if (_.missing(nextCell.floating)) {
-                    this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
-                }
+            this.gridPanel.ensureColumnVisible(nextCell.column);
+            // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
+            // floating cell, the scrolls get out of sync
+            this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
 
-                this.gridPanel.ensureColumnVisible(nextCell.column);
-                // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
-                // floating cell, the scrolls get out of sync
-                this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
-
-                nextRenderedCell.startEditing();
+            if (startEditing) {
+                nextRenderedCell.startEditingIfEnabled();
                 nextRenderedCell.focusCell(false);
-                if (this.rangeController) {
-                    this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
-                }
-                return;
+            } else {
+                nextRenderedCell.focusCell(true);
             }
+
+            // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
+            // consistent, we set into range here also.
+            if (this.rangeController) {
+                this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+            }
+
+            return;
         }
     }
 }

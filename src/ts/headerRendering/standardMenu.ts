@@ -13,11 +13,29 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('filterManager')
+    private filterManager:FilterManager;
+    @Autowired('popupService')
+    private popupService:PopupService;
+    @Autowired('gridOptionsWrapper')
+    private gridOptionsWrapper:GridOptionsWrapper;
 
-    public showMenu(column: Column, eventSource: HTMLElement): void {
+    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent): void {
+        this.showPopup(column, (eMenu: HTMLElement) => {
+            this.popupService.positionPopupUnderMouseEvent({
+                mouseEvent: mouseEvent,
+                ePopup: eMenu
+            });
+        });
+    }
+
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void {
+        this.showPopup(column, (eMenu: HTMLElement) => {
+            this.popupService.positionPopupUnderComponent({eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true});
+        });
+    }
+
+    public showPopup(column: Column,  positionCallback: (eMenu: HTMLElement)=>void): void {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
 
         var eMenu = document.createElement('div');
@@ -27,12 +45,11 @@ export class StandardMenuFactory implements IMenuFactory {
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         var hidePopup = this.popupService.addAsModalPopup(eMenu, true);
-        this.popupService.positionPopupUnderComponent({eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true});
+        positionCallback(eMenu);
 
         if (filterWrapper.filter.afterGuiAttached) {
             var params = {
-                hidePopup: hidePopup,
-                eventSource: eventSource
+                hidePopup: hidePopup
             };
             filterWrapper.filter.afterGuiAttached(params);
         }

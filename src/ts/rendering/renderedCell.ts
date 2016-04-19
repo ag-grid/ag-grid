@@ -1,4 +1,4 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
@@ -6,26 +6,31 @@ import {ExpressionService} from "../expressionService";
 import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {RowRenderer} from "./rowRenderer";
 import {TemplateService} from "../templateService";
-import {ColumnController} from "../columnController/columnController";
+import {ColumnController, ColumnApi} from "../columnController/columnController";
 import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
 import {Events} from "../events";
 import {RenderedRow} from "./renderedRow";
-import {Qualifier} from "../context/context";
-import {Autowired} from "../context/context";
-import {ColumnApi} from "../columnController/columnController";
+import {Autowired, PostConstruct, Optional, Context} from "../context/context";
 import {GridApi} from "../gridApi";
-import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
-import {Optional} from "../context/context";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {RangeSelection} from "../interfaces/iRangeController";
-import {GridCell} from "../entities/gridCell";
 import {IRangeController} from "../interfaces/iRangeController";
+import {GridCell} from "../entities/gridCell";
+import {FocusService} from "../misc/focusService";
+import {ICellEditor} from "./cellEditors/iCellEditor";
+import {CellEditorFactory} from "./cellEditorFactory";
+import {Component} from "../widgets/component";
+import {PopupService} from "../widgets/popupService";
+import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {CellRendererFactory} from "./cellRendererFactory";
+import {CellRendererService} from "./cellRendererService";
+import {ValueFormatterService} from "./valueFormatterService";
 
-export class RenderedCell {
+export class RenderedCell extends Component {
 
+    @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -40,31 +45,42 @@ export class RenderedCell {
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Autowired('focusService') private focusService: FocusService;
+    @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
+    @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
+    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+
+    private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
     private eCellWrapper: HTMLElement;
     private eParentOfValue: HTMLElement;
 
+    private gridCell: GridCell; // this is a pojo, not a gui element
+
     // we do not use this in this class, however the renderedRow wants to konw this
     private eParentRow: HTMLElement;
 
     private column: Column;
-    private data: any;
     private node: RowNode;
     private rowIndex: number;
     private editingCell: boolean;
+    private cellEditorInPopup: boolean;
+    private hideEditorPopup: Function;
 
     private scope: any;
 
     private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
+    private cellEditor: ICellEditor;
+    private cellRenderer: ICellRenderer;
 
     private value: any;
     private checkboxSelection: boolean;
     private renderedRow: RenderedRow;
-
-    private destroyMethods: Function[] = [];
 
     private firstRightPinned = false;
     private lastLeftPinned = false;
@@ -73,6 +89,11 @@ export class RenderedCell {
                 cellRendererMap: {[key: string]: any},
                 node: any, rowIndex: number, scope: any,
                 renderedRow: RenderedRow) {
+        super('<div/>');
+
+        // because we reference eGridCell everywhere in this class,
+        // we keep a local reference
+        this.eGridCell = this.getGui();
 
         this.column = column;
         this.cellRendererMap = cellRendererMap;
@@ -81,9 +102,18 @@ export class RenderedCell {
         this.rowIndex = rowIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
+
+        this.gridCell = new GridCell(rowIndex, node.floating, column);
     }
 
-    public checkPinnedClasses(): void {
+    public destroy(): void {
+        super.destroy();
+        if (this.cellEditor && this.cellEditor.destroy) {
+            this.cellEditor.destroy();
+        }
+        if (this.cellRenderer && this.cellRenderer.destroy) {
+            this.cellRenderer.destroy();
+        }
     }
 
     private setPinnedClasses(): void {
@@ -101,7 +131,7 @@ export class RenderedCell {
 
         this.column.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
         this.column.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.column.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
             this.column.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
         });
@@ -115,21 +145,6 @@ export class RenderedCell {
 
     public setParentRow(eParentRow: HTMLElement): void {
         this.eParentRow = eParentRow;
-    }
-
-    @PostConstruct
-    public init(): void {
-        this.data = this.getDataForRow();
-        this.value = this.getValue();
-        this.checkboxSelection = this.calculateCheckboxSelection();
-
-        this.setupComponents();
-    }
-
-    public destroy(): void {
-        this.destroyMethods.forEach( theFunction => {
-            theFunction();
-        });
     }
 
     public calculateCheckboxSelection() {
@@ -166,11 +181,8 @@ export class RenderedCell {
     }
 
     private getValue(): any {
-        return this.valueService.getValueUsingSpecificData(this.column, this.data, this.node);
-    }
-
-    public getGui(): HTMLElement {
-        return this.eGridCell;
+        var data = this.getDataForRow();
+        return this.valueService.getValueUsingSpecificData(this.column, data, this.node);
     }
 
     private getDataForRow() {
@@ -203,7 +215,7 @@ export class RenderedCell {
         };
 
         this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.column.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
         });
 
@@ -217,7 +229,7 @@ export class RenderedCell {
         var rangeCountLastTime: number = 0;
         var rangeSelectedListener = () => {
 
-            var rangeCount = this.rangeController.getCellRangeCount(new GridCell(this.rowIndex, this.node.floating, this.column));
+            var rangeCount = this.rangeController.getCellRangeCount(this.gridCell);
             if (rangeCountLastTime !== rangeCount) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', rangeCount!==0);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', rangeCount===1);
@@ -228,7 +240,7 @@ export class RenderedCell {
             }
         };
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
-        this.destroyMethods.push(()=> {
+        this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
         });
         rangeSelectedListener();
@@ -240,55 +252,80 @@ export class RenderedCell {
         }
 
         var clipboardListener = (event: any) => {
-            _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
-            _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
-            var cellId = new GridCell(this.rowIndex, this.node.floating, this.column).createId();
+            var cellId = this.gridCell.createId();
             var shouldFlash = event.cells[cellId];
             if (shouldFlash) {
-                this.flashCellForClipboardInteraction();
+                this.animateCellWithHighlight();
             }
         };
         this.eventService.addEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
-        this.destroyMethods.push(()=> {
+        this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
         });
     }
 
-    private flashCellForClipboardInteraction(): void {
-        // so tempted to not put a comment here!!!! but because i'm going to release and enterprise version,
-        // i think maybe i should do....   first thing, we do this in a timeout, to make sure the previous
-        // CSS is cleared, that's the css removal in addClipboardListener() method
+    private addChangeListener(): void {
+        var cellChangeListener = (event: any) => {
+            if (event.column === this.column) {
+                this.refreshCell();
+                this.animateCellWithDataChanged();
+            }
+        };
+        this.addDestroyableEventListener(this.node, RowNode.EVENT_CELL_CHANGED, cellChangeListener);
+    }
+
+    private animateCellWithDataChanged(): void {
+        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
+            this.animateCell('data-changed');
+        }
+    }
+
+    private animateCellWithHighlight(): void {
+        this.animateCell('highlight');
+    }
+
+    private animateCell(cssName: string): void {
+        var fullName = 'ag-cell-' + cssName;
+        var animationFullName = 'ag-cell-' + cssName + '-animation';
+        // we want to highlight the cells, without any animation
+        _.addCssClass(this.eGridCell, fullName);
+        _.removeCssClass(this.eGridCell, animationFullName);
+        // then once that is applied, we remove the highlight with animation
         setTimeout( ()=> {
-            // once css is cleared, we want to highlight the cells, without any animation
-            _.addCssClass(this.eGridCell, 'ag-cell-highlight');
+            _.removeCssClass(this.eGridCell, fullName);
+            _.addCssClass(this.eGridCell, animationFullName);
             setTimeout( ()=> {
-                // then once that is applied, we remove the highlight with animation
-                _.removeCssClass(this.eGridCell, 'ag-cell-highlight');
-                _.addCssClass(this.eGridCell, 'ag-cell-highlight-animation');
-                setTimeout( ()=> {
-                    // and then to leave things as we got them, we remove the animation
-                    _.removeCssClass(this.eGridCell, 'ag-cell-highlight-animation');
-                }, 1000);
-            }, 500);
-        }, 0);
+                // and then to leave things as we got them, we remove the animation
+                _.removeCssClass(this.eGridCell, animationFullName);
+            }, 1000);
+        }, 500);
     }
 
     private addCellFocusedListener(): void {
         // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
         var cellFocusedLastTime: boolean = null;
         var cellFocusedListener = (event?: any) => {
-            var cellFocused = this.focusedCellController.isCellFocused(this.rowIndex, this.column, this.node.floating);
+            var cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
+            // see if we need to change the classes on this cell
             if (cellFocused !== cellFocusedLastTime) {
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
                 _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
                 cellFocusedLastTime = cellFocused;
             }
+
+            // if this cell was just focused, see if we need to force browser focus, his can
+            // happen if focus is programmatically set.
             if (cellFocused && event && event.forceBrowserFocus) {
                 this.eGridCell.focus();
             }
+
+            // if another cell was focused, and we are editing, then stop editing
+            if (this.editingCell && !cellFocused) {
+                this.stopEditing();
+            }
         };
         this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
-        this.destroyMethods.push(()=> {
+        this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         });
         cellFocusedListener();
@@ -300,22 +337,28 @@ export class RenderedCell {
         };
 
         this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-        this.destroyMethods.push( () => {
+        this.addDestroyFunc( () => {
             this.column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
         });
 
         widthChangedListener();
     }
 
-    private setupComponents() {
-        this.eGridCell = document.createElement('div');
+    @PostConstruct
+    public init(): void {
+        this.value = this.getValue();
+        this.checkboxSelection = this.calculateCheckboxSelection();
 
         this.setLeftOnCell();
         this.setWidthOnCell();
         this.setPinnedClasses();
         this.addRangeSelectedListener();
         this.addHighlightListener();
+        this.addChangeListener();
         this.addCellFocusedListener();
+        this.addKeyDownListener();
+        this.addKeyPressListener();
+        // this.addFocusListener();
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -324,91 +367,300 @@ export class RenderedCell {
 
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
-
-        this.addCellNavigationHandler();
+        this.setInlineEditingClass();
         this.createParentOfValue();
         this.populateCell();
     }
 
-    // called by rowRenderer when user navigates via tab key
-    public startEditing(key?: number) {
-        var that = this;
-        this.editingCell = true;
-        _.removeAllChildren(this.eGridCell);
-        var eInput = document.createElement('input');
-        eInput.type = 'text';
-        _.addCssClass(eInput, 'ag-cell-edit-input');
+    private onEnterKeyDown(): void {
+        if (this.editingCell) {
+            this.stopEditing();
+            this.focusCell(true);
+        } else {
+            this.startEditingIfEnabled(Constants.KEY_ENTER);
+        }
+    }
 
-        var startWithOldValue = key !== Constants.KEY_BACKSPACE && key !== Constants.KEY_DELETE;
-        var value = this.getValue();
-        if (startWithOldValue && value !== null && value !== undefined) {
-            eInput.value = value;
+    private onF2KeyDown(): void {
+        if (!this.editingCell) {
+            this.startEditingIfEnabled(Constants.KEY_F2);
+        }
+    }
+
+    private onEscapeKeyDown(): void {
+        if (this.editingCell) {
+            this.stopEditing(true);
+            this.focusCell(true);
+        }
+    }
+
+    private onPopupEditorClosed(): void {
+        if (this.editingCell) {
+            this.stopEditing(true);
+
+            // we only focus cell again if this cell is still focused. it is possible
+            // it is not focused if the user cancelled the edit by clicking on another
+            // cell outside of this one
+            if (this.focusedCellController.isCellFocused(this.gridCell)) {
+                this.focusCell(true);
+            }
+        }
+    }
+
+    private onTabKeyDown(event: any): void {
+        var editNextCell: boolean;
+        if (this.editingCell) {
+            // if editing, we stop editing, then start editing next cell
+            this.stopEditing();
+            editNextCell = true;
+        } else {
+            // otherwise we just move to the next cell
+            editNextCell = false;
+        }
+        this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
+        event.preventDefault();
+    }
+
+    private onBackspaceOrDeleteKeyPressed(key: number): void {
+        if (!this.editingCell) {
+            this.startEditingIfEnabled(key);
+        }
+    }
+
+    private onSpaceKeyPressed(): void {
+        if (!this.editingCell && this.gridOptionsWrapper.isRowSelection()) {
+            var selected = this.node.isSelected();
+            this.node.setSelected(!selected);
+        }
+        // prevent default as space key, by default, moves browser scroll down
+        event.preventDefault();
+    }
+
+    private onNavigationKeyPressed(event: any, key: number): void {
+        if (this.editingCell) {
+            this.stopEditing();
+        }
+        // if (!this.editingCell) {
+            this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
+        // }
+        // if we don't prevent default, the grid will scroll with the navigation keys
+        event.preventDefault();
+    }
+
+/*
+    private addFocusListener(): void {
+        var that = this;
+        var focusListener = (event: any) => {
+
+            // if the focus went into another cell, then we stop editing this cell
+            // if (that.editingCell &&!that.cellEditorInPopup && !that.gridCell.eq hasFocusLeftCell(event)) {
+            //     that.stopEditing();
+            // }
+        };
+        // this.eventService.
+        // this.focusService.addListener(focusListener);
+        // this.addDestroyFunc( () => {
+        //     this.focusService.removeListener(focusListener);
+        // });
+    }
+*/
+
+    private addKeyPressListener(): void {
+        var that = this;
+        var keyPressListener = function(event: any) {
+            if (!that.editingCell) {
+                var pressedChar = String.fromCharCode(event.charCode);
+                if (pressedChar === ' ') {
+                    that.onSpaceKeyPressed();
+                } else {
+                    if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
+                        that.startEditingIfEnabled(null, pressedChar);
+                        // if we don't prevent default, then the keypress also gets applied to the text field
+                        // (at least when doing the default editor), but we need to allow the editor to decide
+                        // what it wants to do.
+                        event.preventDefault();
+                    }
+                }
+            }
+        };
+        this.eGridCell.addEventListener('keypress', keyPressListener);
+        this.addDestroyFunc( () => {
+            this.eGridCell.removeEventListener('keypress', keyPressListener);
+        });
+    }
+
+    private onKeyDown(event: KeyboardEvent): void {
+        var key = event.which || event.keyCode;
+
+        switch (key) {
+            case Constants.KEY_ENTER:
+                this.onEnterKeyDown();
+                break;
+            case Constants.KEY_F2:
+                this.onF2KeyDown();
+                break;
+            case Constants.KEY_ESCAPE:
+                this.onEscapeKeyDown();
+                break;
+            case Constants.KEY_TAB:
+                this.onTabKeyDown(event);
+                break;
+            case Constants.KEY_BACKSPACE:
+            case Constants.KEY_DELETE:
+                this.onBackspaceOrDeleteKeyPressed(key);
+                break;
+            case Constants.KEY_DOWN:
+            case Constants.KEY_UP:
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_LEFT:
+                this.onNavigationKeyPressed(event, key);
+                break;
+        }
+    }
+
+    private addKeyDownListener(): void {
+        var editingKeyListener = this.onKeyDown.bind(this);
+        this.eGridCell.addEventListener('keydown', editingKeyListener);
+        this.addDestroyFunc( () => {
+            this.eGridCell.removeEventListener('keydown', editingKeyListener);
+        });
+    }
+
+    private createCellEditor(keyPress?: number, charPress?: string): ICellEditor {
+        var colDef = this.column.getColDef();
+
+        var cellEditor = this.cellEditorFactory.createCellEditor(colDef.cellEditor);
+
+        if (cellEditor.init) {
+            var params = {
+                value: this.getValue(),
+                keyPress: keyPress,
+                charPress: charPress,
+                column: this.column,
+                node: this.node,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext(),
+                onKeyDown: this.onKeyDown.bind(this),
+                stopEditing: this.stopEditingAndFocus.bind(this)
+            };
+
+            if (colDef.cellEditorParams) {
+                _.assign(params, colDef.cellEditorParams);
+            }
+
+            if (cellEditor.init) {
+                cellEditor.init(params);
+            }
         }
 
-        eInput.style.width = (this.column.getActualWidth() - 14) + 'px';
-        this.eGridCell.appendChild(eInput);
-        eInput.focus();
-        eInput.select();
+        return cellEditor;
+    }
 
-        var blurListener = function () {
-            that.stopEditing(eInput, blurListener);
-        };
+    // cell editors call this, when they want to stop for reasons other
+    // than what we pick up on. eg selecting from a dropdown ends editing.
+    private stopEditingAndFocus(): void {
+        this.stopEditing();
+        this.focusCell(true);
+    }
 
-        //stop entering if we loose focus
-        eInput.addEventListener("blur", blurListener);
+    // called by rowRenderer when user navigates via tab key
+    public startEditingIfEnabled(keyPress?: number, charPress?: string) {
 
-        //stop editing if enter pressed
-        eInput.addEventListener('keypress', (event: any) => {
-            var key = event.which || event.keyCode;
-            if (key === Constants.KEY_ENTER) {
-                this.stopEditing(eInput, blurListener);
-                this.focusCell(true);
+        if (!this.isCellEditable()) {
+            return;
+        }
+
+        this.cellEditor = this.createCellEditor(keyPress, charPress);
+
+        if (!this.cellEditor.getGui) {
+            console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
+            return;
+        }
+
+        this.editingCell = true;
+        this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
+        this.setInlineEditingClass();
+
+        if (this.cellEditorInPopup) {
+            this.addPopupCellEditor();
+        } else {
+            this.addInCellEditor();
+        }
+
+        if (this.cellEditor.afterGuiAttached) {
+            this.cellEditor.afterGuiAttached();
+        }
+    }
+
+    private addInCellEditor(): void {
+        _.removeAllChildren(this.eGridCell);
+        this.eGridCell.appendChild(this.cellEditor.getGui());
+
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            this.$compile(this.eGridCell)(this.scope);
+        }
+    }
+
+    private addPopupCellEditor(): void {
+        var ePopupGui = this.cellEditor.getGui();
+
+        this.hideEditorPopup = this.popupService.addAsModalPopup(
+            ePopupGui,
+            true,
+            // callback for when popup disappears
+            ()=> {
+                // we only call stopEditing if we are editing, as
+                // it's possible the popup called 'stop editing'
+                // before this, eg if 'enter key' was pressed on
+                // the editor
+                if (this.editingCell) {
+                    this.onPopupEditorClosed();
+                }
             }
+        );
+
+        this.popupService.positionPopupOverComponent({
+            eventSource: this.eGridCell,
+            ePopup: ePopupGui,
+            keepWithinBounds: true
         });
 
-        //stop editing if enter pressed
-        eInput.addEventListener('keydown', (event: any) => {
-            var key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE) {
-                this.stopEditing(eInput, blurListener, true);
-                this.focusCell(true);
-            }
-        });
-
-        // tab key doesn't generate keypress, so need keydown to listen for that
-        eInput.addEventListener('keydown', function (event:any) {
-            var key = event.which || event.keyCode;
-            if (key == Constants.KEY_TAB) {
-                that.stopEditing(eInput, blurListener);
-                that.rowRenderer.startEditingNextCell(that.rowIndex, that.column, that.node.floating, event.shiftKey);
-                // we don't want the default tab action, so return false, this stops the event from bubbling
-                event.preventDefault();
-                return false;
-            }
-        });
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            this.$compile(ePopupGui)(this.scope);
+        }
     }
 
     public focusCell(forceBrowserFocus: boolean): void {
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
-    private stopEditing(eInput: any, blurListener: any, reset: boolean = false) {
+    private stopEditing(reset: boolean = false) {
         this.editingCell = false;
-        var newValue = eInput.value;
 
-        //If we don't remove the blur listener first, we get:
-        //Uncaught NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is no longer a child of this node. Perhaps it was moved in a 'blur' event handler?
-        eInput.removeEventListener('blur', blurListener);
+        var newValue = this.cellEditor.getValue();
 
         if (!reset) {
             this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
         }
 
-        _.removeAllChildren(this.eGridCell);
-        if (this.checkboxSelection) {
-            this.eGridCell.appendChild(this.eCellWrapper);
+        if (this.cellEditor.destroy) {
+            this.cellEditor.destroy();
         }
+
+        if (this.cellEditorInPopup) {
+            this.hideEditorPopup();
+            this.hideEditorPopup = null;
+        } else {
+            _.removeAllChildren(this.eGridCell);
+            if (this.checkboxSelection) {
+                this.eGridCell.appendChild(this.eCellWrapper);
+            }
+        }
+
+        this.setInlineEditingClass();
+
         this.refreshCell();
     }
 
@@ -447,16 +699,16 @@ export class RenderedCell {
         return this.column.isCellEditable(this.node);
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
         switch (eventName) {
             case 'click': this.onCellClicked(mouseEvent); break;
             case 'mousedown': this.onMouseDown(); break;
-            case 'dblclick': this.onCellDoubleClicked(); break;
+            case 'dblclick': this.onCellDoubleClicked(mouseEvent, eventSource); break;
             case 'contextmenu': this.onContextMenu(mouseEvent); break;
         }
     }
 
-    private onContextMenu(mouseEvent: MouseEvent): any {
+    private onContextMenu(mouseEvent: MouseEvent): void {
 
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
         // thus the normal menu is displayed
@@ -474,17 +726,14 @@ export class RenderedCell {
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
-            event.preventDefault();
-            return false;
-        } else {
-            return true;
+            mouseEvent.preventDefault();
         }
     }
 
-    private onCellDoubleClicked() {
+    private onCellDoubleClicked(mouseEvent: MouseEvent, eventSource: HTMLElement) {
         var colDef = this.column.getColDef();
         // always dispatch event to eventService
-        var agEvent: any = this.createEvent(event, this);
+        var agEvent: any = this.createEvent(mouseEvent, eventSource);
         this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
 
         // check if colDef also wants to handle event
@@ -492,8 +741,8 @@ export class RenderedCell {
             colDef.onCellDoubleClicked(agEvent);
         }
 
-        if (!this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
-            this.startEditing();
+        if (!this.gridOptionsWrapper.isSingleClickEdit()) {
+            this.startEditingIfEnabled();
         }
     }
 
@@ -510,7 +759,7 @@ export class RenderedCell {
         // don't change the range, however if the cell is not in a range,
         // we set a new range
         if (this.rangeController) {
-            var thisCell = new GridCell(this.rowIndex, this.node.floating, this.column);
+            var thisCell = this.gridCell;
             var cellAlreadyInRange = this.rangeController.isCellInAnyRange(thisCell);
             if (!cellAlreadyInRange) {
                 this.rangeController.setRangeToCell(thisCell);
@@ -528,21 +777,29 @@ export class RenderedCell {
             colDef.onCellClicked(agEvent);
         }
 
-        if (this.gridOptionsWrapper.isSingleClickEdit() && this.isCellEditable()) {
-            this.startEditing();
+        if (this.gridOptionsWrapper.isSingleClickEdit()) {
+            this.startEditingIfEnabled();
         }
     }
 
+    // if we are editing inline, then we don't have the padding in the cell (set in the themes)
+    // to allow the text editor full access to the entire cell
+    private setInlineEditingClass(): void {
+        var editingInline = this.editingCell && !this.cellEditorInPopup;
+        _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-inline-editing', editingInline);
+        _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-not-inline-editing', !editingInline);
+    }
+    
     private populateCell() {
         // populate
         this.putDataIntoCell();
         // style
-        this.addStylesFromCollDef();
-        this.addClassesFromCollDef();
+        this.addStylesFromColDef();
+        this.addClassesFromColDef();
         this.addClassesFromRules();
     }
 
-    private addStylesFromCollDef() {
+    private addStylesFromColDef() {
         var colDef = this.column.getColDef();
         if (colDef.cellStyle) {
             var cssToUse: any;
@@ -569,7 +826,7 @@ export class RenderedCell {
         }
     }
 
-    private addClassesFromCollDef() {
+    private addClassesFromColDef() {
         var colDef = this.column.getColDef();
         if (colDef.cellClass) {
           var classToUse: any;
@@ -634,56 +891,6 @@ export class RenderedCell {
         }
     }
 
-    // rename this to 'add key event listener
-    private addCellNavigationHandler() {
-        this.eGridCell.addEventListener('keydown', (event: any) => {
-            if (this.editingCell) {
-                return;
-            }
-            // only interested on key presses that are directly on this element, not any children elements. this
-            // stops navigation if the user is in, for example, a text field inside the cell, and user hits
-            // on of the keys we are looking for.
-            if (event.target !== this.eGridCell) {
-                return;
-            }
-
-            var key = event.which || event.keyCode;
-
-            var startNavigation = key === Constants.KEY_DOWN || key === Constants.KEY_UP
-                || key === Constants.KEY_LEFT || key === Constants.KEY_RIGHT;
-            if (startNavigation) {
-                event.preventDefault();
-                this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
-                return;
-            }
-
-            var startEdit = this.isKeycodeForStartEditing(key);
-            if (startEdit && this.isCellEditable()) {
-                this.startEditing(key);
-                // if we don't prevent default, then the editor that get displayed also picks up the 'enter key'
-                // press, and stops editing immediately, hence giving he user experience that nothing happened
-                event.preventDefault();
-                return;
-            }
-
-            var selectRow = key === Constants.KEY_SPACE;
-            if (selectRow && this.gridOptionsWrapper.isRowSelection()) {
-                var selected = this.node.isSelected();
-                if (selected) {
-                    this.node.setSelected(false);
-                } else {
-                    this.node.setSelected(true);
-                }
-                event.preventDefault();
-                return;
-            }
-        });
-    }
-
-    private isKeycodeForStartEditing(key: number): boolean {
-        return key === Constants.KEY_ENTER || key === Constants.KEY_BACKSPACE || key === Constants.KEY_DELETE;
-    }
-
     private createParentOfValue() {
         if (this.checkboxSelection) {
             this.eCellWrapper = document.createElement('span');
@@ -691,7 +898,7 @@ export class RenderedCell {
             this.eGridCell.appendChild(this.eCellWrapper);
 
             //this.createSelectionCheckbox();
-            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.rowIndex, this.renderedRow.addEventListener.bind(this.renderedRow));
+            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.renderedRow.addEventListener.bind(this.renderedRow));
             this.eCellWrapper.appendChild(this.eCheckbox);
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
@@ -711,22 +918,49 @@ export class RenderedCell {
         return this.column.getColDef().volatile;
     }
 
-    public refreshCell() {
+    public refreshCell(animate = false, newData = false) {
 
-        _.removeAllChildren(this.eParentOfValue);
         this.value = this.getValue();
 
-        this.populateCell();
+        // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
+        // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
+        // then we are not showing a movement in the stock price, rather we are showing different stock.
+        if (!newData && this.cellRenderer && this.cellRenderer.refresh) {
+            // if the cell renderer has a refresh method, we call this instead of doing a refresh
+            // note: should pass in params here instead of value?? so that client has formattedValue
+            var valueFormatted = this.formatValue(this.value);
+            var params = this.createRendererAndRefreshParams(valueFormatted);
+            this.cellRenderer.refresh(params);
+            // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
+            this.addClassesFromRules();
+        } else {
+            // otherwise we rip out the cell and replace it
+            _.removeAllChildren(this.eParentOfValue);
 
-        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(this.eGridCell)(this.scope);
+            // remove old renderer component if it exists
+            if (this.cellRenderer && this.cellRenderer.destroy) {
+                this.cellRenderer.destroy();
+            }
+            this.cellRenderer = null;
+
+            this.populateCell();
+
+            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+            if (this.gridOptionsWrapper.isAngularCompileRows()) {
+                this.$compile(this.eGridCell)(this.scope);
+            }
+        }
+
+        if (animate) {
+            this.animateCellWithDataChanged();
         }
     }
 
     private putDataIntoCell() {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
+        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
+
         if (colDef.template) {
             this.eParentOfValue.innerHTML = colDef.template;
         } else if (colDef.templateUrl) {
@@ -735,64 +969,54 @@ export class RenderedCell {
                 this.eParentOfValue.innerHTML = template;
             }
         } else if (colDef.floatingCellRenderer && this.node.floating) {
-            this.useCellRenderer(colDef.floatingCellRenderer);
+            this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
         } else if (colDef.cellRenderer) {
-            this.useCellRenderer(colDef.cellRenderer);
+            this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams, valueFormatted);
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
-            if (this.value !== undefined && this.value !== null && this.value !== '') {
-                this.eParentOfValue.innerHTML = this.value.toString();
+            var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;
+            if (_.exists(valueToRender) && valueToRender !== '') {
+                this.eParentOfValue.innerHTML = valueToRender.toString();
             }
         }
     }
 
-    private useCellRenderer(cellRenderer: Function | {}) {
+    private formatValue(value: any): any {
+        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, value);
+    }
 
-        var colDef = this.column.getColDef();
-
-        var rendererParams = {
+    private createRendererAndRefreshParams(valueFormatted: string): any {
+        var params = {
             value: this.value,
+            valueFormatted: valueFormatted,
             valueGetter: this.getValue,
+            formatValue: this.formatValue.bind(this),
             data: this.node.data,
             node: this.node,
-            colDef: colDef,
+            colDef: this.column.getColDef(),
             column: this.column,
             $scope: this.scope,
             rowIndex: this.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.eGridCell,
             eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
-        // start duplicated code
-        var actualCellRenderer: Function;
-        if (typeof cellRenderer === 'object' && cellRenderer !== null) {
-            var cellRendererObj = <{ renderer: string }> cellRenderer;
-            actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
-            if (!actualCellRenderer) {
-                throw 'Cell renderer ' + cellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
-            }
-        } else if (typeof cellRenderer === 'function') {
-            actualCellRenderer = <Function>cellRenderer;
-        } else {
-            throw 'Cell Renderer must be String or Function';
+        return params;
+    }
+    
+    private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string): void {
+
+        var params = this.createRendererAndRefreshParams(valueFormatted);
+
+        if (cellRendererParams) {
+            _.assign(params, cellRendererParams);
         }
 
-        var resultFromRenderer = actualCellRenderer(rendererParams);
-
-        // end duplicated code
-        if (resultFromRenderer===null || resultFromRenderer==='') {
-            return;
-        }
-        if (_.isNodeOrElement(resultFromRenderer)) {
-            // a dom node or element was returned, so add child
-            this.eParentOfValue.appendChild(resultFromRenderer);
-        } else {
-            // otherwise assume it was html, so just insert
-            this.eParentOfValue.innerHTML = resultFromRenderer;
-        }
+        this.cellRenderer = this.cellRendererService.useCellRenderer(cellRendererKey, this.eParentOfValue, params);
     }
 
     private addClasses() {

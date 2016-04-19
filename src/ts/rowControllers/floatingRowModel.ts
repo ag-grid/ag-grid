@@ -1,7 +1,7 @@
 
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
-import {Bean} from "../context/context";
+import {Bean, Context} from "../context/context";
 import {Qualifier} from "../context/context";
 import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
@@ -15,6 +15,7 @@ export class FloatingRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('context') private context: Context;
 
     private floatingTopRows: RowNode[];
     private floatingBottomRows: RowNode[];
@@ -66,7 +67,8 @@ export class FloatingRowModel {
         if (allData) {
             var nextRowTop = 0;
             allData.forEach( (dataItem) => {
-                var rowNode = new RowNode(this.eventService, this.gridOptionsWrapper, null);
+                var rowNode = new RowNode();
+                this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.floating = isTop ? Constants.FLOATING_TOP : Constants.FLOATING_BOTTOM;
                 rowNode.rowTop = nextRowTop;

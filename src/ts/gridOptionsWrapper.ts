@@ -1,28 +1,37 @@
-import {RowNode} from './entities/rowNode';
-import {GridOptions} from './entities/gridOptions';
+import {RowNode} from "./entities/rowNode";
+import {
+    GridOptions,
+    NodeChildDetails,
+    GetContextMenuItems,
+    GetMainMenuItems,
+    ProcessRowParams, ProcessCellForExportParams
+} from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
 import {ColDef} from "./entities/colDef";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {ColumnController} from "./columnController/columnController";
-import {Autowired} from "./context/context";
+import {Bean, Qualifier, Autowired, PostConstruct} from "./context/context";
+import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {Events} from "./events";
-import {NodeChildDetails} from "./entities/gridOptions";
-import {ColumnApi} from "./columnController/columnController";
-import {PostConstruct} from "./context/context";
-import {GetContextMenuItems} from "./entities/gridOptions";
-import {GetMainMenuItems} from "./entities/gridOptions";
-import {ProcessRowParams} from "./entities/gridOptions";
-import {ProcessCellForExportParams} from "./entities/gridOptions";
-import {Column} from "./entities/column";
+import {Utils as _} from "./utils";
+import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 
 var DEFAULT_ROW_HEIGHT = 25;
+var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
+var DEFAULT_VIEWPORT_ROW_MODEL_BUFER_SIZE = 5;
 
-function isTrue(value: any) {
+function isTrue(value: any): boolean {
     return value === true || value === 'true';
+}
+
+function positiveNumberOrZero(value: any, defaultValue: number): number {
+    if (value > 0) {
+        return value;
+    } else {
+        // zero gets returned if number is missing or the wrong type
+        return defaultValue;
+    }
 }
 
 @Bean('gridOptionsWrapper')
@@ -33,6 +42,7 @@ export class GridOptionsWrapper {
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('enterprise') private enterprise: boolean;
 
     private headerHeight: number;
 
@@ -56,6 +66,7 @@ export class GridOptionsWrapper {
         }
     }
 
+    public isEnterprise() { return this.enterprise;}
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
     public isRowDeselection() { return isTrue(this.gridOptions.rowDeselection); }
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }
@@ -63,13 +74,14 @@ export class GridOptionsWrapper {
 
     public isRowModelPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
     public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
-    public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual()); }
+    public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
+    public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual() || this.isRowModelViewport()); }
 
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
+    public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
-    public isGroupHideGroupColumns() { return isTrue(this.gridOptions.groupHideGroupColumns); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
     public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
     public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
@@ -109,6 +121,7 @@ export class GridOptionsWrapper {
     public isDebug() { return isTrue(this.gridOptions.debug); }
     public getColumnDefs() { return this.gridOptions.columnDefs; }
     public getDatasource() { return this.gridOptions.datasource; }
+    public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
@@ -122,6 +135,7 @@ export class GridOptionsWrapper {
     public isSuppressMenuFilterPanel() { return isTrue(this.gridOptions.suppressMenuFilterPanel); }
     public isSuppressMenuMainPanel() { return isTrue(this.gridOptions.suppressMenuMainPanel); }
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
+    public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
     public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
@@ -132,12 +146,15 @@ export class GridOptionsWrapper {
     public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
     public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
+    public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
-    public getProcessCellForClipboardFunc() { return this.gridOptions.processCellForClipboard; }
+    public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
+    public getViewportRowModelPageSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
+    public getViewportRowModelBufferSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFER_SIZE); }
 
     public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
         if (this.gridOptions.processRowPostCreate) {
@@ -270,10 +287,14 @@ export class GridOptionsWrapper {
     }
 
     // we don't allow dynamic row height for virtual paging
-    public getRowHeightForVirtualPagination(): number {
-        if (typeof this.gridOptions.rowHeight === 'number') {
+    public getRowHeightAsNumber(): number {
+        var rowHeight = this.gridOptions.rowHeight;
+        if (_.missing(rowHeight)) {
+            return DEFAULT_ROW_HEIGHT;
+        } else if (typeof this.gridOptions.rowHeight === 'number') {
             return this.gridOptions.rowHeight;
         } else {
+            console.warn('ag-Grid row height must be a number if not using standard row model');
             return DEFAULT_ROW_HEIGHT;
         }
     }

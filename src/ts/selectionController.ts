@@ -10,6 +10,8 @@ import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
+import {Constants} from "./constants";
+import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -21,7 +23,7 @@ export class SelectionController {
     private selectedNodes: {[key: string]: RowNode};
     private logger: Logger;
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
 
@@ -60,7 +62,7 @@ export class SelectionController {
 
     public removeGroupsFromSelection(): void {
         _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
-            if (rowNode) {
+            if (rowNode && rowNode.group) {
                 this.selectedNodes[rowNode.id] = undefined;
             }
         });
@@ -68,7 +70,11 @@ export class SelectionController {
 
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(): void {
-        this.rowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+            console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
+        }
+        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+        inMemoryRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
             rowNode.deptFirstSearch( (rowNode)=> {
                 if (rowNode.group) {
                     rowNode.calculateSelectedFromChildren();
@@ -117,7 +123,13 @@ export class SelectionController {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection() {
 
-        var topLevelNodes = this.rowModel.getTopLevelNodes();
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+            console.warn('getBestCostNodeSelection is only avilable when using normal row model');
+        }
+
+        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+
+        var topLevelNodes = inMemoryRowModel.getTopLevelNodes();
 
         if (topLevelNodes===null) {
             console.warn('selectAll not available doing rowModel=virtual');
@@ -174,14 +186,12 @@ export class SelectionController {
     }
 
     public selectAllRowNodes() {
-        if (this.rowModel.getTopLevelNodes() === null) {
-            throw 'selectAll not available when doing virtual pagination';
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+            throw 'selectAll only available with norma row model, ie not virtual pagination';
         }
         this.rowModel.forEachNode( (rowNode: RowNode) => {
             rowNode.setSelected(true, false, true);
         });
-        // because we passed in 'false' as third parameter above, the
-        // eventSelectionChanged event was not fired.
         this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED)
     }
 

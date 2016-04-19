@@ -53,11 +53,11 @@
 
   .ag-cell
     top: -1px;
+    letter-spacing: -0.02em;
+
+  .ag-cell-not-inline-editing
     padding-left: 2px;
     padding-right: 2px;
-    overflow: hidden;
-    white-space: nowrap;
-    letter-spacing: -0.02em;
 
   // we do not want to color the range color when the cell is also focused
   .ag-cell-range-selected-1:not(.ag-cell-focus)
@@ -97,6 +97,42 @@
 
   .ag-cell-highlight-animation
     transition: border 1s;
+
+  .ag-cell-data-changed
+    background: lightskyblue;
+
+  .ag-cell-data-changed-animation
+    transition: background-color 1s;
+
+  .ag-cell-data-changed:not(.ag-cell-focus)
+    background: lightskyblue;
+
+  .ag-cell-data-changed-animation:not(.ag-cell-focus)
+    transition: background-color 1s;
+
+  // used by the animateShowChangedCellRenderer
+  .ag-value-change-delta
+    padding-right: 2px;
+  .ag-value-change-delta-up
+    color: darkgreen;
+  .ag-value-change-delta-down
+    color: darkred;
+  .ag-value-change-value
+    background-color: transparent;
+    border-radius: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    transition: background-color 1s;
+  .ag-value-change-value-highlight
+    background-color: lightblue;
+    transition: background-color 0.1s;
+
+  .ag-rich-select
+    border: 1px solid #000;
+    background-color: #ddebf7;
+
+  .ag-rich-select-list
+    background-color: #fff;
 
   .ag-header
     background-color: #5B9BD5;
@@ -206,7 +242,16 @@
   .ag-group-cell
     font-style: italic;
 
-  .ag-group-expand
+  .ag-group-expanded
+    padding-right: 2px;
+
+  .ag-group-contracted
+    padding-right: 2px;
+
+  .ag-group-value
+    padding-right: 2px;
+
+  .ag-group-checkbox
     padding-right: 2px;
 
   .ag-footer-cell
@@ -310,3 +355,24 @@
   .ag-paging-row-summary-panel
     display: inline-block;
     width: 300px;
+
+  .ag-tool-panel
+    background-color: #eee;
+    border-right: 1px solid #9bc2e6;
+    border-bottom: 1px solid #9bc2e6;
+    border-top: 1px solid #9bc2e6;
+
+  .ag-status-bar
+    font-size: 12px;
+    height: 20px;
+    border-bottom: 1px solid #9bc2e6;
+    border-left: 1px solid #9bc2e6;
+    border-right: 1px solid #9bc2e6;
+    background-color #ddebf7;
+    color: #fff;
+
+  .ag-status-bar-aggregations
+    float: right;
+
+  .ag-status-bar-item
+    padding-left: 10px;

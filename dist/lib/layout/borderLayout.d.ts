@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v3.3.3
+// Type definitions for ag-grid v4.0.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-export default class BorderLayout {
+export declare class BorderLayout {
     private eNorthWrapper;
     private eSouthWrapper;
     private eEastWrapper;
@@ -22,6 +22,7 @@ export default class BorderLayout {
     private id;
     private childPanels;
     private centerHeightLastTime;
+    private centerWidthLastTime;
     private sizeChangeListeners;
     private overlays;
     constructor(params: any);
@@ -38,6 +39,7 @@ export default class BorderLayout {
     getCentreHeight(): number;
     private layoutWidth();
     setEastVisible(visible: any): void;
+    setNorthVisible(visible: any): void;
     private setupOverlays();
     hideOverlay(): void;
     showOverlay(key: string): void;

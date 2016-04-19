@@ -279,6 +279,23 @@ ag-grid-ng2
     //float: left
     position absolute
 
+// this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
+// however it is not tied to color, only placement and visiblity, which is behaviour and not style,
+// thus belongs here, besides it doesn't change wih the themes
+.ag-fade-out
+    opacity: 1.0;
+    margin-right: 5px;
+    transition: opacity 3s, margin-right 3s; // as value fades, it also moves to the left via the margin setting
+    transition-timing-function: linear;
+
+.ag-fade-out-end
+    opacity: 0.0;
+    margin-right: 10px;
+
+.ag-cell-edit-input
+    width 100%
+    height 100%
+
 .ag-group-cell-entire-row
     //position: absolute // took this out because of https://github.com/ceolter/angular-grid/issues/115
     width: 100%
@@ -301,6 +318,10 @@ ag-grid-ng2
 
 .ag-large .ag-root
     font-size: 20px
+
+.ag-popup-editor
+    position: absolute
+    user-select: none;
 
 .ag-menu
     position: absolute
@@ -338,20 +359,34 @@ ag-grid-ng2
 .ag-filter {}
     //z-index: 100
 
-.ag-filter-list-viewport
+.ag-virtual-list-viewport
     overflow-x: auto
-    height: 200px
-    width: 200px
+    height: 100%
+    width: 100%
 
-.ag-filter-list-container
+.ag-virtual-list-container
     position: relative
     overflow: hidden
 
-.ag-filter-item
+.ag-rich-select
+    outline: none;
+
+.ag-rich-select-list
+    width: 200px;
+    height: 200px;
+
+.ag-set-filter-list
+    width: 200px;
+    height: 200px;
+
+.ag-set-filter-item
     text-overflow: ellipsis
     overflow: hidden
     white-space: nowrap
+
+.ag-virtual-list-item
     position: absolute
+    width: 100%;
 
 .ag-filter-filter
     width: 170px

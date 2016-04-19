@@ -41,7 +41,7 @@ export class ColumnApi {
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
     public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
     public getColumn(key: any): Column { return this._columnController.getColumn(key); }
-    public setColumnState(columnState: any): void { return this._columnController.setColumnState(columnState); }
+    public setColumnState(columnState: any): boolean { return this._columnController.setColumnState(columnState); }
     public getColumnState(): [any] { return this._columnController.getColumnState(); }
     public resetColumnState(): void { this._columnController.resetColumnState(); }
     public isPinning(): boolean { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); }
@@ -67,8 +67,11 @@ export class ColumnApi {
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
     public removeValueColumn(column: Column): void { this._columnController.removeValueColumn(column); }
     public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
-    public removeRowGroupColumn(column: Column): void { this._columnController.removeRowGroupColumn(column); }
-    public addRowGroupColumn(column: Column): void { this._columnController.addRowGroupColumn(column); }
+    public setRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.setRowGroupColumns(colKeys); }
+    public removeRowGroupColumn(colKey: Column|ColDef|String): void { this._columnController.removeRowGroupColumn(colKey); }
+    public removeRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removeRowGroupColumns(colKeys); }
+    public addRowGroupColumn(colKey: Column|ColDef|String): void { this._columnController.addRowGroupColumn(colKey); }
+    public addRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.addRowGroupColumns(colKeys); }
     public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getLeftDisplayedColumnGroups(); }
     public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getCenterDisplayedColumnGroups(); }
     public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getRightDisplayedColumnGroups(); }
@@ -89,7 +92,7 @@ export class ColumnApi {
         this._columnController.setColumnVisible(colId, !hide);
     }
 
-    public setState(columnState: any): void {
+    public setState(columnState: any): boolean {
         console.error('ag-Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState);
     }
@@ -157,7 +160,7 @@ export class ColumnController {
         }
     }
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
 
@@ -274,32 +277,49 @@ export class ColumnController {
         return this.getWithOfColsInList(this.displayedRightColumns);
     }
 
-    public addRowGroupColumn(column: Column): void {
-        if (this.allColumns.indexOf(column) < 0) {
-            console.warn('not a valid column: ' + column);
-            return;
-        }
-        if (this.rowGroupColumns.indexOf(column) >= 0) {
-            console.warn('column is already a value column');
-            return;
-        }
-        this.rowGroupColumns.push(column);
+    public addRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+        keys.forEach( (key)=> {
+            var column = this.getColumn(key);
+            if (column) {
+                this.rowGroupColumns.push(column);
+            }
+        });
+
         // because we could be taking out columns, the displayed
-        // columns may differ, so need to work out all the columns again
+        // columns may differ, so need to work out all the columns again.
+        // this is why why don't use 'actionOnColumns', as we need to do
+        // this before we fire the event
         this.updateModel();
+
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
     }
 
-    public removeRowGroupColumn(column: Column): void {
-        if (this.rowGroupColumns.indexOf(column) < 0) {
-            console.warn('column not a row group');
-            return;
-        }
-        _.removeFromArray(this.rowGroupColumns, column);
+    public setRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+        this.rowGroupColumns.length = 0;
+        this.addRowGroupColumns(keys);
+    }
+
+    public addRowGroupColumn(key: Column|ColDef|String): void {
+        this.addRowGroupColumns([key]);
+    }
+
+    public removeRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+        keys.forEach( (key)=> {
+            var column = this.getColumn(key);
+            if (column) {
+                _.removeFromArray(this.rowGroupColumns, column);
+            }
+        });
+
         this.updateModel();
+        
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
+    }
+    
+    public removeRowGroupColumn(key: Column|ColDef|String): void {
+        this.removeRowGroupColumns([key]);
     }
 
     public addValueColumn(column: Column): void {
@@ -610,17 +630,20 @@ export class ColumnController {
         this.setColumnState(state);
     }
 
-    public setColumnState(columnState: any[]): void {
+    public setColumnState(columnState: any[]): boolean {
         var oldColumnList = this.allColumns;
         this.allColumns = [];
         this.rowGroupColumns = [];
         this.valueColumns = [];
+
+        var success = true;
 
         if (columnState) {
             columnState.forEach( (stateItem: any)=> {
                 var oldColumn: Column = _.find(oldColumnList, 'colId', stateItem.colId);
                 if (!oldColumn) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
+                    success = false;
                     return;
                 }
                 // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
@@ -676,6 +699,8 @@ export class ColumnController {
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+
+        return success;
     }
 
     public getColumns(keys: any[]): Column[] {
@@ -1089,9 +1114,9 @@ export class ColumnController {
                             return null;
                         }
                     },
-                    cellRenderer: {
-                        renderer: 'group'
-                    }
+                    suppressAggregation: true,
+                    suppressRowGroup: true,
+                    cellRenderer: 'group'
                 };
             }
             // we never allow moving the group column

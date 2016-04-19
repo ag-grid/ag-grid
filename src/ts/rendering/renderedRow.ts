@@ -1,23 +1,14 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {RenderedCell} from "./renderedCell";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Grid} from "../grid";
 import {ColumnController} from "../columnController/columnController";
-import {ExpressionService} from "../expressionService";
 import {RowRenderer} from "./rowRenderer";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
-import {TemplateService} from "../templateService";
-import {ValueService} from "../valueService";
 import {Column} from "../entities/column";
 import {Events} from "../events";
-import {GridCore} from "../gridCore";
 import {EventService} from "../eventService";
-import {Qualifier} from "../context/context";
-import {Context} from "../context/context";
-import {Autowired} from "../context/context";
+import {Context, Autowired, PostConstruct} from "../context/context";
 import {ColumnChangeEvent} from "../columnChangeEvent";
-import {PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {GridCell} from "../entities/gridCell";
@@ -102,12 +93,9 @@ export class RenderedRow {
         this.addRowIds();
         this.setTopAndHeightCss();
 
-        if (this.scope) {
-            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
-        }
-
         this.addRowSelectedListener();
         this.addCellFocusedListener();
+        this.addNodeDataChangedListener();
         this.addColumnListener();
 
         this.attachContainers();
@@ -123,6 +111,10 @@ export class RenderedRow {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         });
+
+        if (this.scope) {
+            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
+        }
     }
 
     private addColumnListener(): void {
@@ -155,6 +147,9 @@ export class RenderedRow {
         this.refreshCellsIntoRow();
     }
 
+    // method makes sure the right cells are present, and are in the right container. so when this gets called for
+    // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
+    // container (ie into pinned)
     private refreshCellsIntoRow() {
 
         var columns = this.columnController.getAllDisplayedColumns();
@@ -164,7 +159,6 @@ export class RenderedRow {
         columns.forEach( (column: Column) => {
             var renderedCell = this.getOrCreateCell(column);
             this.ensureCellInCorrectRow(renderedCell);
-            renderedCell.checkPinnedClasses();
             _.removeFromArray(renderedCellKeys, column.getColId());
         });
 
@@ -252,6 +246,26 @@ export class RenderedRow {
         rowFocusedListener();
     }
 
+    private forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
+        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
+            if (renderedCell) {
+                callback(renderedCell);
+            }
+        });
+    }
+
+    private addNodeDataChangedListener(): void {
+        var nodeDataChangedListener = () => {
+            var animate = false;
+            var newData = true;
+            this.forEachRenderedCell( renderedCell => renderedCell.refreshCell(animate, newData) );
+        };
+        this.rowNode.addEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
+        this.destroyFunctions.push(()=> {
+            this.rowNode.removeEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
+        });
+    }
+
     private createContainers(): void {
         this.eBodyRow = this.createRowContainer();
         this.eLeftCenterAndRightRows = [this.eBodyRow];
@@ -274,10 +288,10 @@ export class RenderedRow {
         }
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void {
         var renderedCell = this.renderedCells[cell.column.getId()];
         if (renderedCell) {
-            renderedCell.onMouseEvent(eventName, mouseEvent);
+            renderedCell.onMouseEvent(eventName, mouseEvent, eventSource);
         }
     }
 
@@ -319,8 +333,8 @@ export class RenderedRow {
     }
 
     public softRefresh(): void {
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            if (renderedCell && renderedCell.isVolatile()) {
+        this.forEachRenderedCell( renderedCell => {
+            if (renderedCell.isVolatile()) {
                 renderedCell.refreshCell();
             }
         });
@@ -351,11 +365,7 @@ export class RenderedRow {
             this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
         }
 
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            if (renderedCell) {
-                renderedCell.destroy();
-            }
-        });
+        this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
 
         if (this.renderedRowEventService) {
             this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
@@ -568,19 +578,16 @@ export class RenderedRow {
         return this.rowIndex;
     }
 
-    public refreshCells(colIds: string[]): void {
+    public refreshCells(colIds: string[], animate: boolean): void {
         if (!colIds) {
             return;
         }
         var columnsToRefresh = this.columnController.getColumns(colIds);
 
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
-            if (!renderedCell) {
-                return;
-            }
+        this.forEachRenderedCell( renderedCell => {
             var colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel)>=0) {
-                renderedCell.refreshCell();
+                renderedCell.refreshCell(animate);
             }
         });
     }

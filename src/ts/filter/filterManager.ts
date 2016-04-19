@@ -1,21 +1,16 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {PopupService} from "../widgets/popupService";
 import {ValueService} from "../valueService";
 import {ColumnController} from "../columnController/columnController";
-import {Grid} from "../grid";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {TextFilter} from "./textFilter";
 import {NumberFilter} from "./numberFilter";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import {Autowired} from "../context/context";
+import {Bean, PreDestroy, Autowired, PostConstruct, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {PostConstruct} from "../context/context";
 
 @Bean('filterManager')
 export class FilterManager {
@@ -30,6 +25,7 @@ export class FilterManager {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
+    @Autowired('context') private context: Context;
 
     private allFilters: any = {};
     private quickFilter: string = null;
@@ -107,7 +103,7 @@ export class FilterManager {
                 return;
             }
             var model = filterApi.getModel();
-            if (model) {
+            if (_.exists(model)) {
                 result[key] = model;
             }
         });
@@ -302,6 +298,19 @@ export class FilterManager {
         return filterWrapper;
     }
 
+    // destroys the filter, so it not longer takes par
+    public destroyFilter(column: Column): void {
+        var filterWrapper = this.allFilters[column.getColId()];
+        if (filterWrapper) {
+            if (filterWrapper.destroy) {
+                filterWrapper.destroy();
+            }
+            delete this.allFilters[column.getColId()];
+            this.onFilterChanged();
+            filterWrapper.column.setFilterActive(false);
+        }
+    }
+
     private createFilterWrapper(column: Column): FilterWrapper {
         var colDef = column.getColDef();
 
@@ -328,12 +337,15 @@ export class FilterManager {
             console.error('ag-Grid: colDef.filter should be function or a string');
         }
 
+        this.context.wireBean(filterWrapper.filter);
+
         var filterChangedCallback = this.onFilterChanged.bind(this);
         var filterModifiedCallback = () => this.eventService.dispatchEvent(Events.EVENT_FILTER_MODIFIED);
         var doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
         var filterParams = colDef.filterParams;
 
         var params = {
+            column: column,
             colDef: colDef,
             rowModel: this.rowModel,
             filterChangedCallback: filterChangedCallback,
@@ -398,10 +410,11 @@ export class FilterManager {
     }
 
     private onNewColumnsLoaded(): void {
-        this.agDestroy();
+        this.destroy();
     }
 
-    public agDestroy() {
+    @PreDestroy
+    public destroy() {
         _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
             if (filterWrapper.filter.destroy) {
                 filterWrapper.filter.destroy();

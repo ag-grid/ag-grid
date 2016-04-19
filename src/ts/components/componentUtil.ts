@@ -16,7 +16,7 @@ export class ComponentUtil {
         'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType'];
 
     public static OBJECT_PROPERTIES = [
-        'rowStyle','context','groupColumnDef','localeText','icons','datasource'
+        'rowStyle','context','groupColumnDef','localeText','icons','datasource','viewportDatasource'
     ];
 
     public static ARRAY_PROPERTIES = [
@@ -25,7 +25,7 @@ export class ComponentUtil {
 
     public static NUMBER_PROPERTIES = [
         'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded',
-        'minColWidth','maxColWidth'
+        'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize'
     ];
 
     public static BOOLEAN_PROPERTIES = [
@@ -33,19 +33,21 @@ export class ComponentUtil {
         'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
         'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
         'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
-        'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren','groupHideGroupColumns',
+        'angularCompileHeaders','groupSuppressAutoColumn','groupSelectsChildren',
         'groupIncludeFooter','groupUseEntireRow','groupSuppressRow','groupSuppressBlankHeader','forPrint',
         'suppressMenuHide','rowDeselection','unSortIcon','suppressMultiSort','suppressScrollLag',
         'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize',
         'suppressParentsInRowNodes','showToolPanel','suppressColumnMoveAnimation','suppressMovableColumns',
         'suppressFieldDotNotation','enableRangeSelection','suppressEnterprise','rowGroupPanelShow',
-        'suppressContextMenu','suppressMenuFilterPanel','suppressMenuMainPanel','suppressMenuColumnPanel'
+        'suppressContextMenu','suppressMenuFilterPanel','suppressMenuMainPanel','suppressMenuColumnPanel',
+        'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
         'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
         'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
-        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard'];
+        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
+        'getNodeChildDetails'];
 
     public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)

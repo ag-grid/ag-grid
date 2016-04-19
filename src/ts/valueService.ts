@@ -70,7 +70,7 @@ export class ValueService {
             var currentObject = data;
             for (var i = 0; i<fields.length; i++) {
                 currentObject = currentObject[fields[i]];
-                if (!currentObject) {
+                if (_.missing(currentObject)) {
                     return null;
                 }
             }
@@ -78,7 +78,9 @@ export class ValueService {
         }
     }
 
-    public setValue(rowNode: RowNode, column: Column, newValue: any): void {
+    public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
+        var column = this.columnController.getColumn(colKey);
+        
         if (!rowNode || !column) {
             return;
         }

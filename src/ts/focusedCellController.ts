@@ -52,9 +52,9 @@ export class FocusedCellController {
         this.onCellFocused(forceBrowserFocus);
     }
 
-    public isCellFocused(rowIndex: number, column: Column, floating: string): boolean {
+    public isCellFocused(gridCell: GridCell): boolean {
         if (_.missing(this.focusedCell)) { return false; }
-        return this.focusedCell.column === column && this.isRowFocused(rowIndex, floating);
+        return this.focusedCell.column === gridCell.column && this.isRowFocused(gridCell.rowIndex, gridCell.floating);
     }
 
     public isRowFocused(rowIndex: number, floating: string): boolean {

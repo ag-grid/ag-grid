@@ -1,15 +1,13 @@
 import {ColumnController} from "./columnController/columnController";
-import {Grid} from "./grid";
 import {ValueService} from "./valueService";
 import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {GridCore} from "./gridCore";
-import {Autowired} from "./context/context";
+import {Bean, Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ProcessCellForExportParams} from "./entities/gridOptions";
+import {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./entities/gridOptions";
+import {Constants} from "./constants";
+import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 
 var LINE_SEPARATOR = '\r\n';
 
@@ -24,6 +22,7 @@ export interface CsvExportParams {
     columnSeparator?: string;
     onlySelected?: boolean;
     processCellCallback?(params: ProcessCellForExportParams): void;
+    processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 }
 
 @Bean('csvCreator')
@@ -59,10 +58,11 @@ export class CsvCreator {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        if (this.gridOptionsWrapper.isRowModelVirtual()) {
-            console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
             return '';
         }
+        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
 
         var result = '';
 
@@ -94,7 +94,8 @@ export class CsvCreator {
         // first pass, put in the header names of the cols
         if (!skipHeader) {
             columnsToExport.forEach( (column: Column, index: number)=> {
-                var nameForCol = this.columnController.getDisplayNameForCol(column);
+
+                var nameForCol = this.getHeaderName(params.processHeaderCallback, column);
                 if (nameForCol === null || nameForCol === undefined) {
                     nameForCol = '';
                 }
@@ -106,7 +107,7 @@ export class CsvCreator {
             result += LINE_SEPARATOR;
         }
 
-        this.rowModel.forEachNodeAfterFilterAndSort( (node: RowNode) => {
+        inMemoryRowModel.forEachNodeAfterFilterAndSort( (node: RowNode) => {
             if (skipGroups && node.group) { return; }
 
             if (skipFooters && node.footer) { return; }
@@ -138,6 +139,19 @@ export class CsvCreator {
         }
 
         return result;
+    }
+
+    private getHeaderName(callback: (params: ProcessHeaderForExportParams)=>string, column: Column): string {
+        if (callback) {
+            return callback({
+                column: column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            });
+        } else {
+            return this.columnController.getDisplayNameForCol(column);
+        }
     }
 
     private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>void): any {

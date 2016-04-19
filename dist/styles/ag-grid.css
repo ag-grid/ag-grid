@@ -2,20 +2,22 @@ ag-grid-ng2 {
   display: inline-block;
 }
 .ag-root {
-  font-size: 14px;
-  cursor: default;
 /* set to relative, so absolute popups appear relative to this */
   position: relative;
-/* disable user mouse selection */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 /* was getting some 'should be there' scrolls, this sorts it out */
   overflow: hidden;
+}
+.ag-font-style {
+  cursor: default;
+  font-size: 14px;
+/* disable user mouse selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .ag-no-scrolls {
   white-space: nowrap;
@@ -90,6 +92,35 @@ ag-grid-ng2 {
   text-align: center;
   display: inline-block;
   height: 100%;
+}
+.ag-header-cell-ghost {
+  font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: absolute;
+  background: #e5e5e5;
+  border: 1px solid #000;
+  cursor: move;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  padding: 3px;
+  line-height: 1.4;
+}
+.ag-header-cell-ghost img {
+  vertical-align: middle;
+  border: 0px;
+}
+.ag-header-cell-ghost-icon {
+  float: left;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 .ag-header-group-cell {
   height: 100%;
@@ -264,6 +295,12 @@ ag-grid-ng2 {
 .agile-gird-row:hover {
   background-color: #f0f8ff;
 }
+.ag-row-group-panel {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .ag-cell {
   display: inline-block;
   white-space: nowrap;
@@ -303,9 +340,41 @@ ag-grid-ng2 {
 .ag-large .ag-root {
   font-size: 20px;
 }
-.ag-filter {
+.ag-menu {
   position: absolute;
-  z-index: 100;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ag-menu-column-select-wrapper {
+  width: 200px;
+  height: 300px;
+}
+.ag-menu-list {
+  display: table;
+  border-collapse: collapse;
+}
+.ag-menu-option {
+  display: table-row;
+}
+.ag-menu-option-text {
+  display: table-cell;
+}
+.ag-menu-option-shortcut {
+  display: table-cell;
+}
+.ag-menu-option-icon {
+  display: table-cell;
+}
+.ag-menu-option-popup-pointer {
+  display: table-cell;
+}
+.ag-menu-separator {
+  display: table-row;
+}
+.ag-menu-separator-cell {
+  display: table-cell;
 }
 .ag-filter-list-viewport {
   overflow-x: auto;
@@ -350,11 +419,99 @@ ag-grid-ng2 {
   user-select: none;
   cursor: default;
 }
-.ag-tool-panel-container {
+.ag-tool-panel {
+  width: 200px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   cursor: default;
-  width: 200px;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ag-column-select-indent {
+  display: inline-block;
+}
+.ag-column-select-column {
+  margin-left: 14px;
+  white-space: nowrap;
+}
+.ag-column-select-column-group {
+  white-space: nowrap;
+}
+.ag-column-select-panel {
+  height: 100%;
+  overflow: auto;
+}
+.ag-hidden {
+  display: none;
+}
+.ag-faded {
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+}
+.ag-shake-left-to-right {
+  -webkit-animation-name: ag-shake-left-to-right;
+  -moz-animation-name: ag-shake-left-to-right;
+  -o-animation-name: ag-shake-left-to-right;
+  -ms-animation-name: ag-shake-left-to-right;
+  animation-name: ag-shake-left-to-right;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  -ms-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  -o-animation-iteration-count: infinite;
+  -ms-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  -moz-animation-direction: alternate;
+  -o-animation-direction: alternate;
+  -ms-animation-direction: alternate;
+  animation-direction: alternate;
+}
+@-moz-keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
+}
+@-webkit-keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
+}
+@-o-keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
+}
+@keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
 }

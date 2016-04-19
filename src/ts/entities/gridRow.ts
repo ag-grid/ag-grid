@@ -1,5 +1,7 @@
 import {Constants} from "../constants";
 import {Utils as _} from '../utils';
+import {GridCell} from "./gridCell";
+import {Column} from "./column";
 
 export class GridRow {
 
@@ -26,6 +28,14 @@ export class GridRow {
     public equals(otherSelection: GridRow): boolean {
         return this.rowIndex === otherSelection.rowIndex
             && this.floating === otherSelection.floating;
+    }
+
+    public toString(): string {
+        return `rowIndex = ${this.rowIndex}, floating = ${this.floating}`;
+    }
+
+    public getGridCell(column: Column): GridCell {
+        return new GridCell(this.rowIndex, this.floating, column);
     }
 
     // tests if this row selection is before the other row selection

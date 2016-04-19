@@ -1,6 +1,8 @@
 import {RowNode} from "./rowNode";
 import {SetFilterParameters} from "../filter/setFilterParameters";
 import {TextAndNumberFilterParameters} from "../filter/textAndNumberFilterParameters";
+import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
+import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -75,10 +77,21 @@ export interface ColDef extends AbstractColDef {
     cellStyle?: {} | ((params:any) => {});
 
     /** A function for rendering a cell. */
-    cellRenderer?: Function | {};
+    cellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    cellRendererParams?: {};
+
+    /** Cell editor */
+    cellEditor?: {new(): ICellEditor};
+    cellEditorParams?: {};
 
     /** A function for rendering a floating cell. */
-    floatingCellRenderer?: Function | {};
+    floatingCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    floatingCellRendererParams?: {};
+
+    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    cellFormatter?: (params: any) => string;
+    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    floatingCellFormatter?: (params: any) => string;
 
     /** Name of function to use for aggregation. One of [sum,min,max]. */
     aggFunc?: string;
@@ -112,6 +125,12 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
+
+    /** Set to true if you don't want to be able to group by this column */
+    suppressRowGroup?: boolean;
+
+    /** Set to true if you don't want to be able to aggregate by this column */
+    suppressAggregation?: boolean;
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | (Function);
@@ -151,4 +170,7 @@ export interface ColDef extends AbstractColDef {
 
     /** Icons for this column. Leave blank to use default. */
     icons?: {[key: string]: string};
+    
+    /** If true, grid will flash cell after cell is refreshed */
+    enableCellChangeFlash?: boolean;
 }

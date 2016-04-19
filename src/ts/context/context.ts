@@ -1,6 +1,5 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {Logger} from "../logger";
-import {LoggerFactory} from "../logger";
 
 // steps in booting up:
 // 1. create all beans
@@ -59,8 +58,7 @@ export class Context {
     private wireBeans(beans: any[]): void {
         this.autoWireBeans(beans);
         this.methodWireBeans(beans);
-        this.postWire(beans);
-        this.wireCompleteBeans(beans);
+        this.postConstruct(beans);
     }
 
     private createBeans(): void {
@@ -76,8 +74,9 @@ export class Context {
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
             var constructorParamsMeta: any;
             if (beanEntry.bean.prototype.__agBeanMetaData
-                && beanEntry.bean.prototype.__agBeanMetaData.agConstructor) {
-                constructorParamsMeta = beanEntry.bean.prototype.__agBeanMetaData.agConstructor;
+                && beanEntry.bean.prototype.__agBeanMetaData.autowireMethods
+                && beanEntry.bean.prototype.__agBeanMetaData.autowireMethods.agConstructor) {
+                constructorParamsMeta = beanEntry.bean.prototype.__agBeanMetaData.autowireMethods.agConstructor;
             }
             var constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.beanName);
             var newInstance = applyToConstructor(beanEntry.bean, constructorParams);
@@ -145,22 +144,19 @@ export class Context {
     }
 
     private methodWireBean(bean: any): void {
-        var beanName = this.getBeanName(bean);
 
-        // if no init method, skip he bean
-        if (!bean.agWire) {
-            return;
+        var autowiredMethods: any;
+        if (bean.__agBeanMetaData) {
+            autowiredMethods = bean.__agBeanMetaData.autowireMethods;
         }
 
-        var wireParams: any;
-        if (bean.__agBeanMetaData
-            && bean.__agBeanMetaData.agWire) {
-            wireParams = bean.__agBeanMetaData.agWire;
-        }
-
-        var initParams = this.getBeansForParameters(wireParams, beanName);
-
-        bean.agWire.apply(bean, initParams);
+        _.iterateObject(autowiredMethods, (methodName: string, wireParams: any[]) => {
+            // skip constructor, as this is dealt with elsewhere
+            if (methodName === 'agConstructor') { return; }
+            var beanName = this.getBeanName(bean);
+            var initParams = this.getBeansForParameters(wireParams, beanName);
+            bean[methodName].apply(bean, initParams);
+        });
     }
 
     private getBeansForParameters(parameters: any, beanName: string): any[] {
@@ -191,7 +187,7 @@ export class Context {
         }
     }
 
-    private postWire(beans: any): void {
+    private postConstruct(beans: any): void {
         beans.forEach( (bean: any) => {
             // try calling init methods
             if (bean.__agBeanMetaData && bean.__agBeanMetaData.postConstructMethods) {
@@ -201,12 +197,8 @@ export class Context {
         } );
     }
 
-    private wireCompleteBeans(beans: any[]): void {
-        beans.forEach( (bean)=> {
-            if (bean.agApplicationBoot) {
-                bean.agApplicationBoot();
-            }
-        } );
+    public getBean(name: string): any {
+        return this.lookupBeanInstance('getBean', name, true);
     }
 
     public destroy(): void {
@@ -215,15 +207,15 @@ export class Context {
             return;
         }
         this.logger.log('>> Shutting down ag-Application Context');
+        
+        // try calling destroy methods
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
-            if (beanEntry.beanInstance.agDestroy) {
-                if (this.contextParams.debug) {
-                    console.log('ag-Grid: destroying ' + beanEntry.beanName);
-                }
-                beanEntry.beanInstance.agDestroy();
+            var bean = beanEntry.beanInstance;
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData.preDestroyMethods) {
+                bean.__agBeanMetaData.preDestroyMethods.forEach( (methodName: string) => bean[methodName]() );
             }
-            this.logger.log('bean ' + this.getBeanName(beanEntry.beanInstance) + ' destroyed');
         });
+
         this.destroyed = true;
         this.logger.log('>> ag-Application Context shut down - component is dead');
     }
@@ -238,12 +230,19 @@ function applyToConstructor(constructor: Function, argArray: any[]) {
 }
 
 export function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
-    // it's an attribute on the class
     var props = getOrCreateProps(target);
     if (!props.postConstructMethods) {
         props.postConstructMethods = [];
     }
     props.postConstructMethods.push(methodName);
+}
+
+export function PreDestroy(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
+    var props = getOrCreateProps(target);
+    if (!props.preDestroyMethods) {
+        props.preDestroyMethods = [];
+    }
+    props.preDestroyMethods.push(methodName);
 }
 
 export function Bean(beanName: string): Function {
@@ -299,10 +298,13 @@ export function Qualifier(name: string): Function {
                 props = getOrCreateProps(classPrototype.prototype);
                 methodName = 'agConstructor';
             }
-            if (!props[methodName]) {
-                props[methodName] = {};
+            if (!props.autowireMethods) {
+                props.autowireMethods = {};
             }
-            props[methodName][index] = name;
+            if (!props.autowireMethods[methodName]) {
+                props.autowireMethods[methodName] = {};
+            }
+            props.autowireMethods[methodName][index] = name;
         }
 
     };

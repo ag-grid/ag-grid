@@ -8,7 +8,7 @@ export class ExpressionService {
     private expressionToFunctionCache = <any>{};
     private logger: Logger;
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ExpressionService');
     }
 

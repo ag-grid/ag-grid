@@ -2,10 +2,23 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SelectionController} from "../selectionController";
+import {ColDef} from "./colDef";
+import {Column} from "./column";
+import {ValueService} from "../valueService";
+import {ColumnController} from "../columnController/columnController";
+import {Autowired} from "../context/context";
 
 export class RowNode {
 
     public static EVENT_ROW_SELECTED = 'rowSelected';
+    public static EVENT_DATA_CHANGED = 'dataChanged';
+    public static EVENT_CELL_CHANGED = 'cellChanged';
+
+    @Autowired('eventService') private mainEventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('valueService') private valueService: ValueService;
 
     /** Unique ID for the node. Can be thought of as the index of the row in the original list. */
     public id: number;
@@ -53,17 +66,31 @@ export class RowNode {
     public rowTop: number;
 
     private selected = false;
-
     private eventService: EventService;
-    private mainEventService: EventService;
-    private gridOptionsWrapper: GridOptionsWrapper;
-    private selectionController: SelectionController;
 
-    constructor(mainEventService: EventService, gridOptionsWrapper: GridOptionsWrapper,
-                selectionController: SelectionController) {
-        this.mainEventService = mainEventService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.selectionController = selectionController ;
+    public setData(data: any): void {
+        var oldData = this.data;
+        this.data = data;
+        var event = {oldData: oldData, newData: data};
+        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    }
+
+    private dispatchLocalEvent(eventName: string, event?: any): void {
+        if (this.eventService) {
+            this.eventService.dispatchEvent(eventName, event);
+        }
+    }
+
+    // we also allow editing the value via the editors. when it is done via
+    // the editors, no 'cell changed' event gets fired, as it's assumed that
+    // the cell knows about the change given it's in charge of the editing.
+    // this method is for the client to call, so the cell listens for the change
+    // event, and also flashes the cell when the change occurs.
+    public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
+        var column = this.columnController.getColumn(colKey);
+        this.valueService.setValue(this, column, newValue);
+        var event = {column: column, newValue: newValue};
+        this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
     }
 
     public resetQuickFilterAggregateText(): void {
@@ -178,7 +205,7 @@ export class RowNode {
             this.selected = newValue;
 
             if (this.eventService) {
-                this.eventService.dispatchEvent(RowNode.EVENT_ROW_SELECTED);
+                this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
             }
 
             var event:any = {node: this};

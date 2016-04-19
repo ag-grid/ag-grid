@@ -10,7 +10,7 @@ import {Utils as _} from './utils';
 @Bean('selectionRendererFactory')
 export class SelectionRendererFactory {
 
-    public createSelectionCheckbox(rowNode: RowNode, rowIndex: any, addRenderedRowEventListener: Function) {
+    public createSelectionCheckbox(rowNode: RowNode, addRenderedRowEventListener: Function) {
 
         var eCheckbox = document.createElement('input');
         eCheckbox.type = "checkbox";

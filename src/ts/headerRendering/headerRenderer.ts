@@ -1,28 +1,11 @@
-import {Utils as _} from '../utils';
-import {HeaderTemplateLoader} from "./headerTemplateLoader";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import {Grid} from "../grid";
-import {FilterManager} from "../filter/filterManager";
 import {GridPanel} from "../gridPanel/gridPanel";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnGroup} from "../entities/columnGroup";
-import {RenderedHeaderGroupCell} from "./renderedHeaderGroupCell";
 import {Column} from "../entities/column";
-import {RenderedHeaderCell} from "./renderedHeaderCell";
-import {HorizontalDragService} from "./horizontalDragService";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import {PopupService} from "../widgets/popupService";
-import {Autowired} from "../context/context";
-import {Context} from "../context/context";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
+import {Bean, Autowired, Context, PostConstruct} from "../context/context";
 import {HeaderContainer} from "./headerContainer";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {ColumnChangeEvent} from "../columnChangeEvent";
-import {PostConstruct} from "../context/context";
 
 @Bean('headerRenderer')
 export class HeaderRenderer {

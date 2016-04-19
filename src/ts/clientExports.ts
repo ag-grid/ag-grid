@@ -5,37 +5,24 @@ import {ComponentUtil} from "./components/componentUtil";
 import {ColumnController} from "./columnController/columnController";
 import {initialiseAgGridWithAngular1} from "./components/agGridNg1";
 import {initialiseAgGridWithWebComponents} from "./components/agGridWebComponent";
-import {IRowModel} from "./interfaces/iRowModel";
-import {TextAndNumberFilterParameters} from "./filter/textAndNumberFilterParameters";
 import {GridCell} from "./entities/gridCell";
 import {RowNode} from "./entities/rowNode";
-import {OriginalColumnGroupChild} from "./entities/originalColumnGroupChild";
 import {OriginalColumnGroup} from "./entities/originalColumnGroup";
-import {ColumnGroupChild} from "./entities/columnGroupChild";
 import {ColumnGroup} from "./entities/columnGroup";
 import {Column} from "./entities/column";
-import {ColGroupDef} from "./entities/colDef";
-import {ColDef} from "./entities/colDef";
-import {AbstractColDef} from "./entities/colDef";
-import {NodeChildDetails} from "./entities/gridOptions";
 import {FocusedCellController} from "./focusedCellController";
 import {defaultGroupComparator} from "./functions";
-import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {MenuItem} from "./widgets/cMenuItem";
-import {groupCellRendererFactory} from "./cellRenderers/groupCellRendererFactory";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
-import {Context} from "./context/context";
+import {Context, Autowired, PostConstruct, Optional, Bean, Qualifier} from "./context/context";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
-import {Filter} from "./filter/filter";
 import {FilterManager} from "./filter/filterManager";
 import {NumberFilter} from "./filter/numberFilter";
-import {SetFilterParameters} from "./filter/setFilterParameters";
 import {TextFilter} from "./filter/textFilter";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {MouseEventService} from "./gridPanel/mouseEventService";
@@ -44,7 +31,6 @@ import {HeaderContainer} from "./headerRendering/headerContainer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
-import {IRenderedHeaderElement} from "./headerRendering/iRenderedHeaderElement";
 import {MoveColumnController} from "./headerRendering/moveColumnController";
 import {RenderedHeaderCell} from "./headerRendering/renderedHeaderCell";
 import {RenderedHeaderGroupCell} from "./headerRendering/renderedHeaderGroupCell";
@@ -57,12 +43,9 @@ import {RenderedRow} from "./rendering/renderedRow";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
-import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {PaginationController} from "./rowControllers/paginationController";
-import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
-import {CMenuItem} from "./widgets/cMenuItem";
 import {Component} from "./widgets/component";
 import {MenuList} from "./widgets/menuList";
 import {CellNavigationService} from "./cellNavigationService";
@@ -82,17 +65,26 @@ import {TemplateService} from "./templateService";
 import {Utils} from "./utils";
 import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
-import {Autowired} from "./context/context";
-import {PostConstruct} from "./context/context";
-import {Optional} from "./context/context";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
 import {GridRow} from "./entities/gridRow";
+import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
+import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
+import {MenuItemComponent} from "./widgets/menuItemComponent";
+import {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCellRenderer";
+import {CellEditorFactory} from "./rendering/cellEditorFactory";
+import {PopupEditorWrapper} from "./rendering/cellEditors/popupEditorWrapper";
+import {PopupSelectCellEditor} from "./rendering/cellEditors/popupSelectCellEditor";
+import {PopupTextCellEditor} from "./rendering/cellEditors/popupTextCellEditor";
+import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
+import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
+import {CellRendererFactory} from "./rendering/cellRendererFactory";
+import {VirtualList} from "./widgets/virtualList";
+import {RichSelectCellEditor} from "./rendering/cellEditors/richSelect/richSelectCellEditor";
+import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
+import {CellRendererService} from "./rendering/cellRendererService";
+import {ValueFormatterService} from "./rendering/valueFormatterService";
+import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 
 export function populateClientExports(exports: any): void {
-
-    // cellRenderers
-    exports.groupCellRendererFactory = groupCellRendererFactory;
 
     // columnController
     exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;
@@ -152,28 +144,46 @@ export function populateClientExports(exports: any): void {
     exports.TabbedLayout = TabbedLayout;
     exports.VerticalStack = VerticalStack;
 
+    // rendering / cellEditors
+    exports.DateCellEditor = DateCellEditor;
+    exports.PopupEditorWrapper = PopupEditorWrapper;
+    exports.PopupSelectCellEditor = PopupSelectCellEditor;
+    exports.PopupTextCellEditor = PopupTextCellEditor;
+    exports.SelectCellEditor = SelectCellEditor;
+    exports.TextCellEditor = TextCellEditor;
+    exports.RichSelectCellEditor = RichSelectCellEditor;
+
+    // rendering / cellRenderers
+    exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
+    exports.GroupCellRenderer = GroupCellRenderer;
+
     // rendering
     exports.AutoWidthCalculator = AutoWidthCalculator;
+    exports.CellEditorFactory = CellEditorFactory;
     exports.RenderedHeaderCell = RenderedHeaderCell;
+    exports.CellRendererFactory = CellRendererFactory;
+    exports.CellRendererService = CellRendererService;
     exports.RenderedRow = RenderedRow;
     exports.RowRenderer = RowRenderer;
+    exports.ValueFormatterService = ValueFormatterService;
 
     // rowControllers/inMemory
     exports.FilterStage = FilterStage;
     exports.FlattenStage = FlattenStage;
-    exports.InMemoryRowController = InMemoryRowController;
+    exports.InMemoryRowModel = InMemoryRowModel;
     exports.SortStage = SortStage;
 
     // rowControllers
     exports.FloatingRowModel = FloatingRowModel;
     exports.PaginationController = PaginationController;
-    exports.VirtualPageRowController = VirtualPageRowController;
+    exports.VirtualPageRowModel = VirtualPageRowModel;
 
     // widgets
     exports.PopupService = PopupService;
-    exports.CMenuItem = CMenuItem;
+    exports.MenuItemComponent = MenuItemComponent;
     exports.Component = Component;
     exports.MenuList = MenuList;
+    exports.VirtualList = VirtualList;
 
     // root
     exports.CellNavigationService = CellNavigationService;

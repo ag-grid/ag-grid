@@ -1,12 +1,10 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
 import {PaginationController} from "./rowControllers/paginationController";
-import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {SelectionController} from "./selectionController";
-import {ColumnController} from "./columnController/columnController";
+import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
@@ -15,7 +13,6 @@ import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {OldToolPanelDragAndDropService} from "./dragAndDrop/oldToolPanelDragAndDropService";
 import {GridPanel} from "./gridPanel/gridPanel";
-import {Logger} from "./logger";
 import {GridApi} from "./gridApi";
 import {Constants} from "./constants";
 import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
@@ -28,28 +25,30 @@ import {PopupService} from "./widgets/popupService";
 import {LoggerFactory} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
-import {Events} from "./events";
-import {BorderLayout} from "./layout/borderLayout";
-import {ColumnChangeEvent} from "./columnChangeEvent";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {ColDef} from "./entities/colDef";
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
-import {Context} from './context/context';
+import {Context} from "./context/context";
 import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {SortController} from "./sortController";
-import {ColumnApi} from "./columnController/columnController";
 import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
-import {Utils as _} from './utils';
+import {Utils as _} from "./utils";
 import {FilterStage} from "./rowControllers/inMemory/fillterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
+import {FocusService} from "./misc/focusService";
+import {CellEditorFactory} from "./rendering/cellEditorFactory";
+import {Events} from "./events";
+import {ViewportRowModel} from "./rowControllers/viewportRowModel";
+import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
+import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
+import {CellRendererFactory} from "./rendering/cellRendererFactory";
+import {CellRendererService} from "./rendering/cellRendererService";
+import {ValueFormatterService} from "./rendering/valueFormatterService";
 
 export class Grid {
 
@@ -69,9 +68,8 @@ export class Grid {
         if (!gridOptions) {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
-
-        var virtualPaging = gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL;
-        var rowModelClass = virtualPaging ? VirtualPageRowController : InMemoryRowController;
+        
+        var rowModelClass = this.getRowModelClass(gridOptions);
 
         var enterprise = _.exists(Grid.enterpriseBeans);
 
@@ -86,7 +84,7 @@ export class Grid {
                 quickFilterOnScope: quickFilterOnScope,
                 globalEventListener: globalEventListener
             },
-            beans: [rowModelClass, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+            beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, SelectionRendererFactory, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
@@ -94,10 +92,28 @@ export class Grid {
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterStage, SortStage, FlattenStage],
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
+                CellEditorFactory, CellRendererService, ValueFormatterService],
             debug: !!gridOptions.debug
         });
+
+        var eventService = this.context.getBean('eventService');
+        var readyEvent = {
+            api: gridOptions.api,
+            columnApi: gridOptions.columnApi
+        };
+        eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
     }
+
+    private getRowModelClass(gridOptions:GridOptions): any {
+        if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
+            return ViewportRowModel;
+        } else if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL) {
+            return VirtualPageRowModel;
+        } else {
+            return InMemoryRowModel;
+        }
+    };
 
     public destroy(): void {
         this.context.destroy();

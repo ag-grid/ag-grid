@@ -1,44 +1,20 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {InMemoryRowController} from "./rowControllers/inMemory/inMemoryRowController";
 import {PaginationController} from "./rowControllers/paginationController";
-import {VirtualPageRowController} from "./rowControllers/virtualPageRowController";
-import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";
-import {ValueService} from "./valueService";
-import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
-import {Logger} from "./logger";
-import {GridApi} from "./gridApi";
+import {Logger, LoggerFactory} from "./logger";
 import {Constants} from "./constants";
-import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
-import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
-import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
-import {SelectionRendererFactory} from "./selectionRendererFactory";
-import {ExpressionService} from "./expressionService";
-import {TemplateService} from "./templateService";
 import {PopupService} from "./widgets/popupService";
-import {LoggerFactory} from "./logger";
-import {ColumnUtils} from "./columnController/columnUtils";
-import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {Events} from "./events";
 import {BorderLayout} from "./layout/borderLayout";
-import {ColumnChangeEvent} from "./columnChangeEvent";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {ColDef} from "./entities/colDef";
-import {Context} from './context/context';
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {Autowired} from "./context/context";
+import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
-import {PostConstruct} from "./context/context";
 import {FocusedCellController} from "./focusedCellController";
-import {Optional} from "./context/context";
 import {Component} from "./widgets/component";
 
 @Bean('gridCore')
@@ -63,6 +39,7 @@ export class GridCore {
 
     @Optional('rowGroupPanel') private rowGroupPanel: Component;
     @Optional('toolPanel') private toolPanel: Component;
+    @Optional('statusBar') private statusBar: Component;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -81,11 +58,9 @@ export class GridCore {
     public init(): void {
 
         // and the last bean, done in it's own section, as it's optional
-        var paginationGui: any;
         var toolPanelGui: HTMLElement;
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            paginationGui = this.paginationController.getGui();
-        }
+
+        var eSouthPanel = this.createSouthPanel();
 
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             toolPanelGui = this.toolPanel.getGui();
@@ -100,12 +75,10 @@ export class GridCore {
             center: this.gridPanel.getLayout(),
             east: toolPanelGui,
             north: rowGroupGui,
-            south: paginationGui,
+            south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
             name: 'eRootPanel'
         });
-
-        this.eRootPanel.setSouthVisible(this.gridOptionsWrapper.isRowModelPagination());
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
@@ -126,14 +99,41 @@ export class GridCore {
         this.finished = false;
         this.periodicallyDoLayout();
 
-        this.popupService.setPopupParent(this.eRootPanel.getGui());
-
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onRowGroupChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
 
         this.logger.log('ready');
+    }
+
+    public getRootGui(): HTMLElement {
+        return this.eRootPanel.getGui();
+    }
+    
+    private createSouthPanel(): HTMLElement {
+
+        if (!this.statusBar && this.gridOptionsWrapper.isEnableStatusBar()) {
+            console.warn('ag-Grid: status bar is only available in ag-Grid-Enterprise');
+        }
+
+        var statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
+        var paginationPanelEnabled = this.gridOptionsWrapper.isRowModelPagination() && !this.gridOptionsWrapper.isForPrint();
+
+        if (!statusBarEnabled && !paginationPanelEnabled) {
+            return null;
+        }
+
+        var eSouthPanel = document.createElement('div');
+        if (statusBarEnabled) {
+            eSouthPanel.appendChild(this.statusBar.getGui());
+        }
+
+        if (paginationPanelEnabled) {
+            eSouthPanel.appendChild(this.paginationController.getGui());
+        }
+
+        return eSouthPanel;
     }
 
     private onRowGroupChanged(): void {
@@ -150,15 +150,7 @@ export class GridCore {
             this.eRootPanel.setNorthVisible(false);
         }
     }
-
-    public agApplicationBoot(): void {
-        var readyEvent = {
-            api: this.gridOptions.api,
-            columnApi: this.gridOptions.columnApi
-        };
-        this.eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
-    }
-
+    
     private addWindowResizeListener(): void {
         var that = this;
         // putting this into a function, so when we remove the function,
@@ -183,8 +175,8 @@ export class GridCore {
     }
 
     public showToolPanel(show: any) {
-        if (!this.toolPanel) {
-            console.log('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+        if (show && !this.toolPanel) {
+            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             this.toolPanelShowing = false;
             return;
         }
@@ -197,7 +189,8 @@ export class GridCore {
         return this.toolPanelShowing;
     }
 
-    public agDestroy() {
+    @PreDestroy
+    private destroy() {
         if (this.windowResizeListener) {
             window.removeEventListener('resize', this.windowResizeListener);
             this.logger.log('Removing windowResizeListener');
