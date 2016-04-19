@@ -76,6 +76,7 @@
                 <img src='images/sean.png'/>
             </div>
             <h3>Sean Landsman</h3>
+            <h4>Lead Developer</h4>
             <p>
                 Sean is an experienced full stack technical lead with an extensive background in enterprise solutions. Over
                 19 years in the industry has taught him the value of quality code and good team collaboration. The bulk
