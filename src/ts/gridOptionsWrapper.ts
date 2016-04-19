@@ -16,6 +16,7 @@ import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {Events} from "./events";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
+import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -140,7 +141,9 @@ export class GridOptionsWrapper {
     public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
-    public getGroupRowRenderer() { return this.gridOptions.groupRowRenderer; }
+    public getGroupRowRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.gridOptions.groupRowRenderer; }
+    public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
+    public getGroupRowInnerRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.gridOptions.groupRowInnerRenderer; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
     public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
@@ -189,10 +192,6 @@ export class GridOptionsWrapper {
         } else {
             return false;
         }
-    }
-
-    public getGroupRowInnerRenderer() {
-        return this.gridOptions.groupRowInnerRenderer;
     }
 
     public getMinColWidth() {

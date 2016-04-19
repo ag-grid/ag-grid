@@ -46,7 +46,6 @@ export class RowRenderer {
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
 
-    private cellRendererMap: {[key: string]: any};
     private firstRenderedRow: number;
     private lastRenderedRow: number;
 
@@ -196,7 +195,6 @@ export class RowRenderer {
         if (rowNodes) {
             rowNodes.forEach( (node: RowNode, rowIndex: number) => {
                 var renderedRow = new RenderedRow(this.$scope,
-                    this.cellRendererMap,
                     this,
                     bodyContainer,
                     pinnedLeftContainer,
@@ -211,6 +209,10 @@ export class RowRenderer {
     public refreshView(refreshEvent?: any) {
         this.logger.log('refreshView');
 
+        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+
+        this.focusedCellController.getFocusedCell();
+
         var refreshFromIndex: number = refreshEvent ? refreshEvent.fromIndex : null;
 
         if (!this.gridOptionsWrapper.isForPrint()) {
@@ -222,12 +224,28 @@ export class RowRenderer {
 
         this.refreshAllVirtualRows(refreshFromIndex);
         this.refreshAllFloatingRows();
+
+        this.restoreFocusedCell(focusedCell);
+    }
+
+    // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
+    // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
+    // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
+    // edited cell).
+    private restoreFocusedCell(gridCell: GridCell): void {
+        if (gridCell) {
+            this.focusedCellController.setFocusedCell(gridCell.rowIndex, gridCell.column, gridCell.floating, true);
+        }
     }
 
     public softRefreshView() {
+        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+
         _.iterateObject(this.renderedRows, (key: any, renderedRow: RenderedRow)=> {
             renderedRow.softRefresh();
         });
+
+        this.restoreFocusedCell(focusedCell);
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
@@ -239,6 +257,9 @@ export class RowRenderer {
         if (!rowNodes || rowNodes.length==0) {
             return;
         }
+
+        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+
         // we only need to be worried about rendered rows, as this method is
         // called to whats rendered. if the row isn't rendered, we don't care
         var indexesToRemove: any = [];
@@ -252,6 +273,8 @@ export class RowRenderer {
         this.removeVirtualRow(indexesToRemove);
         // add draw them again
         this.drawVirtualRows();
+
+        this.restoreFocusedCell(focusedCell);
     }
 
     public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
@@ -464,7 +487,6 @@ export class RowRenderer {
         }
 
         var renderedRow = new RenderedRow(this.$scope,
-            this.cellRendererMap,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex);
         this.context.wireBean(renderedRow);

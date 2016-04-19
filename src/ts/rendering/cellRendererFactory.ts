@@ -12,9 +12,9 @@ import {GroupCellRenderer} from "./cellRenderers/groupCellRenderer";
 @Bean('cellRendererFactory')
 export class CellRendererFactory {
 
-    private static ANIMATE_SLIDE = 'animateSlide';
-    private static ANIMATE_SHOW_CHANGE = 'animateShowChange';
-    private static GROUP = 'group';
+    public static ANIMATE_SLIDE = 'animateSlide';
+    public static ANIMATE_SHOW_CHANGE = 'animateShowChange';
+    public static GROUP = 'group';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;

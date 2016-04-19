@@ -12,6 +12,8 @@ import {ColumnChangeEvent} from "../columnChangeEvent";
 import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {GridCell} from "../entities/gridCell";
+import {CellRendererService} from "./cellRendererService";
+import {CellRendererFactory} from "./cellRendererFactory";
 
 export class RenderedRow {
 
@@ -23,6 +25,7 @@ export class RenderedRow {
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('context') private context: Context;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
 
     public ePinnedLeftRow: HTMLElement;
     public ePinnedRightRow: HTMLElement;
@@ -35,8 +38,6 @@ export class RenderedRow {
     private rowIndex: number;
 
     private rowIsHeaderThatSpans: boolean;
-
-    private cellRendererMap: {[key: string]: any};
 
     private parentScope: any;
     private rowRenderer: RowRenderer;
@@ -51,7 +52,6 @@ export class RenderedRow {
     private renderedRowEventService: EventService;
 
     constructor(parentScope: any,
-                cellRendererMap: {[key: string]: any},
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
                 ePinnedLeftContainer: HTMLElement,
@@ -59,7 +59,6 @@ export class RenderedRow {
                 node: RowNode,
                 rowIndex: number) {
         this.parentScope = parentScope;
-        this.cellRendererMap = cellRendererMap;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
@@ -210,8 +209,7 @@ export class RenderedRow {
             return this.renderedCells[colId];
         } else {
             var renderedCell = new RenderedCell(column,
-                this.cellRendererMap, this.rowNode,
-                this.rowIndex, this.scope, this);
+                this.rowNode, this.rowIndex, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             return renderedCell;
@@ -404,54 +402,45 @@ export class RenderedRow {
         }
     }
 
-    private createGroupSpanningEntireRowCell(padding: any) {
+    private createGroupSpanningEntireRowCell(padding: boolean) {
         var eRow: any;
         // padding means we are on the right hand side of a pinned table, ie
         // in the main body.
-        if (padding) {
-            eRow = document.createElement('span');
-        } else {
-            var rowCellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
-            if (!rowCellRenderer) {
-                rowCellRenderer = {
-                    renderer: 'group',
-                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
-                };
+        eRow = document.createElement('span');
+        if (!padding) {
+            var cellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
+            var cellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
+
+            if (!cellRenderer) {
+                cellRenderer = CellRendererFactory.GROUP;
+                cellRendererParams = {
+                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
+                }
             }
             var params = {
-                node: this.rowNode,
                 data: this.rowNode.data,
+                node: this.rowNode,
+                $scope: this.scope,
                 rowIndex: this.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext(),
+                eGridCell: eRow,
+                eParentOfValue: eRow,
+                addRenderedRowListener: this.addEventListener.bind(this),
                 colDef: {
-                    cellRenderer: rowCellRenderer
+                    cellRenderer: cellRenderer,
+                    cellRendererParams: cellRendererParams
                 }
             };
 
-            // start duplicated code
-            var actualCellRenderer: Function;
-            if (typeof rowCellRenderer === 'object' && rowCellRenderer !== null) {
-                var cellRendererObj = <{ renderer: string }> rowCellRenderer;
-                actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
-                if (!actualCellRenderer) {
-                    throw 'Cell renderer ' + rowCellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
-                }
-            } else if (typeof rowCellRenderer === 'function') {
-                actualCellRenderer = <Function>rowCellRenderer;
-            } else {
-                throw 'Cell Renderer must be String or Function';
+            if (cellRendererParams) {
+                _.assign(params, cellRendererParams);
             }
-            var resultFromRenderer = actualCellRenderer(params);
-            // end duplicated code
 
-            if (_.isNodeOrElement(resultFromRenderer)) {
-                // a dom node or element was returned, so add child
-                eRow = resultFromRenderer;
-            } else {
-                // otherwise assume it was html, so just insert
-                eRow = _.loadTemplate(resultFromRenderer);
-            }
+            this.cellRendererService.useCellRenderer(cellRenderer, eRow, params);
         }
+
         if (this.rowNode.footer) {
             _.addCssClass(eRow, 'ag-footer-cell-entire-row');
         } else {

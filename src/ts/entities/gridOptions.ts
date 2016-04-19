@@ -4,6 +4,7 @@ import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 import {MenuItem} from "../widgets/menuItemComponent";
+import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -122,8 +123,9 @@ export interface GridOptions {
      ****************************************************************/
 
     // callbacks
-    groupRowInnerRenderer?(params: any): void;
-    groupRowRenderer?: Function | Object;
+    groupRowRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    groupRowRendererParams?: any;
+    groupRowInnerRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     isScrollLag?(): boolean;
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;

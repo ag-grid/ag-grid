@@ -73,7 +73,6 @@ export class RenderedCell extends Component {
 
     private scope: any;
 
-    private cellRendererMap: {[key: string]: Function};
     private eCheckbox: HTMLInputElement;
     private cellEditor: ICellEditor;
     private cellRenderer: ICellRenderer;
@@ -86,7 +85,6 @@ export class RenderedCell extends Component {
     private lastLeftPinned = false;
 
     constructor(column: any,
-                cellRendererMap: {[key: string]: any},
                 node: any, rowIndex: number, scope: any,
                 renderedRow: RenderedRow) {
         super('<div/>');
@@ -96,7 +94,6 @@ export class RenderedCell extends Component {
         this.eGridCell = this.getGui();
 
         this.column = column;
-        this.cellRendererMap = cellRendererMap;
 
         this.node = node;
         this.rowIndex = rowIndex;

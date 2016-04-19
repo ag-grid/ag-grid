@@ -16,7 +16,8 @@ export class ComponentUtil {
         'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType'];
 
     public static OBJECT_PROPERTIES = [
-        'rowStyle','context','groupColumnDef','localeText','icons','datasource','viewportDatasource'
+        'rowStyle','context','groupColumnDef','localeText','icons','datasource','viewportDatasource',
+        'groupRowRendererParams'
     ];
 
     public static ARRAY_PROPERTIES = [
