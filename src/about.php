@@ -76,8 +76,12 @@
                 <img src='images/sean.png'/>
             </div>
             <h3>Sean Landsman</h3>
+            <h4>Lead Developer</h4>
             <p>
-                Lead Developer
+                Sean is an experienced full stack technical lead with an extensive background in enterprise solutions. Over
+                19 years in the industry has taught him the value of quality code and good team collaboration. The bulk
+                of his background is on the server side, but like Niall is increasingly switching focus to include front end
+                technologies.
             </p>
         </div>
 
@@ -90,9 +94,7 @@
                 Front End Developer
             </p>
         </div>
-
     </div> <!-- end row -->
-
 </div>
 
 

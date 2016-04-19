@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>sizeColumnsToFit(width)</th>
             <td>Don't use this! You are better off using gridApi.sizeColumnsToFit(), which first
-            works out the available with, and then calls this method. Only use this method if you
+            works out the available width, and then calls this method. Only use this method if you
             want to size to something other than the available width.</td>
         </tr>
         <tr>
@@ -156,7 +156,7 @@ include '../documentation-main/documentation_header.php';
             <td>Sets the visibility of a column. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
-            <th>setColumnsVisible(key, visible)</th>
+            <th>setColumnsVisible(keys, visible)</th>
             <td>Same as setColumnVisible, but provide a list of column keys.</td>
         </tr>
         <tr>
@@ -276,7 +276,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>colId</b>: The ID of the column. See
             <a href="/angular-grid-column-definitions/index.php">column definitions</a> for explanation
             of column ID</li>
-        <li><b>aggFunc</b>: If this columns is a value column, this field specifies the aggregation function.
+        <li><b>aggFunc</b>: If this column is a value column, this field specifies the aggregation function.
         If the column is not a value column, this field is null.</li>
         <li><b>hide</b>: True if the column is hidden, otherwise false.</li>
         <li><b>rowGroupIndex</b>: The index of the row group. If the column is not grouped, this field is null.

@@ -45,13 +45,13 @@ include('../includes/mediaHeader.php');
 
         <h3>Learning from Angular 2 and Typescript</h3>
 
-        <p>You do not need to be using, or even a fan of, Angular 2 or Typescript for them to be useful for you.
-        You can learn from them and benefit from what they bring to the community even if your a Babel and React guy.
+        <p>You do not need to be using, or even be a fan of, Angular 2 or Typescript for them to be useful for you.
+        You can learn from them and benefit from what they bring to the community even if you're a Babel and React guy.
         <ul>
             <li><b>Typescript</b> is written by Microsoft, a proper company with experience writing proper compilers
             including C# and C++. This means I respect more their 'design on things' than I would open source
             community driven projects. Personally I learnt a lot by observing the different options of the Typescript
-            compiler and how they changed the resultant JavaScript code.</li>
+            compiler and how they changed the resulting JavaScript code.</li>
             <li><b>Angular 2</b> is pushing the boundaries of ECMA 6 and Typescript. This may be it's achilles heel,
                 in that it's using cutting edge technologies, but it is forcing these technologies into the main
             stream and ironing them out. A lot can be learnt of the future by looking at what Angular 2 is doing
@@ -163,7 +163,7 @@ function tscTask() {
             <li><b>system:</b> System modules are the future. However they are still changing, which is difficult
             to support. Angular 2 is provided through CommonJS - to me this is very telling as the
             Angular 2 guys collaborate with the TypeScript guys, pushing the boundaries of TypeScript,
-            and if the Angular 2 guys think System modules are not ready, then me neither. Besides, CommonJS can
+            and if the Angular 2 guys think System modules are not ready, then I don't either. Besides, CommonJS can
             also be read in from SystemX, so why take the risk and pain at this point? CommonJS works and is stable.</li>
         </ul>
         ag-Grid uses Gulp to configure TypeScript. Another popular way is to use tsconfig.json. There is no
