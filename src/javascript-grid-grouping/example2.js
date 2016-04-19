@@ -19,8 +19,8 @@ var gridOptions = {
         field: "athlete",
         width: 200,
         comparator: agGrid.defaultGroupComparator,
-        cellRenderer: {
-            renderer: 'group',
+        cellRenderer: 'group',
+        cellRendererParams: {
             footerValueGetter: '"Total (" + x + ")"',
             padding: 5
         }}
