@@ -1,4 +1,6 @@
 import {
+    GetContextMenuItemsParams,
+    GetContextMenuItems,
     SvgFactory,
     MenuItemComponent,
     Bean,
@@ -33,8 +35,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private getMenuItems(node: RowNode, column: Column, value: any): [MenuItem|string] {
         var defaultMenuOptions: [string] = ['copy','paste','separator','toolPanel'];
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
-            var userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
-            var params = {
+            var userFunc: GetContextMenuItems = this.gridOptionsWrapper.getContextMenuItemsFunc();
+            var params: GetContextMenuItemsParams = {
                 node: node,
                 column: column,
                 value: value,
