@@ -53,6 +53,11 @@
         </div> <!-- end col -->
     </div> <!-- end row -->
 
+    <!--
+    I'm so glad you made ag-Grid!  Finally, someone has done it right.  I started using Google's Table visualizations, then tried dataTables.net and then js-Grid before I discovered your product.  Your design and implementation is brilliant.
+    Graham Smith, United Healthcare Workers West
+    -->
+
     <div class="row">
         <div class="col-md-9">    
             <hr/>

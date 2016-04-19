@@ -297,7 +297,7 @@
             </h2>
 
             <p>
-                If you wish to use ag-Grid-Enterprise within a non-profit organisation or for educational purposes,
+                If you wish to use ag-Grid-Enterprise within a non-profit charity or for educational purposes,
                 then you can use ag-Grid-Enterprise for free. All we ask in return is the following:
                 <ul>
                     <li>

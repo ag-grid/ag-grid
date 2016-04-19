@@ -115,7 +115,12 @@ include '../documentation-main/documentation_header.php';
             <th>groupRowRenderer</th>
             <td>If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default
                 presentation of the group. This is only used when groupUseEntireRow=true. This gives you full control
-                of the row, so the grid will not provide any default expand / collapse or selection checkbox.</td>
+                of the row, so the grid will not provide any default expand / collapse or selection checkbox. The
+                renderer is a standard </td>
+        </tr>
+        <tr>
+            <th>groupRowRendererParams</th>
+            <td>Param for groupRowRenderer. See section on cellRendering for details.</td>
         </tr>
         <tr>
             <th>groupRowInnerRenderer</th>
@@ -161,15 +166,13 @@ gridOptions.groupColumnDef = null; // or undefined</pre>
     </p>
         <pre>gridOptions.groupSuppressAutoColumn = false; // or undefined
 gridOptions.groupColumnDef = {
-    cellRenderer: {
-        renderer: 'group',
-        headerName: 'Group Column'
-    }
+    cellRenderer: 'group',
+    headerName: 'Group Column'
 };</pre>
     <p>
         Because a group column is just a normal column, you can provide all the column attributes, such as header name,
         css style and class, field, valueGetter etc. All of these parameters are used as appropriate. The example
-        above uses the stock 'group' cellRenderer - you can also use this, or you can build your own cellRenderer
+        above uses the provided 'group' cellRenderer - you can also use this, or you can build your own cellRenderer
         from scratch.
     </p>
 
@@ -193,24 +196,23 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         If grouping, you will need to dedicate a column to displaying the group, as described above.
         To have the column behave appropriate, you need to provide it with an appropriate cell renderer.
         You can either a) use the built in provided group cell renderer or b) bake your own grouping
-        cell renderer. The provided cell renderer is selected by providing a string (the key for this
-        group cell renderer, in the future I plan to include other cell renderers) instead of a function
-        for the cell renderer.
+        cell renderer. The provided cell renderer is selected by providing the string 'group' for
+        the cellRenderer. You also provide params with options as follows:
         <pre>colDef.cellRenderer = {
-        renderer: 'group',
+        renderer: 'group'
+};
+colDef.cellRendererParams = {
         keyMap: {from: 'to'},
         suppressCount: false,
         checkbox: true,
         padding: 10,
         innerRenderer: myInnerRenderer,
         footerValueGetter: myFooterValueGetter
-}</pre>
+};</pre>
 
     <p>
-        The attributes are:
+        The parameters are:
     <ul>
-        <li><b>renderer:</b> This picks the built in renderer, in this case the group renderer. At the time of writing,
-            no other built in renderers are provided.</li>
         <li><b>keyMap:</b> Map of key value pairs to display alternatives instead of the group keys. For example,
             if the group was 'LDN', you could display it as 'London'.</li>
         <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
@@ -304,14 +306,14 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         the same, one using a function, one using an expression.
     </p>
     <pre><code>// use a function to return a footer value
-cellRenderer: {
-    renderer: 'group',
+cellRenderer: 'group',
+cellRendererParams: {
     footerValueGetter: function(params) { return 'Total (' + params.value + ')'},
 }}
 
 // use an expression to return a footer value. this gives the same result as above
-    cellRenderer: {
-    renderer: 'group',
+cellRenderer: 'group',
+cellRendererParams: {
     footerValueGetter: '"Total (" + x + ")"'
 }}</code></pre>
     <p>
@@ -370,8 +372,8 @@ gridOptions.groupUseEntireRow = true;
 // we tell the grid what renderer to use (the built in renderer) and we
 // configure the default renderer with our own inner renderer
 gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer: {
-    renderer: 'group',
+gridOptions.groupRowRenderer:  'group';
+gridOptions.groupRowRendererParams: {
     innerRenderer: function(params) {return params.node.key;},
 };
 

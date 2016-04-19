@@ -1,9 +1,7 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 200,
         comparator: agGrid.defaultGroupComparator,
-        cellRenderer: {
-            renderer: 'group'
-        }
+        cellRenderer: 'group'
     },
     {headerName: "Age", field: "age", width: 90, cellRenderer: ageRenderer},
     {headerName: "Gold", field: "gold", width: 100},
@@ -50,7 +48,7 @@ function groupAggFunction(nodes) {
         bronze: 0,
         total: 0,
         minAge: 100,
-        maxAge: 0,
+        maxAge: 0
     };
 
     nodes.forEach(function(node) {

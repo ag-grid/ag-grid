@@ -66,7 +66,8 @@
             <p>
                 Niall has 16 years building greenfield software projects in Telecommunications, Government, Insurance
                 and most recently Investment Banking. Oracle and Java used to be his bread and butter but is now
-                focusing on front end JavaScript.
+                focusing on front end JavaScript, bringing his skill and knowledge from prevoius domains to the
+                emerging JavaScript platform.
             </p>
         </div>
 
@@ -76,10 +77,20 @@
             </div>
             <h3>Sean Landsman</h3>
             <p>
-                Sean is an experienced full stack developer with an extensive background in enterprise solutions. Over
+                Sean is an experienced full stack technical lead with an extensive background in enterprise solutions. Over
                 19 years in the industry has taught him the value of quality code and good team collaboration. The bulk
                 of his background is on the server side, but like Niall is increasingly switching focus to include front end
                 technologies.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <div>
+                <img src='images/will.png'/>
+            </div>
+            <h3>Will Halling</h3>
+            <p>
+                Front End Developer
             </p>
         </div>
     </div> <!-- end row -->
