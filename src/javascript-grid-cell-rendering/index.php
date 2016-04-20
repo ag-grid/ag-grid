@@ -17,7 +17,14 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        A cell renderer is a function that when called, returns HTML (either a Dom or Node element, or an HTML string).
+        A cell renderer is provided as part of the column definition and can be one of the following:
+        <ul>
+        <li>string: The cell renderer is looked up from the provided cellRenderers.</li>
+        <li>function: The cellRenderer is a function that gets called once for each cell. The function
+        should return a string (which will be treated as html) or a DOM object.</li>
+        <li>class: The grid will call 'new' on the class and treat the object as a component, using
+        lifecycle methods.</li>
+    </ul>
     </p>
 
     <p>

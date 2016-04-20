@@ -23,6 +23,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: New methods: columnApi.addRowGroupColumns(), columnApi.removeRowGroupColumns(), columnApi.setRowGroupColumns()</li>
 <!--    <li>Styles: ag-filter-list-container and ag-filter-item renamed to ag-virtual-list-container and ag-virtual-item</li>-->
     <li>Enhancement: When you refresh the grid, doing a refresh doesn't loose the focused cell if a cell has browser focus.</li>
+    <li>Bugfix: Row grouping was not working when colId was provided.</li>
 
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>

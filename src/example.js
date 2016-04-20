@@ -287,6 +287,7 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: CountryCellRenderer,
+                colId: 'a',
                 cellEditor: 'richSelect',
                 cellEditorParams: {
                     cellRenderer: CountryCellRenderer,
