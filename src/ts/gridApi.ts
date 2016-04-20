@@ -29,6 +29,10 @@ import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
 import {ViewportRowModel} from "./rowControllers/viewportRowModel";
+import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
+import {CellRendererFactory} from "./rendering/cellRendererFactory";
+import {CellEditorFactory} from "./rendering/cellEditorFactory";
+import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
 
 @Bean('gridApi')
 export class GridApi {
@@ -54,6 +58,8 @@ export class GridApi {
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
+    @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
 
@@ -462,6 +468,14 @@ export class GridApi {
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 
+    public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
+        this.cellRendererFactory.addCellRenderer(key, cellRenderer);
+    }
+    
+    public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
+        this.cellEditorFactory.addCellEditor(key, cellEditor);
+    }
+    
     /*
         public setViewportRowData(rowData: {[key: number]: RowNode}): void {
             if (this.gridOptionsWrapper.isRowModelViewport()) {

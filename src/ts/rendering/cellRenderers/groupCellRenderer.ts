@@ -128,7 +128,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private createGroupCell(params: any): void {
-        var columnOfGroupedCol = params.columnApi.getColumn(params.node.field);
+        // pull out the column that the grouping is on
+        var rowGroupColumns = params.columnApi.getRowGroupColumns();
+        var columnOfGroupedCol = rowGroupColumns[params.node.level];
         var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
 
         var groupName = this.getGroupName(params);

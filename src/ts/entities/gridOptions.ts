@@ -5,6 +5,7 @@ import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 import {MenuItem} from "../widgets/menuItemComponent";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -71,6 +72,10 @@ export interface GridOptions {
     localeText?: any;
     localeTextFunc?: Function;
     suppressScrollLag?: boolean;
+    /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
+    cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
+    /* a map of strings (cellEditor keys) to cellEditors */
+    cellEditors?: {[key: string]: {new(): ICellEditor}};
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

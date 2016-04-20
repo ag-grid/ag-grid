@@ -28,6 +28,11 @@ export class CellRendererFactory {
         this.cellRendererMap[CellRendererFactory.ANIMATE_SLIDE] = AnimateSlideCellRenderer;
         this.cellRendererMap[CellRendererFactory.ANIMATE_SHOW_CHANGE] = AnimateShowChangeCellRenderer;
         this.cellRendererMap[CellRendererFactory.GROUP] = GroupCellRenderer;
+
+    }
+
+    private registerRenderersFromGridOptions(): void {
+        
     }
 
     public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
