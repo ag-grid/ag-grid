@@ -149,6 +149,71 @@ interface IViewportDatasourceParams {
     </ul>
     </p>
 
+    <h2>Replacing Data</h2>
+
+    <p>
+        You may want to completely change data in the viewport, for example if you are showing 'latest 10 trades over 10k'
+        which changes over time as to what the trades are, then you just call <i>setRowData()</i> again with the new data.
+        The grid doesn't care how many times your call <i>setRowData()</i> with new data. You could alternatively call
+        <i>rowNode.setData(data)</i> on the individual row nodes, it will have the same effect.
+    </p>
+
+    <p>
+        If you want to change the length of data (eg you apply a filter, or the results set grows or shrinks) then you
+        call <i>setRowCount()</i> again. The grid doesn't are how many times you call <i>setRowCount()</i>.
+    </p>
+
+    <h2>Sorting</h2>
+
+    <p>
+        Only server side sorting is supported, if you want sorting you have to do it yourself on the server side.
+        This is done by listening for the <i>sortChanged</i> event and then calling <i>setRowData()</i> with the new
+        data when it arrives.
+    </p>
+
+    <h2>Filtering</h2>
+
+    <p>
+        As with sorting, filtering also must be done on the server side. To implement, listen for the <i>filterChanged</i>
+        event and apply the filter to your server side set of data. Then call <i>setRowCount()</i> and <i>setRowData()</i>
+        to display the new data.
+    </p>
+
+    <h2>Grouping</h2>
+
+    <p>
+        And you guessed it, if you are doing grouping, you will need to implement this yourself on the server side.
+        If you group, then you will need to provide your own groupCellRenderer that gives functionality to your own
+        custom grouping. You will also need to manage how the grouping impacts the overall grid's set size yourself (ie
+        if you expand a group, the number of rows increases, and likewise contracting will decrease).
+    </p>
+
+    <h2>Viewport Settings</h2>
+
+    <p>
+        For simplicity the above said the viewport was the rows the grid is currently displaying. This is almost true
+        except there are two properties, viewportRowModelPageSize and viewportRowModelBufferSize, to make the
+        communication with the server better.
+    </p>
+
+    <p><b>viewportRowModelPageSize</b></p>
+    <p>
+        It is not good to have the grid ask for rows one at a time if the user is scrolling slowly. To get around this,
+        the grid defines a page size, so it will ask for rows in 'pages'. For example, if the pages size is 5, then
+        the viewport will always start and end in numbers divisible by 5. For example the viewport will be 0 to 20 or
+        75 to 100. So if the user is scrolling slowly, the viewport will only be requested to get new rows after the
+        grid hits 'the next five rows'. The default page size is 5. To change this, set the grid property
+        <i>viewportRowModelPageSize</i>.
+    </p>
+
+    <p><b>viewportRowModelBufferSize</b></p>
+    <p>
+        In addition to the page size, the grid will also extend the viewport outside the viewable area by the buffer
+        size. For example, if the viewport is showing rows 30 to 50, and the buffer is set to 5, the grid will request
+        rows 25 to 55 from the viewport. This will reduce 'loading flicker' as the user scrolls through the data.
+        The default buffer size is 5. To change this, set the grid property <i>viewportRowModelBufferSize</i>.
+    </p>
+
     <h2>Example</h2>
 
     <p>
