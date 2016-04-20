@@ -102,7 +102,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Example Column Menu</h3>
 
     <p>
-        The example below shows the <i>getContextMenuItems()</i> in action. To demonstrate different scenarios,
+        The example below shows the <i>getMainMenuItems()</i> in action. To demonstrate different scenarios,
         the callback returns something different based on the selected column as follows:
         <ul>
         <li>Athlete column appends custom items to the list of built in items.</li>
