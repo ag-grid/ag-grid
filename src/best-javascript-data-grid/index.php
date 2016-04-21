@@ -1,6 +1,6 @@
 <?php
 $key = "Getting Started Javascript";
-$pageTitle = "The Best Javascript Data Grid";
+$pageTitle = "Best Javascript Data Grid";
 $pageDescription = "How to set up the Best Javascript Data Grid. Shows how to use ag-Grid to build a Javascript grid using only Javascript and without using any framework";
 $pageKeyboards = "Best Javascript Data Grid";
 include '../documentation-main/documentation_header.php';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>The Best JavaScript Data Grid</h2>
+    <h2>Best JavaScript Data Grid</h2>
 
     <p>
         When using no framework, you have the choice of using the bundled ag-Grid (which puts
