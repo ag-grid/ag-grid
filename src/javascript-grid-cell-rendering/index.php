@@ -305,7 +305,7 @@ colDef.cellRendererParams = {
     
     <p>
         You do not need to register you cellRenderers. However if you do, they will be stored alongside the grid
-        provided cellRenderers and will be available to your column definition and identified by strings. This
+        provided cellRenderers and will be available to your column definitions and identified by strings. This
         is useful if you want to provide a bunch of your own cellRenders inside your company that are reused
         across grids. It also means you can define your columns using only JSON and not require
         referencing JavaScript functions directly.

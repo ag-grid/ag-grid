@@ -298,11 +298,29 @@ colDef.cellEditorParams = {
 
     <p>
         The default text cellEditor takes no parameters. The select cellEditor takes a list of values
-        which the user can select against.
+        which the user can select against. The example below shows configuring the selet cellEditor.
     </p>
+
+    <pre>colDef.cellEditor = 'select';
+colDef.cellEditorParams = {
+    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
+}</pre>
     
     <h3>Registering cellEditors</h3>
-    
+
+    <p>
+        Like cellRenderers, cellEditors can also be registered with ag-Grid and referenced by
+        strings. You register cellRenders in one of the following ways:
+    <ul>
+        <li>Provide <i>cellEditors</i> property to the grid as a map of key=>cellEditor pairs.
+            This property is used once during grid initialisation.</li>
+        <li>Register the cellEditor by calling <i>gridApi.addCellEditor(key, cellEditor)</i>.
+            This can be called at any time during the lifetime of the grid.</li>
+    </ul>
+    </p>
+
+    <p>If you have many instances of a grid, you must register the cellEditors with each one.</p>
+
     <!--    <h4>Callback: New Value Handlers</h4>
 
         <p>
@@ -326,6 +344,9 @@ colDef.cellEditorParams = {
 
     <h4>Callback: Cell Value Changed</h4>
 
+    <p><b>Niall Note: </b> This needs to change. It's an event. Also the newValueHandler should be changed with
+        'valueSetter' so it's the inverst of 'valueGetter'.</p>
+
     <p>
         After a cell has been changed with default editing (ie not your own custom cell renderer),
         then <i>onCellValueChanged</i>, if provided, is called on the column def. This is used if
@@ -338,63 +359,78 @@ colDef.cellEditorParams = {
         string value into a number, then newValue for newValueHandler will have the string, and
         newValue for onCellValueChanged will have the number.
     </p>
-<!--
-    <div class="bigTitle">Custom Editing</div>
 
-    <p>
-        For more details editing, beyond a simple text editor, you need to provide the cell
-        editing yourself (in which case, do not set 'editable' to true for the column, as
-        your renderer will do the editing).
-    </p>
+    <div style="background-color: aliceblue; padding: 10px; border: 1px solid grey;">
+        <div style="font-size: 30px;">Sean: </div>
+        Example needs to show:
+        <ul>
+            <li>Component cell editor normal - maybe a text input that only accepts numbers??</li>
+            <li>Component cell editor popup (maybe have something pop up with 2 buttons, one says 'yes' and on 'no'??</li>
+            <li>Registering cell editor using api</li>
+            <li>Registering cell editor using property</li>
+            <li>Use complementing parameters somewhere.</li>
+        </ul>
+        The main example has examples of the editors. I will create a new page for 'richSelect', it's going
+        to be an enterprise component and deserves it's own page.
+    </div>
 
-    <h4>Example</h4>
+    <!--
+        <div class="bigTitle">Custom Editing</div>
 
-    <p>
-        The example below shows editing in the following ways:
-    </p>
+        <p>
+            For more details editing, beyond a simple text editor, you need to provide the cell
+            editing yourself (in which case, do not set 'editable' to true for the column, as
+            your renderer will do the editing).
+        </p>
 
-    <table class="table">
-        <tr>
-            <th>Column</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <th>Default String</th>
-            <td>No custom editing or handling, allows the grid to manage the editing
-                using simple strings.</td>
-        </tr>
-        <tr>
-            <th>Upper Case Only</th>
-            <td>Allows the grid to manage the editing, however a custom newValueHandler is
-                used to make the text upper case before attaching to the row.</td>
-        </tr>
-        <tr>
-            <th>Number</th>
-            <td>Allows the grid to manage the editing, however a custom 'new value handler'
-                is used to convert the string to a number before attaching to the row.</td>
-        </tr>
-        <tr>
-            <th>Custom</th>
-            <td>Custom editing. The cellRenderer provides a drop down selection.</td>
-        </tr>
-    </table>
+        <h4>Example</h4>
 
-    <show-example example="example1"></show-example>
+        <p>
+            The example below shows editing in the following ways:
+        </p>
 
-    <h4>Advanced Pop Editing</h4>
+        <table class="table">
+            <tr>
+                <th>Column</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <th>Default String</th>
+                <td>No custom editing or handling, allows the grid to manage the editing
+                    using simple strings.</td>
+            </tr>
+            <tr>
+                <th>Upper Case Only</th>
+                <td>Allows the grid to manage the editing, however a custom newValueHandler is
+                    used to make the text upper case before attaching to the row.</td>
+            </tr>
+            <tr>
+                <th>Number</th>
+                <td>Allows the grid to manage the editing, however a custom 'new value handler'
+                    is used to convert the string to a number before attaching to the row.</td>
+            </tr>
+            <tr>
+                <th>Custom</th>
+                <td>Custom editing. The cellRenderer provides a drop down selection.</td>
+            </tr>
+        </table>
 
-    <p>
-        If you need an advanced popup for editing (for example, providing a complex user search), then
-        you will soon realise that the cell renderer is restricted to the cell, overflow will be clipped.
-        To get around this, have the cell renderer create a GUI widget who's parent is outside the table,
-        and hence not restricted by the cell bounding box. The renderer can work out the best place to
-        display the popup using the screen coordinates of the cell.
-    </p>
+        <show-example example="example1"></show-example>
 
-    
-    
-    <show-example example="exampleCellEditing"></show-example>
--->
+        <h4>Advanced Pop Editing</h4>
+
+        <p>
+            If you need an advanced popup for editing (for example, providing a complex user search), then
+            you will soon realise that the cell renderer is restricted to the cell, overflow will be clipped.
+            To get around this, have the cell renderer create a GUI widget who's parent is outside the table,
+            and hence not restricted by the cell bounding box. The renderer can work out the best place to
+            display the popup using the screen coordinates of the cell.
+        </p>
+
+
+
+        <show-example example="exampleCellEditing"></show-example>
+    -->
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
