@@ -635,9 +635,8 @@ export class RenderedCell extends Component {
     private stopEditing(reset: boolean = false) {
         this.editingCell = false;
 
-        var newValue = this.cellEditor.getValue();
-
         if (!reset) {
+            var newValue = this.cellEditor.getValue();
             this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
         }
@@ -651,8 +650,17 @@ export class RenderedCell extends Component {
             this.hideEditorPopup = null;
         } else {
             _.removeAllChildren(this.eGridCell);
+            // put the cell back the way it was before editing
             if (this.checkboxSelection) {
+                // if wrapper, then put the wrapper back
                 this.eGridCell.appendChild(this.eCellWrapper);
+            } else {
+                // if cellRenderer, then put the gui back in. if the renderer has
+                // a refresh, it will be called. however if it doesn't, then later
+                // the renderer will be destroyed and a new one will be created.
+                if (this.cellRenderer) {
+                    this.eGridCell.appendChild(this.cellRenderer.getGui());
+                }
             }
         }
 
