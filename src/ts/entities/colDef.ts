@@ -8,6 +8,8 @@ import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCell
 export interface AbstractColDef {
     /** The name to render in the column header */
     headerName?: string;
+    /** The field of the row to get the cells data from */
+    field?: string;
     /** Whether to show the column when the group is open / closed. */
     columnGroupShow?: string;
     /** CSS class for the header */
@@ -35,9 +37,6 @@ export interface ColDef extends AbstractColDef {
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
     sortingOrder?: string[];
-
-    /** The field of the row to get the cells data from */
-    field?: string;
 
     /** Expression or function to get the cells value. */
     headerValueGetter?: string | Function;

@@ -103,4 +103,21 @@ export class HeaderRenderer {
         this.pinnedRightContainer.onIndividualColumnResized(column);
         this.centerContainer.onIndividualColumnResized(column);
     }
+
+    public getHeaderCellForColumn(column: Column): HTMLElement {
+        var eCell: HTMLElement;
+
+        switch(column.getPinned()) {
+            case 'left':
+                eCell = this.pinnedLeftContainer.getCellForCol(column);
+                break;
+            case 'right':
+                eCell = this.pinnedLeftContainer.getCellForCol(column);
+                break;
+            default:
+                eCell = this.centerContainer.getCellForCol(column);
+        }
+
+        return eCell;
+    }
 }
