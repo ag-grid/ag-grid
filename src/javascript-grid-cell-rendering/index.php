@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
         lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
         refresh requirements.</li>
-        <li>string: The cell renderer is looked up from the provided cellRenderers. Use this is you
+        <li>string: The cellRenderer is looked up from the provided cellRenderers. Use this if you
         want to use a built in renderer (eg 'group') or you want to register your own cellRenderers
         for reuse.</li>
     </ul>
@@ -108,10 +108,6 @@ colDef.cellRenderer = function(params) {
 }</pre>
 
     <p>
-
-    </p>
-
-    <p>
         Below is a simple example of cellRenderer class:
     </p>
 
@@ -143,7 +139,7 @@ MyCellRenderer.prototype.init = function(params) {
 };
 
 <b>// gets called once when grid ready to insert the element</b>
-MyCellRenderer.prototype.init = function() {
+MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 

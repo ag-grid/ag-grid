@@ -232,16 +232,16 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/index.php">Cell Rendering</a>
                 <?php } ?>
 
+                <?php if ($key == "Cell Editing") { ?>
+                    <span class="sidebarLinkSelected">Cell Editing</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/index.php">Cell Editing</a>
+                <?php } ?>
+
                 <?php if ($key == "Cell Templates") { ?>
                     <span class="sidebarLinkSelected">Cell Templates</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-template/index.php">Cell Templates</a>
-                <?php } ?>
-
-                <?php if ($key == "Editing") { ?>
-                    <span class="sidebarLinkSelected">Editing Cells</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-editing/index.php">Editing Cells</a>
                 <?php } ?>
 
                 <?php if ($key == "Context") { ?>
