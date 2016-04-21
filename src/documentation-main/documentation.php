@@ -54,7 +54,7 @@ include 'documentation_header.php';
 </h2>
 
 <p>
-    If you are introducing yourself to ag-Grid, then you should read <a href="../angular-grid-getting-started/">Getting Started</a>.
+    If you are introducing yourself to ag-Grid, then you should read <a href="../javascript-grid-getting-started/">Getting Started</a>.
     Then follow on to the section on the framework that interests you (one of
     <a href="../best-javascript-data-grid/index.php">Javascript</a>,
     <a href="../best-react-data-grid/index.php">React</a>,

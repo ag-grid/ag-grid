@@ -18,9 +18,9 @@ include '../documentation-main/documentation_header.php';
     <note>
         This page discusses filtering outside of the context of paging. To see how to implement server
         side filtering, see the sections
-        <a href="/angular-grid-pagination/index.php">pagination</a>
+        <a href="/javascript-grid-pagination/index.php">pagination</a>
         and
-        <a href="/angular-grid-virtual-paging/index.php">virtual paging</a>
+        <a href="/javascript-grid-virtual-paging/index.php">virtual paging</a>
     </note>
 
     <h3>Enable Filtering</h3>
@@ -49,7 +49,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>set</th>
             <td>A set filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise
-            feature and explained further <a href="../angular-grid-set-filtering/">here</a></td>
+            feature and explained further <a href="../javascript-grid-set-filtering/">here</a></td>
         </tr>
         <tr>
             <th>number</th>
@@ -236,7 +236,7 @@ columnDefinition = {
                         filterParams: The filter parameters, as provided in the column definition.
                     </li>
                     <li>
-                        context: The context for this grid. See section on <a href="../angular-grid-context/">Context</a>
+                        context: The context for this grid. See section on <a href="../javascript-grid-context/">Context</a>
                     </li>
                     <li>
                         $scope: If the grid options angularCompileFilters is set to true, then a new child
@@ -380,7 +380,7 @@ columnDefinition = {
     </p>
     
     <p>
-        (Note: the example uses the <a href="../angular-grid-set-filtering/">enterprise set filter</a>).
+        (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
     </p>
 
     <show-example example="exampleFilterApi"></show-example>
@@ -407,7 +407,7 @@ columnDefinition = {
     </p>
 
     <p>
-        (Note: the example uses the <a href="../angular-grid-set-filtering/">enterprise set filter</a>).
+        (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
     </p>
 
     <show-example example="exampleFilterModel"></show-example>

@@ -274,7 +274,7 @@ include '../documentation-main/documentation_header.php';
         The values have the following meaning:
     <ul>
         <li><b>colId</b>: The ID of the column. See
-            <a href="/angular-grid-column-definitions/index.php">column definitions</a> for explanation
+            <a href="/javascript-grid-column-definitions/index.php">column definitions</a> for explanation
             of column ID</li>
         <li><b>aggFunc</b>: If this column is a value column, this field specifies the aggregation function.
         If the column is not a value column, this field is null.</li>

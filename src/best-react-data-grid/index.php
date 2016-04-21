@@ -181,9 +181,9 @@ somePointLater() {
     <h2>Cell Rendering</h2>
 
     <p>
-        It is possible to have <a href="../angular-grid-cell-rendering/index.php">cellRenderers</a>
+        It is possible to have <a href="../javascript-grid-cell-rendering/index.php">cellRenderers</a>
         use React. Before reading this, it would be good to understand how to build a
-        <a href="../angular-grid-cell-rendering/index.php">cellRenderer</a> without using React as
+        <a href="../javascript-grid-cell-rendering/index.php">cellRenderer</a> without using React as
         it is assumed here that you already know this.
     </p>
 
@@ -208,7 +208,7 @@ somePointLater() {
 
     <h2>Custom Filtering</h2>
 
-    <p>As with cellRendering, this section on <a href="../angular-grid-filtering/index.php">custom filtering</a>
+    <p>As with cellRendering, this section on <a href="../javascript-grid-filtering/index.php">custom filtering</a>
         also assumes you are familiar with custom filtering inside the grid. If you are not, then please learn
         this first.</p>
 

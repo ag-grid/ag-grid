@@ -28,6 +28,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
     <li>Enhancement: Now ctrl+d will copy down the selected range, similar to Excel</li>
+    <li>Deprecated: cellRendererParams.addRenderedRowListener() is now deprecated. If you want callback methods for cellRendering, use the cellRenderer Component pattern.</li>
 
     <h3>Version 4.0.x (ag-Grid 4.0.4)</h3>
 

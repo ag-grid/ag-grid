@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        You cannot use variable row height when doing <a href="../angular-grid-virtual-paging/">virtual paging</a>.
+        You cannot use variable row height when doing <a href="../javascript-grid-virtual-paging/">virtual paging</a>.
         This is because virtual paging algorithm needs to work out the position of rows that are not loaded.
     </note>
 
@@ -52,10 +52,10 @@ include '../documentation-main/documentation_header.php';
     <p>
         The params object passed to the callback has the following values:
     <ul>
-        <li><b>node:</b> The <a href="/angular-grid-model/index.php#rowNode">rowNode</a> in question.</li>
+        <li><b>node:</b> The <a href="/javascript-grid-model/index.php#rowNode">rowNode</a> in question.</li>
         <li><b>data:</b> The data for the row.</li>
-        <li><b>api:</b> The <a href="/angular-grid-api/index.php">grid api</a>.</li>
-        <li><b>context:</b> The <a href="/angular-grid-context/index.php">grid context</a>.</li>
+        <li><b>api:</b> The <a href="/javascript-grid-api/index.php">grid api</a>.</li>
+        <li><b>context:</b> The <a href="/javascript-grid-context/index.php">grid context</a>.</li>
     </ul>
     </p>
 

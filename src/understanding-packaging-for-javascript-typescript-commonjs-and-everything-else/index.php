@@ -418,17 +418,6 @@ import {Grid} from 'ag-grid/main';</pre>
 
         </div>
 
-        <!--        <div style="font-size: 14px; border: 1px solid lightgrey; margin-top: 25px; padding: 15px;">
-                    This article was was published on:
-                    <br/>
-                    <a href="http://dailyjs.com/2015/03/31/angular-grid-react-native/?utm_content=buffer98f7e&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer">DailyJS</a>
-                    <br/>
-                    <a href="http://www.dzone.com/links/why_the_world_needed_another_angularjs_grid.html">DZone</a>
-                    <br/>
-                    <a href="http://www.reddit.com/r/angularjs/comments/30uel2/why_the_world_needed_another_angularjs_grid/">reddit</a>
-                    <br/>
-                    <a href="http://t.co/vpH62y3THW">ng-newsletter</a>
-                </div>-->
     </div>
 </div>
 

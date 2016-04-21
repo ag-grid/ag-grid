@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
             doing virtual paging.
         </ul>
 
-        The virtual page controller is explained in the section <a href="../angular-grid-virtual-paging/">Virtual
+        The virtual page controller is explained in the section <a href="../javascript-grid-virtual-paging/">Virtual
         Paging and Infinite Scrolling</a>. This section of the documentation focuses on the core row controller.
 
     </p>
