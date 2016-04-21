@@ -476,21 +476,4 @@ export class GridApi {
         this.cellEditorFactory.addCellEditor(key, cellEditor);
     }
     
-    /*
-        public setViewportRowData(rowData: {[key: number]: RowNode}): void {
-            if (this.gridOptionsWrapper.isRowModelViewport()) {
-                (<ViewportRowController>this.rowModel).setViewportRowData(rowData);
-            } else {
-                console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
-            }
-        }
-
-        public setViewportTotalRowCount(rowCount: number): void {
-            if (this.gridOptionsWrapper.isRowModelViewport()) {
-                (<ViewportRowController>this.rowModel).setRowCount(rowCount);
-            } else {
-                console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
-            }
-        }
-    */
 }
