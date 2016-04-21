@@ -8,10 +8,6 @@ include '../documentation-main/documentation_header.php';
 <!--include '../documentation-main/documentation_header.php';-->
 <div>
 
-    <h2>Compatibility</h2>
-
-    <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
-
     <h2>Getting ag-Grid</h2>
 
     <h3>Download ag-Grid Project</h3>
@@ -281,6 +277,10 @@ import 'ag-grid-enterprise/main';
         want. So continue now to the section on the framework you are interested in, then jump to the
         details of how to use the grid.
     </p>
+
+    <h2>Compatibility</h2>
+
+    <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
 
 </div>
 
