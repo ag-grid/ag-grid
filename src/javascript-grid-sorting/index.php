@@ -119,7 +119,7 @@ colDef.comparator = function (value1, value2, data1, data2, isInverted) {
 
     <p>
         The grid sorts columns ignoring the groups, even if the column is displaying group data. This
-        decoupling, although good design, has the fallback that the column doesn't realise it also
+        decoupling, although good design, has the drawback that the column doesn't realise it also
         needs to sort the groups. To get a column to sort the groups when sorting, you have to
         provide a custom comparator to the column. A custom comparator for groups is provided
         by agGrid and can be configured like the following:

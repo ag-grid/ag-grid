@@ -104,7 +104,7 @@ columnDefinition = {
     <h3>Built In Filters Example</h3>
 
     <p>
-        The example below demonstrates: text filer, number filter and quick filter.
+        The example below demonstrates: text filter, number filter and quick filter.
         The example also demonstrates using the <i>ag-header-cell-filtered</i> class, which is applied to the header
         cell when the header is filtered. By default, no style is applied to this class, the example shows
         applying a different color background to this style.
