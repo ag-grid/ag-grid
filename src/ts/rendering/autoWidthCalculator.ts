@@ -29,6 +29,9 @@ export class AutoWidthCalculator {
         // rendered cells, rows not rendered due to row visualisation will not be here)
         var eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
 
+        // padding offset to make the column bigger if there is padding styling applied
+        var paddingOffset = 0;
+
         eOriginalCells.forEach( (eCell: HTMLElement, index: number) => {
             // make a deep clone of the cell
             var eCellClone: HTMLElement = <HTMLElement> eCell.cloneNode(true);
@@ -50,6 +53,15 @@ export class AutoWidthCalculator {
             // the parent in the dummy, and the dummy down in the vall-e-ooo, OOOOOOOOO! Oh row the rattling bog....
             eCloneParent.appendChild(eCellClone);
             eDummyContainer.appendChild(eCloneParent);
+
+            // gets the global style of the element
+            var computedStyle = window.getComputedStyle(eCell, null);
+            // calculates the horizontal cell padding
+            var cellPadding = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
+            // checks if the cell padding is more than the current padding offset
+            if(paddingOffset < cellPadding) {
+                paddingOffset = cellPadding;
+            }
         });
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
@@ -60,7 +72,7 @@ export class AutoWidthCalculator {
         eBodyContainer.removeChild(eDummyContainer);
 
         // we add 4 as I found without it, the gui still put '...' after some of the texts
-        return dummyContainerWidth + 4;
+        return dummyContainerWidth + 4 + paddingOffset;
    }
 
 }
