@@ -64,9 +64,9 @@
             <h3>Niall Crosby</h3>
             <h4>Founder</h4>
             <p>
-                Niall has 16 years building greenfield software projects in Telecommunications, Government, Insurance
+                Niall has 16 years leading greenfield software projects in Telecommunications, Government, Insurance
                 and most recently Investment Banking. Oracle and Java used to be his bread and butter but is now
-                focusing on front end JavaScript, bringing his skill and knowledge from prevoius domains to the
+                focusing on front end JavaScript, bringing his skill and knowledge from previous domains to the
                 emerging JavaScript platform.
             </p>
         </div>
@@ -90,8 +90,11 @@
                 <img src='images/will.png'/>
             </div>
             <h3>Will Halling</h3>
+            <h4>UI Developer</h4>
             <p>
-                Front End Developer
+                Will has over ten years experience working with Front End technologies. Will has worked on various
+                high-profile projects in the Banking, Travel, Government and Advertisement sectors. He understands
+                the importance of developing industry-leading responsive user interfaces.
             </p>
         </div>
     </div> <!-- end row -->
