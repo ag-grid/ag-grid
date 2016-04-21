@@ -63,7 +63,9 @@ export class AutoWidthCalculator {
         eContainer.appendChild(eDummyContainer);
 
         eOriginalCells.forEach( (eCell: HTMLElement, index: number) => {
-            eDummyContainer.appendChild(this.getCloneParent(eCell));
+            if(eCell) {
+                eDummyContainer.appendChild(this.getCloneParent(eCell));
+            }
         });
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
