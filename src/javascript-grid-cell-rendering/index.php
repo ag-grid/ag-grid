@@ -353,6 +353,7 @@ colDef.cellRendererParams = {
             gold medal won.</li>
     </ul>
 
+    <show-example example="example2"></show-example>
     <show-example example="example1"></show-example>
 
 </div>
