@@ -309,6 +309,9 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             return;
         }
 
+        // add sortable class for styling
+        _.addCssClass(this.eHeaderCell, 'ag-header-cell-sortable');
+
         // add the event on the header, so when clicked, we do sorting
         if (eHeaderCellLabel) {
             eHeaderCellLabel.addEventListener("click", (event:MouseEvent) => {
