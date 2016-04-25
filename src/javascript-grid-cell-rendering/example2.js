@@ -91,13 +91,13 @@ var columnDefs = [
     {
         headerName: "Month",
         field: "Month",
-        width: 50,
+        width: 75,
         cellStyle: {color: 'darkred'}
     },
     {
         headerName: "Max Temp (˚C)",
         field: "Max temp (C)",
-        width: 105,
+        width: 120,
         cellRenderer: function (params) {      // Function cell renderer
             return deltaIndicator(params, "Max temp (C)");
         }
@@ -105,7 +105,7 @@ var columnDefs = [
     {
         headerName: "Min Temp (˚C)",
         field: "Min temp (C)",
-        width: 105,
+        width: 120,
         cellRenderer: function (params) {      // Function cell renderer
             return deltaIndicator(params, "Min temp (C)");
         }
@@ -113,7 +113,7 @@ var columnDefs = [
     {
         headerName: "Days of Air Frost",
         field: "Days of air frost (days)",
-        width: 190,
+        width: 233,
         cellRenderer: DaysFrostRenderer,       // Component Cell Renderer
         cellRendererParams: {
             rendererImage: 'frost.png'         // Complementing the Cell Renderer parameters
@@ -122,7 +122,7 @@ var columnDefs = [
     {
         headerName: "Days Sunshine",
         field: "Sunshine (hours)",
-        width: 170,
+        width: 190,
         cellRenderer: 'daysSunshineRenderer',  // Cell Renderer by Property (using the api)
         cellRendererParams: {
             rendererImage: 'sun.png'           // Complementing the Cell Renderer parameters
@@ -132,7 +132,7 @@ var columnDefs = [
     {
         headerName: "Rainfall (10mm)",
         field: "Rainfall (mm)",
-        width: 170,
+        width: 180,
         cellRenderer: 'rainPerTenMmRenderer',  // Cell Renderer by Property (using the gridOptions parameter),
         cellRendererParams: {
             rendererImage: 'rain.png'          // Complementing the Cell Renderer parameters
