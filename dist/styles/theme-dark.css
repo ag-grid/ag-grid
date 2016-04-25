@@ -53,6 +53,8 @@
 }
 .ag-dark .ag-cell {
   border-right: 1px solid #808080;
+}
+.ag-dark .ag-cell-not-inline-editing {
   padding: 2px;
 }
 .ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {
@@ -98,6 +100,76 @@
   -o-transition: border 1s;
   -ms-transition: border 1s;
   transition: border 1s;
+}
+.ag-dark .ag-cell-data-changed {
+  background-color: #5f9ea0;
+}
+.ag-dark .ag-cell-data-changed-animation {
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
+.ag-dark .ag-cell-data-changed:not(.ag-cell-focus) {
+  background-color: #5f9ea0;
+}
+.ag-dark .ag-cell-data-changed-animation:not(.ag-cell-focus) {
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
+.ag-dark .ag-value-change-delta {
+  padding-right: 2px;
+}
+.ag-dark .ag-value-change-delta-up {
+  color: #adff2f;
+}
+.ag-dark .ag-value-change-delta-down {
+  color: #f00;
+}
+.ag-dark .ag-value-change-value {
+  background-color: transparent;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  padding-left: 1px;
+  padding-right: 1px;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
+.ag-dark .ag-value-change-value-highlight {
+  background-color: #d2691e;
+  -webkit-transition: background-color 0.1s;
+  -moz-transition: background-color 0.1s;
+  -o-transition: background-color 0.1s;
+  -ms-transition: background-color 0.1s;
+  transition: background-color 0.1s;
+}
+.ag-dark .ag-rich-select {
+  font-size: 14px;
+  border: 1px solid #000;
+  background-color: #eee;
+}
+.ag-dark .ag-rich-select-list {
+  background-color: #fff;
+  border-top: 1px solid #aaa;
+}
+.ag-dark .ag-rich-select-value {
+  padding: 2px;
+}
+.ag-dark .ag-rich-select-list {
+  background-color: #fff;
+}
+.ag-dark .ag-rich-select-row {
+  padding: 2px;
+}
+.ag-dark .ag-rich-select-row-selected {
+  background-color: #eee;
 }
 .ag-dark .ag-header {
   background-color: #430000;
@@ -203,7 +275,16 @@
 .ag-dark .ag-group-cell {
   font-style: italic;
 }
-.ag-dark .ag-group-expand {
+.ag-dark .ag-group-expanded {
+  padding-right: 2px;
+}
+.ag-dark .ag-group-contracted {
+  padding-right: 2px;
+}
+.ag-dark .ag-group-value {
+  padding-right: 2px;
+}
+.ag-dark .ag-group-checkbox {
   padding-right: 2px;
 }
 .ag-dark .ag-footer-cell {
