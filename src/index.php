@@ -21,16 +21,16 @@
             <div class="Hero-grid">
                 <div class="container">
                     <div class="row text-center">
-                        <h1 style="padding-bottom: 0px;">
+                        <h1 style="padding-bottom: 10px; padding-top: 10px;">
                             <img alt="ag-grid" src="../images/logo.png" style="width: 400px;"/>
                         </h1>
 
-                        <h1>The Data Grid for Enterprise</h1>
+                        <h1 style="padding-bottom: 10px; padding-top: 10px;">The Data Grid for Enterprise</h1>
 <!--                        <h2>'ag' stands for Agnostic - not bound to any framework but integrates with <a href="/best-javascript-data-grid/index.php">JavaScript</a>, <a href="/best-react-data-grid/index.php">React</a>, <a href="/best-angularjs-data-grid/index.php">Angular</a>, <a href="/best-angular-2-data-grid/index.php">Angular 2</a> &amp; <a href="/best-web-component-data-grid/index.php">Web Components</a>.</h2>
 -->
-                        <h1>
+                        <h2>
                             <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/index.php"><span class="glyphicon glyphicon-download-alt"></span> Download</a>
-                        </h1>
+                        </h2>
                         <div class="Hero-share">
                             <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.ag-grid.com">
                                 <img inline width="32" height="32" src="/images/social-icons/facebook-logo.svg" alt="Share ag-Grid on Facebook" title="Share ag-Grid on Facebook"/>

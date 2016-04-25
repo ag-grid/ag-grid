@@ -8,7 +8,7 @@
             <?php if ($navKey !== 'home') { ?>
             <div class="navbar-header col-md-2 col-sm-3 col-xs-6">
                 <a class="Header-logo" href="/">
-                    <img src="../images/logo.png" style="width: 140px;"/>
+                    <img src="../images/logo.png" style="width: 70px;"/>
                 </a>
             </div>
             <?php } ?>
