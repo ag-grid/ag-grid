@@ -14,6 +14,7 @@ import {RangeController} from "./rangeController";
 import {RowGroupPanel} from "./rowGroupPanel";
 import {ToolPanel} from "./toolPanel";
 import {ContextMenuFactory} from "./contextMenu";
+import {ViewportRowModel} from "./viewport/viewportRowModel";
 
 export function populateClientExports(exports: any): void {
 
@@ -29,6 +30,8 @@ export function populateClientExports(exports: any): void {
 
     exports.StatusBar = StatusBar;
     exports.StatusItem = StatusItem;
+
+    exports.ViewportRowModel = ViewportRowModel;
 
     exports.ContextMenuFactory = ContextMenuFactory;
     exports.ClipboardService = ClipboardService;
