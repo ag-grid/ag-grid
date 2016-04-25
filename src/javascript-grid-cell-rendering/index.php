@@ -99,7 +99,8 @@ colDef.cellRenderer = function(params) {
     // Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM
     getGui(): HTMLElement;
 
-    // Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup, do it here
+    // Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup,
+    // do it here
     destroy?(): void;
 
     // Optional - Get the cell to refresh. If this method is not provided, then when refresh is needed, the grid
@@ -160,7 +161,7 @@ MyCellRenderer.prototype.destroy = function() {
     <h3>cellRenderer Component Refresh</h3>
 
     <p>
-        The grid is constantly refreshing rows and cells into the browser. But not every refresh of the grid
+        The grid is constantly refreshing rows and cells into the browser, but not every refresh of the grid
         results in the refresh method of your cellRenderer getting called. The following details when your
         cellRenderer refresh method gets called and when not.
     </p>
