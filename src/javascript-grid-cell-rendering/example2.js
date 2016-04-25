@@ -25,7 +25,7 @@ function frostierYear(extraDaysFrost) {
 /**
  * Demonstrating function cell renderer
  * Visually indicates if this months value is higher or lower than last months value
- * by adding an up or down arrow according to the difference
+ * by adding an +/- symbols according to the difference
  */
 function deltaIndicator(params, field) {
     var rowsToDisplay = gridOptions.api.getModel().rowsToDisplay;
@@ -40,9 +40,9 @@ function deltaIndicator(params, field) {
 
     // visually indicate if this months value is higher or lower than last months value
     if (params.value > rowsToDisplay[index].data[field]) {
-        imageElement.src = "/images/redUp.png"
+        imageElement.src = "/images/fire-plus.png"
     } else {
-        imageElement.src = "/images/blueDown.png"
+        imageElement.src = "/images/fire-minus.png"
     }
     element.appendChild(imageElement);
     element.appendChild(document.createTextNode(params.value));
