@@ -394,34 +394,19 @@ colDef.cellRendererParams = {
 
     <h3>Example: Using cellRenderers</h3>
 
-    <div style="background-color: aliceblue; padding: 10px; border: 1px solid grey;">
-        <div style="font-size: 30px;">Sean: </div>
-        Example needs to show:
-        <ul>
-            <li>Function cell renderer</li>
-            <li>Component cell renderer</li>
-            <li>Registering cell renderer using api</li>
-            <li>Registering cell renderer using property</li>
-            <li>Put in 'refresh' button that changes the data (adds a value??) and demonstrates the refresh of the above.</li>
-            <li>Use complementing parameters somewhere.</li>
-        </ul>
-        Not sure if one example would be to much to show all the above, might need to break it out. You can decide.
-        Remember, the example will also be how we test.
-    </div>
-
     <p>
-        The below example shows three columns formatted, demonstrating each of the three
+        The example below shows five columns formatted, demonstrating each of the
         methods above.
     </p>
     <ul>
-        <li>'Athlete' column uses cellStyle to format each cell in the column with the same style.</li>
-        <li>'Age' column uses cellStyle to format each cell with the capital letter 'C'.</li>
-        <li>'Gold' column renders the cell from scratch, by adding a gold star image for each
-            gold medal won.</li>
+        <li>'Month' column uses cellStyle to format each cell in the column with the same style.</li>
+        <li>'Max Temp' and 'Min Temp' columns uses the Function method to format each cell in the column with the same style.</li>
+        <li>'Days of Air Frost' column uses the Component method to format each cell in the column with the same style</li>
+        <li>'Days Sunshine' column uses the Property method (using the api) to format each cell in the column with the same style</li>
+        <li>'Rainfall (10mm)' column uses the Property method (using the gridOptions parameter) to format each cell in the column with the same style</li>
     </ul>
 
     <show-example example="example2"></show-example>
-    <show-example example="example1"></show-example>
 
 </div>
 
