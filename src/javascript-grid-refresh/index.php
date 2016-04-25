@@ -35,6 +35,14 @@ include '../documentation-main/documentation_header.php';
         amounts of data and virtualising the rows.
     </note>
 
+    <note>
+        There are lots of ways to refresh, each achieving the similar effects. Each refresh will either: rip
+        out and replace the entire row, rip out and replace the particular cells, or call 'refresh' on the
+        cellRenderer (see section on cell renderers). Which you you use is up to you, there is not clear
+        advantage, the different ways are provided to give you choice. Choose what fits into your application
+        design the best.
+    </note>
+
     <h3>Refreshing Everything, Specific Rows or Specific Cells</h3>
 
     <p>
@@ -58,6 +66,20 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <show-example example="example3"></show-example>
+
+    <h3>Refresh via rowNode</h3>
+
+    <p>
+        Each data item in ag-Grid is wrapped by a rowNode. The rowNode has two methods for refreshing that
+        that it is wrapping:
+        <ul>
+        <li><b>setData(newData)</b>: Sets new data.</li>
+        <li><b>setDataValue(colKey, newValue)</b>: Sets just one value for a particular piece of data, using either
+        the field specified in the colDef, or a valueSetter if provided.</li>
+    </ul>
+
+    Use the above if your code if working directly with the rowNode makes more sense for your code.
+    </p>
 
     <h3>Volatile Cells</h3>
 
