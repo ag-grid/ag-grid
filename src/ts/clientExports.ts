@@ -18,7 +18,7 @@ import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
-import {Context, Autowired, PostConstruct, Optional, Bean, Qualifier} from "./context/context";
+import {Context, Autowired, PostConstruct, Optional, Bean, Qualifier, PreDestroy} from "./context/context";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {FilterManager} from "./filter/filterManager";
@@ -101,6 +101,7 @@ export function populateClientExports(exports: any): void {
     exports.Context = Context;
     exports.Autowired = Autowired;
     exports.PostConstruct = PostConstruct;
+    exports.PreDestroy = PreDestroy;
     exports.Optional = Optional;
     exports.Bean = Bean;
     exports.Qualifier = Qualifier;
