@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.0
+// ag-grid-enterprise v4.1.1
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters) {

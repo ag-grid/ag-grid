@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.0
+// ag-grid-enterprise v4.1.1
 import { RenderedItem } from "./renderedItem";
 import { Column } from "ag-grid/main";
 export declare class RenderedColumn extends RenderedItem {
