@@ -144,14 +144,6 @@ include 'documentation_header.php';
     management company in Canada.
 </p>
 
-<h4>Enhanced Editing (ag-Grid free)</h4>
-
-<p>
-    The core editing and navigation will be revamped, to allow users to work with editing the data as easy as
-    working in Excel. Expect a new type 'cellEditor' to be added, allowing your editors to integrate with the
-    built in navigation and editing of the grid.
-</p>
-
 <h4>Pinnable Filters in Tool Panel (ag-Grid enterprise)</h4>
 
 <p>
@@ -159,18 +151,6 @@ include 'documentation_header.php';
     concurrently. ag-Grid will allow this option by having a 'pinnable' option on the filters, which
     when clicked, will move the filter to the tool panel (the right hand panel that currently has
     column management). This will allow the tool panel to host and display multiple filters concurrently.
-</p>
-
-<h4>Big Data View (ag-Grid enterprise)</h4>
-
-<p>
-    A new data model type (in addition to the existing three that are 1 - plain, 2 - pagination and 3 - virtual pagination)
-    that will allow viewing
-    infinite amounts of data (as far as the grid is concerned) through a virtual web view. The concept
-    will be similar to the current virtual pagination but far more advanced. The view will support
-    aggregations, parent / child and drill-down. The target for this is to sit on top of the new
-    generation of 'big data' stores, allowing an easy navigation experience on top of very large data.
-    This feature will be of particular interest to corporations with large stores of risk, trade and market data.
 </p>
 
 <h4>Smaller Items (all for ag-Grid free)</h4>
