@@ -123,7 +123,7 @@ var columnDefs = [
         headerName: "Days Sunshine",
         field: "Sunshine (hours)",
         width: 190,
-        cellRenderer: 'daysSunshineRenderer',  // Cell Renderer by Property (using the api)
+        cellRenderer: daysSunshineRenderer,
         cellRendererParams: {
             rendererImage: 'sun.png'           // Complementing the Cell Renderer parameters
         }
@@ -133,7 +133,7 @@ var columnDefs = [
         headerName: "Rainfall (10mm)",
         field: "Rainfall (mm)",
         width: 180,
-        cellRenderer: 'rainPerTenMmRenderer',  // Cell Renderer by Property (using the gridOptions parameter),
+        cellRenderer: rainPerTenMmRenderer,
         cellRendererParams: {
             rendererImage: 'rain.png'          // Complementing the Cell Renderer parameters
         }
@@ -142,18 +142,13 @@ var columnDefs = [
 
 gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
-    cellRenderers: {rainPerTenMmRenderer: rainPerTenMmRenderer} // Cell Renderer by Property (using the gridOptions parameter)
-
+    rowData: null
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    // Cell Renderer by Property (using the api)
-    gridOptions.api.addCellRenderer('daysSunshineRenderer', daysSunshineRenderer);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.

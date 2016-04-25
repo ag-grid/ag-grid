@@ -305,7 +305,9 @@ colDef.cellEditorParams = {
 colDef.cellEditorParams = {
     values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
 }</pre>
-    
+<!--
+    TAKING OUT as we want to reconsider how to register components
+
     <h3>Registering cellEditors</h3>
 
     <p>
@@ -317,7 +319,7 @@ colDef.cellEditorParams = {
         <li>Register the cellEditor by calling <i>gridApi.addCellEditor(key, cellEditor)</i>.
             This can be called at any time during the lifetime of the grid.</li>
     </ul>
-    </p>
+    </p>-->
 
     <p>If you have many instances of a grid, you must register the cellEditors with each one.</p>
 

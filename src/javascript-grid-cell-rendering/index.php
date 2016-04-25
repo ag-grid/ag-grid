@@ -371,6 +371,10 @@ colDef.cellRendererParams = {
 
     <p>Usage of animateShowChange and animateSlide is demonstrated in the section <a href="../javascript-grid-viewport/">Viewport</a>.</p>
 
+    <!--
+
+TAKING OUT as want to reconsider how to register components
+
     <h3>Registering cellRenderers</h3>
     
     <p>
@@ -390,7 +394,7 @@ colDef.cellRendererParams = {
         This can be called at any time during the lifetime of the grid.</li>
     </ul>
     </p>
-    
+    -->
     <p>If you have many instances of a grid, you must register the cellRenders with each one.</p>
 
     <h3>Example: Using cellRenderers</h3>
@@ -403,8 +407,7 @@ colDef.cellRendererParams = {
         <li>'Month' column uses cellStyle to format each cell in the column with the same style.</li>
         <li>'Max Temp' and 'Min Temp' columns uses the Function method to format each cell in the column with the same style.</li>
         <li>'Days of Air Frost' column uses the Component method to format each cell in the column with the same style</li>
-        <li>'Days Sunshine' column uses the Property method (using the api) to format each cell in the column with the same style</li>
-        <li>'Rainfall (10mm)' column uses the Property method (using the gridOptions parameter) to format each cell in the column with the same style</li>
+        <li>'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.</li>
     </ul>
 
     <show-example example="example2"></show-example>
