@@ -292,24 +292,6 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/index.php">Data Export</a>
                 <?php } ?>
 
-                <?php if ($key == "Datasource") { ?>
-                    <span class="sidebarLinkSelected">Datasource</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-datasource/index.php">Datasource</a>
-                <?php } ?>
-
-                <?php if ($key == "Pagination") { ?>
-                    <span class="sidebarLinkSelected">Pagination</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pagination/index.php">Pagination</a>
-                <?php } ?>
-
-                <?php if ($key == "Virtual Paging / Infinite Scrolling") { ?>
-                    <span class="sidebarLinkSelected">Virtual Paging / Infinite Scrolling</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-virtual-paging/index.php">Virtual Paging<br/>& Infinite Scrolling</a>
-                <?php } ?>
-
                 <?php if ($key == "Styling") { ?>
                     <span class="sidebarLinkSelected">Layout & Styling</span>
                 <?php } else { ?>
@@ -332,6 +314,34 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">For Print</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-for-print/index.php">For Print</a>
+                <?php } ?>
+
+                <h4>
+                    Row Models
+                </h4>
+
+                <?php if ($key == "Row Models") { ?>
+                    <span class="sidebarLinkSelected">Introduction</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-models/index.php">Introduction</a>
+                <?php } ?>
+
+                <?php if ($key == "Datasource") { ?>
+                    <span class="sidebarLinkSelected">Datasource</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-datasource/index.php">Datasource</a>
+                <?php } ?>
+
+                <?php if ($key == "Pagination") { ?>
+                    <span class="sidebarLinkSelected">Pagination</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pagination/index.php">Pagination</a>
+                <?php } ?>
+
+                <?php if ($key == "Virtual Paging / Infinite Scrolling") { ?>
+                    <span class="sidebarLinkSelected">Virtual Paging / Infinite Scrolling</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-virtual-paging/index.php">Virtual Paging<br/>& Infinite Scrolling</a>
                 <?php } ?>
 
                 <h4>
