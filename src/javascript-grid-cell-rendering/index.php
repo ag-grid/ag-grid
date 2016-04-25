@@ -157,6 +157,73 @@ MyCellRenderer.prototype.destroy = function() {
     this.eButton.removeEventListener('click', this.eventListener);
 };</code></pre>
 
+    <h3>cellRenderer Component Refresh</h3>
+
+    <p>
+        The grid is constantly refreshing rows and cells into the browser. But not every refresh of the grid
+        results in the refresh method of your cellRenderer getting called. The following details when your
+        cellRenderer refresh method gets called and when not.
+    </p>
+
+    <p>
+        The following will result in cellRenderer refresh method getting called:
+    <ul>
+        <li>
+            Calling <i>rowNode.setDataValue(colKey, value)</i> to set a value directly onto the rowNode
+        </li>
+        <li>
+            When editing a cell and editing is stopped, so that cell displays new value after editing.
+        </li>
+        <li>
+            Calling <i>api.refreshCells(rowNodes, colIds)</i> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
+        </li>
+        <li>
+            Calling <i>api.softRefreshView()</i> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
+        </li>
+    </ul>
+    If any of the above occur, the <i>refresh()</i> method will be called if it is provided. If not,
+    the component will be destroyed and replaced.
+    </p>
+
+    <p>
+        The following will <b>not</b> result in cellRenderer refresh method getting called:
+    <ul>
+        <li>
+            Calling <i>rowNode.setData(data)</i> to set new data into a rowNode.
+        </li>
+        <li>
+            Scrolling the grid vertically (results in rows getting ripped in / out of the dom).
+        </li>
+        <li>
+            All other api refresh methods (<i>refreshRows, refreshView</i> etc).
+        </li>
+    </ul>
+    All of the above will result in the component getting destrotyed and recreated.
+    </p>
+
+    <h3>
+        cellRenderer Component Lifecycle
+    </h3>
+
+    <p>
+        The lifecycle of the cellRenderer is as follows:
+    <ul>
+        <li><i>new</i> is called on the class.</li>
+        <li><i>init()</i> is called once.</li>
+        <li><i>getGui()</i> is called once.</li>
+        <li><i>refresh()</i> is called 0..n times (ie it may never be called, or called multiple times)</li>
+        <li><i>destroy()</i> is called once.</li>
+    </ul>
+    In other words, <i>new(), init(), getGui()</i> and <i>destroy()</i> are always called exactly once.
+    <i>refresh()</i> is optionally called multiple times.
+    </p>
+
+    <p>
+        If you are implementing <i>refresh()</i>, rememver that <i>getGui()</i> is only called once, so be sure
+        to update the existing GUI in your refresh, do not thing that the grid is going to call <i>getGui()</i>
+        again to get a new version of the GUI.
+    </p>
+
     <h3>cellRenderer Params</h3>
 
     <p>
