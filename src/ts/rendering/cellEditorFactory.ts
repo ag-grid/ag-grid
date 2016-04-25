@@ -6,7 +6,6 @@ import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
 import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
-import {RichSelectCellEditor} from "../../../../ag-grid-enterprise/src/rendering/richSelect/richSelectCellEditor";
 import {DateCellEditor} from "./cellEditors/dateCellEditor";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
