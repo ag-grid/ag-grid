@@ -28,11 +28,8 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
-import {ViewportRowModel} from "./../../../ag-grid-enterprise/src/viewport/viewportRowModel";
-import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
-import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
 
 @Bean('gridApi')
 export class GridApi {
