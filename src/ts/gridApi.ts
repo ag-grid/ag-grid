@@ -28,7 +28,7 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
-import {ViewportRowModel} from "./rowControllers/viewportRowModel";
+import {ViewportRowModel} from "./../../../ag-grid-enterprise/src/viewport/viewportRowModel";
 import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
@@ -103,7 +103,10 @@ export class GridApi {
 
     public setViewportDatasource(viewportDatasource: IViewportDatasource) {
         if (this.gridOptionsWrapper.isRowModelViewport()) {
-            (<ViewportRowModel>this.rowModel).setViewportDatasource(viewportDatasource);
+            // this is bad coding, because it's using an interface that's exposed in the enterprise.
+            // really we should create an interface in the core for viewportDatasource and let
+            // the enterprise implement it, rather than casting to 'any' here
+            (<any>this.rowModel).setViewportDatasource(viewportDatasource);
         } else {
             console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
         }

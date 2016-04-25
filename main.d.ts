@@ -91,7 +91,6 @@ export * from './dist/lib/rowControllers/inMemory/sortStage';
 
 export * from './dist/lib/rowControllers/floatingRowModel';
 export * from './dist/lib/rowControllers/paginationController';
-export * from './dist/lib/rowControllers/viewportRowModel';
 export * from './dist/lib/rowControllers/virtualPageRowModel';
 
 export * from './dist/lib/widgets/menuItemComponent';
