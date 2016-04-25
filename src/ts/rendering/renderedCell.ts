@@ -932,7 +932,8 @@ export class RenderedCell extends Component {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
             var valueFormatted = this.formatValue(this.value);
-            var params = this.createRendererAndRefreshParams(valueFormatted);
+            var cellRendererParams = this.column.getColDef().cellRendererParams;
+            var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
             this.cellRenderer.refresh(params);
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
             this.addClassesFromRules();
@@ -988,7 +989,7 @@ export class RenderedCell extends Component {
         return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, value);
     }
 
-    private createRendererAndRefreshParams(valueFormatted: string): any {
+    private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): any {
         var params = {
             value: this.value,
             valueFormatted: valueFormatted,
@@ -1008,16 +1009,17 @@ export class RenderedCell extends Component {
             eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
+
+        if (cellRendererParams) {
+            _.assign(params, cellRendererParams);
+        }
+
         return params;
     }
     
     private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string): void {
 
-        var params = this.createRendererAndRefreshParams(valueFormatted);
-
-        if (cellRendererParams) {
-            _.assign(params, cellRendererParams);
-        }
+        var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
 
         this.cellRenderer = this.cellRendererService.useCellRenderer(cellRendererKey, this.eParentOfValue, params);
     }
