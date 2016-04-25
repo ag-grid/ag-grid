@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -14,14 +14,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
-var main_3 = require("ag-grid/main");
-var main_4 = require("ag-grid/main");
-var main_5 = require("ag-grid/main");
-var main_6 = require("ag-grid/main");
-var main_7 = require("ag-grid/main");
-var main_8 = require("ag-grid/main");
-var main_9 = require("ag-grid/main");
 var renderedGroup_1 = require("./renderedGroup");
 var renderedColumn_1 = require("./renderedColumn");
 var ColumnSelectPanel = (function (_super) {
@@ -31,7 +23,7 @@ var ColumnSelectPanel = (function (_super) {
         this.allowDragging = allowDragging;
     }
     ColumnSelectPanel.prototype.init = function () {
-        this.addDestroyableEventListener(this.globalEventService, main_7.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.globalEventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -46,9 +38,9 @@ var ColumnSelectPanel = (function (_super) {
         this.destroyAllRenderedElements();
     };
     ColumnSelectPanel.prototype.destroyAllRenderedElements = function () {
-        main_9.Utils.removeAllChildren(this.getGui());
+        main_1.Utils.removeAllChildren(this.getGui());
         if (this.renderedItems) {
-            main_9.Utils.iterateObject(this.renderedItems, function (key, renderedItem) { return renderedItem.destroy(); });
+            main_1.Utils.iterateObject(this.renderedItems, function (key, renderedItem) { return renderedItem.destroy(); });
         }
         this.renderedItems = {};
     };
@@ -78,7 +70,7 @@ var ColumnSelectPanel = (function (_super) {
     ColumnSelectPanel.prototype.recursivelyRenderComponents = function (tree, dept) {
         var _this = this;
         tree.forEach(function (child) {
-            if (child instanceof main_8.OriginalColumnGroup) {
+            if (child instanceof main_1.OriginalColumnGroup) {
                 _this.recursivelyRenderGroupComponent(child, dept);
             }
             else {
@@ -93,7 +85,7 @@ var ColumnSelectPanel = (function (_super) {
             if (component) {
                 component.setVisible(visible);
             }
-            if (child instanceof main_8.OriginalColumnGroup) {
+            if (child instanceof main_1.OriginalColumnGroup) {
                 var columnGroup = child;
                 var newVisible;
                 if (component) {
@@ -113,19 +105,19 @@ var ColumnSelectPanel = (function (_super) {
     };
     ColumnSelectPanel.TEMPLATE = '<div class="ag-column-select-panel"></div>';
     __decorate([
-        main_2.Autowired('columnController'), 
-        __metadata('design:type', main_3.ColumnController)
+        main_1.Autowired('columnController'), 
+        __metadata('design:type', main_1.ColumnController)
     ], ColumnSelectPanel.prototype, "columnController", void 0);
     __decorate([
-        main_2.Autowired('eventService'), 
-        __metadata('design:type', main_4.EventService)
+        main_1.Autowired('eventService'), 
+        __metadata('design:type', main_1.EventService)
     ], ColumnSelectPanel.prototype, "globalEventService", void 0);
     __decorate([
-        main_2.Autowired('context'), 
-        __metadata('design:type', main_5.Context)
+        main_1.Autowired('context'), 
+        __metadata('design:type', main_1.Context)
     ], ColumnSelectPanel.prototype, "context", void 0);
     __decorate([
-        main_6.PostConstruct, 
+        main_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

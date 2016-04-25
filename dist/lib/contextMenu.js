@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -14,17 +14,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
-var main_3 = require("ag-grid/main");
-var main_4 = require("ag-grid/main");
-var main_5 = require("ag-grid/main");
-var main_6 = require("ag-grid/main");
-var main_7 = require("ag-grid/main");
 var clipboardService_1 = require("./clipboardService");
-var main_8 = require("ag-grid/main");
-var main_9 = require("ag-grid/main");
-var main_10 = require("ag-grid/main");
-var main_11 = require("ag-grid/main");
 var svgFactory = main_1.SvgFactory.getInstance();
 var ContextMenuFactory = (function () {
     function ContextMenuFactory() {
@@ -53,7 +43,7 @@ var ContextMenuFactory = (function () {
     };
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
         var menuItems = this.getMenuItems(node, column, value);
-        var menu = new CContextMenu(menuItems);
+        var menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
         var eMenuGui = menu.getGui();
         // need to show filter before positioning, as only after filter
@@ -66,37 +56,37 @@ var ContextMenuFactory = (function () {
         menu.afterGuiAttached(hidePopup);
     };
     __decorate([
-        main_3.Autowired('context'), 
-        __metadata('design:type', main_4.Context)
+        main_1.Autowired('context'), 
+        __metadata('design:type', main_1.Context)
     ], ContextMenuFactory.prototype, "context", void 0);
     __decorate([
-        main_3.Autowired('popupService'), 
-        __metadata('design:type', main_5.PopupService)
+        main_1.Autowired('popupService'), 
+        __metadata('design:type', main_1.PopupService)
     ], ContextMenuFactory.prototype, "popupService", void 0);
     __decorate([
-        main_3.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_10.GridOptionsWrapper)
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_6.PostConstruct, 
+        main_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], ContextMenuFactory.prototype, "init", null);
     ContextMenuFactory = __decorate([
-        main_2.Bean('contextMenuFactory'), 
+        main_1.Bean('contextMenuFactory'), 
         __metadata('design:paramtypes', [])
     ], ContextMenuFactory);
     return ContextMenuFactory;
 })();
 exports.ContextMenuFactory = ContextMenuFactory;
-var CContextMenu = (function (_super) {
-    __extends(CContextMenu, _super);
-    function CContextMenu(menuItems) {
+var ContextMenu = (function (_super) {
+    __extends(ContextMenu, _super);
+    function ContextMenu(menuItems) {
         _super.call(this, '<div class="ag-menu"></div>');
         this.menuItems = menuItems;
     }
-    CContextMenu.prototype.createDefaultMenuItems = function () {
+    ContextMenu.prototype.createDefaultMenuItems = function () {
         var _this = this;
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var result = {
@@ -121,41 +111,41 @@ var CContextMenu = (function (_super) {
         };
         return result;
     };
-    CContextMenu.prototype.addMenuItems = function () {
-        this.menuList = new main_8.MenuList();
+    ContextMenu.prototype.addMenuItems = function () {
+        this.menuList = new main_1.MenuList();
         this.context.wireBean(this.menuList);
         var defaultMenuItems = this.createDefaultMenuItems();
         this.menuList.addMenuItems(this.menuItems, defaultMenuItems);
         this.getGui().appendChild(this.menuList.getGui());
-        this.menuList.addEventListener(main_9.CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.menuList.addEventListener(main_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
     };
-    CContextMenu.prototype.onHidePopup = function () {
+    ContextMenu.prototype.onHidePopup = function () {
         this.hidePopupFunc();
     };
-    CContextMenu.prototype.afterGuiAttached = function (hidePopup) {
+    ContextMenu.prototype.afterGuiAttached = function (hidePopup) {
         this.hidePopupFunc = hidePopup;
     };
     __decorate([
-        main_3.Autowired('context'), 
-        __metadata('design:type', main_4.Context)
-    ], CContextMenu.prototype, "context", void 0);
+        main_1.Autowired('context'), 
+        __metadata('design:type', main_1.Context)
+    ], ContextMenu.prototype, "context", void 0);
     __decorate([
-        main_3.Autowired('clipboardService'), 
+        main_1.Autowired('clipboardService'), 
         __metadata('design:type', clipboardService_1.ClipboardService)
-    ], CContextMenu.prototype, "clipboardService", void 0);
+    ], ContextMenu.prototype, "clipboardService", void 0);
     __decorate([
-        main_3.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_10.GridOptionsWrapper)
-    ], CContextMenu.prototype, "gridOptionsWrapper", void 0);
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
+    ], ContextMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_3.Autowired('gridApi'), 
-        __metadata('design:type', main_11.GridApi)
-    ], CContextMenu.prototype, "gridApi", void 0);
+        main_1.Autowired('gridApi'), 
+        __metadata('design:type', main_1.GridApi)
+    ], ContextMenu.prototype, "gridApi", void 0);
     __decorate([
-        main_6.PostConstruct, 
+        main_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
-    ], CContextMenu.prototype, "addMenuItems", null);
-    return CContextMenu;
-})(main_7.Component);
+    ], ContextMenu.prototype, "addMenuItems", null);
+    return ContextMenu;
+})(main_1.Component);

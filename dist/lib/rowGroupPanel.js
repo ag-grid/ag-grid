@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -33,10 +33,8 @@ var RowGroupPanel = (function (_super) {
     function RowGroupPanel() {
         _super.call(this, '<div class="ag-row-group-panel ag-font-style"></div>');
     }
-    RowGroupPanel.prototype.agWire = function () {
-        this.addEmptyMessageToGui();
-    };
     RowGroupPanel.prototype.init = function () {
+        this.addEmptyMessageToGui();
         this.logger = this.loggerFactory.create('RowGroupPanel');
         this.globalEventService.addEventListener(main_14.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
         this.globalEventService.addEventListener(main_14.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));

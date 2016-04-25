@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,13 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
-var main_3 = require("ag-grid/main");
-var main_4 = require("ag-grid/main");
-var main_5 = require("ag-grid/main");
-var main_6 = require("ag-grid/main");
-var main_7 = require("ag-grid/main");
-var main_8 = require("ag-grid/main");
 var GroupStage = (function () {
     function GroupStage() {
     }
@@ -38,7 +31,8 @@ var GroupStage = (function () {
         return result;
     };
     GroupStage.prototype.group = function (rowNodes, groupedCols, expandByDefault) {
-        var topMostGroup = new main_8.RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+        var topMostGroup = new main_1.RowNode();
+        this.context.wireBean(topMostGroup);
         topMostGroup.level = -1;
         topMostGroup.children = [];
         topMostGroup._childrenMap = {};
@@ -68,7 +62,8 @@ var GroupStage = (function () {
                 // if group doesn't exist yet, create it
                 nextGroup = currentGroup._childrenMap[groupKey];
                 if (!nextGroup) {
-                    nextGroup = new main_8.RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+                    nextGroup = new main_1.RowNode();
+                    this.context.wireBean(nextGroup);
                     nextGroup.group = true;
                     nextGroup.field = groupColumn.getColDef().field;
                     nextGroup.id = index--;
@@ -120,25 +115,29 @@ var GroupStage = (function () {
         }
     };
     __decorate([
-        main_2.Autowired('selectionController'), 
-        __metadata('design:type', main_3.SelectionController)
+        main_1.Autowired('selectionController'), 
+        __metadata('design:type', main_1.SelectionController)
     ], GroupStage.prototype, "selectionController", void 0);
     __decorate([
-        main_2.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_4.GridOptionsWrapper)
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], GroupStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_2.Autowired('columnController'), 
-        __metadata('design:type', main_5.ColumnController)
+        main_1.Autowired('columnController'), 
+        __metadata('design:type', main_1.ColumnController)
     ], GroupStage.prototype, "columnController", void 0);
     __decorate([
-        main_2.Autowired('valueService'), 
-        __metadata('design:type', main_6.ValueService)
+        main_1.Autowired('valueService'), 
+        __metadata('design:type', main_1.ValueService)
     ], GroupStage.prototype, "valueService", void 0);
     __decorate([
-        main_2.Autowired('eventService'), 
-        __metadata('design:type', main_7.EventService)
+        main_1.Autowired('eventService'), 
+        __metadata('design:type', main_1.EventService)
     ], GroupStage.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('context'), 
+        __metadata('design:type', main_1.Context)
+    ], GroupStage.prototype, "context", void 0);
     GroupStage = __decorate([
         main_1.Bean('groupStage'), 
         __metadata('design:paramtypes', [])

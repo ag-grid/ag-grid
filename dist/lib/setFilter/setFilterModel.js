@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters) {
@@ -47,7 +47,8 @@ var SetFilterModel = (function () {
             this.allUniqueValues = main_1.Utils.toStrings(this.filterParams.values);
         }
         else {
-            this.allUniqueValues = main_1.Utils.toStrings(this.getUniqueValues(false));
+            var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
+            this.allUniqueValues = main_1.Utils.toStrings(uniqueValuesAsAnyObjects);
         }
         this.sortValues(this.allUniqueValues);
     };
@@ -57,7 +58,8 @@ var SetFilterModel = (function () {
             this.availableUniqueValues = this.allUniqueValues;
             return;
         }
-        this.availableUniqueValues = main_1.Utils.toStrings(this.getUniqueValues(true));
+        var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
+        this.availableUniqueValues = main_1.Utils.toStrings(uniqueValuesAsAnyObjects);
         this.sortValues(this.availableUniqueValues);
     };
     SetFilterModel.prototype.sortValues = function (values) {
@@ -193,6 +195,7 @@ var SetFilterModel = (function () {
         return selectedValues;
     };
     SetFilterModel.prototype.setModel = function (model, isSelectAll) {
+        if (isSelectAll === void 0) { isSelectAll = false; }
         if (model && !isSelectAll) {
             this.selectNothing();
             for (var i = 0; i < model.length; i++) {

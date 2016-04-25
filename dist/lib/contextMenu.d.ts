@@ -1,7 +1,5 @@
-// ag-grid-enterprise v4.0.7
-import { IContextMenuFactory } from "ag-grid/main";
-import { RowNode } from "ag-grid/main";
-import { Column } from "ag-grid/main";
+// ag-grid-enterprise v4.1.0
+import { IContextMenuFactory, RowNode, Column } from "ag-grid/main";
 export declare class ContextMenuFactory implements IContextMenuFactory {
     private context;
     private popupService;

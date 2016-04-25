@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -24,10 +24,8 @@ var ToolPanel = (function (_super) {
     function ToolPanel() {
         _super.call(this, ToolPanel.TEMPLATE);
     }
-    ToolPanel.prototype.agWire = function () {
-        this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(true);
-    };
     ToolPanel.prototype.init = function () {
+        this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
         this.getGui().appendChild(this.columnSelectPanel.getGui());
     };

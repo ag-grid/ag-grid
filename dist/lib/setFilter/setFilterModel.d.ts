@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 import { ColDef } from "ag-grid/main";
 export declare class SetFilterModel {
     private colDef;
@@ -37,5 +37,5 @@ export declare class SetFilterModel {
     isEverythingSelected(): boolean;
     isNothingSelected(): boolean;
     getModel(): any;
-    setModel(model: any, isSelectAll: boolean): void;
+    setModel(model: any, isSelectAll?: boolean): void;
 }

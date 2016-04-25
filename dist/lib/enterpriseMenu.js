@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,27 +9,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
-var main_3 = require("ag-grid/main");
-var main_4 = require("ag-grid/main");
-var main_5 = require("ag-grid/main");
-var main_6 = require("ag-grid/main");
-var main_7 = require("ag-grid/main");
-var main_8 = require("ag-grid/main");
-var main_9 = require("ag-grid/main");
-var main_10 = require("ag-grid/main");
-var main_11 = require("ag-grid/main");
-var main_12 = require("ag-grid/main");
-var main_13 = require("ag-grid/main");
 var columnSelectPanel_1 = require("./columnSelect/columnSelectPanel");
-var main_14 = require("ag-grid/main");
-var main_15 = require("ag-grid/main");
-var main_16 = require("ag-grid/main");
-var svgFactory = main_2.SvgFactory.getInstance();
+var svgFactory = main_1.SvgFactory.getInstance();
 var EnterpriseMenuFactory = (function () {
     function EnterpriseMenuFactory() {
     }
-    EnterpriseMenuFactory.prototype.showMenu = function (column, eventSource) {
+    EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent) {
+        var _this = this;
+        this.showMenu(column, function (menu) {
+            _this.popupService.positionPopupUnderMouseEvent({
+                mouseEvent: mouseEvent,
+                ePopup: menu.getGui()
+            });
+        });
+    };
+    EnterpriseMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
+        var _this = this;
+        this.showMenu(column, function (menu) {
+            _this.popupService.positionPopupUnderComponent({ eventSource: eventSource,
+                ePopup: menu.getGui(),
+                nudgeX: -9,
+                nudgeY: -26,
+                minWidth: menu.getMinWidth(),
+                keepWithinBounds: true
+            });
+        });
+    };
+    EnterpriseMenuFactory.prototype.showMenu = function (column, positionCallback) {
         var _this = this;
         var menu = new EnterpriseMenu(column, this.lastSelectedTab);
         this.context.wireBean(menu);
@@ -37,16 +43,9 @@ var EnterpriseMenuFactory = (function () {
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); });
-        this.popupService.positionPopupUnderComponent({ eventSource: eventSource,
-            ePopup: eMenuGui,
-            nudgeX: -9,
-            nudgeY: -26,
-            minWidth: menu.getMinWidth(),
-            keepWithinBounds: true
-        });
+        positionCallback(menu);
         menu.afterGuiAttached({
-            hidePopup: hidePopup,
-            eventSource: eventSource
+            hidePopup: hidePopup
         });
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;
@@ -59,19 +58,19 @@ var EnterpriseMenuFactory = (function () {
         return showColumnPanel || showMainPanel || showFilterPanel;
     };
     __decorate([
-        main_4.Autowired('context'), 
-        __metadata('design:type', main_5.Context)
+        main_1.Autowired('context'), 
+        __metadata('design:type', main_1.Context)
     ], EnterpriseMenuFactory.prototype, "context", void 0);
     __decorate([
-        main_4.Autowired('popupService'), 
-        __metadata('design:type', main_6.PopupService)
+        main_1.Autowired('popupService'), 
+        __metadata('design:type', main_1.PopupService)
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
     __decorate([
-        main_4.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_7.GridOptionsWrapper)
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
     EnterpriseMenuFactory = __decorate([
-        main_3.Bean('menuFactory'), 
+        main_1.Bean('menuFactory'), 
         __metadata('design:paramtypes', [])
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
@@ -79,7 +78,7 @@ var EnterpriseMenuFactory = (function () {
 exports.EnterpriseMenuFactory = EnterpriseMenuFactory;
 var EnterpriseMenu = (function () {
     function EnterpriseMenu(column, initialSelection) {
-        this.eventService = new main_14.EventService();
+        this.eventService = new main_1.EventService();
         this.column = column;
         this.initialSelection = initialSelection;
     }
@@ -103,7 +102,7 @@ var EnterpriseMenu = (function () {
             this.createColumnsPanel();
             tabItems.push(this.tabItemColumns);
         }
-        this.tabbedLayout = new main_12.TabbedLayout({
+        this.tabbedLayout = new main_1.TabbedLayout({
             items: tabItems,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this),
@@ -152,17 +151,17 @@ var EnterpriseMenu = (function () {
     };
     EnterpriseMenu.prototype.createPinnedSubMenu = function () {
         var _this = this;
-        var cMenuList = new main_13.MenuList();
+        var cMenuList = new main_1.MenuList();
         this.context.wireBean(cMenuList);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         cMenuList.addItem({
             name: localeTextFunc('pinLeft', 'Pin Left'),
-            action: function () { return _this.columnController.setColumnPinned(_this.column, main_8.Column.PINNED_LEFT); },
+            action: function () { return _this.columnController.setColumnPinned(_this.column, main_1.Column.PINNED_LEFT); },
             checked: this.column.isPinnedLeft()
         });
         cMenuList.addItem({
             name: localeTextFunc('pinRight', 'Pin Right'),
-            action: function () { return _this.columnController.setColumnPinned(_this.column, main_8.Column.PINNED_RIGHT); },
+            action: function () { return _this.columnController.setColumnPinned(_this.column, main_1.Column.PINNED_RIGHT); },
             checked: this.column.isPinnedRight()
         });
         cMenuList.addItem({
@@ -174,49 +173,49 @@ var EnterpriseMenu = (function () {
     };
     EnterpriseMenu.prototype.createAggregationSubMenu = function () {
         var _this = this;
-        var cMenuList = new main_13.MenuList();
+        var cMenuList = new main_1.MenuList();
         this.context.wireBean(cMenuList);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var columnIsAlreadyAggValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
         cMenuList.addItem({
             name: localeTextFunc('sum', 'Sum'),
             action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_8.Column.AGG_SUM);
+                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_SUM);
                 _this.columnController.addValueColumn(_this.column);
             },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_8.Column.AGG_SUM
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_SUM
         });
         cMenuList.addItem({
             name: localeTextFunc('min', 'Min'),
             action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_8.Column.AGG_MIN);
+                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_MIN);
                 _this.columnController.addValueColumn(_this.column);
             },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_8.Column.AGG_MIN
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_MIN
         });
         cMenuList.addItem({
             name: localeTextFunc('max', 'Max'),
             action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_8.Column.AGG_MAX);
+                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_MAX);
                 _this.columnController.addValueColumn(_this.column);
             },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_8.Column.AGG_MAX
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_MAX
         });
         cMenuList.addItem({
             name: localeTextFunc('first', 'First'),
             action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_8.Column.AGG_FIRST);
+                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_FIRST);
                 _this.columnController.addValueColumn(_this.column);
             },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_8.Column.AGG_FIRST
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_FIRST
         });
         cMenuList.addItem({
             name: localeTextFunc('last', 'Last'),
             action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_8.Column.AGG_LAST);
+                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_LAST);
                 _this.columnController.addValueColumn(_this.column);
             },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_8.Column.AGG_LAST
+            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_LAST
         });
         cMenuList.addItem({
             name: localeTextFunc('none', 'None'),
@@ -329,12 +328,12 @@ var EnterpriseMenu = (function () {
         return result;
     };
     EnterpriseMenu.prototype.createMainPanel = function () {
-        this.mainMenuList = new main_13.MenuList();
+        this.mainMenuList = new main_1.MenuList();
         this.context.wireBean(this.mainMenuList);
         var menuItems = this.getMenuItems();
         var builtInOptions = this.createBuiltInMenuOptions();
         this.mainMenuList.addMenuItems(menuItems, builtInOptions);
-        this.mainMenuList.addEventListener(main_16.CMenuItem.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(main_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
             title: svgFactory.createMenuSvg(),
             body: this.mainMenuList.getGui()
@@ -379,27 +378,27 @@ var EnterpriseMenu = (function () {
     EnterpriseMenu.TAB_GENERAL = 'general';
     EnterpriseMenu.TAB_COLUMNS = 'columns';
     __decorate([
-        main_4.Autowired('columnController'), 
-        __metadata('design:type', main_9.ColumnController)
+        main_1.Autowired('columnController'), 
+        __metadata('design:type', main_1.ColumnController)
     ], EnterpriseMenu.prototype, "columnController", void 0);
     __decorate([
-        main_4.Autowired('filterManager'), 
-        __metadata('design:type', main_10.FilterManager)
+        main_1.Autowired('filterManager'), 
+        __metadata('design:type', main_1.FilterManager)
     ], EnterpriseMenu.prototype, "filterManager", void 0);
     __decorate([
-        main_4.Autowired('context'), 
-        __metadata('design:type', main_5.Context)
+        main_1.Autowired('context'), 
+        __metadata('design:type', main_1.Context)
     ], EnterpriseMenu.prototype, "context", void 0);
     __decorate([
-        main_4.Autowired('gridApi'), 
-        __metadata('design:type', main_11.GridApi)
+        main_1.Autowired('gridApi'), 
+        __metadata('design:type', main_1.GridApi)
     ], EnterpriseMenu.prototype, "gridApi", void 0);
     __decorate([
-        main_4.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_7.GridOptionsWrapper)
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_15.PostConstruct, 
+        main_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

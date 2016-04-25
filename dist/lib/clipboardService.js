@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -51,17 +51,24 @@ var ClipboardService = (function () {
         }
         var cellsToFlash = {};
         var firstRowValues = null;
+        var updatedRowNodes = [];
+        var updatedColumnIds = [];
         this.forEachRangeRow(function (currentRow, rowNode, columns) {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues) {
                 firstRowValues = [];
+                // two reasons for looping through columns
                 columns.forEach(function (column) {
+                    // reason 1 - to get the initial values to copy down
                     var value = _this.valueService.getValue(column, rowNode);
                     firstRowValues.push(value);
+                    // reason 2 - to record the columnId for refreshing
+                    updatedColumnIds.push(column.getId());
                 });
             }
             else {
                 // otherwise we are not the first row, so copy
+                updatedRowNodes.push(rowNode);
                 columns.forEach(function (column, index) {
                     if (!column.isCellEditable(rowNode)) {
                         return;
@@ -75,6 +82,7 @@ var ClipboardService = (function () {
         });
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshView();
+        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
         this.eventService.dispatchEvent(main_18.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
     ClipboardService.prototype.finishPasteFromClipboard = function (data) {
@@ -97,12 +105,15 @@ var ClipboardService = (function () {
         }
         var currentRow = new main_15.GridRow(focusedCell.rowIndex, focusedCell.floating);
         var cellsToFlash = {};
-        parsedData.forEach(function (values) {
+        var updatedRowNodes = [];
+        var updatedColumnIds = [];
+        parsedData.forEach(function (values, index) {
             // if we have come to end of rows in grid, then skip
             if (!currentRow) {
                 return;
             }
             var rowNode = _this.getRowNode(currentRow);
+            updatedRowNodes.push(rowNode);
             var column = focusedCell.column;
             values.forEach(function (value) {
                 if (main_16.Utils.missing(column)) {
@@ -114,14 +125,18 @@ var ClipboardService = (function () {
                 _this.valueService.setValue(rowNode, column, value);
                 var cellId = new main_17.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
+                if (index === 0) {
+                    updatedColumnIds.push(column.getId());
+                }
                 column = _this.columnController.getDisplayedColAfter(column);
             });
             // move to next row down for next set of values
             currentRow = _this.cellNavigationService.getRowBelow(currentRow);
         });
         // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshView();
+        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
         this.eventService.dispatchEvent(main_18.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     };
     ClipboardService.prototype.copyToClipboard = function () {
         this.logger.log('copyToClipboard');

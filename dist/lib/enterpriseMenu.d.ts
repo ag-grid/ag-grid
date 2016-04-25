@@ -1,12 +1,13 @@
-// ag-grid-enterprise v4.0.7
-import { IMenuFactory } from "ag-grid/main";
-import { Column } from "ag-grid/main";
+// ag-grid-enterprise v4.1.0
+import { IMenuFactory, Column } from "ag-grid/main";
 export declare class EnterpriseMenuFactory implements IMenuFactory {
     private context;
     private popupService;
     private gridOptionsWrapper;
     private lastSelectedTab;
-    showMenu(column: Column, eventSource: HTMLElement): void;
+    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent): void;
+    showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void;
+    showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void): void;
     isMenuEnabled(column: Column): boolean;
 }
 export declare class EnterpriseMenu {

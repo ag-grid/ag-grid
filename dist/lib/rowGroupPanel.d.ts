@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
 import { Component } from "ag-grid/main";
 import { ColumnController } from "ag-grid/main";
 import { EventService } from "ag-grid/main";
@@ -19,7 +19,6 @@ export declare class RowGroupPanel extends Component {
     private dropTarget;
     private ePotentialDropGui;
     constructor();
-    agWire(): void;
     init(): void;
     private setupDropTarget();
     private onDragging();

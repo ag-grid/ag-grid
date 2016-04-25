@@ -13,29 +13,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var main_1 = require('ag-grid/main');
-var StatusItem = (function (_super) {
-    __extends(StatusItem, _super);
-    function StatusItem(label) {
-        _super.call(this, StatusItem.TEMPLATE);
-        this.queryForHtmlElement('#_label').innerHTML = label;
+var main_1 = require("ag-grid/main");
+var RichSelectRow = (function (_super) {
+    __extends(RichSelectRow, _super);
+    function RichSelectRow(cellRenderer) {
+        _super.call(this, '<div class="ag-rich-select-row"></div>');
+        this.cellRenderer = cellRenderer;
     }
-    StatusItem.prototype.init = function () {
-        this.lbValue = this.queryForHtmlElement('#_value');
+    RichSelectRow.prototype.setState = function (value, selected) {
+        var childComponent = this.cellRendererService.useCellRenderer(this.cellRenderer, this.getGui(), { value: value });
+        if (childComponent && childComponent.destroy) {
+            this.addDestroyFunc(childComponent.destroy.bind(childComponent));
+        }
+        main_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
     };
-    StatusItem.prototype.setValue = function (value) {
-        this.lbValue.innerHTML = main_1.Utils.formatNumberTwoDecimalPlacesAndCommas(value);
-    };
-    StatusItem.TEMPLATE = '<span class="ag-status-bar-item">' +
-        '  <span id="_label"></span>' +
-        '  <span id="_value"></span>' +
-        '</span>';
     __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], StatusItem.prototype, "init", null);
-    return StatusItem;
+        main_1.Autowired('cellRendererService'), 
+        __metadata('design:type', main_1.CellRendererService)
+    ], RichSelectRow.prototype, "cellRendererService", void 0);
+    return RichSelectRow;
 })(main_1.Component);
-exports.StatusItem = StatusItem;
+exports.RichSelectRow = RichSelectRow;

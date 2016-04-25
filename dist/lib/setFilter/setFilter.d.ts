@@ -1,48 +1,38 @@
-// ag-grid-enterprise v4.0.7
+// ag-grid-enterprise v4.1.0
+import { Component } from "ag-grid/main";
 import { Filter } from "ag-grid/main";
-export declare class SetFilter implements Filter {
-    private eGui;
+export declare class SetFilter extends Component implements Filter {
+    private static TEMPLATE;
+    private gridOptionsWrapper;
+    private context;
     private filterParams;
-    private rowHeight;
     private model;
     private filterChangedCallback;
     private filterModifiedCallback;
     private valueGetter;
-    private rowsInBodyContainer;
     private colDef;
-    private localeTextFunc;
-    private cellRenderer;
-    private eListContainer;
-    private eFilterValueTemplate;
     private eSelectAll;
-    private eListViewport;
     private eMiniFilter;
     private api;
     private applyActive;
     private eApplyButton;
+    private virtualList;
+    constructor();
+    private postConstruct();
     init(params: any): void;
+    private createSetListItem(value);
     afterGuiAttached(params: any): void;
+    getApi(): any;
     isFilterActive(): boolean;
     doesFilterPass(node: any): boolean;
-    getGui(): any;
     onNewRowsLoaded(): void;
     onAnyFilterChanged(): void;
     private createTemplate();
     private createGui();
     private setupApply();
-    private setContainerHeight();
-    private drawVirtualRows();
-    private ensureRowsRendered(start, finish);
-    private removeVirtualRows(rowsToRemove);
-    private insertRow(value, rowIndex);
-    private onCheckboxClicked(eCheckbox, value);
     private filterChanged();
     private onMiniFilterChanged();
-    private refreshVirtualRows();
-    private clearVirtualRows();
     private onSelectAll();
-    private updateAllCheckboxes(checked);
-    private addScrollListener();
-    getApi(): any;
+    private onItemSelected(value, selected);
     private createApi();
 }
