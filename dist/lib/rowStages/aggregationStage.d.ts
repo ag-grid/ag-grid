@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.1
+// ag-grid-enterprise v4.1.2
 import { IRowNodeStage } from "ag-grid/main";
 import { RowNode } from "ag-grid/main";
 export declare class AggregationStage implements IRowNodeStage {
