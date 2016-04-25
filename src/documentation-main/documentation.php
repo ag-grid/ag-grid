@@ -18,17 +18,21 @@ include 'documentation_header.php';
         .separator { text-align: center; }
     </style>
 
-<!--    <div class="news-box">
-        <div class="news-header">24th March 2016</div>
-        <div>ag-grid-ng2 updated to Angular 2 Beta 12.</div>
+    <div class="news-box">
+        <div class="news-header">25th April 2016</div>
+        <div>ag-Grid 4.2.x released. Includes improved
+            <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering">Cell Rendering</a>,
+            new <a href="../javascript-grid-viewport/">Viewport</a> row model for big data. Lots of other smaller changes,
+            see <a href="../change-log/">Change Log</a> for full details.
+            .</div>
     </div>
 
-    <div class="news-box">
+<!--    <div class="news-box">
         <div class="news-header">22th March 2016</div>
         <div>Patch for 4.0.x released with bug fixes and minor changes.
             Check <a href="../change-log/changeLogIndex.php">change log</a>.</div>
-    </div>-->
-
+    </div>
+-->
 </div>
 
 <p>

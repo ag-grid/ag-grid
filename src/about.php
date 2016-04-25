@@ -64,7 +64,7 @@
             <h3>Niall Crosby</h3>
             <h4>Founder</h4>
             <p>
-                Niall has 16 years leading greenfield software projects in Telecommunications, Government, Insurance
+                Niall has 17 years leading greenfield software projects in Telecommunications, Government, Insurance
                 and most recently Investment Banking. Oracle and Java used to be his bread and butter but is now
                 focusing on front end JavaScript, bringing his skill and knowledge from previous domains to the
                 emerging JavaScript platform.

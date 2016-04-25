@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
 
     <b>Big changes</b>
     <li>Vamped up Cell Editing and Rendering. See new documentation pages for <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering">Cell Rendering</a></li>
-    <li>New row model called Viewport. Designed for views over large data and pushing out updates from server to client.</li>
+    <li>New row model called <a href="../javascript-grid-viewport/">Viewport</a>. Designed for views over large data and pushing out updates from server to client.</li>
 
     <b>Small changes</b>
     <li>Enhancement: New event - viewportChanged - gets called when the rendered rows changes, either
