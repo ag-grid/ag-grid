@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        This is similar to cellRender. cellRenderers have an additional 'method' option with no lifecycle
+        This is similar to cellRender, but cellRenderers have an additional 'method' option with no lifecycle
         methods. There is no equivalent for cellEditors as lifecycle is integral to how they work as the
         grid needs to ask 'what is the new value' after editing has stopped. A cellEditor
         without a lifecycle doesn't make sense.
@@ -213,7 +213,7 @@ colDef.cellEditorParams = {
         If you have <i>colDef.editable=true</i> set for a column then editing will start upon any of the following:
         Editing can start in the following ways:
         <ul>
-        <li><b>Control Key Pressed</b>: One of the following is pressed: Enter, F2, Backspace, Delete. If this
+        <li><b>Edit Key Pressed</b>: One of the following is pressed: Enter, F2, Backspace, Delete. If this
         happens then params.keyPress will contain the key code of the key that started the edit. The default editor
         will clear the contents of the cell if Backspace or Delete are pressed.</li>
         <li><b>Printable Key Pressed</b>: Any of the following characters are pressed:
@@ -278,8 +278,8 @@ colDef.cellEditorParams = {
     </p>
 
     <p>
-        To have an editor appear in a popup, have the <i>isPopup()</i> method return true. If you want in cell,
-        either return false or don't provide this method at all.
+        To have an editor appear in a popup, have the <i>isPopup()</i> method return true. If you want editing
+        to be done within a cell, either return false or don't provide this method at all.
     </p>
 
     <h3>Provided cellEditors</h3>
@@ -290,7 +290,7 @@ colDef.cellEditorParams = {
         <li><b>text</b>: Simple text editor that uses standard HTML Input. This is the default.</li>
         <li><b>select</b>: Simple editor that uses standard HTML Select.</li>
         <li><b>popupText</b>: Same as 'text' but as popup.</li>
-        <li><b>popupSelect</b>: Same as 'popupSelect' but as popup.</li>
+        <li><b>popupSelect</b>: Same as 'select' but as popup.</li>
         <li><b>richSelect (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
         and custom rendering to allow a richer experience than the standard select.</li>
     </ul>
@@ -298,7 +298,7 @@ colDef.cellEditorParams = {
 
     <p>
         The default text cellEditor takes no parameters. The select cellEditor takes a list of values
-        which the user can select against. The example below shows configuring the selet cellEditor.
+        from which the user can select. The example below shows configuring the select cellEditor.
     </p>
 
     <pre>colDef.cellEditor = 'select';
@@ -362,20 +362,14 @@ colDef.cellEditorParams = {
         newValue for onCellValueChanged will have the number.
     </p>
 
-    <div style="background-color: aliceblue; padding: 10px; border: 1px solid grey;">
-        <div style="font-size: 30px;">Sean: </div>
-        Example needs to show:
-        <ul>
-            <li>Component cell editor normal - maybe a text input that only accepts numbers??</li>
-            <li>Component cell editor popup (maybe have something pop up with 2 buttons, one says 'yes' and on 'no'??</li>
-            <li>Registering cell editor using api</li>
-            <li>Registering cell editor using property</li>
-            <li>Use complementing parameters somewhere.</li>
-        </ul>
-        The main example has examples of the editors. I will create a new page for 'richSelect', it's going
-        to be an enterprise component and deserves it's own page.
-    </div>
+    <p>The example below illustrates:
+    <ul>
+        <li>'Gender' column uses a Component cell editor that allows choices via a 'popupSelect', with values supplied by complementing the editor paramters.</li>
+        <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
+    </ul>
+    </p>
 
+    <show-example example="exampleCellEditing"></show-example>
     <!--
         <div class="bigTitle">Custom Editing</div>
 
