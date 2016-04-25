@@ -1,7 +1,8 @@
-import {Utils as _, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper, VirtualList, VirtualListModel} from "ag-grid/main";
+import {Utils as _, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
 import {SetFilterListItem} from "./setFilterListItem";
+import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
 export class SetFilter extends Component implements Filter {
 

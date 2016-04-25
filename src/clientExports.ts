@@ -15,12 +15,19 @@ import {RowGroupPanel} from "./rowGroupPanel";
 import {ToolPanel} from "./toolPanel";
 import {ContextMenuFactory} from "./contextMenu";
 import {ViewportRowModel} from "./viewport/viewportRowModel";
+import {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
+import {RichSelectRow} from "./rendering/richSelect/richSelectRow";
+import {VirtualList} from "./rendering/virtualList";
 
 export function populateClientExports(exports: any): void {
 
     exports.ColumnSelectPanel = ColumnSelectPanel;
     exports.RenderedColumn = RenderedColumn;
     exports.RenderedGroup = RenderedGroup;
+
+    exports.RichSelectCellEditor = RichSelectCellEditor;
+    exports.RichSelectRow = RichSelectRow;
+    exports.VirtualList = VirtualList;
 
     exports.AggregationStage = AggregationStage;
     exports.GroupStage = GroupStage;
