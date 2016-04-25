@@ -73,9 +73,9 @@ export interface GridOptions {
     localeTextFunc?: Function;
     suppressScrollLag?: boolean;
     /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
-    cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
+    // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
     /* a map of strings (cellEditor keys) to cellEditors */
-    cellEditors?: {[key: string]: {new(): ICellEditor}};
+    // cellEditors?: {[key: string]: {new(): ICellEditor}};
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

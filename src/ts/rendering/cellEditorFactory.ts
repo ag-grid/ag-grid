@@ -37,12 +37,12 @@ export class CellEditorFactory {
         this.cellEditorMap[key] = cellEditor;
     }
 
-    private registerEditorsFromGridOptions(): void {
-        var userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
-        _.iterateObject(userProvidedCellEditors, (key: string, cellEditor: {new(): ICellEditor})=> {
-            this.addCellEditor(key, cellEditor);
-        });
-    }
+    // private registerEditorsFromGridOptions(): void {
+    //     var userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
+    //     _.iterateObject(userProvidedCellEditors, (key: string, cellEditor: {new(): ICellEditor})=> {
+    //         this.addCellEditor(key, cellEditor);
+    //     });
+    // }
 
     public createCellEditor(key: string|{new(): ICellEditor}): ICellEditor {
 

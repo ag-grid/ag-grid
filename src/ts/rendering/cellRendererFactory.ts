@@ -29,15 +29,15 @@ export class CellRendererFactory {
         this.cellRendererMap[CellRendererFactory.ANIMATE_SHOW_CHANGE] = AnimateShowChangeCellRenderer;
         this.cellRendererMap[CellRendererFactory.GROUP] = GroupCellRenderer;
 
-        this.registerRenderersFromGridOptions();
+        // this.registerRenderersFromGridOptions();
     }
 
-    private registerRenderersFromGridOptions(): void {
-        var userProvidedCellRenderers = this.gridOptionsWrapper.getCellRenderers();
-        _.iterateObject(userProvidedCellRenderers, (key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc)=> {
-            this.addCellRenderer(key, cellRenderer);
-        });
-    }
+    // private registerRenderersFromGridOptions(): void {
+    //     var userProvidedCellRenderers = this.gridOptionsWrapper.getCellRenderers();
+    //     _.iterateObject(userProvidedCellRenderers, (key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc)=> {
+    //         this.addCellRenderer(key, cellRenderer);
+    //     });
+    // }
 
     public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
         this.cellRendererMap[key] = cellRenderer;
