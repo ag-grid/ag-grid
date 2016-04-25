@@ -19,8 +19,8 @@ include '../documentation-main/documentation_header.php';
             <li><b>Virtual Paging:</b> This will present the data to the user in one screen with a vertical scrollbar.
                 The grid will retrieve the data from the server in blocks using a least recently used algorithm to
                 cache the blocks on in the client.</li>
-            <li><b>Viewport:</b> This will present the dat to the user in on screen with a vertical scrollbar.
-                The grid will inform the server exactly what data is displaying (first and last row) and the
+            <li><b>Viewport:</b> This will present the data to the user in on screen with a vertical scrollbar.
+                The grid will inform the server exactly what data it is displaying (first and last row) and the
                 server will provide data for exactly those rows only.</li>
         </ul>
     </p>
@@ -108,15 +108,15 @@ include '../documentation-main/documentation_header.php';
     <p>
         Which row model you use will depend on your application. Here are some rules of thumb:
         <ul>
-        <li>If you are not user, use default. The grid can handle massive (100k+) amounts of data. The grid will only
+        <li>If you are not sure, use default. The grid can handle massive (100k+) amounts of data. The grid will only
         render what's visible on the screen (40 rows approx???) even if you have thousands of rows returned from your
-        server. You will not kill the grid with to much data - rather your browser will run out of memory before
+        server. You will not kill the grid with too much data - rather your browser will run out of memory before
         the grid gets into problems. So if you are unsure, go with 'normal' row model first and only change if you need another.</li>
-        <li>If you do not want to shift all the data from your server to your client, as the amount of data is to
+        <li>If you do not want to shift all the data from your server to your client, as the amount of data is too
         large to shift over the network or to extract from the underlying datasource, then use either pagination
         or virtual paging. Each one takes data from the server in blocks. Pagination allows the user to view the
         data using next / previous buttons. Virtual pagination allows the user to view the data with a vertical scroll.</li>
-        <li>If you want the server to know exactly what the user is looking at, then user viewport, as this will
+        <li>If you want the server to know exactly what the user is looking at, then use viewport, as this will
         put the state on the server side. This is best when you have changing data and want to push updates
         to the client when the server side data changes.</li>
     </ul>
