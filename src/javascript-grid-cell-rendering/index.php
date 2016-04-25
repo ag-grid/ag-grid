@@ -46,19 +46,19 @@ include '../documentation-main/documentation_header.php';
 
 <pre><code><b>// put the value in bold</b>
 colDef.cellRenderer = function(params) {
-    return '&lt;b>' params.value.toUpperCase() + '&lt;/b>';
+    return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
 }
 
 <b>// put a tooltip on the value</b>
 colDef.cellRenderer = function(params) {
-    return '&lt;span title="the tooltip">'+params.data.value+'&lt;/span>';
+    return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
 }
 
 <b>// create a DOM object </b>
 colDef.cellRenderer = function(params) {
     var eDiv = document.createElement('div');
     eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
-    var eButton = eDiv.querySelectorAll('.btn-simple');
+    var eButton = eDiv.querySelectorAll('.btn-simple')[0];
     var eButton.addEventListener('click', function() {
         console.log('button was clicked!!');
     });
@@ -66,7 +66,7 @@ colDef.cellRenderer = function(params) {
 }</code></pre>
 
     <p>
-        The set of parameters passed to the function as described below.
+        See further below for the set of parameters passed to the rendering function.
     </p>
 
     <h3>cellRenderer Component</h3>
@@ -111,7 +111,9 @@ colDef.cellRenderer = function(params) {
         Below is a simple example of cellRenderer class:
     </p>
 
-<pre><code><b>// function to act as a class</b>
+<pre>
+<code>
+<b>// function to act as a class</b>
 function MyCellRenderer () {}
 
 <b>// gets called once before the renderer is used</b>
@@ -125,8 +127,8 @@ MyCellRenderer.prototype.init = function(params) {
         &lt;/span>';
 
     // get references to the elements we want
-    this.eButton = eDiv.querySelectorAll('.btn-simple');
-    this.eValue = eDiv.querySelectorAll('.my-value');
+    this.eButton = this.eGui.querySelectorAll('.btn-simple')[0];
+    this.eValue = this.eGui.querySelectorAll('.my-value')[0];
 
     // set value into cell
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
@@ -134,8 +136,8 @@ MyCellRenderer.prototype.init = function(params) {
     // add event listener to button
     this.eventListener = function() {
         console.log('button was clicked!!');
-    });
-    var eButton.addEventListener('click', this.eventListener);
+    };
+    this.eButton.addEventListener('click', this.eventListener);
 };
 
 <b>// gets called once when grid ready to insert the element</b>
@@ -152,7 +154,7 @@ MyCellRenderer.prototype.refresh = function(params) {
 <b>// gets called when the cell is removed from the grid</b>
 MyCellRenderer.prototype.destroy = function() {
     // do cleanup, remove event listener from button
-    var eButton.addEventListener('click', this.eventListener);
+    this.eButton.removeEventListener('click', this.eventListener);
 };</code></pre>
 
     <h3>cellRenderer Params</h3>
@@ -304,9 +306,9 @@ colDef.cellRendererParams = {
     <h3>Registering cellRenderers</h3>
     
     <p>
-        You do not need to register you cellRenderers. However if you do, they will be stored alongside the grid
+        You do not need to register your cellRenderers. However if you do, they will be stored alongside the grid
         provided cellRenderers and will be available to your column definitions and identified by strings. This
-        is useful if you want to provide a bunch of your own cellRenders inside your company that are reused
+        is useful if you want to provide your own cellRenders inside your company that are reused
         across grids. It also means you can define your columns using only JSON and not require
         referencing JavaScript functions directly.
     </p>
@@ -351,6 +353,7 @@ colDef.cellRendererParams = {
             gold medal won.</li>
     </ul>
 
+    <show-example example="example2"></show-example>
     <show-example example="example1"></show-example>
 
 </div>
