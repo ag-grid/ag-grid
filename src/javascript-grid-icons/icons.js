@@ -5,9 +5,7 @@ var columnDefs = [
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
         },
-        cellRenderer: {
-            renderer: 'group'
-        }
+        cellRenderer: 'group'
     },
     {headerName: "Age", field: "age", width: 90,
         icons: {

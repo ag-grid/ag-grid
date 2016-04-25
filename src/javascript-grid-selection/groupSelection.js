@@ -18,8 +18,8 @@ var gridOptions = {
     groupSelectsChildren: true,
     suppressRowClickSelection: true,
     groupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
-        cellRenderer: {
-            renderer: "group",
+        cellRenderer: 'group',
+        cellRendererParams: {
             checkbox: true
         }}
 };

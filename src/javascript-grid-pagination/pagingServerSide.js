@@ -160,8 +160,8 @@ function filterData(filterModel, data) {
         }
 
         if (filterModel.country) {
-            if (filterModel.country.indexOf(item.country) < 0) {
-                // year didn't match, so skip this record
+            if (item.country.toLowerCase().indexOf(filterModel.country.filter) < 0) {
+                // country didn't match, so skip this record
                 continue;
             }
         }

@@ -60,8 +60,8 @@ include '../documentation-main/documentation_header.php';
     some utils for React rendering.
         <pre><code>  "dependencies": {
     ...
-    "ag-grid": "3.3.x",
-    "ag-grid-react": "3.3.x"
+    "ag-grid": "4.1.x",
+    "ag-grid-react": "4.1.x"
 }</code></pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However

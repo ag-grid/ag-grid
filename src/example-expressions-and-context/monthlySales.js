@@ -46,8 +46,8 @@ var columnDefs = [
 
 var gridOptions = {
     groupColumnDef: {headerName : "Location", field: "city", width: 200,
-        cellRenderer: {
-            renderer: 'group',
+        cellRenderer: 'group',
+        cellRendererParams: {
             checkbox: true
         }
     },

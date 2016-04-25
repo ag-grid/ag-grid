@@ -4,10 +4,7 @@ var classRules =  {
 };
 
 var columnDefs = [
-    {headerName: "Person", field: 'name', width: 400,
-    cellRenderer: {
-        renderer: 'group'
-    }},
+    {headerName: "Person", field: 'name', width: 400, cellRenderer: 'group'},
     {field: 'nationality', rowGroupIndex: 0, hide: true},
     {
         headerName: 'Weekly Editable Values',

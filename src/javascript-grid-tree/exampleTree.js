@@ -1,7 +1,5 @@
 var columnDefs = [
-    {headerName: "Group", cellRenderer: {
-        renderer: 'group'
-    }},
+    {headerName: "Group", cellRenderer: 'group'},
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Year", field: "year"},
     {headerName: "Country", field: "country"}

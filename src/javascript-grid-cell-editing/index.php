@@ -323,44 +323,44 @@ colDef.cellEditorParams = {
 
     <p>If you have many instances of a grid, you must register the cellEditors with each one.</p>
 
-    <!--    <h4>Callback: New Value Handlers</h4>
+    <h4>Callback: New Value Handlers</h4>
 
-        <p>
-            If you want to use the simple text editing, but want to format the result in some way
-            before inserting into the row, then you can provide a <i>newValueHandler</i> to the column.
-            This will allow you to add additional validation or conversation to the value. The example
-            below shows the newValueHandler in action in the 'Upper Case Only' column.
-        </p>
+    <p>
+        If you want to use the simple text editing, but want to format the result in some way
+        before inserting into the row, then you can provide a <i>newValueHandler</i> to the column.
+        This will allow you to add additional validation or conversation to the value. The example
+        below shows the newValueHandler in action in the 'Upper Case Only' column.
+    </p>
 
-        <p>
-            newValueHandler is provided a params object with attributes:<br/>
-            <b>node: </b>The grid node in question.<br/>
-            <b>data: </b>The row data in question.<br/>
-            <b>oldValue: </b>If 'field' is in the column definition, contains the value in the data before the edit.<br/>
-            <b>newValue: </b>The string value entered into the default editor.<br/>
-            <b>rowIndex: </b>The index of the virtualised row.<br/>
-            <b>colDef: </b>The column definition.<br/>
-            <b>context: </b>The context as set in the gridOptions.<br/>
-            <b>api: </b>A reference to the ag-Grid API.<br/>
-        </p>-->
+    <p>
+        newValueHandler is provided a params object with attributes:<br/>
+        <b>node: </b>The grid node in question.<br/>
+        <b>data: </b>The row data in question.<br/>
+        <b>oldValue: </b>If 'field' is in the column definition, contains the value in the data before the edit.<br/>
+        <b>newValue: </b>The string value entered into the default editor.<br/>
+        <b>rowIndex: </b>The index of the virtualised row.<br/>
+        <b>colDef: </b>The column definition.<br/>
+        <b>context: </b>The context as set in the gridOptions.<br/>
+        <b>api: </b>A reference to the ag-Grid API.<br/>
+    </p>
 
-    <h4>Callback: Cell Value Changed</h4>
-
-    <p><b>Niall Note: </b> This needs to change. It's an event. Also the newValueHandler should be changed with
-        'valueSetter' so it's the inverst of 'valueGetter'.</p>
+    <h4>Event: Cell Value Changed</h4>
 
     <p>
         After a cell has been changed with default editing (ie not your own custom cell renderer),
-        then <i>onCellValueChanged</i>, if provided, is called on the column def. This is used if
-        your application needs to do something after a value has been changed.
+        then <i>cellValueChanged</i> event is fired. You can listen for this event in the normal
+        way, or additionally you can add a <i>onCellValueChanged()</i> callback to the colDef.
+        This is used if your application needs to do something after a value has been changed.
     </p>
     <p>
-        onCellValueChanged is provided with the same parameters as newValueHandler with one difference,
+        The <i>cellValueChanged</i> event contains the same parameters as newValueHandler with one difference,
         the <i>newValue</i>. If 'field' is in the column definition, the newValue contains the value
         in the data after the edit. So for example, if the onCellValueChanged converts the provided
         string value into a number, then newValue for newValueHandler will have the string, and
         newValue for onCellValueChanged will have the number.
     </p>
+
+    <h3>Cell Editing Example</h3>
 
     <p>The example below illustrates:
     <ul>
