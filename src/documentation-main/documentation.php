@@ -20,7 +20,7 @@ include 'documentation_header.php';
 
     <div class="news-box">
         <div class="news-header">25th April 2016</div>
-        <div>ag-Grid 4.2.x released. Includes improved
+        <div>ag-Grid 4.1.x released. Includes improved
             <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering">Cell Rendering</a>,
             new <a href="../javascript-grid-viewport/">Viewport</a> row model for big data. Lots of other smaller changes,
             see <a href="../change-log/changeLogIndex.php">Change Log</a> for full details.
