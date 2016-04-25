@@ -437,9 +437,7 @@ export class RenderedCell extends Component {
         if (this.editingCell) {
             this.stopEditing();
         }
-        // if (!this.editingCell) {
-            this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
-        // }
+        this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
