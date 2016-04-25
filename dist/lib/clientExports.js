@@ -103,6 +103,7 @@ function populateClientExports(exports) {
     exports.Context = context_1.Context;
     exports.Autowired = context_1.Autowired;
     exports.PostConstruct = context_1.PostConstruct;
+    exports.PreDestroy = context_1.PreDestroy;
     exports.Optional = context_1.Optional;
     exports.Bean = context_1.Bean;
     exports.Qualifier = context_1.Qualifier;
