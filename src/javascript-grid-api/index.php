@@ -118,9 +118,8 @@ include '../documentation-main/documentation_header.php';
             <td>Rips out the virtual rows showing representing the provided list of row nodes and then redraws them.</td>
         </tr>
         <tr>
-            <th>refreshCells(rowNodes, colIds, animate?)</th>
-            <td>Gets the individual cells for the provided rowNodes to refresh, the row itself and all other cells stay intact.
-            If animate=true, then the updated cells will flash.</td>
+            <th>refreshCells(rowNodes, colIds)</th>
+            <td>Gets the individual cells for the provided rowNodes to refresh, the row itself and all other cells stay intact.</td>
         </tr>
         <tr>
             <th>refreshHeader()</th>

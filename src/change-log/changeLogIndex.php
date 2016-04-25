@@ -9,21 +9,24 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <h3>Version 4.1.x</h3>
+
+    <b>Big changes</b>
+    <li>Vamped up Cell Editing and Rendering. See new documentation pages for <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering">Cell Rendering</a></li>
+    <li>New row model called Viewport. Designed for views over large data and pushing out updates from server to client.</li>
+
+    <b>Small changes</b>
     <li>Enhancement: New event - viewportChanged - gets called when the rendered rows changes, either
     due to scrolling, new data or grid resize. Using this, you know exactly what divs will be rendered in the DOM.</li>
     <li>Navigation: When not editing, tab moves between cells. Shift+tab goes backwards.</li>
     <li>Editing: Hitting any key started editing.</li>
-    <li>Enhancement: api.refreshCell() now takes 'animate' parameter, so cell will flash when changed.</li>
     <li>Enhancement: New api methods: showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterMouseClick(colKey, mouseEvent)</li>
-    <li>Bugfix: api.setFocusedCell() method now sets browser focus (previous was just graphically highlighting the cell)</li>
-    <li>Breaking Change: colDef.cellRenderer can no longer be an object, must be function, class or string. please see section on cellRendering. ##### Give example for this</li>
-    <li>Enhancement: new function colDef.valueFormatter - value formatting responsibility used to lie in cellRenderer, now it's broken out into valueFormatter, allows reusing cellRenderer's against different formats.</li>
+    <li>Enhancement: new function colDef.valueFormatter - value formatting responsibility used to tie in cellRenderer, now it's broken out into valueFormatter, allows reusing cellRenderer's against different formats.</li>
     <li>Enhancement: added 'destroyFilter' api</li>
-    <li>Enhancement: columnApi.addRowGroupColumn() and columnApi.removeRowGroupColumn() now work of colKey and not columns, so you can pass in colDefs, colIds or columns (previously was just columns)</li>
+    <li>Enhancement: columnApi.addRowGroupColumn() and columnApi.removeRowGroupColumn() now work off colKey and not columns, so you can pass in colDefs, colIds or columns (previously was just columns)</li>
     <li>Enhancement: New methods: columnApi.addRowGroupColumns(), columnApi.removeRowGroupColumns(), columnApi.setRowGroupColumns()</li>
-<!--    <li>Styles: ag-filter-list-container and ag-filter-item renamed to ag-virtual-list-container and ag-virtual-item</li>-->
     <li>Enhancement: When you refresh the grid, doing a refresh doesn't loose the focused cell if a cell has browser focus.</li>
     <li>Bugfix: Row grouping was not working when colId was provided.</li>
+    <li>Bugfix: api.setFocusedCell() method now sets browser focus (previous was just graphically highlighting the cell)</li>
 
     <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
