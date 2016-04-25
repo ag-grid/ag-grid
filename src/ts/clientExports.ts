@@ -77,8 +77,6 @@ import {PopupTextCellEditor} from "./rendering/cellEditors/popupTextCellEditor";
 import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
 import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
-import {VirtualList} from "./widgets/virtualList";
-import {RichSelectCellEditor} from "./rendering/cellEditors/richSelect/richSelectCellEditor";
 import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
@@ -151,7 +149,6 @@ export function populateClientExports(exports: any): void {
     exports.PopupTextCellEditor = PopupTextCellEditor;
     exports.SelectCellEditor = SelectCellEditor;
     exports.TextCellEditor = TextCellEditor;
-    exports.RichSelectCellEditor = RichSelectCellEditor;
 
     // rendering / cellRenderers
     exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
@@ -183,7 +180,6 @@ export function populateClientExports(exports: any): void {
     exports.MenuItemComponent = MenuItemComponent;
     exports.Component = Component;
     exports.MenuList = MenuList;
-    exports.VirtualList = VirtualList;
 
     // root
     exports.CellNavigationService = CellNavigationService;

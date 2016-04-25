@@ -6,7 +6,7 @@ import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
 import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
-import {RichSelectCellEditor} from "./cellEditors/richSelect/richSelectCellEditor";
+import {RichSelectCellEditor} from "../../../../ag-grid-enterprise/src/rendering/richSelect/richSelectCellEditor";
 import {DateCellEditor} from "./cellEditors/dateCellEditor";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
@@ -18,7 +18,6 @@ export class CellEditorFactory {
     private static DATE = 'date';
     private static POPUP_TEXT = 'popupText';
     private static POPUP_SELECT = 'popupSelect';
-    private static RICH_SELECT = 'richSelect';
 
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -31,7 +30,6 @@ export class CellEditorFactory {
         this.cellEditorMap[CellEditorFactory.SELECT] = SelectCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.RICH_SELECT] = RichSelectCellEditor;
         this.cellEditorMap[CellEditorFactory.DATE] = DateCellEditor;
     }
     
