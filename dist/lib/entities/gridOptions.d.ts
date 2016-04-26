@@ -1,12 +1,14 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { RowNode } from './rowNode';
+import { RowNode } from "./rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnController";
 import { Column } from "./column";
-import { MenuItem } from "../widgets/cMenuItem";
+import { IViewportDatasource } from "../interfaces/iViewportDatasource";
+import { MenuItem } from "../widgets/menuItemComponent";
+import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -56,6 +58,9 @@ export interface GridOptions {
     suppressMenuMainPanel?: boolean;
     suppressMenuColumnPanel?: boolean;
     rememberGroupStateWhenNewData?: boolean;
+    viewportRowModelPageSize?: number;
+    viewportRowModelBufferSize?: number;
+    enableCellChangeFlash?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -67,7 +72,6 @@ export interface GridOptions {
      ****************************************************************/
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
-    groupHideGroupColumns?: boolean;
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
     groupSuppressRow?: boolean;
@@ -98,12 +102,18 @@ export interface GridOptions {
     showToolPanel?: boolean;
     columnDefs?: any[];
     datasource?: any;
+    viewportDatasource?: IViewportDatasource;
     headerHeight?: number;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
-    groupRowInnerRenderer?(params: any): void;
-    groupRowRenderer?: Function | Object;
+    groupRowRenderer?: {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    groupRowRendererParams?: any;
+    groupRowInnerRenderer?: {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
     isScrollLag?(): boolean;
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
@@ -122,25 +132,42 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
-    onGridReady?(params: any): void;
-    onModelUpdated?(): void;
-    onCellClicked?(params: any): void;
-    onCellDoubleClicked?(params: any): void;
-    onCellContextMenu?(params: any): void;
-    onCellValueChanged?(params: any): void;
-    onCellFocused?(params: any): void;
-    onRowSelected?(params: any): void;
-    onRowDeselected?(params: any): void;
-    onSelectionChanged?(): void;
-    onBeforeFilterChanged?(): void;
-    onAfterFilterChanged?(): void;
-    onFilterModified?(): void;
-    onBeforeSortChanged?(): void;
-    onAfterSortChanged?(): void;
-    onVirtualRowRemoved?(params: any): void;
-    onRowClicked?(params: any): void;
-    onRowDoubleClicked?(params: any): void;
-    onGridSizeChanged?(params: any): void;
+    onColumnEverythingChanged?(event?: any): void;
+    onNewColumnsLoaded?(event?: any): void;
+    onColumnRowGroupChanged?(event?: any): void;
+    onColumnValueChanged?(event?: any): void;
+    onColumnMoved?(event?: any): void;
+    onColumnVisible?(event?: any): void;
+    onColumnPinned?(event?: any): void;
+    onColumnGroupOpened?(event?: any): void;
+    onColumnResized?(event?: any): void;
+    onRowGroupOpened?(event?: any): void;
+    onRowDataChanged?(event?: any): void;
+    onFloatingRowDataChanged?(event?: any): void;
+    onRangeSelectionChanged?(event?: any): void;
+    onClipboardPaste?(event?: any): void;
+    onHeaderHeightChanged?(event?: any): void;
+    onModelUpdated?(event?: any): void;
+    onCellClicked?(event?: any): void;
+    onCellDoubleClicked?(event?: any): void;
+    onCellContextMenu?(event?: any): void;
+    onCellValueChanged?(event?: any): void;
+    onCellFocused?(event?: any): void;
+    onRowSelected?(event?: any): void;
+    onSelectionChanged?(event?: any): void;
+    onBeforeFilterChanged?(event?: any): void;
+    onFilterChanged?(event?: any): void;
+    onAfterFilterChanged?(event?: any): void;
+    onFilterModified?(event?: any): void;
+    onBeforeSortChanged?(event?: any): void;
+    onSortChanged?(event?: any): void;
+    onAfterSortChanged?(event?: any): void;
+    onVirtualRowRemoved?(event?: any): void;
+    onRowClicked?(event?: any): void;
+    onRowDoubleClicked?(event?: any): void;
+    onGridReady?(event?: any): void;
+    onGridSizeChanged?(event?: any): void;
+    onViewportChanged?(event?: any): void;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -155,6 +182,7 @@ export interface NodeChildDetails {
     key?: any;
 }
 export interface GetContextMenuItemsParams {
+    defaultItems: [string];
     column: Column;
     node: RowNode;
     value: any;
@@ -189,6 +217,12 @@ export interface ProcessRowParams {
 export interface ProcessCellForExportParams {
     value: any;
     node: RowNode;
+    column: Column;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+}
+export interface ProcessHeaderForExportParams {
     column: Column;
     api: GridApi;
     columnApi: ColumnApi;

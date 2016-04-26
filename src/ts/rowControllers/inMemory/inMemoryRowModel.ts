@@ -278,7 +278,12 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         if (!groupState) { return; }
 
         _.traverseNodesWithKey(this.rowsAfterGroup, (node: RowNode, key: string)=> {
-            node.expanded = groupState[key] === true
+            // if the group was open last time, then open it this time. however
+            // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
+            // setting will take effect.
+            if (groupState[key] === true) {
+                node.expanded = true;
+            }
         });
     }
 

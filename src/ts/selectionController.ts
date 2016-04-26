@@ -183,6 +183,7 @@ export class SelectionController {
         // that we pick up, however it's good to clean it down, as we are still
         // left with entries pointing to 'undefined'
         this.selectedNodes = {};
+        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED)
     }
 
     public selectAllRowNodes() {

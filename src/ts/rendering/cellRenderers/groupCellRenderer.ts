@@ -14,6 +14,8 @@ import {RowNode} from "../../entities/rowNode";
 import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
+import {Column} from "../../entities/column";
+import {ColDef} from "../../entities/colDef";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -130,7 +132,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private createGroupCell(params: any): void {
         // pull out the column that the grouping is on
         var rowGroupColumns = params.columnApi.getRowGroupColumns();
+
+        // if we are using in memory grid grouping, then we try to look up the column that
+        // we did the grouping on. however if it is not possible (happens when user provides
+        // the data already grouped) then we just the current col, ie use cellrenderer of current col
         var columnOfGroupedCol = rowGroupColumns[params.node.level];
+        if (_.missing(columnOfGroupedCol)) {
+            columnOfGroupedCol = params.column;
+        }
         var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
 
         var groupName = this.getGroupName(params);

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,10 +15,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var context_1 = require("./context/context");
 var constants_1 = require("./constants");
-var context_2 = require("./context/context");
 var columnController_1 = require("./columnController/columnController");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
-var utils_1 = require('./utils');
+var utils_1 = require("./utils");
 var gridRow_1 = require("./entities/gridRow");
 var gridCell_1 = require("./entities/gridCell");
 var CellNavigationService = (function () {
@@ -153,6 +152,14 @@ var CellNavigationService = (function () {
         var lastFloatingRow = this.floatingRowModel.getFloatingTopRowData().length - 1;
         return new gridRow_1.GridRow(lastFloatingRow, constants_1.Constants.FLOATING_TOP);
     };
+    CellNavigationService.prototype.getNextTabbedCell = function (gridCell, backwards) {
+        if (backwards) {
+            return this.getNextTabbedCellBackwards(gridCell);
+        }
+        else {
+            return this.getNextTabbedCellForwards(gridCell);
+        }
+    };
     CellNavigationService.prototype.getNextTabbedCellForwards = function (gridCell) {
         var displayedColumns = this.columnController.getAllDisplayedColumns();
         var newRowIndex = gridCell.rowIndex;
@@ -190,15 +197,15 @@ var CellNavigationService = (function () {
         return new gridCell_1.GridCell(newRowIndex, newFloating, newColumn);
     };
     __decorate([
-        context_2.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], CellNavigationService.prototype, "columnController", void 0);
     __decorate([
-        context_2.Autowired('rowModel'), 
+        context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], CellNavigationService.prototype, "rowModel", void 0);
     __decorate([
-        context_2.Autowired('floatingRowModel'), 
+        context_1.Autowired('floatingRowModel'), 
         __metadata('design:type', floatingRowModel_1.FloatingRowModel)
     ], CellNavigationService.prototype, "floatingRowModel", void 0);
     CellNavigationService = __decorate([

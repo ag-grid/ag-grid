@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,6 +10,9 @@ var Utils = (function () {
     function Utils() {
     }
     Utils.iterateObject = function (object, callback) {
+        if (this.missing(object)) {
+            return;
+        }
         var keys = Object.keys(object);
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
@@ -62,9 +65,11 @@ var Utils = (function () {
         return result;
     };
     Utils.assign = function (object, source) {
-        Utils.iterateObject(source, function (key, value) {
-            object[key] = value;
-        });
+        if (this.exists(source)) {
+            this.iterateObject(source, function (key, value) {
+                object[key] = value;
+            });
+        }
     };
     Utils.getFunctionParameters = function (func) {
         var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
@@ -231,6 +236,42 @@ var Utils = (function () {
             }
         }
     };
+    Utils.containsClass = function (element, className) {
+        if (element.classList) {
+            // for modern browsers
+            return element.classList.contains(className);
+        }
+        else if (element.className) {
+            // for older browsers, check against the string of class names
+            // if only one class, can check for exact match
+            var onlyClass = element.className === className;
+            // if many classes, check for class name, we have to pad with ' ' to stop other
+            // class names that are a substring of this class
+            var contains = element.className.indexOf(' ' + className + ' ') >= 0;
+            // the padding above then breaks when it's the first or last class names
+            var startsWithClass = element.className.indexOf(className + ' ') === 0;
+            var endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
+            return onlyClass || contains || startsWithClass || endsWithClass;
+        }
+        else {
+            // if item is not a node
+            return false;
+        }
+    };
+    Utils.getElementAttribute = function (element, attributeName) {
+        if (element.attributes) {
+            if (element.attributes[attributeName]) {
+                var attribute = element.attributes[attributeName];
+                return attribute.value;
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
+    };
     Utils.offsetHeight = function (element) {
         return element && element.clientHeight ? element.clientHeight : 0;
     };
@@ -289,27 +330,6 @@ var Utils = (function () {
         }
         else {
             return '';
-        }
-    };
-    /**
-     * Tries to use the provided renderer.
-     */
-    Utils.useRenderer = function (eParent, eRenderer, params) {
-        var resultFromRenderer = eRenderer(params);
-        //TypeScript type inference magic
-        if (typeof resultFromRenderer === 'string') {
-            var eTextSpan = document.createElement('span');
-            eTextSpan.innerHTML = resultFromRenderer;
-            eParent.appendChild(eTextSpan);
-        }
-        else if (this.isNodeOrElement(resultFromRenderer)) {
-            //a dom node or element was returned, so add child
-            eParent.appendChild(resultFromRenderer);
-        }
-        else {
-            if (this.exists(resultFromRenderer)) {
-                console.warn('ag-Grid: result from render should be either a string or a DOM object, got ' + typeof resultFromRenderer);
-            }
         }
     };
     /**

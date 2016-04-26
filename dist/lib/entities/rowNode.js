@@ -1,18 +1,51 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var selectionController_1 = require("../selectionController");
+var valueService_1 = require("../valueService");
+var columnController_1 = require("../columnController/columnController");
+var context_1 = require("../context/context");
 var RowNode = (function () {
-    function RowNode(mainEventService, gridOptionsWrapper, selectionController) {
+    function RowNode() {
         this.selected = false;
-        this.mainEventService = mainEventService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.selectionController = selectionController;
     }
+    RowNode.prototype.setData = function (data) {
+        var oldData = this.data;
+        this.data = data;
+        var event = { oldData: oldData, newData: data };
+        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    };
+    RowNode.prototype.dispatchLocalEvent = function (eventName, event) {
+        if (this.eventService) {
+            this.eventService.dispatchEvent(eventName, event);
+        }
+    };
+    // we also allow editing the value via the editors. when it is done via
+    // the editors, no 'cell changed' event gets fired, as it's assumed that
+    // the cell knows about the change given it's in charge of the editing.
+    // this method is for the client to call, so the cell listens for the change
+    // event, and also flashes the cell when the change occurs.
+    RowNode.prototype.setDataValue = function (colKey, newValue) {
+        var column = this.columnController.getColumn(colKey);
+        this.valueService.setValue(this, column, newValue);
+        var event = { column: column, newValue: newValue };
+        this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
+    };
     RowNode.prototype.resetQuickFilterAggregateText = function () {
         this.quickFilterAggregateText = null;
     };
@@ -111,7 +144,7 @@ var RowNode = (function () {
         if (this.selected !== newValue) {
             this.selected = newValue;
             if (this.eventService) {
-                this.eventService.dispatchEvent(RowNode.EVENT_ROW_SELECTED);
+                this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
             }
             var event = { node: this };
             this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_SELECTED, event);
@@ -132,6 +165,28 @@ var RowNode = (function () {
         this.eventService.removeEventListener(eventType, listener);
     };
     RowNode.EVENT_ROW_SELECTED = 'rowSelected';
+    RowNode.EVENT_DATA_CHANGED = 'dataChanged';
+    RowNode.EVENT_CELL_CHANGED = 'cellChanged';
+    __decorate([
+        context_1.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], RowNode.prototype, "mainEventService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], RowNode.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('selectionController'), 
+        __metadata('design:type', selectionController_1.SelectionController)
+    ], RowNode.prototype, "selectionController", void 0);
+    __decorate([
+        context_1.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], RowNode.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('valueService'), 
+        __metadata('design:type', valueService_1.ValueService)
+    ], RowNode.prototype, "valueService", void 0);
     return RowNode;
 })();
 exports.RowNode = RowNode;

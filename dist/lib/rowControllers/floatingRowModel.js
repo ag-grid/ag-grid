@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,8 @@ var FloatingRowModel = (function () {
         if (allData) {
             var nextRowTop = 0;
             allData.forEach(function (dataItem) {
-                var rowNode = new rowNode_1.RowNode(_this.eventService, _this.gridOptionsWrapper, null);
+                var rowNode = new rowNode_1.RowNode();
+                _this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.floating = isTop ? constants_1.Constants.FLOATING_TOP : constants_1.Constants.FLOATING_BOTTOM;
                 rowNode.rowTop = nextRowTop;
@@ -106,6 +107,10 @@ var FloatingRowModel = (function () {
         context_2.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], FloatingRowModel.prototype, "eventService", void 0);
+    __decorate([
+        context_2.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
+    ], FloatingRowModel.prototype, "context", void 0);
     __decorate([
         context_3.PostConstruct, 
         __metadata('design:type', Function), 

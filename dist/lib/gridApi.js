@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,15 +28,20 @@ var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
 var constants_1 = require("./constants");
 var context_1 = require("./context/context");
 var gridCore_1 = require("./gridCore");
-var context_2 = require("./context/context");
-var context_3 = require("./context/context");
 var sortController_1 = require("./sortController");
 var paginationController_1 = require("./rowControllers/paginationController");
 var focusedCellController_1 = require("./focusedCellController");
-var context_4 = require("./context/context");
+var utils_1 = require("./utils");
+var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
+var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var GridApi = (function () {
     function GridApi() {
     }
+    GridApi.prototype.init = function () {
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+            this.inMemoryRowModel = this.rowModel;
+        }
+    };
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     GridApi.prototype.__getMasterSlaveService = function () {
         return this.masterSlaveService;
@@ -64,8 +69,22 @@ var GridApi = (function () {
             console.warn("ag-Grid: you can only use a datasource when gridOptions.rowModelType is '" + constants_1.Constants.ROW_MODEL_TYPE_VIRTUAL + "' or '" + constants_1.Constants.ROW_MODEL_TYPE_PAGINATION + "'");
         }
     };
+    GridApi.prototype.setViewportDatasource = function (viewportDatasource) {
+        if (this.gridOptionsWrapper.isRowModelViewport()) {
+            // this is bad coding, because it's using an interface that's exposed in the enterprise.
+            // really we should create an interface in the core for viewportDatasource and let
+            // the enterprise implement it, rather than casting to 'any' here
+            this.rowModel.setViewportDatasource(viewportDatasource);
+        }
+        else {
+            console.warn("ag-Grid: you can only use a datasource when gridOptions.rowModelType is '" + constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT + "'");
+        }
+    };
     GridApi.prototype.setRowData = function (rowData) {
-        this.rowModel.setRowData(rowData, true);
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call setRowData unless using normal row model');
+        }
+        this.inMemoryRowModel.setRowData(rowData, true);
     };
     GridApi.prototype.setFloatingTopRowData = function (rows) {
         this.floatingRowModel.setFloatingTopRowData(rows);
@@ -79,8 +98,9 @@ var GridApi = (function () {
     GridApi.prototype.refreshRows = function (rowNodes) {
         this.rowRenderer.refreshRows(rowNodes);
     };
-    GridApi.prototype.refreshCells = function (rowNodes, colIds) {
-        this.rowRenderer.refreshCells(rowNodes, colIds);
+    GridApi.prototype.refreshCells = function (rowNodes, colIds, animate) {
+        if (animate === void 0) { animate = false; }
+        this.rowRenderer.refreshCells(rowNodes, colIds, animate);
     };
     GridApi.prototype.rowDataChanged = function (rows) {
         this.rowRenderer.rowDataChanged(rows);
@@ -111,13 +131,22 @@ var GridApi = (function () {
         return this.rowModel;
     };
     GridApi.prototype.onGroupExpandedOrCollapsed = function (refreshFromIndex) {
-        this.rowModel.refreshModel(constants_1.Constants.STEP_MAP, refreshFromIndex);
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call onGroupExpandedOrCollapsed unless using normal row model');
+        }
+        this.inMemoryRowModel.refreshModel(constants_1.Constants.STEP_MAP, refreshFromIndex);
     };
     GridApi.prototype.expandAll = function () {
-        this.rowModel.expandOrCollapseAll(true);
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call expandAll unless using normal row model');
+        }
+        this.inMemoryRowModel.expandOrCollapseAll(true);
     };
     GridApi.prototype.collapseAll = function () {
-        this.rowModel.expandOrCollapseAll(false);
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call collapseAll unless using normal row model');
+        }
+        this.inMemoryRowModel.expandOrCollapseAll(false);
     };
     GridApi.prototype.addVirtualRowListener = function (eventName, rowIndex, callback) {
         if (typeof eventName !== 'string') {
@@ -167,7 +196,10 @@ var GridApi = (function () {
         this.selectionController.deselectAllRowNodes();
     };
     GridApi.prototype.recomputeAggregates = function () {
-        this.rowModel.refreshModel(constants_1.Constants.STEP_AGGREGATE);
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call recomputeAggregates unless using normal row model');
+        }
+        this.inMemoryRowModel.refreshModel(constants_1.Constants.STEP_AGGREGATE);
     };
     GridApi.prototype.sizeColumnsToFit = function () {
         if (this.gridOptionsWrapper.isForPrint()) {
@@ -221,10 +253,16 @@ var GridApi = (function () {
         this.rowModel.forEachNode(callback);
     };
     GridApi.prototype.forEachNodeAfterFilter = function (callback) {
-        this.rowModel.forEachNodeAfterFilter(callback);
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call forEachNodeAfterFilter unless using normal row model');
+        }
+        this.inMemoryRowModel.forEachNodeAfterFilter(callback);
     };
     GridApi.prototype.forEachNodeAfterFilterAndSort = function (callback) {
-        this.rowModel.forEachNodeAfterFilterAndSort(callback);
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call forEachNodeAfterFilterAndSort unless using normal row model');
+        }
+        this.inMemoryRowModel.forEachNodeAfterFilterAndSort(callback);
     };
     GridApi.prototype.getFilterApiForColDef = function (colDef) {
         console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
@@ -232,7 +270,15 @@ var GridApi = (function () {
     };
     GridApi.prototype.getFilterApi = function (key) {
         var column = this.columnController.getColumn(key);
-        return this.filterManager.getFilterApi(column);
+        if (column) {
+            return this.filterManager.getFilterApi(column);
+        }
+    };
+    GridApi.prototype.destroyFilter = function (key) {
+        var column = this.columnController.getColumn(key);
+        if (column) {
+            return this.filterManager.destroyFilter(column);
+        }
     };
     GridApi.prototype.getColumnDef = function (key) {
         var column = this.columnController.getColumn(key);
@@ -262,7 +308,7 @@ var GridApi = (function () {
         return this.focusedCellController.getFocusedCell();
     };
     GridApi.prototype.setFocusedCell = function (rowIndex, colKey, floating) {
-        this.focusedCellController.setFocusedCell(rowIndex, colKey, floating);
+        this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     };
     GridApi.prototype.setHeaderHeight = function (headerHeight) {
         this.gridOptionsWrapper.setHeaderHeight(headerHeight);
@@ -340,86 +386,112 @@ var GridApi = (function () {
         }
         this.clipboardService.copyRangeDown();
     };
+    GridApi.prototype.showColumnMenuAfterButtonClick = function (colKey, buttonElement) {
+        var column = this.columnController.getColumn(colKey);
+        this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
+    };
+    GridApi.prototype.showColumnMenuAfterMouseClick = function (colKey, mouseEvent) {
+        var column = this.columnController.getColumn(colKey);
+        this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
+    };
     __decorate([
-        context_3.Autowired('csvCreator'), 
+        context_1.Autowired('csvCreator'), 
         __metadata('design:type', csvCreator_1.CsvCreator)
     ], GridApi.prototype, "csvCreator", void 0);
     __decorate([
-        context_3.Autowired('gridCore'), 
+        context_1.Autowired('gridCore'), 
         __metadata('design:type', gridCore_1.GridCore)
     ], GridApi.prototype, "gridCore", void 0);
     __decorate([
-        context_3.Autowired('rowRenderer'), 
+        context_1.Autowired('rowRenderer'), 
         __metadata('design:type', rowRenderer_1.RowRenderer)
     ], GridApi.prototype, "rowRenderer", void 0);
     __decorate([
-        context_3.Autowired('headerRenderer'), 
+        context_1.Autowired('headerRenderer'), 
         __metadata('design:type', headerRenderer_1.HeaderRenderer)
     ], GridApi.prototype, "headerRenderer", void 0);
     __decorate([
-        context_3.Autowired('filterManager'), 
+        context_1.Autowired('filterManager'), 
         __metadata('design:type', filterManager_1.FilterManager)
     ], GridApi.prototype, "filterManager", void 0);
     __decorate([
-        context_3.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], GridApi.prototype, "columnController", void 0);
     __decorate([
-        context_3.Autowired('selectionController'), 
+        context_1.Autowired('selectionController'), 
         __metadata('design:type', selectionController_1.SelectionController)
     ], GridApi.prototype, "selectionController", void 0);
     __decorate([
-        context_3.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], GridApi.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_3.Autowired('gridPanel'), 
+        context_1.Autowired('gridPanel'), 
         __metadata('design:type', gridPanel_1.GridPanel)
     ], GridApi.prototype, "gridPanel", void 0);
     __decorate([
-        context_3.Autowired('valueService'), 
+        context_1.Autowired('valueService'), 
         __metadata('design:type', valueService_1.ValueService)
     ], GridApi.prototype, "valueService", void 0);
     __decorate([
-        context_3.Autowired('masterSlaveService'), 
+        context_1.Autowired('masterSlaveService'), 
         __metadata('design:type', masterSlaveService_1.MasterSlaveService)
     ], GridApi.prototype, "masterSlaveService", void 0);
     __decorate([
-        context_3.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], GridApi.prototype, "eventService", void 0);
     __decorate([
-        context_3.Autowired('floatingRowModel'), 
+        context_1.Autowired('floatingRowModel'), 
         __metadata('design:type', floatingRowModel_1.FloatingRowModel)
     ], GridApi.prototype, "floatingRowModel", void 0);
     __decorate([
-        context_3.Autowired('context'), 
-        __metadata('design:type', context_2.Context)
+        context_1.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
     ], GridApi.prototype, "context", void 0);
     __decorate([
-        context_3.Autowired('rowModel'), 
+        context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], GridApi.prototype, "rowModel", void 0);
     __decorate([
-        context_3.Autowired('sortController'), 
+        context_1.Autowired('sortController'), 
         __metadata('design:type', sortController_1.SortController)
     ], GridApi.prototype, "sortController", void 0);
     __decorate([
-        context_3.Autowired('paginationController'), 
+        context_1.Autowired('paginationController'), 
         __metadata('design:type', paginationController_1.PaginationController)
     ], GridApi.prototype, "paginationController", void 0);
     __decorate([
-        context_3.Autowired('focusedCellController'), 
+        context_1.Autowired('focusedCellController'), 
         __metadata('design:type', focusedCellController_1.FocusedCellController)
     ], GridApi.prototype, "focusedCellController", void 0);
     __decorate([
-        context_4.Optional('rangeController'), 
+        context_1.Optional('rangeController'), 
         __metadata('design:type', Object)
     ], GridApi.prototype, "rangeController", void 0);
     __decorate([
-        context_4.Optional('clipboardService'), 
+        context_1.Optional('clipboardService'), 
         __metadata('design:type', Object)
     ], GridApi.prototype, "clipboardService", void 0);
+    __decorate([
+        context_1.Autowired('menuFactory'), 
+        __metadata('design:type', Object)
+    ], GridApi.prototype, "menuFactory", void 0);
+    __decorate([
+        context_1.Autowired('cellRendererFactory'), 
+        __metadata('design:type', cellRendererFactory_1.CellRendererFactory)
+    ], GridApi.prototype, "cellRendererFactory", void 0);
+    __decorate([
+        context_1.Autowired('cellEditorFactory'), 
+        __metadata('design:type', cellEditorFactory_1.CellEditorFactory)
+    ], GridApi.prototype, "cellEditorFactory", void 0);
+    __decorate([
+        context_1.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], GridApi.prototype, "init", null);
     GridApi = __decorate([
         context_1.Bean('gridApi'), 
         __metadata('design:paramtypes', [])

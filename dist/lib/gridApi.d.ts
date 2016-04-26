@@ -1,16 +1,16 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { MasterSlaveService } from "./masterSlaveService";
 import { CsvExportParams } from "./csvCreator";
+import { MasterSlaveService } from "./masterSlaveService";
 import { ColDef } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { IRowModel } from "./interfaces/iRowModel";
-import { RangeSelection } from "./interfaces/iRangeController";
+import { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 import { GridCell } from "./entities/gridCell";
-import { AddRangeSelectionParams } from "./interfaces/iRangeController";
+import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 export declare class GridApi {
     private csvCreator;
     private gridCore;
@@ -32,6 +32,11 @@ export declare class GridApi {
     private focusedCellController;
     private rangeController;
     private clipboardService;
+    private menuFactory;
+    private cellRendererFactory;
+    private cellEditorFactory;
+    private inMemoryRowModel;
+    private init();
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getMasterSlaveService(): MasterSlaveService;
     getFirstRenderedRow(): number;
@@ -39,12 +44,13 @@ export declare class GridApi {
     getDataAsCsv(params?: CsvExportParams): string;
     exportDataAsCsv(params?: CsvExportParams): void;
     setDatasource(datasource: any): void;
+    setViewportDatasource(viewportDatasource: IViewportDatasource): void;
     setRowData(rowData: any[]): void;
     setFloatingTopRowData(rows: any[]): void;
     setFloatingBottomRowData(rows: any[]): void;
     setColumnDefs(colDefs: ColDef[]): void;
     refreshRows(rowNodes: RowNode[]): void;
-    refreshCells(rowNodes: RowNode[], colIds: string[]): void;
+    refreshCells(rowNodes: RowNode[], colIds: string[], animate?: boolean): void;
     rowDataChanged(rows: any): void;
     refreshView(): void;
     softRefreshView(): void;
@@ -54,7 +60,7 @@ export declare class GridApi {
     isAdvancedFilterPresent(): boolean;
     isQuickFilterPresent(): boolean;
     getModel(): IRowModel;
-    onGroupExpandedOrCollapsed(refreshFromIndex: any): void;
+    onGroupExpandedOrCollapsed(refreshFromIndex?: any): void;
     expandAll(): void;
     collapseAll(): void;
     addVirtualRowListener(eventName: string, rowIndex: number, callback: Function): void;
@@ -88,6 +94,7 @@ export declare class GridApi {
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode) => void): void;
     getFilterApiForColDef(colDef: any): any;
     getFilterApi(key: string | Column | ColDef): any;
+    destroyFilter(key: string | Column | ColDef): void;
     getColumnDef(key: string | Column | ColDef): ColDef;
     onFilterChanged(): void;
     setSortModel(sortModel: any): void;
@@ -117,4 +124,6 @@ export declare class GridApi {
     copySelectedRowsToClipboard(): void;
     copySelectedRangeToClipboard(): void;
     copySelectedRangeDown(): void;
+    showColumnMenuAfterButtonClick(colKey: string | Column | ColDef, buttonElement: HTMLElement): void;
+    showColumnMenuAfterMouseClick(colKey: string | Column | ColDef, mouseEvent: MouseEvent): void;
 }

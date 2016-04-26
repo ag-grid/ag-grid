@@ -1,10 +1,12 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Column } from "../entities/column";
 import { RenderedRow } from "./renderedRow";
-export declare class RenderedCell {
+import { Component } from "../widgets/component";
+export declare class RenderedCell extends Component {
+    private context;
     private columnApi;
     private gridApi;
     private gridOptionsWrapper;
@@ -19,49 +21,71 @@ export declare class RenderedCell {
     private rangeController;
     private focusedCellController;
     private contextMenuFactory;
+    private focusService;
+    private cellEditorFactory;
+    private cellRendererFactory;
+    private popupService;
+    private cellRendererService;
+    private valueFormatterService;
+    private static PRINTABLE_CHARACTERS;
     private eGridCell;
     private eSpanWithValue;
     private eCellWrapper;
     private eParentOfValue;
+    private gridCell;
     private eParentRow;
     private column;
-    private data;
     private node;
     private rowIndex;
     private editingCell;
+    private cellEditorInPopup;
+    private hideEditorPopup;
     private scope;
-    private cellRendererMap;
     private eCheckbox;
+    private cellEditor;
+    private cellRenderer;
     private value;
     private checkboxSelection;
     private renderedRow;
-    private destroyMethods;
     private firstRightPinned;
     private lastLeftPinned;
-    constructor(column: any, cellRendererMap: {
-        [key: string]: any;
-    }, node: any, rowIndex: number, scope: any, renderedRow: RenderedRow);
-    checkPinnedClasses(): void;
+    constructor(column: any, node: any, rowIndex: number, scope: any, renderedRow: RenderedRow);
+    destroy(): void;
     private setPinnedClasses();
     getParentRow(): HTMLElement;
     setParentRow(eParentRow: HTMLElement): void;
-    init(): void;
-    destroy(): void;
     calculateCheckboxSelection(): any;
     getColumn(): Column;
     private getValue();
-    getGui(): HTMLElement;
     private getDataForRow();
     private setLeftOnCell();
     private addRangeSelectedListener();
     private addHighlightListener();
-    private flashCellForClipboardInteraction();
+    private addChangeListener();
+    private animateCellWithDataChanged();
+    private animateCellWithHighlight();
+    private animateCell(cssName);
     private addCellFocusedListener();
     private setWidthOnCell();
-    private setupComponents();
-    startEditing(key?: number): void;
+    init(): void;
+    private onEnterKeyDown();
+    private onF2KeyDown();
+    private onEscapeKeyDown();
+    private onPopupEditorClosed();
+    private onTabKeyDown(event);
+    private onBackspaceOrDeleteKeyPressed(key);
+    private onSpaceKeyPressed();
+    private onNavigationKeyPressed(event, key);
+    private addKeyPressListener();
+    private onKeyDown(event);
+    private addKeyDownListener();
+    private createCellEditor(keyPress?, charPress?);
+    private stopEditingAndFocus();
+    startEditingIfEnabled(keyPress?: number, charPress?: string): void;
+    private addInCellEditor();
+    private addPopupCellEditor();
     focusCell(forceBrowserFocus: boolean): void;
-    private stopEditing(eInput, blurListener, reset?);
+    private stopEditing(reset?);
     private createParams();
     private createEvent(event, eventSource?);
     isCellEditable(): boolean;
@@ -70,16 +94,17 @@ export declare class RenderedCell {
     private onCellDoubleClicked(mouseEvent, eventSource);
     private onMouseDown();
     private onCellClicked(mouseEvent);
+    private setInlineEditingClass();
     private populateCell();
-    private addStylesFromCollDef();
-    private addClassesFromCollDef();
+    private addStylesFromColDef();
+    private addClassesFromColDef();
     private addClassesFromRules();
-    private addCellNavigationHandler();
-    private isKeycodeForStartEditing(key);
     private createParentOfValue();
     isVolatile(): boolean;
-    refreshCell(): void;
+    refreshCell(animate?: boolean, newData?: boolean): void;
     private putDataIntoCell();
-    private useCellRenderer(cellRenderer);
+    private formatValue(value);
+    private createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+    private useCellRenderer(cellRendererKey, cellRendererParams, valueFormatted);
     private addClasses();
 }

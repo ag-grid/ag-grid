@@ -61,8 +61,6 @@ export * from './dist/lib/layout/borderLayout';
 export * from './dist/lib/layout/tabbedLayout';
 export * from './dist/lib/layout/verticalStack';
 
-export * from './dist/lib/rendering/cellEditors/richSelect/richSelectCellEditor';
-
 export * from './dist/lib/rendering/cellEditors/dateCellEditor';
 export * from './dist/lib/rendering/cellEditors/iCellEditor';
 export * from './dist/lib/rendering/cellEditors/popupEditorWrapper';
@@ -91,14 +89,12 @@ export * from './dist/lib/rowControllers/inMemory/sortStage';
 
 export * from './dist/lib/rowControllers/floatingRowModel';
 export * from './dist/lib/rowControllers/paginationController';
-export * from './dist/lib/rowControllers/viewportRowModel';
 export * from './dist/lib/rowControllers/virtualPageRowModel';
 
 export * from './dist/lib/widgets/menuItemComponent';
 export * from './dist/lib/widgets/component';
 export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
-export * from './dist/lib/widgets/virtualList';
 
 export * from './dist/lib/cellNavigationService';
 export * from './dist/lib/clientExports';

@@ -1,8 +1,7 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { LoggerFactory } from "../logger";
 import { Column } from "../entities/column";
 export interface DragSource {
     eElement: HTMLElement;
@@ -54,7 +53,7 @@ export declare class DragAndDropService {
     private eLeftIcon;
     private eRightIcon;
     private eGroupIcon;
-    agWire(loggerFactory: LoggerFactory): void;
+    private setBeans(loggerFactory);
     addDragSource(params: DragSource): void;
     nudge(): void;
     private onDragStart(dragSource, mouseEvent);

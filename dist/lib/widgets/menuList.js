@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,11 +19,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var component_1 = require("./component");
-var utils_1 = require('../utils');
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
+var utils_1 = require("../utils");
 var popupService_1 = require("./popupService");
-var cMenuItem_1 = require("./cMenuItem");
+var menuItemComponent_1 = require("./menuItemComponent");
 var MenuList = (function (_super) {
     __extends(MenuList, _super);
     function MenuList() {
@@ -57,15 +56,15 @@ var MenuList = (function (_super) {
     };
     MenuList.prototype.addItem = function (params) {
         var _this = this;
-        var cMenuItem = new cMenuItem_1.CMenuItem(params);
+        var cMenuItem = new menuItemComponent_1.MenuItemComponent(params);
         this.context.wireBean(cMenuItem);
         this.getGui().appendChild(cMenuItem.getGui());
-        cMenuItem.addEventListener(cMenuItem_1.CMenuItem.EVENT_ITEM_SELECTED, function (event) {
+        cMenuItem.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, function (event) {
             if (params.childMenu) {
                 _this.showChildMenu(params, cMenuItem);
             }
             else {
-                _this.dispatchEvent(cMenuItem_1.CMenuItem.EVENT_ITEM_SELECTED, event);
+                _this.dispatchEvent(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, event);
             }
         });
         cMenuItem.addGuiEventListener('mouseenter', this.mouseEnterItem.bind(this, params, cMenuItem));
@@ -142,7 +141,7 @@ var MenuList = (function (_super) {
         '</div>';
     __decorate([
         context_1.Autowired('context'), 
-        __metadata('design:type', context_2.Context)
+        __metadata('design:type', context_1.Context)
     ], MenuList.prototype, "context", void 0);
     __decorate([
         context_1.Autowired('popupService'), 

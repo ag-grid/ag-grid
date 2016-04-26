@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,6 +24,7 @@ var context_3 = require("../context/context");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var filterManager_1 = require("../filter/filterManager");
+var constants_1 = require("../constants");
 var template = '<div class="ag-paging-panel ag-font-style">' +
     '<span id="pageRowSummaryPanel" class="ag-paging-row-summary-panel">' +
     '<span id="firstRowOnPage"></span>' +
@@ -48,6 +49,12 @@ var PaginationController = (function () {
     }
     PaginationController.prototype.init = function () {
         var _this = this;
+        // if we are doing pagination, we are guaranteed that the model type
+        // is normal. if it is not, then this paginationController service
+        // will never be called.
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+            this.inMemoryRowModel = this.rowModel;
+        }
         this.setupComponents();
         this.callVersion = 0;
         var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
@@ -128,7 +135,7 @@ var PaginationController = (function () {
     };
     PaginationController.prototype.pageLoaded = function (rows, lastRowIndex) {
         var firstId = this.currentPage * this.pageSize;
-        this.rowModel.setRowData(rows, true, firstId);
+        this.inMemoryRowModel.setRowData(rows, true, firstId);
         // see if we hit the last row
         if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
             this.foundMaxRow = true;
@@ -208,7 +215,7 @@ var PaginationController = (function () {
             // set in an empty set of rows, this will at
             // least get rid of the loading panel, and
             // stop blocking things
-            that.rowModel.setRowData([], true);
+            that.inMemoryRowModel.setRowData([], true);
         }
     };
     PaginationController.prototype.isCallDaemon = function (versionCopy) {
@@ -302,10 +309,6 @@ var PaginationController = (function () {
         __metadata('design:type', selectionController_1.SelectionController)
     ], PaginationController.prototype, "selectionController", void 0);
     __decorate([
-        context_2.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], PaginationController.prototype, "rowModel", void 0);
-    __decorate([
         context_2.Autowired('sortController'), 
         __metadata('design:type', sortController_1.SortController)
     ], PaginationController.prototype, "sortController", void 0);
@@ -313,6 +316,10 @@ var PaginationController = (function () {
         context_2.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], PaginationController.prototype, "eventService", void 0);
+    __decorate([
+        context_2.Autowired('rowModel'), 
+        __metadata('design:type', Object)
+    ], PaginationController.prototype, "rowModel", void 0);
     __decorate([
         context_3.PostConstruct, 
         __metadata('design:type', Function), 

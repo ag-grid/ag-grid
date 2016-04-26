@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,7 +19,6 @@ var column_1 = require("./entities/column");
 var focusedCellController_1 = require("./focusedCellController");
 var functions_1 = require("./functions");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
-var groupCellRendererFactory_1 = require("./cellRenderers/groupCellRendererFactory");
 var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTreeBuilder");
 var columnKeyCreator_1 = require("./columnController/columnKeyCreator");
 var columnUtils_1 = require("./columnController/columnUtils");
@@ -50,12 +49,9 @@ var renderedRow_1 = require("./rendering/renderedRow");
 var rowRenderer_1 = require("./rendering/rowRenderer");
 var fillterStage_1 = require("./rowControllers/inMemory/fillterStage");
 var flattenStage_1 = require("./rowControllers/inMemory/flattenStage");
-var inMemoryRowController_1 = require("./rowControllers/inMemory/inMemoryRowController");
 var sortStage_1 = require("./rowControllers/inMemory/sortStage");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
 var paginationController_1 = require("./rowControllers/paginationController");
-var virtualPageRowController_1 = require("./rowControllers/virtualPageRowController");
-var cMenuItem_1 = require("./widgets/cMenuItem");
 var component_1 = require("./widgets/component");
 var menuList_1 = require("./widgets/menuList");
 var cellNavigationService_1 = require("./cellNavigationService");
@@ -75,15 +71,23 @@ var templateService_1 = require("./templateService");
 var utils_1 = require("./utils");
 var valueService_1 = require("./valueService");
 var popupService_1 = require("./widgets/popupService");
-var context_2 = require("./context/context");
-var context_3 = require("./context/context");
-var context_4 = require("./context/context");
-var context_5 = require("./context/context");
-var context_6 = require("./context/context");
 var gridRow_1 = require("./entities/gridRow");
+var inMemoryRowModel_1 = require("./rowControllers/inMemory/inMemoryRowModel");
+var virtualPageRowModel_1 = require("./rowControllers/virtualPageRowModel");
+var menuItemComponent_1 = require("./widgets/menuItemComponent");
+var animateSlideCellRenderer_1 = require("./rendering/cellRenderers/animateSlideCellRenderer");
+var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
+var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
+var popupSelectCellEditor_1 = require("./rendering/cellEditors/popupSelectCellEditor");
+var popupTextCellEditor_1 = require("./rendering/cellEditors/popupTextCellEditor");
+var selectCellEditor_1 = require("./rendering/cellEditors/selectCellEditor");
+var textCellEditor_1 = require("./rendering/cellEditors/textCellEditor");
+var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
+var groupCellRenderer_1 = require("./rendering/cellRenderers/groupCellRenderer");
+var cellRendererService_1 = require("./rendering/cellRendererService");
+var valueFormatterService_1 = require("./rendering/valueFormatterService");
+var dateCellEditor_1 = require("./rendering/cellEditors/dateCellEditor");
 function populateClientExports(exports) {
-    // cellRenderers
-    exports.groupCellRendererFactory = groupCellRendererFactory_1.groupCellRendererFactory;
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
     exports.ColumnController = columnController_1.ColumnController;
@@ -97,11 +101,12 @@ function populateClientExports(exports) {
     exports.initialiseAgGridWithWebComponents = agGridWebComponent_1.initialiseAgGridWithWebComponents;
     // context
     exports.Context = context_1.Context;
-    exports.Autowired = context_2.Autowired;
-    exports.PostConstruct = context_3.PostConstruct;
-    exports.Optional = context_4.Optional;
-    exports.Bean = context_5.Bean;
-    exports.Qualifier = context_6.Qualifier;
+    exports.Autowired = context_1.Autowired;
+    exports.PostConstruct = context_1.PostConstruct;
+    exports.PreDestroy = context_1.PreDestroy;
+    exports.Optional = context_1.Optional;
+    exports.Bean = context_1.Bean;
+    exports.Qualifier = context_1.Qualifier;
     // dragAndDrop
     exports.DragAndDropService = dragAndDropService_1.DragAndDropService;
     exports.DragService = dragService_1.DragService;
@@ -133,23 +138,37 @@ function populateClientExports(exports) {
     exports.BorderLayout = borderLayout_1.BorderLayout;
     exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
     exports.VerticalStack = verticalStack_1.VerticalStack;
+    // rendering / cellEditors
+    exports.DateCellEditor = dateCellEditor_1.DateCellEditor;
+    exports.PopupEditorWrapper = popupEditorWrapper_1.PopupEditorWrapper;
+    exports.PopupSelectCellEditor = popupSelectCellEditor_1.PopupSelectCellEditor;
+    exports.PopupTextCellEditor = popupTextCellEditor_1.PopupTextCellEditor;
+    exports.SelectCellEditor = selectCellEditor_1.SelectCellEditor;
+    exports.TextCellEditor = textCellEditor_1.TextCellEditor;
+    // rendering / cellRenderers
+    exports.AnimateSlideCellRenderer = animateSlideCellRenderer_1.AnimateSlideCellRenderer;
+    exports.GroupCellRenderer = groupCellRenderer_1.GroupCellRenderer;
     // rendering
     exports.AutoWidthCalculator = autoWidthCalculator_1.AutoWidthCalculator;
+    exports.CellEditorFactory = cellEditorFactory_1.CellEditorFactory;
     exports.RenderedHeaderCell = renderedHeaderCell_1.RenderedHeaderCell;
+    exports.CellRendererFactory = cellRendererFactory_1.CellRendererFactory;
+    exports.CellRendererService = cellRendererService_1.CellRendererService;
     exports.RenderedRow = renderedRow_1.RenderedRow;
     exports.RowRenderer = rowRenderer_1.RowRenderer;
+    exports.ValueFormatterService = valueFormatterService_1.ValueFormatterService;
     // rowControllers/inMemory
     exports.FilterStage = fillterStage_1.FilterStage;
     exports.FlattenStage = flattenStage_1.FlattenStage;
-    exports.InMemoryRowController = inMemoryRowController_1.InMemoryRowController;
+    exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
     exports.SortStage = sortStage_1.SortStage;
     // rowControllers
     exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
     exports.PaginationController = paginationController_1.PaginationController;
-    exports.VirtualPageRowController = virtualPageRowController_1.VirtualPageRowController;
+    exports.VirtualPageRowModel = virtualPageRowModel_1.VirtualPageRowModel;
     // widgets
     exports.PopupService = popupService_1.PopupService;
-    exports.CMenuItem = cMenuItem_1.CMenuItem;
+    exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
     exports.Component = component_1.Component;
     exports.MenuList = menuList_1.MenuList;
     // root

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,7 @@ var context_4 = require("../context/context");
 var BalancedColumnTreeBuilder = (function () {
     function BalancedColumnTreeBuilder() {
     }
-    BalancedColumnTreeBuilder.prototype.agWire = function (loggerFactory) {
+    BalancedColumnTreeBuilder.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     };
     BalancedColumnTreeBuilder.prototype.createBalancedColumnGroups = function (abstractColDefs) {
@@ -153,7 +153,7 @@ var BalancedColumnTreeBuilder = (function () {
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
-    ], BalancedColumnTreeBuilder.prototype, "agWire", null);
+    ], BalancedColumnTreeBuilder.prototype, "setBeans", null);
     BalancedColumnTreeBuilder = __decorate([
         context_1.Bean('balancedColumnTreeBuilder'), 
         __metadata('design:paramtypes', [])

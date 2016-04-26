@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var selectionRendererFactory_1 = require("../selectionRendererFactory");
 var gridPanel_1 = require("../gridPanel/gridPanel");
@@ -26,19 +26,13 @@ var valueService_1 = require("../valueService");
 var eventService_1 = require("../eventService");
 var floatingRowModel_1 = require("../rowControllers/floatingRowModel");
 var renderedRow_1 = require("./renderedRow");
-var groupCellRendererFactory_1 = require("../cellRenderers/groupCellRendererFactory");
 var events_1 = require("../events");
 var constants_1 = require("../constants");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
 var gridCore_1 = require("../gridCore");
 var columnController_1 = require("../columnController/columnController");
-var context_3 = require("../context/context");
-var context_4 = require("../context/context");
 var logger_1 = require("../logger");
-var context_5 = require("../context/context");
 var focusedCellController_1 = require("../focusedCellController");
-var context_6 = require("../context/context");
 var cellNavigationService_1 = require("../cellNavigationService");
 var gridCell_1 = require("../entities/gridCell");
 var RowRenderer = (function () {
@@ -54,12 +48,6 @@ var RowRenderer = (function () {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     };
     RowRenderer.prototype.init = function () {
-        this.cellRendererMap = {
-            'group': groupCellRendererFactory_1.groupCellRendererFactory(this.gridOptionsWrapper, this.selectionRendererFactory, this.expressionService, this.eventService),
-            'default': function (params) {
-                return params.value;
-            }
-        };
         this.getContainersFromGridPanel();
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnEvent.bind(this));
@@ -142,7 +130,7 @@ var RowRenderer = (function () {
         }
         if (rowNodes) {
             rowNodes.forEach(function (node, rowIndex) {
-                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this.cellRendererMap, _this, bodyContainer, pinnedLeftContainer, pinnedRightContainer, node, rowIndex);
+                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, bodyContainer, pinnedLeftContainer, pinnedRightContainer, node, rowIndex);
                 _this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             });
@@ -150,6 +138,8 @@ var RowRenderer = (function () {
     };
     RowRenderer.prototype.refreshView = function (refreshEvent) {
         this.logger.log('refreshView');
+        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+        this.focusedCellController.getFocusedCell();
         var refreshFromIndex = refreshEvent ? refreshEvent.fromIndex : null;
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
@@ -159,11 +149,23 @@ var RowRenderer = (function () {
         }
         this.refreshAllVirtualRows(refreshFromIndex);
         this.refreshAllFloatingRows();
+        this.restoreFocusedCell(focusedCell);
+    };
+    // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
+    // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
+    // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
+    // edited cell).
+    RowRenderer.prototype.restoreFocusedCell = function (gridCell) {
+        if (gridCell) {
+            this.focusedCellController.setFocusedCell(gridCell.rowIndex, gridCell.column, gridCell.floating, true);
+        }
     };
     RowRenderer.prototype.softRefreshView = function () {
+        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
         utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
             renderedRow.softRefresh();
         });
+        this.restoreFocusedCell(focusedCell);
     };
     RowRenderer.prototype.addRenderedRowListener = function (eventName, rowIndex, callback) {
         var renderedRow = this.renderedRows[rowIndex];
@@ -173,6 +175,7 @@ var RowRenderer = (function () {
         if (!rowNodes || rowNodes.length == 0) {
             return;
         }
+        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
         // we only need to be worried about rendered rows, as this method is
         // called to whats rendered. if the row isn't rendered, we don't care
         var indexesToRemove = [];
@@ -186,8 +189,10 @@ var RowRenderer = (function () {
         this.removeVirtualRow(indexesToRemove);
         // add draw them again
         this.drawVirtualRows();
+        this.restoreFocusedCell(focusedCell);
     };
-    RowRenderer.prototype.refreshCells = function (rowNodes, colIds) {
+    RowRenderer.prototype.refreshCells = function (rowNodes, colIds, animate) {
+        if (animate === void 0) { animate = false; }
         if (!rowNodes || rowNodes.length == 0) {
             return;
         }
@@ -196,7 +201,7 @@ var RowRenderer = (function () {
         utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
             var rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode) >= 0) {
-                renderedRow.refreshCells(colIds);
+                renderedRow.refreshCells(colIds, animate);
             }
         });
     };
@@ -217,7 +222,7 @@ var RowRenderer = (function () {
         // add draw them again
         this.drawVirtualRows();
     };
-    RowRenderer.prototype.agDestroy = function () {
+    RowRenderer.prototype.destroy = function () {
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRow(rowsToRemove);
     };
@@ -267,41 +272,52 @@ var RowRenderer = (function () {
         this.ensureRowsRendered();
     };
     RowRenderer.prototype.workOutFirstAndLastRowsToRender = function () {
+        var newFirst;
+        var newLast;
         if (!this.rowModel.isRowsToRender()) {
-            this.firstVirtualRenderedRow = 0;
-            this.lastVirtualRenderedRow = -1; // setting to -1 means nothing in range
-            return;
-        }
-        var rowCount = this.rowModel.getRowCount();
-        if (this.gridOptionsWrapper.isForPrint()) {
-            this.firstVirtualRenderedRow = 0;
-            this.lastVirtualRenderedRow = rowCount;
+            newFirst = 0;
+            newLast = -1; // setting to -1 means nothing in range
         }
         else {
-            var topPixel = this.eBodyViewport.scrollTop;
-            var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
-            var first = this.rowModel.getRowAtPixel(topPixel);
-            var last = this.rowModel.getRowAtPixel(bottomPixel);
-            //add in buffer
-            var buffer = this.gridOptionsWrapper.getRowBuffer();
-            first = first - buffer;
-            last = last + buffer;
-            // adjust, in case buffer extended actual size
-            if (first < 0) {
-                first = 0;
+            var rowCount = this.rowModel.getRowCount();
+            if (this.gridOptionsWrapper.isForPrint()) {
+                newFirst = 0;
+                newLast = rowCount;
             }
-            if (last > rowCount - 1) {
-                last = rowCount - 1;
+            else {
+                var topPixel = this.eBodyViewport.scrollTop;
+                var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
+                var first = this.rowModel.getRowIndexAtPixel(topPixel);
+                var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
+                //add in buffer
+                var buffer = this.gridOptionsWrapper.getRowBuffer();
+                first = first - buffer;
+                last = last + buffer;
+                // adjust, in case buffer extended actual size
+                if (first < 0) {
+                    first = 0;
+                }
+                if (last > rowCount - 1) {
+                    last = rowCount - 1;
+                }
+                newFirst = first;
+                newLast = last;
             }
-            this.firstVirtualRenderedRow = first;
-            this.lastVirtualRenderedRow = last;
+        }
+        var firstDiffers = newFirst !== this.firstRenderedRow;
+        var lastDiffers = newLast !== this.lastRenderedRow;
+        if (firstDiffers || lastDiffers) {
+            this.firstRenderedRow = newFirst;
+            this.lastRenderedRow = newLast;
+            var event = { firstRow: newFirst, lastRow: newLast };
+            this.eventService.dispatchEvent(events_1.Events.EVENT_VIEWPORT_CHANGED, event);
         }
     };
     RowRenderer.prototype.getFirstVirtualRenderedRow = function () {
-        return this.firstVirtualRenderedRow;
+        return this.firstRenderedRow;
     };
     RowRenderer.prototype.getLastVirtualRenderedRow = function () {
-        return this.lastVirtualRenderedRow;
+        return this.lastRenderedRow;
     };
     RowRenderer.prototype.ensureRowsRendered = function () {
         //var start = new Date().getTime();
@@ -309,7 +325,7 @@ var RowRenderer = (function () {
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
         // add in new rows
-        for (var rowIndex = this.firstVirtualRenderedRow; rowIndex <= this.lastVirtualRenderedRow; rowIndex++) {
+        for (var rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
@@ -354,7 +370,7 @@ var RowRenderer = (function () {
         if (!columns || columns.length == 0) {
             return;
         }
-        var renderedRow = new renderedRow_1.RenderedRow(this.$scope, this.cellRendererMap, this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, node, rowIndex);
+        var renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, node, rowIndex);
         this.context.wireBean(renderedRow);
         this.renderedRows[rowIndex] = renderedRow;
     };
@@ -404,135 +420,154 @@ var RowRenderer = (function () {
             this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
         }
     };
+    RowRenderer.prototype.getComponentForCell = function (gridCell) {
+        var rowComponent;
+        switch (gridCell.floating) {
+            case constants_1.Constants.FLOATING_TOP:
+                rowComponent = this.renderedTopFloatingRows[gridCell.rowIndex];
+                break;
+            case constants_1.Constants.FLOATING_BOTTOM:
+                rowComponent = this.renderedBottomFloatingRows[gridCell.rowIndex];
+                break;
+            default:
+                rowComponent = this.renderedRows[gridCell.rowIndex];
+                break;
+        }
+        if (!rowComponent) {
+            return null;
+        }
+        var cellComponent = rowComponent.getRenderedCellForColumn(gridCell.column);
+        return cellComponent;
+    };
     // called by the cell, when tab is pressed while editing
-    RowRenderer.prototype.startEditingNextCell = function (rowIndex, column, floating, shiftKey) {
+    RowRenderer.prototype.moveFocusToNextCell = function (rowIndex, column, floating, shiftKey, startEditing) {
         var nextCell = new gridCell_1.GridCell(rowIndex, floating, column);
         while (true) {
-            if (shiftKey) {
-                nextCell = this.cellNavigationService.getNextTabbedCellBackwards(nextCell);
+            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
+            var nextRenderedCell = this.getComponentForCell(nextCell);
+            // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
+            // so bottom right cell going forwards, or top left going backwards
+            if (!nextRenderedCell) {
+                return;
+            }
+            // if editing, but cell not editable, skip cell
+            if (startEditing && !nextRenderedCell.isCellEditable()) {
+                continue;
+            }
+            // this scrolls the row into view
+            var cellIsNotFloating = utils_1.Utils.missing(nextCell.floating);
+            if (cellIsNotFloating) {
+                this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
+            }
+            this.gridPanel.ensureColumnVisible(nextCell.column);
+            // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
+            // floating cell, the scrolls get out of sync
+            this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+            if (startEditing) {
+                nextRenderedCell.startEditingIfEnabled();
+                nextRenderedCell.focusCell(false);
             }
             else {
-                nextCell = this.cellNavigationService.getNextTabbedCellForwards(nextCell);
+                nextRenderedCell.focusCell(true);
             }
-            var nextRenderedRow;
-            switch (nextCell.floating) {
-                case constants_1.Constants.FLOATING_TOP:
-                    nextRenderedRow = this.renderedTopFloatingRows[nextCell.rowIndex];
-                    break;
-                case constants_1.Constants.FLOATING_BOTTOM:
-                    nextRenderedRow = this.renderedBottomFloatingRows[nextCell.rowIndex];
-                    break;
-                default:
-                    nextRenderedRow = this.renderedRows[nextCell.rowIndex];
-                    break;
+            // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
+            // consistent, we set into range here also.
+            if (this.rangeController) {
+                this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
             }
-            if (!nextRenderedRow) {
-                // this happens if we are on floating row and try to jump to body
-                return;
-            }
-            var nextRenderedCell = nextRenderedRow.getRenderedCellForColumn(nextCell.column);
-            if (nextRenderedCell.isCellEditable()) {
-                // this scrolls the row into view
-                if (utils_1.Utils.missing(nextCell.floating)) {
-                    this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
-                }
-                this.gridPanel.ensureColumnVisible(nextCell.column);
-                // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
-                // floating cell, the scrolls get out of sync
-                this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
-                nextRenderedCell.startEditing();
-                nextRenderedCell.focusCell(false);
-                if (this.rangeController) {
-                    this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
-                }
-                return;
-            }
+            return;
         }
     };
     __decorate([
-        context_4.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], RowRenderer.prototype, "columnController", void 0);
     __decorate([
-        context_4.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], RowRenderer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_4.Autowired('gridCore'), 
+        context_1.Autowired('gridCore'), 
         __metadata('design:type', gridCore_1.GridCore)
     ], RowRenderer.prototype, "gridCore", void 0);
     __decorate([
-        context_4.Autowired('selectionRendererFactory'), 
+        context_1.Autowired('selectionRendererFactory'), 
         __metadata('design:type', selectionRendererFactory_1.SelectionRendererFactory)
     ], RowRenderer.prototype, "selectionRendererFactory", void 0);
     __decorate([
-        context_4.Autowired('gridPanel'), 
+        context_1.Autowired('gridPanel'), 
         __metadata('design:type', gridPanel_1.GridPanel)
     ], RowRenderer.prototype, "gridPanel", void 0);
     __decorate([
-        context_4.Autowired('$compile'), 
+        context_1.Autowired('$compile'), 
         __metadata('design:type', Object)
     ], RowRenderer.prototype, "$compile", void 0);
     __decorate([
-        context_4.Autowired('$scope'), 
+        context_1.Autowired('$scope'), 
         __metadata('design:type', Object)
     ], RowRenderer.prototype, "$scope", void 0);
     __decorate([
-        context_4.Autowired('expressionService'), 
+        context_1.Autowired('expressionService'), 
         __metadata('design:type', expressionService_1.ExpressionService)
     ], RowRenderer.prototype, "expressionService", void 0);
     __decorate([
-        context_4.Autowired('templateService'), 
+        context_1.Autowired('templateService'), 
         __metadata('design:type', templateService_1.TemplateService)
     ], RowRenderer.prototype, "templateService", void 0);
     __decorate([
-        context_4.Autowired('valueService'), 
+        context_1.Autowired('valueService'), 
         __metadata('design:type', valueService_1.ValueService)
     ], RowRenderer.prototype, "valueService", void 0);
     __decorate([
-        context_4.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], RowRenderer.prototype, "eventService", void 0);
     __decorate([
-        context_4.Autowired('floatingRowModel'), 
+        context_1.Autowired('floatingRowModel'), 
         __metadata('design:type', floatingRowModel_1.FloatingRowModel)
     ], RowRenderer.prototype, "floatingRowModel", void 0);
     __decorate([
-        context_4.Autowired('context'), 
-        __metadata('design:type', context_3.Context)
+        context_1.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
     ], RowRenderer.prototype, "context", void 0);
     __decorate([
-        context_4.Autowired('loggerFactory'), 
+        context_1.Autowired('loggerFactory'), 
         __metadata('design:type', logger_1.LoggerFactory)
     ], RowRenderer.prototype, "loggerFactory", void 0);
     __decorate([
-        context_4.Autowired('rowModel'), 
+        context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], RowRenderer.prototype, "rowModel", void 0);
     __decorate([
-        context_4.Autowired('focusedCellController'), 
+        context_1.Autowired('focusedCellController'), 
         __metadata('design:type', focusedCellController_1.FocusedCellController)
     ], RowRenderer.prototype, "focusedCellController", void 0);
     __decorate([
-        context_6.Optional('rangeController'), 
+        context_1.Optional('rangeController'), 
         __metadata('design:type', Object)
     ], RowRenderer.prototype, "rangeController", void 0);
     __decorate([
-        context_4.Autowired('cellNavigationService'), 
+        context_1.Autowired('cellNavigationService'), 
         __metadata('design:type', cellNavigationService_1.CellNavigationService)
     ], RowRenderer.prototype, "cellNavigationService", void 0);
     __decorate([
-        __param(0, context_2.Qualifier('loggerFactory')), 
+        __param(0, context_1.Qualifier('loggerFactory')), 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
     ], RowRenderer.prototype, "agWire", null);
     __decorate([
-        context_5.PostConstruct, 
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], RowRenderer.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], RowRenderer.prototype, "destroy", null);
     RowRenderer = __decorate([
         context_1.Bean('rowRenderer'), 
         __metadata('design:paramtypes', [])

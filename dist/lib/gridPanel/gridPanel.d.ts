@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,6 +19,7 @@ export declare class GridPanel {
     private clipboardService;
     private csvCreator;
     private mouseEventService;
+    private focusedCellController;
     private layout;
     private logger;
     private forPrint;

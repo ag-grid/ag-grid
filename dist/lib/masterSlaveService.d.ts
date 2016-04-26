@@ -1,8 +1,7 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { LoggerFactory } from "./logger";
 import { ColumnChangeEvent } from "./columnChangeEvent";
 import { Column } from "./entities/column";
 export declare class MasterSlaveService {
@@ -12,7 +11,7 @@ export declare class MasterSlaveService {
     private eventService;
     private logger;
     private consuming;
-    agWire(loggerFactory: LoggerFactory): void;
+    private setBeans(loggerFactory);
     init(): void;
     private fireEvent(callback);
     private onEvent(callback);

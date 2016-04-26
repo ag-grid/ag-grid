@@ -1,10 +1,12 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./rowNode";
 import { SetFilterParameters } from "../filter/setFilterParameters";
 import { TextAndNumberFilterParameters } from "../filter/textAndNumberFilterParameters";
+import { ICellEditor } from "../rendering/cellEditors/iCellEditor";
+import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
     /** The name to render in the column header */
@@ -59,9 +61,24 @@ export interface ColDef extends AbstractColDef {
     /** An object of css values. Or a function returning an object of css values. */
     cellStyle?: {} | ((params: any) => {});
     /** A function for rendering a cell. */
-    cellRenderer?: Function | {};
+    cellRenderer?: {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    cellRendererParams?: {};
+    /** Cell editor */
+    cellEditor?: {
+        new (): ICellEditor;
+    } | string;
+    cellEditorParams?: {};
     /** A function for rendering a floating cell. */
-    floatingCellRenderer?: Function | {};
+    floatingCellRenderer?: {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    floatingCellRendererParams?: {};
+    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    cellFormatter?: (params: any) => string;
+    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    floatingCellFormatter?: (params: any) => string;
     /** Name of function to use for aggregation. One of [sum,min,max]. */
     aggFunc?: string;
     /** To group by this column by default, provide an index here. */
@@ -118,4 +135,6 @@ export interface ColDef extends AbstractColDef {
     icons?: {
         [key: string]: string;
     };
+    /** If true, grid will flash cell after cell is refreshed */
+    enableCellChangeFlash?: boolean;
 }

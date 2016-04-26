@@ -1,12 +1,18 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { EventService } from "../eventService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { SelectionController } from "../selectionController";
+import { ColDef } from "./colDef";
+import { Column } from "./column";
 export declare class RowNode {
     static EVENT_ROW_SELECTED: string;
+    static EVENT_DATA_CHANGED: string;
+    static EVENT_CELL_CHANGED: string;
+    private mainEventService;
+    private gridOptionsWrapper;
+    private selectionController;
+    private columnController;
+    private valueService;
     /** Unique ID for the node. Can be thought of as the index of the row in the original list. */
     id: number;
     /** The user provided data */
@@ -53,10 +59,9 @@ export declare class RowNode {
     rowTop: number;
     private selected;
     private eventService;
-    private mainEventService;
-    private gridOptionsWrapper;
-    private selectionController;
-    constructor(mainEventService: EventService, gridOptionsWrapper: GridOptionsWrapper, selectionController: SelectionController);
+    setData(data: any): void;
+    private dispatchLocalEvent(eventName, event?);
+    setDataValue(colKey: string | ColDef | Column, newValue: any): void;
     resetQuickFilterAggregateText(): void;
     isSelected(): boolean;
     deptFirstSearch(callback: (rowNode: RowNode) => void): void;

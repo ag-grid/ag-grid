@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,10 +25,11 @@ var events_1 = require("./events");
 var context_3 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var context_4 = require("./context/context");
+var constants_1 = require("./constants");
 var SelectionController = (function () {
     function SelectionController() {
     }
-    SelectionController.prototype.agWire = function (loggerFactory) {
+    SelectionController.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
         if (this.gridOptionsWrapper.isRowModelDefault()) {
@@ -62,14 +63,18 @@ var SelectionController = (function () {
     SelectionController.prototype.removeGroupsFromSelection = function () {
         var _this = this;
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, rowNode) {
-            if (rowNode) {
+            if (rowNode && rowNode.group) {
                 _this.selectedNodes[rowNode.id] = undefined;
             }
         });
     };
     // should only be called if groupSelectsChildren=true
     SelectionController.prototype.updateGroupsFromChildrenSelections = function () {
-        this.rowModel.getTopLevelNodes().forEach(function (rowNode) {
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+            console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
+        }
+        var inMemoryRowModel = this.rowModel;
+        inMemoryRowModel.getTopLevelNodes().forEach(function (rowNode) {
             rowNode.deptFirstSearch(function (rowNode) {
                 if (rowNode.group) {
                     rowNode.calculateSelectedFromChildren();
@@ -113,7 +118,11 @@ var SelectionController = (function () {
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function () {
-        var topLevelNodes = this.rowModel.getTopLevelNodes();
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+            console.warn('getBestCostNodeSelection is only avilable when using normal row model');
+        }
+        var inMemoryRowModel = this.rowModel;
+        var topLevelNodes = inMemoryRowModel.getTopLevelNodes();
         if (topLevelNodes === null) {
             console.warn('selectAll not available doing rowModel=virtual');
             return;
@@ -162,14 +171,12 @@ var SelectionController = (function () {
         this.selectedNodes = {};
     };
     SelectionController.prototype.selectAllRowNodes = function () {
-        if (this.rowModel.getTopLevelNodes() === null) {
-            throw 'selectAll not available when doing virtual pagination';
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+            throw 'selectAll only available with norma row model, ie not virtual pagination';
         }
         this.rowModel.forEachNode(function (rowNode) {
             rowNode.setSelected(true, false, true);
         });
-        // because we passed in 'false' as third parameter above, the
-        // eventSelectionChanged event was not fired.
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };
     // Deprecated method
@@ -210,7 +217,7 @@ var SelectionController = (function () {
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
-    ], SelectionController.prototype, "agWire", null);
+    ], SelectionController.prototype, "setBeans", null);
     __decorate([
         context_4.PostConstruct, 
         __metadata('design:type', Function), 

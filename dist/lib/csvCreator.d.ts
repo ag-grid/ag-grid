@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { ProcessCellForExportParams } from "./entities/gridOptions";
+import { ProcessCellForExportParams, ProcessHeaderForExportParams } from "./entities/gridOptions";
 export interface CsvExportParams {
     skipHeader?: boolean;
     skipFooters?: boolean;
@@ -14,6 +14,7 @@ export interface CsvExportParams {
     columnSeparator?: string;
     onlySelected?: boolean;
     processCellCallback?(params: ProcessCellForExportParams): void;
+    processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 }
 export declare class CsvCreator {
     private rowModel;
@@ -22,6 +23,7 @@ export declare class CsvCreator {
     private gridOptionsWrapper;
     exportDataAsCsv(params?: CsvExportParams): void;
     getDataAsCsv(params?: CsvExportParams): string;
+    private getHeaderName(callback, column);
     private processCell(rowNode, column, value, processCellCallback);
     private createValueForGroupNode(node);
     private escape(value);

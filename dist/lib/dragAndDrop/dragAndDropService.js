@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,7 +37,7 @@ var DragAndDropService = (function () {
         this.eRightIcon = svgFactory.createRightIcon();
         this.eGroupIcon = svgFactory.createGroupIcon();
     }
-    DragAndDropService.prototype.agWire = function (loggerFactory) {
+    DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
         this.eBody = document.querySelector('body');
         if (!this.eBody) {
@@ -273,7 +273,7 @@ var DragAndDropService = (function () {
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
-    ], DragAndDropService.prototype, "agWire", null);
+    ], DragAndDropService.prototype, "setBeans", null);
     DragAndDropService = __decorate([
         context_2.Bean('dragAndDropService'), 
         __metadata('design:paramtypes', [])

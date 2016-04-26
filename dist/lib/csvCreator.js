@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,8 +16,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var columnController_1 = require("./columnController/columnController");
 var valueService_1 = require("./valueService");
 var context_1 = require("./context/context");
-var context_2 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var constants_1 = require("./constants");
 var LINE_SEPARATOR = '\r\n';
 var CsvCreator = (function () {
     function CsvCreator() {
@@ -47,10 +47,11 @@ var CsvCreator = (function () {
     };
     CsvCreator.prototype.getDataAsCsv = function (params) {
         var _this = this;
-        if (this.gridOptionsWrapper.isRowModelVirtual()) {
-            console.log('ag-Grid: getDataAsCsv not available when doing virtual pagination');
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
             return '';
         }
+        var inMemoryRowModel = this.rowModel;
         var result = '';
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
@@ -77,7 +78,7 @@ var CsvCreator = (function () {
         // first pass, put in the header names of the cols
         if (!skipHeader) {
             columnsToExport.forEach(function (column, index) {
-                var nameForCol = _this.columnController.getDisplayNameForCol(column);
+                var nameForCol = _this.getHeaderName(params.processHeaderCallback, column);
                 if (nameForCol === null || nameForCol === undefined) {
                     nameForCol = '';
                 }
@@ -88,7 +89,7 @@ var CsvCreator = (function () {
             });
             result += LINE_SEPARATOR;
         }
-        this.rowModel.forEachNodeAfterFilterAndSort(function (node) {
+        inMemoryRowModel.forEachNodeAfterFilterAndSort(function (node) {
             if (skipGroups && node.group) {
                 return;
             }
@@ -121,6 +122,19 @@ var CsvCreator = (function () {
             result += params.customFooter;
         }
         return result;
+    };
+    CsvCreator.prototype.getHeaderName = function (callback, column) {
+        if (callback) {
+            return callback({
+                column: column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            });
+        }
+        else {
+            return this.columnController.getDisplayNameForCol(column);
+        }
     };
     CsvCreator.prototype.processCell = function (rowNode, column, value, processCellCallback) {
         if (processCellCallback) {
@@ -164,19 +178,19 @@ var CsvCreator = (function () {
         return stringValue.replace(/"/g, "\"\"");
     };
     __decorate([
-        context_2.Autowired('rowModel'), 
+        context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], CsvCreator.prototype, "rowModel", void 0);
     __decorate([
-        context_2.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], CsvCreator.prototype, "columnController", void 0);
     __decorate([
-        context_2.Autowired('valueService'), 
+        context_1.Autowired('valueService'), 
         __metadata('design:type', valueService_1.ValueService)
     ], CsvCreator.prototype, "valueService", void 0);
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], CsvCreator.prototype, "gridOptionsWrapper", void 0);
     CsvCreator = __decorate([

@@ -53,7 +53,7 @@
   padding: 4px;
   background-color: #f0f0f0;
 }
-.ag-fresh .ag-cell {
+.ag-fresh .ag-cell-not-inline-editing {
   padding: 2px;
 }
 .ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {
@@ -99,6 +99,73 @@
   -o-transition: border 1s;
   -ms-transition: border 1s;
   transition: border 1s;
+}
+.ag-fresh .ag-cell-data-changed {
+  background-color: #add8e6;
+}
+.ag-fresh .ag-cell-data-changed-animation {
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
+.ag-fresh .ag-cell-data-changed:not(.ag-cell-focus) {
+  background-color: #add8e6;
+}
+.ag-fresh .ag-cell-data-changed-animation:not(.ag-cell-focus) {
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
+.ag-fresh .ag-value-change-delta {
+  padding-right: 2px;
+}
+.ag-fresh .ag-value-change-delta-up {
+  color: #006400;
+}
+.ag-fresh .ag-value-change-delta-down {
+  color: #8b0000;
+}
+.ag-fresh .ag-value-change-value {
+  background-color: transparent;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  padding-left: 1px;
+  padding-right: 1px;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
+.ag-fresh .ag-value-change-value-highlight {
+  background-color: #cec;
+  -webkit-transition: background-color 0.1s;
+  -moz-transition: background-color 0.1s;
+  -o-transition: background-color 0.1s;
+  -ms-transition: background-color 0.1s;
+  transition: background-color 0.1s;
+}
+.ag-fresh .ag-rich-select {
+  font-size: 14px;
+  border: 1px solid #000;
+  background-color: #f6f6f6;
+}
+.ag-fresh .ag-rich-select-value {
+  padding: 2px;
+}
+.ag-fresh .ag-rich-select-list {
+  background-color: #fff;
+  border-top: 1px solid #aaa;
+}
+.ag-fresh .ag-rich-select-row {
+  padding: 2px;
+}
+.ag-fresh .ag-rich-select-row-selected {
+  background-color: #ddebf7;
 }
 .ag-fresh .ag-header {
   background: -webkit-linear-gradient(#fff, #d3d3d3);
@@ -217,7 +284,16 @@
 .ag-fresh .ag-group-cell {
   font-style: italic;
 }
-.ag-fresh .ag-group-expand {
+.ag-fresh .ag-group-expanded {
+  padding-right: 2px;
+}
+.ag-fresh .ag-group-contracted {
+  padding-right: 2px;
+}
+.ag-fresh .ag-group-value {
+  padding-right: 2px;
+}
+.ag-fresh .ag-group-checkbox {
   padding-right: 2px;
 }
 .ag-fresh .ag-footer-cell {

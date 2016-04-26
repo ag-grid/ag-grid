@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 export declare class PopupService {
-    private ePopupParent;
-    setPopupParent(ePopupParent: any): void;
+    private gridCore;
+    private getPopupParent();
     positionPopupForMenu(params: {
         eventSource: any;
         ePopup: HTMLElement;
@@ -14,6 +14,14 @@ export declare class PopupService {
         ePopup: HTMLElement;
     }): void;
     positionPopupUnderComponent(params: {
+        eventSource: HTMLElement;
+        ePopup: HTMLElement;
+        minWidth?: number;
+        nudgeX?: number;
+        nudgeY?: number;
+        keepWithinBounds?: boolean;
+    }): void;
+    positionPopupOverComponent(params: {
         eventSource: HTMLElement;
         ePopup: HTMLElement;
         minWidth?: number;
