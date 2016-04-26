@@ -8,6 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version xxx</h3>
+    <li>Bug fix: api.deselectAll() was not calling onSelectionChanged, it is now.</li>
+
     <h3>Version 4.1.x</h3>
 
     <b>Big changes</b>
