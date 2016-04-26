@@ -198,9 +198,7 @@ gridOptions.groupColumnDef = null; // doesn't matter, won't get used anyway</pre
         You can either a) use the built in provided group cell renderer or b) bake your own grouping
         cell renderer. The provided cell renderer is selected by providing the string 'group' for
         the cellRenderer. You also provide params with options as follows:
-        <pre>colDef.cellRenderer = {
-        renderer: 'group'
-};
+        <pre>colDef.cellRenderer = 'group';
 colDef.cellRendererParams = {
         keyMap: {from: 'to'},
         suppressCount: false,
