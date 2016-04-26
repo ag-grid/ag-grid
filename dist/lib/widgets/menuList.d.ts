@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Component } from "./component";
-import { MenuItem } from "./cMenuItem";
+import { MenuItem } from "./menuItemComponent";
 export declare class MenuList extends Component {
     private context;
     private popupService;

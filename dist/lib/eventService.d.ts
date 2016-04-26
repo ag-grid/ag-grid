@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { LoggerFactory } from "./logger";
-export declare class EventService {
+import { IEventEmitter } from "./interfaces/iEventEmitter";
+export declare class EventService implements IEventEmitter {
     private allListeners;
     private globalListeners;
     private logger;

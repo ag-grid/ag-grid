@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -15,6 +15,7 @@ export declare class RenderedRow {
     private mainEventService;
     private context;
     private focusedCellController;
+    private cellRendererService;
     ePinnedLeftRow: HTMLElement;
     ePinnedRightRow: HTMLElement;
     eBodyRow: HTMLElement;
@@ -24,7 +25,6 @@ export declare class RenderedRow {
     private rowNode;
     private rowIndex;
     private rowIsHeaderThatSpans;
-    private cellRendererMap;
     private parentScope;
     private rowRenderer;
     private pinningLeft;
@@ -34,9 +34,7 @@ export declare class RenderedRow {
     private ePinnedRightContainer;
     private destroyFunctions;
     private renderedRowEventService;
-    constructor(parentScope: any, cellRendererMap: {
-        [key: string]: any;
-    }, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedRightContainer: HTMLElement, node: RowNode, rowIndex: number);
+    constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedRightContainer: HTMLElement, node: RowNode, rowIndex: number);
     init(): void;
     private addColumnListener();
     private onColumnChanged(event);
@@ -45,6 +43,8 @@ export declare class RenderedRow {
     private getOrCreateCell(column);
     private addRowSelectedListener();
     private addCellFocusedListener();
+    private forEachRenderedCell(callback);
+    private addNodeDataChangedListener();
     private createContainers();
     private attachContainers();
     onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void;
@@ -69,6 +69,6 @@ export declare class RenderedRow {
     onRowClicked(event: MouseEvent): void;
     getRowNode(): any;
     getRowIndex(): any;
-    refreshCells(colIds: string[]): void;
+    refreshCells(colIds: string[], animate: boolean): void;
     private addDynamicClasses();
 }

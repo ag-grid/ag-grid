@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,7 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var popupService_1 = require("../widgets/popupService");
 var valueService_1 = require("../valueService");
@@ -21,10 +21,8 @@ var columnController_1 = require("../columnController/columnController");
 var textFilter_1 = require("./textFilter");
 var numberFilter_1 = require("./numberFilter");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
-var context_3 = require("../context/context");
 var FilterManager = (function () {
     function FilterManager() {
         this.allFilters = {};
@@ -261,6 +259,18 @@ var FilterManager = (function () {
         }
         return filterWrapper;
     };
+    // destroys the filter, so it not longer takes par
+    FilterManager.prototype.destroyFilter = function (column) {
+        var filterWrapper = this.allFilters[column.getColId()];
+        if (filterWrapper) {
+            if (filterWrapper.destroy) {
+                filterWrapper.destroy();
+            }
+            delete this.allFilters[column.getColId()];
+            this.onFilterChanged();
+            filterWrapper.column.setFilterActive(false);
+        }
+    };
     FilterManager.prototype.createFilterWrapper = function (column) {
         var _this = this;
         var colDef = column.getColDef();
@@ -287,11 +297,13 @@ var FilterManager = (function () {
         else {
             console.error('ag-Grid: colDef.filter should be function or a string');
         }
+        this.context.wireBean(filterWrapper.filter);
         var filterChangedCallback = this.onFilterChanged.bind(this);
         var filterModifiedCallback = function () { return _this.eventService.dispatchEvent(events_1.Events.EVENT_FILTER_MODIFIED); };
         var doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
         var filterParams = colDef.filterParams;
         var params = {
+            column: column,
             colDef: colDef,
             rowModel: this.rowModel,
             filterChangedCallback: filterChangedCallback,
@@ -350,9 +362,9 @@ var FilterManager = (function () {
         }
     };
     FilterManager.prototype.onNewColumnsLoaded = function () {
-        this.agDestroy();
+        this.destroy();
     };
-    FilterManager.prototype.agDestroy = function () {
+    FilterManager.prototype.destroy = function () {
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
             if (filterWrapper.filter.destroy) {
                 filterWrapper.filter.destroy();
@@ -369,51 +381,61 @@ var FilterManager = (function () {
         }
     };
     __decorate([
-        context_2.Autowired('$compile'), 
+        context_1.Autowired('$compile'), 
         __metadata('design:type', Object)
     ], FilterManager.prototype, "$compile", void 0);
     __decorate([
-        context_2.Autowired('$scope'), 
+        context_1.Autowired('$scope'), 
         __metadata('design:type', Object)
     ], FilterManager.prototype, "$scope", void 0);
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], FilterManager.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_2.Autowired('gridCore'), 
+        context_1.Autowired('gridCore'), 
         __metadata('design:type', Object)
     ], FilterManager.prototype, "gridCore", void 0);
     __decorate([
-        context_2.Autowired('popupService'), 
+        context_1.Autowired('popupService'), 
         __metadata('design:type', popupService_1.PopupService)
     ], FilterManager.prototype, "popupService", void 0);
     __decorate([
-        context_2.Autowired('valueService'), 
+        context_1.Autowired('valueService'), 
         __metadata('design:type', valueService_1.ValueService)
     ], FilterManager.prototype, "valueService", void 0);
     __decorate([
-        context_2.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], FilterManager.prototype, "columnController", void 0);
     __decorate([
-        context_2.Autowired('rowModel'), 
+        context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], FilterManager.prototype, "rowModel", void 0);
     __decorate([
-        context_2.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], FilterManager.prototype, "eventService", void 0);
     __decorate([
-        context_2.Autowired('enterprise'), 
+        context_1.Autowired('enterprise'), 
         __metadata('design:type', Boolean)
     ], FilterManager.prototype, "enterprise", void 0);
     __decorate([
-        context_3.PostConstruct, 
+        context_1.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
+    ], FilterManager.prototype, "context", void 0);
+    __decorate([
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], FilterManager.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], FilterManager.prototype, "destroy", null);
     FilterManager = __decorate([
         context_1.Bean('filterManager'), 
         __metadata('design:paramtypes', [])

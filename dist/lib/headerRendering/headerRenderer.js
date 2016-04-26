@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,12 +18,9 @@ var columnController_1 = require("../columnController/columnController");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var column_1 = require("../entities/column");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
-var context_3 = require("../context/context");
 var headerContainer_1 = require("./headerContainer");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
-var context_4 = require("../context/context");
 var HeaderRenderer = (function () {
     function HeaderRenderer() {
     }
@@ -91,27 +88,27 @@ var HeaderRenderer = (function () {
         this.centerContainer.onIndividualColumnResized(column);
     };
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], HeaderRenderer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_2.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], HeaderRenderer.prototype, "columnController", void 0);
     __decorate([
-        context_2.Autowired('gridPanel'), 
+        context_1.Autowired('gridPanel'), 
         __metadata('design:type', gridPanel_1.GridPanel)
     ], HeaderRenderer.prototype, "gridPanel", void 0);
     __decorate([
-        context_2.Autowired('context'), 
-        __metadata('design:type', context_3.Context)
+        context_1.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
     ], HeaderRenderer.prototype, "context", void 0);
     __decorate([
-        context_2.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], HeaderRenderer.prototype, "eventService", void 0);
     __decorate([
-        context_4.PostConstruct, 
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

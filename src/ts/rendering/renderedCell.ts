@@ -437,9 +437,7 @@ export class RenderedCell extends Component {
         if (this.editingCell) {
             this.stopEditing();
         }
-        // if (!this.editingCell) {
-            this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
-        // }
+        this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
@@ -635,9 +633,8 @@ export class RenderedCell extends Component {
     private stopEditing(reset: boolean = false) {
         this.editingCell = false;
 
-        var newValue = this.cellEditor.getValue();
-
         if (!reset) {
+            var newValue = this.cellEditor.getValue();
             this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
         }
@@ -651,8 +648,17 @@ export class RenderedCell extends Component {
             this.hideEditorPopup = null;
         } else {
             _.removeAllChildren(this.eGridCell);
+            // put the cell back the way it was before editing
             if (this.checkboxSelection) {
+                // if wrapper, then put the wrapper back
                 this.eGridCell.appendChild(this.eCellWrapper);
+            } else {
+                // if cellRenderer, then put the gui back in. if the renderer has
+                // a refresh, it will be called. however if it doesn't, then later
+                // the renderer will be destroyed and a new one will be created.
+                if (this.cellRenderer) {
+                    this.eGridCell.appendChild(this.cellRenderer.getGui());
+                }
             }
         }
 
@@ -926,7 +932,8 @@ export class RenderedCell extends Component {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
             var valueFormatted = this.formatValue(this.value);
-            var params = this.createRendererAndRefreshParams(valueFormatted);
+            var cellRendererParams = this.column.getColDef().cellRendererParams;
+            var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
             this.cellRenderer.refresh(params);
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
             this.addClassesFromRules();
@@ -982,7 +989,7 @@ export class RenderedCell extends Component {
         return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, value);
     }
 
-    private createRendererAndRefreshParams(valueFormatted: string): any {
+    private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): any {
         var params = {
             value: this.value,
             valueFormatted: valueFormatted,
@@ -1002,16 +1009,17 @@ export class RenderedCell extends Component {
             eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
         };
+
+        if (cellRendererParams) {
+            _.assign(params, cellRendererParams);
+        }
+
         return params;
     }
     
     private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string): void {
 
-        var params = this.createRendererAndRefreshParams(valueFormatted);
-
-        if (cellRendererParams) {
-            _.assign(params, cellRendererParams);
-        }
+        var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
 
         this.cellRenderer = this.cellRendererService.useCellRenderer(cellRendererKey, this.eParentOfValue, params);
     }

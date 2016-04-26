@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,7 @@ var ExpressionService = (function () {
     function ExpressionService() {
         this.expressionToFunctionCache = {};
     }
-    ExpressionService.prototype.agWire = function (loggerFactory) {
+    ExpressionService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ExpressionService');
     };
     ExpressionService.prototype.evaluate = function (expression, params) {
@@ -68,7 +68,7 @@ var ExpressionService = (function () {
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
-    ], ExpressionService.prototype, "agWire", null);
+    ], ExpressionService.prototype, "setBeans", null);
     ExpressionService = __decorate([
         context_1.Bean('expressionService'), 
         __metadata('design:paramtypes', [])

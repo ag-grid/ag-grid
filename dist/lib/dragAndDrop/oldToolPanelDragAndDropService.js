@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,7 @@ var OldToolPanelDragAndDropService = (function () {
         document.addEventListener('mouseup', mouseUpListener);
         this.destroyFunctions.push(function () { document.removeEventListener('mouseup', mouseUpListener); });
     };
-    OldToolPanelDragAndDropService.prototype.agDestroy = function () {
+    OldToolPanelDragAndDropService.prototype.destroy = function () {
         this.destroyFunctions.forEach(function (func) { return func(); });
         document.removeEventListener('mouseup', this.mouseUpEventListener);
     };
@@ -106,6 +106,12 @@ var OldToolPanelDragAndDropService = (function () {
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
     ], OldToolPanelDragAndDropService.prototype, "agWire", null);
+    __decorate([
+        context_1.PreDestroy, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], OldToolPanelDragAndDropService.prototype, "destroy", null);
     OldToolPanelDragAndDropService = __decorate([
         context_1.Bean('oldToolPanelDragAndDropService'), 
         __metadata('design:paramtypes', [])

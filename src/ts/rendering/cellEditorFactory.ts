@@ -6,8 +6,8 @@ import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
 import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
-import {RichSelectCellEditor} from "./cellEditors/richSelect/richSelectCellEditor";
 import {DateCellEditor} from "./cellEditors/dateCellEditor";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
@@ -17,10 +17,10 @@ export class CellEditorFactory {
     private static DATE = 'date';
     private static POPUP_TEXT = 'popupText';
     private static POPUP_SELECT = 'popupSelect';
-    private static RICH_SELECT = 'richSelect';
 
     @Autowired('context') private context: Context;
-    
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     private cellEditorMap: {[key: string]: {new(): ICellEditor}} = {};
 
     @PostConstruct
@@ -29,14 +29,20 @@ export class CellEditorFactory {
         this.cellEditorMap[CellEditorFactory.SELECT] = SelectCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.RICH_SELECT] = RichSelectCellEditor;
         this.cellEditorMap[CellEditorFactory.DATE] = DateCellEditor;
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
         this.cellEditorMap[key] = cellEditor;
     }
-    
+
+    // private registerEditorsFromGridOptions(): void {
+    //     var userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
+    //     _.iterateObject(userProvidedCellEditors, (key: string, cellEditor: {new(): ICellEditor})=> {
+    //         this.addCellEditor(key, cellEditor);
+    //     });
+    // }
+
     public createCellEditor(key: string|{new(): ICellEditor}): ICellEditor {
 
         var CellEditorClass: {new(): ICellEditor};

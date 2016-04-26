@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -47,4 +47,5 @@ export declare class Events {
     static EVENT_ROW_DOUBLE_CLICKED: string;
     static EVENT_GRID_READY: string;
     static EVENT_GRID_SIZE_CHANGED: string;
+    static EVENT_VIEWPORT_CHANGED: string;
 }

@@ -1,14 +1,17 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { EventService } from "../eventService";
-export declare class Component {
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+export declare class Component implements IEventEmitter {
     private eGui;
     private destroyFunctions;
     private localEventService;
-    constructor(template: string);
+    private childComponents;
+    constructor(template?: string);
+    setTemplate(template: string): void;
     addEventListener(eventType: string, listener: Function): void;
+    removeEventListener(eventType: string, listener: Function): void;
     dispatchEvent(eventType: string, event?: any): void;
     getGui(): HTMLElement;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
@@ -17,6 +20,6 @@ export declare class Component {
     setVisible(visible: boolean): void;
     destroy(): void;
     addGuiEventListener(event: string, listener: () => void): void;
-    addDestroyableEventListener(eElement: HTMLElement | EventService, event: string, listener: () => void): void;
+    addDestroyableEventListener(eElement: HTMLElement | IEventEmitter, event: string, listener: (event?: any) => void): void;
     addDestroyFunc(func: () => void): void;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,15 +21,23 @@ var constants_1 = require("./constants");
 var componentUtil_1 = require("./components/componentUtil");
 var gridApi_1 = require("./gridApi");
 var context_1 = require("./context/context");
-var context_2 = require("./context/context");
 var columnController_1 = require("./columnController/columnController");
-var context_3 = require("./context/context");
 var events_1 = require("./events");
-var columnController_2 = require("./columnController/columnController");
-var context_4 = require("./context/context");
+var utils_1 = require("./utils");
 var DEFAULT_ROW_HEIGHT = 25;
+var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
+var DEFAULT_VIEWPORT_ROW_MODEL_BUFER_SIZE = 5;
 function isTrue(value) {
     return value === true || value === 'true';
+}
+function positiveNumberOrZero(value, defaultValue) {
+    if (value > 0) {
+        return value;
+    }
+    else {
+        // zero gets returned if number is missing or the wrong type
+        return defaultValue;
+    }
 }
 var GridOptionsWrapper = (function () {
     function GridOptionsWrapper() {
@@ -56,12 +64,13 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getContext = function () { return this.gridOptions.context; };
     GridOptionsWrapper.prototype.isRowModelPagination = function () { return this.gridOptions.rowModelType === constants_1.Constants.ROW_MODEL_TYPE_PAGINATION; };
     GridOptionsWrapper.prototype.isRowModelVirtual = function () { return this.gridOptions.rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIRTUAL; };
-    GridOptionsWrapper.prototype.isRowModelDefault = function () { return !(this.isRowModelPagination() || this.isRowModelVirtual()); };
+    GridOptionsWrapper.prototype.isRowModelViewport = function () { return this.gridOptions.rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT; };
+    GridOptionsWrapper.prototype.isRowModelDefault = function () { return !(this.isRowModelPagination() || this.isRowModelVirtual() || this.isRowModelViewport()); };
     GridOptionsWrapper.prototype.isShowToolPanel = function () { return isTrue(this.gridOptions.showToolPanel); };
     GridOptionsWrapper.prototype.isToolPanelSuppressGroups = function () { return isTrue(this.gridOptions.toolPanelSuppressGroups); };
     GridOptionsWrapper.prototype.isToolPanelSuppressValues = function () { return isTrue(this.gridOptions.toolPanelSuppressValues); };
+    GridOptionsWrapper.prototype.isEnableCellChangeFlash = function () { return isTrue(this.gridOptions.enableCellChangeFlash); };
     GridOptionsWrapper.prototype.isGroupSelectsChildren = function () { return isTrue(this.gridOptions.groupSelectsChildren); };
-    GridOptionsWrapper.prototype.isGroupHideGroupColumns = function () { return isTrue(this.gridOptions.groupHideGroupColumns); };
     GridOptionsWrapper.prototype.isGroupIncludeFooter = function () { return isTrue(this.gridOptions.groupIncludeFooter); };
     GridOptionsWrapper.prototype.isGroupSuppressBlankHeader = function () { return isTrue(this.gridOptions.groupSuppressBlankHeader); };
     GridOptionsWrapper.prototype.isSuppressRowClickSelection = function () { return isTrue(this.gridOptions.suppressRowClickSelection); };
@@ -100,6 +109,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isDebug = function () { return isTrue(this.gridOptions.debug); };
     GridOptionsWrapper.prototype.getColumnDefs = function () { return this.gridOptions.columnDefs; };
     GridOptionsWrapper.prototype.getDatasource = function () { return this.gridOptions.datasource; };
+    GridOptionsWrapper.prototype.getViewportDatasource = function () { return this.gridOptions.viewportDatasource; };
     GridOptionsWrapper.prototype.isEnableSorting = function () { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); };
     GridOptionsWrapper.prototype.isEnableCellExpressions = function () { return isTrue(this.gridOptions.enableCellExpressions); };
     GridOptionsWrapper.prototype.isEnableServerSideSorting = function () { return isTrue(this.gridOptions.enableServerSideSorting); };
@@ -119,6 +129,8 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getSortingOrder = function () { return this.gridOptions.sortingOrder; };
     GridOptionsWrapper.prototype.getSlaveGrids = function () { return this.gridOptions.slaveGrids; };
     GridOptionsWrapper.prototype.getGroupRowRenderer = function () { return this.gridOptions.groupRowRenderer; };
+    GridOptionsWrapper.prototype.getGroupRowRendererParams = function () { return this.gridOptions.groupRowRendererParams; };
+    GridOptionsWrapper.prototype.getGroupRowInnerRenderer = function () { return this.gridOptions.groupRowInnerRenderer; };
     GridOptionsWrapper.prototype.getOverlayLoadingTemplate = function () { return this.gridOptions.overlayLoadingTemplate; };
     GridOptionsWrapper.prototype.getOverlayNoRowsTemplate = function () { return this.gridOptions.overlayNoRowsTemplate; };
     GridOptionsWrapper.prototype.getCheckboxSelection = function () { return this.gridOptions.checkboxSelection; };
@@ -131,6 +143,10 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getContextMenuItemsFunc = function () { return this.gridOptions.getContextMenuItems; };
     GridOptionsWrapper.prototype.getMainMenuItemsFunc = function () { return this.gridOptions.getMainMenuItems; };
     GridOptionsWrapper.prototype.getProcessCellForClipboardFunc = function () { return this.gridOptions.processCellForClipboard; };
+    GridOptionsWrapper.prototype.getViewportRowModelPageSize = function () { return positiveNumberOrZero(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); };
+    GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFER_SIZE); };
+    // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
+    // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
     GridOptionsWrapper.prototype.executeProcessRowPostCreateFunc = function (params) {
         if (this.gridOptions.processRowPostCreate) {
             this.gridOptions.processRowPostCreate(params);
@@ -164,9 +180,6 @@ var GridOptionsWrapper = (function () {
         else {
             return false;
         }
-    };
-    GridOptionsWrapper.prototype.getGroupRowInnerRenderer = function () {
-        return this.gridOptions.groupRowInnerRenderer;
     };
     GridOptionsWrapper.prototype.getMinColWidth = function () {
         if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
@@ -258,11 +271,16 @@ var GridOptionsWrapper = (function () {
         }
     };
     // we don't allow dynamic row height for virtual paging
-    GridOptionsWrapper.prototype.getRowHeightForVirtualPagination = function () {
-        if (typeof this.gridOptions.rowHeight === 'number') {
+    GridOptionsWrapper.prototype.getRowHeightAsNumber = function () {
+        var rowHeight = this.gridOptions.rowHeight;
+        if (utils_1.Utils.missing(rowHeight)) {
+            return DEFAULT_ROW_HEIGHT;
+        }
+        else if (typeof this.gridOptions.rowHeight === 'number') {
             return this.gridOptions.rowHeight;
         }
         else {
+            console.warn('ag-Grid row height must be a number if not using standard row model');
             return DEFAULT_ROW_HEIGHT;
         }
     };
@@ -285,30 +303,30 @@ var GridOptionsWrapper = (function () {
     };
     GridOptionsWrapper.MIN_COL_WIDTH = 10;
     __decorate([
-        context_3.Autowired('gridOptions'), 
+        context_1.Autowired('gridOptions'), 
         __metadata('design:type', Object)
     ], GridOptionsWrapper.prototype, "gridOptions", void 0);
     __decorate([
-        context_3.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], GridOptionsWrapper.prototype, "columnController", void 0);
     __decorate([
-        context_3.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], GridOptionsWrapper.prototype, "eventService", void 0);
     __decorate([
-        context_3.Autowired('enterprise'), 
+        context_1.Autowired('enterprise'), 
         __metadata('design:type', Boolean)
     ], GridOptionsWrapper.prototype, "enterprise", void 0);
     __decorate([
-        __param(0, context_2.Qualifier('gridApi')),
-        __param(1, context_2.Qualifier('columnApi')), 
+        __param(0, context_1.Qualifier('gridApi')),
+        __param(1, context_1.Qualifier('columnApi')), 
         __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [gridApi_1.GridApi, columnController_2.ColumnApi]), 
+        __metadata('design:paramtypes', [gridApi_1.GridApi, columnController_1.ColumnApi]), 
         __metadata('design:returntype', void 0)
     ], GridOptionsWrapper.prototype, "agWire", null);
     __decorate([
-        context_4.PostConstruct, 
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

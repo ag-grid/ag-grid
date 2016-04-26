@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,7 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var renderedCell_1 = require("./renderedCell");
 var rowNode_1 = require("../entities/rowNode");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
@@ -22,16 +22,15 @@ var column_1 = require("../entities/column");
 var events_1 = require("../events");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
-var context_3 = require("../context/context");
 var focusedCellController_1 = require("../focusedCellController");
 var constants_1 = require("../constants");
+var cellRendererService_1 = require("./cellRendererService");
+var cellRendererFactory_1 = require("./cellRendererFactory");
 var RenderedRow = (function () {
-    function RenderedRow(parentScope, cellRendererMap, rowRenderer, eBodyContainer, ePinnedLeftContainer, ePinnedRightContainer, node, rowIndex) {
+    function RenderedRow(parentScope, rowRenderer, eBodyContainer, ePinnedLeftContainer, ePinnedRightContainer, node, rowIndex) {
         this.renderedCells = {};
         this.destroyFunctions = [];
         this.parentScope = parentScope;
-        this.cellRendererMap = cellRendererMap;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
@@ -59,6 +58,7 @@ var RenderedRow = (function () {
         this.setTopAndHeightCss();
         this.addRowSelectedListener();
         this.addCellFocusedListener();
+        this.addNodeDataChangedListener();
         this.addColumnListener();
         this.attachContainers();
         this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
@@ -103,6 +103,9 @@ var RenderedRow = (function () {
         }
         this.refreshCellsIntoRow();
     };
+    // method makes sure the right cells are present, and are in the right container. so when this gets called for
+    // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
+    // container (ie into pinned)
     RenderedRow.prototype.refreshCellsIntoRow = function () {
         var _this = this;
         var columns = this.columnController.getAllDisplayedColumns();
@@ -110,7 +113,6 @@ var RenderedRow = (function () {
         columns.forEach(function (column) {
             var renderedCell = _this.getOrCreateCell(column);
             _this.ensureCellInCorrectRow(renderedCell);
-            renderedCell.checkPinnedClasses();
             utils_1.Utils.removeFromArray(renderedCellKeys, column.getColId());
         });
         // remove old cells from gui, but we don't destroy them, we might use them again
@@ -161,7 +163,7 @@ var RenderedRow = (function () {
             return this.renderedCells[colId];
         }
         else {
-            var renderedCell = new renderedCell_1.RenderedCell(column, this.cellRendererMap, this.rowNode, this.rowIndex, this.scope, this);
+            var renderedCell = new renderedCell_1.RenderedCell(column, this.rowNode, this.rowIndex, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             return renderedCell;
@@ -194,6 +196,25 @@ var RenderedRow = (function () {
             _this.mainEventService.removeEventListener(events_1.Events.EVENT_CELL_FOCUSED, rowFocusedListener);
         });
         rowFocusedListener();
+    };
+    RenderedRow.prototype.forEachRenderedCell = function (callback) {
+        utils_1.Utils.iterateObject(this.renderedCells, function (key, renderedCell) {
+            if (renderedCell) {
+                callback(renderedCell);
+            }
+        });
+    };
+    RenderedRow.prototype.addNodeDataChangedListener = function () {
+        var _this = this;
+        var nodeDataChangedListener = function () {
+            var animate = false;
+            var newData = true;
+            _this.forEachRenderedCell(function (renderedCell) { return renderedCell.refreshCell(animate, newData); });
+        };
+        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
+        this.destroyFunctions.push(function () {
+            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
+        });
     };
     RenderedRow.prototype.createContainers = function () {
         this.eBodyRow = this.createRowContainer();
@@ -254,8 +275,8 @@ var RenderedRow = (function () {
         this.renderedRowEventService.removeEventListener(eventType, listener);
     };
     RenderedRow.prototype.softRefresh = function () {
-        utils_1.Utils.iterateObject(this.renderedCells, function (key, renderedCell) {
-            if (renderedCell && renderedCell.isVolatile()) {
+        this.forEachRenderedCell(function (renderedCell) {
+            if (renderedCell.isVolatile()) {
                 renderedCell.refreshCell();
             }
         });
@@ -280,11 +301,7 @@ var RenderedRow = (function () {
             this.ePinnedLeftContainer.removeChild(this.ePinnedLeftRow);
             this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
         }
-        utils_1.Utils.iterateObject(this.renderedCells, function (key, renderedCell) {
-            if (renderedCell) {
-                renderedCell.destroy();
-            }
-        });
+        this.forEachRenderedCell(function (renderedCell) { return renderedCell.destroy(); });
         if (this.renderedRowEventService) {
             this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, { node: this.rowNode });
         }
@@ -320,51 +337,36 @@ var RenderedRow = (function () {
         var eRow;
         // padding means we are on the right hand side of a pinned table, ie
         // in the main body.
-        if (padding) {
-            eRow = document.createElement('span');
-        }
-        else {
-            var rowCellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
-            if (!rowCellRenderer) {
-                rowCellRenderer = {
-                    renderer: 'group',
-                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
+        eRow = document.createElement('span');
+        if (!padding) {
+            var cellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
+            var cellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
+            if (!cellRenderer) {
+                cellRenderer = cellRendererFactory_1.CellRendererFactory.GROUP;
+                cellRendererParams = {
+                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
                 };
             }
             var params = {
-                node: this.rowNode,
                 data: this.rowNode.data,
+                node: this.rowNode,
+                $scope: this.scope,
                 rowIndex: this.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext(),
+                eGridCell: eRow,
+                eParentOfValue: eRow,
+                addRenderedRowListener: this.addEventListener.bind(this),
                 colDef: {
-                    cellRenderer: rowCellRenderer
+                    cellRenderer: cellRenderer,
+                    cellRendererParams: cellRendererParams
                 }
             };
-            // start duplicated code
-            var actualCellRenderer;
-            if (typeof rowCellRenderer === 'object' && rowCellRenderer !== null) {
-                var cellRendererObj = rowCellRenderer;
-                actualCellRenderer = this.cellRendererMap[cellRendererObj.renderer];
-                if (!actualCellRenderer) {
-                    throw 'Cell renderer ' + rowCellRenderer + ' not found, available are ' + Object.keys(this.cellRendererMap);
-                }
+            if (cellRendererParams) {
+                utils_1.Utils.assign(params, cellRendererParams);
             }
-            else if (typeof rowCellRenderer === 'function') {
-                actualCellRenderer = rowCellRenderer;
-            }
-            else {
-                throw 'Cell Renderer must be String or Function';
-            }
-            var resultFromRenderer = actualCellRenderer(params);
-            // end duplicated code
-            if (utils_1.Utils.isNodeOrElement(resultFromRenderer)) {
-                // a dom node or element was returned, so add child
-                eRow = resultFromRenderer;
-            }
-            else {
-                // otherwise assume it was html, so just insert
-                eRow = utils_1.Utils.loadTemplate(resultFromRenderer);
-            }
+            this.cellRendererService.useCellRenderer(cellRenderer, eRow, params);
         }
         if (this.rowNode.footer) {
             utils_1.Utils.addCssClass(eRow, 'ag-footer-cell-entire-row');
@@ -479,18 +481,15 @@ var RenderedRow = (function () {
     RenderedRow.prototype.getRowIndex = function () {
         return this.rowIndex;
     };
-    RenderedRow.prototype.refreshCells = function (colIds) {
+    RenderedRow.prototype.refreshCells = function (colIds, animate) {
         if (!colIds) {
             return;
         }
         var columnsToRefresh = this.columnController.getColumns(colIds);
-        utils_1.Utils.iterateObject(this.renderedCells, function (key, renderedCell) {
-            if (!renderedCell) {
-                return;
-            }
+        this.forEachRenderedCell(function (renderedCell) {
             var colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel) >= 0) {
-                renderedCell.refreshCell();
+                renderedCell.refreshCell(animate);
             }
         });
     };
@@ -571,31 +570,35 @@ var RenderedRow = (function () {
     };
     RenderedRow.EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], RenderedRow.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_2.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], RenderedRow.prototype, "columnController", void 0);
     __decorate([
-        context_2.Autowired('$compile'), 
+        context_1.Autowired('$compile'), 
         __metadata('design:type', Object)
     ], RenderedRow.prototype, "$compile", void 0);
     __decorate([
-        context_2.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], RenderedRow.prototype, "mainEventService", void 0);
     __decorate([
-        context_2.Autowired('context'), 
+        context_1.Autowired('context'), 
         __metadata('design:type', context_1.Context)
     ], RenderedRow.prototype, "context", void 0);
     __decorate([
-        context_2.Autowired('focusedCellController'), 
+        context_1.Autowired('focusedCellController'), 
         __metadata('design:type', focusedCellController_1.FocusedCellController)
     ], RenderedRow.prototype, "focusedCellController", void 0);
     __decorate([
-        context_3.PostConstruct, 
+        context_1.Autowired('cellRendererService'), 
+        __metadata('design:type', cellRendererService_1.CellRendererService)
+    ], RenderedRow.prototype, "cellRendererService", void 0);
+    __decorate([
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

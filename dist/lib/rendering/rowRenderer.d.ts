@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -26,9 +26,8 @@ export declare class RowRenderer {
     private focusedCellController;
     private rangeController;
     private cellNavigationService;
-    private cellRendererMap;
-    private firstVirtualRenderedRow;
-    private lastVirtualRenderedRow;
+    private firstRenderedRow;
+    private lastRenderedRow;
     private renderedRows;
     private renderedTopFloatingRows;
     private renderedBottomFloatingRows;
@@ -56,12 +55,13 @@ export declare class RowRenderer {
     refreshAllFloatingRows(): void;
     private refreshFloatingRows(renderedRows, rowNodes, pinnedLeftContainer, pinnedRightContainer, bodyContainer);
     refreshView(refreshEvent?: any): void;
+    private restoreFocusedCell(gridCell);
     softRefreshView(): void;
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     refreshRows(rowNodes: RowNode[]): void;
-    refreshCells(rowNodes: RowNode[], colIds: string[]): void;
+    refreshCells(rowNodes: RowNode[], colIds: string[], animate?: boolean): void;
     rowDataChanged(rows: any): void;
-    agDestroy(): void;
+    private destroy();
     private refreshAllVirtualRows(fromIndex?);
     refreshGroupRows(): void;
     private removeVirtualRow(rowsToRemove, fromIndex?);
@@ -75,5 +75,6 @@ export declare class RowRenderer {
     private insertRow(node, rowIndex);
     getRenderedNodes(): any[];
     navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;
-    startEditingNextCell(rowIndex: any, column: any, floating: string, shiftKey: any): void;
+    private getComponentForCell(gridCell);
+    moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean): void;
 }

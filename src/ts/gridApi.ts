@@ -28,11 +28,8 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
-import {ViewportRowModel} from "./rowControllers/viewportRowModel";
-import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
-import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
 
 @Bean('gridApi')
 export class GridApi {
@@ -103,7 +100,10 @@ export class GridApi {
 
     public setViewportDatasource(viewportDatasource: IViewportDatasource) {
         if (this.gridOptionsWrapper.isRowModelViewport()) {
-            (<ViewportRowModel>this.rowModel).setViewportDatasource(viewportDatasource);
+            // this is bad coding, because it's using an interface that's exposed in the enterprise.
+            // really we should create an interface in the core for viewportDatasource and let
+            // the enterprise implement it, rather than casting to 'any' here
+            (<any>this.rowModel).setViewportDatasource(viewportDatasource);
         } else {
             console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
         }
@@ -468,29 +468,15 @@ export class GridApi {
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 
+    /*
+    Taking these out, as we want to reconsider how we register components
+    
     public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
         this.cellRendererFactory.addCellRenderer(key, cellRenderer);
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
         this.cellEditorFactory.addCellEditor(key, cellEditor);
-    }
-    
-    /*
-        public setViewportRowData(rowData: {[key: number]: RowNode}): void {
-            if (this.gridOptionsWrapper.isRowModelViewport()) {
-                (<ViewportRowController>this.rowModel).setViewportRowData(rowData);
-            } else {
-                console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
-            }
-        }
+    }*/
 
-        public setViewportTotalRowCount(rowCount: number): void {
-            if (this.gridOptionsWrapper.isRowModelViewport()) {
-                (<ViewportRowController>this.rowModel).setRowCount(rowCount);
-            } else {
-                console.warn(`ag-Grid: you can only set viewport data when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
-            }
-        }
-    */
 }

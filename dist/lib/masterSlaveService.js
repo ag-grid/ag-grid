@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,7 @@ var MasterSlaveService = (function () {
         // we don't fire back any events.
         this.consuming = false;
     }
-    MasterSlaveService.prototype.agWire = function (loggerFactory) {
+    MasterSlaveService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('MasterSlaveService');
     };
     MasterSlaveService.prototype.init = function () {
@@ -185,7 +185,7 @@ var MasterSlaveService = (function () {
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
-    ], MasterSlaveService.prototype, "agWire", null);
+    ], MasterSlaveService.prototype, "setBeans", null);
     __decorate([
         context_4.PostConstruct, 
         __metadata('design:type', Function), 

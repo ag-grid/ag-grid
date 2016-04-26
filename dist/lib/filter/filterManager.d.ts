@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -14,6 +14,7 @@ export declare class FilterManager {
     private rowModel;
     private eventService;
     private enterprise;
+    private context;
     private allFilters;
     private quickFilter;
     private advancedFilterPresent;
@@ -37,10 +38,11 @@ export declare class FilterManager {
     private createValueGetter(column);
     getFilterApi(column: Column): any;
     getOrCreateFilterWrapper(column: Column): FilterWrapper;
+    destroyFilter(column: Column): void;
     private createFilterWrapper(column);
     private getFilterFromCache(filterType);
     private onNewColumnsLoaded();
-    agDestroy(): void;
+    destroy(): void;
     private assertMethodHasNoParameters(theMethod);
 }
 export interface FilterWrapper {

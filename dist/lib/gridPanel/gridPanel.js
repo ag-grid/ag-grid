@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var masterSlaveService_1 = require("../masterSlaveService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnController_1 = require("../columnController/columnController");
@@ -25,17 +25,14 @@ var floatingRowModel_1 = require("../rowControllers/floatingRowModel");
 var borderLayout_1 = require("../layout/borderLayout");
 var logger_1 = require("../logger");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
-var context_3 = require("../context/context");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
-var context_4 = require("../context/context");
 var dragService_1 = require("../dragAndDrop/dragService");
 var constants_1 = require("../constants");
 var selectionController_1 = require("../selectionController");
 var csvCreator_1 = require("../csvCreator");
-var context_5 = require("../context/context");
 var mouseEventService_1 = require("./mouseEventService");
+var focusedCellController_1 = require("../focusedCellController");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var gridHtml = '<div>' +
@@ -215,7 +212,6 @@ var GridPanel = (function () {
         this.eAllCellContainers.forEach(function (container) {
             container.addEventListener('keydown', function (event) {
                 if (event.ctrlKey || event.metaKey) {
-                    console.log('key = ' + event.which);
                     switch (event.which) {
                         case constants_1.Constants.KEY_A: return _this.onCtrlAndA(event);
                         case constants_1.Constants.KEY_C: return _this.onCtrlAndC(event);
@@ -265,8 +261,15 @@ var GridPanel = (function () {
         if (!this.clipboardService) {
             return;
         }
+        var focusedCell = this.focusedCellController.getFocusedCell();
         this.clipboardService.copyToClipboard();
         event.preventDefault();
+        // the copy operation results in loosing focus on the cell,
+        // because of the trickery the copy logic uses with a temporary
+        // widget. so we set it back again.
+        if (focusedCell) {
+            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        }
         return false;
     };
     GridPanel.prototype.onCtrlAndV = function (event) {
@@ -274,7 +277,6 @@ var GridPanel = (function () {
             return;
         }
         this.clipboardService.pasteFromClipboard();
-        //event.preventDefault();
         return false;
     };
     GridPanel.prototype.onCtrlAndD = function (event) {
@@ -864,65 +866,69 @@ var GridPanel = (function () {
         this.eBodyViewport.removeEventListener('scroll', listener);
     };
     __decorate([
-        context_3.Autowired('masterSlaveService'), 
+        context_1.Autowired('masterSlaveService'), 
         __metadata('design:type', masterSlaveService_1.MasterSlaveService)
     ], GridPanel.prototype, "masterSlaveService", void 0);
     __decorate([
-        context_3.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], GridPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_3.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], GridPanel.prototype, "columnController", void 0);
     __decorate([
-        context_3.Autowired('rowRenderer'), 
+        context_1.Autowired('rowRenderer'), 
         __metadata('design:type', rowRenderer_1.RowRenderer)
     ], GridPanel.prototype, "rowRenderer", void 0);
     __decorate([
-        context_3.Autowired('floatingRowModel'), 
+        context_1.Autowired('floatingRowModel'), 
         __metadata('design:type', floatingRowModel_1.FloatingRowModel)
     ], GridPanel.prototype, "floatingRowModel", void 0);
     __decorate([
-        context_3.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], GridPanel.prototype, "eventService", void 0);
     __decorate([
-        context_3.Autowired('rowModel'), 
+        context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], GridPanel.prototype, "rowModel", void 0);
     __decorate([
-        context_5.Optional('rangeController'), 
+        context_1.Optional('rangeController'), 
         __metadata('design:type', Object)
     ], GridPanel.prototype, "rangeController", void 0);
     __decorate([
-        context_3.Autowired('dragService'), 
+        context_1.Autowired('dragService'), 
         __metadata('design:type', dragService_1.DragService)
     ], GridPanel.prototype, "dragService", void 0);
     __decorate([
-        context_3.Autowired('selectionController'), 
+        context_1.Autowired('selectionController'), 
         __metadata('design:type', selectionController_1.SelectionController)
     ], GridPanel.prototype, "selectionController", void 0);
     __decorate([
-        context_5.Optional('clipboardService'), 
+        context_1.Optional('clipboardService'), 
         __metadata('design:type', Object)
     ], GridPanel.prototype, "clipboardService", void 0);
     __decorate([
-        context_3.Autowired('csvCreator'), 
+        context_1.Autowired('csvCreator'), 
         __metadata('design:type', csvCreator_1.CsvCreator)
     ], GridPanel.prototype, "csvCreator", void 0);
     __decorate([
-        context_3.Autowired('mouseEventService'), 
+        context_1.Autowired('mouseEventService'), 
         __metadata('design:type', mouseEventService_1.MouseEventService)
     ], GridPanel.prototype, "mouseEventService", void 0);
     __decorate([
-        __param(0, context_2.Qualifier('loggerFactory')), 
+        context_1.Autowired('focusedCellController'), 
+        __metadata('design:type', focusedCellController_1.FocusedCellController)
+    ], GridPanel.prototype, "focusedCellController", void 0);
+    __decorate([
+        __param(0, context_1.Qualifier('loggerFactory')), 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
     ], GridPanel.prototype, "agWire", null);
     __decorate([
-        context_4.PostConstruct, 
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

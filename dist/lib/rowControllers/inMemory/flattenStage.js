@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,9 +15,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var context_1 = require("../../context/context");
 var rowNode_1 = require("../../entities/rowNode");
-var utils_1 = require('../../utils');
+var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
-var context_2 = require("../../context/context");
 var selectionController_1 = require("../../selectionController");
 var eventService_1 = require("../../eventService");
 var FlattenStage = (function () {
@@ -61,7 +60,8 @@ var FlattenStage = (function () {
         nextRowTop.value += rowNode.rowHeight;
     };
     FlattenStage.prototype.createFooterNode = function (groupNode) {
-        var footerNode = new rowNode_1.RowNode(this.eventService, this.gridOptionsWrapper, this.selectionController);
+        var footerNode = new rowNode_1.RowNode();
+        this.context.wireBean(footerNode);
         Object.keys(groupNode).forEach(function (key) {
             footerNode[key] = groupNode[key];
         });
@@ -74,17 +74,21 @@ var FlattenStage = (function () {
         return footerNode;
     };
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], FlattenStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_2.Autowired('selectionController'), 
+        context_1.Autowired('selectionController'), 
         __metadata('design:type', selectionController_1.SelectionController)
     ], FlattenStage.prototype, "selectionController", void 0);
     __decorate([
-        context_2.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], FlattenStage.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
+    ], FlattenStage.prototype, "context", void 0);
     FlattenStage = __decorate([
         context_1.Bean('flattenStage'), 
         __metadata('design:paramtypes', [])

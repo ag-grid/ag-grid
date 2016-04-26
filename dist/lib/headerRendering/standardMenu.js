@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,22 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var StandardMenuFactory = (function () {
     function StandardMenuFactory() {
     }
-    StandardMenuFactory.prototype.showMenu = function (column, eventSource) {
+    StandardMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent) {
+        var _this = this;
+        this.showPopup(column, function (eMenu) {
+            _this.popupService.positionPopupUnderMouseEvent({
+                mouseEvent: mouseEvent,
+                ePopup: eMenu
+            });
+        });
+    };
+    StandardMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
+        var _this = this;
+        this.showPopup(column, function (eMenu) {
+            _this.popupService.positionPopupUnderComponent({ eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true });
+        });
+    };
+    StandardMenuFactory.prototype.showPopup = function (column, positionCallback) {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
         var eMenu = document.createElement('div');
         utils_1.Utils.addCssClass(eMenu, 'ag-menu');
@@ -30,11 +45,10 @@ var StandardMenuFactory = (function () {
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         var hidePopup = this.popupService.addAsModalPopup(eMenu, true);
-        this.popupService.positionPopupUnderComponent({ eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true });
+        positionCallback(eMenu);
         if (filterWrapper.filter.afterGuiAttached) {
             var params = {
-                hidePopup: hidePopup,
-                eventSource: eventSource
+                hidePopup: hidePopup
             };
             filterWrapper.filter.afterGuiAttached(params);
         }

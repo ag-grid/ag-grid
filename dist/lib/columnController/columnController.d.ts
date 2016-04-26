@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -7,7 +7,6 @@ import { Column } from "../entities/column";
 import { ColDef } from "../entities/colDef";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
-import { LoggerFactory } from "../logger";
 import { AbstractColDef } from "../entities/colDef";
 export declare class ColumnApi {
     private _columnController;
@@ -41,8 +40,11 @@ export declare class ColumnApi {
     setColumnWidth(key: Column | string | ColDef, newWidth: number, finished?: boolean): void;
     removeValueColumn(column: Column): void;
     addValueColumn(column: Column): void;
-    removeRowGroupColumn(column: Column): void;
-    addRowGroupColumn(column: Column): void;
+    setRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
+    removeRowGroupColumn(colKey: Column | ColDef | String): void;
+    removeRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
+    addRowGroupColumn(colKey: Column | ColDef | String): void;
+    addRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
     getLeftDisplayedColumnGroups(): ColumnGroupChild[];
     getCenterDisplayedColumnGroups(): ColumnGroupChild[];
     getRightDisplayedColumnGroups(): ColumnGroupChild[];
@@ -84,7 +86,7 @@ export declare class ColumnController {
     private ready;
     private logger;
     init(): void;
-    agWire(loggerFactory: LoggerFactory): void;
+    private setBeans(loggerFactory);
     private setFirstRightAndLastLeftPinned();
     autoSizeColumns(keys: (Column | ColDef | String)[]): void;
     autoSizeColumn(key: Column | String | ColDef): void;
@@ -101,8 +103,11 @@ export declare class ColumnController {
     getAllDisplayedColumns(): Column[];
     getPinnedLeftContainerWidth(): number;
     getPinnedRightContainerWidth(): number;
-    addRowGroupColumn(column: Column): void;
-    removeRowGroupColumn(column: Column): void;
+    addRowGroupColumns(keys: (Column | ColDef | String)[]): void;
+    setRowGroupColumns(keys: (Column | ColDef | String)[]): void;
+    addRowGroupColumn(key: Column | ColDef | String): void;
+    removeRowGroupColumns(keys: (Column | ColDef | String)[]): void;
+    removeRowGroupColumn(key: Column | ColDef | String): void;
     addValueColumn(column: Column): void;
     removeValueColumn(column: Column): void;
     private normaliseColumnWidth(column, newWidth);

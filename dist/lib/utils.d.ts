@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.0.5
+// Type definitions for ag-grid v4.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -40,6 +40,8 @@ export declare class Utils {
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean): void;
     static callIfPresent(func: Function): void;
     static addCssClass(element: HTMLElement, className: string): void;
+    static containsClass(element: any, className: string): boolean;
+    static getElementAttribute(element: any, attributeName: string): string;
     static offsetHeight(element: HTMLElement): number;
     static offsetWidth(element: HTMLElement): number;
     static removeCssClass(element: HTMLElement, className: string): void;
@@ -47,10 +49,6 @@ export declare class Utils {
     static defaultComparator(valueA: any, valueB: any): number;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
-    /**
-     * Tries to use the provided renderer.
-     */
-    static useRenderer<TParams>(eParent: Element, eRenderer: (params: TParams) => Node | string, params: TParams): void;
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,15 +16,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var utils_1 = require('../utils');
 var constants_1 = require("../constants");
 var context_1 = require("../context/context");
+var gridCore_1 = require("../gridCore");
 var PopupService = (function () {
     function PopupService() {
     }
-    PopupService.prototype.setPopupParent = function (ePopupParent) {
-        this.ePopupParent = ePopupParent;
+    // this.popupService.setPopupParent(this.eRootPanel.getGui());
+    PopupService.prototype.getPopupParent = function () {
+        return this.gridCore.getRootGui();
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
         var x = sourceRect.right - parentRect.left - 2;
         var y = sourceRect.top - parentRect.top;
         var minWidth;
@@ -47,7 +49,7 @@ var PopupService = (function () {
         params.ePopup.style.top = y + "px";
     };
     PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
         this.positionPopup({
             ePopup: params.ePopup,
             x: params.mouseEvent.clientX - parentRect.left,
@@ -57,7 +59,7 @@ var PopupService = (function () {
     };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
@@ -68,8 +70,21 @@ var PopupService = (function () {
             keepWithinBounds: params.keepWithinBounds
         });
     };
+    PopupService.prototype.positionPopupOverComponent = function (params) {
+        var sourceRect = params.eventSource.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
+        this.positionPopup({
+            ePopup: params.ePopup,
+            minWidth: params.minWidth,
+            nudgeX: params.nudgeX,
+            nudgeY: params.nudgeY,
+            x: sourceRect.left - parentRect.left,
+            y: sourceRect.top - parentRect.top,
+            keepWithinBounds: params.keepWithinBounds
+        });
+    };
     PopupService.prototype.positionPopup = function (params) {
-        var parentRect = this.ePopupParent.getBoundingClientRect();
+        var parentRect = this.getPopupParent().getBoundingClientRect();
         var x = params.x;
         var y = params.y;
         if (params.nudgeX) {
@@ -115,8 +130,9 @@ var PopupService = (function () {
         if (popupAlreadyShown) {
             return;
         }
-        this.ePopupParent.appendChild(eChild);
+        this.getPopupParent().appendChild(eChild);
         var that = this;
+        var popupHidden = false;
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         setTimeout(function () {
@@ -140,7 +156,14 @@ var PopupService = (function () {
             if (event && event === eventFromChild) {
                 return;
             }
-            that.ePopupParent.removeChild(eChild);
+            // this method should only be called once. the client can have different
+            // paths, each one wanting to close, so this method may be called multiple
+            // times.
+            if (popupHidden) {
+                return;
+            }
+            popupHidden = true;
+            that.getPopupParent().removeChild(eChild);
             eBody.removeEventListener('keydown', hidePopupOnEsc);
             //eBody.removeEventListener('mousedown', hidePopupOnEsc);
             eBody.removeEventListener('click', hidePopup);
@@ -156,6 +179,10 @@ var PopupService = (function () {
         }
         return hidePopup;
     };
+    __decorate([
+        context_1.Autowired('gridCore'), 
+        __metadata('design:type', gridCore_1.GridCore)
+    ], PopupService.prototype, "gridCore", void 0);
     PopupService = __decorate([
         context_1.Bean('popupService'), 
         __metadata('design:paramtypes', [])

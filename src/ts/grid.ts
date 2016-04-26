@@ -14,7 +14,6 @@ import {EventService} from "./eventService";
 import {OldToolPanelDragAndDropService} from "./dragAndDrop/oldToolPanelDragAndDropService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {GridApi} from "./gridApi";
-import {Constants} from "./constants";
 import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
@@ -43,7 +42,6 @@ import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events} from "./events";
-import {ViewportRowModel} from "./rowControllers/viewportRowModel";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
 import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
@@ -56,8 +54,18 @@ export class Grid {
 
     private static enterpriseBeans: any[];
 
-    public static setEnterpriseBeans(enterpriseBeans: any[]): void {
+    // the default is InMemoryRowModel, which is also used for pagination.
+    // the enterprise adds viewport to this list.
+    private static RowModelClasses: any = {
+        virtual: VirtualPageRowModel,
+        pagination: InMemoryRowModel
+    };
+
+    public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {
         this.enterpriseBeans = enterpriseBeans;
+
+        // the enterprise can inject additional row models. this is how it injects the viewportRowModel
+        _.iterateObject(rowModelClasses, (key: string, value: any)=> Grid.RowModelClasses[key] = value );
     }
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
@@ -105,14 +113,20 @@ export class Grid {
         eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
     }
 
-    private getRowModelClass(gridOptions:GridOptions): any {
-        if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-            return ViewportRowModel;
-        } else if (gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL) {
-            return VirtualPageRowModel;
-        } else {
-            return InMemoryRowModel;
+    private getRowModelClass(gridOptions: GridOptions): any {
+        var rowModelType = gridOptions.rowModelType;
+        if (_.exists(rowModelType)) {
+            var rowModelClass = Grid.RowModelClasses[rowModelType];
+            if (_.exists(rowModelClass)) {
+                return rowModelClass;
+            } else {
+                console.error('ag-Grid: count not find matching row model for rowModelType ' + rowModelType);
+                if (rowModelType==='viewport') {
+                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                }
+            }
         }
+        return InMemoryRowModel;
     };
 
     public destroy(): void {

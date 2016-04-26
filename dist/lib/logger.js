@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.0.5
+ * @version v4.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,7 @@ var context_2 = require("./context/context");
 var LoggerFactory = (function () {
     function LoggerFactory() {
     }
-    LoggerFactory.prototype.agWire = function (gridOptionsWrapper) {
+    LoggerFactory.prototype.setBeans = function (gridOptionsWrapper) {
         this.logging = gridOptionsWrapper.isDebug();
     };
     LoggerFactory.prototype.create = function (name) {
@@ -33,7 +33,7 @@ var LoggerFactory = (function () {
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [gridOptionsWrapper_1.GridOptionsWrapper]), 
         __metadata('design:returntype', void 0)
-    ], LoggerFactory.prototype, "agWire", null);
+    ], LoggerFactory.prototype, "setBeans", null);
     LoggerFactory = __decorate([
         context_1.Bean('loggerFactory'), 
         __metadata('design:paramtypes', [])

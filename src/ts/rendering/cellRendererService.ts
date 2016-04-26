@@ -31,6 +31,8 @@ export class CellRendererService {
         var resultFromRenderer: HTMLElement | string;
         var iCellRendererInstance: ICellRenderer = null;
 
+        this.checkForDeprecatedItems(cellRenderer);
+
         // we check if the class has the 'getGui' method to know if it's a component
         var rendererIsAComponent = this.doesImplementICellRenderer(cellRenderer);
         // if it's a component, we create and initialise it
@@ -63,6 +65,13 @@ export class CellRendererService {
         }
 
         return iCellRendererInstance;
+    }
+
+    private checkForDeprecatedItems(cellRenderer: any) {
+        if (cellRenderer && cellRenderer.renderer) {
+            console.warn('ag-grid: colDef.cellRenderer should not be an object, it should be a string, function or class. this ' +
+                'changed in v4.1.x, please check the documentation on Cell Rendering, or if you are doing grouping, look at the grouping examples.');
+        }
     }
 
     private doesImplementICellRenderer(cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): boolean {
