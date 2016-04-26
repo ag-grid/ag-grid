@@ -10,6 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Version xxx</h3>
     <li>Bug fix: api.deselectAll() was not calling onSelectionChanged, it is now.</li>
+    <li>Bug fix: defaultExpanded setting was not been used, it is now.</li>
 
     <h3>Version 4.1.x</h3>
 
