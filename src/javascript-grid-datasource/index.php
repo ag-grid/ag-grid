@@ -40,12 +40,8 @@ gridOptions.datasource = myDataSource;</pre>
         data changes, ie if you want to look at a different set of data.
     </p>
 
-            <pre>// way 1 - set the the datasource using the API
-gridOptions.api.setDatasource(myDataSource);
-
-// way 2 - set the the datasource directly and inform the grid a new datasource is there
-gridOptions.datasource = myNewDatasource;
-gridOptions.api.onNewDatasource();</pre>
+            <pre>// set the the datasource using the API
+gridOptions.api.setDatasource(myDataSource);</pre>
 
     <p>
         <b>Note:</b> If you call <i>setDatasource</i> or <i>onNewDatasource</i>, the grid will act assuming
