@@ -33,10 +33,8 @@ function isKeyPressedNumeric(event) {
     event = event || window.event;
     var charCode = (typeof event.which == "undefined") ? event.keyCode : event.which;
     var charStr = String.fromCharCode(charCode);
-    if (/\d/.test(charStr)) {
-        return true;
-    }
-    return false;
+    return !!/\d/.test(charStr);
+
 }
 
 // function to act as a class
@@ -54,7 +52,7 @@ NumericCellEditor.prototype.init = function (params) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
             that.eInput.select();
-            if(event.preventDefault) event.preventDefault();
+            if (event.preventDefault) event.preventDefault();
         }
     })
 };
@@ -87,6 +85,59 @@ NumericCellEditor.prototype.isPopup = function () {
 };
 
 
+function GenderCellRenderer() {
+}
+
+GenderCellRenderer.prototype.init = function (params) {
+    if (params.value === "" || params.value === undefined || params.value === null) {
+        this.eGui = '';
+    } else {
+        var flag = '<img border="0" width="15" height="10" src="../images/' + params.value.toLowerCase() + '.png">';
+        this.eGui = '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
+    }
+};
+
+GenderCellRenderer.prototype.getGui = function () {
+    return this.eGui;
+};
+
+
+function LargeTextCellEditor () {}
+
+LargeTextCellEditor.prototype.init = function(params) {
+    this.eInput = document.createElement("div");
+    var textarea = document.createElement("textarea");
+    textarea.maxLength = "200";
+    textarea.cols = "80";
+    textarea.rows = "40";
+    this.eInput.appendChild(textarea);
+
+    this.eInput.value = params.value;
+};
+
+// gets called once when grid ready to insert the element
+LargeTextCellEditor.prototype.getGui = function() {
+    return this.eInput;
+};
+
+LargeTextCellEditor.prototype.afterGuiAttached = function() {
+    this.eInput.focus();
+    this.eInput.select();
+};
+
+LargeTextCellEditor.prototype.getValue = function() {
+    return this.eInput.value;
+};
+
+// any cleanup we need to be done here
+LargeTextCellEditor.prototype.destroy = function() {
+};
+
+LargeTextCellEditor.prototype.isPopup = function() {
+    return true;
+};
+
+
 var columnDefs = [
     {headerName: "First Name", field: "first_name", width: 100, editable: true},
     {headerName: "Last Name", field: "last_name", width: 100, editable: true},
@@ -95,13 +146,27 @@ var columnDefs = [
         field: "gender",
         width: 120,
         editable: true,
-        cellEditor: 'popupSelect',
+        cellRenderer: GenderCellRenderer,
+        cellEditor: 'richSelect',
         cellEditorParams: {
+            cellRenderer: GenderCellRenderer,
             values: ['Male', 'Female']
         }
     },
-    {headerName: "Age", field: "age", width: 110, editable: true, cellEditor: NumericCellEditor},
-    {headerName: "Address", field: "address", width: 502, editable: true}
+    {
+        headerName: "Age",
+        field: "age",
+        width: 110,
+        editable: true,
+        cellEditor: NumericCellEditor
+    },
+    {
+        headerName: "Address",
+        field: "address",
+        width: 502,
+        editable: true,
+        cellEditor: LargeTextCellEditor
+    }
 ];
 
 var gridOptions = {
