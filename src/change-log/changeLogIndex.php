@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version xxx</h3>
+    <h3>Version 4.1.x patch (ag-Grid 4.1.4, ag-Grid-Enterprise 4.1.3)</h3>
     <li>Bug fix: api.deselectAll() was not calling onSelectionChanged, it is now.</li>
     <li>Bug fix: defaultExpanded setting was not been used, it is now.</li>
     <li>Buf fix: popup editor was not working, init() was not called.</li>
