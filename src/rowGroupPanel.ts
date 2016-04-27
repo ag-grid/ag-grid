@@ -41,11 +41,14 @@ export class RowGroupPanel extends Component {
 
     @PostConstruct
     public init(): void {
-        this.addEmptyMessageToGui();
         this.logger = this.loggerFactory.create('RowGroupPanel');
         this.globalEventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
         this.globalEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
         this.setupDropTarget();
+        // we don't know if this bean will be initialised before columnController.
+        // if columnController first, then below will work
+        // if columnController second, then below will put blank in, and then above event gets first when columnController is set up
+        this.onColumnChanged();
     }
 
     private setupDropTarget(): void {
