@@ -1,4 +1,4 @@
-import {Bean} from "../context/context";
+import {Bean, PreDestroy} from "../context/context";
 import {Autowired} from "../context/context";
 import {LoggerFactory} from "../logger";
 import {Logger} from "../logger";
@@ -20,13 +20,22 @@ export class DragService {
 
     private logger: Logger;
 
+    private destroyFunctions: (()=>void)[] = [];
+
     @PostConstruct
     private init(): void {
-        this.logger = this.loggerFactory.create('HorizontalDragService');
+        this.logger = this.loggerFactory.create('DragService');
+    }
+
+    @PreDestroy
+    private destroy(): void {
+        this.destroyFunctions.forEach( func => func() );
     }
 
     public addDragSource(params: DragListenerParams): void {
-        params.eElement.addEventListener('mousedown', this.onMouseDown.bind(this, params));
+        var listener = this.onMouseDown.bind(this, params);
+        params.eElement.addEventListener('mousedown', listener);
+        this.destroyFunctions.push( ()=>  params.eElement.removeEventListener('mousedown', listener));
     }
 
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
