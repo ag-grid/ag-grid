@@ -229,10 +229,6 @@ include '../documentation-main/documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
-            <th>suppressMovableColumns</th>
-            <td>Set to true to disallow moving of columns by dragging their headers.</td>
-        </tr>
-        <tr>
             <th>suppressMovingInCss</th>
             <td>Does not apply 'ag-column-moving' class into grid when dragging columns. For the provided themes,
                 this stops the animation while moving columns via dragging their headers.</td>
