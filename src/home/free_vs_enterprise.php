@@ -4,7 +4,7 @@
             <div class="col-md-6">
                 <h3 class="text-center">ag-Grid Free</h3>
                 <p>
-                    Free version is Open Source GPL and can be used by everyone royalty free.
+                    Free version is Open Source MIT and can be used by everyone royalty free.
                 </p>
             </div>
             <div class="col-md-6">
