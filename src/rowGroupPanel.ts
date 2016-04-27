@@ -63,16 +63,26 @@ export class RowGroupPanel extends Component {
     }
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
-        // see if column is already grouped, if it is, ignore it
-        var columnAlreadyGrouped = this.columnController.isColumnRowGrouped(draggingEvent.dragItem);
-        var columnNotGroupable = draggingEvent.dragItem.getColDef().suppressRowGroup;
+        // see if it's a column or a group. if its a group, we always reject
+        var column = (draggingEvent.dragItem instanceof Column) ? <Column> draggingEvent.dragItem : null;
 
-        if (columnAlreadyGrouped || columnNotGroupable) {
+        var reject: boolean;
+
+        if (column) {
+            // see if column is already grouped, if it is, ignore it
+            var columnNotGroupable = column.getColDef().suppressRowGroup;
+            var columnAlreadyGrouped = this.columnController.isColumnRowGrouped(column);
+            reject = columnAlreadyGrouped || columnNotGroupable;
+        } else {
+            reject = true;
+        }
+
+        if (reject) {
             // do not allow group
             this.dragAndDropService.setGhostIcon(null);
         } else {
             // allow group
-            this.addPotentialDropToGui(draggingEvent.dragItem);
+            this.addPotentialDropToGui(column);
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_GROUP);
         }
 
