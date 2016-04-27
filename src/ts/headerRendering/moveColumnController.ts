@@ -9,6 +9,7 @@ import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
+import {ColumnGroup} from "../entities/columnGroup";
 
 export class MoveColumnController {
 
@@ -125,7 +126,9 @@ export class MoveColumnController {
         this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
     }
 
-    private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragItem: Column, x: number): number {
+    private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumnOrGroup: Column | ColumnGroup, x: number): number {
+
+        var dragColumn = <Column> dragColumnOrGroup;
 
         var usedX = 0;
         var leftColumn: Column = null;
@@ -133,7 +136,7 @@ export class MoveColumnController {
         for (var i = 0; i < displayedColumns.length; i++) {
 
             var currentColumn = displayedColumns[i];
-            if (currentColumn === dragItem) { continue; }
+            if (currentColumn === dragColumn) { continue; }
             usedX += currentColumn.getActualWidth();
 
             if (usedX > x) {
@@ -146,7 +149,7 @@ export class MoveColumnController {
         var newIndex: number;
         if (leftColumn) {
             newIndex = allColumns.indexOf(leftColumn) + 1;
-            var oldIndex = allColumns.indexOf(dragItem);
+            var oldIndex = allColumns.indexOf(dragColumn);
             if (oldIndex<newIndex) {
                 newIndex--;
             }
@@ -157,9 +160,11 @@ export class MoveColumnController {
         return newIndex;
     }
 
-    private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragItem: Column, x: number): number {
+    private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragColumnOrGroup: Column | ColumnGroup, x: number): number {
 
-        var usedX = dragItem.getActualWidth();
+        var dragColumn = <Column> dragColumnOrGroup;
+
+        var usedX = dragColumn.getActualWidth();
         var leftColumn: Column = null;
 
         for (var i = 0; i < displayedColumns.length; i++) {
@@ -169,7 +174,7 @@ export class MoveColumnController {
             }
 
             var currentColumn = displayedColumns[i];
-            if (currentColumn === dragItem) { continue; }
+            if (currentColumn === dragColumn) { continue; }
             usedX += currentColumn.getActualWidth();
 
             leftColumn = currentColumn;
@@ -178,7 +183,7 @@ export class MoveColumnController {
         var newIndex: number;
         if (leftColumn) {
             newIndex = allColumns.indexOf(leftColumn) + 1;
-            var oldIndex = allColumns.indexOf(dragItem);
+            var oldIndex = allColumns.indexOf(dragColumn);
             if (oldIndex<newIndex) {
                 newIndex--;
             }
@@ -189,7 +194,8 @@ export class MoveColumnController {
         return newIndex;
     }
 
-    private getColumnsAndOrphans(column: Column): Column[] {
+    private getColumnsAndOrphans(columnOrGroup: Column | ColumnGroup): Column[] {
+        var column = <Column> columnOrGroup;
         // if this column was to move, how many children would be left without a parent
         var pathToChild = this.columnController.getPathForColumn(column);
 

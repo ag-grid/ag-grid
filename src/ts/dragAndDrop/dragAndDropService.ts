@@ -9,12 +9,13 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Autowired} from "../context/context";
 import {SvgFactory} from "../svgFactory";
 import {DragService} from "./dragService";
+import {ColumnGroup} from "../entities/columnGroup";
 
 var svgFactory = SvgFactory.getInstance();
 
 export interface DragSource {
     eElement: HTMLElement,
-    dragItem: Column,
+    dragItem: Column | ColumnGroup,
     dragSourceDropTarget?: DropTarget
 }
 
@@ -33,7 +34,7 @@ export interface DraggingEvent {
     x: number,
     y: number,
     direction: string,
-    dragItem: Column,
+    dragItem: Column | ColumnGroup,
     dragSource: DragSource
 }
 
@@ -55,7 +56,7 @@ export class DragAndDropService {
 
     private logger: Logger;
 
-    private dragItem: Column;
+    private dragItem: Column | ColumnGroup;
     private eventLastTime: MouseEvent;
     private dragSource: DragSource;
     private dragging: boolean;
@@ -264,7 +265,6 @@ export class DragAndDropService {
     }
 
     private createGhost(): void {
-        var dragItem = this.dragSource.dragItem;
         this.eGhost = _.loadTemplate(HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE);
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('#eGhostIcon');
 
@@ -272,17 +272,42 @@ export class DragAndDropService {
             this.setGhostIcon(this.lastDropTarget.iconName);
         }
 
+        var dragItem = this.dragSource.dragItem;
+
         var eText = <HTMLElement> this.eGhost.querySelector('#agText');
-        if (dragItem.getColDef().headerName) {
-            eText.innerHTML = dragItem.getColDef().headerName;
-        } else {
-            eText.innerHTML = dragItem.getColId()
-        }
-        this.eGhost.style.width = dragItem.getActualWidth() + 'px';
+        eText.innerHTML = this.getNameForGhost(dragItem);
+
+        this.eGhost.style.width = this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         this.eBody.appendChild(this.eGhost);
+    }
+
+    private getActualWidth(dragItem: Column | ColumnGroup): number {
+        if (dragItem instanceof Column) {
+            return (<Column>dragItem).getActualWidth();
+        } else {
+            return (<ColumnGroup>dragItem).getActualWidth();
+        }
+    }
+
+    private getNameForGhost(dragItem: Column | ColumnGroup): string {
+        if (dragItem instanceof Column) {
+            var column = <Column> dragItem;
+            if (column.getColDef().headerName) {
+                return column.getColDef().headerName;
+            } else {
+                return column.getColId()
+            }
+        } else {
+            var columnGroup = <ColumnGroup> dragItem;
+            if (columnGroup.getColGroupDef().headerName) {
+                return columnGroup.getColGroupDef().headerName;
+            } else {
+                return columnGroup.getGroupId();
+            }
+        }
     }
 
     public setGhostIcon(iconName: string, shake = false): void {

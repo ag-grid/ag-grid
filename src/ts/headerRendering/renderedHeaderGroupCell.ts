@@ -9,7 +9,7 @@ import {HorizontalDragService} from "./horizontalDragService";
 import {Autowired, PostConstruct} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {DragSource} from "../dragAndDrop/dragAndDropService";
+import {DragSource, DropTarget, DragAndDropService} from "../dragAndDrop/dragAndDropService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -19,10 +19,12 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('horizontalDragService') private dragService: HorizontalDragService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private eHeaderGroupCell: HTMLElement;
     private eHeaderCellResize: HTMLElement;
     private columnGroup: ColumnGroup;
+    private dragSourceDropTarget: DropTarget;
 
     private groupWidthStart: number;
     private childrenWidthStarts: number[];
@@ -31,11 +33,12 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
     private eRoot: HTMLElement;
 
-    constructor(columnGroup:ColumnGroup, eRoot: HTMLElement, parentScope: any) {
+    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, parentScope: any, dragSourceDropTarget: DropTarget) {
         this.columnGroup = columnGroup;
         this.parentScope = parentScope;
         this.eRoot = eRoot;
         this.parentScope = parentScope;
+        this.dragSourceDropTarget = dragSourceDropTarget;
     }
 
     public getGui(): HTMLElement {
@@ -128,33 +131,33 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         }
     }
 
-    // private setupMove(): void {
-    //     var eLabel = <HTMLElement> this.eHeaderGroupCell.querySelector('ag-header-group-cell-label');
-    //     if (!eLabel) { return; }
-    //
-    //     if (this.gridOptionsWrapper.isSuppressMovableColumns()) { return; }
-    //
-    //     // if any child is fixed, then don't allow moving
-    //     var atLeastOneChildNotMovable = false;
-    //     this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-    //         if (column.getColDef().suppressMovable) {
-    //             atLeastOneChildNotMovable = true;
-    //         }
-    //     });
-    //     if (atLeastOneChildNotMovable) { return; }
-    //
-    //     // don't allow moving of headers when forPrint, as the header overlay doesn't exist
-    //     if (this.gridOptionsWrapper.isForPrint()) { return; }
-    //
-    //     if (eLabel) {
-    //         var dragSource: DragSource = {
-    //             eElement: eLabel,
-    //             dragItem: this.columnGroup,
-    //             dragSourceDropTarget: this.dragSourceDropTarget
-    //         };
-    //         this.dragAndDropService.addDragSource(dragSource);
-    //     }
-    // }
+    private setupMove(): void {
+        var eLabel = <HTMLElement> this.eHeaderGroupCell.querySelector('.ag-header-group-cell-label');
+        if (!eLabel) { return; }
+    
+        if (this.gridOptionsWrapper.isSuppressMovableColumns()) { return; }
+    
+        // if any child is fixed, then don't allow moving
+        var atLeastOneChildNotMovable = false;
+        this.columnGroup.getLeafColumns().forEach( (column: Column) => {
+            if (column.getColDef().suppressMovable) {
+                atLeastOneChildNotMovable = true;
+            }
+        });
+        if (atLeastOneChildNotMovable) { return; }
+    
+        // don't allow moving of headers when forPrint, as the header overlay doesn't exist
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
+    
+        if (eLabel) {
+            var dragSource: DragSource = {
+                eElement: eLabel,
+                dragItem: this.columnGroup,
+                dragSourceDropTarget: this.dragSourceDropTarget
+            };
+            this.dragAndDropService.addDragSource(dragSource);
+        }
+    }
 
     private setWidth(): void {
         var widthChangedListener = () => {
