@@ -21,8 +21,9 @@
             <div class="Hero-grid">
                 <div class="container">
                     <div class="row text-center">
-                        <h1 style="padding-bottom: 10px; padding-top: 10px;">
-                            <img inline alt="ag-grid" src="images/logo.png" style="width: 400px;"/>
+                        <h1 style="padding-bottom: 10px; padding-top: 10px;" class="big-logo">
+                            <?php include 'images/logo-dark-hacked.svg'; ?>
+<!--                            <img inline alt="ag-grid" src="images/logo.png" style="width: 400px;"/>-->
                         </h1>
 
                         <h1 style="padding-bottom: 10px; padding-top: 10px;">The Data Grid for Enterprise</h1>

@@ -252,6 +252,16 @@ h4 {
     color: #eee;
 }
 
+.big-logo .logo-svg {
+    width: 380px;
+}
+
+.small-logo .logo-svg {
+    width: 100px;
+    position: absolute;
+    top: 5px;
+}
+
 .header-icon {
     font-size: 150%;
 }
