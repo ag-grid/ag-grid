@@ -29,9 +29,13 @@ var students = [
     }
 ];
 
-function isKeyPressedNumeric(event) {
+function getCharCodeFromEvent(event) {
     event = event || window.event;
-    var charCode = (typeof event.which == "undefined") ? event.keyCode : event.which;
+    return (typeof event.which == "undefined") ? event.keyCode : event.which;
+}
+
+function isKeyPressedNumeric(event) {
+    var charCode = getCharCodeFromEvent(event);
     var charStr = String.fromCharCode(charCode);
     return !!/\d/.test(charStr);
 
@@ -102,41 +106,53 @@ GenderCellRenderer.prototype.getGui = function () {
 };
 
 
-function LargeTextCellEditor () {}
+function LargeTextCellEditor() {
+}
 
-LargeTextCellEditor.prototype.init = function(params) {
+LargeTextCellEditor.prototype.init = function (params) {
+    this.textarea = document.createElement("textarea");
+    this.textarea.maxLength = "200";
+    this.textarea.cols = "60";
+    this.textarea.rows = "10";
+    this.textarea.value = params.value;
+
     this.eInput = document.createElement("div");
-    var textarea = document.createElement("textarea");
-    textarea.maxLength = "200";
-    textarea.cols = "80";
-    textarea.rows = "40";
-    this.eInput.appendChild(textarea);
+    this.eInput.appendChild(this.textarea);
 
-    this.eInput.value = params.value;
+    // allow arrow keys and enter in the textarea
+    // tab, esc etc will still end the editing
+    this.textarea.addEventListener('keydown', function (event) {
+        var charCode = getCharCodeFromEvent(event);
+        if(charCode == 37 ||            // left
+                charCode == 38 ||       // up
+                charCode == 39 ||       // right
+                charCode == 40 ||       // down
+                charCode == 13) {       // enter
+            event.stopPropagation();
+        }
+    })
 };
 
 // gets called once when grid ready to insert the element
-LargeTextCellEditor.prototype.getGui = function() {
+LargeTextCellEditor.prototype.getGui = function () {
     return this.eInput;
 };
 
-LargeTextCellEditor.prototype.afterGuiAttached = function() {
-    this.eInput.focus();
-    this.eInput.select();
+LargeTextCellEditor.prototype.afterGuiAttached = function () {
+    this.textarea.focus();
 };
 
-LargeTextCellEditor.prototype.getValue = function() {
-    return this.eInput.value;
+LargeTextCellEditor.prototype.getValue = function () {
+    return this.textarea.value;
 };
 
 // any cleanup we need to be done here
-LargeTextCellEditor.prototype.destroy = function() {
+LargeTextCellEditor.prototype.destroy = function () {
 };
 
-LargeTextCellEditor.prototype.isPopup = function() {
+LargeTextCellEditor.prototype.isPopup = function () {
     return true;
 };
-
 
 var columnDefs = [
     {headerName: "First Name", field: "first_name", width: 100, editable: true},
