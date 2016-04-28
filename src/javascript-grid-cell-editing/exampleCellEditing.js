@@ -29,14 +29,16 @@ var students = [
     }
 ];
 
-function isKeyPressedNumeric(event) {
+function getCharCodeFromEvent(event) {
     event = event || window.event;
-    var charCode = (typeof event.which == "undefined") ? event.keyCode : event.which;
+    return (typeof event.which == "undefined") ? event.keyCode : event.which;
+}
+
+function isKeyPressedNumeric(event) {
+    var charCode = getCharCodeFromEvent(event);
     var charStr = String.fromCharCode(charCode);
-    if (/\d/.test(charStr)) {
-        return true;
-    }
-    return false;
+    return !!/\d/.test(charStr);
+
 }
 
 // function to act as a class
@@ -54,7 +56,7 @@ NumericCellEditor.prototype.init = function (params) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
             that.eInput.select();
-            if(event.preventDefault) event.preventDefault();
+            if (event.preventDefault) event.preventDefault();
         }
     })
 };
@@ -87,6 +89,71 @@ NumericCellEditor.prototype.isPopup = function () {
 };
 
 
+function GenderCellRenderer() {
+}
+
+GenderCellRenderer.prototype.init = function (params) {
+    if (params.value === "" || params.value === undefined || params.value === null) {
+        this.eGui = '';
+    } else {
+        var flag = '<img border="0" width="15" height="10" src="../images/' + params.value.toLowerCase() + '.png">';
+        this.eGui = '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
+    }
+};
+
+GenderCellRenderer.prototype.getGui = function () {
+    return this.eGui;
+};
+
+
+function LargeTextCellEditor() {
+}
+
+LargeTextCellEditor.prototype.init = function (params) {
+    this.textarea = document.createElement("textarea");
+    this.textarea.maxLength = "200";
+    this.textarea.cols = "60";
+    this.textarea.rows = "10";
+    this.textarea.value = params.value;
+
+    this.eInput = document.createElement("div");
+    this.eInput.appendChild(this.textarea);
+
+    // allow arrow keys and enter in the textarea
+    // tab, esc etc will still end the editing
+    this.textarea.addEventListener('keydown', function (event) {
+        var charCode = getCharCodeFromEvent(event);
+        if(charCode == 37 ||            // left
+                charCode == 38 ||       // up
+                charCode == 39 ||       // right
+                charCode == 40 ||       // down
+                charCode == 13) {       // enter
+            event.stopPropagation();
+        }
+    })
+};
+
+// gets called once when grid ready to insert the element
+LargeTextCellEditor.prototype.getGui = function () {
+    return this.eInput;
+};
+
+LargeTextCellEditor.prototype.afterGuiAttached = function () {
+    this.textarea.focus();
+};
+
+LargeTextCellEditor.prototype.getValue = function () {
+    return this.textarea.value;
+};
+
+// any cleanup we need to be done here
+LargeTextCellEditor.prototype.destroy = function () {
+};
+
+LargeTextCellEditor.prototype.isPopup = function () {
+    return true;
+};
+
 var columnDefs = [
     {headerName: "First Name", field: "first_name", width: 100, editable: true},
     {headerName: "Last Name", field: "last_name", width: 100, editable: true},
@@ -95,13 +162,27 @@ var columnDefs = [
         field: "gender",
         width: 120,
         editable: true,
-        cellEditor: 'popupSelect',
+        cellRenderer: GenderCellRenderer,
+        cellEditor: 'richSelect',
         cellEditorParams: {
+            cellRenderer: GenderCellRenderer,
             values: ['Male', 'Female']
         }
     },
-    {headerName: "Age", field: "age", width: 110, editable: true, cellEditor: NumericCellEditor},
-    {headerName: "Address", field: "address", width: 502, editable: true}
+    {
+        headerName: "Age",
+        field: "age",
+        width: 110,
+        editable: true,
+        cellEditor: NumericCellEditor
+    },
+    {
+        headerName: "Address",
+        field: "address",
+        width: 502,
+        editable: true,
+        cellEditor: LargeTextCellEditor
+    }
 ];
 
 var gridOptions = {
