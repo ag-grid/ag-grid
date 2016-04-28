@@ -45,13 +45,13 @@ export class MoveColumnController {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
-        this.columnController.setColumnVisible(draggingEvent.dragItem, true);
-        this.columnController.setColumnPinned(draggingEvent.dragItem, this.pinned);
+        this.columnController.setColumnVisible(draggingEvent.dragSource.dragItem, true);
+        this.columnController.setColumnPinned(draggingEvent.dragSource.dragItem, this.pinned);
         this.onDragging(draggingEvent);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        this.columnController.setColumnVisible(draggingEvent.dragItem, false);
+        this.columnController.setColumnVisible(draggingEvent.dragSource.dragItem, false);
         this.ensureIntervalCleared();
     }
 
@@ -69,9 +69,9 @@ export class MoveColumnController {
 
     private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
         if (draggingEvent.direction === DragAndDropService.DIRECTION_LEFT) {
-            return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
+            return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, draggingEvent.dragSource.dragItem, xAdjustedForScroll);
         } else {
-            return this.getNewIndexForColMovingRight(displayedColumns, allColumns, draggingEvent.dragItem, xAdjustedForScroll);
+            return this.getNewIndexForColMovingRight(displayedColumns, allColumns, draggingEvent.dragSource.dragItem, xAdjustedForScroll);
         }
     }
 
@@ -116,13 +116,13 @@ export class MoveColumnController {
         var oldColumn = allColumns[newIndex];
 
         // if col already at required location, do nothing
-        if (oldColumn === draggingEvent.dragItem) {
+        if (oldColumn === draggingEvent.dragSource.dragItem) {
             return;
         }
 
         // we move one column, UNLESS the column is the only visible column
         // of a group, in which case we move the whole group.
-        var columnsToMove = this.getColumnsAndOrphans(draggingEvent.dragItem);
+        var columnsToMove = this.getColumnsAndOrphans(draggingEvent.dragSource.dragItem);
         this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
     }
 
@@ -256,9 +256,9 @@ export class MoveColumnController {
             this.failedMoveAttempts++;
             if (this.failedMoveAttempts > 7) {
                 if (this.needToMoveLeft) {
-                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragItem, Column.PINNED_LEFT);
+                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragSource.dragItem, Column.PINNED_LEFT);
                 } else {
-                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragItem, Column.PINNED_RIGHT);
+                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragSource.dragItem, Column.PINNED_RIGHT);
                 }
                 this.dragAndDropService.nudge();
             }
