@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <h4 style="padding-left: 30px;">ag-Grid is designed to be extensible, create components with specific
+                    <h4 style="padding-left: 30px;">ag-Grid is designed to be extensible. Create components with specific
                     behaviour beyond what is typically expected from grids.</h4>
                 </div>
             </div>

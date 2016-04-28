@@ -12,13 +12,13 @@
                 <div class="col-md-4 col-sm-4 col-xs-12">
                     <h4 class="text-left">For Developers</h4>
                     <p class="text-left">
-                        Developers love ag-Grid. Once moving to ag-Grid, their lives will be easier -- they will develop applications quicker, and spend more time on things that matter.
+                        Developers love ag-Grid. Once moving to ag-Grid, their lives will be easier -- they'll develop applications quicker, and spend more time on things that matter.
                     </p>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12">
                     <h4 class="text-left">For Users</h4>
                     <p class="text-left">
-                        Users will lesson the need to export to Excel and use other reporting tools. The advanced features of ag-Grid will help keep your users on your platform and get more done.
+                        Users will lessen the need to export to Excel and use other reporting tools. The advanced features of ag-Grid will help keep your users on your platform and get more done.
                     </p>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12">
