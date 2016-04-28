@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.4
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,14 +22,16 @@ var column_1 = require("../entities/column");
 var horizontalDragService_1 = require("./horizontalDragService");
 var context_1 = require("../context/context");
 var cssClassApplier_1 = require("./cssClassApplier");
+var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var RenderedHeaderGroupCell = (function () {
-    function RenderedHeaderGroupCell(columnGroup, eRoot, parentScope) {
+    function RenderedHeaderGroupCell(columnGroup, eRoot, parentScope, dragSourceDropTarget) {
         this.destroyFunctions = [];
         this.columnGroup = columnGroup;
         this.parentScope = parentScope;
         this.eRoot = eRoot;
         this.parentScope = parentScope;
+        this.dragSourceDropTarget = dragSourceDropTarget;
     }
     RenderedHeaderGroupCell.prototype.getGui = function () {
         return this.eHeaderGroupCell;
@@ -110,33 +112,37 @@ var RenderedHeaderGroupCell = (function () {
             });
         }
     };
-    // private setupMove(): void {
-    //     var eLabel = <HTMLElement> this.eHeaderGroupCell.querySelector('ag-header-group-cell-label');
-    //     if (!eLabel) { return; }
-    //
-    //     if (this.gridOptionsWrapper.isSuppressMovableColumns()) { return; }
-    //
-    //     // if any child is fixed, then don't allow moving
-    //     var atLeastOneChildNotMovable = false;
-    //     this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-    //         if (column.getColDef().suppressMovable) {
-    //             atLeastOneChildNotMovable = true;
-    //         }
-    //     });
-    //     if (atLeastOneChildNotMovable) { return; }
-    //
-    //     // don't allow moving of headers when forPrint, as the header overlay doesn't exist
-    //     if (this.gridOptionsWrapper.isForPrint()) { return; }
-    //
-    //     if (eLabel) {
-    //         var dragSource: DragSource = {
-    //             eElement: eLabel,
-    //             dragItem: this.columnGroup,
-    //             dragSourceDropTarget: this.dragSourceDropTarget
-    //         };
-    //         this.dragAndDropService.addDragSource(dragSource);
-    //     }
-    // }
+    RenderedHeaderGroupCell.prototype.setupMove = function () {
+        var eLabel = this.eHeaderGroupCell.querySelector('.ag-header-group-cell-label');
+        if (!eLabel) {
+            return;
+        }
+        if (this.gridOptionsWrapper.isSuppressMovableColumns()) {
+            return;
+        }
+        // if any child is fixed, then don't allow moving
+        var atLeastOneChildNotMovable = false;
+        this.columnGroup.getLeafColumns().forEach(function (column) {
+            if (column.getColDef().suppressMovable) {
+                atLeastOneChildNotMovable = true;
+            }
+        });
+        if (atLeastOneChildNotMovable) {
+            return;
+        }
+        // don't allow moving of headers when forPrint, as the header overlay doesn't exist
+        if (this.gridOptionsWrapper.isForPrint()) {
+            return;
+        }
+        if (eLabel) {
+            var dragSource = {
+                eElement: eLabel,
+                dragItem: this.columnGroup,
+                dragSourceDropTarget: this.dragSourceDropTarget
+            };
+            this.dragAndDropService.addDragSource(dragSource);
+        }
+    };
     RenderedHeaderGroupCell.prototype.setWidth = function () {
         var _this = this;
         var widthChangedListener = function () {
@@ -227,6 +233,10 @@ var RenderedHeaderGroupCell = (function () {
         context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], RenderedHeaderGroupCell.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('dragAndDropService'), 
+        __metadata('design:type', dragAndDropService_1.DragAndDropService)
+    ], RenderedHeaderGroupCell.prototype, "dragAndDropService", void 0);
     __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 
