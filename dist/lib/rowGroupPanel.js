@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.3
+// ag-grid-enterprise v4.1.4
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -27,6 +27,7 @@ var main_11 = require("ag-grid/main");
 var main_12 = require("ag-grid/main");
 var main_13 = require("ag-grid/main");
 var main_14 = require("ag-grid/main");
+var main_15 = require("ag-grid/main");
 var svgFactory = main_2.SvgFactory.getInstance();
 var RowGroupPanel = (function (_super) {
     __extends(RowGroupPanel, _super);
@@ -34,11 +35,14 @@ var RowGroupPanel = (function (_super) {
         _super.call(this, '<div class="ag-row-group-panel ag-font-style"></div>');
     }
     RowGroupPanel.prototype.init = function () {
-        this.addEmptyMessageToGui();
         this.logger = this.loggerFactory.create('RowGroupPanel');
         this.globalEventService.addEventListener(main_14.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
         this.globalEventService.addEventListener(main_14.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
         this.setupDropTarget();
+        // we don't know if this bean will be initialised before columnController.
+        // if columnController first, then below will work
+        // if columnController second, then below will put blank in, and then above event gets first when columnController is set up
+        this.onColumnChanged();
     };
     RowGroupPanel.prototype.setupDropTarget = function () {
         this.dropTarget = {
@@ -53,16 +57,25 @@ var RowGroupPanel = (function (_super) {
     RowGroupPanel.prototype.onDragging = function () {
     };
     RowGroupPanel.prototype.onDragEnter = function (draggingEvent) {
-        // see if column is already grouped, if it is, ignore it
-        var columnAlreadyGrouped = this.columnController.isColumnRowGrouped(draggingEvent.dragItem);
-        var columnNotGroupable = draggingEvent.dragItem.getColDef().suppressRowGroup;
-        if (columnAlreadyGrouped || columnNotGroupable) {
+        // see if it's a column or a group. if its a group, we always reject
+        var column = (draggingEvent.dragItem instanceof main_15.Column) ? draggingEvent.dragItem : null;
+        var reject;
+        if (column) {
+            // see if column is already grouped, if it is, ignore it
+            var columnNotGroupable = column.getColDef().suppressRowGroup;
+            var columnAlreadyGrouped = this.columnController.isColumnRowGrouped(column);
+            reject = columnAlreadyGrouped || columnNotGroupable;
+        }
+        else {
+            reject = true;
+        }
+        if (reject) {
             // do not allow group
             this.dragAndDropService.setGhostIcon(null);
         }
         else {
             // allow group
-            this.addPotentialDropToGui(draggingEvent.dragItem);
+            this.addPotentialDropToGui(column);
             this.dragAndDropService.setGhostIcon(main_10.DragAndDropService.ICON_GROUP);
         }
     };
