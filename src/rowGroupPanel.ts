@@ -67,7 +67,7 @@ export class RowGroupPanel extends Component {
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
         // see if it's a column or a group. if its a group, we always reject
-        var column = (draggingEvent.dragItem instanceof Column) ? <Column> draggingEvent.dragItem : null;
+        var column = (draggingEvent.dragSource.dragItem instanceof Column) ? <Column> draggingEvent.dragSource.dragItem : null;
 
         var reject: boolean;
 
@@ -96,8 +96,8 @@ export class RowGroupPanel extends Component {
         // someplace else, then we don't, as it was only 'asking'
         if (draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget) {
             this.gridPanel.turnOnAnimationForABit();
-            this.columnController.removeRowGroupColumn(draggingEvent.dragItem);
-            this.columnController.setColumnVisible(draggingEvent.dragItem, true);
+            this.columnController.removeRowGroupColumn(draggingEvent.dragSource.dragItem);
+            this.columnController.setColumnVisible(draggingEvent.dragSource.dragItem, true);
         }
         if (this.ePotentialDropGui) {
             this.removePotentialDropFromGui();
@@ -110,7 +110,7 @@ export class RowGroupPanel extends Component {
             // not necessary to remove it, as the change to rowGroups results in
             // this panel refreshing, however my brain will be more at peace if we do
             this.removePotentialDropFromGui();
-            this.columnController.addRowGroupColumn(draggingEvent.dragItem);
+            this.columnController.addRowGroupColumn(draggingEvent.dragSource.dragItem);
         }
     }
 
