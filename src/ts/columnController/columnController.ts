@@ -443,7 +443,7 @@ export class ColumnController {
 
     // + toolPanel
     public getRowGroupColumns(): Column[] {
-        return this.rowGroupColumns;
+        return this.rowGroupColumns ? this.rowGroupColumns : [];
     }
 
     public isColumnRowGrouped(column: Column): boolean {
