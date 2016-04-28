@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
     <li>Bug fix: row group panel was not initialising correctly.</li>
+    
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.4, ag-Grid-Enterprise 4.1.3)</h3>
     <li>Bug fix: api.deselectAll() was not calling onSelectionChanged, it is now.</li>
