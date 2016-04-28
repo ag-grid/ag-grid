@@ -21,28 +21,33 @@
             <div class="Hero-grid">
                 <div class="container">
                     <div class="row text-center">
-                        <h1 style="padding-bottom: 10px; padding-top: 10px;">
-                            <img alt="ag-grid" src="../images/logo.png" style="width: 400px;"/>
+                        <h1 style="padding-bottom: 10px; padding-top: 10px;" class="big-logo">
+                            <?php include 'images/logo-dark-hacked.svg'; ?>
+<!--                            <img inline alt="ag-grid" src="images/logo.png" style="width: 400px;"/>-->
                         </h1>
 
                         <h1 style="padding-bottom: 10px; padding-top: 10px;">The Data Grid for Enterprise</h1>
 <!--                        <h2>'ag' stands for Agnostic - not bound to any framework but integrates with <a href="/best-javascript-data-grid/index.php">JavaScript</a>, <a href="/best-react-data-grid/index.php">React</a>, <a href="/best-angularjs-data-grid/index.php">Angular</a>, <a href="/best-angular-2-data-grid/index.php">Angular 2</a> &amp; <a href="/best-web-component-data-grid/index.php">Web Components</a>.</h2>
 -->
+
                         <h2>
-                            <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/index.php"><span class="glyphicon glyphicon-download-alt"></span> Download</a>
+                            <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/index.php">
+                                <?php include 'images/download.svg'; ?>
+                                Download
+                            </a>
                         </h2>
                         <div class="Hero-share">
-                            <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.ag-grid.com">
-                                <img inline width="32" height="32" src="/images/social-icons/facebook-logo.svg" alt="Share ag-Grid on Facebook" title="Share ag-Grid on Facebook"/>
+                            <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.ag-grid.com" alt="Share ag-Grid on Facebook" title="Share ag-Grid on Facebook">
+                                <?php include 'images/social-icons/facebook-logo-hacked.svg'; ?>
                             </a>
-                            <a class='share-link' href="https://twitter.com/home?status=http://www.ag-Grid.com,%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers%20%23aggrid%20">
-                                <img inline width="32" height="32" src="/images/social-icons/twitter-social-logotype.svg" alt="Share ag-Grid on Twitter" title="Share ag-Grid on Twitter"/>
+                            <a class='share-link' href="https://twitter.com/home?status=http://www.ag-Grid.com,%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers%20%23aggrid%20" alt="Share ag-Grid on Twitter" title="Share ag-Grid on Twitter">
+                                <?php include 'images/social-icons/twitter-social-logotype-hacked.svg'; ?>
                             </a>
-                            <a class='share-link' href="https://plus.google.com/share?url=www.ag-grid.com">
-                                <img inline width="32" height="32" src="/images/social-icons/google-plus-social-logotype.svg" alt="Share ag-Grid on Google Plus" title="Share ag-Grid on Google Plus"/>
+                            <a class='share-link' href="https://plus.google.com/share?url=www.ag-grid.com" alt="Share ag-Grid on Google Plus" title="Share ag-Grid on Google Plus">
+                                <?php include 'images/social-icons/google-plus-social-logotype-hacked.svg'; ?>
                             </a>
-                            <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.ag-grid.com&title=Angular%20Grid&summary=%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers&source=">
-                                <img inline width="32" height="32" src="/images/social-icons/linkedin-logo.svg" alt="Share ag-Grid on LinkedIn" title="Share ag-Grid on LinkedIn"/>
+                            <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.ag-grid.com&title=Angular%20Grid&summary=%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers&source=" alt="Share ag-Grid on LinkedIn" title="Share ag-Grid on LinkedIn">
+                                <?php include 'images/social-icons/linkedin-logo-hacked.svg'; ?>
                             </a>
                         </div>
                     </div>
