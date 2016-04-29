@@ -11,7 +11,6 @@ import {
     Utils as _,
     OriginalColumnGroupChild
 } from "ag-grid/main";
-import {RenderedItem} from "./renderedItem";
 import {RenderedGroup} from "./renderedGroup";
 import {RenderedColumn} from "./renderedColumn";
 
@@ -23,7 +22,7 @@ export class ColumnSelectPanel extends Component {
 
     private static TEMPLATE = '<div class="ag-column-select-panel"></div>';
 
-    private renderedItems: {[key: string]: RenderedItem};
+    private renderedItems: {[key: string]: Component};
 
     private columnTree: OriginalColumnGroupChild[];
 
@@ -56,7 +55,7 @@ export class ColumnSelectPanel extends Component {
     private destroyAllRenderedElements(): void {
         _.removeAllChildren(this.getGui());
         if (this.renderedItems) {
-            _.iterateObject(this.renderedItems, (key: string, renderedItem: RenderedItem) => renderedItem.destroy() );
+            _.iterateObject(this.renderedItems, (key: string, renderedItem: Component) => renderedItem.destroy() );
         }
         this.renderedItems = {};
     }

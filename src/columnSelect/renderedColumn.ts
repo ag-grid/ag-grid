@@ -1,17 +1,19 @@
-import {Utils as _} from "ag-grid/main";
-import {SvgFactory} from "ag-grid/main";
-import {RenderedItem} from "./renderedItem";
-import {Autowired} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {DragAndDropService} from "ag-grid/main";
-import {GridPanel} from "ag-grid/main";
-import {Column} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
-import {DragSource} from "ag-grid/main";
+import {
+    Utils as _,
+    SvgFactory,
+    Autowired,
+    Component,
+    ColumnController,
+    DragAndDropService,
+    GridPanel,
+    Column,
+    PostConstruct,
+    DragSource
+} from "ag-grid/main";
 
 var svgFactory = SvgFactory.getInstance();
 
-export class RenderedColumn extends RenderedItem {
+export class RenderedColumn extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +

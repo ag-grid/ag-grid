@@ -1,16 +1,18 @@
-import {Utils as _} from "ag-grid/main";
-import {SvgFactory} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {RenderedItem} from "./renderedItem";
-import {GridOptionsWrapper} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {GridPanel} from "ag-grid/main";
-import {OriginalColumnGroup} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
+import {
+    Utils as _,
+    SvgFactory,
+    Autowired,
+    Component,
+    GridOptionsWrapper,
+    ColumnController,
+    GridPanel,
+    OriginalColumnGroup,
+    PostConstruct
+} from "ag-grid/main";
 
 var svgFactory = SvgFactory.getInstance();
 
-export class RenderedGroup extends RenderedItem {
+export class RenderedGroup extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
