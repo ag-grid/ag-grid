@@ -96,10 +96,10 @@ export class DragAndDropService {
     // we do not need to clean up drag sources, as we are just adding a listener to the element.
     // when the element is disposed, the drag source is also disposed, even though this service
     // remains. this is a bit different to normal 'addListener' methods
-    public addDragSource(params: DragSource): void {
+    public addDragSource(dragSource: DragSource): void {
         this.dragService.addDragSource({
-            eElement: params.eElement,
-            onDragStart: this.onDragStart.bind(this, params),
+            eElement: dragSource.eElement,
+            onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
         });
