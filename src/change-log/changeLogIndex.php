@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <h3>Version xxx</h3>
-    <li>Fixed bug in rowGroupPanel - when dragging items out of panel, GUI wasn't redrawing correctly and crashing, causing inconsistent state and console error messages</li>
+    <li>Bug fix: when dragging columns out of rowGroupPanel, GUI wasn't redrawing correctly and crashing, causing inconsistent state and console error messages</li>
+    <li>Bug fix: disabled menu items were still allowed to be clicked</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
