@@ -47,8 +47,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public setMoving(moving: boolean) {
-        this.moving = moving;
-        this.eventService.dispatchEvent(Column.EVENT_MOVING_CHANGED);
+        this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
     }
 
     public isMoving(): boolean {

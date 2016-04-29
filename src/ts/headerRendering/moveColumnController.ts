@@ -67,11 +67,11 @@ export class MoveColumnController {
         }
     }
 
-    private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], draggingEvent: DraggingEvent, xAdjustedForScroll: number) {
-        if (draggingEvent.direction === DragAndDropService.DIRECTION_LEFT) {
-            return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, draggingEvent.dragSource.dragItem, xAdjustedForScroll);
+    private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, direction: string, xAdjustedForScroll: number) {
+        if (direction === DragAndDropService.DIRECTION_LEFT) {
+            return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumn, xAdjustedForScroll);
         } else {
-            return this.getNewIndexForColMovingRight(displayedColumns, allColumns, draggingEvent.dragSource.dragItem, xAdjustedForScroll);
+            return this.getNewIndexForColMovingRight(displayedColumns, allColumns, dragColumn, xAdjustedForScroll);
         }
     }
 
@@ -105,30 +105,58 @@ export class MoveColumnController {
         var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
         this.checkCenterForScrolling(xAdjustedForScroll);
 
-        // find out what the correct position is for this column
-        this.checkColIndexAndMove(draggingEvent, xAdjustedForScroll);
+        var dragItem = draggingEvent.dragSource.dragItem;
+        if (dragItem instanceof Column) {
+            this.attemptColumnMove(<Column>dragItem, draggingEvent.direction, xAdjustedForScroll);
+        } else {
+            this.attemptColumnGroupMove(<ColumnGroup>dragItem, draggingEvent.direction, xAdjustedForScroll);
+        }
     }
 
-    private checkColIndexAndMove(draggingEvent: DraggingEvent, xAdjustedForScroll: number): void {
+    private attemptColumnGroupMove(dragColumnGroup: ColumnGroup, dragDirection: string, xAdjustedForScroll: number): void {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
         var allColumns = this.columnController.getAllColumns();
-        var newIndex = this.workOutNewIndex(displayedColumns, allColumns, draggingEvent, xAdjustedForScroll);
+
+        var dragColumn: Column;
+        var allMovingColumns = dragColumnGroup.getDisplayedLeafColumns();
+        if (dragDirection === DragAndDropService.DIRECTION_LEFT) {
+            dragColumn = allMovingColumns[0];
+        } else {
+            dragColumn = allMovingColumns[allMovingColumns.length-1];
+        }
+
+        var newIndex = this.workOutNewIndex(displayedColumns, allColumns, dragColumn, dragDirection, xAdjustedForScroll);
         var oldColumn = allColumns[newIndex];
 
         // if col already at required location, do nothing
-        if (oldColumn === draggingEvent.dragSource.dragItem) {
+        if (oldColumn === dragColumn) {
             return;
         }
 
         // we move one column, UNLESS the column is the only visible column
         // of a group, in which case we move the whole group.
-        var columnsToMove = this.getColumnsAndOrphans(draggingEvent.dragSource.dragItem);
+        // var columnsToMove = this.getColumnsAndOrphans(dragColumn);
+        this.columnController.moveColumns(allMovingColumns, newIndex);
+    }
+
+    private attemptColumnMove(dragColumn: Column, dragDirection: string, xAdjustedForScroll: number): void {
+        var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
+        var allColumns = this.columnController.getAllColumns();
+        var newIndex = this.workOutNewIndex(displayedColumns, allColumns, dragColumn, dragDirection, xAdjustedForScroll);
+        var oldColumn = allColumns[newIndex];
+
+        // if col already at required location, do nothing
+        if (oldColumn === dragColumn) {
+            return;
+        }
+
+        // we move one column, UNLESS the column is the only visible column
+        // of a group, in which case we move the whole group.
+        var columnsToMove = this.getColumnsAndOrphans(dragColumn);
         this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
     }
 
-    private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumnOrGroup: Column | ColumnGroup, x: number): number {
-
-        var dragColumn = <Column> dragColumnOrGroup;
+    private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, x: number): number {
 
         var usedX = 0;
         var leftColumn: Column = null;
