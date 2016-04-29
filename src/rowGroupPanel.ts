@@ -116,7 +116,7 @@ export class RowGroupPanel extends Component {
         var rowGroupColumns = this.columnController.getRowGroupColumns();
 
         var thisPanelStartedTheDrag = draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget;
-        var dragItemIsGrouped = rowGroupColumns.indexOf(draggingEvent.dragSource.dragItem) >= 0;
+        var dragItemIsGrouped = rowGroupColumns.indexOf(<Column>draggingEvent.dragSource.dragItem) >= 0;
         var needToUngroupThisCol = thisPanelStartedTheDrag && dragItemIsGrouped;
 
         if (needToUngroupThisCol) {
