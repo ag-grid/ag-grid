@@ -33,22 +33,38 @@ export class RowGroupPanel extends Component {
 
     private logger: Logger;
     private dropTarget: DropTarget;
-    private ePotentialDropGui: HTMLElement;
+
+    // when we are considering a drop from a dnd event, the item to be dropped
+    // is in here
+    private potentialDragItem: Column;
+
+    private guiDestroyFunctions: (()=>void)[] = [];
 
     constructor() {
         super('<div class="ag-row-group-panel ag-font-style"></div>');
     }
 
+    public destroy(): void {
+        this.destroyGui();
+        super.destroy();
+    }
+
+    private destroyGui(): void {
+        this.guiDestroyFunctions.forEach( (func) => func() );
+        this.guiDestroyFunctions.length = 0;
+        _.removeAllChildren(this.getGui());
+    }
+
     @PostConstruct
     public init(): void {
         this.logger = this.loggerFactory.create('RowGroupPanel');
-        this.globalEventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnChanged.bind(this));
-        this.globalEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnChanged.bind(this));
+        this.globalEventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.globalEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
         // if columnController first, then below will work
         // if columnController second, then below will put blank in, and then above event gets first when columnController is set up
-        this.onColumnChanged();
+        this.refreshGui();
     }
 
     private setupDropTarget(): void {
@@ -85,8 +101,10 @@ export class RowGroupPanel extends Component {
             this.dragAndDropService.setGhostIcon(null);
         } else {
             // allow group
-            this.addPotentialDropToGui(column);
+            this.potentialDragItem = column;
+            // this.addPotentialDropToGui(column);
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_GROUP);
+            this.refreshGui();
         }
 
     }
@@ -94,100 +112,98 @@ export class RowGroupPanel extends Component {
     private onDragLeave(draggingEvent: DraggingEvent): void {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'
-        if (draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget) {
+
+        var rowGroupColumns = this.columnController.getRowGroupColumns();
+
+        var thisPanelStartedTheDrag = draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget;
+        var dragItemIsGrouped = rowGroupColumns.indexOf(draggingEvent.dragSource.dragItem) >= 0;
+        var needToUngroupThisCol = thisPanelStartedTheDrag && dragItemIsGrouped;
+
+        if (needToUngroupThisCol) {
             this.gridPanel.turnOnAnimationForABit();
             this.columnController.removeRowGroupColumn(draggingEvent.dragSource.dragItem);
             this.columnController.setColumnVisible(draggingEvent.dragSource.dragItem, true);
         }
-        if (this.ePotentialDropGui) {
-            this.removePotentialDropFromGui();
+
+        if (this.potentialDragItem) {
+            this.potentialDragItem = null;
+            this.refreshGui();
         }
     }
 
     private onDragStop(draggingEvent: DraggingEvent): void {
         //this.columnController.addRowGroupColumn(draggingEvent.dragItem);
-        if (this.ePotentialDropGui) {
+        if (this.potentialDragItem) {
             // not necessary to remove it, as the change to rowGroups results in
             // this panel refreshing, however my brain will be more at peace if we do
-            this.removePotentialDropFromGui();
+            // this.removePotentialDropFromGui();
             this.columnController.addRowGroupColumn(draggingEvent.dragSource.dragItem);
+            this.potentialDragItem = null;
+            this.refreshGui();
         }
     }
 
-    private onColumnChanged(): void {
-        _.removeAllChildren(this.getGui());
+    private refreshGui(): void {
+        this.destroyGui();
 
-        var columns = this.columnController.getRowGroupColumns();
+        this.addGroupIconToGui();
+        this.addEmptyMessageToGui();
+        this.addRowGroupColumnsToGui();
+        this.addPotentialDragItemToGui();
+    }
 
-        if (columns.length > 0) {
-            this.addColumnsToGui(columns);
-        } else {
-            this.addEmptyMessageToGui();
+    private addPotentialDragItemToGui(): void {
+        var rowGroupColumns = this.columnController.getRowGroupColumns();
+        if (this.potentialDragItem) {
+            if (rowGroupColumns.length!==0) {
+                this.addArrowToGui();
+            }
+            var ghostCell = new RenderedGroupedColumnCell(this.potentialDragItem, this.dropTarget, true);
+            this.context.wireBean(ghostCell);
+            this.getGui().appendChild(ghostCell.getGui());
+            this.guiDestroyFunctions.push( ()=> ghostCell.destroy() );
         }
     }
 
-    private removePotentialDropFromGui(): void {
-        this.getGui().removeChild(this.ePotentialDropGui);
-        this.ePotentialDropGui = null;
-        // if no groupings, need to add the empty message back in
-        if (this.columnController.getRowGroupColumns().length === 0) {
-            this.addEmptyMessageToGui();
-        }
-    }
-
-    private addPotentialDropToGui(column: Column): void {
-        this.ePotentialDropGui = document.createElement('span');
-        if (this.columnController.getRowGroupColumns().length === 0) {
-            // if no groupings, need to remove the empty message
-            _.removeAllChildren(this.getGui());
-            var eGroupIcon = svgFactory.createGroupIcon();
-            _.addCssClass(eGroupIcon, 'ag-faded');
-            _.addCssClass(eGroupIcon, 'ag-row-group-icon');
-            this.ePotentialDropGui.appendChild(eGroupIcon);
-        } else {
-            // otherwise we need to add an arrow
-            var eArrow = document.createElement('span');
-            eArrow.innerHTML = '&#8594;';
-            this.ePotentialDropGui.appendChild(eArrow);
-        }
-        var cell = new RenderedGroupedColumnCell(column, this.dropTarget, true);
-        this.context.wireBean(cell);
-        this.ePotentialDropGui.appendChild(cell.getGui());
-
-        this.getGui().appendChild(this.ePotentialDropGui);
-    }
-
-    private addColumnsToGui(columns: Column[]): void {
-        var eGroupIcon = svgFactory.createGroupIcon();
-        _.addCssClass(eGroupIcon, 'ag-row-group-icon');
-        this.getGui().appendChild(eGroupIcon);
-
-        columns.forEach( (column: Column, index: number) => {
+    private addRowGroupColumnsToGui(): void {
+        var rowGroupColumns = this.columnController.getRowGroupColumns();
+        rowGroupColumns.forEach( (column: Column, index: number) => {
             if (index > 0) {
-                var eArrow = document.createElement('span');
-                eArrow.innerHTML = '&#8594;';
-                this.getGui().appendChild(eArrow);
+                this.addArrowToGui();
             }
             var cell = new RenderedGroupedColumnCell(column, this.dropTarget);
             this.context.wireBean(cell);
             this.getGui().appendChild(cell.getGui());
+            this.guiDestroyFunctions.push( ()=> cell.destroy() );
         });
     }
 
-    private addEmptyMessageToGui(): void {
-        // add in faded group icon
+    private addGroupIconToGui(): void {
+        var rowGroupColumns = this.columnController.getRowGroupColumns();
+        var iconFaded = rowGroupColumns.length === 0;
         var eGroupIcon = svgFactory.createGroupIcon();
-        _.addCssClass(eGroupIcon, 'ag-faded ag-row-group-icon');
+        _.addCssClass(eGroupIcon, 'ag-row-group-icon');
+        _.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
         this.getGui().appendChild(eGroupIcon);
+    }
 
-        // add in message
+    private addEmptyMessageToGui(): void {
+        var rowGroupColumns = this.columnController.getRowGroupColumns();
+        var showEmptyMessage = rowGroupColumns.length === 0 && !this.potentialDragItem;
+        if (!showEmptyMessage) { return; }
+
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var rowGroupColumnsEmptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag columns here to group');
         var eMessage = document.createElement('span');
         eMessage.innerHTML = rowGroupColumnsEmptyMessage;
         _.addCssClass(eMessage, 'ag-row-group-empty-message');
-
         this.getGui().appendChild(eMessage);
+    }
+
+    private addArrowToGui(): void {
+        var eArrow = document.createElement('span');
+        eArrow.innerHTML = '&#8594;';
+        this.getGui().appendChild(eArrow);
     }
 }
 
