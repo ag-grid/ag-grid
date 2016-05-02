@@ -154,6 +154,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             this.childScope = parentScope.$new();
             this.childScope.colDef = this.column.getColDef();
             this.childScope.colDefWrapper = this.column;
+            this.childScope.context = this.gridOptionsWrapper.getContext();
 
             this.destroyFunctions.push( ()=> {
                 this.childScope.$destroy();
