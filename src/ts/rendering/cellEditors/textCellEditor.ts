@@ -40,7 +40,9 @@ export class TextCellEditor extends Component implements ICellEditor {
             }
         }
 
-        eInput.value = startValue;
+	if (startValue !== undefined) {
+            eInput.value = startValue;
+	}
     }
 
     public afterGuiAttached(): void {
