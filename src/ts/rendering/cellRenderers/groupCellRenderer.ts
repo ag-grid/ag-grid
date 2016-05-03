@@ -80,9 +80,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             }
             var paddingPx = node.level * paddingFactor;
             if (node.footer) {
-                paddingPx += 10;
+                paddingPx += 15;
             } else if (!node.group) {
-                paddingPx += 5;
+                paddingPx += 10;
             }
             this.getGui().style.paddingLeft = paddingPx + 'px';
         }
