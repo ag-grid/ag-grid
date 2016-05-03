@@ -1,0 +1,134 @@
+@import 'nib'
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic,100,300)
+
+secondary-color = rgb(255,64,129)
+material-elevation-1 = 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)
+
+arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'><path d='M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z'></path></svg>"
+
+.ag-material
+    box-shadow: material-elevation-1
+    font-family: "Roboto"
+    
+    .ag-root
+        
+     .ag-header
+        color: rgba(0, 0, 0, 0.54)
+        font-size: 12px
+        height: 56px !important;
+        
+        .ag-header-row
+            height: 100% !important
+            border-bottom: 1px solid #EDEDED
+            box-sizing: border-box
+            
+        .ag-header-cell
+            padding: 20px 24px
+            cursor: pointer
+            font-weight: bold   
+            text-align: left
+            
+        .ag-header-cell:first-child
+            padding-right: 0px
+            
+        .ag-sort-ascending-icon, .ag-sort-descending-icon
+            display: none !important
+            
+        .ag-header-cell-text:after
+            position: absolute
+            content: ''
+            background: url(arrow-up) no-repeat
+            width: 15px;
+            height: 15px;
+            margin: 0px 10px;
+            display: none
+         
+        .ag-header-cell-sorted-asc, .ag-header-cell-sorted-desc
+            color: rgba(0,0,0,.87)
+            
+            .ag-header-cell-text:after
+                display: initial
+                
+         .ag-header-cell-sorted-desc .ag-header-cell-text:after
+            transform: rotate(180deg)
+            transition: 0.2s linear
+         
+      .ag-filter
+          background: #FAFAFA
+          box-shadow: material-elevation-1
+          margin-top: 24px;
+          padding: 6px;
+              
+      .ag-body
+          color: rgba(0, 0, 0, 0.87)
+          font-size: 13px
+          padding-top: 56px !important
+          
+          .ag-row
+              border-bottom: 1px solid #EDEDED
+              height: 48px !important
+              transition: 0.2s background ease-in
+              
+          .ag-row:hover
+              background: #EEEEEE
+              
+          .ag-row.ag-row-selected
+              background: #F5F5F5
+              
+          .ag-cell
+              outline: none
+              padding: 16px 24px 
+              font-weight: 500
+          
+          .ag-cell:first-child
+              padding-right: 0px
+              
+    .ag-selection-checkbox
+        margin: -1px 0px
+        cursor: pointer
+        height: 18px;
+        width: 18px;
+        
+    .ag-selection-checkbox:focus
+        outline: none
+        
+    .ag-selection-checkbox + .ag-cell-value
+        position: absolute;
+        left: 24px;
+        top: 15px;
+        pointer-events: none;  
+        
+    .ag-selection-checkbox + .ag-cell-value:before 
+        width: 18px
+        height: 18px
+        border: 2px solid #757575
+        border-radius: 2px
+        content: ''
+        background: #fff
+        position: absolute
+        box-sizing: border-box
+        transition: 0.2s all ease-in
+        
+    .ag-selection-checkbox:checked + .ag-cell-value:before 
+        background: secondary-color
+        border-color: secondary-color
+    
+    .ag-selection-checkbox:checked + .ag-cell-value:after 
+        border-bottom : 2px solid #fff
+        border-left: 2px solid #fff
+        border-bottom-left-radius: 1px
+        content: ''
+        position: absolute
+        box-sizing: border-box
+        width: 12px
+        height: 6px
+        margin: 5px 3px
+        transform: rotate(-45deg)
+        
+     .ag-header
+     
+        .ag-selection-checkbox + .ag-cell-value
+            top: 19px
+            
+     
