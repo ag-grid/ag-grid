@@ -414,8 +414,12 @@ export class RenderedCell extends Component {
             // otherwise we just move to the next cell
             editNextCell = false;
         }
-        this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
-        event.preventDefault();
+        var foundCell = this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            event.preventDefault();
+        }
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
