@@ -63,6 +63,8 @@ export class CheckboxSelectionComponent extends Component {
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
         this.addGuiEventListener('click', event => event.stopPropagation() );
+        // likewise we don't want double click on this icon to open a group
+        this.addGuiEventListener('dblclick', event => event.stopPropagation() );
 
         this.addDestroyableEventListener(this.eCheckedIcon, 'click', this.onCheckedClicked.bind(this));
         this.addDestroyableEventListener(this.eUncheckedIcon, 'click', this.onUncheckedClicked.bind(this));
