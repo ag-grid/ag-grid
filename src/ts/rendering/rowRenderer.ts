@@ -1,6 +1,5 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ExpressionService} from "../expressionService";
 import {TemplateService} from "../templateService";
@@ -30,7 +29,6 @@ export class RowRenderer {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridCore') private gridCore: GridCore;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;

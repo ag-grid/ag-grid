@@ -35,8 +35,8 @@ export class SvgFactory {
         return eSvg;
     }
 
-    public createMenuSvg(): Element {
-        var eSvg = document.createElementNS(SVG_NS, "svg");
+    public createMenuSvg(): HTMLElement {
+        var eSvg = <HTMLElement> document.createElementNS(SVG_NS, "svg");
         var size = "12";
         eSvg.setAttribute("width", size);
         eSvg.setAttribute("height", size);
@@ -72,7 +72,7 @@ export class SvgFactory {
         return eSvg;
     }
 
-    public createArrowUpSvg() {
+    public createArrowUpSvg(): HTMLElement {
         return createPolygonSvg("0,10 5,0 10,10");
     }
 
@@ -309,7 +309,7 @@ export class SvgFactory {
     return eSvg;
 }*/
 
-function createPolygonSvg(points: any, width?: any) {
+function createPolygonSvg(points: any, width?: any): HTMLElement {
     var eSvg = createIconSvg(width);
 
     var eDescIcon = document.createElementNS(SVG_NS, "polygon");
@@ -320,8 +320,8 @@ function createPolygonSvg(points: any, width?: any) {
 }
 
 // util function for the above
-function createIconSvg(width?: any) {
-    var eSvg = document.createElementNS(SVG_NS, "svg");
+function createIconSvg(width?: any): HTMLElement {
+    var eSvg = <HTMLElement> document.createElementNS(SVG_NS, "svg");
     if (width > 0) {
         eSvg.setAttribute("width", width);
         eSvg.setAttribute("height", width);

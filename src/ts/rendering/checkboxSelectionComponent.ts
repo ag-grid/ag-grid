@@ -4,34 +4,70 @@ import {RowNode} from "../entities/rowNode";
 import {Utils as _} from '../utils';
 import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {SvgFactory} from "../svgFactory";
+
+var svgFactory = SvgFactory.getInstance();
 
 export class CheckboxSelectionComponent extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    private eCheckedIcon: HTMLElement;
+    private eUncheckedIcon: HTMLElement;
+    private eIndeterminateIcon: HTMLElement;
+
+    private rowNode: RowNode;
+
     constructor() {
-        super(`<input type="checkbox" name="name" class="ag-selection-checkbox"/>`);
+        super(`<span class="ag-selection-checkbox"/>`);
+    }
+
+    private createAndAddIcons(): void {
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon);
+        this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon);
+
+        var eGui = this.getGui();
+        eGui.appendChild(this.eCheckedIcon);
+        eGui.appendChild(this.eUncheckedIcon);
+        eGui.appendChild(this.eIndeterminateIcon);
+    }
+
+    private onSelectionChanged(): void {
+        var state = this.rowNode.isSelected();
+        _.setVisible(this.eCheckedIcon, state === true);
+        _.setVisible(this.eUncheckedIcon, state === false);
+        _.setVisible(this.eIndeterminateIcon, typeof state !== 'boolean');
+    }
+
+    private onCheckedClicked(): void {
+        this.rowNode.setSelected(false);
+    }
+
+    private onUncheckedClicked(): void {
+        this.rowNode.setSelected(true);
+    }
+
+    private onIndeterminateClicked(): void {
+        this.rowNode.setSelected(true);
     }
 
     public init(params: any): void {
 
-        var rowNode = <RowNode> params.rowNode;
-        var eCheckbox = <HTMLInputElement> this.getGui();
+        this.createAndAddIcons();
 
-        _.setCheckboxState(eCheckbox, rowNode.isSelected());
+        this.rowNode = params.rowNode;
+
+        this.onSelectionChanged();
 
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
         this.addGuiEventListener('click', event => event.stopPropagation() );
 
-        this.addGuiEventListener('change', () => {
-            var newValue = eCheckbox.checked;
-            rowNode.setSelected(newValue);
-        });
+        this.addDestroyableEventListener(this.eCheckedIcon, 'click', this.onCheckedClicked.bind(this));
+        this.addDestroyableEventListener(this.eUncheckedIcon, 'click', this.onUncheckedClicked.bind(this));
+        this.addDestroyableEventListener(this.eIndeterminateIcon, 'click', this.onIndeterminateClicked.bind(this));
 
-        var selectionChangedCallback = ()=> _.setCheckboxState(eCheckbox, rowNode.isSelected());
-        rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback);
-
-        this.addDestroyFunc( ()=> rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, selectionChangedCallback));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
     }
 }

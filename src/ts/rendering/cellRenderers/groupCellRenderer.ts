@@ -1,11 +1,10 @@
 
 import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {SelectionRendererFactory} from "../../selectionRendererFactory";
 import {ExpressionService} from "../../expressionService";
 import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
-import {Utils as _} from '../../utils';
+import {Utils as _} from "../../utils";
 import {Events} from "../../events";
 import {Autowired, Context} from "../../context/context";
 import {Component} from "../../widgets/component";
@@ -14,8 +13,6 @@ import {RowNode} from "../../entities/rowNode";
 import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
-import {Column} from "../../entities/column";
-import {ColDef} from "../../entities/colDef";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 
 var svgFactory = SvgFactory.getInstance();
@@ -32,7 +29,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         '</span>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
@@ -199,8 +195,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         var checkboxNeeded = params.checkbox && !this.rowNode.footer &&!this.rowNode.floating;
         if (checkboxNeeded) {
             var cbSelectionComponent = new CheckboxSelectionComponent();
-            cbSelectionComponent.init({rowNode: this.rowNode});
             this.context.wireBean(cbSelectionComponent);
+            cbSelectionComponent.init({rowNode: this.rowNode});
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }

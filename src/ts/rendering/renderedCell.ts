@@ -3,7 +3,6 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../expressionService";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {RowRenderer} from "./rowRenderer";
 import {TemplateService} from "../templateService";
 import {ColumnController, ColumnApi} from "../columnController/columnController";
@@ -36,7 +35,6 @@ export class RenderedCell extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('$compile') private $compile: any;
     @Autowired('templateService') private templateService: TemplateService;
@@ -905,8 +903,8 @@ export class RenderedCell extends Component {
             this.eGridCell.appendChild(this.eCellWrapper);
 
             var cbSelectionComponent = new CheckboxSelectionComponent();
-            cbSelectionComponent.init({rowNode: this.node});
             this.context.wireBean(cbSelectionComponent);
+            cbSelectionComponent.init({rowNode: this.node});
             this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
 

@@ -363,13 +363,13 @@ export class Utils {
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
      */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => Node) {
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
         var eResult = document.createElement('span');
         eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
         return eResult;
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => Node) {
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
         var userProvidedIcon: Function | string;
         // check col for icon first
         if (colDefWrapper && colDefWrapper.getColDef().icons) {

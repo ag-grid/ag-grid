@@ -6,7 +6,6 @@ import {ColDef} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Grid} from "../grid";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {ExpressionService} from "../expressionService";
 import {BalancedColumnTreeBuilder} from "./balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./displayedGroupCreator";
@@ -111,7 +110,6 @@ export class ColumnApi {
 export class ColumnController {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;

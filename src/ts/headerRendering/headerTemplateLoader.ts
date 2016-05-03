@@ -88,7 +88,7 @@ export class HeaderTemplateLoader {
         return eTemplate;
     }
 
-    private addInIcon(eTemplate: HTMLElement, iconName: string, cssSelector: string, column: Column, defaultIconFactory: () => Node): void {
+    private addInIcon(eTemplate: HTMLElement, iconName: string, cssSelector: string, column: Column, defaultIconFactory: () => HTMLElement): void {
         var eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
         eTemplate.querySelector(cssSelector).appendChild(eIcon);
     }
