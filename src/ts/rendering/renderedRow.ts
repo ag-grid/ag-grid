@@ -454,6 +454,7 @@ export class RenderedRow {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             var newChildScope = this.parentScope.$new();
             newChildScope.data = data;
+            newChildScope.context = this.gridOptionsWrapper.getContext();
             return newChildScope;
         } else {
             return null;
