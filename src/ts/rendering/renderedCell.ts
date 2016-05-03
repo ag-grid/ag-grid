@@ -3,7 +3,6 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../expressionService";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {RowRenderer} from "./rowRenderer";
 import {TemplateService} from "../templateService";
 import {ColumnController, ColumnApi} from "../columnController/columnController";
@@ -27,6 +26,7 @@ import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
+import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 
 export class RenderedCell extends Component {
 
@@ -35,7 +35,6 @@ export class RenderedCell extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('$compile') private $compile: any;
     @Autowired('templateService') private templateService: TemplateService;
@@ -73,7 +72,6 @@ export class RenderedCell extends Component {
 
     private scope: any;
 
-    private eCheckbox: HTMLInputElement;
     private cellEditor: ICellEditor;
     private cellRenderer: ICellRenderer;
 
@@ -414,8 +412,12 @@ export class RenderedCell extends Component {
             // otherwise we just move to the next cell
             editNextCell = false;
         }
-        this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
-        event.preventDefault();
+        var foundCell = this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            event.preventDefault();
+        }
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
@@ -900,9 +902,11 @@ export class RenderedCell extends Component {
             _.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
             this.eGridCell.appendChild(this.eCellWrapper);
 
-            //this.createSelectionCheckbox();
-            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.renderedRow.addEventListener.bind(this.renderedRow));
-            this.eCellWrapper.appendChild(this.eCheckbox);
+            var cbSelectionComponent = new CheckboxSelectionComponent();
+            this.context.wireBean(cbSelectionComponent);
+            cbSelectionComponent.init({rowNode: this.node});
+            this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
+            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
             this.eSpanWithValue = document.createElement('span');

@@ -17,7 +17,6 @@ import {GridApi} from "./gridApi";
 import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
-import {SelectionRendererFactory} from "./selectionRendererFactory";
 import {ExpressionService} from "./expressionService";
 import {TemplateService} from "./templateService";
 import {PopupService} from "./widgets/popupService";
@@ -94,7 +93,7 @@ export class Grid {
             },
             beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, SelectionRendererFactory, ColumnController, RowRenderer,
+                FilterManager, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
                 TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
