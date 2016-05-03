@@ -12,6 +12,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bug fix: when dragging columns out of rowGroupPanel, GUI wasn't redrawing correctly and crashing, causing inconsistent state and console error messages</li>
     <li>Bug fix: disabled menu items were still allowed to be clicked</li>
     <li>Bug fix: you can now tab into and out of the grid.</li>
+    <li>Bug fix: default text editor was displaying 'undefined' when initial value was missing. now showing blank.</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
