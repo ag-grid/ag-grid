@@ -243,6 +243,24 @@ export class SvgFactory {
         return eImg;
     }
 
+    public createCheckboxCheckedIcon() {
+        var eImg = document.createElement('img');
+        eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVVJREFUeNrEU7FugzAQPUcFhZRmAoaMXbpEXdv/YM7OxtwJMXXJwhBlyMQ/5CPo3EodKiGxoQwhtEAiQpT6WWUgIWolhp50enf2u3c2nNnxeKQu1qOO1lngqg4cxyHG2C0PH7jfXOB/cX/h1w5d120KVFUFeLRt+8kwjHFb9Wq1evM875mH4dkJyrIEDDVNG/+INSyOYxqNRmPOG7Z+g91uB2coPvXNZkPL5VLE4IB7UeBwONBsNqP1ek37/V6g7/uU5zlh7zeBHorQcT6fUxiGApGbpikEwWkVKIoCLk4wmUwoSRJaLBYCkSuKIk4ADrhnAtvtFi4EBoMBWZZFaZoKRI7u2AMH3DOBIAjQLYui6F2WZdJ1nabTqUBJkghr2AMH3NpY/Rb4EOmqqt73+/07Hl+3zQHn5vz+H1mWvfI4PhVAEf4x+8MEf/K6rCHwb4/pW4ABAGkv7mEJb7TSAAAAAElFTkSuQmCC';
+        return eImg;
+    }
+
+    public createCheckboxUncheckedIcon() {
+        var eImg = document.createElement('img');
+        eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQVJREFUeNrEU00LgkAQ3V1XkbJO5g/o1EG61r/y3Ek8dfZf2bkg6CB4Cy9CLSp+NgMVWGsFHhoY5uG+ebwdZ2nbtmRIMDIwBgvwB3Bdl1BK5wBXkJMe/hVyB9cOPc/rClRVhWXtOM7Gsixb1h3H8cH3/S3A8M1BURRYpqZp2next8Az4E2lV8jzHAvF5qZp5ANjDHn0o0Bd16TPAef8qwAry7JXAHcGeEwqkKbp0wGKyAL+EvLkDrIs+yqgKAryqHSRgiAgSZKIKIqOmqYRVVU7id/wDDnIfbp6vAWwNzMMY6nr+gLwqGcGKczgJITYAz6/CoxxDxD+sMEX6BMdgb89ppsAAwDi5ZEgMNjfAQAAAABJRU5ErkJggg==';
+        return eImg;
+    }
+
+    public createCheckboxIndeterminateIcon() {
+        var eImg = document.createElement('img');
+        eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUBJREFUeNrEU71qhEAQnvUPScxhYcQ6NimOtMkD2Nxj3BNYpzquSu3T+AqmTiAS8MBORPBIRA/P08xIPDBufuCKDAz7MfPNx8zuLOu6Dk4xAU60kwWkAaxWK2CMXSG8Rb/4hv+O/ohjb9br9VigaRo67lzXvTdNc86rTtP02fO8B4SbSQd1XdMxMwxj/ik2Mcohb8YdYbfb0cGouG1b8H0fkiTpc5ZlwWKxAEEQiMd+FDgcDv04YRgeSdvtFhzHAUmSfhUQ9vt9L5Bl2ah9itPOIE/gCpRleeyAyLquQxRFfc627T6Gr0Q8fgdVVY0ElsvlpANRFInHuIsUBAHkeV7EcfyiKArIsjxyilGOOMQdjA1/Adu71DTtRlXVa8RnvGdEbol38FoUxRPi5KvAOe0BwT9s8BvWFSOBf/tMHwIMABzVrS7gMYnMAAAAAElFTkSuQmCC';
+        return eImg;
+    }
+
 }
 
 // i couldn't figure out how to not make these blurry

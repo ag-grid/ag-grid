@@ -7,7 +7,7 @@ import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
 import {Utils as _} from '../../utils';
 import {Events} from "../../events";
-import {Autowired} from "../../context/context";
+import {Autowired, Context} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {ICellRenderer} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
@@ -16,6 +16,7 @@ import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
 import {Column} from "../../entities/column";
 import {ColDef} from "../../entities/colDef";
+import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -36,6 +37,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('context') private context: Context;
 
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
@@ -196,8 +198,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private addCheckboxIfNeeded(params: any): void {
         var checkboxNeeded = params.checkbox && !this.rowNode.footer &&!this.rowNode.floating;
         if (checkboxNeeded) {
-            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.rowNode, params.addRenderedRowListener);
-            this.eCheckbox.appendChild(eCheckbox);
+            var cbSelectionComponent = new CheckboxSelectionComponent();
+            cbSelectionComponent.init({rowNode: this.rowNode});
+            this.context.wireBean(cbSelectionComponent);
+            this.eCheckbox.appendChild(cbSelectionComponent.getGui());
+            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
     }
 

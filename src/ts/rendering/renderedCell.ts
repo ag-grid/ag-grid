@@ -27,6 +27,7 @@ import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
+import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 
 export class RenderedCell extends Component {
 
@@ -73,7 +74,6 @@ export class RenderedCell extends Component {
 
     private scope: any;
 
-    private eCheckbox: HTMLInputElement;
     private cellEditor: ICellEditor;
     private cellRenderer: ICellRenderer;
 
@@ -904,9 +904,11 @@ export class RenderedCell extends Component {
             _.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
             this.eGridCell.appendChild(this.eCellWrapper);
 
-            //this.createSelectionCheckbox();
-            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.renderedRow.addEventListener.bind(this.renderedRow));
-            this.eCellWrapper.appendChild(this.eCheckbox);
+            var cbSelectionComponent = new CheckboxSelectionComponent();
+            cbSelectionComponent.init({rowNode: this.node});
+            this.context.wireBean(cbSelectionComponent);
+            this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
+            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
             this.eSpanWithValue = document.createElement('span');

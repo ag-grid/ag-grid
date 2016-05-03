@@ -398,7 +398,11 @@ export class Utils {
             }
         } else {
             // otherwise we use the built in icon
-            return svgFactoryFunc();
+            if (svgFactoryFunc) {
+                return svgFactoryFunc();
+            } else {
+                return null;
+            }
         }
     }
 

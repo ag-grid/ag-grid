@@ -72,7 +72,7 @@ export class Component implements IEventEmitter {
         this.destroyFunctions.forEach( func => func() );
     }
 
-    public addGuiEventListener(event: string, listener: ()=>void): void {
+    public addGuiEventListener(event: string, listener: (event: any)=>void): void {
         this.getGui().addEventListener(event, listener);
         this.destroyFunctions.push( ()=> this.getGui().removeEventListener(event, listener));
     }
