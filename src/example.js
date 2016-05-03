@@ -1,5 +1,4 @@
-
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
@@ -7,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 var gridDiv;
 
-var colNames = ["Station","Railway","Street","Address","Toy","Soft Box","Make and Model","Longest Day","Shortest Night"];
+var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
     {country: "Ireland", continent: "Europe", language: "English"},
@@ -30,25 +29,25 @@ var countries = [
     {country: "Uruguay", continent: "South America", language: "Spanish"}
 ];
 
-var games = ["Chess","Cross and Circle","Daldøs","Downfall","DVONN","Fanorona","Game of the Generals","Ghosts",
-    "Abalone","Agon","Backgammon","Battleship","Blockade","Blood Bowl","Bul","Camelot","Checkers",
-    "Go","Gipf","Guess Who?","Hare and Hounds","Hex","Hijara","Isola","Janggi (Korean Chess)","Le Jeu de la Guerre",
-    "Patolli","Plateau","PÜNCT","Rithmomachy","Sáhkku","Senet","Shogi","Space Hulk","Stratego","Sugoroku",
-    "Tâb","Tablut","Tantrix","Wari","Xiangqi (Chinese chess)","YINSH","ZÈRTZ","Kalah","Kamisado","Liu po",
-    "Lost Cities","Mad Gab","Master Mind","Nine Men's Morris","Obsession","Othello"
+var games = ["Chess", "Cross and Circle", "Daldøs", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
+    "Abalone", "Agon", "Backgammon", "Battleship", "Blockade", "Blood Bowl", "Bul", "Camelot", "Checkers",
+    "Go", "Gipf", "Guess Who?", "Hare and Hounds", "Hex", "Hijara", "Isola", "Janggi (Korean Chess)", "Le Jeu de la Guerre",
+    "Patolli", "Plateau", "PÜNCT", "Rithmomachy", "Sáhkku", "Senet", "Shogi", "Space Hulk", "Stratego", "Sugoroku",
+    "Tâb", "Tablut", "Tantrix", "Wari", "Xiangqi (Chinese chess)", "YINSH", "ZÈRTZ", "Kalah", "Kamisado", "Liu po",
+    "Lost Cities", "Mad Gab", "Master Mind", "Nine Men's Morris", "Obsession", "Othello"
 ];
 var booleanValues = [true, "true", false, "false", null, undefined, ""];
 
-var firstNames = ["Sophie","Isabelle","Emily","Olivia","Lily","Chloe","Isabella",
-    "Amelia","Jessica","Sophia","Ava","Charlotte","Mia","Lucy","Grace","Ruby",
-    "Ella","Evie","Freya","Isla","Poppy","Daisy","Layla"];
-var lastNames = ["Beckham","Black","Braxton","Brennan","Brock","Bryson","Cadwell",
-    "Cage","Carson","Chandler","Cohen","Cole","Corbin","Dallas","Dalton","Dane",
-    "Donovan","Easton","Fisher","Fletcher","Grady","Greyson","Griffin","Gunner",
-    "Hayden","Hudson","Hunter","Jacoby","Jagger","Jaxon","Jett","Kade","Kane",
-    "Keating","Keegan","Kingston","Kobe"];
+var firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
+    "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
+    "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
+var lastNames = ["Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+    "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
+    "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
+    "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
+    "Keating", "Keegan", "Kingston", "Kobe"];
 
-var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 var dataSize = '1x22';
 
@@ -95,41 +94,41 @@ var groupColumn = {
 // the moving animation looks crap on IE, firefox and safari, so we turn it off in the demo for them
 function suppressColumnMoveAnimation() {
     var isFirefox = typeof InstallTrigger !== 'undefined';
-    // At least Safari 3+: "[object HTMLElementConstructor]"
+// At least Safari 3+: "[object HTMLElementConstructor]"
     var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-    // Internet Explorer 6-11
+// Internet Explorer 6-11
     var isIE = /*@cc_on!@*/false || !!document.documentMode;
 
     return isFirefox || isSafari || isIE;
 }
 
 var gridOptions = {
-    //debug: true,
-    //suppressEnterprise: true,
+//debug: true,
+//suppressEnterprise: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
-    //minColWidth: 50,
-    //maxColWidth: 300,
-    //rowsBuffer: 1,
-    //columnDefs: [],
-    //singleClickEdit: true,
-    //rowData: [
-    //    {name: 'Niall'},
-    //    {name: 'Eamon'},
-    //    {name: 'Kevin'},
-    //    {name: 'Brian'}
-    //],
+//minColWidth: 50,
+//maxColWidth: 300,
+//rowsBuffer: 1,
+//columnDefs: [],
+//singleClickEdit: true,
+//rowData: [
+//    {name: 'Niall'},
+//    {name: 'Eamon'},
+//    {name: 'Kevin'},
+//    {name: 'Brian'}
+//],
     groupKeys: undefined, //set as string of keys eg ["region","country"],
 //            groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
-    //groupSuppressBlankHeader: true,
-    //suppressMovingCss: true,
-    //suppressMovableColumns: true,
-    //groupIncludeFooter: true,
+//groupSuppressBlankHeader: true,
+//suppressMovingCss: true,
+//suppressMovableColumns: true,
+//groupIncludeFooter: true,
     groupHideGroupColumns: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
-    //unSortIcon: true,
+//unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
@@ -140,30 +139,30 @@ var gridOptions = {
     rowDeselection: true,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-    //suppressContextMenu: true,
-    //suppressFieldDotNotation: true,
+//suppressContextMenu: true,
+//suppressFieldDotNotation: true,
     groupColumnDef: groupColumn,
-    //suppressCellSelection: true,
-    //suppressMultiSort: true,
+//suppressCellSelection: true,
+//suppressMultiSort: true,
     showToolPanel: window.innerWidth > 1000,
-    //toolPanelSuppressGroups: true,
-    //toolPanelSuppressValues: true,
-    //groupSuppressAutoColumn: true,
-    //groupAggFunction: groupAggFunction,
-    //groupAggFields: ['bankBalance','totalWinnings'],
-    checkboxSelection: function(params) {
+//toolPanelSuppressGroups: true,
+//toolPanelSuppressValues: true,
+//groupSuppressAutoColumn: true,
+//groupAggFunction: groupAggFunction,
+//groupAggFields: ['bankBalance','totalWinnings'],
+    checkboxSelection: function (params) {
         // we show checkbox selection in the first column, unless we are grouping,
         // as the group column is configured to always show selection
         var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
         return params.colIndex === 0 && !isGrouping;
     },
-    //suppressMenuFilterPanel: true,
-    //suppressMenuMainPanel: true,
-    //suppressMenuColumnPanel: true,
-    //forPrint: true,
-    //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
-    //headerCellRenderer: headerCellRenderer_text,
-    //headerCellRenderer: headerCellRenderer_dom,
+//suppressMenuFilterPanel: true,
+//suppressMenuMainPanel: true,
+//suppressMenuColumnPanel: true,
+//forPrint: true,
+//rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
+//headerCellRenderer: headerCellRenderer_text,
+//headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     icons: {
@@ -180,52 +179,52 @@ var gridOptions = {
         columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
     },
 
-    getBusinessKeyForNode: function(node) {
+    getBusinessKeyForNode: function (node) {
         if (node.data) {
             return node.data.name;
         } else {
             return '';
         }
     },
-    // isScrollLag: function() { return false; },
-    //suppressScrollLag: true,
-    // floatingTopRowData: [{},{},{}],
-    // floatingBottomRowData: [{},{},{}],
-    // callback when row clicked
-    onRowClicked: function(params) {
+// isScrollLag: function() { return false; },
+//suppressScrollLag: true,
+// floatingTopRowData: [{},{},{}],
+// floatingBottomRowData: [{},{},{}],
+// callback when row clicked
+    onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
-    onRowDoubleClicked: function(params) {
+    onRowDoubleClicked: function (params) {
         // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
-    // callback when cell clicked
-    onCellClicked: function(params) {
+// callback when cell clicked
+    onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-    // callback when cell double clicked
-    onCellDoubleClicked:  function(params) {
+// callback when cell double clicked
+    onCellDoubleClicked: function (params) {
         // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-    // callback when cell right clicked
-    onCellContextMenu:  function(params) {
+// callback when cell right clicked
+    onCellContextMenu: function (params) {
         console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-    onCellFocused: function(params) {
+    onCellFocused: function (params) {
         // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
-    onGridReady: function(event) {
+    onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
         //event.api.addGlobalListener(function(type, event) {
         //    console.log('event ' + type);
         //});
     },
-    onGridSizeChanged: function(event) {
+    onGridSizeChanged: function (event) {
         console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
     },
-    onRowGroupOpened: function(event) {
+    onRowGroupOpened: function (event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
     },
-    onRangeSelectionChanged: function(event) {
+    onRangeSelectionChanged: function (event) {
         //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
     getContextMenuItems: getContextMenuItems
@@ -249,19 +248,19 @@ function getContextMenuItems(params) {
 }
 
 var firstColumn = {
-    headerName: "Name",
-    field: "name",
-    width: 200,
-    editable: true,
-    filter: PersonFilter,
-    checkboxSelection: function(params) {
-        // we put checkbox on the name if we are not doing no grouping
-        return params.columnApi.getRowGroupColumns().length === 0;
-    },
-    icons: {
-        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-    }
+        headerName: "Name",
+        field: "name",
+        width: 200,
+        editable: true,
+        filter: PersonFilter,
+        checkboxSelection: function (params) {
+            // we put checkbox on the name if we are not doing no grouping
+            return params.columnApi.getRowGroupColumns().length === 0;
+        },
+        icons: {
+            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+        }
 };
 
 //var groupColumn = {
@@ -286,40 +285,41 @@ var defaultCols = [
         children: [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: CountryCellRenderer,
-                colId: 'a',
-                cellEditor: 'richSelect',
-                cellEditorParams: {
-                    cellRenderer: CountryCellRenderer,
-                    values: [ "Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
-                        "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
-                        "Uruguay", "Venezuela"]
-                },
-                //pinned: 'left',
-                floatCell: true,
-                filterParams: {
-                    cellRenderer: CountryCellRenderer,
-                    cellHeight: 20,
-                    newRowsAction: 'keep'
-                },
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
-            },
-            {headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                cellRenderer: languageCellRenderer,
-                cellEditor: 'select',
-                cellEditorParams: {
-                    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
-                },
-                //pinned: 'left',
-                headerTooltip: "Example tooltip for Language",
-                filterParams: {newRowsAction: 'keep'},
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
+        cellRenderer: CountryCellRenderer,
+        colId: 'a',
+        cellEditor: 'richSelect',
+        cellEditorParams: {
+            cellRenderer: CountryCellRenderer,
+            values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
+                "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
+                "Uruguay", "Venezuela"]
+        },
+        //pinned: 'left',
+        floatCell: true,
+        filterParams: {
+            cellRenderer: CountryCellRenderer,
+            cellHeight: 20,
+            newRowsAction: 'keep'
+        },
+        icons: {
+            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+        }
+    },
+    {
+        headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
+        cellRenderer: languageCellRenderer,
+        cellEditor: 'select',
+        cellEditorParams: {
+            values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
+        },
+        //pinned: 'left',
+        headerTooltip: "Example tooltip for Language",
+        filterParams: {newRowsAction: 'keep'},
+        icons: {
+            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+        }
             }
         ]
     },
@@ -328,17 +328,20 @@ var defaultCols = [
         headerName: 'Game of Choice',
         children: [
             {headerName: "Game of Choice", field: "game.name", width: 180, editable: true, filter: 'set',
-                cellClass: function() { return 'alphabet'; },
-                //pinned: 'right',
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
-            },
-            {headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
-                //pinned: 'right',
-                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
-                floatCell: true,
+        cellClass: function () {
+            return 'alphabet';
+        },
+        //pinned: 'right',
+        icons: {
+            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+        }
+    },
+    {
+        headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
+        //pinned: 'right',
+        cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+        floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
         ]
     },
@@ -348,27 +351,30 @@ var defaultCols = [
         groupId: 'performance',
         children: [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
-                filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-                filterParams: {cellRenderer: currencyRenderer},
-                aggFunc: 'sum',
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-amount-desc"/>'
-                }
-            },
-            {headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+        filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+        filterParams: {cellRenderer: currencyRenderer},
+        aggFunc: 'sum',
+        icons: {
+            sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+            sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+        }
+    },
+    {
+        headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
+        suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
                 cellRenderer: function() { return 'Abra...'; } },
             {headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+        suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
                 cellRenderer: function() { return '...cadabra!'; } }
         ]
     },
-    {headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
+    {
+        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
         filterParams: {cellRenderer: ratingFilterRenderer}
     },
-    {headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
+    {
+        headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
         aggFunc: 'sum',
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
@@ -384,7 +390,7 @@ var monthGroup = {
     children: []
 };
 defaultCols.push(monthGroup);
-months.forEach(function(month) {
+months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
@@ -396,13 +402,14 @@ months.forEach(function(month) {
         },
         newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
         filterCellRenderer: currencyRenderer,
-        cellStyle: {"text-align": "right"}})
+        cellStyle: {"text-align": "right"}
+    })
 });
 
 //gridOptions.columnDefs = createCols();
 
 function filterDoubleClicked(event) {
-    setInterval(function() {
+    setInterval(function () {
         gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
     }, 1000);
 }
@@ -419,29 +426,35 @@ function toggleToolPanel() {
 
 function getColCount() {
     switch (dataSize) {
-        case '10x100': return 100;
-        default: return 22;
+        case '10x100':
+            return 100;
+        default:
+            return 22;
     }
 }
 
 function getRowCount() {
     switch (dataSize) {
-        case '1x22': return 1000;
-        case '10x100': return 10000;
-        case '100x22': return 100000;
-        default: return -1;
+        case '1x22':
+            return 1000;
+        case '10x100':
+            return 10000;
+        case '100x22':
+            return 100000;
+        default:
+            return -1;
     }
 }
 
 function createCols() {
     var colCount = getColCount();
-    // start with a copy of the default cols
+// start with a copy of the default cols
     var columns = defaultCols.slice(0, colCount);
 
-    // there are 22 cols by default
-    for (var col = 22; col<colCount; col++) {
+// there are 22 cols by default
+    for (var col = 22; col < colCount; col++) {
         var colName = colNames[col % colNames.length];
-        var colDef = {headerName: colName, field: "col"+col, width: 200, editable: true};
+        var colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
         columns.push(colDef);
     }
 
@@ -454,7 +467,7 @@ function createData() {
 
     var eMessage = document.querySelector('#message');
     var eMessageText = document.querySelector('#messageText');
-    loadInstance ++;
+    loadInstance++;
 
     var loadInstanceCopy = loadInstance;
     gridOptions.api.showLoadingOverlay();
@@ -469,13 +482,13 @@ function createData() {
 
     eMessage.style.display = 'inline';
 
-    var intervalId = setInterval( function() {
-        if (loadInstanceCopy!=loadInstance) {
+    var intervalId = setInterval(function () {
+        if (loadInstanceCopy != loadInstance) {
             clearInterval(intervalId);
             return;
         }
 
-        for (var i = 0; i<1000; i++) {
+        for (var i = 0; i < 1000; i++) {
             var rowItem = createRowItem(row, colCount);
             data.push(rowItem);
             row++;
@@ -485,7 +498,7 @@ function createData() {
 
         if (row >= rowCount) {
             clearInterval(intervalId);
-            setTimeout( function() {
+            setTimeout(function () {
                 gridOptions.api.setColumnDefs(colDefs);
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
@@ -499,7 +512,7 @@ function createData() {
 function createRowItem(row, colCount) {
     var rowItem = {};
 
-    //create data for the known columns
+//create data for the known columns
     var countryData = countries[row % countries.length];
     rowItem.country = countryData.country;
     rowItem.continent = countryData.continent;
@@ -514,23 +527,23 @@ function createRowItem(row, colCount) {
         bought: booleanValues[row % booleanValues.length]
     };
 
-    rowItem.bankBalance = ((Math.round(Math.random()*10000000))/100) - 3000;
-    rowItem.rating = (Math.round(Math.random()*5));
+    rowItem.bankBalance = ((Math.round(Math.random() * 10000000)) / 100) - 3000;
+    rowItem.rating = (Math.round(Math.random() * 5));
 
     var totalWinnings = 0;
-    months.forEach(function(month) {
-        var value = ((Math.round(Math.random()*10000000))/100) - 20;
+    months.forEach(function (month) {
+        var value = ((Math.round(Math.random() * 10000000)) / 100) - 20;
         rowItem[month.toLocaleLowerCase()] = value;
         totalWinnings += value;
     });
     rowItem.totalWinnings = totalWinnings;
 
-    //create dummy data for the additional columns
-    for (var col = defaultCols.length; col<colCount; col++) {
+//create dummy data for the additional columns
+    for (var col = defaultCols.length; col < colCount; col++) {
         var value;
-        var randomBit = Math.random().toString().substring(2,5);
-        value = colNames[col % colNames.length]+"-"+randomBit +" - (" +(row+1)+","+col+")";
-        rowItem["col"+col] = value;
+        var randomBit = Math.random().toString().substring(2, 5);
+        value = colNames[col % colNames.length] + "-" + randomBit + " - (" + (row + 1) + "," + col + ")";
+        rowItem["col" + col] = value;
     }
 
     return rowItem;
@@ -541,24 +554,27 @@ function selectionChanged(event) {
 }
 
 function rowSelected(event) {
-    // the number of rows selected could be huge, if the user is grouping and selects a group, so
-    // to stop the console from clogging up, we only print if in the first 10 (by chance we know
-    // the node id's are assigned from 0 upwards)
+// the number of rows selected could be huge, if the user is grouping and selects a group, so
+// to stop the console from clogging up, we only print if in the first 10 (by chance we know
+// the node id's are assigned from 0 upwards)
     if (event.node.id < 10) {
-        var valueToPrint = event.node.group ? 'group ('+event.node.key+')' : event.node.data.name;
+        var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
         console.log("Callback rowSelected: " + valueToPrint);
     }
 }
 
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
+    gridOptions.rowHeight = newTheme === 'ag-material' ? 48 : 25;
+    gridOptions.gridApi.refreshView();
+
 }
 
 var filterCount = 0;
 function onFilterChanged(newFilter) {
     filterCount++;
     var filterCountCopy = filterCount;
-    setTimeout( function() {
+    setTimeout(function () {
         if (filterCount === filterCountCopy) {
             gridOptions.api.setQuickFilter(newFilter);
         }
@@ -589,7 +605,7 @@ var COUNTRY_CODES = {
 function numberNewValueHandler(params) {
     var newValue = params.newValue;
     var valueAsNumber;
-    if (newValue===null || newValue===undefined || newValue==='') {
+    if (newValue === null || newValue === undefined || newValue === '') {
         valueAsNumber = null;
     } else {
         valueAsNumber = parseFloat(params.newValue);
@@ -624,12 +640,13 @@ PersonFilter.prototype.setupGui = function (params) {
     this.eFilterText.addEventListener("changed", listener);
     this.eFilterText.addEventListener("paste", listener);
     this.eFilterText.addEventListener("input", listener);
-    // IE doesn't fire changed for special keys (eg delete, backspace), so need to
-    // listen for this further ones
+// IE doesn't fire changed for special keys (eg delete, backspace), so need to
+// listen for this further ones
     this.eFilterText.addEventListener("keydown", listener);
     this.eFilterText.addEventListener("keyup", listener);
 
     var that = this;
+
     function listener(event) {
         that.filterText = event.target.value;
         params.filterChangedCallback();
@@ -641,12 +658,12 @@ PersonFilter.prototype.getGui = function () {
 };
 
 PersonFilter.prototype.doesFilterPass = function (params) {
-    // make sure each word passes separately, ie search for firstname, lastname
+// make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     var valueGetter = this.valueGetter;
-    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+    this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
         var value = valueGetter(params);
-        if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+        if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
             passed = false;
         }
     });
@@ -659,14 +676,14 @@ PersonFilter.prototype.isFilterActive = function () {
     return isActive;
 };
 
-PersonFilter.prototype.getApi = function() {
+PersonFilter.prototype.getApi = function () {
     var that = this;
     return {
-        getModel: function() {
+        getModel: function () {
             var model = {value: that.filterText.value};
             return model;
         },
-        setModel: function(model) {
+        setModel: function (model) {
             that.eFilterText.value = model.value;
         }
     }
@@ -683,11 +700,11 @@ WinningsFilter.prototype.init = function (params) {
     this.eGui.innerHTML =
         '<div style="padding: 4px;">' +
         '<div style="font-weight: bold;">Example Custom Filter</div>' +
-        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNoFilter">No filter</input></label></div>' +
-        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbPositive">Positive</input></label></div>' +
-        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbNegative">Negative</input></label></div>' +
-        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbGreater50">&gt; &pound;50,000</label></div>' +
-        '<div><label><input type="radio" name="filter"'+uniqueId+' id="cbGreater90">&gt; &pound;90,000</label></div>' +
+        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter">No filter</input></label></div>' +
+        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive">Positive</input></label></div>' +
+        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative">Negative</input></label></div>' +
+        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50">&gt; &pound;50,000</label></div>' +
+        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90">&gt; &pound;90,000</label></div>' +
         '</div>';
     this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
     this.cbPositive = this.eGui.querySelector('#cbPositive');
@@ -729,14 +746,14 @@ WinningsFilter.prototype.isFilterActive = function () {
 };
 
 function currencyCssFunc(params) {
-    if (params.value!==null && params.value!==undefined && params.value<0) {
+    if (params.value !== null && params.value !== undefined && params.value < 0) {
         return {"color": "red", "text-align": "right", "font-weight": "bold"};
     } else {
         return {"text-align": "right"};
     }
 }
 
-function ratingFilterRenderer(params)  {
+function ratingFilterRenderer(params) {
     return ratingRendererGeneral(params.value, true)
 }
 
@@ -744,10 +761,10 @@ function ratingRenderer(params) {
     return ratingRendererGeneral(params.value, false)
 }
 
-function ratingRendererGeneral(value, forFilter)  {
+function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
-    for (var i = 0; i<5; i++) {
-        if (value>i) {
+    for (var i = 0; i < 5; i++) {
+        if (value > i) {
             result += '<img src="images/goldStar.png"/>';
         }
     }
@@ -757,8 +774,8 @@ function ratingRendererGeneral(value, forFilter)  {
     return result;
 }
 
-function currencyRenderer(params)  {
-    if (params.value===null || params.value===undefined) {
+function currencyRenderer(params) {
+    if (params.value === null || params.value === undefined) {
         return null;
     } else if (isNaN(params.value)) {
         return 'NaN';
@@ -770,17 +787,17 @@ function currencyRenderer(params)  {
 function booleanComparator(value1, value2) {
     var value1Cleaned = booleanCleaner(value1);
     var value2Cleaned = booleanCleaner(value2);
-    var value1Ordinal = value1Cleaned===true ? 0 : (value1Cleaned===false ? 1 : 2);
-    var value2Ordinal = value2Cleaned===true ? 0 : (value2Cleaned===false ? 1 : 2);
+    var value1Ordinal = value1Cleaned === true ? 0 : (value1Cleaned === false ? 1 : 2);
+    var value2Ordinal = value2Cleaned === true ? 0 : (value2Cleaned === false ? 1 : 2);
     return value1Ordinal - value2Ordinal;
 }
 
 function booleanCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
-    if (valueCleaned===true) {
+    if (valueCleaned === true) {
         //this is the unicode for tick character
         return "<span title='true'>&#10004;</span>";
-    } else if (valueCleaned===false) {
+    } else if (valueCleaned === false) {
         //this is the unicode for cross character
         return "<span title='false'>&#10006;</span>";
     } else {
@@ -790,10 +807,10 @@ function booleanCellRenderer(params) {
 
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
-    if (valueCleaned===true) {
+    if (valueCleaned === true) {
         //this is the unicode for tick character
         return "&#10004;";
-    } else if (valueCleaned===false) {
+    } else if (valueCleaned === false) {
         //this is the unicode for cross character
         return "&#10006;";
     } else {
@@ -802,9 +819,9 @@ function booleanFilterCellRenderer(params) {
 }
 
 function booleanCleaner(value) {
-    if (value==="true" || value===true || value===1) {
+    if (value === "true" || value === true || value === 1) {
         return true;
-    } else if (value==="false" || value===false || value===0) {
+    } else if (value === "false" || value === false || value === 0) {
         return false;
     } else {
         return null;
@@ -815,7 +832,7 @@ function languageCellRenderer(params) {
     if (params.$scope) {
         return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
             "<span ng-click='clicked=false' ng-show='clicked' ng-bind='data.language'></span>";
-    } else if (params.value!==null && params.value!==undefined) {
+    } else if (params.value !== null && params.value !== undefined) {
         return params.value;
     } else {
         return null;
@@ -823,11 +840,11 @@ function languageCellRenderer(params) {
 }
 
 function countryCellRenderer(params) {
-    //get flags from here: http://www.freeflagicons.com/
-    if (params.value==="" || params.value===undefined || params.value===null) {
+//get flags from here: http://www.freeflagicons.com/
+    if (params.value === "" || params.value === undefined || params.value === null) {
         return null;
     } else {
-        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/'+COUNTRY_CODES[params.value]+'.png">';
+        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
     }
 }
@@ -835,16 +852,16 @@ function countryCellRenderer(params) {
 function CountryCellRenderer() {
 }
 
-CountryCellRenderer.prototype.init = function(params) {
-    //get flags from here: http://www.freeflagicons.com/
-    if (params.value==="" || params.value===undefined || params.value===null) {
+CountryCellRenderer.prototype.init = function (params) {
+//get flags from here: http://www.freeflagicons.com/
+    if (params.value === "" || params.value === undefined || params.value === null) {
         this.eGui = '';
     } else {
-        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/'+COUNTRY_CODES[params.value]+'.png">';
+        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         this.eGui = '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
     }
 };
 
-CountryCellRenderer.prototype.getGui = function() {
+CountryCellRenderer.prototype.getGui = function () {
     return this.eGui;
 };
