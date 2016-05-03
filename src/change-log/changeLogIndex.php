@@ -14,6 +14,8 @@ include '../documentation-main/documentation_header.php';
     <li>Bug fix: you can now tab into and out of the grid.</li>
     <li>Bug fix: default text editor was displaying 'undefined' when initial value was missing. now showing blank.</li>
 
+    <li>Enhancement: row selection 'checked' icons are now icons and not browser checkbox. they are now also customisable via changing icons.</li>
+
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
     <li>Bug fix: row group panel was not initialising correctly.</li>

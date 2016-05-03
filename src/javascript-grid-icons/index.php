@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
             <li>Menu icon on header</li>
             <li>Group open / close icon in headers</li>
             <li>Group expand / contact icon in rows</li>
+            <li>Checkbox checked / unchecked / indeterminate</li>
             <li>Column select panel expand / contact column group</li>
         </ul>
     </p>
@@ -51,6 +52,9 @@ gridOptions.icons = {
     columnGroupClosed: myGroupContractedIcon,
     columnSelectOpen: myColumnSelectOpen,
     columnSelectClosed: myColumnSelectClosed,
+    checkboxChecked: myCheckboxChecked,
+    checkboxUnchecked: myCheckboxUnchecked,
+    checkboxIndeterminate: myCheckboxIndeterminate
 }
 </pre>
 
