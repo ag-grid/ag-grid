@@ -566,7 +566,7 @@ function rowSelected(event) {
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
     gridOptions.rowHeight = newTheme === 'ag-material' ? 48 : 25;
-    gridOptions.gridApi.refreshView();
+    gridOptions.api.onGroupExpandedOrCollapsed();
 
 }
 
