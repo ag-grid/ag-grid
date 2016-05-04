@@ -135,7 +135,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>getMainMenuItems(params)</th>
-            <td>For customising the context menu.</td>
+            <td>For customising the main 'column header' menu.</td>
         </tr>
         <tr>
             <th>processCellForClipboard(params)</th>
