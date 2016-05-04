@@ -7,6 +7,9 @@ material-elevation-1 = 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0
 
 arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'><path d='M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z'></path></svg>"
 
+default-background = #eeeeee
+default-border = 1px solid #ededed
+
 .ag-material
     box-shadow: material-elevation-1
     font-family: "Roboto"
@@ -20,19 +23,15 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
      .ag-header
         color: rgba(0, 0, 0, 0.54)
         font-size: 12px
-        //height: 56px !important;
 
         .ag-header-row
-        //    height: 100% !important
-            border-bottom: 1px solid #EDEDED
+            border-bottom: default-border
             box-sizing: border-box
 
         .ag-header-cell
-            //padding: 20px 24px
             cursor: pointer
             font-weight: bold
-            //text-align: left
-            border-right: 1px solid #ededed;
+            border-right: default-border;
 
 
         .ag-header-cell:first-child
@@ -75,12 +74,12 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
           padding-top: 56px !important
 
           .ag-row
-              border-bottom: 1px solid #EDEDED
+              border-bottom: default-border
               height: 48px !important
               transition: 0.2s background ease-in
 
           .ag-row:hover
-              background: #eee
+              background: default-background
 
           .ag-row.ag-row-selected
               background: #F5F5F5
@@ -109,18 +108,6 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
         //top: 15px;
         pointer-events: none;
 
-    //.ag-selection-checkbox + .ag-cell-value:before
-    //    width: 18px
-    //    height: 18px
-    //    border: 2px solid #757575
-    //    border-radius: 2px
-    //    content: ''
-    //    background: #fff
-    //    position: absolute
-    //    box-sizing: border-box
-    //    transition: 0.2s all ease-in
-    //    left: -20px
-
     .ag-selection-checkbox:checked + .ag-cell-value:before
         background: secondary-color
         border-color: secondary-color
@@ -147,7 +134,7 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
 
   .ag-row-group-cell
       background: linear-gradient(white, lightgrey);
-      border: 1px solid #EDEDED
+      border: default-border
       padding: 2px;
 
   .ag-row-group-cell-ghost
@@ -176,11 +163,9 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
       padding-right: 4px;
 
   .ag-row-group-panel
-      border-top: 1px solid #EDEDED;
-      border-left: 1px solid #EDEDED;
-      border-right: 1px solid #EDEDED;
+      border: default-border
       padding: 4px;
-      background-color #f0f0f0;
+      background-color white;
 
   .ag-cell {}
 
@@ -207,7 +192,6 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
       border: 1px solid darkgrey;
 
   .ag-cell-no-focus
-      //border-right: 1px dotted grey;
       border-top: 1px solid transparent;
       border-left: 1px solid transparent;
       border-bottom: 1px solid transparent;
@@ -294,11 +278,10 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
 
   .ag-header-group-cell
       font-weight: bold
-      //text-align left
-      border-right: 1px solid #ededed
+      border-right: default-border
 
   .ag-header-group-cell-with-group
-      border-bottom: 1px solid #EDEDED
+      border-bottom: default-border
 
   .ag-header-cell-label
       padding: 4px 2px 4px 2px ;
@@ -306,7 +289,6 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
 
   .ag-header-group-cell-label
       padding: 4px;
-      //padding-left: 10px;
 
   .ag-header-group-text
       margin-right: 2px;
@@ -317,7 +299,7 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
       border: 1px solid transparent;
       border-radius: 3px;
       box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
-      line-height: 0px; /* normal line height, a space was appearing below the menu button */
+      line-height: 0; /* normal line height, a space was appearing below the menu button */
 
   .ag-pinned-right-header
       border-left: 1px solid grey;
@@ -330,13 +312,6 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
 
   .ag-row-selected
       background-color: #f0f0f0
-
-  .ag-body
-      //.ag-row-odd
-      //    background-color: #f6f6f6;
-      //
-      //.ag-row-even
-      //    background-color: white;
 
   .ag-floating-top
       .ag-row
@@ -475,10 +450,8 @@ arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' wid
       width: 300px;
 
   .ag-tool-panel
-      background-color: #eee;
-      border-right: 1px solid #808080;
-      border-bottom: 1px solid #808080;
-      border-top: 1px solid #808080;
+      background-color: white;
+      border: 1px solid default-background
 
   .ag-status-bar
       font-size: 12px;
