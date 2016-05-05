@@ -29,7 +29,6 @@
     "typescript": "1.8.10",
     "gulp-header": "1.7.0",
     "merge2": "0.3.6",
-    "tsd": "latest",
 
     "systemjs": "0.19.27",
     "es6-shim": "^0.35.0",
