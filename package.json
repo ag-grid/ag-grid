@@ -26,7 +26,6 @@
   "devDependencies": {
     "gulp": "3.9.1",
     "gulp-typescript": "2.10.0",
-    "typescript": "1.8.10",
     "gulp-header": "1.7.0",
     "merge2": "0.3.6",
     "typescript": "1.8.10",
