@@ -10,4 +10,12 @@ Building
 To build:
 - `npm install`
 - `npm install gulp -g`
+- `npm install ag-grid@4.1.x`
+- `npm install @angular/core@2.0.0-rc.1`
+- `npm install @angular/platform-browser-dynamic@2.0.0-rc.1`
+
+// required typings to solve 'promise' dependency
+- `npm install tsd -g`
+- `tsd install es6-shim`
+
 - `gulp`

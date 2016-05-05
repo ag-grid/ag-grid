@@ -1,6 +1,5 @@
-
 import {Grid, GridOptions, GridApi, ColumnApi, ComponentUtil} from 'ag-grid/main';
-import {Component, EventEmitter, ViewEncapsulation, ElementRef} from 'angular2/core';
+import {Component, EventEmitter, ViewEncapsulation, ElementRef} from '@angular/core';
 
 @Component({
     selector: 'ag-grid-ng2',
