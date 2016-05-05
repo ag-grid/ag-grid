@@ -11,7 +11,7 @@
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "gulp": "3.9.0",
+    "gulp": "3.9.1",
     "gulp-foreach": "0.1.0",
     "gulp-rename": "1.2.2",
     "gulp-stylus": "2.2.0",
