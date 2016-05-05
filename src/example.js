@@ -55,7 +55,6 @@ var size = 'fill'; // model for size select
 var width = '100%'; // the div gets it's width and height from here
 var height = '100%';
 
-var style = 'ag-fresh';
 var rowSelection = 'checkbox';
 
 var groupColumn = {
