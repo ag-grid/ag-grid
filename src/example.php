@@ -93,6 +93,7 @@
                                     <option value="ag-blue">Blue</option>
                                     <option value="ag-dark">Dark</option>
                                     <option value="ag-material">Material</option>
+                                    <option value="ag-bootstrap">Bootstrap</option>
                                 </select>
 
                                 <span id="message" style="margin-left: 10px;">
