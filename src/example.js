@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     gridDiv = document.querySelector('#myGrid');
+
+    agGrid.LicenseManager.setLicenseKey("Some Long String");
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 });
