@@ -117,25 +117,44 @@ export class MoveColumnController {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
         var allColumns = this.columnController.getAllColumns();
 
+        var draggingLeft = dragDirection === DragAndDropService.DIRECTION_LEFT;
+        var draggingRight = dragDirection === DragAndDropService.DIRECTION_RIGHT;
+
         var dragColumn: Column;
         var allMovingColumns = dragColumnGroup.getDisplayedLeafColumns();
-        if (dragDirection === DragAndDropService.DIRECTION_LEFT) {
+        // if dragging left, we want to use the left most column, ie move the left most column to
+        // under the mouse pointer
+        if (draggingLeft) {
             dragColumn = allMovingColumns[0];
+        // if dragging right, we want to keep the right most column under the mouse pointer
         } else {
             dragColumn = allMovingColumns[allMovingColumns.length-1];
         }
 
         var newIndex = this.workOutNewIndex(displayedColumns, allColumns, dragColumn, dragDirection, xAdjustedForScroll);
-        var oldColumn = allColumns[newIndex];
+        var oldIndex = allColumns.indexOf(dragColumn);
 
-        // if col already at required location, do nothing
-        if (oldColumn === dragColumn) {
+        // the two check below stop an error when the user grabs a group my a middle column, then
+        // it is possible the mouse pointer is to the right of a column while been dragged left.
+        // so we need to make sure that the mouse pointer is actually left of the left most column
+        // if moving left, and right of the right most column if moving right
+
+        // only allow left drag if this column is moving left
+        if (draggingLeft && newIndex>=oldIndex) {
             return;
+        }
+        // only allow right drag if this column is moving right
+        if (draggingRight && newIndex<=oldIndex) {
+            return;
+        }
+
+        // if moving right, the new index is the index of the right most column, so adjust to first column
+        if (draggingRight) {
+            newIndex = newIndex - allMovingColumns.length + 1;
         }
 
         // we move one column, UNLESS the column is the only visible column
         // of a group, in which case we move the whole group.
-        // var columnsToMove = this.getColumnsAndOrphans(dragColumn);
         this.columnController.moveColumns(allMovingColumns, newIndex);
     }
 
@@ -152,8 +171,8 @@ export class MoveColumnController {
 
         // we move one column, UNLESS the column is the only visible column
         // of a group, in which case we move the whole group.
-        var columnsToMove = this.getColumnsAndOrphans(dragColumn);
-        this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
+        // var columnsToMove = this.getColumnsAndOrphans(dragColumn);
+        this.columnController.moveColumns([dragColumn], newIndex);
     }
 
     private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, x: number): number {
