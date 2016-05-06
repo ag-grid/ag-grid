@@ -127,6 +127,7 @@ var gridOptions = {
 //groupIncludeFooter: true,
     groupHideGroupColumns: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
+    // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
     enableColResize: true, //one of [true, false]
