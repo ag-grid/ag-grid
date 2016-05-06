@@ -404,18 +404,6 @@ export class ColumnController {
         return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
     }
 
-    public moveColumnsOld(keys: (Column|ColDef|String)[], toIndex: number): void {
-        this.gridPanel.turnOnAnimationForABit();
-        this.actionOnColumns(keys, (column: Column)=> {
-            var fromIndex = this.allColumns.indexOf(column);
-            this.allColumns.splice(fromIndex, 1);
-            this.allColumns.splice(toIndex, 0, column);
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
-        });
-        this.updateModel();
-    }
-
     public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
         this.gridPanel.turnOnAnimationForABit();
 
@@ -436,13 +424,15 @@ export class ColumnController {
 
         // now add the columns, in same order as provided to us, that means we start at the end
         // as the columns will be pushed to the right as they are inserted
-        columnsToInsert.reverse().forEach( (column)=> {
+        columnsToInsert.slice().reverse().forEach( (column)=> {
             _.insertIntoArray(this.allColumns, column, toIndex);
         });
 
         this.updateModel();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED)
+            .withToIndex(toIndex)
+            .withColumns(columnsToInsert);
         if (columnsToInsert.length===1) {
             event.withColumn(columnsToInsert[0]);
         }

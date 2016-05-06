@@ -45,13 +45,15 @@ export class MoveColumnController {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
-        this.columnController.setColumnVisible(draggingEvent.dragSource.dragItem, true);
-        this.columnController.setColumnPinned(draggingEvent.dragSource.dragItem, this.pinned);
+        var columns = this.getColumnsFromEvent(draggingEvent);
+        this.columnController.setColumnsVisible(columns, true);
+        this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        this.columnController.setColumnVisible(draggingEvent.dragSource.dragItem, false);
+        var columns = this.getColumnsFromEvent(draggingEvent);
+        this.columnController.setColumnsVisible(columns, false);
         this.ensureIntervalCleared();
     }
 
@@ -105,15 +107,24 @@ export class MoveColumnController {
         var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
         this.checkCenterForScrolling(xAdjustedForScroll);
 
-        var dragItem = draggingEvent.dragSource.dragItem;
-        if (dragItem instanceof Column) {
-            this.attemptColumnMove(<Column>dragItem, draggingEvent.direction, xAdjustedForScroll);
-        } else {
-            this.attemptColumnGroupMove(<ColumnGroup>dragItem, draggingEvent.direction, xAdjustedForScroll);
-        }
+        var columnsToMove = this.getColumnsFromEvent(draggingEvent);
+        this.attemptMoveColumns(columnsToMove, draggingEvent.direction, xAdjustedForScroll);
     }
 
-    private attemptColumnGroupMove(dragColumnGroup: ColumnGroup, dragDirection: string, xAdjustedForScroll: number): void {
+    private getColumnsFromEvent(draggingEvent: DraggingEvent): Column[] {
+        var dragItem = draggingEvent.dragSource.dragItem;
+        var columns: Column[];
+        if (dragItem instanceof Column) {
+            var dragColumn = <Column>dragItem;
+            columns = [dragColumn];
+        } else {
+            var dragColumnGroup = <ColumnGroup>dragItem;
+            columns = dragColumnGroup.getDisplayedLeafColumns();
+        }
+        return columns;
+    }
+
+    private attemptMoveColumns(allMovingColumns: Column[], dragDirection: string, xAdjustedForScroll: number): void {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
         var allColumns = this.columnController.getAllColumns();
 
@@ -121,7 +132,6 @@ export class MoveColumnController {
         var draggingRight = dragDirection === DragAndDropService.DIRECTION_RIGHT;
 
         var dragColumn: Column;
-        var allMovingColumns = dragColumnGroup.getDisplayedLeafColumns();
         // if dragging left, we want to use the left most column, ie move the left most column to
         // under the mouse pointer
         if (draggingLeft) {
@@ -156,23 +166,6 @@ export class MoveColumnController {
         // we move one column, UNLESS the column is the only visible column
         // of a group, in which case we move the whole group.
         this.columnController.moveColumns(allMovingColumns, newIndex);
-    }
-
-    private attemptColumnMove(dragColumn: Column, dragDirection: string, xAdjustedForScroll: number): void {
-        var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
-        var allColumns = this.columnController.getAllColumns();
-        var newIndex = this.workOutNewIndex(displayedColumns, allColumns, dragColumn, dragDirection, xAdjustedForScroll);
-        var oldColumn = allColumns[newIndex];
-
-        // if col already at required location, do nothing
-        if (oldColumn === dragColumn) {
-            return;
-        }
-
-        // we move one column, UNLESS the column is the only visible column
-        // of a group, in which case we move the whole group.
-        // var columnsToMove = this.getColumnsAndOrphans(dragColumn);
-        this.columnController.moveColumns([dragColumn], newIndex);
     }
 
     private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, x: number): number {
@@ -240,7 +233,9 @@ export class MoveColumnController {
 
         return newIndex;
     }
-
+/* // taking this out as it's adding loads of complexity, and made moving column groups really difficult.
+   // instead, if we want this, should add logic to when groups are opened, and move non-visible columns to beside
+   // the opened group if they are not already beside it
     private getColumnsAndOrphans(columnOrGroup: Column | ColumnGroup): Column[] {
         var column = <Column> columnOrGroup;
         // if this column was to move, how many children would be left without a parent
@@ -259,6 +254,7 @@ export class MoveColumnController {
 
         return [column];
     }
+*/
 
     private ensureIntervalStarted(): void {
         if (!this.movingIntervalId) {
