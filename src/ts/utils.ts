@@ -317,7 +317,10 @@ export class Utils {
         if (array.indexOf(object) >= 0) {
             array.splice(array.indexOf(object), 1);
         }
+    }
 
+    static insertIntoArray<T>(array: T[], object: T, toIndex: number) {
+        array.splice(toIndex, 0, object);
     }
 
     static defaultComparator(valueA: any, valueB: any): number {

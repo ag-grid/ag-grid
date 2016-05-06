@@ -64,7 +64,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         // this.setupMove();
         this.setWidth();
     }
-
+    
     private setupLabel(): void {
         // no renderer, default text render
         var groupName = this.columnGroup.getHeaderName();

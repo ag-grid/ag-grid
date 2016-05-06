@@ -404,7 +404,7 @@ export class ColumnController {
         return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
     }
 
-    public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
+    public moveColumnsOld(keys: (Column|ColDef|String)[], toIndex: number): void {
         this.gridPanel.turnOnAnimationForABit();
         this.actionOnColumns(keys, (column: Column)=> {
             var fromIndex = this.allColumns.indexOf(column);
@@ -414,6 +414,39 @@ export class ColumnController {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
         });
         this.updateModel();
+    }
+
+    public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
+        this.gridPanel.turnOnAnimationForABit();
+
+        // we want to pull all the columns out first and put them into an ordered list
+        var columnsToInsert = <Column[]> [];
+        keys.forEach( (key)=> {
+            var column = this.getColumn(key);
+            if (column) {
+                _.removeFromArray(this.allColumns, column);
+                columnsToInsert.push(column);
+            }
+        });
+
+        if (toIndex > this.allColumns.length) {
+            console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
+            console.warn('ag-Grid: remember that you should not count the moving columns when calculating the new index');
+        }
+
+        // now add the columns, in same order as provided to us, that means we start at the end
+        // as the columns will be pushed to the right as they are inserted
+        columnsToInsert.reverse().forEach( (column)=> {
+            _.insertIntoArray(this.allColumns, column, toIndex);
+        });
+
+        this.updateModel();
+
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
+        if (columnsToInsert.length===1) {
+            event.withColumn(columnsToInsert[0]);
+        }
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
     }
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {
