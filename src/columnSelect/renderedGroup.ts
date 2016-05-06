@@ -75,17 +75,17 @@ export class RenderedGroup extends Component {
         this.setIconVisibility();
 
         if (this.allowDragging) {
-            // this.addDragSource();
+            this.addDragSource();
         }
     }
 
-    // private addDragSource(): void {
-    //     var dragSource: DragSource = {
-    //         eElement: this.getGui(),
-    //         dragItem: this.columnGroup
-    //     };
-    //     this.dragAndDropService.addDragSource(dragSource);
-    // }
+    private addDragSource(): void {
+        var dragSource: DragSource = {
+            eElement: this.getGui(),
+            dragItem: this.columnGroup.getLeafColumns()
+        };
+        this.dragAndDropService.addDragSource(dragSource);
+    }
 
     private setupExpandContract(): void {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');

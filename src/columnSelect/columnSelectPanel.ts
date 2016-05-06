@@ -66,7 +66,7 @@ export class ColumnSelectPanel extends Component {
         var newDept: number;
 
         if (columnGroup.getColGroupDef()) {
-            var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this));
+            var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
             this.appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children

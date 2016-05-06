@@ -79,7 +79,7 @@ export class RenderedColumn extends Component {
     private addDragSource(): void {
         var dragSource: DragSource = {
             eElement: this.getGui(),
-            dragItem: this.column
+            dragItem: [this.column]
         };
         this.dragAndDropService.addDragSource(dragSource);
     }
