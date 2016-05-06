@@ -18,6 +18,7 @@ import {ViewportRowModel} from "./viewport/viewportRowModel";
 import {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
 import {RichSelectRow} from "./rendering/richSelect/richSelectRow";
 import {VirtualList} from "./rendering/virtualList";
+import {LicenseManager} from "./licenseManager";
 
 export function populateClientExports(exports: any): void {
 
@@ -48,4 +49,5 @@ export function populateClientExports(exports: any): void {
     exports.RowGroupPanel = RowGroupPanel;
     exports.ToolPanel = ToolPanel;
 
+    exports.LicenseManager = LicenseManager;
 }
