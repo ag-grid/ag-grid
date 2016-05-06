@@ -6,6 +6,8 @@ import {
     GridOptionsWrapper,
     ColumnController,
     GridPanel,
+    DragSource,
+    DragAndDropService,
     OriginalColumnGroup,
     PostConstruct
 } from "ag-grid/main";
@@ -17,6 +19,7 @@ export class RenderedGroup extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
@@ -43,11 +46,14 @@ export class RenderedGroup extends Component {
 
     private expandedCallback: ()=>void;
 
-    constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void ) {
+    private allowDragging: boolean;
+
+    constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void, allowDragging: boolean) {
         super(RenderedGroup.TEMPLATE);
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
         this.expandedCallback = expandedCallback;
+        this.allowDragging = allowDragging;
     }
 
     @PostConstruct
@@ -67,7 +73,19 @@ export class RenderedGroup extends Component {
         eIndent.style.width = (this.columnDept * 10) + 'px';
 
         this.setIconVisibility();
+
+        if (this.allowDragging) {
+            // this.addDragSource();
+        }
     }
+
+    // private addDragSource(): void {
+    //     var dragSource: DragSource = {
+    //         eElement: this.getGui(),
+    //         dragItem: this.columnGroup
+    //     };
+    //     this.dragAndDropService.addDragSource(dragSource);
+    // }
 
     private setupExpandContract(): void {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');

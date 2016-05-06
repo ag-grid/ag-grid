@@ -28,6 +28,7 @@ export class ColumnSelectPanel extends Component {
 
     private allowDragging: boolean;
 
+    // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {
         super(ColumnSelectPanel.TEMPLATE);
         this.allowDragging = allowDragging;
