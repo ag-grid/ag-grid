@@ -232,7 +232,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         if (eHeaderCellLabel) {
             var dragSource: DragSource = {
                 eElement: eHeaderCellLabel,
-                dragItem: this.column,
+                dragItem: [this.column],
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource);

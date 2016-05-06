@@ -17,7 +17,7 @@ export interface DragSource {
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement,
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItem: Column | ColumnGroup,
+    dragItem: Column[],
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget
@@ -65,7 +65,7 @@ export class DragAndDropService {
 
     private logger: Logger;
 
-    private dragItem: Column | ColumnGroup;
+    private dragItem: Column[];
     private eventLastTime: MouseEvent;
     private dragSource: DragSource;
     private dragging: boolean;
@@ -115,7 +115,7 @@ export class DragAndDropService {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragSource.dragItem.setMoving(true);
+        this.dragSource.dragItem.forEach( column => column.setMoving(true));
         this.dragItem = this.dragSource.dragItem;
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
@@ -125,7 +125,7 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        this.dragItem.setMoving(false);
+        this.dragItem.forEach( column => column.setMoving(false) );
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -297,30 +297,21 @@ export class DragAndDropService {
         this.eBody.appendChild(this.eGhost);
     }
 
-    private getActualWidth(dragItem: Column | ColumnGroup): number {
-        if (dragItem instanceof Column) {
-            return (<Column>dragItem).getActualWidth();
-        } else {
-            return (<ColumnGroup>dragItem).getActualWidth();
-        }
+    private getActualWidth(columns: Column[]): number {
+        var totalColWidth = 0;
+        columns.forEach( column => totalColWidth += column.getActualWidth() );
+        return totalColWidth;
     }
 
-    private getNameForGhost(dragItem: Column | ColumnGroup): string {
-        if (dragItem instanceof Column) {
-            var column = <Column> dragItem;
+    private getNameForGhost(columns: Column[]): string {
+        var columnNames = columns.map( column => {
             if (column.getColDef().headerName) {
                 return column.getColDef().headerName;
             } else {
                 return column.getColId()
             }
-        } else {
-            var columnGroup = <ColumnGroup> dragItem;
-            if (columnGroup.getColGroupDef().headerName) {
-                return columnGroup.getColGroupDef().headerName;
-            } else {
-                return columnGroup.getGroupId();
-            }
-        }
+        });
+        return columnNames.join(' / ');
     }
 
     public setGhostIcon(iconName: string, shake = false): void {

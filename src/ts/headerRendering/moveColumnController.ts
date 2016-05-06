@@ -47,7 +47,7 @@ export class MoveColumnController {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
-        var columns = this.getColumnsFromEvent(draggingEvent);
+        var columns = draggingEvent.dragSource.dragItem;
         this.columnController.setColumnsVisible(columns, true);
         this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent);
@@ -55,7 +55,7 @@ export class MoveColumnController {
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
         if (!this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
-            var columns = this.getColumnsFromEvent(draggingEvent);
+            var columns = draggingEvent.dragSource.dragItem;
             this.columnController.setColumnsVisible(columns, false);
         }
         this.ensureIntervalCleared();
@@ -111,21 +111,8 @@ export class MoveColumnController {
         var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
         this.checkCenterForScrolling(xAdjustedForScroll);
 
-        var columnsToMove = this.getColumnsFromEvent(draggingEvent);
+        var columnsToMove = draggingEvent.dragSource.dragItem;
         this.attemptMoveColumns(columnsToMove, draggingEvent.direction, xAdjustedForScroll);
-    }
-
-    private getColumnsFromEvent(draggingEvent: DraggingEvent): Column[] {
-        var dragItem = draggingEvent.dragSource.dragItem;
-        var columns: Column[];
-        if (dragItem instanceof Column) {
-            var dragColumn = <Column>dragItem;
-            columns = [dragColumn];
-        } else {
-            var dragColumnGroup = <ColumnGroup>dragItem;
-            columns = dragColumnGroup.getDisplayedLeafColumns();
-        }
-        return columns;
     }
 
     private attemptMoveColumns(allMovingColumns: Column[], dragDirection: string, xAdjustedForScroll: number): void {
@@ -302,11 +289,9 @@ export class MoveColumnController {
         } else {
             this.failedMoveAttempts++;
             if (this.failedMoveAttempts > 7) {
-                if (this.needToMoveLeft) {
-                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragSource.dragItem, Column.PINNED_LEFT);
-                } else {
-                    this.columnController.setColumnPinned(this.lastDraggingEvent.dragSource.dragItem, Column.PINNED_RIGHT);
-                }
+                var columns = this.lastDraggingEvent.dragSource.dragItem;
+                var pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
+                this.columnController.setColumnsPinned(columns, pinType);
                 this.dragAndDropService.nudge();
             }
         }
