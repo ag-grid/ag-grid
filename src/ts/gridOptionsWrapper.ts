@@ -4,7 +4,8 @@ import {
     NodeChildDetails,
     GetContextMenuItems,
     GetMainMenuItems,
-    ProcessRowParams, ProcessCellForExportParams
+    ProcessRowParams,
+    ProcessCellForExportParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
@@ -17,7 +18,6 @@ import {Events} from "./events";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
-import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -90,6 +90,7 @@ export class GridOptionsWrapper {
     public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
     public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
+    public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isForPrint() { return isTrue(this.gridOptions.forPrint); }
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }

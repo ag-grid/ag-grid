@@ -10,6 +10,7 @@ import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
 import {ColumnGroup} from "../entities/columnGroup";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export class MoveColumnController {
 
@@ -17,6 +18,7 @@ export class MoveColumnController {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -52,8 +54,10 @@ export class MoveColumnController {
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        var columns = this.getColumnsFromEvent(draggingEvent);
-        this.columnController.setColumnsVisible(columns, false);
+        if (!this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+            var columns = this.getColumnsFromEvent(draggingEvent);
+            this.columnController.setColumnsVisible(columns, false);
+        }
         this.ensureIntervalCleared();
     }
 

@@ -61,7 +61,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         this.setupResize();
         this.addClasses();
         this.setupLabel();
-        // this.setupMove();
+        this.setupMove();
         this.setWidth();
     }
 
