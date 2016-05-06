@@ -26,8 +26,8 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "media"; include './includes/navbar.php'; ?>
+<?php $navKey = "media"; include 'navbar.php'; ?>
 
-<?php $headerTitle = "Media"; include './includes/headerRow.php'; ?>
+<?php $headerTitle = "Media"; include 'headerRow.php'; ?>
 
 <div class="container">
