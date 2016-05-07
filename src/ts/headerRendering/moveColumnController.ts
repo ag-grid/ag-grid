@@ -46,7 +46,7 @@ export class MoveColumnController {
         var columns = draggingEvent.dragSource.dragItem;
         this.columnController.setColumnsVisible(columns, true);
         this.columnController.setColumnsPinned(columns, this.pinned);
-        this.onDragging(draggingEvent);
+        this.onDragging(draggingEvent, true);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
@@ -95,7 +95,7 @@ export class MoveColumnController {
         }
     }
 
-    public onDragging(draggingEvent: DraggingEvent): void {
+    public onDragging(draggingEvent: DraggingEvent, fromEnter = false): void {
 
         this.lastDraggingEvent = draggingEvent;
 
@@ -105,13 +105,19 @@ export class MoveColumnController {
         }
 
         var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
-        this.checkCenterForScrolling(xAdjustedForScroll);
+
+        // if the user is dragging into the panel, ie coming from the side panel into the main grid,
+        // we don't want to scroll the grid this time, it would appear like the table is jumping
+        // each time a column is dragged in.
+        if (!fromEnter) {
+            this.checkCenterForScrolling(xAdjustedForScroll);
+        }
 
         var columnsToMove = draggingEvent.dragSource.dragItem;
-        this.attemptMoveColumns(columnsToMove, draggingEvent.direction, xAdjustedForScroll);
+        this.attemptMoveColumns(columnsToMove, draggingEvent.direction, xAdjustedForScroll, fromEnter);
     }
 
-    private attemptMoveColumns(allMovingColumns: Column[], dragDirection: string, xAdjustedForScroll: number): void {
+    private attemptMoveColumns(allMovingColumns: Column[], dragDirection: string, xAdjustedForScroll: number, fromEnter: boolean): void {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
         var allColumns = this.columnController.getAllColumns();
 
@@ -136,12 +142,17 @@ export class MoveColumnController {
         // so we need to make sure that the mouse pointer is actually left of the left most column
         // if moving left, and right of the right most column if moving right
 
+        // we check 'fromEnter' below so we move the column to the new spot if the mouse is coming from
+        // outside the grid, eg if the column is moving from side panel, mouse is moving left, then we should
+        // place the column to the RHS even if the mouse is moving left and the column is already on
+        // the LHS. otherwise we stick to the rule described above.
+
         // only allow left drag if this column is moving left
-        if (draggingLeft && newIndex>=oldIndex) {
+        if (!fromEnter && draggingLeft && newIndex>=oldIndex) {
             return;
         }
         // only allow right drag if this column is moving right
-        if (draggingRight && newIndex<=oldIndex) {
+        if (!fromEnter && draggingRight && newIndex<=oldIndex) {
             return;
         }
 
