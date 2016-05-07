@@ -232,6 +232,7 @@ class RenderedGroupedColumnCell extends Component {
     private column: Column;
     private dragSourceDropTarget: DropTarget;
     private ghost: boolean;
+    private displayName: string;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, ghost = false) {
         super(RenderedGroupedColumnCell.TEMPLATE);
@@ -242,6 +243,7 @@ class RenderedGroupedColumnCell extends Component {
 
     @PostConstruct
     public init(): void {
+        this.displayName = this.columnController.getDisplayNameForCol(this.column);
         this.setupComponents();
         if (!this.ghost) {
             this.addDragSource();
@@ -252,6 +254,7 @@ class RenderedGroupedColumnCell extends Component {
         var dragSource: DragSource = {
             eElement: this.getGui(),
             dragItem: [this.column],
+            dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
         };
         this.dragAndDropService.addDragSource(dragSource);
@@ -261,7 +264,7 @@ class RenderedGroupedColumnCell extends Component {
         var eText = <HTMLElement> this.getGui().querySelector('#eText');
         var btRemove = <HTMLElement> this.getGui().querySelector('#btRemove');
 
-        eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
+        eText.innerHTML = this.displayName;
         btRemove.addEventListener('click', ()=> {
             this.gridPanel.turnOnAnimationForABit();
             this.columnController.removeRowGroupColumn(this.column);

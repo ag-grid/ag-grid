@@ -48,6 +48,8 @@ export class RenderedGroup extends Component {
 
     private allowDragging: boolean;
 
+    private displayName: string;
+
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void, allowDragging: boolean) {
         super(RenderedGroup.TEMPLATE);
         this.columnGroup = columnGroup;
@@ -60,12 +62,12 @@ export class RenderedGroup extends Component {
     public init(): void {
         var eText = this.queryForHtmlElement('#eText');
 
-        var headerName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
-        if (_.missing(headerName)) {
-            headerName = '>>'
+        this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
+        if (_.missing(this.displayName)) {
+            this.displayName = '>>'
         }
 
-        eText.innerHTML = headerName;
+        eText.innerHTML = this.displayName;
         eText.addEventListener('dblclick', this.onExpandOrContractClicked.bind(this));
         this.setupExpandContract();
 
@@ -82,6 +84,7 @@ export class RenderedGroup extends Component {
     private addDragSource(): void {
         var dragSource: DragSource = {
             eElement: this.getGui(),
+            dragItemName: this.displayName,
             dragItem: this.columnGroup.getLeafColumns()
         };
         this.dragAndDropService.addDragSource(dragSource);

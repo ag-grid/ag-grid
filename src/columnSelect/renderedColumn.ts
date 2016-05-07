@@ -36,6 +36,8 @@ export class RenderedColumn extends Component {
     private eColumnHiddenIcon: HTMLInputElement;
     private allowDragging: boolean;
 
+    private displayName: string;
+
     constructor(column: Column, columnDept: number, allowDragging: boolean) {
         super(RenderedColumn.TEMPLATE);
         this.column = column;
@@ -45,8 +47,9 @@ export class RenderedColumn extends Component {
 
     @PostConstruct
     public init(): void {
+        this.displayName = this.columnController.getDisplayNameForCol(this.column);
         var eText = <HTMLElement> this.queryForHtmlElement('#eText');
-        eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
+        eText.innerHTML = this.displayName;
         eText.addEventListener('dblclick', this.onColumnVisibilityChanged.bind(this));
 
         this.setupVisibleIcons();
@@ -79,6 +82,7 @@ export class RenderedColumn extends Component {
     private addDragSource(): void {
         var dragSource: DragSource = {
             eElement: this.getGui(),
+            dragItemName: this.displayName,
             dragItem: [this.column]
         };
         this.dragAndDropService.addDragSource(dragSource);
