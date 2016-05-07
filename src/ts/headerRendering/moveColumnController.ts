@@ -1,14 +1,10 @@
-import {Bean} from "../context/context";
-import {Autowired} from "../context/context";
-import {LoggerFactory} from "../logger";
-import {Logger} from "../logger";
+import {Autowired, PostConstruct} from "../context/context";
+import {LoggerFactory, Logger} from "../logger";
 import {ColumnController} from "../columnController/columnController";
 import {Column} from "../entities/column";
-import {Utils as _} from '../utils';
-import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
-import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
+import {Utils as _} from "../utils";
+import {DragAndDropService, DraggingEvent} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
-import {PostConstruct} from "../context/context";
 import {ColumnGroup} from "../entities/columnGroup";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
@@ -288,6 +284,7 @@ export class MoveColumnController {
             this.failedMoveAttempts = 0;
         } else {
             this.failedMoveAttempts++;
+            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
                 var columns = this.lastDraggingEvent.dragSource.dragItem;
                 var pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
