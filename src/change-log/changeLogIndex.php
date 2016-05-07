@@ -15,6 +15,14 @@ include '../documentation-main/documentation_header.php';
     <li>Bug fix: default text editor was displaying 'undefined' when initial value was missing. now showing blank.</li>
 
     <li>Enhancement: row selection 'checked' icons are now icons and not browser checkbox. they are now also customisable via changing icons.</li>
+    <li>Enhancement: moving drag moving of column groups
+        <ul>
+            <li>Drag groups of columns from within table to move</li>
+            <li>Drag groups of columns from column toolPanel</li>
+            <li>Drag groups of columns to 'row group panel' to row group by multiple columns</li>
+        </ul>
+    </li>
+    <li>Enhancement: changed icons for drag pinning, now when you drag a column to the edge, the drag icon changes to 'pinned' so use knows the column is about to be pinned.</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
