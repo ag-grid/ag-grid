@@ -18,6 +18,8 @@ export interface DragSource {
     eElement: HTMLElement,
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     dragItem: Column[],
+    /** This name appears in the ghost icon when dragging */
+    dragItemName: string,
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget
@@ -288,7 +290,7 @@ export class DragAndDropService {
         var dragItem = this.dragSource.dragItem;
 
         var eText = <HTMLElement> this.eGhost.querySelector('#agText');
-        eText.innerHTML = this.getNameForGhost(dragItem);
+        eText.innerHTML = this.dragSource.dragItemName;
 
         this.eGhost.style.width = this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
@@ -301,17 +303,6 @@ export class DragAndDropService {
         var totalColWidth = 0;
         columns.forEach( column => totalColWidth += column.getActualWidth() );
         return totalColWidth;
-    }
-
-    private getNameForGhost(columns: Column[]): string {
-        var columnNames = columns.map( column => {
-            if (column.getColDef().headerName) {
-                return column.getColDef().headerName;
-            } else {
-                return column.getColId()
-            }
-        });
-        return columnNames.join(' / ');
     }
 
     public setGhostIcon(iconName: string, shake = false): void {
