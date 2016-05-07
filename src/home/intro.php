@@ -24,7 +24,7 @@
                 <div class="col-md-4 col-sm-4 col-xs-12">
                     <h4 class="text-left">For Applications</h4>
                     <p class="text-left">
-                        An application with ag-Grid will perform smoother giving your application a professional and expert feel. A great grid is the foundation of a great application.
+                        An application with ag-Grid will perform more smoothly giving your application a professional and expert feel. A great grid is the foundation of a great application.
                     </p>
                 </div>
             </div>
