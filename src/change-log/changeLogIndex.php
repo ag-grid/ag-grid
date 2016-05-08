@@ -24,6 +24,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </li>
     <li>Enhancement: changed icons for drag pinning, now when you drag a column to the edge, the drag icon changes to 'pinned' so use knows the column is about to be pinned.</li>
+    <li>Enhancement: new property for column group called 'marryChildren', when true then group cannot be split up by moving children.</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
