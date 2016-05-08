@@ -161,9 +161,23 @@ export class MoveColumnController {
             newIndex = newIndex - allMovingColumns.length + 1;
         }
 
-        // we move one column, UNLESS the column is the only visible column
-        // of a group, in which case we move the whole group.
+        // if (this.doesMoveFailRules(allMovingColumns, newIndex)) {
+        //
+        // }
+
         this.columnController.moveColumns(allMovingColumns, newIndex);
+    }
+
+    private doesMoveFailRules(columns: Column[], toIndex: number): boolean {
+
+        // toolpanel or table move: only move entire group
+        // when moving, jump groups
+
+        // get all columns, do the moves, see if result positions fail, if they fail, reject the move
+
+        var allColumnsCopy = this.columnController.getAllColumns().slice();
+
+        return false;
     }
 
     private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, x: number): number {
@@ -231,6 +245,7 @@ export class MoveColumnController {
 
         return newIndex;
     }
+
 /* // taking this out as it's adding loads of complexity, and made moving column groups really difficult.
    // instead, if we want this, should add logic to when groups are opened, and move non-visible columns to beside
    // the opened group if they are not already beside it

@@ -146,7 +146,6 @@ export class MasterSlaveService {
             switch (event.getType()) {
                 case Events.EVENT_COLUMN_MOVED:
                     this.logger.log('onColumnEvent-> processing '+event+' toIndex = ' + event.getToIndex());
-                    console.log(`processing ${event.getToIndex()} ${columnIds.join(', ')} `);
                     this.columnController.moveColumns(columnIds, event.getToIndex());
                     break;
                 case Events.EVENT_COLUMN_VISIBLE:

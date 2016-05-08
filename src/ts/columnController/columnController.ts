@@ -400,21 +400,18 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
     }
 
-    public getPathForColumn(column: Column): ColumnGroup[] {
-        return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
-    }
+    // public getPathForColumn(column: Column): ColumnGroup[] {
+    //     return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
+    // }
 
     public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
         this.gridPanel.turnOnAnimationForABit();
 
         // we want to pull all the columns out first and put them into an ordered list
-        var columnsToInsert = <Column[]> [];
-        keys.forEach( (key)=> {
-            var column = this.getColumn(key);
-            if (column) {
-                _.removeFromArray(this.allColumns, column);
-                columnsToInsert.push(column);
-            }
+        var columnsToInsert = this.getColumns(keys);
+        
+        columnsToInsert.forEach( (column)=> {
+            _.removeFromArray(this.allColumns, column);
         });
 
         if (toIndex > this.allColumns.length) {
@@ -438,6 +435,46 @@ export class ColumnController {
         }
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
     }
+
+/*
+
+put this logic into column controller, 
+
+    // goes through the list of cols and arranges them so that cols
+    // of the same group appear together
+    public keepGroupsTogether(): void {
+
+        // go through the groups from left to right, and add any column after this group
+        // that belongs to this group.
+        for (var index = 0; index < (this.allColumns.length-1); index++) {
+            var thisColumn = this.allColumns[index];
+            var nextColumn = this.allColumns[index + 1];
+
+            var thisPath = this.columnUtils.getPathForColumn(thisColumn, this.getAllDisplayedColumnGroups());
+            var nextPath = this.columnUtils.getPathForColumn(nextColumn, this.getAllDisplayedColumnGroups());
+
+            // start at the top of the path and work down
+            for (var dept = 0; dept<thisPath.length; dept++) {
+                var thisOriginalGroup = thisPath[dept].getOriginalColumnGroup();
+                var nextOriginalGroup = nextPath[dept].getOriginalColumnGroup();
+                var lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
+                if (lastColInGroup) {
+                    for (var tailIndex = index+1; tailIndex < this.allColumns.length; tailIndex++) {
+                        var tailColumn = this.allColumns[tailIndex];
+                        var tailPath = this.columnUtils.getPathForColumn(tailColumn, this.getAllDisplayedColumnGroups());
+                        var tailOriginalGroup = tailPath[dept].getOriginalColumnGroup();
+                        if (tailOriginalGroup===thisOriginalGroup) {
+                            this.moveColumn(tailColumn, index + 1);
+                            index++;
+                        }
+                    }
+                }
+            }
+
+            // console.log(thisPath + ' ' + nextPath);
+        }
+    }
+*/
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {
         this.moveColumns([key], toIndex);
@@ -737,6 +774,7 @@ export class ColumnController {
         return foundColumns;
     }
 
+    // used by growGroupPanel
     public getColumnWithValidation(key: string|ColDef|Column): Column {
         var column = this.getColumn(key);
         if (!column) {
