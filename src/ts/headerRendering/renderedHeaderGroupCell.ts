@@ -156,7 +156,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
             var dragSource: DragSource = {
                 eElement: eLabel,
                 dragItemName: this.displayName,
-                dragItem: this.columnGroup.getDisplayedLeafColumns(),
+                dragItem: this.columnGroup.getLeafColumns(),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource);

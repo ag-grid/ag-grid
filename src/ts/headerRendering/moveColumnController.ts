@@ -161,25 +161,9 @@ export class MoveColumnController {
             newIndex = newIndex - allMovingColumns.length + 1;
         }
 
-        // if (this.doesMoveFailRules(allMovingColumns, newIndex)) {
-        //
-        // }
-
         this.columnController.moveColumns(allMovingColumns, newIndex);
     }
-
-    private doesMoveFailRules(columns: Column[], toIndex: number): boolean {
-
-        // toolpanel or table move: only move entire group
-        // when moving, jump groups
-
-        // get all columns, do the moves, see if result positions fail, if they fail, reject the move
-
-        var allColumnsCopy = this.columnController.getAllColumns().slice();
-
-        return false;
-    }
-
+    
     private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, x: number): number {
 
         var usedX = 0;

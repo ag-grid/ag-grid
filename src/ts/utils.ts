@@ -323,6 +323,19 @@ export class Utils {
         array.splice(toIndex, 0, object);
     }
 
+    static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
+        // first take out it items from the array
+        objectsToMove.forEach( (obj)=> {
+            this.removeFromArray(array, obj);
+        });
+
+        // now add the objects, in same order as provided to us, that means we start at the end
+        // as the objects will be pushed to the right as they are inserted
+        objectsToMove.slice().reverse().forEach( (obj)=> {
+            this.insertIntoArray(array, obj, toIndex);
+        });
+    }
+    
     static defaultComparator(valueA: any, valueB: any): number {
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
