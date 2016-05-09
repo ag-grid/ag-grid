@@ -444,8 +444,17 @@ export class ColumnController {
             var thisColumn = allColumnsCopy[index];
             var nextColumn = allColumnsCopy[index + 1];
 
+            // skip hidden columns
+            if (!nextColumn.isVisible()) {
+                continue;
+            }
+
             var thisPath = this.columnUtils.getPathForColumn(thisColumn, this.getAllDisplayedColumnGroups());
             var nextPath = this.columnUtils.getPathForColumn(nextColumn, this.getAllDisplayedColumnGroups());
+
+            if (!nextPath) {
+                console.log('next path is missing');
+            }
 
             // start at the top of the path and work down
             for (var dept = 0; dept<thisPath.length; dept++) {
@@ -471,46 +480,6 @@ export class ColumnController {
 
         return true;
     }
-
-    /*
-
-    put this logic into column controller,
-
-        // goes through the list of cols and arranges them so that cols
-        // of the same group appear together
-        public keepGroupsTogether(): void {
-
-            // go through the groups from left to right, and add any column after this group
-            // that belongs to this group.
-            for (var index = 0; index < (this.allColumns.length-1); index++) {
-                var thisColumn = this.allColumns[index];
-                var nextColumn = this.allColumns[index + 1];
-
-                var thisPath = this.columnUtils.getPathForColumn(thisColumn, this.getAllDisplayedColumnGroups());
-                var nextPath = this.columnUtils.getPathForColumn(nextColumn, this.getAllDisplayedColumnGroups());
-
-                // start at the top of the path and work down
-                for (var dept = 0; dept<thisPath.length; dept++) {
-                    var thisOriginalGroup = thisPath[dept].getOriginalColumnGroup();
-                    var nextOriginalGroup = nextPath[dept].getOriginalColumnGroup();
-                    var lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
-                    if (lastColInGroup) {
-                        for (var tailIndex = index+1; tailIndex < this.allColumns.length; tailIndex++) {
-                            var tailColumn = this.allColumns[tailIndex];
-                            var tailPath = this.columnUtils.getPathForColumn(tailColumn, this.getAllDisplayedColumnGroups());
-                            var tailOriginalGroup = tailPath[dept].getOriginalColumnGroup();
-                            if (tailOriginalGroup===thisOriginalGroup) {
-                                this.moveColumn(tailColumn, index + 1);
-                                index++;
-                            }
-                        }
-                    }
-                }
-
-                // console.log(thisPath + ' ' + nextPath);
-            }
-        }
-    */
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {
         this.moveColumns([key], toIndex);
