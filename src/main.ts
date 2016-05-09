@@ -12,10 +12,11 @@ import {StatusBar} from "./statusBar/statusBar";
 import {ContextMenuFactory} from "./contextMenu";
 import {ViewportRowModel} from "./viewport/viewportRowModel";
 import {LicenseManager} from "./licenseManager";
+import {MD5} from "./license/md5";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
 Grid.setEnterpriseBeans([ToolPanel, EnterpriseMenuFactory, RowGroupPanel,
     ColumnSelectPanel, RangeController, ClipboardService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
-    StatusBar, LicenseManager], rowModelTypes);
+    StatusBar, LicenseManager, MD5], rowModelTypes);
