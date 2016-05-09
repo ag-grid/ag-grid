@@ -25,7 +25,7 @@ export class LicenseManager {
 
                 if(!isNaN(expiry.getTime())) {
                     valid = true;
-                    current = (new Date().getTime() < expiry)
+                    current = (this.getGridReleaseDate() < expiry)
                 }
             }
         }
@@ -36,6 +36,10 @@ export class LicenseManager {
             alert("Your license has expired (valid until " + expiry + ")")
         }
     }
+
+    private getGridReleaseDate() {
+        return new Date().getTime();
+    };
 
     private static decode(input:string):string {
         var keystr:string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
