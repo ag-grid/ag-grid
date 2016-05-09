@@ -400,53 +400,85 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
     }
 
-    public getPathForColumn(column: Column): ColumnGroup[] {
-        return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
-    }
+    // public getPathForColumn(column: Column): ColumnGroup[] {
+    //     return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
+    // }
 
-    public moveColumnsOld(keys: (Column|ColDef|String)[], toIndex: number): void {
-        this.gridPanel.turnOnAnimationForABit();
-        this.actionOnColumns(keys, (column: Column)=> {
-            var fromIndex = this.allColumns.indexOf(column);
-            this.allColumns.splice(fromIndex, 1);
-            this.allColumns.splice(toIndex, 0, column);
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
-        });
-        this.updateModel();
-    }
+    public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number): void {
 
-    public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
-        this.gridPanel.turnOnAnimationForABit();
-
-        // we want to pull all the columns out first and put them into an ordered list
-        var columnsToInsert = <Column[]> [];
-        keys.forEach( (key)=> {
-            var column = this.getColumn(key);
-            if (column) {
-                _.removeFromArray(this.allColumns, column);
-                columnsToInsert.push(column);
-            }
-        });
-
-        if (toIndex > this.allColumns.length) {
+        if (toIndex > this.allColumns.length - columnsToMoveKeys.length) {
             console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
             console.warn('ag-Grid: remember that you should not count the moving columns when calculating the new index');
+            return;
         }
 
-        // now add the columns, in same order as provided to us, that means we start at the end
-        // as the columns will be pushed to the right as they are inserted
-        columnsToInsert.reverse().forEach( (column)=> {
-            _.insertIntoArray(this.allColumns, column, toIndex);
-        });
+        // we want to pull all the columns out first and put them into an ordered list
+        var columnsToMove = this.getColumns(columnsToMoveKeys);
+
+        var failedRules = !this.doesMovePassRules(columnsToMove, toIndex);
+        if (failedRules) { return; }
+
+        this.gridPanel.turnOnAnimationForABit();
+
+        _.moveInArray(this.allColumns, columnsToMove, toIndex);
 
         this.updateModel();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
-        if (columnsToInsert.length===1) {
-            event.withColumn(columnsToInsert[0]);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED)
+            .withToIndex(toIndex)
+            .withColumns(columnsToMove);
+        if (columnsToMove.length===1) {
+            event.withColumn(columnsToMove[0]);
         }
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
+    }
+
+    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
+
+        var allColumnsCopy = this.allColumns.slice();
+
+        _.moveInArray(allColumnsCopy, columnsToMove, toIndex);
+
+        // look for broken groups, ie stray columns from groups that should be married
+        for (var index = 0; index < (allColumnsCopy.length-1); index++) {
+            var thisColumn = allColumnsCopy[index];
+            var nextColumn = allColumnsCopy[index + 1];
+
+            // skip hidden columns
+            if (!nextColumn.isVisible()) {
+                continue;
+            }
+
+            var thisPath = this.columnUtils.getPathForColumn(thisColumn, this.getAllDisplayedColumnGroups());
+            var nextPath = this.columnUtils.getPathForColumn(nextColumn, this.getAllDisplayedColumnGroups());
+
+            if (!nextPath) {
+                console.log('next path is missing');
+            }
+
+            // start at the top of the path and work down
+            for (var dept = 0; dept<thisPath.length; dept++) {
+                var thisOriginalGroup = thisPath[dept].getOriginalColumnGroup();
+                var nextOriginalGroup = nextPath[dept].getOriginalColumnGroup();
+                var lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
+                // a runaway is a column from this group that left the group, and the group has it's children marked as married
+                var colGroupDef = thisOriginalGroup.getColGroupDef();
+                var marryChildren = colGroupDef && colGroupDef.marryChildren;
+                var needToCheckForRunaways = lastColInGroup && marryChildren;
+                if (needToCheckForRunaways) {
+                    for (var tailIndex = index+1; tailIndex < allColumnsCopy.length; tailIndex++) {
+                        var tailColumn = allColumnsCopy[tailIndex];
+                        var tailPath = this.columnUtils.getPathForColumn(tailColumn, this.getAllDisplayedColumnGroups());
+                        var tailOriginalGroup = tailPath[dept].getOriginalColumnGroup();
+                        if (tailOriginalGroup===thisOriginalGroup) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {
@@ -747,6 +779,7 @@ export class ColumnController {
         return foundColumns;
     }
 
+    // used by growGroupPanel
     public getColumnWithValidation(key: string|ColDef|Column): Column {
         var column = this.getColumn(key);
         if (!column) {

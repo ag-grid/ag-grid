@@ -15,10 +15,12 @@ export interface AbstractColDef {
 }
 
 export interface ColGroupDef extends AbstractColDef {
-    /** Columns in this group*/
+    /** Columns in this group */
     children: AbstractColDef[];
     /** Group ID */
     groupId?: string;
+    /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
+    marryChildren?: boolean;
 }
 
 export interface ColDef extends AbstractColDef {

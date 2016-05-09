@@ -44,12 +44,12 @@ export class CheckboxSelectionComponent extends Component {
         this.rowNode.setSelected(false);
     }
 
-    private onUncheckedClicked(): void {
-        this.rowNode.setSelected(true);
+    private onUncheckedClicked(event: MouseEvent): void {
+        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey});
     }
 
-    private onIndeterminateClicked(): void {
-        this.rowNode.setSelected(true);
+    private onIndeterminateClicked(event: MouseEvent): void {
+        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey});
     }
 
     public init(params: any): void {

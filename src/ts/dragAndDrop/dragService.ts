@@ -94,7 +94,6 @@ export class DragService {
     }
 
     public onMouseUp(mouseEvent: MouseEvent): void {
-        this.logger.log('onMouseUp');
 
         document.removeEventListener('mouseup', this.onMouseUpListener);
         document.removeEventListener('mousemove', this.onMouseMoveListener);

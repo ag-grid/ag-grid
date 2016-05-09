@@ -33,6 +33,8 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
     private eRoot: HTMLElement;
 
+    private displayName: string;
+
     constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, parentScope: any, dragSourceDropTarget: DropTarget) {
         this.columnGroup = columnGroup;
         this.parentScope = parentScope;
@@ -58,17 +60,18 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
         CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper);
 
+        this.displayName = this.columnGroup.getHeaderName();
+
         this.setupResize();
         this.addClasses();
         this.setupLabel();
-        // this.setupMove();
+        this.setupMove();
         this.setWidth();
     }
-    
+
     private setupLabel(): void {
         // no renderer, default text render
-        var groupName = this.columnGroup.getHeaderName();
-        if (groupName && groupName !== '') {
+        if (this.displayName && this.displayName !== '') {
             var eGroupCellLabel = document.createElement("div");
             eGroupCellLabel.className = 'ag-header-group-cell-label';
             this.eHeaderGroupCell.appendChild(eGroupCellLabel);
@@ -79,7 +82,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
             var eInnerText = document.createElement("span");
             eInnerText.className = 'ag-header-group-text';
-            eInnerText.innerHTML = groupName;
+            eInnerText.innerHTML = this.displayName;
             eGroupCellLabel.appendChild(eInnerText);
 
             if (this.columnGroup.isExpandable()) {
@@ -148,11 +151,12 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     
         // don't allow moving of headers when forPrint, as the header overlay doesn't exist
         if (this.gridOptionsWrapper.isForPrint()) { return; }
-    
+
         if (eLabel) {
             var dragSource: DragSource = {
                 eElement: eLabel,
-                dragItem: this.columnGroup,
+                dragItemName: this.displayName,
+                dragItem: this.columnGroup.getLeafColumns(),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource);
@@ -183,9 +187,9 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
         var eGroupIcon: any;
         if (this.columnGroup.isExpanded()) {
-            eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
+            eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
         } else {
-            eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+            eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
         }
         eGroupIcon.className = 'ag-header-expand-icon';
         eGroupCellLabel.appendChild(eGroupIcon);

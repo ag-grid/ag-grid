@@ -168,6 +168,10 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.originalColumnGroup.getColumnGroupShow();
     }
 
+    public getOriginalColumnGroup(): OriginalColumnGroup {
+        return this.originalColumnGroup;
+    }
+    
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];

@@ -23,6 +23,9 @@ export class SelectionController {
     private selectedNodes: {[key: string]: RowNode};
     private logger: Logger;
 
+    // used for shift selection, so we know where to start the range selection from
+    private lastSelectedNode: RowNode;
+
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
@@ -38,6 +41,14 @@ export class SelectionController {
     @PostConstruct
     public init(): void {
         this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+    }
+
+    public setLastSelectedNode(rowNode: RowNode): void {
+        this.lastSelectedNode = rowNode;
+    }
+
+    public getLastSelectedNode(): RowNode {
+        return this.lastSelectedNode;
     }
 
     public getSelectedNodes() {
@@ -90,7 +101,7 @@ export class SelectionController {
     public clearOtherNodes(rowNodeToKeepSelected: RowNode): void {
         _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                this.selectedNodes[otherRowNode.id].setSelected(false, false, true);
+                this.selectedNodes[otherRowNode.id].setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
             }
         });
     }
@@ -114,6 +125,7 @@ export class SelectionController {
     public reset(): void {
         this.logger.log('reset');
         this.selectedNodes = {};
+        this.lastSelectedNode = null;
     }
 
     // returns a list of all nodes at 'best cost' - a feature to be used
@@ -191,31 +203,31 @@ export class SelectionController {
             throw 'selectAll only available with norma row model, ie not virtual pagination';
         }
         this.rowModel.forEachNode( (rowNode: RowNode) => {
-            rowNode.setSelected(true, false, true);
+            rowNode.setSelectedParams({newValue: true, clearSelection: false, tailingNodeInSequence: true});
         });
         this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED)
     }
 
     // Deprecated method
-    public selectNode(rowNode: RowNode, tryMulti: boolean, suppressEvents?: boolean) {
-        rowNode.setSelected(true, !tryMulti, suppressEvents);
+    public selectNode(rowNode: RowNode, tryMulti: boolean) {
+        rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
     }
 
     // Deprecated method
-    public deselectIndex(rowIndex: number, suppressEvents: boolean = false) {
+    public deselectIndex(rowIndex: number) {
         var node = this.rowModel.getRow(rowIndex);
-        this.deselectNode(node, suppressEvents);
+        this.deselectNode(node);
     }
 
     // Deprecated method
-    public deselectNode(rowNode: RowNode, suppressEvents: boolean = false) {
-        rowNode.setSelected(false, false, suppressEvents);
+    public deselectNode(rowNode: RowNode) {
+        rowNode.setSelectedParams({newValue: false, clearSelection: false});
     }
 
     // Deprecated method
-    public selectIndex(index: any, tryMulti: boolean, suppressEvents: boolean = false) {
+    public selectIndex(index: any, tryMulti: boolean) {
         var node = this.rowModel.getRow(index);
-        this.selectNode(node, tryMulti, suppressEvents);
+        this.selectNode(node, tryMulti);
     }
 
 }
