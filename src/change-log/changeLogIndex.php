@@ -14,6 +14,8 @@ include '../documentation-main/documentation_header.php';
     <li>Bug fix: you can now tab into and out of the grid.</li>
     <li>Bug fix: default text editor was displaying 'undefined' when initial value was missing. now showing blank.</li>
 
+    <li>Enhancement: New theme for Bootstrap</li>
+    <li>Enhancement: New theme for Material Design</li>
     <li>Enhancement: better default icons for row groups and checkbox selection</li>
     <li>Enhancement: row selection 'checked' icons are now icons and not browser checkbox. they are now also customisable via changing icons.</li>
     <li>Enhancement: moving drag via dragging now supports:
@@ -26,6 +28,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: changed icons for drag pinning, now when you drag a column to the edge, the drag icon changes to 'pinned' so use knows the column is about to be pinned.</li>
     <li>Enhancement: new property for column group called 'marryChildren', when true then group cannot be split up by moving children.</li>
     <li>Enhancement: toolpanel now has icon beside column group to show visibility of the group. icon is also clickable to set visible / hidden all children of the group</li>
+    <li>Enhancement: a range of rows can be selected together by holding down shift (does not work with virtual pagination or viewport, only normal 'in memory row model').</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
