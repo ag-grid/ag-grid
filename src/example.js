@@ -1,13 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     gridDiv = document.querySelector('#myGrid');
 
-    agGrid.LicenseManager.setLicenseKey("Some Long String");
+    agGrid.LicenseManager.setLicenseKey("Credit_Suisse_RDA_Clients_Only_Expires_01_JAN_2018_NF8xNDYyNTY2MTM2NDc3_851d4fd24aa0f6ffd76c42c69c2550e3");
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 });
 
 var gridDiv;
-
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
