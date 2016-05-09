@@ -28,6 +28,7 @@ export class ColumnSelectPanel extends Component {
 
     private allowDragging: boolean;
 
+    // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {
         super(ColumnSelectPanel.TEMPLATE);
         this.allowDragging = allowDragging;
@@ -65,7 +66,7 @@ export class ColumnSelectPanel extends Component {
         var newDept: number;
 
         if (columnGroup.getColGroupDef()) {
-            var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this));
+            var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
             this.appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
