@@ -22,7 +22,7 @@ export class RenderedColumn extends Component {
         '    <span id="eColumnVisibleIcon" class="ag-column-visible-icon"></span>' +
         '    <span id="eColumnHiddenIcon" class="ag-column-hidden-icon"></span>' +
         '  </span>' +
-        '    <span id="eText" class="ag-column-select-label"></span>' +
+        '  <span id="eText" class="ag-column-select-label"></span>' +
         '</div>';
 
     @Autowired('columnController') private columnController: ColumnController;
