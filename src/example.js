@@ -284,6 +284,7 @@ var defaultCols = [
     {
         // column group 'Participant
         headerName: 'Participant',
+        // marryChildren: true,
         children: [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,

@@ -24,27 +24,29 @@ include '../documentation-main/documentation_header.php';
         You do not need to know this. However it is helpful to understand what's going on inside the grid sometimes.
     </note>
 
-    <h2>Row Controllers</h2>
+    <h2>Row Models</h2>
 
     <p>
-        There are two row controllers used in the grid:
+        There are three row row models used in the grid:
         <ul>
-            <li><b>In Memory Controller:</b></li> This is the most common. It allows the full set of filtering, sorting
+            <li><b>In Memory Row Model:</b></li> This is the most common. It allows the full set of filtering, sorting
             and grouping inside the grid. When doing pagination, this model is used to display one page at a time in the
-            grid. The only time this is not used is when doing virtual pagination.
-            <li><b>Virtual Page Controller:</b></li> This is the most common. This is used for everything except when
-            doing virtual paging.
+            grid. The only times this is not used is when using virtual pagination or viewport.
+            <li><b>Virtual Page Row Model:</b></li> This is used when doing virtual pagination.
+            <li><b>Viewport Row Model:</b></li> This is used when doing viewport.
         </ul>
 
-        The virtual page controller is explained in the section <a href="../javascript-grid-virtual-paging/">Virtual
-        Paging and Infinite Scrolling</a>. This section of the documentation focuses on the core row controller.
+        The virtual page row model is explained in the section <a href="../javascript-grid-virtual-paging/">Virtual
+        Paging and Infinite Scrolling</a>. The viewport row model is explained in the section
+        <a href="../javascript-grid-viewport/">Viewport</a>. The remainder of this section of the documentation
+        focuses on the In Memory Row Model.
 
     </p>
 
-    <h2>In Memory Row Controller</h2>
+    <h2>In Memory Row Model</h2>
 
     <p>
-        The in memory row controller is responsible for working out how to display the rows inside the grid.
+        The in memory row model is responsible for working out how to display the rows inside the grid.
         It has a complex data structures, representing the data in difference states. The states are as follows:
         <ul>
         <li><b>State 1: Row Data:</b> Row data the application provides.</li>
