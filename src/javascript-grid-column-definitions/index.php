@@ -236,6 +236,11 @@ include '../documentation-main/documentation_header.php';
             <th>children</th>
             <td>A list containing a mix of columns and column groups.</td>
         </tr>
+        <tr>
+            <th>marryChildren</th>
+            <td>Set to 'true' to keep columns in this group beside each other in the grid. Moving the columns outside
+            of the group (and hence breaking the group) is not allowed.</td>
+        </tr>
     </table>
 
 <?php include '../documentation-main/documentation_footer.php';?>

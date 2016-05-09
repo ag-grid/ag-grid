@@ -128,6 +128,7 @@ var gridOptions = {
 //groupIncludeFooter: true,
     groupHideGroupColumns: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
+    // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
     enableColResize: true, //one of [true, false]
@@ -175,8 +176,8 @@ var gridOptions = {
         sortDescending: '<i class="fa fa-long-arrow-up"/>',
         // groupExpanded: '<i class="fa fa-minus-square-o"/>',
         // groupContracted: '<i class="fa fa-plus-square-o"/>',
-        columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-        columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
+        // columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+        // columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
     },
 
     getBusinessKeyForNode: function (node) {
