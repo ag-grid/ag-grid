@@ -1,22 +1,25 @@
-import {Utils as _} from "ag-grid/main";
-import {SvgFactory} from "ag-grid/main";
-import {Bean} from "ag-grid/main";
-import {Component} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {EventService} from "ag-grid/main";
-import {Context} from "ag-grid/main";
-import {LoggerFactory} from "ag-grid/main";
-import {DragAndDropService} from "ag-grid/main";
-import {GridOptionsWrapper} from "ag-grid/main";
-import {GridPanel} from "ag-grid/main";
-import {Logger} from "ag-grid/main";
-import {DropTarget} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
-import {Events} from "ag-grid/main";
-import {DraggingEvent} from "ag-grid/main";
-import {Column} from "ag-grid/main";
-import {DragSource} from "ag-grid/main";
+import {
+    Utils as _,
+    SvgFactory,
+    Bean,
+    Component,
+    Autowired,
+    ColumnController,
+    EventService,
+    Context,
+    LoggerFactory,
+    DragAndDropService,
+    GridOptionsWrapper,
+    GridPanel,
+    Logger,
+    DropTarget,
+    PostConstruct,
+    Events,
+    DraggingEvent,
+    Column,
+    ColumnGroup,
+    DragSource
+} from "ag-grid/main";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -34,9 +37,9 @@ export class RowGroupPanel extends Component {
     private logger: Logger;
     private dropTarget: DropTarget;
 
-    // when we are considering a drop from a dnd event, the item to be dropped
-    // is in here
-    private potentialDragItem: Column;
+    // when we are considering a drop from a dnd event,
+    // the columns to be dropped go in here
+    private potentialDndColumns: Column[];
 
     private guiDestroyFunctions: (()=>void)[] = [];
 
@@ -81,32 +84,27 @@ export class RowGroupPanel extends Component {
     private onDragging(): void {
     }
 
+    private isColumnGroupable(column: Column): boolean {
+        var columnGroupable = !column.getColDef().suppressRowGroup;
+        var columnNotAlreadyGrouped = !this.columnController.isColumnRowGrouped(column);
+        return columnGroupable && columnNotAlreadyGrouped;
+    }
+
     private onDragEnter(draggingEvent: DraggingEvent): void {
-        // see if it's a column or a group. if its a group, we always reject
-        var column = (draggingEvent.dragSource.dragItem instanceof Column) ? <Column> draggingEvent.dragSource.dragItem : null;
+        // this will contain all columns that are potential drops
+        var dragColumns = draggingEvent.dragSource.dragItem;
 
-        var reject: boolean;
+        // take out columns that are not groupable
+        var goodDragColumns = _.filter(dragColumns, this.isColumnGroupable.bind(this) );
 
-        if (column) {
-            // see if column is already grouped, if it is, ignore it
-            var columnNotGroupable = column.getColDef().suppressRowGroup;
-            var columnAlreadyGrouped = this.columnController.isColumnRowGrouped(column);
-            reject = columnAlreadyGrouped || columnNotGroupable;
-        } else {
-            reject = true;
-        }
-
-        if (reject) {
-            // do not allow group
-            this.dragAndDropService.setGhostIcon(null);
-        } else {
-            // allow group
-            this.potentialDragItem = column;
-            // this.addPotentialDropToGui(column);
+        var weHaveColumnsToDrag = goodDragColumns.length > 0;
+        if (weHaveColumnsToDrag) {
+            this.potentialDndColumns = goodDragColumns;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_GROUP);
             this.refreshGui();
+        } else {
+            this.dragAndDropService.setGhostIcon(null);
         }
-
     }
 
     private onDragLeave(draggingEvent: DraggingEvent): void {
@@ -116,30 +114,33 @@ export class RowGroupPanel extends Component {
         var rowGroupColumns = this.columnController.getRowGroupColumns();
 
         var thisPanelStartedTheDrag = draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget;
-        var dragItemIsGrouped = rowGroupColumns.indexOf(<Column>draggingEvent.dragSource.dragItem) >= 0;
-        var needToUngroupThisCol = thisPanelStartedTheDrag && dragItemIsGrouped;
-
-        if (needToUngroupThisCol) {
-            this.gridPanel.turnOnAnimationForABit();
-            this.columnController.removeRowGroupColumn(draggingEvent.dragSource.dragItem);
-            this.columnController.setColumnVisible(draggingEvent.dragSource.dragItem, true);
+        if (thisPanelStartedTheDrag) {
+            // this panel only allows dragging columns (not column groups) so we are guaranteed
+            // the dragItem is a column
+            var columns = draggingEvent.dragSource.dragItem;
+            columns.forEach( column => {
+                var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
+                if (columnIsGrouped) {
+                    this.gridPanel.turnOnAnimationForABit();
+                    this.columnController.removeRowGroupColumn(column);
+                    this.columnController.setColumnVisible(column, true);
+                }
+            });
         }
 
-        if (this.potentialDragItem) {
-            this.potentialDragItem = null;
+        if (this.potentialDndColumns) {
+            this.potentialDndColumns = null;
             this.refreshGui();
         }
     }
 
-    private onDragStop(draggingEvent: DraggingEvent): void {
-        //this.columnController.addRowGroupColumn(draggingEvent.dragItem);
-        if (this.potentialDragItem) {
-            // not necessary to remove it, as the change to rowGroups results in
-            // this panel refreshing, however my brain will be more at peace if we do
-            // this.removePotentialDropFromGui();
-            this.columnController.addRowGroupColumn(draggingEvent.dragSource.dragItem);
-            this.potentialDragItem = null;
-            this.refreshGui();
+    private onDragStop(): void {
+        if (this.potentialDndColumns) {
+            this.potentialDndColumns.forEach( (column) => {
+                this.columnController.addRowGroupColumn(column);
+                this.potentialDndColumns = null;
+                this.refreshGui();
+            });
         }
     }
 
@@ -149,19 +150,28 @@ export class RowGroupPanel extends Component {
         this.addGroupIconToGui();
         this.addEmptyMessageToGui();
         this.addRowGroupColumnsToGui();
-        this.addPotentialDragItemToGui();
+        this.addPotentialDragItemsToGui();
     }
 
-    private addPotentialDragItemToGui(): void {
+    private addPotentialDragItemsToGui(): void {
         var rowGroupColumns = this.columnController.getRowGroupColumns();
-        if (this.potentialDragItem) {
-            if (rowGroupColumns.length!==0) {
-                this.addArrowToGui();
-            }
-            var ghostCell = new RenderedGroupedColumnCell(this.potentialDragItem, this.dropTarget, true);
-            this.context.wireBean(ghostCell);
-            this.getGui().appendChild(ghostCell.getGui());
-            this.guiDestroyFunctions.push( ()=> ghostCell.destroy() );
+        var first = rowGroupColumns.length === 0;
+
+        if (this.potentialDndColumns) {
+
+            this.potentialDndColumns.forEach( (column) => {
+                if (!first) {
+                    this.addArrowToGui();
+                }
+                first = false;
+
+                var ghostCell = new RenderedGroupedColumnCell(column, this.dropTarget, true);
+                this.context.wireBean(ghostCell);
+                this.getGui().appendChild(ghostCell.getGui());
+                this.guiDestroyFunctions.push( ()=> ghostCell.destroy() );
+
+            } );
+
         }
     }
 
@@ -189,7 +199,7 @@ export class RowGroupPanel extends Component {
 
     private addEmptyMessageToGui(): void {
         var rowGroupColumns = this.columnController.getRowGroupColumns();
-        var showEmptyMessage = rowGroupColumns.length === 0 && !this.potentialDragItem;
+        var showEmptyMessage = rowGroupColumns.length === 0 && !this.potentialDndColumns;
         if (!showEmptyMessage) { return; }
 
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -222,6 +232,7 @@ class RenderedGroupedColumnCell extends Component {
     private column: Column;
     private dragSourceDropTarget: DropTarget;
     private ghost: boolean;
+    private displayName: string;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, ghost = false) {
         super(RenderedGroupedColumnCell.TEMPLATE);
@@ -232,6 +243,7 @@ class RenderedGroupedColumnCell extends Component {
 
     @PostConstruct
     public init(): void {
+        this.displayName = this.columnController.getDisplayNameForCol(this.column);
         this.setupComponents();
         if (!this.ghost) {
             this.addDragSource();
@@ -241,7 +253,8 @@ class RenderedGroupedColumnCell extends Component {
     private addDragSource(): void {
         var dragSource: DragSource = {
             eElement: this.getGui(),
-            dragItem: this.column,
+            dragItem: [this.column],
+            dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
         };
         this.dragAndDropService.addDragSource(dragSource);
@@ -251,7 +264,7 @@ class RenderedGroupedColumnCell extends Component {
         var eText = <HTMLElement> this.getGui().querySelector('#eText');
         var btRemove = <HTMLElement> this.getGui().querySelector('#btRemove');
 
-        eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
+        eText.innerHTML = this.displayName;
         btRemove.addEventListener('click', ()=> {
             this.gridPanel.turnOnAnimationForABit();
             this.columnController.removeRowGroupColumn(this.column);
