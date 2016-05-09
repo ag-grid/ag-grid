@@ -28,7 +28,42 @@ export class ColumnUtils {
         }
     }
 
-    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
+    public getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] {
+        var result: OriginalColumnGroup[] = [];
+        var found = false;
+
+        recursePath(originalBalancedTree, 0);
+
+        // we should always find the path, but in case there is a bug somewhere, returning null
+        // will make it fail rather than provide a 'hard to track down' bug
+        if (found) {
+            return result;
+        } else {
+            return null;
+        }
+
+        function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
+
+            for (var i = 0; i<balancedColumnTree.length; i++) {
+                if (found) {
+                    // quit the search, so 'result' is kept with the found result
+                    return;
+                }
+                var node = balancedColumnTree[i];
+                if (node instanceof OriginalColumnGroup) {
+                    var nextNode = <OriginalColumnGroup> node;
+                    recursePath(nextNode.getChildren(), dept+1);
+                    result[dept] = node;
+                } else {
+                    if (node === column) {
+                        found = true;
+                    }
+                }
+            }
+        }
+    }
+
+/*    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
         var result: ColumnGroup[] = [];
         var found = false;
 
@@ -61,7 +96,7 @@ export class ColumnUtils {
                 }
             }
         }
-    }
+    }*/
 
     public deptFirstOriginalTreeSearch(tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild)=>void ): void {
 

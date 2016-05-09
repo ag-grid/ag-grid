@@ -400,10 +400,6 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
     }
 
-    // public getPathForColumn(column: Column): ColumnGroup[] {
-    //     return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
-    // }
-
     public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number): void {
 
         if (toIndex > this.allColumns.length - columnsToMoveKeys.length) {
@@ -449,17 +445,17 @@ export class ColumnController {
                 continue;
             }
 
-            var thisPath = this.columnUtils.getPathForColumn(thisColumn, this.getAllDisplayedColumnGroups());
-            var nextPath = this.columnUtils.getPathForColumn(nextColumn, this.getAllDisplayedColumnGroups());
+            var thisPath = this.columnUtils.getOriginalPathForColumn(thisColumn, this.originalBalancedTree);
+            var nextPath = this.columnUtils.getOriginalPathForColumn(nextColumn, this.originalBalancedTree);
 
-            if (!nextPath) {
+            if (!nextPath || !thisPath) {
                 console.log('next path is missing');
             }
 
             // start at the top of the path and work down
             for (var dept = 0; dept<thisPath.length; dept++) {
-                var thisOriginalGroup = thisPath[dept].getOriginalColumnGroup();
-                var nextOriginalGroup = nextPath[dept].getOriginalColumnGroup();
+                var thisOriginalGroup = thisPath[dept];
+                var nextOriginalGroup = nextPath[dept];
                 var lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
                 // a runaway is a column from this group that left the group, and the group has it's children marked as married
                 var colGroupDef = thisOriginalGroup.getColGroupDef();
@@ -468,8 +464,8 @@ export class ColumnController {
                 if (needToCheckForRunaways) {
                     for (var tailIndex = index+1; tailIndex < allColumnsCopy.length; tailIndex++) {
                         var tailColumn = allColumnsCopy[tailIndex];
-                        var tailPath = this.columnUtils.getPathForColumn(tailColumn, this.getAllDisplayedColumnGroups());
-                        var tailOriginalGroup = tailPath[dept].getOriginalColumnGroup();
+                        var tailPath = this.columnUtils.getOriginalPathForColumn(tailColumn, this.originalBalancedTree);
+                        var tailOriginalGroup = tailPath[dept];
                         if (tailOriginalGroup===thisOriginalGroup) {
                             return false;
                         }

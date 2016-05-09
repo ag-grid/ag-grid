@@ -10,6 +10,7 @@ import {Autowired} from "../context/context";
 import {SvgFactory} from "../svgFactory";
 import {DragService} from "./dragService";
 import {ColumnGroup} from "../entities/columnGroup";
+import {ColumnController} from "../columnController/columnController";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -54,6 +55,7 @@ export class DragAndDropService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
+    @Autowired('columnController') private columnController: ColumnController;
 
     public static DIRECTION_LEFT = 'left';
     public static DIRECTION_RIGHT = 'right';
@@ -301,7 +303,15 @@ export class DragAndDropService {
 
     private getActualWidth(columns: Column[]): number {
         var totalColWidth = 0;
-        columns.forEach( column => totalColWidth += column.getActualWidth() );
+
+        // we only include displayed columns so hidden columns do not add space as this would look weird,
+        // if for example moving a group with 5 cols, but only 1 displayed, we want chost to be just the width
+        // of the 1 displayed column
+        var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
+        var displayedColumns = _.filter(columns, column => allDisplayedColumns.indexOf(column) >= 0 );
+
+        displayedColumns.forEach( column => totalColWidth += column.getActualWidth() );
+
         return totalColWidth;
     }
 

@@ -156,11 +156,29 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
             var dragSource: DragSource = {
                 eElement: eLabel,
                 dragItemName: this.displayName,
-                dragItem: this.columnGroup.getLeafColumns(),
+                // we add in the original group leaf columns, so we move both visible and non-visible items
+                dragItem: this.getAllColumnsInThisGroup(),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource);
         }
+    }
+
+    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
+    // are currently in the screen.
+    public getAllColumnsInThisGroup(): Column[] {
+        var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        var allColumnsCurrentOrder: Column[] = [];
+        this.columnController.getAllDisplayedColumns().forEach( column => {
+            if (allColumnsOriginalOrder.indexOf(column) >= 0) {
+                allColumnsCurrentOrder.push(column);
+                _.removeFromArray(allColumnsOriginalOrder, column);
+            }
+        });
+        // we are left with non-visible columns, stick these in at the end
+        allColumnsOriginalOrder.forEach( column => allColumnsCurrentOrder.push(column));
+
+        return allColumnsCurrentOrder;
     }
 
     private setWidth(): void {

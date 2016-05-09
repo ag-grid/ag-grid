@@ -125,13 +125,14 @@ export class MoveColumnController {
         var draggingRight = dragDirection === DragAndDropService.DIRECTION_RIGHT;
 
         var dragColumn: Column;
+        var displayedMovingColumns = _.filter(allMovingColumns, column => displayedColumns.indexOf(column) >= 0 );
         // if dragging left, we want to use the left most column, ie move the left most column to
         // under the mouse pointer
         if (draggingLeft) {
-            dragColumn = allMovingColumns[0];
+            dragColumn = displayedMovingColumns[0];
         // if dragging right, we want to keep the right most column under the mouse pointer
         } else {
-            dragColumn = allMovingColumns[allMovingColumns.length-1];
+            dragColumn = displayedMovingColumns[displayedMovingColumns.length-1];
         }
 
         var newIndex = this.workOutNewIndex(displayedColumns, allColumns, dragColumn, dragDirection, xAdjustedForScroll);
@@ -229,29 +230,6 @@ export class MoveColumnController {
 
         return newIndex;
     }
-
-/* // taking this out as it's adding loads of complexity, and made moving column groups really difficult.
-   // instead, if we want this, should add logic to when groups are opened, and move non-visible columns to beside
-   // the opened group if they are not already beside it
-    private getColumnsAndOrphans(columnOrGroup: Column | ColumnGroup): Column[] {
-        var column = <Column> columnOrGroup;
-        // if this column was to move, how many children would be left without a parent
-        var pathToChild = this.columnController.getPathForColumn(column);
-
-        for (var i = pathToChild.length - 1; i>=0; i--) {
-            var columnGroup = pathToChild[i];
-            var onlyDisplayedChild = columnGroup.getDisplayedChildren().length === 1;
-            var moreThanOneChild = columnGroup.getChildren().length > 1;
-            if (onlyDisplayedChild && moreThanOneChild) {
-                // return total columns below here, not including the column under inspection
-                var leafColumns = columnGroup.getLeafColumns();
-                return leafColumns;
-            }
-        }
-
-        return [column];
-    }
-*/
 
     private ensureIntervalStarted(): void {
         if (!this.movingIntervalId) {
