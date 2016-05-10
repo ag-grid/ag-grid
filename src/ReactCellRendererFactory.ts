@@ -1,9 +1,9 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-export function reactCellRendererFactory(reactComponent: any): Function {
+export function reactCellRendererFactory(reactComponent: any): ( (params: any) => HTMLElement | string) {
 
-    return (params: any): any => {
+    return (params: any): HTMLElement | string => {
 
         var eParentElement = params.eParentOfValue;
 
