@@ -1,14 +1,17 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var column_1 = require("./column");
+var eventService_1 = require("../eventService");
 var ColumnGroup = (function () {
     function ColumnGroup(originalColumnGroup, groupId, instanceId) {
         // depends on the open/closed state of the group, only displaying columns are stored here
         this.displayedChildren = [];
+        this.moving = false;
+        this.eventService = new eventService_1.EventService();
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
@@ -22,6 +25,19 @@ var ColumnGroup = (function () {
         else {
             return null;
         }
+    };
+    ColumnGroup.prototype.addEventListener = function (eventType, listener) {
+        this.eventService.addEventListener(eventType, listener);
+    };
+    ColumnGroup.prototype.removeEventListener = function (eventType, listener) {
+        this.eventService.removeEventListener(eventType, listener);
+    };
+    ColumnGroup.prototype.setMoving = function (moving) {
+        this.moving = moving;
+        this.eventService.dispatchEvent(column_1.Column.EVENT_MOVING_CHANGED);
+    };
+    ColumnGroup.prototype.isMoving = function () {
+        return this.moving;
     };
     ColumnGroup.prototype.getGroupId = function () {
         return this.groupId;

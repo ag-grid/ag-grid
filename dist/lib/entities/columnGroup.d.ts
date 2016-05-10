@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.3
+// Type definitions for ag-grid v4.1.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -15,8 +15,14 @@ export declare class ColumnGroup implements ColumnGroupChild {
     private groupId;
     private instanceId;
     private originalColumnGroup;
+    private moving;
+    private eventService;
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number);
     getHeaderName(): string;
+    addEventListener(eventType: string, listener: Function): void;
+    removeEventListener(eventType: string, listener: Function): void;
+    setMoving(moving: boolean): void;
+    isMoving(): boolean;
     getGroupId(): string;
     getInstanceId(): number;
     isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean;

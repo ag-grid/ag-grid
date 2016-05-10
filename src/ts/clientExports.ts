@@ -58,7 +58,6 @@ import {GridCore} from "./gridCore";
 import {Logger} from "./logger";
 import {MasterSlaveService} from "./masterSlaveService";
 import {SelectionController} from "./selectionController";
-import {SelectionRendererFactory} from "./selectionRendererFactory";
 import {SortController} from "./sortController";
 import {SvgFactory} from "./svgFactory";
 import {TemplateService} from "./templateService";
@@ -81,6 +80,7 @@ import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
+import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
 
 export function populateClientExports(exports: any): void {
 
@@ -199,7 +199,7 @@ export function populateClientExports(exports: any): void {
     exports.Logger = Logger;
     exports.MasterSlaveService = MasterSlaveService;
     exports.SelectionController = SelectionController;
-    exports.SelectionRendererFactory = SelectionRendererFactory;
+    exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
     exports.SortController = SortController;
     exports.SvgFactory = SvgFactory;
     exports.TemplateService = TemplateService;

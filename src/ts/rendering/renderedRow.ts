@@ -454,6 +454,7 @@ export class RenderedRow {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             var newChildScope = this.parentScope.$new();
             newChildScope.data = data;
+            newChildScope.context = this.gridOptionsWrapper.getContext();
             return newChildScope;
         } else {
             return null;
@@ -521,6 +522,8 @@ export class RenderedRow {
         // ctrlKey for windows, metaKey for Apple
         var multiSelectKeyPressed = event.ctrlKey || event.metaKey;
 
+        var shiftKeyPressed = event.shiftKey;
+
         // we do not allow selecting groups by clicking (as the click here expands the group)
         // so return if it's a group row
         if (this.rowNode.group) {
@@ -548,14 +551,14 @@ export class RenderedRow {
         if (this.rowNode.isSelected()) {
             if (multiSelectKeyPressed) {
                 if (gridOptionsWrapper.isRowDeselection()) {
-                    this.rowNode.setSelected(false);
+                    this.rowNode.setSelectedParams({newValue: false});
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelected(true, true);
+                this.rowNode.setSelectedParams({newValue: true, clearSelection: true});
             }
         } else {
-            this.rowNode.setSelected(true, !multiSelectKeyPressed);
+            this.rowNode.setSelectedParams({newValue: true, clearSelection: !multiSelectKeyPressed, rangeSelect: shiftKeyPressed});
         }
     }
 

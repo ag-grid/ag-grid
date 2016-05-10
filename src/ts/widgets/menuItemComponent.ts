@@ -57,9 +57,9 @@ export class MenuItemComponent extends Component {
 
         if (params.disabled) {
             _.addCssClass(this.getGui(), 'ag-menu-option-disabled');
+        } else {
+            this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
-
-        this.addGuiEventListener('click', this.onOptionSelected.bind(this));
     }
 
     private onOptionSelected(): void {

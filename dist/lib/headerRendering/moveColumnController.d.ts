@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.3
+// Type definitions for ag-grid v4.1.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -27,9 +27,9 @@ export declare class MoveColumnController {
     private checkCenterForScrolling(xAdjustedForScroll);
     onDragging(draggingEvent: DraggingEvent): void;
     private checkColIndexAndMove(draggingEvent, xAdjustedForScroll);
-    private getNewIndexForColMovingLeft(displayedColumns, allColumns, dragItem, x);
-    private getNewIndexForColMovingRight(displayedColumns, allColumns, dragItem, x);
-    private getColumnsAndOrphans(column);
+    private getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumnOrGroup, x);
+    private getNewIndexForColMovingRight(displayedColumns, allColumns, dragColumnOrGroup, x);
+    private getColumnsAndOrphans(columnOrGroup);
     private ensureIntervalStarted();
     private ensureIntervalCleared();
     private moveInterval();

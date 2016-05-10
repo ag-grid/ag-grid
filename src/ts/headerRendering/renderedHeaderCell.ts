@@ -37,6 +37,8 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     private parentScope: any;
     private dragSourceDropTarget: DropTarget;
 
+    private displayName: string;
+
     // for better structured code, anything we need to do when this column gets destroyed,
     // we put a function in here. otherwise we would have a big destroy function with lots
     // of 'if / else' mapping to things that got created.
@@ -60,6 +62,9 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
         // label div
         var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
+
+        this.displayName = this.columnController.getDisplayNameForCol(this.column);
+
 
         this.setupMovingCss();
         this.setupTooltip();
@@ -91,16 +96,14 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
         }
 
-        var headerNameValue = this.columnController.getDisplayNameForCol(this.column);
-
         var eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
         if (eText) {
             if (headerCellRenderer) {
-                this.useRenderer(headerNameValue, headerCellRenderer, eText);
+                this.useRenderer(this.displayName, headerCellRenderer, eText);
             } else {
                 // no renderer, default text render
                 eText.className = 'ag-header-cell-text';
-                eText.innerHTML = headerNameValue;
+                eText.innerHTML = this.displayName;
             }
         }
     }
@@ -154,6 +157,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             this.childScope = parentScope.$new();
             this.childScope.colDef = this.column.getColDef();
             this.childScope.colDefWrapper = this.column;
+            this.childScope.context = this.gridOptionsWrapper.getContext();
 
             this.destroyFunctions.push( ()=> {
                 this.childScope.$destroy();
@@ -231,7 +235,8 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         if (eHeaderCellLabel) {
             var dragSource: DragSource = {
                 eElement: eHeaderCellLabel,
-                dragItem: this.column,
+                dragItem: [this.column],
+                dragItemName: this.displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource);

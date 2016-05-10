@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,12 +101,13 @@ var MoveColumnController = (function () {
         var columnsToMove = this.getColumnsAndOrphans(draggingEvent.dragItem);
         this.columnController.moveColumns(columnsToMove.reverse(), newIndex);
     };
-    MoveColumnController.prototype.getNewIndexForColMovingLeft = function (displayedColumns, allColumns, dragItem, x) {
+    MoveColumnController.prototype.getNewIndexForColMovingLeft = function (displayedColumns, allColumns, dragColumnOrGroup, x) {
+        var dragColumn = dragColumnOrGroup;
         var usedX = 0;
         var leftColumn = null;
         for (var i = 0; i < displayedColumns.length; i++) {
             var currentColumn = displayedColumns[i];
-            if (currentColumn === dragItem) {
+            if (currentColumn === dragColumn) {
                 continue;
             }
             usedX += currentColumn.getActualWidth();
@@ -118,7 +119,7 @@ var MoveColumnController = (function () {
         var newIndex;
         if (leftColumn) {
             newIndex = allColumns.indexOf(leftColumn) + 1;
-            var oldIndex = allColumns.indexOf(dragItem);
+            var oldIndex = allColumns.indexOf(dragColumn);
             if (oldIndex < newIndex) {
                 newIndex--;
             }
@@ -128,15 +129,16 @@ var MoveColumnController = (function () {
         }
         return newIndex;
     };
-    MoveColumnController.prototype.getNewIndexForColMovingRight = function (displayedColumns, allColumns, dragItem, x) {
-        var usedX = dragItem.getActualWidth();
+    MoveColumnController.prototype.getNewIndexForColMovingRight = function (displayedColumns, allColumns, dragColumnOrGroup, x) {
+        var dragColumn = dragColumnOrGroup;
+        var usedX = dragColumn.getActualWidth();
         var leftColumn = null;
         for (var i = 0; i < displayedColumns.length; i++) {
             if (usedX > x) {
                 break;
             }
             var currentColumn = displayedColumns[i];
-            if (currentColumn === dragItem) {
+            if (currentColumn === dragColumn) {
                 continue;
             }
             usedX += currentColumn.getActualWidth();
@@ -145,7 +147,7 @@ var MoveColumnController = (function () {
         var newIndex;
         if (leftColumn) {
             newIndex = allColumns.indexOf(leftColumn) + 1;
-            var oldIndex = allColumns.indexOf(dragItem);
+            var oldIndex = allColumns.indexOf(dragColumn);
             if (oldIndex < newIndex) {
                 newIndex--;
             }
@@ -155,7 +157,8 @@ var MoveColumnController = (function () {
         }
         return newIndex;
     };
-    MoveColumnController.prototype.getColumnsAndOrphans = function (column) {
+    MoveColumnController.prototype.getColumnsAndOrphans = function (columnOrGroup) {
+        var column = columnOrGroup;
         // if this column was to move, how many children would be left without a parent
         var pathToChild = this.columnController.getPathForColumn(column);
         for (var i = pathToChild.length - 1; i >= 0; i--) {

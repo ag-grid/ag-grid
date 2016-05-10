@@ -1,15 +1,10 @@
-import {Constants as constants} from '../constants';
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {ColDef} from "./colDef";
-import {AbstractColDef} from "./colDef";
+import {ColDef, AbstractColDef} from "./colDef";
 import {EventService} from "../eventService";
-import {ColumnGroup} from "./columnGroup";
-import {ColumnController} from "../columnController/columnController";
-import {Utils as _} from '../utils';
-import {Autowired} from "../context/context";
+import {Utils as _} from "../utils";
+import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {PostConstruct} from "../context/context";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
 

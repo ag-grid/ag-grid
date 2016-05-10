@@ -6,7 +6,7 @@ export class Constants {
     static STEP_SORT = 2;
     static STEP_MAP = 3;
 
-    static ROW_BUFFER_SIZE = 2;
+    static ROW_BUFFER_SIZE = 5;
 
     static KEY_TAB = 9;
     static KEY_ENTER = 13;

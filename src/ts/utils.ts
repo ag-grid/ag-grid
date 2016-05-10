@@ -317,9 +317,25 @@ export class Utils {
         if (array.indexOf(object) >= 0) {
             array.splice(array.indexOf(object), 1);
         }
-
     }
 
+    static insertIntoArray<T>(array: T[], object: T, toIndex: number) {
+        array.splice(toIndex, 0, object);
+    }
+
+    static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
+        // first take out it items from the array
+        objectsToMove.forEach( (obj)=> {
+            this.removeFromArray(array, obj);
+        });
+
+        // now add the objects, in same order as provided to us, that means we start at the end
+        // as the objects will be pushed to the right as they are inserted
+        objectsToMove.slice().reverse().forEach( (obj)=> {
+            this.insertIntoArray(array, obj, toIndex);
+        });
+    }
+    
     static defaultComparator(valueA: any, valueB: any): number {
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
@@ -363,13 +379,13 @@ export class Utils {
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
      */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => Node) {
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
         var eResult = document.createElement('span');
         eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
         return eResult;
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => Node) {
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
         var userProvidedIcon: Function | string;
         // check col for icon first
         if (colDefWrapper && colDefWrapper.getColDef().icons) {
@@ -398,7 +414,11 @@ export class Utils {
             }
         } else {
             // otherwise we use the built in icon
-            return svgFactoryFunc();
+            if (svgFactoryFunc) {
+                return svgFactoryFunc();
+            } else {
+                return null;
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,12 +22,18 @@ var DragService = (function () {
     function DragService() {
         this.onMouseUpListener = this.onMouseUp.bind(this);
         this.onMouseMoveListener = this.onMouseMove.bind(this);
+        this.destroyFunctions = [];
     }
     DragService.prototype.init = function () {
-        this.logger = this.loggerFactory.create('HorizontalDragService');
+        this.logger = this.loggerFactory.create('DragService');
+    };
+    DragService.prototype.destroy = function () {
+        this.destroyFunctions.forEach(function (func) { return func(); });
     };
     DragService.prototype.addDragSource = function (params) {
-        params.eElement.addEventListener('mousedown', this.onMouseDown.bind(this, params));
+        var listener = this.onMouseDown.bind(this, params);
+        params.eElement.addEventListener('mousedown', listener);
+        this.destroyFunctions.push(function () { return params.eElement.removeEventListener('mousedown', listener); });
     };
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         // only interested in left button clicks
@@ -89,6 +95,12 @@ var DragService = (function () {
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], DragService.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], DragService.prototype, "destroy", null);
     DragService = __decorate([
         context_1.Bean('dragService'), 
         __metadata('design:paramtypes', [])

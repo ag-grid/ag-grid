@@ -79,6 +79,7 @@ export * from './dist/lib/rendering/renderedRow';
 export * from './dist/lib/rendering/rowRenderer';
 export * from './dist/lib/rendering/cellRendererFactory';
 export * from './dist/lib/rendering/cellRendererService';
+export * from './dist/lib/rendering/checkboxSelectionComponent';
 export * from './dist/lib/rendering/cellEditorFactory';
 export * from './dist/lib/rendering/valueFormatterService';
 
@@ -113,7 +114,6 @@ export * from './dist/lib/gridOptionsWrapper';
 export * from './dist/lib/logger';
 export * from './dist/lib/masterSlaveService';
 export * from './dist/lib/selectionController';
-export * from './dist/lib/selectionRendererFactory';
 export * from './dist/lib/sortController';
 export * from './dist/lib/svgFactory';
 export * from './dist/lib/templateService';

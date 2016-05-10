@@ -3,7 +3,6 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../expressionService";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {RowRenderer} from "./rowRenderer";
 import {TemplateService} from "../templateService";
 import {ColumnController, ColumnApi} from "../columnController/columnController";
@@ -27,6 +26,7 @@ import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
+import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 
 export class RenderedCell extends Component {
 
@@ -35,7 +35,6 @@ export class RenderedCell extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('$compile') private $compile: any;
     @Autowired('templateService') private templateService: TemplateService;
@@ -73,7 +72,6 @@ export class RenderedCell extends Component {
 
     private scope: any;
 
-    private eCheckbox: HTMLInputElement;
     private cellEditor: ICellEditor;
     private cellRenderer: ICellRenderer;
 
@@ -414,8 +412,12 @@ export class RenderedCell extends Component {
             // otherwise we just move to the next cell
             editNextCell = false;
         }
-        this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
-        event.preventDefault();
+        var foundCell = this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            event.preventDefault();
+        }
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
@@ -441,24 +443,6 @@ export class RenderedCell extends Component {
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
-
-/*
-    private addFocusListener(): void {
-        var that = this;
-        var focusListener = (event: any) => {
-
-            // if the focus went into another cell, then we stop editing this cell
-            // if (that.editingCell &&!that.cellEditorInPopup && !that.gridCell.eq hasFocusLeftCell(event)) {
-            //     that.stopEditing();
-            // }
-        };
-        // this.eventService.
-        // this.focusService.addListener(focusListener);
-        // this.addDestroyFunc( () => {
-        //     this.focusService.removeListener(focusListener);
-        // });
-    }
-*/
 
     private addKeyPressListener(): void {
         var that = this;
@@ -566,13 +550,20 @@ export class RenderedCell extends Component {
             return;
         }
 
-        this.cellEditor = this.createCellEditor(keyPress, charPress);
+        var cellEditor = this.createCellEditor(keyPress, charPress);
+        if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
+            if (cellEditor.destroy) {
+                cellEditor.destroy();
+            }
+            return;
+        }
 
-        if (!this.cellEditor.getGui) {
+        if (!cellEditor.getGui) {
             console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
             return;
         }
 
+        this.cellEditor = cellEditor;
         this.editingCell = true;
         this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
         this.setInlineEditingClass();
@@ -583,8 +574,8 @@ export class RenderedCell extends Component {
             this.addInCellEditor();
         }
 
-        if (this.cellEditor.afterGuiAttached) {
-            this.cellEditor.afterGuiAttached();
+        if (cellEditor.afterGuiAttached) {
+            cellEditor.afterGuiAttached();
         }
     }
 
@@ -630,10 +621,18 @@ export class RenderedCell extends Component {
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
-    private stopEditing(reset: boolean = false) {
+    // pass in 'true' to cancel the editing.
+    private stopEditing(cancel: boolean = false) {
         this.editingCell = false;
 
-        if (!reset) {
+        // also have another option here to cancel after editing, so for example user could have a popup editor and
+        // it is closed by user clicking outside the editor. then the editor will close automatically (with false
+        // passed above) and we need to see if the editor wants to accept the new value.
+        var cancelAfterEnd = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
+
+        var acceptNewValue = !cancel && !cancelAfterEnd;
+
+        if (acceptNewValue) {
             var newValue = this.cellEditor.getValue();
             this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
@@ -900,9 +899,11 @@ export class RenderedCell extends Component {
             _.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
             this.eGridCell.appendChild(this.eCellWrapper);
 
-            //this.createSelectionCheckbox();
-            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.renderedRow.addEventListener.bind(this.renderedRow));
-            this.eCellWrapper.appendChild(this.eCheckbox);
+            var cbSelectionComponent = new CheckboxSelectionComponent();
+            this.context.wireBean(cbSelectionComponent);
+            cbSelectionComponent.init({rowNode: this.node});
+            this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
+            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
 
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
             this.eSpanWithValue = document.createElement('span');

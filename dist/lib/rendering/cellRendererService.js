@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,6 +35,7 @@ var CellRendererService = (function () {
         }
         var resultFromRenderer;
         var iCellRendererInstance = null;
+        this.checkForDeprecatedItems(cellRenderer);
         // we check if the class has the 'getGui' method to know if it's a component
         var rendererIsAComponent = this.doesImplementICellRenderer(cellRenderer);
         // if it's a component, we create and initialise it
@@ -64,6 +65,12 @@ var CellRendererService = (function () {
             eTarget.innerHTML = resultFromRenderer;
         }
         return iCellRendererInstance;
+    };
+    CellRendererService.prototype.checkForDeprecatedItems = function (cellRenderer) {
+        if (cellRenderer && cellRenderer.renderer) {
+            console.warn('ag-grid: colDef.cellRenderer should not be an object, it should be a string, function or class. this ' +
+                'changed in v4.1.x, please check the documentation on Cell Rendering, or if you are doing grouping, look at the grouping examples.');
+        }
     };
     CellRendererService.prototype.doesImplementICellRenderer = function (cellRenderer) {
         // see if the class has a prototype that defines a getGui method. this is very rough,
