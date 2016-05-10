@@ -58,7 +58,11 @@ NumericCellEditor.prototype.init = function (params) {
             that.eInput.select();
             if (event.preventDefault) event.preventDefault();
         }
-    })
+    });
+
+    // only start edit if key pressed is a number, not a letter
+    var charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
+    this.cancelBeforeStart = charPressIsNotANumber;
 };
 
 // gets called once when grid ready to insert the element
@@ -70,6 +74,18 @@ NumericCellEditor.prototype.getGui = function () {
 NumericCellEditor.prototype.afterGuiAttached = function () {
     this.eInput.focus();
     this.eInput.select();
+};
+
+// returns the new value after editing
+NumericCellEditor.prototype.isCancelBeforeStart = function () {
+    return this.cancelBeforeStart;
+};
+
+// example - will reject the number if it contains the value 007
+// - not very practical, but demonstrates the method.
+NumericCellEditor.prototype.isCancelAfterEnd = function () {
+    var value = this.getValue();
+    return value.indexOf('007') >= 0;
 };
 
 // returns the new value after editing
