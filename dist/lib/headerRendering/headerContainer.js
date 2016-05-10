@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -117,7 +117,7 @@ var HeaderContainer = (function () {
     HeaderContainer.prototype.createHeaderElement = function (columnGroupChild) {
         var result;
         if (columnGroupChild instanceof columnGroup_1.ColumnGroup) {
-            result = new renderedHeaderGroupCell_1.RenderedHeaderGroupCell(columnGroupChild, this.eRoot, this.$scope);
+            result = new renderedHeaderGroupCell_1.RenderedHeaderGroupCell(columnGroupChild, this.eRoot, this.$scope, this.dropTarget);
         }
         else {
             result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.$scope, this.eRoot, this.dropTarget);

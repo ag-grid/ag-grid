@@ -135,7 +135,7 @@ export class HeaderContainer {
     private createHeaderElement(columnGroupChild: ColumnGroupChild): IRenderedHeaderElement {
         var result: IRenderedHeaderElement;
         if (columnGroupChild instanceof ColumnGroup) {
-            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.$scope);
+            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.$scope, this.dropTarget);
         } else {
             result = new RenderedHeaderCell(<Column> columnGroupChild, this.$scope, this.eRoot, this.dropTarget);
         }

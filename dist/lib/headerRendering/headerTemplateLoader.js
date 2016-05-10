@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,11 +13,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var svgFactory_1 = require("../svgFactory");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var HeaderTemplateLoader = (function () {
     function HeaderTemplateLoader() {
@@ -93,7 +92,7 @@ var HeaderTemplateLoader = (function () {
         '  </div>' +
         '</div>';
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], HeaderTemplateLoader.prototype, "gridOptionsWrapper", void 0);
     HeaderTemplateLoader = __decorate([

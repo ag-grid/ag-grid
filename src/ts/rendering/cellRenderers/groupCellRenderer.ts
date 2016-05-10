@@ -1,21 +1,19 @@
 
 import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {SelectionRendererFactory} from "../../selectionRendererFactory";
 import {ExpressionService} from "../../expressionService";
 import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
-import {Utils as _} from '../../utils';
+import {Utils as _} from "../../utils";
 import {Events} from "../../events";
-import {Autowired} from "../../context/context";
+import {Autowired, Context} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {ICellRenderer} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
 import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
-import {Column} from "../../entities/column";
-import {ColDef} from "../../entities/colDef";
+import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -31,11 +29,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         '</span>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('context') private context: Context;
 
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
@@ -82,9 +80,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             }
             var paddingPx = node.level * paddingFactor;
             if (node.footer) {
-                paddingPx += 10;
+                paddingPx += 15;
             } else if (!node.group) {
-                paddingPx += 5;
+                paddingPx += 10;
             }
             this.getGui().style.paddingLeft = paddingPx + 'px';
         }
@@ -196,14 +194,17 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private addCheckboxIfNeeded(params: any): void {
         var checkboxNeeded = params.checkbox && !this.rowNode.footer &&!this.rowNode.floating;
         if (checkboxNeeded) {
-            var eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.rowNode, params.addRenderedRowListener);
-            this.eCheckbox.appendChild(eCheckbox);
+            var cbSelectionComponent = new CheckboxSelectionComponent();
+            this.context.wireBean(cbSelectionComponent);
+            cbSelectionComponent.init({rowNode: this.rowNode});
+            this.eCheckbox.appendChild(cbSelectionComponent.getGui());
+            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
     }
 
     private addExpandAndContract(eGroupCell: HTMLElement): void {
-        var eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createArrowDownSvg);
-        var eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+        var eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
+        var eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 

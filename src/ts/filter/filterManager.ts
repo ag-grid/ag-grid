@@ -326,6 +326,7 @@ export class FilterManager {
             // first up, create child scope if needed
             if (this.gridOptionsWrapper.isAngularCompileFilters()) {
                 filterWrapper.scope = this.$scope.$new();
+                filterWrapper.scope.context = this.gridOptionsWrapper.getContext();
             }
             // now create filter (had to cast to any to get 'new' working)
             this.assertMethodHasNoParameters(colDef.filter);

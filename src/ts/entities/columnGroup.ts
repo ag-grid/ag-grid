@@ -3,6 +3,7 @@ import {ColGroupDef} from "./colDef";
 import {Column} from "./column";
 import {AbstractColDef} from "./colDef";
 import {OriginalColumnGroup} from "./originalColumnGroup";
+import {EventService} from "../eventService";
 
 export class ColumnGroup implements ColumnGroupChild {
 
@@ -18,6 +19,9 @@ export class ColumnGroup implements ColumnGroupChild {
     private instanceId: number;
     private originalColumnGroup: OriginalColumnGroup;
 
+    private moving = false;
+    private eventService: EventService = new EventService();
+
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number) {
         this.groupId = groupId;
         this.instanceId = instanceId;
@@ -32,6 +36,22 @@ export class ColumnGroup implements ColumnGroupChild {
         } else {
             return null;
         }
+    }
+
+    public addEventListener(eventType: string, listener: Function): void {
+        this.eventService.addEventListener(eventType, listener);
+    }
+
+    public removeEventListener(eventType: string, listener: Function): void {
+        this.eventService.removeEventListener(eventType, listener);
+    }
+
+    public setMoving(moving: boolean) {
+        this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
+    }
+
+    public isMoving(): boolean {
+        return this.moving;
     }
 
     public getGroupId(): string {
@@ -148,6 +168,10 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.originalColumnGroup.getColumnGroupShow();
     }
 
+    public getOriginalColumnGroup(): OriginalColumnGroup {
+        return this.originalColumnGroup;
+    }
+    
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];

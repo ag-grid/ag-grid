@@ -1,10 +1,12 @@
-import {Bean} from "../context/context";
+import {Bean, PreDestroy} from "../context/context";
 import {Autowired} from "../context/context";
 import {LoggerFactory} from "../logger";
 import {Logger} from "../logger";
 import {PostConstruct} from "../context/context";
 import {Utils as _} from '../utils';
 
+/** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
+ * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 @Bean('dragService')
 export class DragService {
 
@@ -20,15 +22,25 @@ export class DragService {
 
     private logger: Logger;
 
+    private destroyFunctions: (()=>void)[] = [];
+
     @PostConstruct
     private init(): void {
-        this.logger = this.loggerFactory.create('HorizontalDragService');
+        this.logger = this.loggerFactory.create('DragService');
+    }
+
+    @PreDestroy
+    private destroy(): void {
+        this.destroyFunctions.forEach( func => func() );
     }
 
     public addDragSource(params: DragListenerParams): void {
-        params.eElement.addEventListener('mousedown', this.onMouseDown.bind(this, params));
+        var listener = this.onMouseDown.bind(this, params);
+        params.eElement.addEventListener('mousedown', listener);
+        this.destroyFunctions.push( ()=>  params.eElement.removeEventListener('mousedown', listener));
     }
 
+    // gets called whenever mouse down on any drag source
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
         // only interested in left button clicks
         if (mouseEvent.button!==0) { return; }
@@ -39,6 +51,8 @@ export class DragService {
         this.eventLastTime = mouseEvent;
         this.dragStartEvent = mouseEvent;
 
+        // we temporally add these listeners, for the duration of the drag, they
+        // are removed in mouseup handling.
         document.addEventListener('mousemove', this.onMouseMoveListener);
         document.addEventListener('mouseup', this.onMouseUpListener);
 
@@ -48,6 +62,8 @@ export class DragService {
         }
     }
 
+    // returns true if the event is close to the original event by X pixels either vertically or horizontally.
+    // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     private isEventNearStartEvent(event: MouseEvent): boolean {
         // by default, we wait 4 pixels before starting the drag
         var requiredPixelDiff = _.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
@@ -59,11 +75,14 @@ export class DragService {
         return Math.max(diffX, diffY) <= requiredPixelDiff;
     }
 
+    // only gets called after a mouse down - as this is only added after mouseDown
+    // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent): void {
 
         if (!this.dragging) {
-            // we want to have moved at least 4px before the drag starts
-            if (this.isEventNearStartEvent(mouseEvent)) {
+            // if mouse hasn't travelled from the start position enough, do nothing
+            var toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(mouseEvent);
+            if (toEarlyToDrag) {
                 return;
             } else {
                 this.dragging = true;
@@ -75,7 +94,6 @@ export class DragService {
     }
 
     public onMouseUp(mouseEvent: MouseEvent): void {
-        this.logger.log('onMouseUp');
 
         document.removeEventListener('mouseup', this.onMouseUpListener);
         document.removeEventListener('mousemove', this.onMouseMoveListener);
@@ -91,9 +109,14 @@ export class DragService {
 }
 
 export interface DragListenerParams {
+    /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number,
+    /** Dom element to add the drag handling to */
     eElement: HTMLElement,
+    /** Callback for drag starting */
     onDragStart: (mouseEvent: MouseEvent)=>void,
+    /** Callback for drag stopping */
     onDragStop: (mouseEvent: MouseEvent)=>void,
+    /** Callback for mouse move while dragging */
     onDragging: (mouseEvent: MouseEvent)=>void
 }

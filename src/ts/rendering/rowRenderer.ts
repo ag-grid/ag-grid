@@ -1,6 +1,5 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ExpressionService} from "../expressionService";
 import {TemplateService} from "../templateService";
@@ -30,7 +29,6 @@ export class RowRenderer {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridCore') private gridCore: GridCore;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;
@@ -572,21 +570,23 @@ export class RowRenderer {
         return cellComponent;
     }
 
-    // called by the cell, when tab is pressed while editing
-    public moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean) {
+    // called by the cell, when tab is pressed while editing.
+    // @return: true when navigation successful, otherwise false
+    public moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean): boolean {
 
         var nextCell = new GridCell(rowIndex, floating, column);
 
         while (true) {
 
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
-            var nextRenderedCell = this.getComponentForCell(nextCell);
 
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
-            if (!nextRenderedCell) {
-                return;
+            if (!nextCell) {
+                return false;
             }
+
+            var nextRenderedCell = this.getComponentForCell(nextCell);
 
             // if editing, but cell not editable, skip cell
             if (startEditing && !nextRenderedCell.isCellEditable()) {
@@ -617,7 +617,8 @@ export class RowRenderer {
                 this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
             }
 
-            return;
+            // we successfully tabbed onto a grid cell, so return true
+            return true;
         }
     }
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var context_1 = require("../context/context");
 var logger_1 = require("../logger");
 var context_2 = require("../context/context");
+var column_1 = require("../entities/column");
 var headerTemplateLoader_1 = require("../headerRendering/headerTemplateLoader");
 var utils_1 = require('../utils');
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
@@ -203,24 +204,47 @@ var DragAndDropService = (function () {
         this.eGhost = null;
     };
     DragAndDropService.prototype.createGhost = function () {
-        var dragItem = this.dragSource.dragItem;
         this.eGhost = utils_1.Utils.loadTemplate(headerTemplateLoader_1.HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE);
         this.eGhostIcon = this.eGhost.querySelector('#eGhostIcon');
         if (this.lastDropTarget) {
             this.setGhostIcon(this.lastDropTarget.iconName);
         }
+        var dragItem = this.dragSource.dragItem;
         var eText = this.eGhost.querySelector('#agText');
-        if (dragItem.getColDef().headerName) {
-            eText.innerHTML = dragItem.getColDef().headerName;
-        }
-        else {
-            eText.innerHTML = dragItem.getColId();
-        }
-        this.eGhost.style.width = dragItem.getActualWidth() + 'px';
+        eText.innerHTML = this.getNameForGhost(dragItem);
+        this.eGhost.style.width = this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         this.eBody.appendChild(this.eGhost);
+    };
+    DragAndDropService.prototype.getActualWidth = function (dragItem) {
+        if (dragItem instanceof column_1.Column) {
+            return dragItem.getActualWidth();
+        }
+        else {
+            return dragItem.getActualWidth();
+        }
+    };
+    DragAndDropService.prototype.getNameForGhost = function (dragItem) {
+        if (dragItem instanceof column_1.Column) {
+            var column = dragItem;
+            if (column.getColDef().headerName) {
+                return column.getColDef().headerName;
+            }
+            else {
+                return column.getColId();
+            }
+        }
+        else {
+            var columnGroup = dragItem;
+            if (columnGroup.getColGroupDef().headerName) {
+                return columnGroup.getColGroupDef().headerName;
+            }
+            else {
+                return columnGroup.getGroupId();
+            }
+        }
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }

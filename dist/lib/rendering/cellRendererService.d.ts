@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.3
+// Type definitions for ag-grid v4.1.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -16,6 +16,7 @@ export declare class CellRendererService {
     useCellRenderer(cellRendererKey: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string, eTarget: HTMLElement, params: any): ICellRenderer;
+    private checkForDeprecatedItems(cellRenderer);
     private doesImplementICellRenderer(cellRenderer);
     private lookUpCellRenderer(cellRendererKey);
 }

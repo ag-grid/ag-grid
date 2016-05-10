@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,7 +17,11 @@ var PopupEditorWrapper = (function (_super) {
         this.getGuiCalledOnChild = false;
         this.cellEditor = cellEditor;
         this.addDestroyFunc(function () { return cellEditor.destroy(); });
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.onKeyDown.bind(this));
+        this.addDestroyableEventListener(
+        // this needs to be 'super' and not 'this' as if we call 'this',
+        // it ends up called 'getGui()' on the child before 'init' was called,
+        // which is not good
+        _super.prototype.getGui.call(this), 'keydown', this.onKeyDown.bind(this));
     }
     PopupEditorWrapper.prototype.onKeyDown = function (event) {
         this.params.onKeyDown(event);

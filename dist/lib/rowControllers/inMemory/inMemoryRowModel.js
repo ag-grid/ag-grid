@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -243,7 +243,12 @@ var InMemoryRowModel = (function () {
             return;
         }
         utils_1.Utils.traverseNodesWithKey(this.rowsAfterGroup, function (node, key) {
-            node.expanded = groupState[key] === true;
+            // if the group was open last time, then open it this time. however
+            // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
+            // setting will take effect.
+            if (groupState[key] === true) {
+                node.expanded = true;
+            }
         });
     };
     InMemoryRowModel.prototype.doFilter = function () {

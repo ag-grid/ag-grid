@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.3
+// Type definitions for ag-grid v4.1.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -11,7 +11,9 @@ export declare class DragService {
     private onMouseUpListener;
     private onMouseMoveListener;
     private logger;
+    private destroyFunctions;
     private init();
+    private destroy();
     addDragSource(params: DragListenerParams): void;
     private onMouseDown(params, mouseEvent);
     private isEventNearStartEvent(event);

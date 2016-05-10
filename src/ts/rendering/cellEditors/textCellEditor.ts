@@ -1,6 +1,7 @@
 import {Constants} from "../../constants";
 import {Component} from "../../widgets/component";
 import {ICellEditor} from "./iCellEditor";
+import {Utils as _} from '../../utils';
 
 enum StartState {
     HighlightAll,
@@ -40,7 +41,9 @@ export class TextCellEditor extends Component implements ICellEditor {
             }
         }
 
-        eInput.value = startValue;
+        if (_.exists(startValue)) {
+            eInput.value = startValue;
+        }
     }
 
     public afterGuiAttached(): void {

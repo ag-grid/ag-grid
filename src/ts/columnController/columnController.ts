@@ -1,35 +1,24 @@
-import {Utils as _} from '../utils';
-import {Constants as constants} from '../constants';
+import {Utils as _} from "../utils";
 import {ColumnGroup} from "../entities/columnGroup";
 import {Column} from "../entities/column";
-import {ColDef} from "../entities/colDef";
+import {ColDef, AbstractColDef} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Grid} from "../grid";
-import {SelectionRendererFactory} from "../selectionRendererFactory";
 import {ExpressionService} from "../expressionService";
 import {BalancedColumnTreeBuilder} from "./balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./displayedGroupCreator";
 import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
 import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
-import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {ColumnUtils} from "./columnUtils";
-import {Logger} from "../logger";
-import {LoggerFactory} from "../logger";
+import {Logger, LoggerFactory} from "../logger";
 import {Events} from "../events";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
 import {defaultGroupComparator} from "../functions";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import {Autowired} from "../context/context";
+import {Bean, Qualifier, Autowired, PostConstruct, Context} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
-import {AbstractColDef} from "../entities/colDef";
-import {PostConstruct} from "../context/context";
-import {Context} from "../context/context";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -111,12 +100,10 @@ export class ColumnApi {
 export class ColumnController {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionRendererFactory') private selectionRendererFactory: SelectionRendererFactory;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('valueService') private valueColumns: Column[];
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('gridPanel') private gridPanel: GridPanel;
@@ -148,7 +135,8 @@ export class ColumnController {
     private rowGroupColumns: Column[];
     private groupAutoColumn: Column;
     private groupAutoColumnActive: boolean;
-    private valueService: ValueService;
+
+    private valueColumns: Column[];
 
     private ready = false;
     private logger: Logger;
@@ -402,20 +390,81 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
     }
 
-    public getPathForColumn(column: Column): ColumnGroup[] {
-        return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
+    public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number): void {
+
+        if (toIndex > this.allColumns.length - columnsToMoveKeys.length) {
+            console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
+            console.warn('ag-Grid: remember that you should not count the moving columns when calculating the new index');
+            return;
+        }
+
+        // we want to pull all the columns out first and put them into an ordered list
+        var columnsToMove = this.getColumns(columnsToMoveKeys);
+
+        var failedRules = !this.doesMovePassRules(columnsToMove, toIndex);
+        if (failedRules) { return; }
+
+        this.gridPanel.turnOnAnimationForABit();
+
+        _.moveInArray(this.allColumns, columnsToMove, toIndex);
+
+        this.updateModel();
+
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED)
+            .withToIndex(toIndex)
+            .withColumns(columnsToMove);
+        if (columnsToMove.length===1) {
+            event.withColumn(columnsToMove[0]);
+        }
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
     }
 
-    public moveColumns(keys: (Column|ColDef|String)[], toIndex: number): void {
-        this.gridPanel.turnOnAnimationForABit();
-        this.actionOnColumns(keys, (column: Column)=> {
-            var fromIndex = this.allColumns.indexOf(column);
-            this.allColumns.splice(fromIndex, 1);
-            this.allColumns.splice(toIndex, 0, column);
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED).withToIndex(toIndex);
-        });
-        this.updateModel();
+    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
+
+        var allColumnsCopy = this.allColumns.slice();
+
+        _.moveInArray(allColumnsCopy, columnsToMove, toIndex);
+
+        // look for broken groups, ie stray columns from groups that should be married
+        for (var index = 0; index < (allColumnsCopy.length-1); index++) {
+            var thisColumn = allColumnsCopy[index];
+            var nextColumn = allColumnsCopy[index + 1];
+
+            // skip hidden columns
+            if (!nextColumn.isVisible()) {
+                continue;
+            }
+
+            var thisPath = this.columnUtils.getOriginalPathForColumn(thisColumn, this.originalBalancedTree);
+            var nextPath = this.columnUtils.getOriginalPathForColumn(nextColumn, this.originalBalancedTree);
+
+            if (!nextPath || !thisPath) {
+                console.log('next path is missing');
+            }
+
+            // start at the top of the path and work down
+            for (var dept = 0; dept<thisPath.length; dept++) {
+                var thisOriginalGroup = thisPath[dept];
+                var nextOriginalGroup = nextPath[dept];
+                var lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
+                // a runaway is a column from this group that left the group, and the group has it's children marked as married
+                var colGroupDef = thisOriginalGroup.getColGroupDef();
+                var marryChildren = colGroupDef && colGroupDef.marryChildren;
+                var needToCheckForRunaways = lastColInGroup && marryChildren;
+                if (needToCheckForRunaways) {
+                    for (var tailIndex = index+1; tailIndex < allColumnsCopy.length; tailIndex++) {
+                        var tailColumn = allColumnsCopy[tailIndex];
+                        var tailPath = this.columnUtils.getOriginalPathForColumn(tailColumn, this.originalBalancedTree);
+                        var tailOriginalGroup = tailPath[dept];
+                        if (tailOriginalGroup===thisOriginalGroup) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {
@@ -443,7 +492,7 @@ export class ColumnController {
 
     // + toolPanel
     public getRowGroupColumns(): Column[] {
-        return this.rowGroupColumns;
+        return this.rowGroupColumns ? this.rowGroupColumns : [];
     }
 
     public isColumnRowGrouped(column: Column): boolean {
@@ -716,6 +765,7 @@ export class ColumnController {
         return foundColumns;
     }
 
+    // used by growGroupPanel
     public getColumnWithValidation(key: string|ColDef|Column): Column {
         var column = this.getColumn(key);
         if (!column) {

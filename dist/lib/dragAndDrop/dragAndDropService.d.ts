@@ -1,11 +1,12 @@
-// Type definitions for ag-grid v4.1.3
+// Type definitions for ag-grid v4.1.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
 export interface DragSource {
     eElement: HTMLElement;
-    dragItem: Column;
+    dragItem: Column | ColumnGroup;
     dragSourceDropTarget?: DropTarget;
 }
 export interface DropTarget {
@@ -22,7 +23,7 @@ export interface DraggingEvent {
     x: number;
     y: number;
     direction: string;
-    dragItem: Column;
+    dragItem: Column | ColumnGroup;
     dragSource: DragSource;
 }
 export declare class DragAndDropService {
@@ -65,5 +66,7 @@ export declare class DragAndDropService {
     private positionGhost(event);
     private removeGhost();
     private createGhost();
+    private getActualWidth(dragItem);
+    private getNameForGhost(dragItem);
     setGhostIcon(iconName: string, shake?: boolean): void;
 }

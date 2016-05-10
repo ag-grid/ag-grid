@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.3
+ * @version v4.1.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -382,7 +382,7 @@ var ColumnController = (function () {
     };
     // + toolPanel
     ColumnController.prototype.getRowGroupColumns = function () {
-        return this.rowGroupColumns;
+        return this.rowGroupColumns ? this.rowGroupColumns : [];
     };
     ColumnController.prototype.isColumnRowGrouped = function (column) {
         return this.rowGroupColumns.indexOf(column) >= 0;
