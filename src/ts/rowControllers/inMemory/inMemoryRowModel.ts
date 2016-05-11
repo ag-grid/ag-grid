@@ -77,6 +77,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 this.doRowGrouping(groupState);
             case constants.STEP_FILTER:
                 this.doFilter();
+                // fire event here???
+                // create pivot columns
             case constants.STEP_AGGREGATE:
                 this.doAggregate();
             case constants.STEP_SORT:

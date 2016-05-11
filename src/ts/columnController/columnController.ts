@@ -1,7 +1,7 @@
 import {Utils as _} from "../utils";
 import {ColumnGroup} from "../entities/columnGroup";
 import {Column} from "../entities/column";
-import {ColDef, AbstractColDef, ColGroupDef} from "../entities/colDef";
+import {ColDef, AbstractColDef} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../expressionService";
@@ -19,6 +19,7 @@ import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
 import {defaultGroupComparator} from "../functions";
 import {Bean, Qualifier, Autowired, PostConstruct, Context} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
+import {PivotService} from "./pivotService";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -116,6 +117,7 @@ export class ColumnController {
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
+    @Autowired('pivotService') private pivotService: PivotService;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -162,6 +164,7 @@ export class ColumnController {
         if (this.gridOptionsWrapper.getColumnDefs()) {
             this.setColumnDefs(this.gridOptionsWrapper.getColumnDefs());
         }
+        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -1083,12 +1086,21 @@ export class ColumnController {
         this.setFirstRightAndLastLeftPinned();
     }
 
+    private onRowDataChanged(): void {
+        // if we are pivoting, then we need to re-work the pivot columns
+        if (this.pivotColumns.length>0) {
+            this.setupGridColumns();
+            this.updateModel();
+            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+        }
+    }
 
     private setupGridColumns(): void {
 
         var doingPivot = this.pivotColumns.length > 0;
         if (doingPivot) {
-            var pivotColumnDefs = this.createPivotColumnDefs();
+            var pivotColumnDefs = this.pivotService.createPivotColumnDefs();
             var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(pivotColumnDefs);
             this.gridBalancedTree = balancedTreeResult.balancedTree;
             this.gridHeaderRowCount = balancedTreeResult.treeDept + 1;
@@ -1099,25 +1111,6 @@ export class ColumnController {
             this.gridHeaderRowCount = this.originalHeaderRowCount;
             this.gridColumns = this.originalColumns;
         }
-    }
-
-    private createPivotColumnDefs(): (ColGroupDef|ColDef)[] {
-        var pivotColumnDefs: ColGroupDef[] = [
-            {
-                headerName: 'Country',
-                children: [
-                    {
-                        headerName: 'Ireland',
-                        valueGetter: '55'
-                    },
-                    {
-                        headerName: 'UK',
-                        valueGetter: '66'
-                    }
-                ]
-            }
-        ];
-        return pivotColumnDefs;
     }
 
     private updateGroupsAndDisplayedColumns() {
