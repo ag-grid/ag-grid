@@ -76,7 +76,7 @@ export class RangeController implements IRangeController {
 
     public addRange(rangeSelection: AddRangeSelectionParams): void {
         var columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
-        var columnEnd = this.columnController.getColumn(rangeSelection.columnEnd);
+        var columnEnd = this.columnController.getOriginalColumn(rangeSelection.columnEnd);
         if (!columnStart || !columnEnd) { return; }
 
         var columns = this.updateSelectedColumns(columnStart, columnEnd);
