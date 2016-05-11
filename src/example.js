@@ -310,6 +310,7 @@ var defaultCols = [
         headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
         cellRenderer: languageCellRenderer,
         cellEditor: 'select',
+        pivotIndex: 0,
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
         },
