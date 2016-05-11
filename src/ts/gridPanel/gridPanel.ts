@@ -489,7 +489,7 @@ export class GridPanel {
     }
 
     public ensureColumnVisible(key: any) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column.isPinned()) {
             console.warn('calling ensureIndexVisible on a '+column.getPinned()+' pinned column doesn\'t make sense for column ' + column.getColId());
             return;

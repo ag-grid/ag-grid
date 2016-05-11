@@ -122,7 +122,7 @@ export class MasterSlaveService {
             var masterColumn = event.getColumn();
             var slaveColumn: Column;
             if (masterColumn) {
-                slaveColumn = this.columnController.getColumn(masterColumn.getColId());
+                slaveColumn = this.columnController.getOriginalColumn(masterColumn.getColId());
             }
             // if event was with respect to a master column, that is not present in this
             // grid, then we ignore the event

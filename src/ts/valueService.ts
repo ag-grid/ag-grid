@@ -79,7 +79,7 @@ export class ValueService {
     }
 
     public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         
         if (!rowNode || !column) {
             return;
@@ -169,7 +169,7 @@ export class ValueService {
     }
 
     private getValueCallback(data: any, node: RowNode, field: string): any {
-        var otherColumn = this.columnController.getColumn(field);
+        var otherColumn = this.columnController.getOriginalColumn(field);
         if (otherColumn) {
             return this.getValueUsingSpecificData(otherColumn, data, node);
         } else {

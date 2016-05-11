@@ -337,21 +337,21 @@ export class GridApi {
     }
 
     public getFilterApi(key: string|Column|ColDef) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column) {
             return this.filterManager.getFilterApi(column);
         }
     }
 
     public destroyFilter(key: string|Column|ColDef) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column);
         }
     }
     
     public getColumnDef(key: string|Column|ColDef) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column) {
             return column.getColDef();
         } else {
@@ -404,7 +404,7 @@ export class GridApi {
     }
 
     public getValue(colKey: string|ColDef|Column, rowNode: RowNode): any {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         return this.valueService.getValue(column, rowNode);
     }
 
@@ -471,12 +471,12 @@ export class GridApi {
     }
 
     public showColumnMenuAfterButtonClick(colKey: string|Column|ColDef, buttonElement: HTMLElement): void {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     }
 
     public showColumnMenuAfterMouseClick(colKey: string|Column|ColDef, mouseEvent: MouseEvent): void {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 

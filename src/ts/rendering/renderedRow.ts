@@ -574,7 +574,7 @@ export class RenderedRow {
         if (!colIds) {
             return;
         }
-        var columnsToRefresh = this.columnController.getColumns(colIds);
+        var columnsToRefresh = this.columnController.getOriginalColumns(colIds);
 
         this.forEachRenderedCell( renderedCell => {
             var colForCel = renderedCell.getColumn();

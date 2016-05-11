@@ -78,7 +78,7 @@ export class CsvCreator {
 
         var columnsToExport: Column[];
         if (allColumns) {
-            columnsToExport = this.columnController.getAllColumns();
+            columnsToExport = this.columnController.getAllOriginalColumns();
         } else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
         }

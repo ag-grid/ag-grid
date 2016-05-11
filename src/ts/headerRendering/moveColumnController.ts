@@ -119,7 +119,7 @@ export class MoveColumnController {
 
     private attemptMoveColumns(allMovingColumns: Column[], dragDirection: string, xAdjustedForScroll: number, fromEnter: boolean): void {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
-        var allColumns = this.columnController.getAllColumns();
+        var gridColumns = this.columnController.getAllGridColumns();
 
         var draggingLeft = dragDirection === DragAndDropService.DIRECTION_LEFT;
         var draggingRight = dragDirection === DragAndDropService.DIRECTION_RIGHT;
@@ -135,8 +135,8 @@ export class MoveColumnController {
             dragColumn = displayedMovingColumns[displayedMovingColumns.length-1];
         }
 
-        var newIndex = this.workOutNewIndex(displayedColumns, allColumns, dragColumn, dragDirection, xAdjustedForScroll);
-        var oldIndex = allColumns.indexOf(dragColumn);
+        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, dragDirection, xAdjustedForScroll);
+        var oldIndex = gridColumns.indexOf(dragColumn);
 
         // the two check below stop an error when the user grabs a group my a middle column, then
         // it is possible the mouse pointer is to the right of a column while been dragged left.
