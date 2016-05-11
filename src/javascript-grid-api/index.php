@@ -208,10 +208,16 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>showLoading(show)</th>
-            <td>Show or hide the loading icon. Pass either true or false. If the method setRowData
-                is called, the loading icon is automatically hidden.
-            </td>
+            <th>showLoadingOverlay()</th>
+            <td>Show the loading overlay.</td>
+        </tr>
+        <tr>
+            <th>showNoRowsOverlay()</th>
+            <td>Show the 'no rows' overlay.</td>
+        </tr>
+        <tr>
+            <th>hideOverlay()</th>
+            <td>Hides the overlay if showing.</td>
         </tr>
         <tr>
             <th>recomputeAggregates()</th>
