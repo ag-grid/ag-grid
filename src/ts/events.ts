@@ -7,6 +7,9 @@ export class Events {
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGE = 'columnRowGroupChanged';
 
+    /** A pivot column was added, removed or order changed. */
+    public static EVENT_COLUMN_PIVOT_CHANGE = 'columnPivotChanged';
+
     /** A value column was added, removed or agg function was changed. */
     public static EVENT_COLUMN_VALUE_CHANGE = 'columnValueChanged';
 

@@ -101,6 +101,9 @@ export interface ColDef extends AbstractColDef {
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
 
+    /** To pivot by this column by default, provide an index here. */
+    pivotIndex?: number;
+
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
 

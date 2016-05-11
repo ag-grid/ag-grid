@@ -56,11 +56,19 @@ export class ColumnApi {
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
     public removeValueColumn(column: Column): void { this._columnController.removeValueColumn(column); }
     public addValueColumn(column: Column): void { this._columnController.addValueColumn(column); }
+
     public setRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.setRowGroupColumns(colKeys); }
     public removeRowGroupColumn(colKey: Column|ColDef|String): void { this._columnController.removeRowGroupColumn(colKey); }
     public removeRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removeRowGroupColumns(colKeys); }
     public addRowGroupColumn(colKey: Column|ColDef|String): void { this._columnController.addRowGroupColumn(colKey); }
     public addRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.addRowGroupColumns(colKeys); }
+
+    public setPivotColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.setPivotColumns(colKeys); }
+    public removePivotColumn(colKey: Column|ColDef|String): void { this._columnController.removePivotColumn(colKey); }
+    public removePivotColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removePivotColumns(colKeys); }
+    public addPivotColumn(colKey: Column|ColDef|String): void { this._columnController.addPivotColumn(colKey); }
+    public addPivotColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.addPivotColumns(colKeys); }
+
     public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getLeftDisplayedColumnGroups(); }
     public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getCenterDisplayedColumnGroups(); }
     public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getRightDisplayedColumnGroups(); }
@@ -114,10 +122,12 @@ export class ColumnController {
     // provides a new set of column definitions. otherwise this tree is used to build up
     // the groups for displaying.
     private originalBalancedTree: OriginalColumnGroupChild[];
-    // these are every single column, regardless of whether they are shown on
-    // screen or not (cols can be missing if visible=false or the group they are
-    // in is closed). basically it's the leaf level nodes of the tree above (originalBalancedTree)
-    private allColumns: Column[]; // every column available
+    // all columns provided by the user. basically it's the leaf level nodes of the
+    // tree above (originalBalancedTree)
+    private allUserProvidedColumns: Column[]; // every column available
+
+    // these are all columns that are available to the grid for rendering after pivot
+    private allDisplayableColumns: Column[];
 
     // these are the columns actually shown on the screen. used by the header renderer,
     // as header needs to know about column groups and the tree structure.
@@ -138,6 +148,8 @@ export class ColumnController {
 
     private valueColumns: Column[];
 
+    private pivotColumns: Column[];
+
     private ready = false;
     private logger: Logger;
 
@@ -156,7 +168,7 @@ export class ColumnController {
         var lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
         var firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
 
-        this.allColumns.forEach( (column: Column) => {
+        this.allUserProvidedColumns.forEach( (column: Column) => {
             column.setLastLeftPinned(column === lastLeft);
             column.setFirstRightPinned(column === firstRight);
         } );
@@ -310,8 +322,52 @@ export class ColumnController {
         this.removeRowGroupColumns([key]);
     }
 
+    public addPivotColumns(keys: (Column|ColDef|String)[]): void {
+        keys.forEach( (key)=> {
+            var column = this.getColumn(key);
+            if (column) {
+                this.pivotColumns.push(column);
+            }
+        });
+
+        // as with changing rowGroupColumn, changing the pivot totally changes
+        // the columns that are displayed, so we don't use 'actionOnColumns', as 
+        // we need to do this before we fire the event
+        this.updateModel();
+
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
+    }
+
+    public setPivotColumns(keys: (Column|ColDef|String)[]): void {
+        this.pivotColumns.length = 0;
+        this.addPivotColumns(keys);
+    }
+
+    public addPivotColumn(key: Column|ColDef|String): void {
+        this.addPivotColumns([key]);
+    }
+
+    public removePivotColumns(keys: (Column|ColDef|String)[]): void {
+        keys.forEach( (key)=> {
+            var column = this.getColumn(key);
+            if (column) {
+                _.removeFromArray(this.pivotColumns, column);
+            }
+        });
+
+        this.updateModel();
+
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
+    }
+
+    public removePivotColumn(key: Column|ColDef|String): void {
+        this.removePivotColumns([key]);
+    }
+    
     public addValueColumn(column: Column): void {
-        if (this.allColumns.indexOf(column) < 0) {
+        if (this.allUserProvidedColumns.indexOf(column) < 0) {
             console.warn('not a valid column: ' + column);
             return;
         }
@@ -392,7 +448,7 @@ export class ColumnController {
 
     public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number): void {
 
-        if (toIndex > this.allColumns.length - columnsToMoveKeys.length) {
+        if (toIndex > this.allUserProvidedColumns.length - columnsToMoveKeys.length) {
             console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
             console.warn('ag-Grid: remember that you should not count the moving columns when calculating the new index');
             return;
@@ -406,7 +462,7 @@ export class ColumnController {
 
         this.gridPanel.turnOnAnimationForABit();
 
-        _.moveInArray(this.allColumns, columnsToMove, toIndex);
+        _.moveInArray(this.allUserProvidedColumns, columnsToMove, toIndex);
 
         this.updateModel();
 
@@ -421,7 +477,7 @@ export class ColumnController {
 
     private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
 
-        var allColumnsCopy = this.allColumns.slice();
+        var allColumnsCopy = this.allUserProvidedColumns.slice();
 
         _.moveInArray(allColumnsCopy, columnsToMove, toIndex);
 
@@ -472,7 +528,7 @@ export class ColumnController {
     }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number): void {
-        var column = this.allColumns[fromIndex];
+        var column = this.allUserProvidedColumns[fromIndex];
         this.moveColumn(column, toIndex);
     }
 
@@ -490,6 +546,11 @@ export class ColumnController {
         return this.valueColumns;
     }
 
+    // + rowController
+    public getPivotColumns(): Column[] {
+        return this.pivotColumns;
+    }
+    
     // + toolPanel
     public getRowGroupColumns(): Column[] {
         return this.rowGroupColumns ? this.rowGroupColumns : [];
@@ -523,11 +584,11 @@ export class ColumnController {
     // + inMemoryRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllColumns(): Column[] {
-        return this.allColumns;
+        return this.allUserProvidedColumns;
     }
 
     public isEmpty(): boolean {
-        return _.missingOrEmpty(this.allColumns);
+        return _.missingOrEmpty(this.allUserProvidedColumns);
     }
 
     public isRowGroupEmpty(): boolean {
@@ -631,7 +692,7 @@ export class ColumnController {
     }
 
     public getAllColumnsIncludingAuto(): Column[] {
-        var result = this.allColumns.slice(0);
+        var result = this.allUserProvidedColumns.slice(0);
         if (this.groupAutoColumnActive) {
             result.push(this.groupAutoColumn);
         }
@@ -639,12 +700,12 @@ export class ColumnController {
     }
 
     public getColumnState(): [any] {
-        if (!this.allColumns || this.allColumns.length < 0) {
+        if (!this.allUserProvidedColumns || this.allUserProvidedColumns.length < 0) {
             return <any>[];
         }
         var result = <any>[];
-        for (var i = 0; i < this.allColumns.length; i++) {
-            var column = this.allColumns[i];
+        for (var i = 0; i < this.allUserProvidedColumns.length; i++) {
+            var column = this.allUserProvidedColumns[i];
             var rowGroupIndex = this.rowGroupColumns.indexOf(column);
             var resultItem = {
                 colId: column.getColId(),
@@ -661,7 +722,7 @@ export class ColumnController {
 
     public resetColumnState(): void {
         // we can't use 'allColumns' as the order might of messed up, so get the original ordered list
-        var originalColumns = this.allColumns = this.getColumnsFromTree(this.originalBalancedTree);
+        var originalColumns = this.allUserProvidedColumns = this.getColumnsFromTree(this.originalBalancedTree);
         var state: any[] = [];
 
         if (originalColumns) {
@@ -680,8 +741,8 @@ export class ColumnController {
     }
 
     public setColumnState(columnState: any[]): boolean {
-        var oldColumnList = this.allColumns;
-        this.allColumns = [];
+        var oldColumnList = this.allUserProvidedColumns;
+        this.allUserProvidedColumns = [];
         this.rowGroupColumns = [];
         this.valueColumns = [];
 
@@ -715,7 +776,7 @@ export class ColumnController {
                 if (typeof stateItem.rowGroupIndex === 'number' && stateItem.rowGroupIndex >= 0) {
                     this.rowGroupColumns.push(oldColumn);
                 }
-                this.allColumns.push(oldColumn);
+                this.allUserProvidedColumns.push(oldColumn);
                 oldColumnList.splice(oldColumnList.indexOf(oldColumn), 1);
             });
         }
@@ -725,7 +786,7 @@ export class ColumnController {
             oldColumn.setVisible(false);
             oldColumn.setAggFunc(null);
             oldColumn.setPinned(null);
-            this.allColumns.push(oldColumn);
+            this.allUserProvidedColumns.push(oldColumn);
         });
 
         // sort the row group columns
@@ -777,9 +838,9 @@ export class ColumnController {
     public getColumn(key: string|ColDef|Column): Column {
         if (!key) {return null;}
 
-        for (var i = 0; i < this.allColumns.length; i++) {
-            if (colMatches(this.allColumns[i])) {
-                return this.allColumns[i];
+        for (var i = 0; i < this.allUserProvidedColumns.length; i++) {
+            if (colMatches(this.allUserProvidedColumns[i])) {
+                return this.allUserProvidedColumns[i];
             }
         }
 
@@ -886,8 +947,9 @@ export class ColumnController {
         this.originalBalancedTree = balancedTreeResult.balancedTree;
         this.headerRowCount = balancedTreeResult.treeDept + 1;
 
-        this.allColumns = this.getColumnsFromTree(this.originalBalancedTree);
+        this.allUserProvidedColumns = this.getColumnsFromTree(this.originalBalancedTree);
         this.extractRowGroupColumns();
+        this.extractPivotColumns();
         this.createValueColumns();
         this.updateModel();
         this.ready = true;
@@ -903,7 +965,7 @@ export class ColumnController {
     private extractRowGroupColumns(): void {
         this.rowGroupColumns = [];
         // pull out the columns
-        this.allColumns.forEach( (column: Column) => {
+        this.allUserProvidedColumns.forEach( (column: Column) => {
             if (typeof column.getColDef().rowGroupIndex === 'number') {
                 this.rowGroupColumns.push(column);
             }
@@ -911,6 +973,20 @@ export class ColumnController {
         // then sort them
         this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
             return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
+        });
+    }
+
+    private extractPivotColumns(): void {
+        this.pivotColumns = [];
+        // pull out the columns
+        this.allUserProvidedColumns.forEach( (column: Column) => {
+            if (typeof column.getColDef().pivotIndex === 'number') {
+                this.pivotColumns.push(column);
+            }
+        });
+        // then sort them
+        this.pivotColumns.sort(function (colA: Column, colB: Column): number {
+            return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
         });
     }
 
@@ -962,7 +1038,7 @@ export class ColumnController {
 
         // following 3 methods are only called from here
         this.createGroupAutoColumn();
-        var visibleColumns = this.updateVisibleColumns();
+        var visibleColumns = this.calculateVisibleColumns();
         this.buildAllGroups(visibleColumns);
 
         // restore opened / closed state
@@ -986,9 +1062,10 @@ export class ColumnController {
         this.setLeftValues();
     }
 
+    // sets the left pixel position of each column
     private setLeftValues(): void {
         // go through each list of displayed columns
-        var allColumns = this.allColumns.slice(0);
+        var allColumns = this.allUserProvidedColumns.slice(0);
         [this.displayedLeftColumns,this.displayedRightColumns,this.displayedCenterColumns].forEach( columns => {
             var left = 0;
             columns.forEach( column => {
@@ -1107,17 +1184,8 @@ export class ColumnController {
             return column.getPinned() !== 'left' && column.getPinned() !== 'right';
         });
 
-        //// if pinning left, then group column is also always pinned left. if not
-        //// pinning, then group column is either pinned left or center.
-        //if (this.groupAutoColumn) {
-        //    if (leftVisibleColumns.length > 0 || this.groupAutoColumn.isPinnedLeft()) {
-        //        leftVisibleColumns.unshift(this.groupAutoColumn);
-        //    } else {
-        //        centerVisibleColumns.unshift(this.groupAutoColumn);
-        //    }
-        //}
-
         var groupInstanceIdCreator = new GroupInstanceIdCreator();
+
         this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(
             leftVisibleColumns, this.originalBalancedTree, groupInstanceIdCreator);
         this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(
@@ -1178,8 +1246,8 @@ export class ColumnController {
         }
     }
 
-    private updateVisibleColumns(): Column[] {
-        var visibleColumns = _.filter(this.allColumns, column => column.isVisible() );
+    private calculateVisibleColumns(): Column[] {
+        var visibleColumns = _.filter(this.allUserProvidedColumns, column => column.isVisible() );
 
         if (this.groupAutoColumnActive) {
             visibleColumns.unshift(this.groupAutoColumn);
@@ -1192,8 +1260,8 @@ export class ColumnController {
         this.valueColumns = [];
 
         // override with columns that have the aggFunc specified explicitly
-        for (var i = 0; i < this.allColumns.length; i++) {
-            var column = this.allColumns[i];
+        for (var i = 0; i < this.allUserProvidedColumns.length; i++) {
+            var column = this.allUserProvidedColumns[i];
             if (column.getColDef().aggFunc) {
                 column.setAggFunc(column.getColDef().aggFunc);
                 this.valueColumns.push(column);
