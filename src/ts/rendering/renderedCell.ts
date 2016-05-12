@@ -444,24 +444,6 @@ export class RenderedCell extends Component {
         event.preventDefault();
     }
 
-/*
-    private addFocusListener(): void {
-        var that = this;
-        var focusListener = (event: any) => {
-
-            // if the focus went into another cell, then we stop editing this cell
-            // if (that.editingCell &&!that.cellEditorInPopup && !that.gridCell.eq hasFocusLeftCell(event)) {
-            //     that.stopEditing();
-            // }
-        };
-        // this.eventService.
-        // this.focusService.addListener(focusListener);
-        // this.addDestroyFunc( () => {
-        //     this.focusService.removeListener(focusListener);
-        // });
-    }
-*/
-
     private addKeyPressListener(): void {
         var that = this;
         var keyPressListener = function(event: any) {
@@ -568,13 +550,20 @@ export class RenderedCell extends Component {
             return;
         }
 
-        this.cellEditor = this.createCellEditor(keyPress, charPress);
+        var cellEditor = this.createCellEditor(keyPress, charPress);
+        if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
+            if (cellEditor.destroy) {
+                cellEditor.destroy();
+            }
+            return;
+        }
 
-        if (!this.cellEditor.getGui) {
+        if (!cellEditor.getGui) {
             console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
             return;
         }
 
+        this.cellEditor = cellEditor;
         this.editingCell = true;
         this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
         this.setInlineEditingClass();
@@ -585,8 +574,8 @@ export class RenderedCell extends Component {
             this.addInCellEditor();
         }
 
-        if (this.cellEditor.afterGuiAttached) {
-            this.cellEditor.afterGuiAttached();
+        if (cellEditor.afterGuiAttached) {
+            cellEditor.afterGuiAttached();
         }
     }
 
@@ -632,10 +621,18 @@ export class RenderedCell extends Component {
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
-    private stopEditing(reset: boolean = false) {
+    // pass in 'true' to cancel the editing.
+    private stopEditing(cancel: boolean = false) {
         this.editingCell = false;
 
-        if (!reset) {
+        // also have another option here to cancel after editing, so for example user could have a popup editor and
+        // it is closed by user clicking outside the editor. then the editor will close automatically (with false
+        // passed above) and we need to see if the editor wants to accept the new value.
+        var cancelAfterEnd = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
+
+        var acceptNewValue = !cancel && !cancelAfterEnd;
+
+        if (acceptNewValue) {
             var newValue = this.cellEditor.getValue();
             this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
