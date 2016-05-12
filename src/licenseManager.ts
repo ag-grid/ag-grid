@@ -4,11 +4,16 @@ import {MD5} from "./license/md5";
 
 @Bean('licenseManager')
 export class LicenseManager {
+    private static RELEASE_INFORMATION:string = '@RELEASE_INFO@';
     private static licenseKey:string;
 
     @Autowired('md5') private md5:MD5;
 
     public validateLicense():void {
+        if(LicenseManager.RELEASE_INFORMATION === '@RELEASE_INFO@') {
+            return;
+        }
+
         var valid:boolean = false;
         var current:boolean = false;
 
@@ -25,7 +30,7 @@ export class LicenseManager {
 
                 if(!isNaN(expiry.getTime())) {
                     valid = true;
-                    current = (this.getGridReleaseDate() < expiry)
+                    current = (LicenseManager.getGridReleaseDate() < expiry)
                 }
             }
         }
@@ -37,17 +42,17 @@ export class LicenseManager {
         }
     }
 
-    private getGridReleaseDate() {
-        return new Date().getTime();
+    private static getGridReleaseDate() {
+        return new Date(parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION)));
     };
 
     private static decode(input:string):string {
         var keystr:string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
         var t = "";
-        var n, r, i;
-        var s, o, u, a;
-        var f = 0;
-        var e = input.replace(/[^A-Za-z0-9+/=]/g, "");
+        var n:any, r:any, i:any;
+        var s:any, o:any, u:any, a:any;
+        var f:number = 0;
+        var e:string = input.replace(/[^A-Za-z0-9+/=]/g, "");
         while (f < e.length) {
             s = keystr.indexOf(e.charAt(f++));
             o = keystr.indexOf(e.charAt(f++));
