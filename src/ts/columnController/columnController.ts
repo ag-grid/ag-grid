@@ -1,34 +1,24 @@
-import {Utils as _} from '../utils';
-import {Constants as constants} from '../constants';
+import {Utils as _} from "../utils";
 import {ColumnGroup} from "../entities/columnGroup";
 import {Column} from "../entities/column";
-import {ColDef} from "../entities/colDef";
+import {ColDef, AbstractColDef} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Grid} from "../grid";
 import {ExpressionService} from "../expressionService";
 import {BalancedColumnTreeBuilder} from "./balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./displayedGroupCreator";
 import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
 import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
-import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {ColumnUtils} from "./columnUtils";
-import {Logger} from "../logger";
-import {LoggerFactory} from "../logger";
+import {Logger, LoggerFactory} from "../logger";
 import {Events} from "../events";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
 import {defaultGroupComparator} from "../functions";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import {Autowired} from "../context/context";
+import {Bean, Qualifier, Autowired, PostConstruct, Context} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
-import {AbstractColDef} from "../entities/colDef";
-import {PostConstruct} from "../context/context";
-import {Context} from "../context/context";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -114,7 +104,6 @@ export class ColumnController {
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('valueService') private valueColumns: Column[];
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('gridPanel') private gridPanel: GridPanel;
@@ -146,7 +135,8 @@ export class ColumnController {
     private rowGroupColumns: Column[];
     private groupAutoColumn: Column;
     private groupAutoColumnActive: boolean;
-    private valueService: ValueService;
+
+    private valueColumns: Column[];
 
     private ready = false;
     private logger: Logger;
@@ -400,10 +390,6 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
     }
 
-    // public getPathForColumn(column: Column): ColumnGroup[] {
-    //     return this.columnUtils.getPathForColumn(column, this.getAllDisplayedColumnGroups());
-    // }
-
     public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number): void {
 
         if (toIndex > this.allColumns.length - columnsToMoveKeys.length) {
@@ -449,17 +435,17 @@ export class ColumnController {
                 continue;
             }
 
-            var thisPath = this.columnUtils.getPathForColumn(thisColumn, this.getAllDisplayedColumnGroups());
-            var nextPath = this.columnUtils.getPathForColumn(nextColumn, this.getAllDisplayedColumnGroups());
+            var thisPath = this.columnUtils.getOriginalPathForColumn(thisColumn, this.originalBalancedTree);
+            var nextPath = this.columnUtils.getOriginalPathForColumn(nextColumn, this.originalBalancedTree);
 
-            if (!nextPath) {
+            if (!nextPath || !thisPath) {
                 console.log('next path is missing');
             }
 
             // start at the top of the path and work down
             for (var dept = 0; dept<thisPath.length; dept++) {
-                var thisOriginalGroup = thisPath[dept].getOriginalColumnGroup();
-                var nextOriginalGroup = nextPath[dept].getOriginalColumnGroup();
+                var thisOriginalGroup = thisPath[dept];
+                var nextOriginalGroup = nextPath[dept];
                 var lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
                 // a runaway is a column from this group that left the group, and the group has it's children marked as married
                 var colGroupDef = thisOriginalGroup.getColGroupDef();
@@ -468,8 +454,8 @@ export class ColumnController {
                 if (needToCheckForRunaways) {
                     for (var tailIndex = index+1; tailIndex < allColumnsCopy.length; tailIndex++) {
                         var tailColumn = allColumnsCopy[tailIndex];
-                        var tailPath = this.columnUtils.getPathForColumn(tailColumn, this.getAllDisplayedColumnGroups());
-                        var tailOriginalGroup = tailPath[dept].getOriginalColumnGroup();
+                        var tailPath = this.columnUtils.getOriginalPathForColumn(tailColumn, this.originalBalancedTree);
+                        var tailOriginalGroup = tailPath[dept];
                         if (tailOriginalGroup===thisOriginalGroup) {
                             return false;
                         }
