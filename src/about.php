@@ -33,26 +33,66 @@
         <div class="col-md-12" style="padding-top: 40px;">
 
             <h3>
-                About Us
+                Company
             </h3>
             <p>
-                ag-Grid creates high quality data analytics software that enables companies build quality
-                enterprise products. ag-Grid takes from lessons learnt over the past 20 years in software
-                development and applies those principles to JavaScript development. JavaScript has long
-                been junior with regards quality with a focus on websites.
+                ag-Grid is a Private Limited Company registered in the United Kingdom. The company is based
+                out of the Techhub @ Campus incubation center in London.
             </p>
-
+            <p>
+            <style>
+                td {
+                    padding: 10px;;
+                }
+            </style>
+                <table>
+                <tr>
+                    <td valign="top"><b>Address</b></td>
+                    <td>
+                        Techhub @ Campus,<br/>
+                        4-5 Bonhill Street,<br/>
+                        London,<br/>
+                        England,<br/>
+                        EC2A 4BX
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><b>Company Number</b></td>
+                    <td>
+                        07318192
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top"><b>VAT Number</b></td>
+                    <td>
+                        GB 998360167
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://beta.companieshouse.gov.uk/company/07318192">UK Companies House</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://london.techhub.com/">Techhub @ Campus</a>
+                    </td>
+                </tr>
+                </table>
+                <br/>
+            </p>
         </div> <!-- end col -->
 
         <div class="col-md-12" style="padding-top: 40px;">
 
             <h3 id="team">
-                The Team
+                Team
             </h3>
             <p>
                 The team is passionate about great products and great software. They are experienced
-                delivering quality software and continue to do so with the ag-Grid project. They have worked together
-                delivering web enabled enterprise technologies for years.
+                delivering quality software and continue to do so with the ag-Grid project taking
+                lessons learnt over the past 20 years in software
+                development and applying those principles to JavaScript.
             </p>
 
         </div> <!-- end col -->
