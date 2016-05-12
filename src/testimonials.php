@@ -28,41 +28,73 @@
 
 <div class="container">
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="PageContent">
-                <figure class="Testimonials-item col-md-4 col-sm-4 col-xs-12">
-                  <blockquote>We’re using ag-Grid as a major component in our enterprise analytics and reporting product and it’s incredible. Prior to ag-Grid, we tried jqGrid, jqxGrid, DataTables, and SlickGrid, which all have their strong points, but we eventually ran into a wall with certain features. ag-Grid’s grouping, aggregation, filtering, and all-around flexibility allowed us to quickly integrate it into our product. And, the performance is truly awesome!</blockquote>
-                  <div class="author">
-                    <h5>Andrew Taft</h5><span>Head of Product Development at Insight Technology Group</span>
-                  </div>
-                </figure>
-                <figure class="Testimonials-item col-md-4 col-sm-4 col-xs-12">
-                  <blockquote>We love Ag-grid for its simple integration, blazing-fast performance, and friendly community.</blockquote>
-                  <div class="author">
-                    <h5>Lucas Val</h5><span>VP of Product Development at Hexonet Services Inc</span>
-                  </div>
-                </figure>
-                <figure class="Testimonials-item col-md-4 col-sm-4 col-xs-12">
-                  <blockquote>Remarkable speed and extensibility, ag-Grid is the best web feature-rich BI tool on the market.</blockquote>
-                  <div class="author">
-                    <h5>Robin Cote, Senior Systems Developer</h5><span>Investment Solutions Group<br/>Healthcare of Ontario Pension Plan</span>
-                  </div>
-                </figure>
-            </div>
-        </div> <!-- end col -->
-    </div> <!-- end row -->
+    <style>
+        .quote-text {
+            font-style: italic;
+        }
+        .quote-from {
+            font-size: 10px;
+            padding-top: 10px;
+            text-transform: uppercase;
+            font-weight: 800;
+            font-family: inherit;
+            color: dimgrey;
+        }
+        .quote-company {
+            font-size: 12px;
+        }
+        .quote {
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-top: 30px;
+            padding: 10px;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+            border-style: outset;
+            border-width: 1px;
+        }
+    </style>
 
-    <!--
-    I'm so glad you made ag-Grid!  Finally, someone has done it right.  I started using Google's Table visualizations, then tried dataTables.net and then js-Grid before I discovered your product.  Your design and implementation is brilliant.
-    Graham Smith, United Healthcare Workers West
-    -->
+    <div class="row quote">
+        <div class="quote-text">"We’re using ag-Grid as a major component in our enterprise analytics and reporting product and it’s incredible. Prior to ag-Grid, we tried jqGrid, jqxGrid, DataTables, and SlickGrid, which all have their strong points, but we eventually ran into a wall with certain features. ag-Grid’s grouping, aggregation, filtering, and all-around flexibility allowed us to quickly integrate it into our product. And, the performance is truly awesome!"</div>
+        <div class="quote-from">Andrew Taft</div>
+        <div class="quote-company">Head of Product Development at Insight Technology Group</div>
+    </div>
+
+    <div class="row quote">
+        <div class="quote-text">"We love Ag-grid for its simple integration, blazing-fast performance, and friendly community."</div>
+        <div class="quote-from">Lucas Val</div>
+        <div class="quote-company">VP of Product Development at Hexonet Services Inc</div>
+    </div>
+
+    <div class="row quote">
+        <div class="quote-text">"Remarkable speed and extensibility, ag-Grid is the best web feature-rich BI tool on the market."</div>
+        <div class="quote-from">Robin Cote</div>
+        <div class="quote-company">Senior Systems Developer, Investment Solutions Group, Healthcare of Ontario Pension Plan</div>
+    </div>
+
+    <div class="row quote">
+        <div class="quote-text">"I'm so glad you made ag-Grid!  Finally, someone has done it right.  I started using Google's Table visualizations, then tried dataTables.net and then js-Grid before I discovered your product.  Your design and implementation is brilliant."</div>
+        <div class="quote-from">Graham Smith</div>
+        <div class="quote-company">United Healthcare Workers West</div>
+    </div>
+
+    <div class="row quote">
+        <div class="quote-text">"For those who are just checking into this project, stop looking at others and start using agGrid.
+            This is an amazing piece of work and the api is so deep, you will be thrilled to find out all it is capable of doing.
+            Thanks to @ceolter for his efforts, you have helped improve our application with agGrid."</div>
+        <div class="quote-from">Mike Erickson</div>
+        <div class="quote-company">Code Dungeon</div>
+    </div>
+
 
     <div class="row">
         <div class="col-md-9">    
             <hr/>
             <h3>Add your own Testimonial</h3>
-            <p style="display: inline">We'd love to hear about your experiences with ag-Grid or ag-Grid Enterprise.<br/>Please let us know what you think @
+            <p style="display: inline">
+                If you want to share your experience with ag-Grid, please send us your testimonial to
             <script language="JavaScript"><!--
             var name = "accounts";
             var domain = "ag-grid.com";
