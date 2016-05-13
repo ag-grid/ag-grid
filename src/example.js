@@ -287,6 +287,7 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
         cellRenderer: CountryCellRenderer,
+                // pivotIndex: 1,
         cellEditor: 'richSelect',
         cellEditorParams: {
             cellRenderer: CountryCellRenderer,
@@ -310,7 +311,7 @@ var defaultCols = [
         headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
         cellRenderer: languageCellRenderer,
         cellEditor: 'select',
-        pivotIndex: 0,
+        rowGroupIndex: 0,
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
         },
@@ -341,6 +342,7 @@ var defaultCols = [
     {
         headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
         //pinned: 'right',
+        rowGroupIndex: 1,
         cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
         floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
@@ -354,6 +356,8 @@ var defaultCols = [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
         filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         filterParams: {cellRenderer: currencyRenderer},
+        colId: 'asf',
+        valueGetter: 'data.bankBalance',
         aggFunc: 'sum',
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
