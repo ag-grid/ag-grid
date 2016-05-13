@@ -311,7 +311,7 @@ var defaultCols = [
         headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
         cellRenderer: languageCellRenderer,
         cellEditor: 'select',
-        rowGroupIndex: 0,
+        // rowGroupIndex: 0,
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
         },
@@ -342,7 +342,7 @@ var defaultCols = [
     {
         headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
         //pinned: 'right',
-        rowGroupIndex: 1,
+        // rowGroupIndex: 1,
         cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
         floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
