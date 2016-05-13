@@ -4,7 +4,8 @@ import {MD5} from "./license/md5";
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = '@RELEASE_INFO@';
+    private static RELEASE_INFORMATION:string = 'MTQ2MzA2NzUzNzM5OQ==';
+    //private static RELEASE_INFORMATION:string = '@RELEASE_INFO@';
     private static licenseKey:string;
 
     @Autowired('md5') private md5:MD5;
@@ -14,6 +15,7 @@ export class LicenseManager {
             return;
         }
 
+        var gridReleaseDate = LicenseManager.getGridReleaseDate();
         var valid:boolean = false;
         var current:boolean = false;
 
@@ -30,17 +32,34 @@ export class LicenseManager {
 
                 if(!isNaN(expiry.getTime())) {
                     valid = true;
-                    current = (LicenseManager.getGridReleaseDate() < expiry)
+                    current = (gridReleaseDate < expiry)
                 }
             }
         }
 
         if (!valid) {
-            alert("Your license is not valid")
+            alert("Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license.")
         } else if(!current) {
-            alert("Your license has expired (valid until " + expiry + ")")
+            alert("Your license for ag-Grid Enterprise expired on " + this.formatDate(expiry) + " but the version installed was released on " + this.formatDate(gridReleaseDate) + ". Please " +
+                "contact ag-Grid Support to renew your license");
         }
     }
+
+    private formatDate(date:any):string {
+        var monthNames:[string] = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"
+        ];
+
+        var day = date.getDate();
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    }
+
 
     private static getGridReleaseDate() {
         return new Date(parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION)));
