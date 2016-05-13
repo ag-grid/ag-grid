@@ -10,6 +10,9 @@ export class Events {
     /** A pivot column was added, removed or order changed. */
     public static EVENT_COLUMN_PIVOT_CHANGE = 'columnPivotChanged';
 
+    /** A pivot column was added, removed or order changed. */
+    public static EVENT_PIVOT_VALUE_CHANGED = 'pivotValueChanged';
+
     /** A value column was added, removed or agg function was changed. */
     public static EVENT_COLUMN_VALUE_CHANGE = 'columnValueChanged';
 

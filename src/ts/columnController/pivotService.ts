@@ -6,6 +6,7 @@ import {Column} from "../entities/column";
 import {ColGroupDef, ColDef} from "../entities/colDef";
 import {ColumnController} from "./columnController";
 import {RowNode} from "../entities/rowNode";
+import {Utils as _} from "../utils";
 
 @Bean('pivotService')
 export class PivotService {
@@ -14,6 +15,87 @@ export class PivotService {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
+
+    private uniqueValues: any;
+
+    public setUniqueValues(): void {
+    }
+
+    private mapRowNode(rowNode: RowNode): void {
+
+        var pivotColumns = this.columnController.getPivotColumns();
+
+        if (pivotColumns.length===0) {
+            rowNode.childrenMapped = null;
+            return;
+        }
+
+        rowNode.childrenMapped = this.mapChildren(rowNode.children, pivotColumns, 0);
+    }
+
+    private mapChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number): any {
+
+        var mappedChildren: any = {};
+        var column = pivotColumns[pivotIndex];
+
+        var columnUniqueValues = this.uniqueValues[column.getId()];
+        if (_.missing(columnUniqueValues)) {
+            columnUniqueValues = {};
+            this.uniqueValues[column.getId()] = columnUniqueValues;
+        }
+
+        // map the children out based on the pivot column
+        children.forEach( (child: RowNode) => {
+            var key = this.valueService.getValue(column, child);
+            if (_.missing(key)) {
+                key = '';
+            }
+
+            // we could check this first, but it's quicker to skip the lookup and just overwrite
+            columnUniqueValues[key]= true;
+
+            if (!mappedChildren[key]) {
+                mappedChildren[key] = [];
+            }
+            mappedChildren[key].push(child);
+        });
+
+        // if it's the last pivot column, return as is, otherwise go one level further in the map
+        if (pivotIndex === pivotColumns.length-1) {
+            return {
+                data: {},
+                children: mappedChildren
+            };
+        } else {
+            var result: any = {};
+            
+            _.iterateObject(mappedChildren, (key: string, value: RowNode[])=> {
+                result[key] = this.mapChildren(value, pivotColumns, pivotIndex + 1);
+            });
+            
+            return result;
+        }
+    }
+
+    public execute(rowNodes: RowNode[]): RowNode[] {
+
+        this.uniqueValues = {};
+        var that = this;
+
+        function findLeafGroups(rowNodes: RowNode[]): void {
+            rowNodes.forEach( rowNode => {
+                if (rowNode.leafGroup) {
+                    that.mapRowNode(rowNode);
+                } else if (rowNode.group) {
+                    findLeafGroups(rowNode.childrenAfterFilter);
+                }
+            });
+        }
+
+        findLeafGroups(rowNodes);
+
+        return rowNodes;
+    }
 
     public createPivotColumnDefs(): (ColGroupDef|ColDef)[] {
 

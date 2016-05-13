@@ -119,6 +119,8 @@ export class ColumnController {
     @Autowired('context') private context: Context;
     @Autowired('pivotService') private pivotService: PivotService;
 
+    private reduce = false;
+    
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
     // provides a new set of column definitions. otherwise this tree is used to build up
@@ -167,6 +169,10 @@ export class ColumnController {
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
     }
 
+    public isReduce(): boolean {
+        return this.reduce;
+    }
+    
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }

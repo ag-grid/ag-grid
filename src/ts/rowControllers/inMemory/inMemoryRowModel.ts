@@ -10,6 +10,7 @@ import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/c
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
+import {PivotService} from "../../columnController/pivotService";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -24,6 +25,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
+    // need to refactor this out, should it be a stage?
+    @Autowired('pivotService') private pivotService: PivotService;
+
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
     @Autowired('sortStage') private sortStage: IRowNodeStage;
@@ -36,9 +40,11 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     // the rows go through a pipeline of steps, each array below is the result
     // after a certain step.
     private allRows: RowNode[] = []; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
+
     private rowsAfterGroup: RowNode[]; // rows in group form, stored in a tree (the parent / child bits of RowNode are used)
     private rowsAfterFilter: RowNode[]; // after filtering
     private rowsAfterSort: RowNode[]; // after sorting
+    
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
     @PostConstruct
@@ -77,9 +83,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 this.doRowGrouping(groupState);
             case constants.STEP_FILTER:
                 this.doFilter();
-                // fire event here???
-                // create pivot columns
-            case constants.STEP_AGGREGATE:
+                this.doPivot();
+            case constants.STEP_AGGREGATE: // depends on agg fields
                 this.doAggregate();
             case constants.STEP_SORT:
                 this.doSort();
@@ -291,6 +296,13 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     private doFilter() {
         this.rowsAfterFilter = this.filterStage.execute(this.rowsAfterGroup);
+    }
+
+    private doPivot() {
+        this.pivotService.execute(this.rowsAfterFilter);
+        // fire event here???
+        // pivotService.createPivotColumns()
+        // do pivot - create pivot columns?
     }
 
     // rows: the rows to put into the model

@@ -31,7 +31,7 @@ export class ValueService {
         return this.getValueUsingSpecificData(column, node.data, node);
     }
 
-    public getValueUsingSpecificData(column: Column, data: any, node: any): any {
+    public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
 
         var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         var colDef = column.getColDef();
