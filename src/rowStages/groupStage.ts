@@ -55,6 +55,7 @@ export class GroupStage implements IRowNodeStage {
         allGroups.push(topMostGroup);
 
         var levelToInsertChild = groupedCols.length - 1;
+        var numberOfLevels = groupedCols.length - 1;
         var i: number;
         var currentLevel: number;
         var node: RowNode;
@@ -73,7 +74,7 @@ export class GroupStage implements IRowNodeStage {
             // all leaf nodes have the same level in this grouping, which is one level after the last group
             node.level = levelToInsertChild + 1;
 
-            for (currentLevel = 0; currentLevel < groupedCols.length; currentLevel++) {
+            for (currentLevel = 0; currentLevel <= numberOfLevels; currentLevel++) {
                 var groupColumn = groupedCols[currentLevel];
                 groupKey = this.valueService.getValue(groupColumn, node);
 
@@ -96,6 +97,7 @@ export class GroupStage implements IRowNodeStage {
                     nextGroup.parent = null;
                     nextGroup.allChildrenCount = 0;
                     nextGroup.level = currentGroup.level + 1;
+                    nextGroup.leafGroup = currentLevel === numberOfLevels;
                     // this is a temporary map, we remove at the end of this method
                     nextGroup._childrenMap = {};
 
