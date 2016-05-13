@@ -3,10 +3,11 @@ import {Bean, Autowired} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {ValueService} from "../valueService";
 import {Column} from "../entities/column";
-import {ColGroupDef, ColDef} from "../entities/colDef";
+import {ColGroupDef, ColDef, AbstractColDef} from "../entities/colDef";
 import {ColumnController} from "./columnController";
 import {RowNode} from "../entities/rowNode";
 import {Utils as _} from "../utils";
+import {EventService} from "../eventService";
 
 @Bean('pivotService')
 export class PivotService {
@@ -15,11 +16,11 @@ export class PivotService {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
 
     private uniqueValues: any;
 
-    public setUniqueValues(): void {
-    }
+    private pivotColumnDefs: (ColDef|ColGroupDef)[];
 
     private mapRowNode(rowNode: RowNode): void {
 
@@ -30,29 +31,24 @@ export class PivotService {
             return;
         }
 
-        rowNode.childrenMapped = this.mapChildren(rowNode.childrenAfterFilter, pivotColumns, 0);
+        rowNode.childrenMapped = this.mapChildren(rowNode.childrenAfterFilter, pivotColumns, 0, this.uniqueValues);
     }
 
-    private mapChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number): any {
+    private mapChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
 
         var mappedChildren: any = {};
-        var column = pivotColumns[pivotIndex];
-
-        var columnUniqueValues = this.uniqueValues[column.getId()];
-        if (_.missing(columnUniqueValues)) {
-            columnUniqueValues = {};
-            this.uniqueValues[column.getId()] = columnUniqueValues;
-        }
+        var pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
         children.forEach( (child: RowNode) => {
-            var key = this.valueService.getValue(column, child);
+            var key = this.valueService.getValue(pivotColumn, child);
             if (_.missing(key)) {
                 key = '';
             }
 
-            // we could check this first, but it's quicker to skip the lookup and just overwrite
-            columnUniqueValues[key]= true;
+            if (!uniqueValues[key]) {
+                uniqueValues[key] = {};
+            }
 
             if (!mappedChildren[key]) {
                 mappedChildren[key] = [];
@@ -62,83 +58,81 @@ export class PivotService {
 
         // if it's the last pivot column, return as is, otherwise go one level further in the map
         if (pivotIndex === pivotColumns.length-1) {
-            return {
-                data: {},
-                children: mappedChildren
-            };
+            return mappedChildren;
         } else {
             var result: any = {};
             
             _.iterateObject(mappedChildren, (key: string, value: RowNode[])=> {
-                result[key] = this.mapChildren(value, pivotColumns, pivotIndex + 1);
+                result[key] = this.mapChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
             });
             
             return result;
         }
     }
 
-    public execute(rowNodes: RowNode[]): RowNode[] {
+    public execute(rootNode: RowNode): any {
 
         this.uniqueValues = {};
         var that = this;
 
-        function findLeafGroups(rowNodes: RowNode[]): void {
-            rowNodes.forEach( rowNode => {
-                if (rowNode.leafGroup) {
-                    that.mapRowNode(rowNode);
-                } else if (rowNode.group) {
-                    findLeafGroups(rowNode.childrenAfterFilter);
-                }
-            });
+        function findLeafGroups(rowNode: RowNode): void {
+            if (rowNode.leafGroup) {
+                that.mapRowNode(rowNode);
+            } else {
+                rowNode.childrenAfterFilter.forEach( child => {
+                    findLeafGroups(child);
+                });
+            }
         }
 
-        findLeafGroups(rowNodes);
+        findLeafGroups(rootNode);
 
-        return rowNodes;
+        this.createPivotColumnDefs();
+
+        this.columnController.onPivotValueChanged();
     }
 
-    public createPivotColumnDefs(): (ColGroupDef|ColDef)[] {
+    public getPivotColumnDefs(): (ColDef|ColGroupDef)[] {
+        return this.pivotColumnDefs;
+    }
 
-        var result: ColGroupDef = {
-            children: [],
+    private createPivotColumnDefs(): void {
+
+        var topLevelCol = {
+            children: <(ColDef|ColGroupDef)[]> [],
             headerName: 'Pivot'
         };
-
-        var that = this;
+        this.pivotColumnDefs = [topLevelCol];
 
         var pivotColumns = this.columnController.getPivotColumns();
-        
-        recursivelyAddGroup(result.children, 0);
+        var levelsDeep = pivotColumns.length;
 
-        function recursivelyAddGroup(parentChildren: (ColGroupDef|ColDef)[], index: number): void {
+        recursivelyAddGroup(topLevelCol.children, 1, this.uniqueValues);
 
-            var column = pivotColumns[index];
-            var values = that.getUniqueValues(column);
+        function recursivelyAddGroup(parentChildren: (ColGroupDef|ColDef)[], index: number, uniqueValues: any): void {
 
-            values.forEach( (value: string) => {
-                var createGroup = index !== values.length - 1;
+            // var column = pivotColumns[index];
+            _.iterateObject(uniqueValues, (key: string, value: any)=> {
+                var createGroup = index !== levelsDeep;
                 if (createGroup) {
                     var groupDef: ColGroupDef = {
                         children: [],
-                        headerName: value
+                        headerName: key
                     };
                     parentChildren.push(groupDef);
-                    recursivelyAddGroup(groupDef.children, index+1);
+                    recursivelyAddGroup(groupDef.children, index+1, value);
                 } else {
                     var colDef: ColDef = {
                         valueGetter: '' + Math.random(),
-                        headerName: value
+                        headerName: key
                     };
                     parentChildren.push(colDef);
                 }
             });
-
         }
-
-        return [result];
     }
 
-    private getUniqueValues(column: Column): any[] {
+/*    private getUniqueValues(column: Column): any[] {
         var uniqueCheck = <any>{};
         var result = <any>[];
 
@@ -161,6 +155,6 @@ export class PivotService {
         }
 
         return result;
-    }
+    }*/
 
 }

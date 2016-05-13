@@ -311,7 +311,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doPivot() {
-        // this.pivotService.execute(this.rowsAfterFilter);
+        this.pivotService.execute(this.rootNode);
 
         // fire event here???
         // pivotService.createPivotColumns()

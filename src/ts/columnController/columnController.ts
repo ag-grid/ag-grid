@@ -166,7 +166,7 @@ export class ColumnController {
         if (this.gridOptionsWrapper.getColumnDefs()) {
             this.setColumnDefs(this.gridOptionsWrapper.getColumnDefs());
         }
-        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.onPivotValueChanged.bind(this));
     }
 
     public isReduce(): boolean {
@@ -241,7 +241,7 @@ export class ColumnController {
 
     // + gridPanel -> for resizing the body and setting top margin
     public getHeaderRowCount(): number {
-        return this.originalHeaderRowCount;
+        return this.gridHeaderRowCount;
     }
 
     // + headerRenderer -> setting pinned body width
@@ -1081,7 +1081,7 @@ export class ColumnController {
             visibleColumns.unshift(this.groupAutoColumn);
         }
 
-        this.buildAllGroups(visibleColumns, this.originalBalancedTree);
+        this.buildAllGroups(visibleColumns);
 
         // restore opened / closed state
         this.setColumnGroupState(oldGroupState);
@@ -1092,26 +1092,24 @@ export class ColumnController {
         this.setFirstRightAndLastLeftPinned();
     }
 
-    private onRowDataChanged(): void {
+    public onPivotValueChanged(): void {
         // if we are pivoting, then we need to re-work the pivot columns
-        if (this.pivotColumns.length>0) {
-            this.setupGridColumns();
-            this.updateModel();
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
-        }
+        this.setupGridColumns();
+        this.updateModel();
+        this.eventService.dispatchEvent(Events.EVENT_PIVOT_VALUE_CHANGED);
+        // var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
+        // this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
     }
 
     private setupGridColumns(): void {
 
         var doingPivot = this.pivotColumns.length > 0;
         if (doingPivot) {
-            var pivotColumnDefs = this.pivotService.createPivotColumnDefs();
+            var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
             var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(pivotColumnDefs);
             this.gridBalancedTree = balancedTreeResult.balancedTree;
             this.gridHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.gridColumns = this.getColumnsFromTree(this.gridBalancedTree);
-
         } else {
             this.gridBalancedTree = this.originalBalancedTree;
             this.gridHeaderRowCount = this.originalHeaderRowCount;
@@ -1240,7 +1238,7 @@ export class ColumnController {
         }
     }
 
-    private buildAllGroups(visibleColumns: Column[], balancedColumnTree: OriginalColumnGroupChild[]) {
+    private buildAllGroups(visibleColumns: Column[]) {
         var leftVisibleColumns = _.filter(visibleColumns, (column)=> {
             return column.getPinned() === 'left';
         });
@@ -1256,11 +1254,11 @@ export class ColumnController {
         var groupInstanceIdCreator = new GroupInstanceIdCreator();
 
         this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, balancedColumnTree, groupInstanceIdCreator);
+            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator);
         this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, balancedColumnTree, groupInstanceIdCreator);
+            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator);
         this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            centerVisibleColumns, balancedColumnTree, groupInstanceIdCreator);
+            centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator);
     }
 
     private updateGroups(): void {
