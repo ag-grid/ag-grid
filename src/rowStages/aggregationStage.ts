@@ -17,73 +17,33 @@ export class AggregationStage implements IRowNodeStage {
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    public execute(rowsToAgg: RowNode[]): RowNode[] {
+    public execute(rowNode: RowNode): any {
 
-        var groupAggFunction = this.gridOptionsWrapper.getGroupAggFunction();
-        if (typeof groupAggFunction === 'function') {
-            this.recursivelyCreateAggData(rowsToAgg, groupAggFunction, 0);
+        // we don't do aggregation if user provided the groups
+        var userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (userProvidedTheGroups) {
             return;
         }
 
         var valueColumns = this.columnController.getValueColumns();
-        if (valueColumns && valueColumns.length > 0) {
-            var aggFunction = this.aggregateUsingValueColumns.bind(this, valueColumns);
-            this.recursivelyCreateAggData(rowsToAgg, aggFunction, 0);
+        this.recursivelyCreateAggData(rowNode, valueColumns);
+    }
+
+    private recursivelyCreateAggData(rowNode: RowNode, valueColumns: Column[]) {
+        var doingAggregation = valueColumns.length > 0;
+
+        // aggregate all children first, as we use the result in this nodes calculations
+        rowNode.childrenAfterFilter.forEach( child => {
+            if (child.group) {
+                this.recursivelyCreateAggData(child, valueColumns);
+            }
+        });
+
+        if (doingAggregation) {
+            rowNode.data = this.aggregateUsingValueColumns(valueColumns, rowNode.childrenAfterFilter);
         } else {
-            // if no agg data, need to clear out any previous items, when can be left behind
-            // if user is creating / removing columns using the tool panel.
-            // one exception - don't do this if already grouped, as this breaks the File Explorer example!!
-            // to fix another day - how do we reset when the user provided the data??
-            if (_.missing(this.gridOptionsWrapper.getNodeChildDetailsFunc())) {
-                this.recursivelyClearAggData(rowsToAgg);
-            }
+            rowNode.data = null;
         }
-
-        return rowsToAgg;
-    }
-
-    private recursivelyClearAggData(nodes: RowNode[]): void {
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var node = nodes[i];
-            if (node.group) {
-                // agg function needs to start at the bottom, so traverse first
-                this.recursivelyClearAggData(node.childrenAfterFilter);
-                node.data = null;
-            }
-        }
-    }
-
-    private recursivelyCreateAggData(nodes: RowNode[], groupAggFunction: any, level: number) {
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var node = nodes[i];
-            if (node.group) {
-                // agg function needs to start at the bottom, so traverse first
-                this.recursivelyCreateAggData(node.childrenAfterFilter, groupAggFunction, level++);
-                // after traversal, we can now do the agg at this level
-
-                var pivotColumns = this.columnController.getPivotColumns();
-
-                // if pivot, then result for each pivot
-                if (pivotColumns.length > 0) {
-                    // if lowest level then reduce from list
-                    data = this.recursePivot(node.childrenMapped, pivotColumns, 0);
-                    // else extract from each child and add
-                } else {
-                    var data = groupAggFunction(node.childrenAfterFilter, level);
-                }
-
-                node.data = data;
-                // if we are grouping, then it's possible there is a sibling footer
-                // to the group, so update the data here also if there is one
-                if (node.sibling) {
-                    node.sibling.data = data;
-                }
-            }
-        }
-    }
-
-    private recursePivot(map: any, pivotColumns: Column[], index: number): void {
-
     }
 
     private aggregateUsingValueColumns(valueColumns: Column[], rows: RowNode[]): any {
