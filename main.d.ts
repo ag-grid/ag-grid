@@ -83,7 +83,7 @@ export * from './dist/lib/rendering/checkboxSelectionComponent';
 export * from './dist/lib/rendering/cellEditorFactory';
 export * from './dist/lib/rendering/valueFormatterService';
 
-export * from './dist/lib/rowControllers/inMemory/fillterStage';
+export * from './dist/lib/rowControllers/inMemory/filterStage';
 export * from './dist/lib/rowControllers/inMemory/flattenStage';
 export * from './dist/lib/rowControllers/inMemory/inMemoryRowModel';
 export * from './dist/lib/rowControllers/inMemory/sortStage';

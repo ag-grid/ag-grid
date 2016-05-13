@@ -35,7 +35,7 @@ import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
 import {Utils as _} from "./utils";
-import {FilterStage} from "./rowControllers/inMemory/fillterStage";
+import {FilterStage} from "./rowControllers/inMemory/filterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {FocusService} from "./misc/focusService";

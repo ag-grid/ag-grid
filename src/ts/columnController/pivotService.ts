@@ -30,7 +30,7 @@ export class PivotService {
             return;
         }
 
-        rowNode.childrenMapped = this.mapChildren(rowNode.children, pivotColumns, 0);
+        rowNode.childrenMapped = this.mapChildren(rowNode.childrenAfterFilter, pivotColumns, 0);
     }
 
     private mapChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number): any {

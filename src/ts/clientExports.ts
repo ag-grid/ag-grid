@@ -41,7 +41,7 @@ import {VerticalStack} from "./layout/verticalStack";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {RenderedRow} from "./rendering/renderedRow";
 import {RowRenderer} from "./rendering/rowRenderer";
-import {FilterStage} from "./rowControllers/inMemory/fillterStage";
+import {FilterStage} from "./rowControllers/inMemory/filterStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";

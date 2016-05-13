@@ -53,8 +53,11 @@ export class RowNode {
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
 
+    /** All user provided nodes */
+    public allLeafChildren: RowNode[];
+
     /** Groups only - Children of this group */
-    public children: RowNode[];
+    public childrenAfterGroup: RowNode[];
     /** Groups only - Filtered children of this group */
     public childrenAfterFilter: RowNode[];
     /** Groups only - Sorted children of this group */
@@ -118,8 +121,8 @@ export class RowNode {
     }
 
     public deptFirstSearch( callback: (rowNode: RowNode) => void ): void {
-        if (this.children) {
-            this.children.forEach( child => child.deptFirstSearch(callback) );
+        if (this.childrenAfterGroup) {
+            this.childrenAfterGroup.forEach( child => child.deptFirstSearch(callback) );
         }
         callback(this);
     }
@@ -131,9 +134,9 @@ export class RowNode {
         var atLeastOneMixed = false;
 
         var newSelectedValue:boolean;
-        if (this.children) {
-            for (var i = 0; i < this.children.length; i++) {
-                var childState = this.children[i].isSelected();
+        if (this.childrenAfterGroup) {
+            for (var i = 0; i < this.childrenAfterGroup.length; i++) {
+                var childState = this.childrenAfterGroup[i].isSelected();
                 switch (childState) {
                     case true:
                         atLeastOneSelected = true;
@@ -332,8 +335,8 @@ export class RowNode {
     }
 
     private selectChildNodes(newValue: boolean): void {
-        for (var i = 0; i<this.children.length; i++) {
-            this.children[i].setSelectedParams({
+        for (var i = 0; i<this.childrenAfterGroup.length; i++) {
+            this.childrenAfterGroup[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
                 tailingNodeInSequence: true

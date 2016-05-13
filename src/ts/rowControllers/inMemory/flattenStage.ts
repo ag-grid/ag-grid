@@ -14,14 +14,14 @@ export class FlattenStage implements IRowNodeStage {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    public execute(rowsToFlatten: RowNode[]): RowNode[] {
+    public execute(rootNode: RowNode): RowNode[] {
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var result: RowNode[] = [];
 
         // putting value into a wrapper so it's passed by reference
         var nextRowTop: NumberWrapper = {value: 0};
-        this.recursivelyAddToRowsToDisplay(rowsToFlatten, result, nextRowTop);
+        this.recursivelyAddToRowsToDisplay(rootNode.childrenAfterSort, result, nextRowTop);
 
         return result;
     }
