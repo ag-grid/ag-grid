@@ -44,11 +44,11 @@ export class GroupStage implements IRowNodeStage {
     private recursivelyGroup(rowNode: RowNode, groupColumns: Column[], level: number, expandByDefault: any, groupId: any, rowsAlreadyGrouped: boolean): void {
 
         var groupingThisLevel = level < groupColumns.length;
+        rowNode.leafGroup = level === groupColumns.length;
 
         if (groupingThisLevel && !rowsAlreadyGrouped) {
             var groupColumn = groupColumns[level];
-            var leafGroup = level === groupColumns.length - 1;
-            this.setChildrenAfterGroup(rowNode, groupColumn, groupId, expandByDefault, level, leafGroup);
+            this.setChildrenAfterGroup(rowNode, groupColumn, groupId, expandByDefault, level);
             rowNode.childrenAfterGroup.forEach( child => {
                 this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, groupId, rowsAlreadyGrouped);
             });
@@ -62,7 +62,7 @@ export class GroupStage implements IRowNodeStage {
 
     }
 
-    private setChildrenAfterGroup(rowNode: RowNode, groupColumn: Column, groupId: any, expandByDefault: any, level: number, leafGroup: boolean): void {
+    private setChildrenAfterGroup(rowNode: RowNode, groupColumn: Column, groupId: any, expandByDefault: any, level: number): void {
 
         rowNode.childrenAfterGroup = [];
         rowNode.childrenMapped = {};
@@ -73,7 +73,7 @@ export class GroupStage implements IRowNodeStage {
 
             var groupForChild = <RowNode> rowNode.childrenMapped[groupKey];
             if (!groupForChild) {
-                groupForChild = this.createGroup(groupColumn, groupKey, rowNode, groupId, expandByDefault, level, leafGroup);
+                groupForChild = this.createGroup(groupColumn, groupKey, rowNode, groupId, expandByDefault, level);
                 rowNode.childrenMapped[groupKey] = groupForChild;
                 rowNode.childrenAfterGroup.push(groupForChild);
             }
@@ -82,7 +82,7 @@ export class GroupStage implements IRowNodeStage {
         });
     }
 
-    private createGroup(groupColumn: Column, groupKey: string, parent: RowNode, groupId: any, expandByDefault: any, level: number, leafGroup: boolean): RowNode {
+    private createGroup(groupColumn: Column, groupKey: string, parent: RowNode, groupId: any, expandByDefault: any, level: number): RowNode {
         var nextGroup = new RowNode();
         this.context.wireBean(nextGroup);
 
@@ -94,7 +94,6 @@ export class GroupStage implements IRowNodeStage {
         nextGroup.allLeafChildren = [];
         nextGroup.allChildrenCount = 0;
         nextGroup.level = level;
-        nextGroup.leafGroup = leafGroup;
 
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         nextGroup.parent = includeParents ? parent : null;
