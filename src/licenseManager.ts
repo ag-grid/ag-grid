@@ -4,14 +4,13 @@ import {MD5} from "./license/md5";
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = 'MTQ2MzA2NzUzNzM5OQ==';
-    //private static RELEASE_INFORMATION:string = '@RELEASE_INFO@';
+    private static RELEASE_INFORMATION:string = '@RELEASE_INFO@';
     private static licenseKey:string;
 
     @Autowired('md5') private md5:MD5;
 
     public validateLicense():void {
-        if(LicenseManager.RELEASE_INFORMATION === '@RELEASE_INFO@') {
+        if(window.location.hostname.slice(-"ag-grid.com".length) == "ag-grid.com" || LicenseManager.RELEASE_INFORMATION === '@RELEASE_INFO@') {
             return;
         }
 
