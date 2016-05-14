@@ -119,8 +119,7 @@ export class ColumnController {
     @Autowired('context') private context: Context;
     @Autowired('pivotService') private pivotService: PivotService;
 
-    private reduce = false;
-    
+
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
     // provides a new set of column definitions. otherwise this tree is used to build up
@@ -170,7 +169,7 @@ export class ColumnController {
     }
 
     public isReduce(): boolean {
-        return this.reduce;
+        return this.pivotColumns.length > 0;
     }
     
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -1096,17 +1095,17 @@ export class ColumnController {
         // if we are pivoting, then we need to re-work the pivot columns
         this.setupGridColumns();
         this.updateModel();
-        this.eventService.dispatchEvent(Events.EVENT_PIVOT_VALUE_CHANGED);
-        // var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
-        // this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+        // this.eventService.dispatchEvent(Events.EVENT_PIVOT_VALUE_CHANGED);
+        var event = new ColumnChangeEvent(Events.EVENT_PIVOT_VALUE_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_PIVOT_VALUE_CHANGED, event);
     }
 
     private setupGridColumns(): void {
 
         var doingPivot = this.pivotColumns.length > 0;
         if (doingPivot) {
-            var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
-            var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(pivotColumnDefs);
+            var pivotColumnGroupDefs = this.pivotService.getPivotColumnGroupDefs();
+            var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(pivotColumnGroupDefs);
             this.gridBalancedTree = balancedTreeResult.balancedTree;
             this.gridHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.gridColumns = this.getColumnsFromTree(this.gridBalancedTree);

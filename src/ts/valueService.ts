@@ -34,13 +34,16 @@ export class ValueService {
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
 
         var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+        var userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         var colDef = column.getColDef();
         var field = colDef.field;
 
         var result: any;
 
         // if there is a value getter, this gets precedence over a field
-        if (colDef.valueGetter) {
+        if (node.group && !userProvidedTheGroups) {
+            result = node.data ? node.data[column.getId()] : undefined;
+        } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         } else if (field && data) {
             result = this.getValueUsingField(data, field);

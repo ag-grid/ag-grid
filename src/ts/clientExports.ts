@@ -81,6 +81,7 @@ import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
+import {PivotService} from "./columnController/pivotService";
 
 export function populateClientExports(exports: any): void {
 
@@ -91,6 +92,7 @@ export function populateClientExports(exports: any): void {
     exports.ColumnUtils = ColumnUtils;
     exports.DisplayedGroupCreator = DisplayedGroupCreator;
     exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
+    exports.PivotService = PivotService;
 
     // components
     exports.ComponentUtil = ComponentUtil;

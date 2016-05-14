@@ -61,7 +61,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
 
         this.rootNode = new RowNode();
-        this.rootNode.group = false;
+        this.rootNode.group = true;
         this.context.wireBean(this.rootNode);
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {

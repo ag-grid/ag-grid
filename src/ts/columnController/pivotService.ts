@@ -3,7 +3,7 @@ import {Bean, Autowired} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {ValueService} from "../valueService";
 import {Column} from "../entities/column";
-import {ColGroupDef, ColDef, AbstractColDef} from "../entities/colDef";
+import {ColGroupDef, ColDef} from "../entities/colDef";
 import {ColumnController} from "./columnController";
 import {RowNode} from "../entities/rowNode";
 import {Utils as _} from "../utils";
@@ -20,7 +20,8 @@ export class PivotService {
 
     private uniqueValues: any;
 
-    private pivotColumnDefs: (ColDef|ColGroupDef)[];
+    private pivotColumnGroupDefs: (ColDef|ColGroupDef)[];
+    private pivotColumnDefs: ColDef[];
 
     private mapRowNode(rowNode: RowNode): void {
 
@@ -34,6 +35,10 @@ export class PivotService {
         rowNode.childrenMapped = this.mapChildren(rowNode.childrenAfterFilter, pivotColumns, 0, this.uniqueValues);
     }
 
+    public getUniqueValues(): any {
+        return this.uniqueValues;
+    }
+    
     private mapChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
 
         var mappedChildren: any = {};
@@ -92,27 +97,38 @@ export class PivotService {
         this.columnController.onPivotValueChanged();
     }
 
-    public getPivotColumnDefs(): (ColDef|ColGroupDef)[] {
-        return this.pivotColumnDefs;
+    public getPivotColumnGroupDefs(): (ColDef|ColGroupDef)[] {
+        return this.pivotColumnGroupDefs;
     }
 
+    public getPivotColumnDefs(): ColDef[] {
+        return this.pivotColumnDefs;
+    }
+    
     private createPivotColumnDefs(): void {
 
-        var topLevelCol = {
-            children: <(ColDef|ColGroupDef)[]> [],
-            headerName: 'Pivot'
-        };
-        this.pivotColumnDefs = [topLevelCol];
+        // var topLevelCol = {
+        //     children: <(ColDef|ColGroupDef)[]> [],
+        //     headerName: 'Pivot'
+        // };
+        this.pivotColumnGroupDefs = [];
+        this.pivotColumnDefs = [];
+        var that = this;
 
         var pivotColumns = this.columnController.getPivotColumns();
         var levelsDeep = pivotColumns.length;
+        var columnIdSequence = 0;
 
-        recursivelyAddGroup(topLevelCol.children, 1, this.uniqueValues);
+        recursivelyAddGroup(this.pivotColumnGroupDefs, 1, this.uniqueValues, []);
 
-        function recursivelyAddGroup(parentChildren: (ColGroupDef|ColDef)[], index: number, uniqueValues: any): void {
+        function recursivelyAddGroup(parentChildren: (ColGroupDef|ColDef)[], index: number, uniqueValues: any, keys: string[]): void {
 
             // var column = pivotColumns[index];
             _.iterateObject(uniqueValues, (key: string, value: any)=> {
+
+                var newKeys = keys.slice(0);
+                newKeys.push(key);
+
                 var createGroup = index !== levelsDeep;
                 if (createGroup) {
                     var groupDef: ColGroupDef = {
@@ -120,41 +136,50 @@ export class PivotService {
                         headerName: key
                     };
                     parentChildren.push(groupDef);
-                    recursivelyAddGroup(groupDef.children, index+1, value);
+                    recursivelyAddGroup(groupDef.children, index+1, value, newKeys);
                 } else {
-                    var colDef: ColDef = {
-                        valueGetter: '' + Math.random(),
-                        headerName: key
-                    };
-                    parentChildren.push(colDef);
+                    
+                    var valueColumns = that.columnController.getValueColumns();
+
+                    if (valueColumns.length===1) {
+                        var colDef = createColDef(valueColumns[0], key, newKeys);
+                        parentChildren.push(colDef);
+                        that.pivotColumnDefs.push(colDef);
+                    } else {
+                        var valueGroup: ColGroupDef = {
+                            children: [],
+                            headerName: key
+                        };
+                        parentChildren.push(valueGroup);
+                        valueColumns.forEach( valueColumn => {
+                            var colDef = createColDef(valueColumn, valueColumn.getColDef().headerName, newKeys);
+                            valueGroup.children.push(colDef);
+                            that.pivotColumnDefs.push(colDef);
+                        });
+                    }
+
                 }
             });
         }
-    }
 
-/*    private getUniqueValues(column: Column): any[] {
-        var uniqueCheck = <any>{};
-        var result = <any>[];
+        function createColDef(valueColumn: Column, headerName: any, pivotKeys: string[]): ColDef {
 
-        this.rowModel.forEachNode( (node: RowNode)=> {
-            if (!node.group) {
-                var value = this.valueService.getValue(column, node);
-                if (value === "" || value === undefined) {
-                    value = null;
-                }
+            var colDef: ColDef = {};
 
-                addUniqueValueIfMissing(value)
+            if (valueColumn) {
+                var colDefToCopy = valueColumn.getColDef();
+                _.assign(colDef, colDefToCopy);
             }
-        });
 
-        function addUniqueValueIfMissing(value: any) {
-            if (!uniqueCheck.hasOwnProperty(value)) {
-                result.push(value);
-                uniqueCheck[value] = 1;
-            }
+            colDef.valueGetter = null;
+            colDef.headerName = headerName;
+            colDef.colId = 'pivot_' + columnIdSequence++;
+
+            (<any>colDef).keys = pivotKeys;
+            (<any>colDef).valueColumn = valueColumn;
+
+            return colDef;
         }
-
-        return result;
-    }*/
+    }
 
 }

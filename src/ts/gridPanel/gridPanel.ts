@@ -226,7 +226,9 @@ export class GridPanel {
 
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
         this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
+
         this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.onColumnsChanged.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
     }
