@@ -1,12 +1,16 @@
-import {Utils as _} from "ag-grid/main";
-import {Bean} from "ag-grid/main";
-import {IRowNodeStage} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {GridOptionsWrapper} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {ValueService} from "ag-grid/main";
-import {RowNode} from "ag-grid/main";
-import {Column} from "ag-grid/main";
+import {
+    Utils as _,
+    Bean,
+    IRowNodeStage,
+    Autowired,
+    GridOptionsWrapper,
+    ColumnController,
+    ValueService,
+    RowNode,
+    ColDef,
+    PivotService,
+    Column
+} from "ag-grid/main";
 
 @Bean('aggregationStage')
 export class AggregationStage implements IRowNodeStage {
@@ -14,10 +18,11 @@ export class AggregationStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('pivotService') private pivotService: PivotService;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    public execute(rowNode: RowNode): any {
+    public execute(rootNode: RowNode): any {
 
         // we don't do aggregation if user provided the groups
         var userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
@@ -26,95 +31,170 @@ export class AggregationStage implements IRowNodeStage {
         }
 
         var valueColumns = this.columnController.getValueColumns();
-        this.recursivelyCreateAggData(rowNode, valueColumns);
+        var pivotColumns = this.columnController.getPivotColumns();
+
+        this.recursivelyCreateAggData(rootNode, valueColumns, pivotColumns);
     }
 
-    private recursivelyCreateAggData(rowNode: RowNode, valueColumns: Column[]) {
-        var doingAggregation = valueColumns.length > 0;
+    private recursivelyCreateAggData(rowNode: RowNode, valueColumns: Column[], pivotColumns: Column[]) {
 
         // aggregate all children first, as we use the result in this nodes calculations
         rowNode.childrenAfterFilter.forEach( child => {
             if (child.group) {
-                this.recursivelyCreateAggData(child, valueColumns);
+                this.recursivelyCreateAggData(child, valueColumns, pivotColumns);
             }
         });
 
-        if (doingAggregation) {
-            rowNode.data = this.aggregateUsingValueColumns(valueColumns, rowNode.childrenAfterFilter);
-        } else {
-            rowNode.data = null;
-        }
+        this.aggregateRowNode(rowNode, valueColumns, pivotColumns);
     }
 
-    private aggregateUsingValueColumns(valueColumns: Column[], rows: RowNode[]): any {
-        var result = <any>{};
+    private aggregateRowNode(rowNode: RowNode, valueColumns: Column[], pivotColumns: Column[]): void {
+        var valueColumnsMissing = valueColumns.length === 0;
+        var pivotColumnsMissing = pivotColumns.length === 0;
 
-        for (var j = 0; j < valueColumns.length; j++) {
-            var valueColumn = valueColumns[j];
-            var colField = valueColumn.getColDef().field;
-            if (!colField) {
-                console.log('ag-Grid: you need to provide a field for all value columns so that ' +
-                    'the grid knows what field to store the result in. so even if using a valueGetter, ' +
-                    'the result will not be stored in a value getter.');
-            }
+        if (valueColumnsMissing) {
+            rowNode.data = null;
+            return;
+        }
+        
+        rowNode.data = {};
 
-            result[colField] = this.aggregateColumn(rows, valueColumn.getAggFunc(), colField, valueColumn);
+        if (pivotColumnsMissing) {
+            valueColumns.forEach( valueColumn => {
+                var values = this.getValuesNormal(rowNode, valueColumn);
+                rowNode.data[valueColumn.getId()] = this.aggregateValues(values, valueColumn.getAggFunc());
+                return;
+            });
         }
 
+        var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
+        pivotColumnDefs.forEach( pivotColumnDef => {
+
+            var values: any[];
+            var valueColumn = (<any>pivotColumnDef).valueColumn;
+
+            if (rowNode.leafGroup) {
+                // lowest level group, get the values from the mapped set
+                var keys = (<any>pivotColumnDef).keys;
+                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, valueColumn);
+            } else {
+                // value columns and pivot columns, non-leaf group
+                values = this.getValuesPivotNonLeaf(rowNode, pivotColumnDef.colId);
+            }
+
+            rowNode.data[pivotColumnDef.colId] = this.aggregateValues(values, valueColumn.getAggFunc());
+
+        });
+
+    }
+
+    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
+        var values: any[] = [];
+        rowNode.childrenAfterFilter.forEach( rowNode => {
+            var value = rowNode.data[colId];
+            values.push(value);
+        });
+        return values;
+    }
+    
+    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
+        var mapPointer = mappedSet;
+        keys.forEach( key => mapPointer = mapPointer ? mapPointer[key] : null );
+
+        if (!mapPointer) {
+            return [];
+        }
+
+        var values: any = [];
+        mapPointer.forEach( (rowNode: RowNode) => {
+            var value = this.valueService.getValue(valueColumn, rowNode);
+            values.push(value);
+        });
+
+        return values;
+    }
+
+    private getValuesNormal(rowNode: RowNode, valueColumn: Column): any[] {
+        var values: any[] = [];
+        rowNode.childrenAfterFilter.forEach( rowNode => {
+            var value:any;
+            // if the row is a group, then it will only have an agg result value,
+            // which means valueGetter is never used.
+            if (rowNode.group) {
+                value = rowNode.data[valueColumn.getId()];
+            } else {
+                value = this.valueService.getValue(valueColumn, rowNode);
+            }
+            values.push(value);
+        });
+        return values;
+    }
+    
+    private aggregateValues(values: any[], aggFunc: string): any {
+        switch (aggFunc) {
+            case Column.AGG_SUM: return this.aggFuncSum(values);
+            case Column.AGG_FIRST: return this.aggFuncFirst(values);
+            case Column.AGG_LAST: return this.aggFuncLast(values);
+            case Column.AGG_MIN: return this.aggFuncMin(values);
+            case Column.AGG_MAX: return this.aggFuncMax(values);
+        }
+    }
+    
+    private aggFuncSum(input: any[]): any {
+        var result = null;
+        input.forEach( value => {
+            if (typeof value === 'number') {
+                if (result === null) {
+                    result = value;
+                } else {
+                    result += value;
+                }
+            }
+        });
         return result;
     }
 
-    // executes the agg function on a list and returns the result
-    private aggregateColumn(rowNodes: RowNode[], aggFunc: string, colField: string, valueColumn: Column) {
-        var resultForColumn: number = null;
-        for (var i = 0; i < rowNodes.length; i++) {
-            var rowNode = rowNodes[i];
-            // if the row is a group, then it will only have an agg result value,
-            // which means valueGetter is never used.
-            var thisColumnValue: any;
-            if (rowNode.group) {
-                thisColumnValue = rowNode.data[colField];
-            } else {
-                thisColumnValue = this.valueService.getValue(valueColumn, rowNode);
-            }
-            // only include if the value is a number
-            if (typeof thisColumnValue === 'number') {
-
-                var firstRow = i === 0;
-                var lastRow = i===(rowNodes.length-1);
-
-                switch (aggFunc) {
-                    case Column.AGG_SUM :
-                        resultForColumn += thisColumnValue;
-                        break;
-                    case Column.AGG_MIN :
-                        if (resultForColumn === null) {
-                            resultForColumn = thisColumnValue;
-                        } else if (resultForColumn > thisColumnValue) {
-                            resultForColumn = thisColumnValue;
-                        }
-                        break;
-                    case Column.AGG_MAX :
-                        if (resultForColumn === null) {
-                            resultForColumn = thisColumnValue;
-                        } else if (resultForColumn < thisColumnValue) {
-                            resultForColumn = thisColumnValue;
-                        }
-                        break;
-                    case Column.AGG_FIRST :
-                        if (firstRow) {
-                            resultForColumn = thisColumnValue;
-                        }
-                        break;
-                    case Column.AGG_LAST :
-                        if (lastRow) {
-                            resultForColumn = thisColumnValue;
-                        }
-                        break;
-                }
-
-            }
+    private aggFuncFirst(input: any[]): any {
+        if (input.length>=0) {
+            return input[0];
+        } else {
+            return null;
         }
-        return resultForColumn;
+    }
+
+    private aggFuncLast(input: any[]): any {
+        if (input.length>=0) {
+            return input[input.length-1];
+        } else {
+            return null;
+        }
+    }
+
+    private aggFuncMin(input: any[]): any {
+        var result: number = null;
+        input.forEach( value => {
+            if (typeof value === 'number') {
+                if (result === null) {
+                    result = value;
+                } else if (result > value) {
+                    result = value;
+                }
+            }
+        });
+        return result;
+    }
+
+    private aggFuncMax(input: any[]): any {
+        var result: number = null;
+        input.forEach( value => {
+            if (typeof value === 'number') {
+                if (result === null) {
+                    result = value;
+                } else if (result < value) {
+                    result = value;
+                }
+            }
+        });
+        return result;
     }
 }
