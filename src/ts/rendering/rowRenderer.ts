@@ -236,7 +236,7 @@ export class RowRenderer {
         }
     }
 
-    public softRefreshView(suppressFocus) {
+    public softRefreshView(suppressFocus: boolean) {
         var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
 
         this.forEachRenderedCell( renderedCell => {
