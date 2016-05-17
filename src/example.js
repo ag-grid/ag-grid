@@ -287,7 +287,7 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
         cellRenderer: CountryCellRenderer,
-        pivotIndex: 1,
+        // pivotIndex: 1,
         // rowGroupIndex: 1,
         cellEditor: 'richSelect',
         cellEditorParams: {
@@ -313,7 +313,7 @@ var defaultCols = [
         cellRenderer: languageCellRenderer,
         cellEditor: 'select',
         // rowGroupIndex: 0,
-        pivotIndex: 0,
+        // pivotIndex: 0,
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
         },
