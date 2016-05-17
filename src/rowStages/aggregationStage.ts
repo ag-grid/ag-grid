@@ -7,7 +7,6 @@ import {
     ColumnController,
     ValueService,
     RowNode,
-    ColDef,
     PivotService,
     Column
 } from "ag-grid/main";
@@ -141,7 +140,7 @@ export class AggregationStage implements IRowNodeStage {
     }
     
     private aggFuncSum(input: any[]): any {
-        var result = null;
+        var result: number = null;
         input.forEach( value => {
             if (typeof value === 'number') {
                 if (result === null) {
