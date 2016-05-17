@@ -8,7 +8,7 @@ import {
     Events,
     OriginalColumnGroup,
     Column,
-    Utils as _,
+    Utils,
     OriginalColumnGroupChild
 } from "ag-grid/main";
 import {RenderedGroup} from "./renderedGroup";
@@ -54,9 +54,9 @@ export class ColumnSelectPanel extends Component {
     }
 
     private destroyAllRenderedElements(): void {
-        _.removeAllChildren(this.getGui());
+        Utils.removeAllChildren(this.getGui());
         if (this.renderedItems) {
-            _.iterateObject(this.renderedItems, (key: string, renderedItem: Component) => renderedItem.destroy() );
+            Utils.iterateObject(this.renderedItems, (key: string, renderedItem: Component) => renderedItem.destroy() );
         }
         this.renderedItems = {};
     }

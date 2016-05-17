@@ -1,4 +1,4 @@
-import {Utils as _} from "ag-grid/main";
+import {Utils} from "ag-grid/main";
 import {Bean} from "ag-grid/main";
 import {IRangeController} from "ag-grid/main";
 import {Autowired} from "ag-grid/main";
@@ -49,7 +49,7 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.clearSelection.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.clearSelection.bind(this));
     }
@@ -99,11 +99,11 @@ export class RangeController implements IRangeController {
     }
 
     public isEmpty(): boolean {
-        return _.missingOrEmpty(this.cellRanges);
+        return Utils.missingOrEmpty(this.cellRanges);
     }
 
     public isMoreThanOneCell(): boolean {
-        if (_.missingOrEmpty(this.cellRanges)) {
+        if (Utils.missingOrEmpty(this.cellRanges)) {
             return false;
         } else {
             if (this.cellRanges.length>1) {
@@ -119,7 +119,7 @@ export class RangeController implements IRangeController {
     }
 
     public clearSelection(): void {
-        if (_.missing(this.cellRanges)) {
+        if (Utils.missing(this.cellRanges)) {
             return;
         }
         this.activeRange = null;
@@ -146,7 +146,7 @@ export class RangeController implements IRangeController {
 
     // returns the number of ranges this cell is in
     public getCellRangeCount(cell: GridCell): number {
-        if (_.missingOrEmpty(this.cellRanges)) {
+        if (Utils.missingOrEmpty(this.cellRanges)) {
             return 0;
         }
 
@@ -185,12 +185,12 @@ export class RangeController implements IRangeController {
 
         // ctrlKey for windows, metaKey for Apple
         var multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        if (_.missing(this.cellRanges) || !multiSelectKeyPressed) {
+        if (Utils.missing(this.cellRanges) || !multiSelectKeyPressed) {
             this.cellRanges = [];
         }
 
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
-        if (_.missing(cell)) {
+        if (Utils.missing(cell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
             // (which them means onDragging and onDragStop do nothing)
             return;
@@ -245,7 +245,7 @@ export class RangeController implements IRangeController {
         this.lastMouseEvent = mouseEvent;
 
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
-        if (_.missing(cell)) {
+        if (Utils.missing(cell)) {
             return;
         }
 

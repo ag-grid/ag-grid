@@ -1,5 +1,5 @@
 import {
-    Utils as _,
+    Utils,
     SvgFactory,
     Autowired,
     Column,
@@ -65,7 +65,7 @@ export class RenderedGroup extends Component {
         var eText = this.queryForHtmlElement('#eText');
 
         this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
-        if (_.missing(this.displayName)) {
+        if (Utils.missing(this.displayName)) {
             this.displayName = '>>'
         }
 
@@ -126,8 +126,8 @@ export class RenderedGroup extends Component {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
         this.eGroupOpenedIcon = this.queryForHtmlElement('#eGroupOpenedIcon');
 
-        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null, svgFactory.createFolderClosed));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null, svgFactory.createFolderOpen));
+        this.eGroupClosedIcon.appendChild(Utils.createIcon('columnSelectClosed', this.gridOptionsWrapper, null, svgFactory.createFolderClosed));
+        this.eGroupOpenedIcon.appendChild(Utils.createIcon('columnSelectOpen', this.gridOptionsWrapper, null, svgFactory.createFolderOpen));
 
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
@@ -148,9 +148,9 @@ export class RenderedGroup extends Component {
                 hiddenChildCount++;
             }
         });
-        _.setVisible(this.eAllHiddenIcon, visibleChildCount===0);
-        _.setVisible(this.eAllVisibleIcon, hiddenChildCount===0);
-        _.setVisible(this.eHalfVisibleIcon, hiddenChildCount!==0 && visibleChildCount!==0);
+        Utils.setVisible(this.eAllHiddenIcon, visibleChildCount===0);
+        Utils.setVisible(this.eAllVisibleIcon, hiddenChildCount===0);
+        Utils.setVisible(this.eHalfVisibleIcon, hiddenChildCount!==0 && visibleChildCount!==0);
     }
 
     private onExpandOrContractClicked(): void {
@@ -161,8 +161,8 @@ export class RenderedGroup extends Component {
 
     private setOpenClosedIcons(): void {
         var folderOpen = this.expanded;
-        _.setVisible(this.eGroupClosedIcon, !folderOpen);
-        _.setVisible(this.eGroupOpenedIcon, folderOpen);
+        Utils.setVisible(this.eGroupClosedIcon, !folderOpen);
+        Utils.setVisible(this.eGroupOpenedIcon, folderOpen);
     }
 
     public isExpanded(): boolean {

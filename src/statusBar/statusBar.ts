@@ -1,4 +1,4 @@
-import {EventService, Component, Autowired, PostConstruct, Events, Utils as _, Column,
+import {EventService, Component, Autowired, PostConstruct, Events, Utils, Column,
     GridRow, RowNode, Constants, FloatingRowModel, IRowModel, ValueService,
     CellNavigationService, Bean, Context, GridOptionsWrapper, GridCell} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
@@ -71,7 +71,7 @@ export class StatusBar extends Component {
 
         var cellsSoFar: any = {};
 
-        if (!_.missingOrEmpty(cellRanges)) {
+        if (!Utils.missingOrEmpty(cellRanges)) {
 
             cellRanges.forEach( (cellRange)=> {
 
@@ -98,7 +98,7 @@ export class StatusBar extends Component {
                         var value = this.valueService.getValue(column, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
-                        if (_.missing(value) || value === '') {
+                        if (Utils.missing(value) || value === '') {
                             return;
                         }
 
