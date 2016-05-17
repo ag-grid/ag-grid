@@ -47,7 +47,7 @@ var verticalStack_1 = require("./layout/verticalStack");
 var autoWidthCalculator_1 = require("./rendering/autoWidthCalculator");
 var renderedRow_1 = require("./rendering/renderedRow");
 var rowRenderer_1 = require("./rendering/rowRenderer");
-var fillterStage_1 = require("./rowControllers/inMemory/fillterStage");
+var filterStage_1 = require("./rowControllers/inMemory/filterStage");
 var flattenStage_1 = require("./rowControllers/inMemory/flattenStage");
 var sortStage_1 = require("./rowControllers/inMemory/sortStage");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
@@ -64,7 +64,6 @@ var gridCore_1 = require("./gridCore");
 var logger_1 = require("./logger");
 var masterSlaveService_1 = require("./masterSlaveService");
 var selectionController_1 = require("./selectionController");
-var selectionRendererFactory_1 = require("./selectionRendererFactory");
 var sortController_1 = require("./sortController");
 var svgFactory_1 = require("./svgFactory");
 var templateService_1 = require("./templateService");
@@ -87,6 +86,8 @@ var groupCellRenderer_1 = require("./rendering/cellRenderers/groupCellRenderer")
 var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
 var dateCellEditor_1 = require("./rendering/cellEditors/dateCellEditor");
+var checkboxSelectionComponent_1 = require("./rendering/checkboxSelectionComponent");
+var pivotService_1 = require("./columnController/pivotService");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -95,6 +96,7 @@ function populateClientExports(exports) {
     exports.ColumnUtils = columnUtils_1.ColumnUtils;
     exports.DisplayedGroupCreator = displayedGroupCreator_1.DisplayedGroupCreator;
     exports.GroupInstanceIdCreator = groupInstanceIdCreator_1.GroupInstanceIdCreator;
+    exports.PivotService = pivotService_1.PivotService;
     // components
     exports.ComponentUtil = componentUtil_1.ComponentUtil;
     exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
@@ -158,7 +160,7 @@ function populateClientExports(exports) {
     exports.RowRenderer = rowRenderer_1.RowRenderer;
     exports.ValueFormatterService = valueFormatterService_1.ValueFormatterService;
     // rowControllers/inMemory
-    exports.FilterStage = fillterStage_1.FilterStage;
+    exports.FilterStage = filterStage_1.FilterStage;
     exports.FlattenStage = flattenStage_1.FlattenStage;
     exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
     exports.SortStage = sortStage_1.SortStage;
@@ -188,7 +190,7 @@ function populateClientExports(exports) {
     exports.Logger = logger_1.Logger;
     exports.MasterSlaveService = masterSlaveService_1.MasterSlaveService;
     exports.SelectionController = selectionController_1.SelectionController;
-    exports.SelectionRendererFactory = selectionRendererFactory_1.SelectionRendererFactory;
+    exports.CheckboxSelectionComponent = checkboxSelectionComponent_1.CheckboxSelectionComponent;
     exports.SortController = sortController_1.SortController;
     exports.SvgFactory = svgFactory_1.SvgFactory;
     exports.TemplateService = templateService_1.TemplateService;

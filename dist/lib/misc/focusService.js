@@ -86,7 +86,7 @@ var FocusService = (function () {
             // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
             var colId = utils_1.Utils.getElementAttribute(eTarget, 'colid');
             if (utils_1.Utils.exists(colId) && utils_1.Utils.containsClass(eTarget, 'ag-cell')) {
-                var foundColumn = that.columnController.getColumn(colId);
+                var foundColumn = that.columnController.getOriginalColumn(colId);
                 if (foundColumn) {
                     column = foundColumn;
                 }

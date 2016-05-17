@@ -47,6 +47,7 @@ export interface GridOptions {
     suppressAutoSize?: boolean;
     suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;
+    suppressDragLeaveHidesColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
     rowModelType?: string;

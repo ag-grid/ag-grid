@@ -36,10 +36,10 @@ var ColumnUtils = (function () {
             return colDef.width;
         }
     };
-    ColumnUtils.prototype.getPathForColumn = function (column, allDisplayedColumnGroups) {
+    ColumnUtils.prototype.getOriginalPathForColumn = function (column, originalBalancedTree) {
         var result = [];
         var found = false;
-        recursePath(allDisplayedColumnGroups, 0);
+        recursePath(originalBalancedTree, 0);
         // we should always find the path, but in case there is a bug somewhere, returning null
         // will make it fail rather than provide a 'hard to track down' bug
         if (found) {
@@ -55,7 +55,7 @@ var ColumnUtils = (function () {
                     return;
                 }
                 var node = balancedColumnTree[i];
-                if (node instanceof columnGroup_1.ColumnGroup) {
+                if (node instanceof originalColumnGroup_1.OriginalColumnGroup) {
                     var nextNode = node;
                     recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;
@@ -68,6 +68,40 @@ var ColumnUtils = (function () {
             }
         }
     };
+    /*    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
+            var result: ColumnGroup[] = [];
+            var found = false;
+    
+            recursePath(allDisplayedColumnGroups, 0);
+    
+            // we should always find the path, but in case there is a bug somewhere, returning null
+            // will make it fail rather than provide a 'hard to track down' bug
+            if (found) {
+                return result;
+            } else {
+                return null;
+            }
+    
+            function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
+    
+                for (var i = 0; i<balancedColumnTree.length; i++) {
+                    if (found) {
+                        // quit the search, so 'result' is kept with the found result
+                        return;
+                    }
+                    var node = balancedColumnTree[i];
+                    if (node instanceof ColumnGroup) {
+                        var nextNode = <ColumnGroup> node;
+                        recursePath(nextNode.getChildren(), dept+1);
+                        result[dept] = node;
+                    } else {
+                        if (node === column) {
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }*/
     ColumnUtils.prototype.deptFirstOriginalTreeSearch = function (tree, callback) {
         var _this = this;
         if (!tree) {

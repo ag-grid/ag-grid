@@ -4,5 +4,5 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "../entities/rowNode";
 export interface IRowNodeStage {
-    execute(rowNodes: RowNode[]): RowNode[];
+    execute(rowNode: RowNode): any;
 }

@@ -8,7 +8,6 @@ export declare class CellRendererFactory {
     static ANIMATE_SHOW_CHANGE: string;
     static GROUP: string;
     private gridOptionsWrapper;
-    private selectionRendererFactory;
     private expressionService;
     private eventService;
     private cellRendererMap;

@@ -289,13 +289,14 @@ export class DragAndDropService {
             this.setGhostIcon(this.lastDropTarget.iconName);
         }
 
-        var dragItem = this.dragSource.dragItem;
+        // var dragItem = this.dragSource.dragItem;
 
         var eText = <HTMLElement> this.eGhost.querySelector('#agText');
         eText.innerHTML = this.dragSource.dragItemName;
 
-        this.eGhost.style.width = '200px';//this.getActualWidth(dragItem) + 'px';
+        // this.eGhost.style.width = '200px';//this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
+
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         this.eBody.appendChild(this.eGhost);

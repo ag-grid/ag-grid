@@ -13,7 +13,7 @@ export declare class ValueService {
     private suppressDotNotation;
     init(): void;
     getValue(column: Column, node: RowNode): any;
-    getValueUsingSpecificData(column: Column, data: any, node: any): any;
+    getValueUsingSpecificData(column: Column, data: any, node: RowNode): any;
     private getValueUsingField(data, field);
     setValue(rowNode: RowNode, colKey: string | ColDef | Column, newValue: any): void;
     private setValueUsingField(data, field, newValue);

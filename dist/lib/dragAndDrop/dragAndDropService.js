@@ -19,13 +19,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var context_1 = require("../context/context");
 var logger_1 = require("../logger");
 var context_2 = require("../context/context");
-var column_1 = require("../entities/column");
 var headerTemplateLoader_1 = require("../headerRendering/headerTemplateLoader");
 var utils_1 = require('../utils');
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_3 = require("../context/context");
 var svgFactory_1 = require("../svgFactory");
 var dragService_1 = require("./dragService");
+var columnController_1 = require("../columnController/columnController");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var DragAndDropService = (function () {
     function DragAndDropService() {
@@ -48,14 +48,13 @@ var DragAndDropService = (function () {
     // we do not need to clean up drag sources, as we are just adding a listener to the element.
     // when the element is disposed, the drag source is also disposed, even though this service
     // remains. this is a bit different to normal 'addListener' methods
-    DragAndDropService.prototype.addDragSource = function (params) {
+    DragAndDropService.prototype.addDragSource = function (dragSource) {
         this.dragService.addDragSource({
-            eElement: params.eElement,
-            onDragStart: this.onDragStart.bind(this, params),
+            eElement: dragSource.eElement,
+            onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
         });
-        //params.eElement.addEventListener('mousedown', this.onMouseDown.bind(this, params));
     };
     DragAndDropService.prototype.nudge = function () {
         if (this.dragging) {
@@ -63,20 +62,18 @@ var DragAndDropService = (function () {
         }
     };
     DragAndDropService.prototype.onDragStart = function (dragSource, mouseEvent) {
-        this.logger.log('startDrag');
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragSource.dragItem.setMoving(true);
+        this.dragSource.dragItem.forEach(function (column) { return column.setMoving(true); });
         this.dragItem = this.dragSource.dragItem;
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
     };
     DragAndDropService.prototype.onDragStop = function (mouseEvent) {
-        this.logger.log('onDragStop');
         this.eventLastTime = null;
         this.dragging = false;
-        this.dragItem.setMoving(false);
+        this.dragItem.forEach(function (column) { return column.setMoving(false); });
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -90,49 +87,57 @@ var DragAndDropService = (function () {
         this.eventLastTime = mouseEvent;
         this.positionGhost(mouseEvent);
         // check if mouseEvent intersects with any of the drop targets
-        var dropTarget = utils_1.Utils.find(this.dropTargets, function (dropTarget) {
-            var targetsToCheck = [dropTarget.eContainer];
-            if (dropTarget.eSecondaryContainers) {
-                targetsToCheck = targetsToCheck.concat(dropTarget.eSecondaryContainers);
-            }
-            var gotMatch = false;
-            targetsToCheck.forEach(function (eContainer) {
-                if (!eContainer) {
-                    return;
-                } // secondary can be missing
-                var rect = eContainer.getBoundingClientRect();
-                // if element is not visible, then width and height are zero
-                if (rect.width === 0 || rect.height === 0) {
-                    return;
-                }
-                var horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
-                var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
-                //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
-                if (horizontalFit && verticalFit) {
-                    gotMatch = true;
-                }
-            });
-            return gotMatch;
-        });
+        var dropTarget = utils_1.Utils.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
         if (dropTarget !== this.lastDropTarget) {
-            if (this.lastDropTarget) {
-                this.logger.log('onDragLeave');
-                var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, direction);
-                this.lastDropTarget.onDragLeave(dragLeaveEvent);
-                this.setGhostIcon(null);
-            }
-            if (dropTarget) {
-                this.logger.log('onDragEnter');
-                var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction);
-                dropTarget.onDragEnter(dragEnterEvent);
-                this.setGhostIcon(dropTarget.iconName);
-            }
+            this.leaveLastTargetIfExists(mouseEvent, direction);
+            this.enterDragTargetIfExists(dropTarget, mouseEvent, direction);
             this.lastDropTarget = dropTarget;
         }
         else if (dropTarget) {
             var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction);
             dropTarget.onDragging(draggingEvent);
         }
+    };
+    DragAndDropService.prototype.enterDragTargetIfExists = function (dropTarget, mouseEvent, direction) {
+        if (!dropTarget) {
+            return;
+        }
+        var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction);
+        dropTarget.onDragEnter(dragEnterEvent);
+        this.setGhostIcon(dropTarget.iconName);
+    };
+    DragAndDropService.prototype.leaveLastTargetIfExists = function (mouseEvent, direction) {
+        if (!this.lastDropTarget) {
+            return;
+        }
+        var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, direction);
+        this.lastDropTarget.onDragLeave(dragLeaveEvent);
+        this.setGhostIcon(null);
+    };
+    // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
+    DragAndDropService.prototype.isMouseOnDropTarget = function (mouseEvent, dropTarget) {
+        var ePrimaryAndSecondaryContainers = [dropTarget.eContainer];
+        if (dropTarget.eSecondaryContainers) {
+            ePrimaryAndSecondaryContainers = ePrimaryAndSecondaryContainers.concat(dropTarget.eSecondaryContainers);
+        }
+        var gotMatch = false;
+        ePrimaryAndSecondaryContainers.forEach(function (eContainer) {
+            if (!eContainer) {
+                return;
+            } // secondary can be missing
+            var rect = eContainer.getBoundingClientRect();
+            // if element is not visible, then width and height are zero
+            if (rect.width === 0 || rect.height === 0) {
+                return;
+            }
+            var horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
+            var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+            //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
+            if (horizontalFit && verticalFit) {
+                gotMatch = true;
+            }
+        });
+        return gotMatch;
     };
     DragAndDropService.prototype.addDropTarget = function (dropTarget) {
         this.dropTargets.push(dropTarget);
@@ -160,7 +165,6 @@ var DragAndDropService = (function () {
             x: x,
             y: y,
             direction: direction,
-            dragItem: this.dragItem,
             dragSource: this.dragSource
         };
         return dropTargetEvent;
@@ -211,41 +215,32 @@ var DragAndDropService = (function () {
         }
         var dragItem = this.dragSource.dragItem;
         var eText = this.eGhost.querySelector('#agText');
-        eText.innerHTML = this.getNameForGhost(dragItem);
-        this.eGhost.style.width = this.getActualWidth(dragItem) + 'px';
+        eText.innerHTML = this.dragSource.dragItemName;
+        this.eGhost.style.width = '200px'; //this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         this.eBody.appendChild(this.eGhost);
     };
-    DragAndDropService.prototype.getActualWidth = function (dragItem) {
-        if (dragItem instanceof column_1.Column) {
-            return dragItem.getActualWidth();
+    /*
+    // took this out as it wasn't making sense when dragging from the side panel, as it was possible to drag
+       columns that were not visible - which is fine, as you are selecting from all columns here. what should be
+       done is we check what columns to include in the drag depending on what started to drag - but that is to
+       much coding for now, so just hardcoding the width to 200px for now.
+        private getActualWidth(columns: Column[]): number {
+            var totalColWidth = 0;
+    
+            // we only include displayed columns so hidden columns do not add space as this would look weird,
+            // if for example moving a group with 5 cols, but only 1 displayed, we want ghost to be just the width
+            // of the 1 displayed column
+            var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
+            var displayedColumns = _.filter(columns, column => allDisplayedColumns.indexOf(column) >= 0 );
+    
+            displayedColumns.forEach( column => totalColWidth += column.getActualWidth() );
+    
+            return totalColWidth;
         }
-        else {
-            return dragItem.getActualWidth();
-        }
-    };
-    DragAndDropService.prototype.getNameForGhost = function (dragItem) {
-        if (dragItem instanceof column_1.Column) {
-            var column = dragItem;
-            if (column.getColDef().headerName) {
-                return column.getColDef().headerName;
-            }
-            else {
-                return column.getColId();
-            }
-        }
-        else {
-            var columnGroup = dragItem;
-            if (columnGroup.getColGroupDef().headerName) {
-                return columnGroup.getColGroupDef().headerName;
-            }
-            else {
-                return columnGroup.getGroupId();
-            }
-        }
-    };
+    */
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
         utils_1.Utils.removeAllChildren(this.eGhostIcon);
@@ -292,6 +287,10 @@ var DragAndDropService = (function () {
         context_3.Autowired('dragService'), 
         __metadata('design:type', dragService_1.DragService)
     ], DragAndDropService.prototype, "dragService", void 0);
+    __decorate([
+        context_3.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], DragAndDropService.prototype, "columnController", void 0);
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory')), 
         __metadata('design:type', Function), 

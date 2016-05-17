@@ -18,7 +18,6 @@ var utils_1 = require('../utils');
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var eventService_1 = require("../eventService");
 var expressionService_1 = require("../expressionService");
-var selectionRendererFactory_1 = require("../selectionRendererFactory");
 var animateSlideCellRenderer_1 = require("./cellRenderers/animateSlideCellRenderer");
 var animateShowChangeCellRenderer_1 = require("./cellRenderers/animateShowChangeCellRenderer");
 var groupCellRenderer_1 = require("./cellRenderers/groupCellRenderer");
@@ -56,10 +55,6 @@ var CellRendererFactory = (function () {
         context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], CellRendererFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('selectionRendererFactory'), 
-        __metadata('design:type', selectionRendererFactory_1.SelectionRendererFactory)
-    ], CellRendererFactory.prototype, "selectionRendererFactory", void 0);
     __decorate([
         context_1.Autowired('expressionService'), 
         __metadata('design:type', expressionService_1.ExpressionService)

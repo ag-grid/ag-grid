@@ -303,8 +303,8 @@ export class ColumnController {
         // this before we fire the event
         this.updateModel();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
     }
 
     public setRowGroupColumns(keys: (Column|ColDef|String)[]): void {
@@ -326,8 +326,8 @@ export class ColumnController {
 
         this.updateModel();
         
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
     }
     
     public removeRowGroupColumn(key: Column|ColDef|String): void {
@@ -347,8 +347,8 @@ export class ColumnController {
         // we need to do this before we fire the event
         this.updateModel();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGED, event);
     }
 
     public setPivotColumns(keys: (Column|ColDef|String)[]): void {
@@ -370,8 +370,8 @@ export class ColumnController {
 
         this.updateModel();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGED, event);
     }
 
     public removePivotColumn(key: Column|ColDef|String): void {
@@ -391,8 +391,8 @@ export class ColumnController {
             column.setAggFunc(Column.AGG_SUM);
         }
         this.valueColumns.push(column);
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGED, event);
     }
 
     public removeValueColumn(column: Column): void {
@@ -401,8 +401,8 @@ export class ColumnController {
             return;
         }
         _.removeFromArray(this.valueColumns, column);
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGED, event);
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths
@@ -446,16 +446,16 @@ export class ColumnController {
 
     public setColumnAggFunction(column: Column, aggFunc: string): void {
         column.setAggFunc(aggFunc);
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGED, event);
     }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void {
         var column = this.rowGroupColumns[fromIndex];
         this.rowGroupColumns.splice(fromIndex, 1);
         this.rowGroupColumns.splice(toIndex, 0, column);
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
     }
 
     public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number): void {
@@ -555,12 +555,12 @@ export class ColumnController {
 
     // + rowController
     public getValueColumns(): Column[] {
-        return this.valueColumns;
+        return this.valueColumns ? this.valueColumns : [];
     }
 
     // + rowController
     public getPivotColumns(): Column[] {
-        return this.pivotColumns;
+        return this.pivotColumns ? this.pivotColumns : [];
     }
     
     // + toolPanel
@@ -570,6 +570,10 @@ export class ColumnController {
 
     public isColumnRowGrouped(column: Column): boolean {
         return this.rowGroupColumns.indexOf(column) >= 0;
+    }
+
+    public isColumnPivoted(column: Column): boolean {
+        return this.pivotColumns.indexOf(column) >= 0;
     }
 
     // + rowController -> while inserting rows

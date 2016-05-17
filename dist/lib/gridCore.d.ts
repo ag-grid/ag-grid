@@ -18,7 +18,8 @@ export declare class GridCore {
     private quickFilterOnScope;
     private popupService;
     private focusedCellController;
-    private rowGroupPanel;
+    private rowGroupColumnsPanel;
+    private pivotColumnsPanel;
     private toolPanel;
     private statusBar;
     private finished;

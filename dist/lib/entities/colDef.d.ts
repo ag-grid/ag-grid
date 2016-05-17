@@ -17,10 +17,12 @@ export interface AbstractColDef {
     headerClass?: string | string[] | ((params: any) => string | string[]);
 }
 export interface ColGroupDef extends AbstractColDef {
-    /** Columns in this group*/
-    children: AbstractColDef[];
+    /** Columns in this group */
+    children: (ColDef | ColGroupDef)[];
     /** Group ID */
     groupId?: string;
+    /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
+    marryChildren?: boolean;
 }
 export interface ColDef extends AbstractColDef {
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
@@ -83,6 +85,8 @@ export interface ColDef extends AbstractColDef {
     aggFunc?: string;
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
+    /** To pivot by this column by default, provide an index here. */
+    pivotIndex?: number;
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
     /** Set to true to render a selection checkbox in the column. */
@@ -103,6 +107,8 @@ export interface ColDef extends AbstractColDef {
     suppressAutoSize?: boolean;
     /** Set to true if you don't want to be able to group by this column */
     suppressRowGroup?: boolean;
+    /** Set to true if you don't want to be able to pivot by this column */
+    suppressPivot?: boolean;
     /** Set to true if you don't want to be able to aggregate by this column */
     suppressAggregation?: boolean;
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */

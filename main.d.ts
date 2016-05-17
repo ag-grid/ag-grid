@@ -51,6 +51,7 @@ export * from './dist/lib/headerRendering/standardMenu';
 
 export * from './dist/lib/interfaces/iClipboardService';
 export * from './dist/lib/interfaces/iContextMenuFactory';
+export * from './dist/lib/interfaces/iComponentFactory';
 export * from './dist/lib/interfaces/iMenu';
 export * from './dist/lib/interfaces/iMenuFactory';
 export * from './dist/lib/interfaces/iRangeController';

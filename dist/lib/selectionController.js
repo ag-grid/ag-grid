@@ -42,6 +42,12 @@ var SelectionController = (function () {
     SelectionController.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     };
+    SelectionController.prototype.setLastSelectedNode = function (rowNode) {
+        this.lastSelectedNode = rowNode;
+    };
+    SelectionController.prototype.getLastSelectedNode = function () {
+        return this.lastSelectedNode;
+    };
     SelectionController.prototype.getSelectedNodes = function () {
         var selectedNodes = [];
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, rowNode) {
@@ -89,7 +95,7 @@ var SelectionController = (function () {
         var _this = this;
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                _this.selectedNodes[otherRowNode.id].setSelected(false, false, true);
+                _this.selectedNodes[otherRowNode.id].setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
             }
         });
     };
@@ -111,6 +117,7 @@ var SelectionController = (function () {
     SelectionController.prototype.reset = function () {
         this.logger.log('reset');
         this.selectedNodes = {};
+        this.lastSelectedNode = null;
     };
     // returns a list of all nodes at 'best cost' - a feature to be used
     // with groups / trees. if a group has all it's children selected,
@@ -176,30 +183,27 @@ var SelectionController = (function () {
             throw 'selectAll only available with norma row model, ie not virtual pagination';
         }
         this.rowModel.forEachNode(function (rowNode) {
-            rowNode.setSelected(true, false, true);
+            rowNode.setSelectedParams({ newValue: true, clearSelection: false, tailingNodeInSequence: true });
         });
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };
     // Deprecated method
-    SelectionController.prototype.selectNode = function (rowNode, tryMulti, suppressEvents) {
-        rowNode.setSelected(true, !tryMulti, suppressEvents);
+    SelectionController.prototype.selectNode = function (rowNode, tryMulti) {
+        rowNode.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
     };
     // Deprecated method
-    SelectionController.prototype.deselectIndex = function (rowIndex, suppressEvents) {
-        if (suppressEvents === void 0) { suppressEvents = false; }
+    SelectionController.prototype.deselectIndex = function (rowIndex) {
         var node = this.rowModel.getRow(rowIndex);
-        this.deselectNode(node, suppressEvents);
+        this.deselectNode(node);
     };
     // Deprecated method
-    SelectionController.prototype.deselectNode = function (rowNode, suppressEvents) {
-        if (suppressEvents === void 0) { suppressEvents = false; }
-        rowNode.setSelected(false, false, suppressEvents);
+    SelectionController.prototype.deselectNode = function (rowNode) {
+        rowNode.setSelectedParams({ newValue: false, clearSelection: false });
     };
     // Deprecated method
-    SelectionController.prototype.selectIndex = function (index, tryMulti, suppressEvents) {
-        if (suppressEvents === void 0) { suppressEvents = false; }
+    SelectionController.prototype.selectIndex = function (index, tryMulti) {
         var node = this.rowModel.getRow(index);
-        this.selectNode(node, tryMulti, suppressEvents);
+        this.selectNode(node, tryMulti);
     };
     __decorate([
         context_3.Autowired('eventService'), 

@@ -134,6 +134,9 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you don't want to be able to group by this column */
     suppressRowGroup?: boolean;
 
+    /** Set to true if you don't want to be able to pivot by this column */
+    suppressPivot?: boolean;
+
     /** Set to true if you don't want to be able to aggregate by this column */
     suppressAggregation?: boolean;
 

@@ -54,8 +54,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     public init(): void {
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshModel.bind(this, Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshModel.bind(this, Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, Constants.STEP_PIVOT));
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants.STEP_FILTER));
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
@@ -90,6 +91,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 this.doRowGrouping(groupState);
             case constants.STEP_FILTER:
                 this.doFilter();
+            case constants.STEP_PIVOT:
                 this.doPivot();
             case constants.STEP_AGGREGATE: // depends on agg fields
                 this.doAggregate();
