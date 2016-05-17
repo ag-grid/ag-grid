@@ -107,10 +107,6 @@ export class PivotService {
     
     private createPivotColumnDefs(): void {
 
-        // var topLevelCol = {
-        //     children: <(ColDef|ColGroupDef)[]> [],
-        //     headerName: 'Pivot'
-        // };
         this.pivotColumnGroupDefs = [];
         this.pivotColumnDefs = [];
         var that = this;
