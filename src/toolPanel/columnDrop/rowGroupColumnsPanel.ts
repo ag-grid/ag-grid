@@ -48,7 +48,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
         });
 
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag columns here to group');
+        var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to group');
         var title = localeTextFunc('groups', 'Groups');
 
         super.init({

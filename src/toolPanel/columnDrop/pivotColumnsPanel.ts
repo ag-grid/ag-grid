@@ -48,7 +48,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
         });
 
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag columns here to pivot');
+        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to pivot');
         var title = localeTextFunc('pivots', 'Pivots');
 
         super.init({
