@@ -654,6 +654,7 @@ export class ColumnController {
     // does an action on a set of columns. provides common functionality for looking up the
     // columns based on key, getting a list of effected columns, and then updated the event
     // with either one column (if it was just one col) or a list of columns
+    // used by: autoResize, setVisible, setPinned
     private actionOnColumns(keys: (Column|ColDef|String)[],
                             action: (column:Column)=>void,
                             createEvent: ()=>ColumnChangeEvent): void {
@@ -663,7 +664,7 @@ export class ColumnController {
         var updatedColumns: Column[] = [];
 
         keys.forEach( (key: Column|ColDef|String)=> {
-            var column = this.getOriginalColumn(key);
+            var column = this.getGridColumn(key);
             if (!column) {return;}
             action(column);
             updatedColumns.push(column);
@@ -832,10 +833,6 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
 
         return success;
-    }
-
-    public getOriginalColumns(keys: any[]): Column[] {
-        return this.getColumns(keys, this.getOriginalColumn.bind(this));
     }
 
     public getGridColumns(keys: any[]): Column[] {

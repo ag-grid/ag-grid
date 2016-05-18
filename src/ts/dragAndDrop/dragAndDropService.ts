@@ -67,6 +67,20 @@ export class DragAndDropService {
     public static ICON_RIGHT = 'right';
     public static ICON_GROUP = 'group';
 
+    public static GHOST_TEMPLATE =
+        '<div class="ag-dnd-ghost">' +
+        '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
+        '  <div class="ag-dnd-ghost-label">' +
+        '  </div>' +
+        '</div>';
+
+    // '<div class="ag-header-cell ag-header-cell-ghost">' +
+    // '  <span id="eGhostIcon" class="ag-header-cell-ghost-icon ag-shake-left-to-right"></span>' +
+    // '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
+    // '    <span id="agText" class="ag-header-cell-text"></span>' +
+    // '  </div>' +
+    // '</div>';
+
     private logger: Logger;
 
     private dragItem: Column[];
@@ -282,19 +296,16 @@ export class DragAndDropService {
     }
 
     private createGhost(): void {
-        this.eGhost = _.loadTemplate(HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE);
-        this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('#eGhostIcon');
+        this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
         if (this.lastDropTarget) {
             this.setGhostIcon(this.lastDropTarget.iconName);
         }
 
-        // var dragItem = this.dragSource.dragItem;
-
-        var eText = <HTMLElement> this.eGhost.querySelector('#agText');
+        var eText = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-label');
         eText.innerHTML = this.dragSource.dragItemName;
 
-        // this.eGhost.style.width = '200px';//this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
 
         this.eGhost.style.top = '20px';
