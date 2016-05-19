@@ -23,6 +23,7 @@ var eventService_1 = require("../../eventService");
 var events_1 = require("../../events");
 var context_1 = require("../../context/context");
 var selectionController_1 = require("../../selectionController");
+var pivotService_1 = require("../../columnController/pivotService");
 var RecursionType;
 (function (RecursionType) {
     RecursionType[RecursionType["Normal"] = 0] = "Normal";
@@ -32,16 +33,17 @@ var RecursionType;
 ;
 var InMemoryRowModel = (function () {
     function InMemoryRowModel() {
-        // the rows go through a pipeline of steps, each array below is the result
-        // after a certain step.
-        this.allRows = []; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
     }
     InMemoryRowModel.prototype.init = function () {
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshModel.bind(this, constants_1.Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshModel.bind(this, constants_1.Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_EVERYTHING));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_PIVOT));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_FILTER));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_SORT));
+        this.rootNode = new rowNode_1.RowNode();
+        this.rootNode.group = true;
+        this.context.wireBean(this.rootNode);
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
         }
@@ -64,6 +66,8 @@ var InMemoryRowModel = (function () {
                 this.doRowGrouping(groupState);
             case constants_1.Constants.STEP_FILTER:
                 this.doFilter();
+            case constants_1.Constants.STEP_PIVOT:
+                this.doPivot();
             case constants_1.Constants.STEP_AGGREGATE:
                 this.doAggregate();
             case constants_1.Constants.STEP_SORT:
@@ -79,7 +83,8 @@ var InMemoryRowModel = (function () {
         }
     };
     InMemoryRowModel.prototype.isEmpty = function () {
-        return this.allRows === null || this.allRows.length === 0 || !this.columnController.isReady();
+        return utils_1.Utils.missing(this.rootNode) || utils_1.Utils.missing(this.rootNode.allLeafChildren)
+            || this.rootNode.allLeafChildren.length === 0 || !this.columnController.isReady();
     };
     InMemoryRowModel.prototype.isRowsToRender = function () {
         return utils_1.Utils.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
@@ -88,7 +93,7 @@ var InMemoryRowModel = (function () {
         console.error('ag-Grid: should never call setDatasource on inMemoryRowController');
     };
     InMemoryRowModel.prototype.getTopLevelNodes = function () {
-        return this.rowsAfterGroup;
+        return this.rootNode ? this.rootNode.childrenAfterGroup : null;
     };
     InMemoryRowModel.prototype.getRow = function (index) {
         return this.rowsToDisplay[index];
@@ -153,13 +158,13 @@ var InMemoryRowModel = (function () {
         }
     };
     InMemoryRowModel.prototype.forEachNode = function (callback) {
-        this.recursivelyWalkNodesAndCallback(this.rowsAfterGroup, callback, RecursionType.Normal, 0);
+        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterGroup, callback, RecursionType.Normal, 0);
     };
     InMemoryRowModel.prototype.forEachNodeAfterFilter = function (callback) {
-        this.recursivelyWalkNodesAndCallback(this.rowsAfterFilter, callback, RecursionType.AfterFilter, 0);
+        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterFilter, callback, RecursionType.AfterFilter, 0);
     };
     InMemoryRowModel.prototype.forEachNodeAfterFilterAndSort = function (callback) {
-        this.recursivelyWalkNodesAndCallback(this.rowsAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
+        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
     };
     // iterates through each item in memory, and calls the callback function
     // nodes - the rowNodes to traverse
@@ -177,7 +182,7 @@ var InMemoryRowModel = (function () {
                     var nodeChildren;
                     switch (recursionType) {
                         case RecursionType.Normal:
-                            nodeChildren = node.children;
+                            nodeChildren = node.childrenAfterGroup;
                             break;
                         case RecursionType.AfterFilter:
                             nodeChildren = node.childrenAfterFilter;
@@ -198,13 +203,15 @@ var InMemoryRowModel = (function () {
     // + gridApi.recomputeAggregates()
     InMemoryRowModel.prototype.doAggregate = function () {
         if (this.aggregationStage) {
-            this.aggregationStage.execute(this.rowsAfterFilter);
+            this.aggregationStage.execute(this.rootNode);
         }
     };
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     InMemoryRowModel.prototype.expandOrCollapseAll = function (expand) {
-        recursiveExpandOrCollapse(this.rowsAfterGroup);
+        if (this.rootNode) {
+            recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
+        }
         function recursiveExpandOrCollapse(rowNodes) {
             if (!rowNodes) {
                 return;
@@ -212,37 +219,37 @@ var InMemoryRowModel = (function () {
             rowNodes.forEach(function (rowNode) {
                 if (rowNode.group) {
                     rowNode.expanded = expand;
-                    recursiveExpandOrCollapse(rowNode.children);
+                    recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 }
             });
         }
         this.refreshModel(constants_1.Constants.STEP_MAP);
     };
     InMemoryRowModel.prototype.doSort = function () {
-        this.rowsAfterSort = this.sortStage.execute(this.rowsAfterFilter);
+        this.sortStage.execute(this.rootNode);
     };
     InMemoryRowModel.prototype.doRowGrouping = function (groupState) {
         // grouping is enterprise only, so if service missing, skip the step
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (this.groupStage && !rowsAlreadyGrouped) {
+        // var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (this.groupStage) {
             // remove old groups from the selection model, as we are about to replace them
             // with new groups
             this.selectionController.removeGroupsFromSelection();
-            this.rowsAfterGroup = this.groupStage.execute(this.allRows);
+            this.groupStage.execute(this.rootNode);
             this.restoreGroupState(groupState);
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
                 this.selectionController.updateGroupsFromChildrenSelections();
             }
         }
         else {
-            this.rowsAfterGroup = this.allRows;
+            this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
         }
     };
     InMemoryRowModel.prototype.restoreGroupState = function (groupState) {
         if (!groupState) {
             return;
         }
-        utils_1.Utils.traverseNodesWithKey(this.rowsAfterGroup, function (node, key) {
+        utils_1.Utils.traverseNodesWithKey(this.rootNode.childrenAfterGroup, function (node, key) {
             // if the group was open last time, then open it this time. however
             // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
             // setting will take effect.
@@ -252,7 +259,13 @@ var InMemoryRowModel = (function () {
         });
     };
     InMemoryRowModel.prototype.doFilter = function () {
-        this.rowsAfterFilter = this.filterStage.execute(this.rowsAfterGroup);
+        this.filterStage.execute(this.rootNode);
+    };
+    InMemoryRowModel.prototype.doPivot = function () {
+        this.pivotService.execute(this.rootNode);
+        // fire event here???
+        // pivotService.createPivotColumns()
+        // do pivot - create pivot columns?
     };
     // rows: the rows to put into the model
     // firstId: the first id to use, used for paging, where we are not on the first page
@@ -260,18 +273,27 @@ var InMemoryRowModel = (function () {
         // remember group state, so we can expand groups that should be expanded
         var groupState = this.getGroupState();
         // place each row into a wrapper
-        this.allRows = this.createRowNodesFromData(rowData, firstId);
+        this.rootNode.allLeafChildren = this.createRowNodesFromData(rowData, firstId);
+        this.rootNode.childrenAfterFilter = null;
+        this.rootNode.childrenAfterGroup = null;
+        this.rootNode.childrenAfterSort = null;
+        this.rootNode.childrenMapped = null;
+        // this event kicks off:
+        // - clears selection
+        // - creates new pivot columns ??
+        // - updates filters
+        // - shows 'row rows' overlay if needed
         this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_CHANGED);
         if (refresh) {
             this.refreshModel(constants_1.Constants.STEP_EVERYTHING, null, groupState);
         }
     };
     InMemoryRowModel.prototype.getGroupState = function () {
-        if (!this.rowsAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
+        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
             return null;
         }
         var result = {};
-        utils_1.Utils.traverseNodesWithKey(this.rowsAfterGroup, function (node, key) { return result[key] = node.expanded; });
+        utils_1.Utils.traverseNodesWithKey(this.rootNode.childrenAfterGroup, function (node, key) { return result[key] = node.expanded; });
         return result;
     };
     InMemoryRowModel.prototype.createRowNodesFromData = function (rowData, firstId) {
@@ -294,7 +316,7 @@ var InMemoryRowModel = (function () {
                 var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
                 if (nodeChildDetails && nodeChildDetails.group) {
                     node.group = true;
-                    node.children = recursiveFunction(nodeChildDetails.children, node, level + 1);
+                    node.childrenAfterGroup = recursiveFunction(nodeChildDetails.children, node, level + 1);
                     node.expanded = nodeChildDetails.expanded === true;
                     node.field = nodeChildDetails.field;
                     node.key = nodeChildDetails.key;
@@ -311,7 +333,8 @@ var InMemoryRowModel = (function () {
         }
     };
     InMemoryRowModel.prototype.doRowsToDisplay = function () {
-        this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterSort);
+        // this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterSort);
+        this.rowsToDisplay = this.flattenStage.execute(this.rootNode);
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'), 
@@ -341,6 +364,10 @@ var InMemoryRowModel = (function () {
         context_1.Autowired('context'), 
         __metadata('design:type', context_1.Context)
     ], InMemoryRowModel.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('pivotService'), 
+        __metadata('design:type', pivotService_1.PivotService)
+    ], InMemoryRowModel.prototype, "pivotService", void 0);
     __decorate([
         context_1.Autowired('filterStage'), 
         __metadata('design:type', Object)

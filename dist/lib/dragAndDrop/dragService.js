@@ -18,6 +18,8 @@ var context_2 = require("../context/context");
 var logger_1 = require("../logger");
 var context_3 = require("../context/context");
 var utils_1 = require('../utils');
+/** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
+ * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = (function () {
     function DragService() {
         this.onMouseUpListener = this.onMouseUp.bind(this);
@@ -35,6 +37,7 @@ var DragService = (function () {
         params.eElement.addEventListener('mousedown', listener);
         this.destroyFunctions.push(function () { return params.eElement.removeEventListener('mousedown', listener); });
     };
+    // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
@@ -44,6 +47,8 @@ var DragService = (function () {
         this.dragging = false;
         this.eventLastTime = mouseEvent;
         this.dragStartEvent = mouseEvent;
+        // we temporally add these listeners, for the duration of the drag, they
+        // are removed in mouseup handling.
         document.addEventListener('mousemove', this.onMouseMoveListener);
         document.addEventListener('mouseup', this.onMouseUpListener);
         // see if we want to start dragging straight away
@@ -51,6 +56,8 @@ var DragService = (function () {
             this.onMouseMove(mouseEvent);
         }
     };
+    // returns true if the event is close to the original event by X pixels either vertically or horizontally.
+    // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     DragService.prototype.isEventNearStartEvent = function (event) {
         // by default, we wait 4 pixels before starting the drag
         var requiredPixelDiff = utils_1.Utils.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
@@ -61,10 +68,13 @@ var DragService = (function () {
         var diffY = Math.abs(event.clientY - this.dragStartEvent.clientY);
         return Math.max(diffX, diffY) <= requiredPixelDiff;
     };
+    // only gets called after a mouse down - as this is only added after mouseDown
+    // and is removed when mouseUp happens
     DragService.prototype.onMouseMove = function (mouseEvent) {
         if (!this.dragging) {
-            // we want to have moved at least 4px before the drag starts
-            if (this.isEventNearStartEvent(mouseEvent)) {
+            // if mouse hasn't travelled from the start position enough, do nothing
+            var toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(mouseEvent);
+            if (toEarlyToDrag) {
                 return;
             }
             else {
@@ -75,7 +85,6 @@ var DragService = (function () {
         this.currentDragParams.onDragging(mouseEvent);
     };
     DragService.prototype.onMouseUp = function (mouseEvent) {
-        this.logger.log('onMouseUp');
         document.removeEventListener('mouseup', this.onMouseUpListener);
         document.removeEventListener('mousemove', this.onMouseMoveListener);
         if (this.dragging) {

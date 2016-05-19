@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var constants_1 = require("../../constants");
 var component_1 = require("../../widgets/component");
+var utils_1 = require('../../utils');
 var StartState;
 (function (StartState) {
     StartState[StartState["HighlightAll"] = 0] = "HighlightAll";
@@ -41,7 +42,9 @@ var TextCellEditor = (function (_super) {
                 this.highlightAllOnFocus = true;
             }
         }
-        eInput.value = startValue;
+        if (utils_1.Utils.exists(startValue)) {
+            eInput.value = startValue;
+        }
     };
     TextCellEditor.prototype.afterGuiAttached = function () {
         var eInput = this.getGui();

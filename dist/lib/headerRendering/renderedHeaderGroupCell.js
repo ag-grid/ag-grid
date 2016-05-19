@@ -44,16 +44,16 @@ var RenderedHeaderGroupCell = (function () {
     RenderedHeaderGroupCell.prototype.init = function () {
         this.eHeaderGroupCell = document.createElement('div');
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper);
+        this.displayName = this.columnGroup.getHeaderName();
         this.setupResize();
         this.addClasses();
         this.setupLabel();
-        // this.setupMove();
+        this.setupMove();
         this.setWidth();
     };
     RenderedHeaderGroupCell.prototype.setupLabel = function () {
         // no renderer, default text render
-        var groupName = this.columnGroup.getHeaderName();
-        if (groupName && groupName !== '') {
+        if (this.displayName && this.displayName !== '') {
             var eGroupCellLabel = document.createElement("div");
             eGroupCellLabel.className = 'ag-header-group-cell-label';
             this.eHeaderGroupCell.appendChild(eGroupCellLabel);
@@ -62,7 +62,7 @@ var RenderedHeaderGroupCell = (function () {
             }
             var eInnerText = document.createElement("span");
             eInnerText.className = 'ag-header-group-text';
-            eInnerText.innerHTML = groupName;
+            eInnerText.innerHTML = this.displayName;
             eGroupCellLabel.appendChild(eInnerText);
             if (this.columnGroup.isExpandable()) {
                 this.addGroupExpandIcon(eGroupCellLabel);
@@ -137,11 +137,28 @@ var RenderedHeaderGroupCell = (function () {
         if (eLabel) {
             var dragSource = {
                 eElement: eLabel,
-                dragItem: this.columnGroup,
+                dragItemName: this.displayName,
+                // we add in the original group leaf columns, so we move both visible and non-visible items
+                dragItem: this.getAllColumnsInThisGroup(),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource);
         }
+    };
+    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
+    // are currently in the screen.
+    RenderedHeaderGroupCell.prototype.getAllColumnsInThisGroup = function () {
+        var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        var allColumnsCurrentOrder = [];
+        this.columnController.getAllDisplayedColumns().forEach(function (column) {
+            if (allColumnsOriginalOrder.indexOf(column) >= 0) {
+                allColumnsCurrentOrder.push(column);
+                utils_1.Utils.removeFromArray(allColumnsOriginalOrder, column);
+            }
+        });
+        // we are left with non-visible columns, stick these in at the end
+        allColumnsOriginalOrder.forEach(function (column) { return allColumnsCurrentOrder.push(column); });
+        return allColumnsCurrentOrder;
     };
     RenderedHeaderGroupCell.prototype.setWidth = function () {
         var _this = this;
@@ -164,10 +181,10 @@ var RenderedHeaderGroupCell = (function () {
     RenderedHeaderGroupCell.prototype.addGroupExpandIcon = function (eGroupCellLabel) {
         var eGroupIcon;
         if (this.columnGroup.isExpanded()) {
-            eGroupIcon = utils_1.Utils.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createArrowLeftSvg);
+            eGroupIcon = utils_1.Utils.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
         }
         else {
-            eGroupIcon = utils_1.Utils.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createArrowRightSvg);
+            eGroupIcon = utils_1.Utils.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
         }
         eGroupIcon.className = 'ag-header-expand-icon';
         eGroupCellLabel.appendChild(eGroupIcon);

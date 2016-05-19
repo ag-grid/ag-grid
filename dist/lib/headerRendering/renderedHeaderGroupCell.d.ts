@@ -21,6 +21,7 @@ export declare class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     private parentScope;
     private destroyFunctions;
     private eRoot;
+    private displayName;
     constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, parentScope: any, dragSourceDropTarget: DropTarget);
     getGui(): HTMLElement;
     onIndividualColumnResized(column: Column): void;
@@ -29,6 +30,7 @@ export declare class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     private addClasses();
     private setupResize();
     private setupMove();
+    getAllColumnsInThisGroup(): Column[];
     private setWidth();
     destroy(): void;
     private addGroupExpandIcon(eGroupCellLabel);

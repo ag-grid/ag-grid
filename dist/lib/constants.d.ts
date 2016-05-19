@@ -5,6 +5,7 @@
 export declare class Constants {
     static STEP_EVERYTHING: number;
     static STEP_FILTER: number;
+    static STEP_PIVOT: number;
     static STEP_AGGREGATE: number;
     static STEP_SORT: number;
     static STEP_MAP: number;

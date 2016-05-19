@@ -86,7 +86,7 @@ ag-grid-ng2
 
 // the ghost header cell doesn't live inside the grid, it's parent is the body element,
 // so we cannot style using standard themes. hence we break the rules, and style it here
-.ag-header-cell-ghost
+.ag-dnd-ghost
     font-size: 14px
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     position: absolute
@@ -99,14 +99,18 @@ ag-grid-ng2
     text-overflow: ellipsis;
     padding: 3px;
     line-height: 1.4;
-    img
-        vertical-align: middle;
-        border: 0px;
+    //img
+    //    vertical-align: middle;
+    //    border: 0px;
 
-.ag-header-cell-ghost-icon
+.ag-dnd-ghost-icon
+    display: inline-block;
     float: left;
     padding-left: 2px;
     padding-right: 2px;
+
+.ag-dnd-ghost-label
+    display: inline-block;
 
 .ag-header-group-cell
     height: 100%
@@ -263,9 +267,22 @@ ag-grid-ng2
 .agile-gird-row:hover
     background-color: aliceblue
 
-.ag-row-group-panel
+.ag-column-drop
     width: 100%;
     box-sizing: border-box;
+
+.ag-column-drop-vertical
+    height: 100%;
+
+    .ag-column-drop-cell
+        display: block;
+
+    .ag-column-drop-empty-message
+        display: block;
+
+    .ag-column-drop-cell-button
+        float: right;
+        line-height: 16px;
 
 .ag-cell
     display: inline-block

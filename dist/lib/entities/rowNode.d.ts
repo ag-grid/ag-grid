@@ -13,6 +13,7 @@ export declare class RowNode {
     private selectionController;
     private columnController;
     private valueService;
+    private rowModel;
     /** Unique ID for the node. Can be thought of as the index of the row in the original list. */
     id: number;
     /** The user provided data */
@@ -23,6 +24,8 @@ export declare class RowNode {
     level: number;
     /** True if this node is a group node (ie has children) */
     group: boolean;
+    /** True if this node is a group and the group is the bottom level in the tree */
+    leafGroup: boolean;
     /** True if this is the first child in this group */
     firstChild: boolean;
     /** True if this is the last child in this group */
@@ -35,18 +38,24 @@ export declare class RowNode {
     quickFilterAggregateText: string;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
     footer: boolean;
-    /** Groups only - Children of this group */
-    children: RowNode[];
     /** Groups only - The field we are grouping on eg Country*/
     field: string;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     key: any;
+    /** All user provided nodes */
+    allLeafChildren: RowNode[];
+    /** Groups only - Children of this group */
+    childrenAfterGroup: RowNode[];
     /** Groups only - Filtered children of this group */
     childrenAfterFilter: RowNode[];
     /** Groups only - Sorted children of this group */
     childrenAfterSort: RowNode[];
     /** Groups only - Number of children and grand children */
     allChildrenCount: number;
+    /** Children mapped by the pivot columns */
+    childrenMapped: {
+        [key: string]: any;
+    };
     /** Groups only - True if group is expanded, otherwise false */
     expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
@@ -70,6 +79,15 @@ export declare class RowNode {
     setSelectedInitialValue(selected: boolean): void;
     /** Returns true if this row is selected */
     setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean): void;
+    setSelectedParams(params: {
+        newValue: boolean;
+        clearSelection?: boolean;
+        tailingNodeInSequence?: boolean;
+        rangeSelect?: boolean;
+    }): void;
+    private doRowRangeSelection();
+    private isParentOfNode(potentialParent);
+    private calculatedSelectedForAllGroupNodes();
     selectThisNode(newValue: boolean): void;
     private selectChildNodes(newValue);
     addEventListener(eventType: string, listener: Function): void;

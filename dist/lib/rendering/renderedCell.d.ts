@@ -11,7 +11,6 @@ export declare class RenderedCell extends Component {
     private gridApi;
     private gridOptionsWrapper;
     private expressionService;
-    private selectionRendererFactory;
     private rowRenderer;
     private $compile;
     private templateService;
@@ -41,7 +40,6 @@ export declare class RenderedCell extends Component {
     private cellEditorInPopup;
     private hideEditorPopup;
     private scope;
-    private eCheckbox;
     private cellEditor;
     private cellRenderer;
     private value;
@@ -85,7 +83,7 @@ export declare class RenderedCell extends Component {
     private addInCellEditor();
     private addPopupCellEditor();
     focusCell(forceBrowserFocus: boolean): void;
-    private stopEditing(reset?);
+    private stopEditing(cancel?);
     private createParams();
     private createEvent(event, eventSource?);
     isCellEditable(): boolean;

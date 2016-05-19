@@ -541,7 +541,7 @@ export class Utils {
                     keyParts.push(node.key);
                     var key = keyParts.join('|');
                     callback(node, key);
-                    recursiveSearchNodes(node.children);
+                    recursiveSearchNodes(node.childrenAfterGroup);
                     keyParts.pop();
                 }
             });

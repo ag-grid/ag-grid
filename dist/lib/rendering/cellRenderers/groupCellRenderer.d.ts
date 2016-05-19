@@ -7,11 +7,12 @@ import { ICellRenderer } from "./iCellRenderer";
 export declare class GroupCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE;
     private gridOptionsWrapper;
-    private selectionRendererFactory;
     private expressionService;
     private eventService;
     private cellRendererService;
     private valueFormatterService;
+    private context;
+    private columnController;
     private eExpanded;
     private eContracted;
     private eCheckbox;

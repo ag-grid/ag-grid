@@ -5,6 +5,7 @@ export * from './dist/lib/columnController/columnKeyCreator';
 export * from './dist/lib/columnController/columnUtils';
 export * from './dist/lib/columnController/displayedGroupCreator';
 export * from './dist/lib/columnController/groupInstanceIdCreator';
+export * from './dist/lib/columnController/pivotService';
 
 export * from './dist/lib/components/agGridNg1';
 export * from './dist/lib/components/agGridWebComponent';
@@ -50,6 +51,7 @@ export * from './dist/lib/headerRendering/standardMenu';
 
 export * from './dist/lib/interfaces/iClipboardService';
 export * from './dist/lib/interfaces/iContextMenuFactory';
+export * from './dist/lib/interfaces/iComponentFactory';
 export * from './dist/lib/interfaces/iMenu';
 export * from './dist/lib/interfaces/iMenuFactory';
 export * from './dist/lib/interfaces/iRangeController';
@@ -83,7 +85,7 @@ export * from './dist/lib/rendering/checkboxSelectionComponent';
 export * from './dist/lib/rendering/cellEditorFactory';
 export * from './dist/lib/rendering/valueFormatterService';
 
-export * from './dist/lib/rowControllers/inMemory/fillterStage';
+export * from './dist/lib/rowControllers/inMemory/filterStage';
 export * from './dist/lib/rowControllers/inMemory/flattenStage';
 export * from './dist/lib/rowControllers/inMemory/inMemoryRowModel';
 export * from './dist/lib/rowControllers/inMemory/sortStage';

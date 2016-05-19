@@ -44,6 +44,7 @@ var RenderedHeaderCell = (function () {
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
         // label div
         var eHeaderCellLabel = this.eHeaderCell.querySelector('#agHeaderCellLabel');
+        this.displayName = this.columnController.getDisplayNameForCol(this.column);
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
@@ -71,16 +72,15 @@ var RenderedHeaderCell = (function () {
         else if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
             headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
         }
-        var headerNameValue = this.columnController.getDisplayNameForCol(this.column);
         var eText = this.eHeaderCell.querySelector('#agText');
         if (eText) {
             if (headerCellRenderer) {
-                this.useRenderer(headerNameValue, headerCellRenderer, eText);
+                this.useRenderer(this.displayName, headerCellRenderer, eText);
             }
             else {
                 // no renderer, default text render
                 eText.className = 'ag-header-cell-text';
-                eText.innerHTML = headerNameValue;
+                eText.innerHTML = this.displayName;
             }
         }
     };
@@ -126,6 +126,7 @@ var RenderedHeaderCell = (function () {
             this.childScope = parentScope.$new();
             this.childScope.colDef = this.column.getColDef();
             this.childScope.colDefWrapper = this.column;
+            this.childScope.context = this.gridOptionsWrapper.getContext();
             this.destroyFunctions.push(function () {
                 _this.childScope.$destroy();
             });
@@ -194,7 +195,8 @@ var RenderedHeaderCell = (function () {
         if (eHeaderCellLabel) {
             var dragSource = {
                 eElement: eHeaderCellLabel,
-                dragItem: this.column,
+                dragItem: [this.column],
+                dragItemName: this.displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource);

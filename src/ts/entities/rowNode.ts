@@ -34,6 +34,8 @@ export class RowNode {
     public level: number;
     /** True if this node is a group node (ie has children) */
     public group: boolean;
+    /** True if this node is a group and the group is the bottom level in the tree */
+    public leafGroup: boolean;
     /** True if this is the first child in this group */
     public firstChild: boolean;
     /** True if this is the last child in this group */
@@ -46,18 +48,26 @@ export class RowNode {
     public quickFilterAggregateText: string;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
     public footer: boolean;
-    /** Groups only - Children of this group */
-    public children: RowNode[];
     /** Groups only - The field we are grouping on eg Country*/
     public field: string;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
+
+    /** All user provided nodes */
+    public allLeafChildren: RowNode[];
+
+    /** Groups only - Children of this group */
+    public childrenAfterGroup: RowNode[];
     /** Groups only - Filtered children of this group */
     public childrenAfterFilter: RowNode[];
     /** Groups only - Sorted children of this group */
     public childrenAfterSort: RowNode[];
     /** Groups only - Number of children and grand children */
     public allChildrenCount: number;
+
+    /** Children mapped by the pivot columns */
+    public childrenMapped: {[key: string]: any} = {};
+
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
@@ -91,7 +101,7 @@ export class RowNode {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         var event = {column: column, newValue: newValue};
         this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
@@ -111,8 +121,8 @@ export class RowNode {
     }
 
     public deptFirstSearch( callback: (rowNode: RowNode) => void ): void {
-        if (this.children) {
-            this.children.forEach( child => child.deptFirstSearch(callback) );
+        if (this.childrenAfterGroup) {
+            this.childrenAfterGroup.forEach( child => child.deptFirstSearch(callback) );
         }
         callback(this);
     }
@@ -124,9 +134,9 @@ export class RowNode {
         var atLeastOneMixed = false;
 
         var newSelectedValue:boolean;
-        if (this.children) {
-            for (var i = 0; i < this.children.length; i++) {
-                var childState = this.children[i].isSelected();
+        if (this.childrenAfterGroup) {
+            for (var i = 0; i < this.childrenAfterGroup.length; i++) {
+                var childState = this.childrenAfterGroup[i].isSelected();
                 switch (childState) {
                     case true:
                         atLeastOneSelected = true;
@@ -325,8 +335,8 @@ export class RowNode {
     }
 
     private selectChildNodes(newValue: boolean): void {
-        for (var i = 0; i<this.children.length; i++) {
-            this.children[i].setSelectedParams({
+        for (var i = 0; i<this.childrenAfterGroup.length; i++) {
+            this.childrenAfterGroup[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
                 tailingNodeInSequence: true

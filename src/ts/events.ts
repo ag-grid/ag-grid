@@ -5,10 +5,16 @@ export class Events {
     public static EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
 
     /** A row group column was added, removed or order changed. */
-    public static EVENT_COLUMN_ROW_GROUP_CHANGE = 'columnRowGroupChanged';
+    public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+
+    /** A pivot column was added, removed or order changed. */
+    public static EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
+
+    /** A pivot column was added, removed or order changed. */
+    public static EVENT_PIVOT_VALUE_CHANGED = 'pivotValueChanged';
 
     /** A value column was added, removed or agg function was changed. */
-    public static EVENT_COLUMN_VALUE_CHANGE = 'columnValueChanged';
+    public static EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
 
     /** A column was moved */
     public static EVENT_COLUMN_MOVED = 'columnMoved';

@@ -24,6 +24,7 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     private startWidth;
     private parentScope;
     private dragSourceDropTarget;
+    private displayName;
     private destroyFunctions;
     constructor(column: Column, parentScope: any, eRoot: HTMLElement, dragSourceDropTarget: DropTarget);
     init(): void;

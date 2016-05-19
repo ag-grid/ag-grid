@@ -64,7 +64,7 @@ var CsvCreator = (function () {
         var processCellCallback = params.processCellCallback;
         var columnsToExport;
         if (allColumns) {
-            columnsToExport = this.columnController.getAllColumns();
+            columnsToExport = this.columnController.getAllOriginalColumns();
         }
         else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
