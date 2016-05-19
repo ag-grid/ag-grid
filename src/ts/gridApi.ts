@@ -176,6 +176,11 @@ export class GridApi {
         this.inMemoryRowModel.refreshModel(Constants.STEP_MAP, refreshFromIndex);
     }
 
+    public refreshInMemoryRowModel(): any {
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call refreshInMemoryRowModel unless using normal row model') }
+        this.inMemoryRowModel.refreshModel(Constants.STEP_EVERYTHING);
+    }
+    
     public expandAll() {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call expandAll unless using normal row model') }
         this.inMemoryRowModel.expandOrCollapseAll(true);
