@@ -1,6 +1,6 @@
-import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
-import {RenderedColumn} from "./columnSelect/renderedColumn";
-import {RenderedGroup} from "./columnSelect/renderedGroup";
+import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
+import {RenderedColumn} from "./toolPanel/columnsSelect/renderedColumn";
+import {RenderedGroup} from "./toolPanel/columnsSelect/renderedGroup";
 import {AggregationStage} from "./rowStages/aggregationStage";
 import {GroupStage} from "./rowStages/groupStage";
 import {SetFilter} from "./setFilter/setFilter";
@@ -11,19 +11,17 @@ import {ClipboardService} from "./clipboardService";
 import {EnterpriseBoot} from "./enterpriseBoot";
 import {EnterpriseMenu} from "./enterpriseMenu";
 import {RangeController} from "./rangeController";
-import {RowGroupPanel} from "./rowGroupPanel";
-import {ToolPanel} from "./toolPanel";
+import {RowGroupColumnsPanel} from "./toolPanel/columnDrop/rowGroupColumnsPanel";
 import {ContextMenuFactory} from "./contextMenu";
 import {ViewportRowModel} from "./viewport/viewportRowModel";
 import {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
 import {RichSelectRow} from "./rendering/richSelect/richSelectRow";
 import {VirtualList} from "./rendering/virtualList";
+import {AbstractColumnDropPanel} from "./toolPanel/columnDrop/abstractColumnDropPanel";
+import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
+import {ToolPanelComp} from "./toolPanel/toolPanelComp";
 
 export function populateClientExports(exports: any): void {
-
-    exports.ColumnSelectPanel = ColumnSelectPanel;
-    exports.RenderedColumn = RenderedColumn;
-    exports.RenderedGroup = RenderedGroup;
 
     exports.RichSelectCellEditor = RichSelectCellEditor;
     exports.RichSelectRow = RichSelectRow;
@@ -38,6 +36,15 @@ export function populateClientExports(exports: any): void {
     exports.StatusBar = StatusBar;
     exports.StatusItem = StatusItem;
 
+    exports.AbstractColumnDropPanel = AbstractColumnDropPanel;
+    exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
+    exports.PivotColumnsPanel = PivotColumnsPanel;
+    exports.ToolPanelComp = ToolPanelComp;
+
+    exports.ColumnSelectPanel = ColumnSelectPanel;
+    exports.RenderedColumn = RenderedColumn;
+    exports.RenderedGroup = RenderedGroup;
+
     exports.ViewportRowModel = ViewportRowModel;
 
     exports.ContextMenuFactory = ContextMenuFactory;
@@ -45,7 +52,5 @@ export function populateClientExports(exports: any): void {
     exports.EnterpriseBoot = EnterpriseBoot;
     exports.EnterpriseMenu = EnterpriseMenu;
     exports.RangeController = RangeController;
-    exports.RowGroupPanel = RowGroupPanel;
-    exports.ToolPanel = ToolPanel;
 
 }
