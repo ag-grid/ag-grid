@@ -8,12 +8,11 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Pivots</h3>
+<!--    <h3>Pivots</h3>
     + New event columnPivotChanged (note - need to put callbacks and component changes in for pivot event)
     + New colDef property pivotIndex
     + New column API methods: setPivotColumns, removePivotColumn, removePivotColumns, addPivotColumn, addPivotColumns
-    + New method: api.refreshInMemoryRowModel Does a complete refresh of the in memory row model. Useful if you need to get the groups worked out again.
-
+-->
     <h3>Version xxx</h3>
     <li>Bug fix: when dragging columns out of rowGroupPanel, GUI wasn't redrawing correctly and crashing, causing inconsistent state and console error messages</li>
     <li>Bug fix: disabled menu items were still allowed to be clicked</li>
@@ -36,12 +35,12 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: toolpanel now has icon beside column group to show visibility of the group. icon is also clickable to set visible / hidden all children of the group</li>
     <li>Enhancement: a range of rows can be selected together by holding down shift (does not work with virtual pagination or viewport, only normal 'in memory row model').</li>
     <li>Enhancement: editing now has methods isCancelBeforeStart() and isCancelAfterEnd() to help with lifecycle.</li>
-    <li>Enhancement: new property suppressDragLeaveHidesColumns, so when columsn dragged out of grid, they are not hidden.</li>
+    <li>Enhancement: new property suppressDragLeaveHidesColumns, so when columns dragged out of grid, they are not hidden.</li>
+    <li>Enhancement: new method api.refreshInMemoryRowModel, does a complete refresh of the in memory row model. Useful if you need to get the groups worked out again.</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
     <li>Bug fix: row group panel was not initialising correctly.</li>
-    
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.4, ag-Grid-Enterprise 4.1.3)</h3>
     <li>Bug fix: api.deselectAll() was not calling onSelectionChanged, it is now.</li>
