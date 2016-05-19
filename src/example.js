@@ -287,6 +287,8 @@ var defaultCols = [
             firstColumn,
             {headerName: "Country", field: "country", width: 150, editable: true,
         cellRenderer: CountryCellRenderer,
+        // pivotIndex: 1,
+        // rowGroupIndex: 1,
         cellEditor: 'richSelect',
         cellEditorParams: {
             cellRenderer: CountryCellRenderer,
@@ -310,6 +312,8 @@ var defaultCols = [
         headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
         cellRenderer: languageCellRenderer,
         cellEditor: 'select',
+        // rowGroupIndex: 0,
+        // pivotIndex: 0,
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
         },
@@ -332,6 +336,7 @@ var defaultCols = [
             return 'alphabet';
         },
         //pinned: 'right',
+        // rowGroupIndex: 1,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -340,6 +345,8 @@ var defaultCols = [
     {
         headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
         //pinned: 'right',
+        // rowGroupIndex: 2,
+        // pivotIndex: 1,
         cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
         floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
@@ -353,6 +360,8 @@ var defaultCols = [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
         filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         filterParams: {cellRenderer: currencyRenderer},
+        // colId: 'sf',
+        // valueGetter: '55',
         aggFunc: 'sum',
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -394,7 +403,7 @@ months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
-        aggFunc: 'sum',
+        // aggFunc: 'sum',
         //hide: true,
         cellClassRules: {
             'good-score': 'x > 50000',

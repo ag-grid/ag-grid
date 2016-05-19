@@ -60,6 +60,14 @@ gridOptionsMaster = {
         between grids if two grids are acting as slaves to each other.
     </p>
 
+    <h4>Pivots</h4>
+
+    <p>
+        The pivot functionality does not work with Master / Slave grids. This is because pivoting data changes
+        the columns, which would make the master and slave grids incompatible, as they are no longer sharing
+        the same set of columns.
+    </p>
+    
     <h4>Demonstration Example</h4>
 
     <p>

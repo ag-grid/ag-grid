@@ -149,6 +149,12 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>refreshInMemoryRowModel()</th>
+            <td>
+                Does a complete refresh of the in memory row model. Shotgun approach for any row changes you have done.
+            </td>
+        </tr>
+        <tr>
             <th>expandAll()</th>
             <td>Expand all groups.</td>
         </tr>
