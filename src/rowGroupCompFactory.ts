@@ -1,8 +1,8 @@
-import {Bean, IComponentFactory, Component, Autowired, Context} from "ag-grid/main";
+import {Bean, ICompFactory, Component, Autowired, Context} from "ag-grid/main";
 import {RowGroupColumnsPanel} from "./toolPanel/columnDrop/rowGroupColumnsPanel";
 
 @Bean('rowGroupCompFactory')
-export class RowGroupCompFactory implements IComponentFactory {
+export class RowGroupCompFactory implements ICompFactory {
 
     @Autowired('context') private context: Context;
     
