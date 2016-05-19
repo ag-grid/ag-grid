@@ -12,6 +12,7 @@ include '../documentation-main/documentation_header.php';
     + New event columnPivotChanged (note - need to put callbacks and component changes in for pivot event)
     + New colDef property pivotIndex
     + New column API methods: setPivotColumns, removePivotColumn, removePivotColumns, addPivotColumn, addPivotColumns
+    + New method: api.refreshInMemoryRowModel Does a complete refresh of the in memory row model. Useful if you need to get the groups worked out again.
 
     <h3>Version xxx</h3>
     <li>Bug fix: when dragging columns out of rowGroupPanel, GUI wasn't redrawing correctly and crashing, causing inconsistent state and console error messages</li>
