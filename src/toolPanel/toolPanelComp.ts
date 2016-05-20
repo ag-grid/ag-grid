@@ -22,7 +22,7 @@ export class ToolPanelComp extends Component {
         this.columnSelectPanel = new ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
 
-        this.addInWrapper(this.columnSelectPanel.getGui(), '100%');
+        this.addInWrapper(this.columnSelectPanel.getGui(), '70%');
 
         var p2 = new RowGroupColumnsPanel(false);
         var p4 = new PivotColumnsPanel(false);
@@ -30,10 +30,8 @@ export class ToolPanelComp extends Component {
         this.context.wireBean(p2);
         this.context.wireBean(p4);
 
-/*
         this.addInWrapper(p2.getGui(), '15%');
         this.addInWrapper(p4.getGui(), '15%');
-*/
     }
 
     private addInWrapper(eElement: HTMLElement, height: string): void {

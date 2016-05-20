@@ -1,5 +1,5 @@
 import {
-    Utils as _,
+    Utils,
     Bean,
     IRowNodeStage,
     Autowired,
@@ -24,7 +24,7 @@ export class AggregationStage implements IRowNodeStage {
     public execute(rootNode: RowNode): any {
 
         // we don't do aggregation if user provided the groups
-        var userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        var userProvidedTheGroups = Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (userProvidedTheGroups) {
             return;
         }
@@ -64,6 +64,7 @@ export class AggregationStage implements IRowNodeStage {
                 rowNode.data[valueColumn.getId()] = this.aggregateValues(values, valueColumn.getAggFunc());
                 return;
             });
+            return;
         }
 
         var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
