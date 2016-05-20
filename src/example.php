@@ -23,11 +23,11 @@
 
             .ag-fresh .good-score { background-color: #beb; }
             .ag-blue .good-score { background-color: #beb; }
-            .ag-dark .good-score { background-color: #0a0; }
+            .ag-dark .good-score { background-color: #3d5229; }
 
             .ag-fresh .bad-score { background-color: #faa; }
             .ag-blue .bad-score { background-color: #faa; }
-            .ag-dark .bad-score { background-color: #a00; }
+            .ag-dark .bad-score { background-color: #8B3A3A; }
 
         </style>
 
@@ -90,8 +90,8 @@
                                 <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;" class="hide-when-small">
                                     <option value="">-none-</option>
                                     <option value="ag-fresh" selected>Fresh</option>
-                                    <option value="ag-blue">Blue</option>
                                     <option value="ag-dark">Dark</option>
+                                    <option value="ag-blue">Blue</option>
                                     <option value="ag-material">Material</option>
                                     <option value="ag-bootstrap">Bootstrap</option>
                                 </select>
