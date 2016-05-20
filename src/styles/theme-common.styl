@@ -13,6 +13,7 @@ todo
   line-height 1.4
   font-family ag-root-font-family
   font-size ag-root-font-size
+  color ag-foreground-1
   // changing the image is same as what bootstrap does, without the images didn't align right
   img
     vertical-align middle
@@ -84,20 +85,19 @@ todo
   .ag-rich-select
     font-size 14px
     border ag-border-1
-    background-color ag-background-1
+    background-color ag-select-background
 
   .ag-rich-select-value
     padding 2px
 
   .ag-rich-select-list
-    background-color #fff
-    border-top 1px solid #aaa
+    border-top 1px solid ag-separator-color
 
   .ag-rich-select-row
     padding 2px
 
   .ag-rich-select-row-selected
-    background-color #ddebf7
+    background-color ag-menu-option-active-color
 
   // HEADER SECTION
   .ag-header
@@ -157,17 +157,18 @@ todo
   .ag-header-cell-menu-button:hover
     border ag-border-1
 
-  .ag-row-selected
-    background-color ag-row-selected-background-color
-
   .ag-body
-      color ag-foreground-1
+    //color ag-foreground-1
+    background-color ag-background-1
 
     .ag-row-odd
       background-color ag-row-odd-background-color
 
     .ag-row-even
       background-color ag-row-even-background-color
+
+    .ag-row-selected
+      background-color ag-row-selected-background-color
 
   .ag-floating-top
     .ag-row
@@ -193,15 +194,12 @@ todo
     border-radius 10px
     padding 10px
 
-  .ag-body
-    background-color ag-background-2
-
   .ag-group-cell-entire-row
-    background-color ag-background-2
+    background-color ag-background-1
     padding ag-cell-padding
 
   .ag-footer-cell-entire-row
-    background-color ag-background-2
+    background-color ag-background-1
     padding ag-cell-padding
 
   .ag-group-cell
@@ -223,8 +221,9 @@ todo
     font-style italic
 
   .ag-menu
-    border ag-border-color-1
+    border ag-border-color-2
     background-color ag-background-1
+    //color ag-foreground-1
     cursor default
     font-family ag-root-font-family
     font-size: ag-root-font-size
@@ -251,7 +250,7 @@ todo
       border-top ag-tab-border
 
   .ag-menu-separator
-    border-top 1px solid ag-seperator-color
+    border-top 1px solid ag-separator-color
 
   .ag-menu-option {}
 
@@ -286,10 +285,10 @@ todo
     left 2px
 
   .ag-filter-header-container
-    border-bottom ag-border-1
+    border-bottom 1px solid ag-separator-color
 
   .ag-filter-apply-panel
-    border-top ag-border-1
+    border-top 1px solid ag-separatorcolor
     padding 2px
 
   .ag-filter-value
@@ -314,15 +313,17 @@ todo
     border-right ag-border-1
     border-bottom ag-border-1
     border-top ag-border-1
+    color ag-foreground-1
 
   .ag-status-bar
+    color ag-foreground-1
+    background-color ag-background-1
     font-size ag-root-font-size
-    height 20px
+    height 22px
     border-bottom ag-border-1
     border-left ag-border-1
     border-right ag-border-1
     padding 2px
-    background-color ag-background-1
 
   .ag-status-bar-aggregations
     float right
