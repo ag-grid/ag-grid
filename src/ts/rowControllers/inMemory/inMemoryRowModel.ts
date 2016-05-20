@@ -63,6 +63,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
         this.rootNode = new RowNode();
         this.rootNode.group = true;
+        this.rootNode.allLeafChildren = [];
         this.context.wireBean(this.rootNode);
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
@@ -91,8 +92,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 this.doRowGrouping(groupState);
             case constants.STEP_FILTER:
                 this.doFilter();
-            case constants.STEP_PIVOT:
-                this.doPivot();
+            // case constants.STEP_PIVOT:
+            //     this.doPivot();
             case constants.STEP_AGGREGATE: // depends on agg fields
                 this.doAggregate();
             case constants.STEP_SORT:

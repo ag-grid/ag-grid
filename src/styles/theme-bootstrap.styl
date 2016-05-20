@@ -1,105 +1,63 @@
-@import 'nib'
 
-default-border = 1px solid lightgrey
+ag-style = bootstrap
+ag-root-font-family = "Helvetica Neue",Helvetica,Arial,sans-serif
+ag-root-font-size = 14px
 
-.ag-bootstrap .ag-root {
-}
+ag-border-1 = none
 
-.ag-bootstrap .ag-cell {
-  padding: 4px;
-}
+ag-border-color-1 = #000
+ag-border-color-2 = #d3d3d3
 
-.ag-bootstrap .ag-pinned-header {
-  border-bottom: 2px solid #ddd;
-}
+ag-background-1 = #f6f6f6
+ag-background-2 = #fafafa
 
-.ag-bootstrap .ag-header-container {
-  border-bottom: 2px solid #ddd;
-}
+ag-foreground-1 = #000
 
-.ag-bootstrap .ag-header-cell {
-  text-align: left;
-  border-right: default-border
-}
+ag-header-foreground-1 = #000
 
-.ag-bootstrap .ag-header-group-cell {
-  border-right: default-border;
-}
+ag-seperator-color = #d3d3d3
 
-.ag-bootstrap .ag-header-group-cell-with-group {
-  border-bottom: default-border;
-}
+ag-cell-focused-border = 2px solid #217346
+ag-cell-no-focus-border-right = none
+ag-cell-no-focus-border-top = 1px solid transparent
+ag-cell-no-focus-border-left = 1px solid transparent
+ag-cell-no-focus-border-bottom = 1px solid transparent
 
-.ag-bootstrap .ag-header-cell-label {
-  padding: 5px;
-  font-weight: 700;
-  font-size: 13px;
-}
+ag-cell-highlight-border = 1px solid darkgreen
 
-.ag-bootstrap .ag-header-group-cell-label {
-  padding: 5px;
-  font-weight: bold;
-}
+ag-cell-padding = 4px
 
-.ag-bootstrap .ag-header-cell-menu-button {
-  padding: 2px;
-  margin-top: 4px;
-  border: 1px solid transparent;
-  border-radius: 3px;
-  box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
-}
+ag-row-selected-background-color = powderblue !important
+ag-row-odd-background-color = #f6f6f6
+ag-row-even-background-color = white
+ag-row-floating-background-color = #f0f0f0
 
-.ag-bootstrap .ag-header-cell-menu-button:hover {
-  border: default-border;
-}
+ag-value-change-delta-up-color = darkgreen
+ag-value-change-delta-down-color = darkred
+ag-value-change-value-highlight-background-color = #cec
 
-.ag-bootstrap .ag-row-odd {
-  background-color: #f6f6f6;
-}
+ag-range-selected-color-1 = rgba(120,120,120,0.4)
+ag-range-selected-color-2 = rgba(80,80,80,0.4)
+ag-range-selected-color-3 = rgba(40,40,40,0.4)
+ag-range-selected-color-4 = rgba(0,0,0,0.4)
 
-.ag-bootstrap .ag-row-even {
-  background-color: white;
-}
+ag-header-background-1 = none
 
-.ag-bootstrap .ag-body {
-  background-color: #ffffff;
-}
+ag-button-background-1 = none
+ag-button-foreground-1 = #000
+ag-button-border-1 = #000
 
-.ag-bootstrap .ag-body-viewport {
-  background-color: #ddd;
-}
+ag-header-font-weight = 600
 
-.ag-bootstrap .ag-pinned-cols-viewport {
-  background-color: #ddd
-}
+ag-tab-border = 1px solid black
+ag-tab-background = #e6e6e6
+ag-tab-selected-background = #f6f6f6
 
-.ag-bootstrap .ag-row-selected {
-  background-color: #B2DFEE;
-  /*background-color: #ECF1EF;*/
-}
+ag-menu-option-active-color = #BDE2E5
 
-.ag-bootstrap .ag-group-cell-entire-row {
-  background-color: #aaa;
-}
+@import "theme-common"
 
-.ag-bootstrap .ag-group-cell {
-}
 
-.ag-bootstrap .ag-filter-checkbox {
-  position: relative;
-  top: 2px;
-  left: 2px;
-}
 
-.ag-bootstrap .ag-filter-header-container {
-  border-bottom: 1px solid lightgrey;
-}
-
-.ag-bootstrap .ag-filter {
-  border: 1px solid black;
-  background-color: #f0f0f0;
-}
-
-.ag-bootstrap .ag-selection-checkbox {
-  margin-left: 4px;
-}
+//stick in an override
+//.ag-common

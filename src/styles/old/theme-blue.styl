@@ -1,0 +1,402 @@
+@import 'nib'
+
+.ag-blue
+  // copying bootstrap with line-height, sorts out alignment problems with images beside text
+  line-height: 1.4;
+
+  // changing the image is same as what bootstrap does, without the images didn't align right
+  img
+    vertical-align: middle;
+    border: 0px;
+
+  .ag-root
+    border: 1px solid #9bc2e6;
+    font: 10pt Calibri, "Segoe UI", Thonburi, Arial, Verdana, sans-serif;
+
+  .ag-column-drop-cell
+    background: #5b9bd5;
+    border: 1px solid #808080;
+    padding: 2px;
+
+  .ag-column-drop-cell-ghost
+    opacity: 0.5;
+
+  .ag-column-drop-cell-text
+    padding-left: 2px;
+    padding-right: 2px;
+
+  .ag-column-drop-cell-button
+    border 1px solid transparent;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 3px;
+
+  .ag-column-drop-cell-button:hover
+    border: 1px solid black;
+
+  .ag-column-drop-empty-message
+    padding-left: 2px;
+    padding-right: 2px;
+    border: 1px solid transparent;
+    color: grey;
+
+  .ag-column-drop-icon
+    padding-right: 4px;
+
+  .ag-column-drop
+    padding: 4px;
+    background-color #ddebf7;
+    color: #fff;
+
+  .ag-column-drop-horizontal
+    border-top: 1px solid #9bc2e6;
+    border-left: 1px solid #9bc2e6;
+    border-right: 1px solid #9bc2e6;
+
+  .ag-column-drop-vertical
+    border-top: 1px solid #9bc2e6;
+
+    .ag-column-drop-cell
+      margin-top: 2px;
+    .ag-column-drop-empty-message
+      padding: 20px;
+
+  .ag-cell
+    top: -1px;
+    letter-spacing: -0.02em;
+
+  .ag-cell-not-inline-editing
+    padding-left: 2px;
+    padding-right: 2px;
+
+  // we do not want to color the range color when the cell is also focused
+  .ag-cell-range-selected-1:not(.ag-cell-focus)
+    background-color: rgba(120,120,120,0.4);
+
+  .ag-cell-range-selected-2:not(.ag-cell-focus)
+    background-color: rgba(80,80,80,0.4);
+
+  .ag-cell-range-selected-3:not(.ag-cell-focus)
+    background-color: rgba(40,40,40,0.4);
+
+  .ag-cell-range-selected-4:not(.ag-cell-focus)
+    background-color: rgba(0,0,0,0.4);
+
+  .ag-column-moving .ag-cell
+    transition: left 0.2s;
+
+  .ag-cell-focus
+    background: #fff;
+    border: 2px solid #217346;
+
+  .ag-cell-no-focus
+    border-right: 1px dotted #9bc2e6;
+    border-top: 2px solid transparent;
+    border-left: 2px solid transparent;
+    border-bottom: 1px solid #9bc2e6;
+
+  .ag-cell-first-right-pinned
+    border-left: 1px solid #9bc2e6;
+
+  .ag-cell-last-left-pinned
+    border-right: 1px solid #9bc2e6;
+
+  // this needs to be after the other cell items, so the boarder gets preference
+  .ag-cell-highlight
+    border: 1px solid darkgreen;
+
+  .ag-cell-highlight-animation
+    transition: border 1s;
+
+  .ag-cell-data-changed
+    background: lightskyblue;
+
+  .ag-cell-data-changed-animation
+    transition: background-color 1s;
+
+  .ag-cell-data-changed:not(.ag-cell-focus)
+    background: lightskyblue;
+
+  .ag-cell-data-changed-animation:not(.ag-cell-focus)
+    transition: background-color 1s;
+
+  // used by the animateShowChangedCellRenderer
+  .ag-value-change-delta
+    padding-right: 2px;
+  .ag-value-change-delta-up
+    color: darkgreen;
+  .ag-value-change-delta-down
+    color: darkred;
+  .ag-value-change-value
+    background-color: transparent;
+    border-radius: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    transition: background-color 1s;
+  .ag-value-change-value-highlight
+    background-color: lightblue;
+    transition: background-color 0.1s;
+
+  .ag-rich-select
+    font-size: 14px;
+    border: 1px solid #000;
+    background-color: #fff;
+
+  .ag-rich-select-list
+    background-color: #fff;
+    border-top: 1px solid #aaa;
+
+  .ag-rich-select-value
+    padding: 2px;
+
+  .ag-rich-select-list
+    background-color: #fff;
+
+  .ag-rich-select-row
+    padding: 2px;
+
+  .ag-rich-select-row-selected
+    background-color: #ddebf7;
+
+  .ag-header
+    background-color: #5B9BD5;
+    border-bottom: 1px solid #9BC2E6;
+
+  .ag-no-scrolls .ag-header-container
+    background-color: #5B9BD5;
+    border-bottom: 1px solid #9BC2E6;
+
+  .ag-header-cell
+    border-right: 1px solid #9BC2E6;
+
+  .ag-header-cell-moving .ag-header-cell-label
+    opacity: 0.0;
+
+  .ag-header-cell-moving-clone
+    border-right: 1px solid grey;
+    border-left: 1px solid grey;
+    background-color:rgba(91, 155, 213, 0.8);
+
+  .ag-header-cell-moving
+    background-color #9bc2e6;
+
+  .ag-header-group-cell
+    border-right: 1px solid #9BC2E6;
+
+  .ag-header-group-cell-with-group
+    border-bottom: 1px solid #9BC2E6;
+
+  .ag-pinned-right-header
+    border-left: 1px solid #9BC2E6;
+
+  .ag-header-cell-label
+    padding: 4px 2px 4px 2px;
+    font-weight: bold;
+    color: #ffffff;
+
+  .ag-header-cell-text
+    padding-left: 2px;
+
+  .ag-header-group-cell-label
+    padding: 4px;
+    font-weight: bold;
+    color: #ffffff;
+    padding-left: 10px;
+
+  .ag-header-group-text
+    margin-right: 2px;
+
+  .ag-header-cell-menu-button
+    color: #ffffff;
+    border: 1px solid #a6acb3;
+    padding: 2px;
+    margin-top: 3px;
+    border-radius: 3px;
+    box-sizing: content-box;
+    line-height: 0px; /* normal line height, a space was appearing below the menu button */
+
+    /* When using bootstrap, box-sizing was set to 'border-box' */
+
+    //background: -webkit-linear-gradient(#feffff, #eff2f7);
+    //background: linear-gradient(#feffff, #eff2f7);
+
+  .ag-header-icon
+    color: #fff;
+    stroke: #fff;
+    fill: #fff;
+
+  .ag-dark .ag-header-expand-icon:hover
+    cursor: pointer;
+
+  .ag-row-odd
+    background-color: #DDEBF7;
+
+  .ag-row-even
+    background-color: #fff;
+
+  .ag-overlay-loading-wrapper
+    background-color: rgba(255, 255, 255, 0.5);
+
+  .ag-overlay-loading-center
+    background-color: #fff;
+    border: 1px solid #a9a9a9;
+    border-radius: 10px;
+    padding: 10px;
+
+  .ag-body
+    background-color: #fafafa;
+
+  .ag-row-selected
+    background-color: #c7c7c7;
+
+  .ag-group-cell-entire-row
+    background-color: #fff;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-bottom: solid 1px #9BC2E6;
+    overflow: hidden;
+    white-space: nowrap;
+
+  .ag-footer-cell-entire-row
+    background-color: #fff;
+    font-weight: bold;
+    padding: 4px;
+    border-bottom: solid 1px #9BC2E6;
+
+  .ag-group-cell
+    font-style: italic;
+
+  .ag-group-expanded
+    padding-right: 4px;
+
+  .ag-group-contracted
+    padding-right: 4px;
+
+  .ag-group-value
+    padding-right: 2px;
+
+  .ag-group-checkbox
+    padding-right: 2px;
+
+  .ag-footer-cell
+    font-style: italic;
+
+  .ag-menu
+    border: 1px solid #7070A0;
+    background-color: #f0f0f0;
+    cursor: default;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+
+    .ag-tab-header
+      background-color: #5b9bd5;
+
+    .ag-tab
+      padding: 6px 8px 6px 8px;
+      margin: 2px 2px 0px 2px;
+      display: inline-block;
+      border-right: 1px solid transparent;
+      border-left: 1px solid transparent;
+      border-top: 1px solid transparent;
+      border-top-right-radius: 2px;
+      border-top-left-radius: 2px;
+
+    .ag-tab-selected
+      background-color: #9bc2e6;
+      border-right: 1px solid #7070A0;
+      border-left: 1px solid #7070A0;
+      border-top: 1px solid #7070A0;
+
+  .ag-menu-panel-title {}
+
+  .ag-menu-separator
+    border-top 1px solid #d3d3d3;
+
+  .ag-menu-option {}
+
+  .ag-menu-option-active
+    background-color: #BDE2E5;
+
+  .ag-menu-option-icon
+    padding: 2px 4px 2px 4px;
+    vertical-align: middle;
+
+  .ag-menu-option-text
+    padding: 2px 4px 2px 4px;
+    vertical-align: middle;
+
+  .ag-menu-option-shortcut
+    padding: 2px 2px 2px 20px;
+    vertical-align: middle;
+
+  .ag-menu-option-popup-pointer
+    padding: 2px 4px 2px 4px;
+    vertical-align: middle;
+
+  .ag-menu-option-disabled
+    opacity: 0.5;
+
+  .ag-menu-column-select-wrapper
+    margin: 2px;
+
+  .ag-filter-checkbox
+    position: relative;
+    top: 2px;
+    left: 2px;
+    padding-right: 2px;
+
+  .ag-filter-header-container
+    border-bottom: 1px solid #d3d3d3;
+    font: 10pt Calibri, "Segoe UI", Thonburi, Arial, Verdana, sans-serif;
+
+  .ag-filter-apply-panel
+    border-top: 1px solid #d3d3d3;
+    padding: 2px;
+
+  .ag-filter-filter
+    background-color: #fff;
+    border: 1px solid #c6c6c6;
+    width: 192px;
+
+  .ag-filter-value
+    margin-left: 4px;
+
+  .ag-filter-value:hover
+    background-color: #3399ff;
+    border: 1px dotted #000;
+    color: #fff;
+
+  .ag-selection-checkbox
+    padding-right: 4px;
+
+  .ag-paging-panel
+    padding: 4px;
+
+  .ag-paging-button
+    margin-left: 4px;
+    margin-right: 4px;
+
+  .ag-paging-row-summary-panel
+    display: inline-block;
+    width: 300px;
+
+  .ag-tool-panel
+    background-color: #eee;
+    border-right: 1px solid #9bc2e6;
+    border-bottom: 1px solid #9bc2e6;
+    border-top: 1px solid #9bc2e6;
+
+  .ag-status-bar
+    font-size: 12px;
+    height: 20px;
+    border-bottom: 1px solid #9bc2e6;
+    border-left: 1px solid #9bc2e6;
+    border-right: 1px solid #9bc2e6;
+    background-color #ddebf7;
+    color: #222;
+
+  .ag-status-bar-aggregations
+    float: right;
+
+  .ag-status-bar-item
+    padding-left: 10px;
