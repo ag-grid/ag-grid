@@ -36,6 +36,7 @@
     "bootstrap": "3.3.6",
     "webpack-stream": "3.1.0",
     "webpack": "1.12.12",
-    "gulp-task-listing": "latest"
+    "gulp-task-listing": "latest",
+    "gulp-replace": "latest"
   }
 }

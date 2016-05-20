@@ -9,6 +9,7 @@ var foreach = require('gulp-foreach');
 var stylus = require('gulp-stylus');
 var nib = require('nib');
 var liveReload = require('gulp-livereload');
+var replace = require('gulp-replace');
 
 gulp.task('default', ['copyFromDocs','copyFromBootstrap','copyFromFontAwesome','webpack'], watchTask);
 
@@ -97,16 +98,29 @@ function tscEnterprise() {
 function stylusGrid() {
 
     // Uncompressed
+    // gulp.src('./node_modules/ag-grid/src/styles/*.styl')
+    //     .pipe(foreach(function(stream, file) {
+    //         return stream
+    //             .pipe(stylus({
+    //                 use: nib(),
+    //                 compress: false
+    //             }))
+    //             .pipe(gulp.dest('./node_modules/ag-grid/dist/styles/'));
+    //     }));
+
+    // Uncompressed
     gulp.src('./node_modules/ag-grid/src/styles/*.styl')
         .pipe(foreach(function(stream, file) {
+            var currentTheme = path.basename(file.path, '.styl');
+            var themeName = currentTheme.replace('theme-','');
             return stream
                 .pipe(stylus({
                     use: nib(),
                     compress: false
                 }))
+                .pipe(replace('ag-common','ag-' + themeName))
                 .pipe(gulp.dest('./node_modules/ag-grid/dist/styles/'));
         }));
-
 }
 
 function liveReloadTask() {
