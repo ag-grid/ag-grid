@@ -117,7 +117,7 @@ var gridOptions = {
 //    {name: 'Brian'}
 //],
     groupKeys: undefined, //set as string of keys eg ["region","country"],
-           groupUseEntireRow: true, //one of [true, false]
+           // groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
@@ -403,7 +403,7 @@ months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
-        // aggFunc: 'sum',
+        aggFunc: 'sum',
         //hide: true,
         cellClassRules: {
             'good-score': 'x > 50000',
