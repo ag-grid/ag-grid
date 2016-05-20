@@ -14,7 +14,7 @@ export class SetFilter extends Component implements Filter {
             '<div class="ag-filter-header-container">'+
                 '<label>'+
                     '<input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>'+
-                    '([SELECT ALL])'+
+                    '<span class="ag-filter-value">([SELECT ALL])</span>'+
                 '</label>'+
             '</div>'+
             '<div id="richList" class="ag-set-filter-list"></div>'+
