@@ -7,14 +7,14 @@
         <meta name="keywords" content="react angular angularjs data grid example"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- Bootstrap -->
+        <!-- Bootstrap
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-
-<!--        <link rel="stylesheet" href="./bootstrap/bootstrap.min.css">
-        <link rel="stylesheet" href="./bootstrap/bootstrap-theme.min.css">
 -->
+        <link rel="stylesheet" href="./dist/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./dist/bootstrap/css/bootstrap-theme.min.css">
+
         <link rel="stylesheet" href="./style.css">
 
         <style>
