@@ -18,8 +18,8 @@ include '../documentation-main/documentation_header.php';
             <li><b>Pagination:</b> This is standard pagination, the grid will load the data in pages and provide next & previous buttons.</li>
             <li><b>Virtual Paging:</b> This will present the data to the user in one screen with a vertical scrollbar.
                 The grid will retrieve the data from the server in blocks using a least recently used algorithm to
-                cache the blocks on in the client.</li>
-            <li><b>Viewport:</b> This will present the data to the user in on screen with a vertical scrollbar.
+                cache the blocks on the client.</li>
+            <li><b>Viewport:</b> This will present the data to the user on screen with a vertical scrollbar.
                 The grid will inform the server exactly what data it is displaying (first and last row) and the
                 server will provide data for exactly those rows only.</li>
         </ul>
