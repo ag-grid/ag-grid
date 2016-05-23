@@ -21,6 +21,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement: New theme for Bootstrap</li>
     <li>Enhancement: New theme for Material Design</li>
+    <li>Enhancement: Dark theme revised</li>
     <li>Enhancement: better default icons for row groups and checkbox selection</li>
     <li>Enhancement: row selection 'checked' icons are now icons and not browser checkbox. they are now also customisable via changing icons.</li>
     <li>Enhancement: moving drag via dragging now supports:
@@ -37,6 +38,8 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: editing now has methods isCancelBeforeStart() and isCancelAfterEnd() to help with lifecycle.</li>
     <li>Enhancement: new property suppressDragLeaveHidesColumns, so when columns dragged out of grid, they are not hidden.</li>
     <li>Enhancement: new method api.refreshInMemoryRowModel, does a complete refresh of the in memory row model. Useful if you need to get the groups worked out again.</li>
+    <li>Enhancement: default text editor - now 'right' and 'left' key presses do not loose focus on current cell</li>
+    <li>Enhancement: added ag-row-hover class for when mouse is over row</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>

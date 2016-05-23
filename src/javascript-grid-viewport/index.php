@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The term 'viewport' is a common term in GUI's used to describe the visible area when scrolls are used
-        to display content that is larger than the visible area. In ag-Grid, the viewPort is referred to as the
+        to display content that is larger than the visible area. In ag-Grid, the viewport is referred to as the
         vertical scroll position, thus it defines the rows that are currently rendered by the grid.
     </p>
 
@@ -29,14 +29,14 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Use a viewPort to display large live sets of data in the grid. The 'large' referring to you only want
+        Use a viewport to display large live sets of data in the grid. The 'large' referring to you only want
         to load a subset of the data into the grid. The 'live' referring to the data is updating at the source
         (typically a server) and the source sends updates to the grid when displayed data is changed.
     </p>
 
     <p>
         The diagram belows shows how the viewport maps to a connection to your dataset. The dataset connection
-        knows what the viewport is displaying and sends up data accordingly. When the use scrolls, the viewport
+        knows what the viewport is displaying and sends up data accordingly. When the user scrolls, the viewport
         will 'get' data from the source. If / when the data changes, the source will 'push' the data to the
         viewport if it knows the viewport is displaying that data.
     </p>
@@ -88,7 +88,7 @@ interface IViewportDatasourceParams {
 
     <p>
         Reading the interfaces will look confusing if you are looking at the for the first time as the different
-        parts done make sense individually, it's how they all work together that creates the magic. So to
+        parts don't make sense individually, it's how they all work together that creates the magic. So to
         explain, the following is a sequence of what may happen.
     </p>
 
@@ -111,7 +111,7 @@ interface IViewportDatasourceParams {
         </li>
         <li>
             The datasource will make an asynchronous call to the server asking for rows 0 to 19. Some time later
-            the result will come back the datasource will call <i>params.setRowData(map)</i> where the map will
+            the result will come back and the datasource will call <i>params.setRowData(map)</i> where the map will
             have 20 entries, the keys will be the strings (a JavaScript object only allows strings as object keys,
             not numbers) 0 to 19 and the values will be the row data.
         </li>
@@ -121,7 +121,7 @@ interface IViewportDatasourceParams {
             a data change.
         </li>
         <li>
-            For example, the user scrolls to position above repeats, the grid calls <i>datasource.setViewportRange(100,119)</i>,
+            If for example the user scrolls down 100 rows, the sequence above partially repeats, the grid calls <i>datasource.setViewportRange(100,119)</i>,
             the datasource asynchronously responds with <i>params.setRowData(map)</i>.
         </li>
     </ol>
@@ -154,12 +154,12 @@ interface IViewportDatasourceParams {
     <p>
         You may want to completely change data in the viewport, for example if you are showing 'latest 10 trades over 10k'
         which changes over time as to what the trades are, then you just call <i>setRowData()</i> again with the new data.
-        The grid doesn't care how many times your call <i>setRowData()</i> with new data. You could alternatively call
+        The grid doesn't care how many times you call <i>setRowData()</i> with new data. You could alternatively call
         <i>rowNode.setData(data)</i> on the individual row nodes, it will have the same effect.
     </p>
 
     <p>
-        If you want to change the length of data (eg you apply a filter, or the results set grows or shrinks) then you
+        If you want to change the length of data (eg you apply a filter, or the result set otherwise grows or shrinks) then you
         call <i>setRowCount()</i> again. The grid doesn't are how many times you call <i>setRowCount()</i>.
     </p>
 
