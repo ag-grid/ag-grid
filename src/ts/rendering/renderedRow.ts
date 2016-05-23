@@ -96,6 +96,7 @@ export class RenderedRow {
         this.addCellFocusedListener();
         this.addNodeDataChangedListener();
         this.addColumnListener();
+        this.addHoverFunctionality();
 
         this.attachContainers();
 
@@ -225,6 +226,38 @@ export class RenderedRow {
         this.destroyFunctions.push(()=> {
             this.rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
         });
+    }
+
+    private addHoverFunctionality(): void {
+
+        var onGuiMouseEnter = this.rowNode.onMouseEnter.bind(this.rowNode);
+        var onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
+        
+        this.eLeftCenterAndRightRows.forEach( eRow => {
+            eRow.addEventListener('mouseenter', onGuiMouseEnter);
+            eRow.addEventListener('mouseleave', onGuiMouseLeave);
+        });
+
+        var onNodeMouseEnter = this.addHoverClass.bind(this, true);
+        var onNodeMouseLeave = this.addHoverClass.bind(this, false);
+
+        this.rowNode.addEventListener(RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+        this.rowNode.addEventListener(RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
+
+        this.destroyFunctions.push( ()=> {
+            this.eLeftCenterAndRightRows.forEach( eRow => {
+                eRow.removeEventListener('mouseenter', onGuiMouseEnter);
+                eRow.removeEventListener('mouseleave', onGuiMouseLeave);
+            });
+
+            this.rowNode.removeEventListener(RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+            this.rowNode.removeEventListener(RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
+        });
+    }
+    
+    private addHoverClass(hover: boolean): void {
+        this.eLeftCenterAndRightRows.forEach( eRow => _.addOrRemoveCssClass(eRow, 'ag-row-hover', hover) );
+        console.log(`addubg ${hover}`);
     }
 
     private addCellFocusedListener(): void {
@@ -504,14 +537,14 @@ export class RenderedRow {
     }
 
     private createRowContainer(): HTMLElement {
-        var vRow = document.createElement('div');
-        vRow.addEventListener("click", this.onRowClicked.bind(this));
-        vRow.addEventListener("dblclick", (event: any) => {
+        var eRow = document.createElement('div');
+        eRow.addEventListener("click", this.onRowClicked.bind(this));
+        eRow.addEventListener("dblclick", (event: any) => {
             var agEvent = this.createEvent(event, this);
             this.mainEventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
         });
 
-        return vRow;
+        return eRow;
     }
 
     public onRowClicked(event: MouseEvent) {

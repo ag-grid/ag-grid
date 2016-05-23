@@ -16,6 +16,8 @@ export class RowNode {
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
+    public static EVENT_MOUSE_ENTER = 'mouseEnter';
+    public static EVENT_MOUSE_LEAVE = 'mouseLeave';
 
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -353,4 +355,11 @@ export class RowNode {
         this.eventService.removeEventListener(eventType, listener);
     }
 
+    public onMouseEnter(): void {
+        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_ENTER);
+    }
+
+    public onMouseLeave(): void {
+        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
+    }
 }
