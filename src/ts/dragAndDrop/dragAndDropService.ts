@@ -67,6 +67,20 @@ export class DragAndDropService {
     public static ICON_RIGHT = 'right';
     public static ICON_GROUP = 'group';
 
+    public static GHOST_TEMPLATE =
+        '<div class="ag-dnd-ghost">' +
+        '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
+        '  <div class="ag-dnd-ghost-label">' +
+        '  </div>' +
+        '</div>';
+
+    // '<div class="ag-header-cell ag-header-cell-ghost">' +
+    // '  <span id="eGhostIcon" class="ag-header-cell-ghost-icon ag-shake-left-to-right"></span>' +
+    // '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
+    // '    <span id="agText" class="ag-header-cell-text"></span>' +
+    // '  </div>' +
+    // '</div>';
+
     private logger: Logger;
 
     private dragItem: Column[];
@@ -282,30 +296,33 @@ export class DragAndDropService {
     }
 
     private createGhost(): void {
-        this.eGhost = _.loadTemplate(HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE);
-        this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('#eGhostIcon');
+        this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
         if (this.lastDropTarget) {
             this.setGhostIcon(this.lastDropTarget.iconName);
         }
 
-        var dragItem = this.dragSource.dragItem;
-
-        var eText = <HTMLElement> this.eGhost.querySelector('#agText');
+        var eText = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-label');
         eText.innerHTML = this.dragSource.dragItemName;
 
-        this.eGhost.style.width = this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
+
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         this.eBody.appendChild(this.eGhost);
     }
 
+/*
+// took this out as it wasn't making sense when dragging from the side panel, as it was possible to drag
+   columns that were not visible - which is fine, as you are selecting from all columns here. what should be
+   done is we check what columns to include in the drag depending on what started to drag - but that is to
+   much coding for now, so just hardcoding the width to 200px for now.
     private getActualWidth(columns: Column[]): number {
         var totalColWidth = 0;
 
         // we only include displayed columns so hidden columns do not add space as this would look weird,
-        // if for example moving a group with 5 cols, but only 1 displayed, we want chost to be just the width
+        // if for example moving a group with 5 cols, but only 1 displayed, we want ghost to be just the width
         // of the 1 displayed column
         var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
         var displayedColumns = _.filter(columns, column => allDisplayedColumns.indexOf(column) >= 0 );
@@ -314,6 +331,7 @@ export class DragAndDropService {
 
         return totalColWidth;
     }
+*/
 
     public setGhostIcon(iconName: string, shake = false): void {
         _.removeAllChildren(this.eGhostIcon);

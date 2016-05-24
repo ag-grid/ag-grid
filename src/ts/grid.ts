@@ -35,7 +35,7 @@ import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
 import {Utils as _} from "./utils";
-import {FilterStage} from "./rowControllers/inMemory/fillterStage";
+import {FilterStage} from "./rowControllers/inMemory/filterStage";
 import {SortStage} from "./rowControllers/inMemory/sortStage";
 import {FlattenStage} from "./rowControllers/inMemory/flattenStage";
 import {FocusService} from "./misc/focusService";
@@ -46,6 +46,7 @@ import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
+import {PivotService} from "./columnController/pivotService";
 
 export class Grid {
 
@@ -93,7 +94,7 @@ export class Grid {
             },
             beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, RowRenderer,
+                FilterManager, ColumnController, RowRenderer, PivotService,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
                 TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,

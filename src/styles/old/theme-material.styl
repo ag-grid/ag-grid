@@ -1,0 +1,473 @@
+@import 'nib'
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic,100,300)
+
+secondary-color = rgb(255, 64, 129)
+material-elevation-1 = 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)
+
+arrow-up = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'><path d='M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z'></path></svg>"
+
+default-background = #eeeeee
+default-border = 1px solid #ededed
+
+.ag-material
+  box-shadow: material-elevation-1
+  font-family: "Roboto"
+
+  // changing the image is same as what bootstrap does, without the images didn't align right
+  img
+    vertical-align: middle;
+
+  .ag-root
+
+    .ag-header
+      color: rgba(0, 0, 0, 0.54)
+      font-size: 12px
+
+      .ag-header-row
+        border-bottom: default-border
+        box-sizing: border-box
+
+      .ag-header-cell
+        cursor: pointer
+        font-weight: bold
+        border-right: default-border;
+
+      .ag-header-cell:first-child
+        padding-right: 0
+
+    .ag-sort-ascending-icon, .ag-sort-descending-icon
+      display: none !important
+
+    .ag-header-cell-text
+      padding-left: 2px;
+
+    .ag-header-cell-text:after
+      position: absolute
+      content: ''
+      background: url(arrow-up) no-repeat
+      width: 15px;
+      height: 15px;
+      margin: 0 10px;
+      display: none
+
+    .ag-header-cell-sorted-asc, .ag-header-cell-sorted-desc
+      color: rgba(0, 0, 0, .87)
+
+      .ag-header-cell-text:after
+        display: initial
+
+    .ag-header-cell-sorted-desc .ag-header-cell-text:after
+      transform: rotate(180deg)
+      transition: 0.2s linear
+
+    .ag-filter
+      background: #FAFAFA
+      box-shadow: material-elevation-1
+      margin-top: 24px;
+      padding: 6px;
+
+    .ag-body
+      color: rgba(0, 0, 0, 0.87)
+      font-size: 13px
+      padding-top: 56px !important
+
+      .ag-row
+        border-bottom: default-border
+        height: 48px !important
+        transition: 0.2s background ease-in
+
+      .ag-row:hover
+        background: default-background
+
+      .ag-row.ag-row-selected
+        background: #F5F5F5
+
+      .ag-cell
+        //padding: 16px 24px
+        font-weight: 500
+
+      .ag-cell:first-child
+        padding-right: 0
+
+.ag-selection-checkbox
+  margin: 15px 4px
+  cursor: pointer
+  height: 18px;
+  width: 18px;
+
+.ag-selection-checkbox:focus
+  outline: none
+
+.ag-selection-checkbox + .ag-cell-value
+  position: absolute;
+  left: 24px;
+  //top: 15px;
+  pointer-events: none;
+
+.ag-selection-checkbox:checked + .ag-cell-value:before
+  background: secondary-color
+  border-color: secondary-color
+
+.ag-selection-checkbox:checked + .ag-cell-value:after
+  border-bottom: 2px solid #fff
+  border-left: 2px solid #fff
+  border-bottom-left-radius: 1px
+  content: ''
+  position: absolute
+  box-sizing: border-box
+  width: 12px
+  height: 6px
+  margin: 5px 3px
+  transform: rotate(-45deg)
+  left: -20px
+
+.ag-header
+
+  .ag-selection-checkbox + .ag-cell-value
+    top: 19px
+
+.ag-column-drop-cell
+  background: linear-gradient(white, lightgrey);
+  border: default-border
+  padding: 2px;
+
+.ag-column-drop-cell-ghost
+  opacity: 0.5;
+
+.ag-column-drop-cell-text
+  padding-left: 2px;
+  padding-right: 2px;
+
+.ag-column-drop-cell-button
+  border 1px solid transparent;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 3px;
+
+.ag-column-drop-cell-button:hover
+  border: 1px solid black;
+
+.ag-column-drop-empty-message
+  padding-left: 2px;
+  padding-right: 2px;
+  border: 1px solid transparent;
+  color: grey;
+
+.ag-column-drop-icon
+  padding-right: 4px;
+
+.ag-column-drop
+  border: default-border
+  padding: 4px;
+  background-color white;
+
+.ag-cell {
+}
+
+.ag-cell-not-inline-editing
+  padding: 2px;
+
+// we do not want to color the range color when the cell is also focused
+.ag-cell-range-selected-1:not(.ag-cell-focus)
+  background-color: rgba(120, 120, 120, 0.4);
+
+.ag-cell-range-selected-2:not(.ag-cell-focus)
+  background-color: rgba(80, 80, 80, 0.4);
+
+.ag-cell-range-selected-3:not(.ag-cell-focus)
+  background-color: rgba(40, 40, 40, 0.4);
+
+.ag-cell-range-selected-4:not(.ag-cell-focus)
+  background-color: rgba(0, 0, 0, 0.4);
+
+.ag-column-moving .ag-cell
+  transition: left 0.2s;
+
+.ag-cell-focus
+  border: 1px solid darkgrey;
+
+.ag-cell-no-focus
+  border-top: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+
+.ag-cell-first-right-pinned
+  border-left: 1px solid black;
+
+.ag-cell-last-left-pinned
+  border-right: 1px solid black;
+
+// this needs to be after the other cell items, so the boarder gets preference
+.ag-cell-highlight
+  border: 1px solid darkgreen;
+
+.ag-cell-highlight-animation
+  transition: border 1s;
+
+.ag-cell-data-changed
+  background-color: lightblue;
+
+.ag-cell-data-changed-animation
+  transition: background-color 1s;
+
+// because the .ag-cell-range-selected classes use 'not' operator, they get precedence
+// over the background-color defined here. to get around this, we also use the 'not'
+// operator here which is redundency as far as this class is concerned, however it means
+// when the cell doe not have ag-cell-focus, this background color gets used and not
+// the range selection - as this is listed after the range selection in the css file.
+.ag-cell-data-changed:not(.ag-cell-focus)
+  background-color: lightblue;
+
+// likewise for animation, see previous comment
+.ag-cell-data-changed-animation:not(.ag-cell-focus)
+  transition: background-color 1s;
+
+// used by the animateShowChangedCellRenderer
+.ag-value-change-delta
+  padding-right: 2px;
+
+.ag-value-change-delta-up
+  color: darkgreen;
+
+.ag-value-change-delta-down
+  color: darkred;
+
+.ag-value-change-value
+  background-color: transparent;
+  border-radius: 1px;
+  padding-left: 1px;
+  padding-right: 1px;
+  transition: background-color 1s;
+
+.ag-value-change-value-highlight
+  background-color: #cec;
+  transition: background-color 0.1s;
+
+.ag-rich-select
+  font-size: 14px;
+  border: 1px solid #000;
+  background-color: #f6f6f6;
+
+.ag-rich-select-value
+  padding: 2px;
+
+.ag-rich-select-list
+  background-color: #fff;
+  border-top: 1px solid #aaa;
+
+.ag-rich-select-row
+  padding: 2px;
+
+.ag-rich-select-row-selected
+  background-color: #ddebf7;
+
+.ag-no-scrolls .ag-header-container
+  background: linear-gradient(white, lightgrey);
+  border-bottom: 1px solid grey;
+
+.ag-header-cell-moving .ag-header-cell-label
+  opacity: 0.5;
+
+.ag-header-cell-moving
+  background-color rgb(190, 190, 190);
+
+.ag-header-cell-moving-clone
+  border-right: 1px solid grey;
+  border-left: 1px solid grey;
+  background-color: rgba(220, 220, 220, 0.8);
+
+.ag-header-group-cell
+  font-weight: bold
+  border-right: default-border
+
+.ag-header-group-cell-with-group
+  border-bottom: default-border
+
+.ag-header-cell-label
+  padding: 4px 2px 4px 2px;
+
+.ag-header-group-cell-label
+  padding: 4px;
+
+.ag-header-group-text
+  margin-right: 2px;
+
+.ag-header-cell-menu-button
+  padding: 2px;
+  margin-top: 4px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
+  line-height: 0;
+
+/* normal line height, a space was appearing below the menu button */
+
+.ag-pinned-right-header
+  border-left: 1px solid grey;
+
+.ag-header-cell-menu-button:hover
+  border: 1px solid black;
+
+.ag-header-icon
+  color: maroon;
+
+.ag-row-selected
+  background-color: #f0f0f0
+
+.ag-floating-top
+  .ag-row
+    background-color: #f0f0f0;
+
+.ag-floating-bottom
+  .ag-row
+    background-color: #f0f0f0;
+
+.ag-overlay-loading-wrapper
+  background-color: rgba(255, 255, 255, 0.5);
+
+.ag-overlay-loading-center
+  background-color: #ffffff;
+  border: 1px solid darkgray;
+  border-radius: 10px;
+  padding: 10px;
+
+.ag-overlay-no-rows-center
+  background-color: #ffffff;
+  border: 1px solid darkgray;
+  border-radius: 10px;
+  padding: 10px;
+
+.ag-body
+  background-color: #ffffff;
+
+.ag-group-cell-entire-row
+  background-color: #aaa;
+  padding: 4px;
+
+.ag-footer-cell-entire-row
+  background-color: #aaa;
+  padding: 4px;
+
+.ag-group-cell
+  font-style: italic;
+
+.ag-group-expanded
+  padding-right 2px;
+
+.ag-group-contracted
+  padding-right 2px;
+
+.ag-group-value
+  padding-right 2px;
+
+.ag-group-checkbox
+  padding-right 2px;
+
+.ag-footer-cell
+  font-style: italic;
+
+.ag-menu
+  border: 1px solid black;
+  background-color: #f0f0f0;
+  cursor: default;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+
+  .ag-tab-header
+    background-color: #f8f8f8;
+
+  .ag-tab
+    padding: 6px 8px 6px 8px;
+    margin: 2px 2px 0 2px;
+    display: inline-block;
+    border-right: 1px solid transparent;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+
+  .ag-tab-selected
+    background-color: #f0f0f0;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+
+.ag-menu-panel-title {
+}
+
+.ag-menu-separator
+  border-top 1px solid #d3d3d3;
+
+.ag-menu-option {
+}
+
+.ag-menu-option-active
+  background-color: #BDE2E5;
+
+.ag-menu-option-icon
+  padding: 2px 4px 2px 4px;
+  vertical-align: middle;
+
+.ag-menu-option-text
+  padding: 2px 4px 2px 4px;
+  vertical-align: middle;
+
+.ag-menu-option-shortcut
+  padding: 2px 2px 2px 20px;
+  vertical-align: middle;
+
+.ag-menu-option-popup-pointer
+  padding: 2px 4px 2px 4px;
+  vertical-align: middle;
+
+.ag-menu-option-disabled
+  opacity: 0.5;
+
+.ag-menu-column-select-wrapper
+  margin: 2px;
+
+.ag-filter-checkbox
+  position: relative;
+  top: 2px;
+  left: 2px;
+
+.ag-filter-header-container
+  border-bottom: 1px solid lightgrey;
+
+.ag-filter-apply-panel
+  border-top: 1px solid lightgrey;
+  padding: 2px;
+
+.ag-filter-value
+  margin-left: 4px;
+
+.ag-paging-panel
+  padding: 4px;
+
+.ag-paging-button
+  margin-left: 4px;
+  margin-right: 4px;
+
+.ag-paging-row-summary-panel
+  display: inline-block;
+  width: 300px;
+
+.ag-tool-panel
+  background-color: white;
+  border: 1px solid default-background
+
+.ag-status-bar
+  font-size: 12px;
+  height: 20px;
+  border-bottom: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #808080;
+  padding: 2px;
+  background-color #f0f0f0;
+
+.ag-status-bar-aggregations
+  float: right;
+
+.ag-status-bar-item
+  padding-left: 10px;

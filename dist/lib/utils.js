@@ -293,6 +293,21 @@ var Utils = (function () {
             array.splice(array.indexOf(object), 1);
         }
     };
+    Utils.insertIntoArray = function (array, object, toIndex) {
+        array.splice(toIndex, 0, object);
+    };
+    Utils.moveInArray = function (array, objectsToMove, toIndex) {
+        var _this = this;
+        // first take out it items from the array
+        objectsToMove.forEach(function (obj) {
+            _this.removeFromArray(array, obj);
+        });
+        // now add the objects, in same order as provided to us, that means we start at the end
+        // as the objects will be pushed to the right as they are inserted
+        objectsToMove.slice().reverse().forEach(function (obj) {
+            _this.insertIntoArray(array, obj, toIndex);
+        });
+    };
     Utils.defaultComparator = function (valueA, valueB) {
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
@@ -375,7 +390,12 @@ var Utils = (function () {
         }
         else {
             // otherwise we use the built in icon
-            return svgFactoryFunc();
+            if (svgFactoryFunc) {
+                return svgFactoryFunc();
+            }
+            else {
+                return null;
+            }
         }
     };
     Utils.addStylesToElement = function (eElement, styles) {
@@ -479,7 +499,7 @@ var Utils = (function () {
                     keyParts.push(node.key);
                     var key = keyParts.join('|');
                     callback(node, key);
-                    recursiveSearchNodes(node.children);
+                    recursiveSearchNodes(node.childrenAfterGroup);
                     keyParts.pop();
                 }
             });

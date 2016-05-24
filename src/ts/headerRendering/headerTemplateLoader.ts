@@ -9,15 +9,6 @@ var svgFactory = SvgFactory.getInstance();
 @Bean('headerTemplateLoader')
 export class HeaderTemplateLoader {
 
-    // used when cell is dragged
-    public static HEADER_CELL_DND_TEMPLATE =
-        '<div class="ag-header-cell ag-header-cell-ghost">' +
-        '  <span id="eGhostIcon" class="ag-header-cell-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
-        '    <span id="agText" class="ag-header-cell-text"></span>' +
-        '  </div>' +
-        '</div>';
-
     private static HEADER_CELL_TEMPLATE =
         '<div class="ag-header-cell">' +
         '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +

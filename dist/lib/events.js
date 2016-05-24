@@ -11,9 +11,13 @@ var Events = (function () {
     Events.EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
     Events.EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
     /** A row group column was added, removed or order changed. */
-    Events.EVENT_COLUMN_ROW_GROUP_CHANGE = 'columnRowGroupChanged';
+    Events.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    /** A pivot column was added, removed or order changed. */
+    Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
+    /** A pivot column was added, removed or order changed. */
+    Events.EVENT_PIVOT_VALUE_CHANGED = 'pivotValueChanged';
     /** A value column was added, removed or agg function was changed. */
-    Events.EVENT_COLUMN_VALUE_CHANGE = 'columnValueChanged';
+    Events.EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
     /** A column was moved */
     Events.EVENT_COLUMN_MOVED = 'columnMoved';
     /** One or more columns was shown / hidden */

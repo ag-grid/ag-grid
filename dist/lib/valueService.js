@@ -33,11 +33,15 @@ var ValueService = (function () {
     };
     ValueService.prototype.getValueUsingSpecificData = function (column, data, node) {
         var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+        var userProvidedTheGroups = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         var colDef = column.getColDef();
         var field = colDef.field;
         var result;
         // if there is a value getter, this gets precedence over a field
-        if (colDef.valueGetter) {
+        if (node.group && !userProvidedTheGroups) {
+            result = node.data ? node.data[column.getId()] : undefined;
+        }
+        else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         }
         else if (field && data) {
@@ -75,7 +79,7 @@ var ValueService = (function () {
         }
     };
     ValueService.prototype.setValue = function (rowNode, colKey, newValue) {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         if (!rowNode || !column) {
             return;
         }
@@ -155,7 +159,7 @@ var ValueService = (function () {
         }
     };
     ValueService.prototype.getValueCallback = function (data, node, field) {
-        var otherColumn = this.columnController.getColumn(field);
+        var otherColumn = this.columnController.getOriginalColumn(field);
         if (otherColumn) {
             return this.getValueUsingSpecificData(otherColumn, data, node);
         }

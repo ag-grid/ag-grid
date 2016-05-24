@@ -173,7 +173,7 @@ var ComponentUtil = (function () {
         'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
         'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise', 'rowGroupPanelShow',
         'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
-        'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash'
+        'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns'
     ];
     ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
         'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',

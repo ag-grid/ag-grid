@@ -51,7 +51,7 @@ var FilterManager = (function () {
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
             utils_1.Utils.iterateArray(modelKeys, function (colId) {
-                var column = _this.columnController.getColumn(colId);
+                var column = _this.columnController.getOriginalColumn(colId);
                 if (!column) {
                     console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
                     return;
@@ -220,7 +220,7 @@ var FilterManager = (function () {
     FilterManager.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
         var that = this;
-        this.columnController.getAllColumns().forEach(function (column) {
+        this.columnController.getAllOriginalColumns().forEach(function (column) {
             var value = that.valueService.getValue(column, node);
             if (value && value !== '') {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
@@ -285,6 +285,7 @@ var FilterManager = (function () {
             // first up, create child scope if needed
             if (this.gridOptionsWrapper.isAngularCompileFilters()) {
                 filterWrapper.scope = this.$scope.$new();
+                filterWrapper.scope.context = this.gridOptionsWrapper.getContext();
             }
             // now create filter (had to cast to any to get 'new' working)
             this.assertMethodHasNoParameters(colDef.filter);

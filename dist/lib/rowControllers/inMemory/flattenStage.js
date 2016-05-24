@@ -19,16 +19,21 @@ var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var selectionController_1 = require("../../selectionController");
 var eventService_1 = require("../../eventService");
+var columnController_1 = require("../../columnController/columnController");
 var FlattenStage = (function () {
     function FlattenStage() {
     }
-    FlattenStage.prototype.execute = function (rowsToFlatten) {
+    FlattenStage.prototype.execute = function (rootNode) {
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var result = [];
         // putting value into a wrapper so it's passed by reference
         var nextRowTop = { value: 0 };
-        this.recursivelyAddToRowsToDisplay(rowsToFlatten, result, nextRowTop);
+        // if we are reducing, and not grouping, then we want to show the root node, as that
+        // is where the pivot values are
+        var showRootNode = this.columnController.isReduce() && rootNode.leafGroup;
+        var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
+        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop);
         return result;
     };
     FlattenStage.prototype.recursivelyAddToRowsToDisplay = function (rowsToFlatten, result, nextRowTop) {
@@ -89,6 +94,10 @@ var FlattenStage = (function () {
         context_1.Autowired('context'), 
         __metadata('design:type', context_1.Context)
     ], FlattenStage.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('columnController'), 
+        __metadata('design:type', columnController_1.ColumnController)
+    ], FlattenStage.prototype, "columnController", void 0);
     FlattenStage = __decorate([
         context_1.Bean('flattenStage'), 
         __metadata('design:paramtypes', [])

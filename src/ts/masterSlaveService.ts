@@ -122,7 +122,7 @@ export class MasterSlaveService {
             var masterColumn = event.getColumn();
             var slaveColumn: Column;
             if (masterColumn) {
-                slaveColumn = this.columnController.getColumn(masterColumn.getColId());
+                slaveColumn = this.columnController.getOriginalColumn(masterColumn.getColId());
             }
             // if event was with respect to a master column, that is not present in this
             // grid, then we ignore the event
@@ -144,6 +144,12 @@ export class MasterSlaveService {
             var masterColumns = this.getMasterColumns(event);
 
             switch (event.getType()) {
+                case Events.EVENT_COLUMN_PIVOT_CHANGED:
+                    // we cannot support pivoting with master / slave as the columns will be out of sync as the
+                    // grids will have columns created based on the row data of the grid.
+                    console.warn('ag-Grid: pivoting is not supported with Master / Slave grids. ' +
+                        'You can only use one of these features at a time in a grid.');
+                    break;
                 case Events.EVENT_COLUMN_MOVED:
                     this.logger.log('onColumnEvent-> processing '+event+' toIndex = ' + event.getToIndex());
                     this.columnController.moveColumns(columnIds, event.getToIndex());

@@ -46,6 +46,8 @@ export declare class Utils {
     static offsetWidth(element: HTMLElement): number;
     static removeCssClass(element: HTMLElement, className: string): void;
     static removeFromArray<T>(array: T[], object: T): void;
+    static insertIntoArray<T>(array: T[], object: T, toIndex: number): void;
+    static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
     static defaultComparator(valueA: any, valueB: any): number;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
@@ -53,8 +55,8 @@ export declare class Utils {
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
      */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => Node): HTMLSpanElement;
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => Node): any;
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
     static addStylesToElement(eElement: any, styles: any): void;
     static getScrollbarWidth(): number;
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;

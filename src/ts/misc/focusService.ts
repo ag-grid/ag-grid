@@ -84,7 +84,7 @@ export class FocusService {
             // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
             var colId = _.getElementAttribute(eTarget, 'colid');
             if (_.exists(colId) && _.containsClass(eTarget, 'ag-cell')) {
-                var foundColumn = that.columnController.getColumn(colId);
+                var foundColumn = that.columnController.getOriginalColumn(colId);
                 if (foundColumn) {
                     column = foundColumn;
                 }

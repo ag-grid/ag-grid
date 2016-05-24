@@ -11,7 +11,6 @@ export declare class RowRenderer {
     private columnController;
     private gridOptionsWrapper;
     private gridCore;
-    private selectionRendererFactory;
     private gridPanel;
     private $compile;
     private $scope;
@@ -76,5 +75,5 @@ export declare class RowRenderer {
     getRenderedNodes(): any[];
     navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;
     private getComponentForCell(gridCell);
-    moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean): void;
+    moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean): boolean;
 }
