@@ -14,6 +14,9 @@ include '../documentation-main/documentation_header.php';
         Virtual paging allows the grid to lazy load rows from the server depending on what the scroll position is of the grid.
     </p>
     <p>
+              To enable virtual paging, set the grid property <i>rowModelType='virtual'</i>.
+      </p>
+    <p>
         If the grid knows how many pages in total at the start, the scroll will be sized to match the entire data set
         despite the data set not loaded from the server.
     </p>
