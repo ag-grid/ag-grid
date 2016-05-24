@@ -33,6 +33,7 @@ export interface GridOptions {
     enableServerSideFilter?: boolean;
     enableStatusBar?: boolean;
     suppressMiddleClickScrolls?: boolean;
+    suppressPreventDefaultOnMouseWheel?: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;
