@@ -257,7 +257,6 @@ export class RenderedRow {
     
     private addHoverClass(hover: boolean): void {
         this.eLeftCenterAndRightRows.forEach( eRow => _.addOrRemoveCssClass(eRow, 'ag-row-hover', hover) );
-        console.log(`addubg ${hover}`);
     }
 
     private addCellFocusedListener(): void {
