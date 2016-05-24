@@ -750,8 +750,14 @@ export class GridPanel {
             targetPanel.scrollTop = newTopPosition;
         }
 
-        // if we don't prevent default, then the whole browser will scroll also as well as the grid
-        event.preventDefault();
+        // allow the option to pass mouse wheel events ot the browser
+        // https://github.com/ceolter/ag-grid/issues/800
+        // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
+        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+            // if we don't prevent default, then the whole browser will scroll also as well as the grid
+            event.preventDefault();
+        }
+
         return false;
     }
 
