@@ -220,8 +220,8 @@ MyCellRenderer.prototype.destroy = function() {
     </p>
 
     <p>
-        If you are implementing <i>refresh()</i>, rememver that <i>getGui()</i> is only called once, so be sure
-        to update the existing GUI in your refresh, do not thing that the grid is going to call <i>getGui()</i>
+        If you are implementing <i>refresh()</i>, remember that <i>getGui()</i> is only called once, so be sure
+        to update the existing GUI in your refresh, do not think that the grid is going to call <i>getGui()</i>
         again to get a new version of the GUI.
     </p>
 
