@@ -120,7 +120,12 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressMiddleClickScrolls</th>
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
-            will use middle click to scroll the grid.</td>
+                will use middle click to scroll the grid.</td>
+        </tr>
+        <tr>
+            <th>suppressPreventDefaultOnMouseWheel</th>
+            <td>If true, mouse wheel events will be passed to the browser - useful if your grid has no vertical scrolls 
+                and you want the mouse to scroll the browser page.</td>
         </tr>
         <tr>
             <th>enableCellExpressions</th>
