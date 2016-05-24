@@ -40,6 +40,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: new method api.refreshInMemoryRowModel, does a complete refresh of the in memory row model. Useful if you need to get the groups worked out again.</li>
     <li>Enhancement: default text editor - now 'right' and 'left' key presses do not loose focus on current cell</li>
     <li>Enhancement: added ag-row-hover class for when mouse is over row</li>
+    <li>Enhancement: new property 'suppressMiddleClickScrolls', so you can listen or 'middle mouse clicks' if you want (otherwise middle mouse click is taken by browser to scroll)</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>

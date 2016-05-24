@@ -115,7 +115,12 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressFieldDotNotation</th>
             <td>If true, then dots (eg address.firstline) in field names are not treated as deep references.
-            Allows you to use dots in your field name if you prefer.</td>
+                Allows you to use dots in your field name if you prefer.</td>
+        </tr>
+        <tr>
+            <th>isSuppressMiddleClickScrolls</th>
+            <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
+            will use middle click to scroll the grid.</td>
         </tr>
         <tr>
             <th>enableCellExpressions</th>
