@@ -9,10 +9,11 @@ var Constants = (function () {
     }
     Constants.STEP_EVERYTHING = 0;
     Constants.STEP_FILTER = 1;
+    Constants.STEP_PIVOT = 5;
     Constants.STEP_AGGREGATE = 4;
     Constants.STEP_SORT = 2;
     Constants.STEP_MAP = 3;
-    Constants.ROW_BUFFER_SIZE = 2;
+    Constants.ROW_BUFFER_SIZE = 5;
     Constants.KEY_TAB = 9;
     Constants.KEY_ENTER = 13;
     Constants.KEY_BACKSPACE = 8;

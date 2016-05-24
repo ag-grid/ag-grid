@@ -1,0 +1,386 @@
+@import 'nib'
+
+.ag-fresh
+    // copying bootstrap with line-height, sorts out alignment problems with images beside text
+    line-height: 1.4;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+
+    // changing the image is same as what bootstrap does, without the images didn't align right
+    img
+        vertical-align: middle;
+        border: 0px;
+
+    .ag-root
+        border: 1px solid grey;
+
+    .ag-column-drop-cell
+        background: linear-gradient(white, lightgrey);
+        border: 1px solid #808080;
+        padding: 2px;
+
+    .ag-column-drop-cell-ghost
+        opacity: 0.5;
+
+    .ag-column-drop-cell-text
+        padding-left: 2px;
+        padding-right: 2px;
+
+    .ag-column-drop-cell-button
+        border 1px solid transparent;
+        padding-left: 2px;
+        padding-right: 2px;
+        border-radius: 3px;
+
+    .ag-column-drop-cell-button:hover
+        border: 1px solid black;
+
+    .ag-column-drop-empty-message
+        padding-left: 2px;
+        padding-right: 2px;
+        border: 1px solid transparent;
+        color: grey;
+
+    .ag-column-drop-icon
+        padding-right: 4px;
+
+    .ag-column-drop
+        padding: 4px;
+        background-color #f0f0f0;
+
+    .ag-column-drop-horizontal
+        border-top: 1px solid #808080;
+        border-left: 1px solid #808080;
+        border-right: 1px solid #808080;
+
+    .ag-column-drop-vertical
+        border-top: 1px solid #808080;
+
+        .ag-column-drop-cell
+            margin-top: 2px;
+
+        .ag-column-drop-empty-message
+            padding: 20px;
+
+    .ag-cell {}
+
+    .ag-cell-not-inline-editing
+        padding: 2px;
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected-1:not(.ag-cell-focus)
+        background-color: rgba(120,120,120,0.4);
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus)
+        background-color: rgba(80,80,80,0.4);
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus)
+        background-color: rgba(40,40,40,0.4);
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus)
+        background-color: rgba(0,0,0,0.4);
+
+    .ag-column-moving .ag-cell
+        transition: left 0.2s;
+
+    .ag-cell-focus
+        border: 1px solid darkgrey;
+
+    .ag-cell-no-focus
+        border-right: 1px dotted grey;
+        border-top: 1px solid transparent;
+        border-left: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+
+    .ag-cell-first-right-pinned
+        border-left: 1px solid black;
+
+    .ag-cell-last-left-pinned
+        border-right: 1px solid black;
+
+    // this needs to be after the other cell items, so the boarder gets preference
+    .ag-cell-highlight
+        border: 1px solid darkgreen;
+
+    .ag-cell-highlight-animation
+        transition: border 1s;
+
+    .ag-cell-data-changed
+        background-color: lightblue;
+
+    .ag-cell-data-changed-animation
+        transition: background-color 1s;
+
+    // because the .ag-cell-range-selected classes use 'not' operator, they get precedence
+    // over the background-color defined here. to get around this, we also use the 'not'
+    // operator here which is redundency as far as this class is concerned, however it means
+    // when the cell doe not have ag-cell-focus, this background color gets used and not
+    // the range selection - as this is listed after the range selection in the css file.
+    .ag-cell-data-changed:not(.ag-cell-focus)
+        background-color: lightblue;
+    // likewise for animation, see previous comment
+    .ag-cell-data-changed-animation:not(.ag-cell-focus)
+        transition: background-color 1s;
+
+    // used by the animateShowChangedCellRenderer
+    .ag-value-change-delta
+        padding-right: 2px;
+    .ag-value-change-delta-up
+        color: darkgreen;
+    .ag-value-change-delta-down
+        color: darkred;
+    .ag-value-change-value
+        background-color: transparent;
+        border-radius: 1px;
+        padding-left: 1px;
+        padding-right: 1px;
+        transition: background-color 1s;
+    .ag-value-change-value-highlight
+        background-color: #cec;
+        transition: background-color 0.1s;
+
+    .ag-rich-select
+        font-size: 14px;
+        border: 1px solid #000;
+        background-color: #f6f6f6;
+
+    .ag-rich-select-value
+        padding: 2px;
+
+    .ag-rich-select-list
+        background-color: #fff;
+        border-top: 1px solid #aaa;
+
+    .ag-rich-select-row
+        padding: 2px;
+
+    .ag-rich-select-row-selected
+        background-color: #ddebf7;
+
+    .ag-header
+        background: linear-gradient(white, lightgrey);
+        border-bottom: 1px solid grey;
+
+    .ag-no-scrolls .ag-header-container
+        background: linear-gradient(white, lightgrey);
+        border-bottom: 1px solid grey;
+
+    .ag-header-cell
+        border-right: 1px solid grey;
+
+    .ag-header-cell-moving .ag-header-cell-label
+        opacity: 0.5;
+
+    .ag-header-cell-moving
+        background-color rgb(190,190,190);
+
+    .ag-header-cell-moving-clone
+        border-right: 1px solid grey;
+        border-left: 1px solid grey;
+        background-color:rgba(220, 220, 220, 0.8);
+
+    .ag-header-group-cell
+        border-right: 1px solid grey;
+
+    .ag-header-group-cell-with-group
+        border-bottom: 1px solid grey;
+
+    .ag-header-cell-label
+        padding: 4px 2px 4px 2px ;
+
+    .ag-header-cell-text
+        padding-left: 2px;
+
+    .ag-header-group-cell-label
+        padding: 4px;
+        padding-left: 10px;
+
+    .ag-header-group-text
+        margin-right: 2px;
+
+    .ag-header-cell-menu-button
+        padding: 2px;
+        margin-top: 4px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */
+        line-height: 0px; /* normal line height, a space was appearing below the menu button */
+
+    .ag-pinned-right-header
+        border-left: 1px solid grey;
+
+    .ag-header-cell-menu-button:hover
+        border: 1px solid black;
+
+    .ag-header-icon
+        color: maroon;
+
+    .ag-row-selected
+        background-color: powderblue !important;
+
+    .ag-body
+        .ag-row-odd
+            background-color: #f6f6f6;
+
+        .ag-row-even
+            background-color: white;
+
+    .ag-floating-top
+        .ag-row
+            background-color: #f0f0f0;
+
+    .ag-floating-bottom
+        .ag-row
+            background-color: #f0f0f0;
+
+    .ag-overlay-loading-wrapper
+        background-color: rgba(255, 255, 255, 0.5);
+
+    .ag-overlay-loading-center
+        background-color: #ffffff;
+        border: 1px solid darkgray;
+        border-radius: 10px;
+        padding: 10px;
+
+    .ag-overlay-no-rows-center
+        background-color: #ffffff;
+        border: 1px solid darkgray;
+        border-radius: 10px;
+        padding: 10px;
+
+    .ag-body
+        background-color: #fafafa;
+
+    .ag-group-cell-entire-row
+        background-color: #aaa;
+        padding: 4px;
+
+    .ag-footer-cell-entire-row
+        background-color: #aaa;
+        padding: 4px;
+
+    .ag-group-cell
+        font-style: italic;
+
+    .ag-group-expanded
+        padding-right 4px;
+
+    .ag-group-contracted
+        padding-right 4px;
+
+    .ag-group-value
+        padding-right 2px;
+
+    .ag-group-checkbox
+        padding-right 2px;
+
+    .ag-footer-cell
+        font-style: italic;
+
+    .ag-menu
+        border: 1px solid black;
+        background-color: #f0f0f0;
+        cursor: default;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+
+        .ag-tab-header
+            background-color: #f8f8f8;
+
+        .ag-tab
+            padding: 6px 8px 6px 8px;
+            margin: 2px 2px 0px 2px;
+            display: inline-block;
+            border-right: 1px solid transparent;
+            border-left: 1px solid transparent;
+            border-top: 1px solid transparent;
+            border-top-right-radius: 2px;
+            border-top-left-radius: 2px;
+
+        .ag-tab-selected
+            background-color: #f0f0f0;
+            border-right: 1px solid black;
+            border-left: 1px solid black;
+            border-top: 1px solid black;
+
+    .ag-menu-panel-title {}
+
+    .ag-menu-separator
+        border-top 1px solid #d3d3d3;
+
+    .ag-menu-option {}
+
+    .ag-menu-option-active
+        background-color: #BDE2E5;
+
+    .ag-menu-option-icon
+        padding: 2px 4px 2px 4px;
+        vertical-align: middle;
+
+    .ag-menu-option-text
+        padding: 2px 4px 2px 4px;
+        vertical-align: middle;
+
+    .ag-menu-option-shortcut
+        padding: 2px 2px 2px 20px;
+        vertical-align: middle;
+
+    .ag-menu-option-popup-pointer
+        padding: 2px 4px 2px 4px;
+        vertical-align: middle;
+
+    .ag-menu-option-disabled
+        opacity: 0.5;
+
+    .ag-menu-column-select-wrapper
+        margin: 2px;
+
+    .ag-filter-checkbox
+        position: relative;
+        top: 2px;
+        left: 2px;
+
+    .ag-filter-header-container
+        border-bottom: 1px solid lightgrey;
+
+    .ag-filter-apply-panel
+        border-top: 1px solid lightgrey;
+        padding: 2px;
+
+    .ag-filter-value
+        margin-left: 4px;
+
+    .ag-selection-checkbox
+        padding-right: 4px;
+
+    .ag-paging-panel
+        padding: 4px;
+
+    .ag-paging-button
+        margin-left: 4px;
+        margin-right: 4px;
+
+    .ag-paging-row-summary-panel
+        display: inline-block;
+        width: 300px;
+
+    .ag-tool-panel
+        background-color: #eee;
+        border-right: 1px solid #808080;
+        border-bottom: 1px solid #808080;
+        border-top: 1px solid #808080;
+
+    .ag-status-bar
+        font-size: 12px;
+        height: 20px;
+        border-bottom: 1px solid #808080;
+        border-left: 1px solid #808080;
+        border-right: 1px solid #808080;
+        padding: 2px;
+        background-color #f0f0f0;
+
+    .ag-status-bar-aggregations
+        float: right;
+
+    .ag-status-bar-item
+        padding-left: 10px;
+

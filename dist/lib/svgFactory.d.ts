@@ -5,17 +5,17 @@
 export declare class SvgFactory {
     static theInstance: SvgFactory;
     static getInstance(): SvgFactory;
-    createFilterSvg(): Element;
-    createFilterSvg12(): Element;
-    createMenuSvg(): Element;
+    createFilterSvg(): HTMLElement;
+    createFilterSvg12(): HTMLElement;
+    createMenuSvg(): HTMLElement;
     createColumnsSvg12(): Element;
-    createArrowUpSvg(): Element;
-    createArrowLeftSvg(): Element;
-    createArrowDownSvg(): Element;
-    createArrowRightSvg(): Element;
-    createSmallArrowRightSvg(): Element;
-    createSmallArrowDownSvg(): Element;
-    createArrowUpDownSvg(): Element;
+    createArrowUpSvg(): HTMLElement;
+    createArrowLeftSvg(): HTMLElement;
+    createArrowDownSvg(): HTMLElement;
+    createArrowRightSvg(): HTMLElement;
+    createSmallArrowRightSvg(): HTMLElement;
+    createSmallArrowDownSvg(): HTMLElement;
+    createArrowUpDownSvg(): HTMLElement;
     createFolderOpen(): HTMLImageElement;
     createFolderClosed(): HTMLImageElement;
     createColumnIcon(): HTMLImageElement;
@@ -28,6 +28,7 @@ export declare class SvgFactory {
     createRightIcon(): HTMLImageElement;
     createColumnVisibleIcon(): HTMLImageElement;
     createColumnHiddenIcon(): HTMLImageElement;
+    createColumnIndeterminateIcon(): HTMLImageElement;
     createGroupIcon(): HTMLImageElement;
     createAggregationIcon(): HTMLImageElement;
     createGroupIcon12(): HTMLImageElement;
@@ -35,4 +36,9 @@ export declare class SvgFactory {
     createCopyIcon(): HTMLImageElement;
     createPasteIcon(): HTMLImageElement;
     createMenuIcon(): HTMLImageElement;
+    createCheckboxCheckedIcon(): HTMLImageElement;
+    createCheckboxUncheckedIcon(): HTMLImageElement;
+    createCheckboxIndeterminateIcon(): HTMLImageElement;
+    createGroupExpandedIcon(): HTMLImageElement;
+    createGroupContractedIcon(): HTMLImageElement;
 }

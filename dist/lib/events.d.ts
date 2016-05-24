@@ -7,9 +7,13 @@ export declare class Events {
     static EVENT_COLUMN_EVERYTHING_CHANGED: string;
     static EVENT_NEW_COLUMNS_LOADED: string;
     /** A row group column was added, removed or order changed. */
-    static EVENT_COLUMN_ROW_GROUP_CHANGE: string;
+    static EVENT_COLUMN_ROW_GROUP_CHANGED: string;
+    /** A pivot column was added, removed or order changed. */
+    static EVENT_COLUMN_PIVOT_CHANGED: string;
+    /** A pivot column was added, removed or order changed. */
+    static EVENT_PIVOT_VALUE_CHANGED: string;
     /** A value column was added, removed or agg function was changed. */
-    static EVENT_COLUMN_VALUE_CHANGE: string;
+    static EVENT_COLUMN_VALUE_CHANGED: string;
     /** A column was moved */
     static EVENT_COLUMN_MOVED: string;
     /** One or more columns was shown / hidden */

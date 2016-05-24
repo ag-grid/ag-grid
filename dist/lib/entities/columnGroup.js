@@ -33,8 +33,7 @@ var ColumnGroup = (function () {
         this.eventService.removeEventListener(eventType, listener);
     };
     ColumnGroup.prototype.setMoving = function (moving) {
-        this.moving = moving;
-        this.eventService.dispatchEvent(column_1.Column.EVENT_MOVING_CHANGED);
+        this.getDisplayedLeafColumns().forEach(function (column) { return column.setMoving(moving); });
     };
     ColumnGroup.prototype.isMoving = function () {
         return this.moving;
@@ -135,6 +134,9 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.prototype.getColumnGroupShow = function () {
         return this.originalColumnGroup.getColumnGroupShow();
+    };
+    ColumnGroup.prototype.getOriginalColumnGroup = function () {
+        return this.originalColumnGroup;
     };
     ColumnGroup.prototype.calculateDisplayedColumns = function () {
         // clear out last time we calculated

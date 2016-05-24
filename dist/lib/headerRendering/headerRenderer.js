@@ -41,12 +41,13 @@ var HeaderRenderer = (function () {
         // small compared to the body, so the cpu cost is low in comparison. it does mean we don't get any
         // animations.
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.refreshHeader.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_PIVOT_VALUE_CHANGED, this.refreshHeader.bind(this));
         // for resized, the individual cells take care of this, so don't need to refresh everything
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
         if (this.columnController.isReady()) {

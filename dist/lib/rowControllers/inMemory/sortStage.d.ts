@@ -7,8 +7,8 @@ export declare class SortStage {
     private gridOptionsWrapper;
     private sortController;
     private valueService;
-    execute(rowsToSort: RowNode[]): RowNode[];
-    private sortList(nodes, sortOptions);
-    private recursivelyResetSort(rowNodes);
-    private updateChildIndexes(nodes);
+    execute(rowNode: RowNode): any;
+    private sortRowNode(rowNode, sortOptions);
+    private compareRowNodes(sortOptions, nodeA, nodeB);
+    private updateChildIndexes(rowNode);
 }

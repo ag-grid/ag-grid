@@ -14,6 +14,7 @@ import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
+import {ColumnController} from "../../columnController/columnController";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -34,6 +35,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('context') private context: Context;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
@@ -79,9 +81,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                 paddingFactor = 10;
             }
             var paddingPx = node.level * paddingFactor;
+            var reducedLeafNode = this.columnController.isReduce() && this.rowNode.leafGroup;
             if (node.footer) {
                 paddingPx += 15;
-            } else if (!node.group) {
+            } else if (!node.group || reducedLeafNode) {
                 paddingPx += 10;
             }
             this.getGui().style.paddingLeft = paddingPx + 'px';
@@ -238,7 +241,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private showExpandAndContractIcons(): void {
-        var expandable = this.rowNode.group && !this.rowNode.footer;
+
+        var reducedLeafNode = this.columnController.isReduce() && this.rowNode.leafGroup;
+
+        var expandable = this.rowNode.group && !this.rowNode.footer && !reducedLeafNode;
         if (expandable) {
             // if expandable, show one based on expand state
             _.setVisible(this.eExpanded, this.rowNode.expanded);

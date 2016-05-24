@@ -16,6 +16,7 @@ import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional} from ".
 import {IRowModel} from "./interfaces/iRowModel";
 import {FocusedCellController} from "./focusedCellController";
 import {Component} from "./widgets/component";
+import {ICompFactory} from "./interfaces/iCompFactory";
 
 @Bean('gridCore')
 export class GridCore {
@@ -37,9 +38,11 @@ export class GridCore {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
 
-    @Optional('rowGroupPanel') private rowGroupPanel: Component;
+    @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('toolPanel') private toolPanel: Component;
     @Optional('statusBar') private statusBar: Component;
+
+    private rowGroupComp: Component;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -67,8 +70,9 @@ export class GridCore {
         }
 
         var rowGroupGui: HTMLElement;
-        if (this.rowGroupPanel) {
-            rowGroupGui = this.rowGroupPanel.getGui();
+        if (this.rowGroupCompFactory) {
+            this.rowGroupComp = this.rowGroupCompFactory.create();
+            rowGroupGui = this.rowGroupComp.getGui();
         }
 
         this.eRootPanel = new BorderLayout({
@@ -99,7 +103,7 @@ export class GridCore {
         this.finished = false;
         this.periodicallyDoLayout();
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onRowGroupChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
@@ -137,7 +141,7 @@ export class GridCore {
     }
 
     private onRowGroupChanged(): void {
-        if (!this.rowGroupPanel) { return; }
+        if (!this.rowGroupComp) { return; }
 
         var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
 

@@ -21,7 +21,6 @@ var gridApi_1 = require("./gridApi");
 var headerTemplateLoader_1 = require("./headerRendering/headerTemplateLoader");
 var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTreeBuilder");
 var displayedGroupCreator_1 = require("./columnController/displayedGroupCreator");
-var selectionRendererFactory_1 = require("./selectionRendererFactory");
 var expressionService_1 = require("./expressionService");
 var templateService_1 = require("./templateService");
 var popupService_1 = require("./widgets/popupService");
@@ -40,7 +39,7 @@ var focusedCellController_1 = require("./focusedCellController");
 var mouseEventService_1 = require("./gridPanel/mouseEventService");
 var cellNavigationService_1 = require("./cellNavigationService");
 var utils_1 = require("./utils");
-var fillterStage_1 = require("./rowControllers/inMemory/fillterStage");
+var filterStage_1 = require("./rowControllers/inMemory/filterStage");
 var sortStage_1 = require("./rowControllers/inMemory/sortStage");
 var flattenStage_1 = require("./rowControllers/inMemory/flattenStage");
 var focusService_1 = require("./misc/focusService");
@@ -51,6 +50,7 @@ var inMemoryRowModel_1 = require("./rowControllers/inMemory/inMemoryRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
+var pivotService_1 = require("./columnController/pivotService");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, globalEventListener, $scope, $compile, quickFilterOnScope) {
         if (globalEventListener === void 0) { globalEventListener = null; }
@@ -78,13 +78,13 @@ var Grid = (function () {
             },
             beans: [rowModelClass, cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, floatingRowModel_1.FloatingRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
-                filterManager_1.FilterManager, selectionRendererFactory_1.SelectionRendererFactory, columnController_1.ColumnController, rowRenderer_1.RowRenderer,
+                filterManager_1.FilterManager, columnController_1.ColumnController, rowRenderer_1.RowRenderer, pivotService_1.PivotService,
                 headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService, balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator,
                 templateService_1.TemplateService, gridPanel_1.GridPanel, popupService_1.PopupService, valueService_1.ValueService, masterSlaveService_1.MasterSlaveService,
                 logger_1.LoggerFactory, oldToolPanelDragAndDropService_1.OldToolPanelDragAndDropService, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, gridApi_1.GridApi,
                 paginationController_1.PaginationController, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
-                cellNavigationService_1.CellNavigationService, fillterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService,
+                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService],
             debug: !!gridOptions.debug
         });

@@ -8,6 +8,7 @@ export declare class MoveColumnController {
     private columnController;
     private gridPanel;
     private dragAndDropService;
+    private gridOptionsWrapper;
     private needToMoveLeft;
     private needToMoveRight;
     private movingIntervalId;
@@ -23,13 +24,12 @@ export declare class MoveColumnController {
     onDragLeave(draggingEvent: DraggingEvent): void;
     onDragStop(): void;
     private adjustXForScroll(draggingEvent);
-    private workOutNewIndex(displayedColumns, allColumns, draggingEvent, xAdjustedForScroll);
+    private workOutNewIndex(displayedColumns, allColumns, dragColumn, direction, xAdjustedForScroll);
     private checkCenterForScrolling(xAdjustedForScroll);
-    onDragging(draggingEvent: DraggingEvent): void;
-    private checkColIndexAndMove(draggingEvent, xAdjustedForScroll);
-    private getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumnOrGroup, x);
+    onDragging(draggingEvent: DraggingEvent, fromEnter?: boolean): void;
+    private attemptMoveColumns(allMovingColumns, dragDirection, xAdjustedForScroll, fromEnter);
+    private getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumn, x);
     private getNewIndexForColMovingRight(displayedColumns, allColumns, dragColumnOrGroup, x);
-    private getColumnsAndOrphans(columnOrGroup);
     private ensureIntervalStarted();
     private ensureIntervalCleared();
     private moveInterval();

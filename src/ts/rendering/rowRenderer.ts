@@ -83,7 +83,7 @@ export class RowRenderer {
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnEvent.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.refreshView.bind(this));
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.refreshView.bind(this, null));
