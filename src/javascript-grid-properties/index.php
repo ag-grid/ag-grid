@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
                 Allows you to use dots in your field name if you prefer.</td>
         </tr>
         <tr>
-            <th>isSuppressMiddleClickScrolls</th>
+            <th>suppressMiddleClickScrolls</th>
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
             will use middle click to scroll the grid.</td>
         </tr>
