@@ -8,6 +8,11 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+<!--    <h3>Pivots</h3>
+    + New event columnPivotChanged (note - need to put callbacks and component changes in for pivot event)
+    + New colDef property pivotIndex
+    + New column API methods: setPivotColumns, removePivotColumn, removePivotColumns, addPivotColumn, addPivotColumns
+-->
     <h3>Version xxx</h3>
     <li>Bug fix: when dragging columns out of rowGroupPanel, GUI wasn't redrawing correctly and crashing, causing inconsistent state and console error messages</li>
     <li>Bug fix: disabled menu items were still allowed to be clicked</li>
@@ -16,6 +21,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement: New theme for Bootstrap</li>
     <li>Enhancement: New theme for Material Design</li>
+    <li>Enhancement: Dark theme revised</li>
     <li>Enhancement: better default icons for row groups and checkbox selection</li>
     <li>Enhancement: row selection 'checked' icons are now icons and not browser checkbox. they are now also customisable via changing icons.</li>
     <li>Enhancement: moving drag via dragging now supports:
@@ -31,6 +37,9 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: a range of rows can be selected together by holding down shift (does not work with virtual pagination or viewport, only normal 'in memory row model').</li>
     <li>Enhancement: editing now has methods isCancelBeforeStart() and isCancelAfterEnd() to help with lifecycle.</li>
     <li>Enhancement: new property suppressDragLeaveHidesColumns, so when columns dragged out of grid, they are not hidden.</li>
+    <li>Enhancement: new method api.refreshInMemoryRowModel, does a complete refresh of the in memory row model. Useful if you need to get the groups worked out again.</li>
+    <li>Enhancement: default text editor - now 'right' and 'left' key presses do not loose focus on current cell</li>
+    <li>Enhancement: added ag-row-hover class for when mouse is over row</li>
 
     <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>

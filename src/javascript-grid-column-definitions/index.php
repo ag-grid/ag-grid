@@ -211,6 +211,11 @@ include '../documentation-main/documentation_header.php';
                 to the group box).</td>
         </tr>
         <tr>
+            <th>suppressPivot</th>
+            <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to pivot by this column (via column menu or by dragging
+                to the pivot box).</td>
+        </tr>
+        <tr>
             <th>suppressAggregation</th>
             <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to aggregate by this column (via column menu).</td>
         </tr>

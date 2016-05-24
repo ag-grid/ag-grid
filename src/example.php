@@ -7,27 +7,27 @@
         <meta name="keywords" content="react angular angularjs data grid example"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- Bootstrap -->
+        <!-- Bootstrap
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-
-<!--        <link rel="stylesheet" href="./bootstrap/bootstrap.min.css">
-        <link rel="stylesheet" href="./bootstrap/bootstrap-theme.min.css">
 -->
+        <link rel="stylesheet" href="./dist/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./dist/bootstrap/css/bootstrap-theme.min.css">
+
         <link rel="stylesheet" href="./style.css">
 
         <style>
             label { font-weight: normal !important; }
             .blue { background-color: darkblue; color: lightblue; }
 
-            .ag-fresh .good-score { background-color: #beb; }
-            .ag-blue .good-score { background-color: #beb; }
-            .ag-dark .good-score { background-color: #0a0; }
+            .ag-fresh .good-score { background-color: rgba(0,200,0,0.4) }
+            .ag-blue .good-score { background-color: rgba(0,200,0,0.4) }
+            .ag-dark .good-score { background-color: rgba(0,100,0,0.4) }
 
-            .ag-fresh .bad-score { background-color: #faa; }
-            .ag-blue .bad-score { background-color: #faa; }
-            .ag-dark .bad-score { background-color: #a00; }
+            .ag-fresh .bad-score { background-color: rgba(200,0,0,0.4) }
+            .ag-blue .bad-score { background-color: rgba(200,0,0,0.4) }
+            .ag-dark .bad-score { background-color: rgba(100,0,0,0.4) }
 
         </style>
 
@@ -90,8 +90,8 @@
                                 <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;" class="hide-when-small">
                                     <option value="">-none-</option>
                                     <option value="ag-fresh" selected>Fresh</option>
-                                    <option value="ag-blue">Blue</option>
                                     <option value="ag-dark">Dark</option>
+                                    <option value="ag-blue">Blue</option>
                                     <option value="ag-material">Material</option>
                                     <option value="ag-bootstrap">Bootstrap</option>
                                 </select>

@@ -3,10 +3,10 @@ var columnDefs = [
         comparator: agGrid.defaultGroupComparator,
         cellRenderer: 'group'
     },
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100},
+    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
+    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
+    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
+    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
     {headerName: "Age", field: "age", width: 90},
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
     {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1},
@@ -20,7 +20,7 @@ var gridOptions = {
     enableSorting: true,
     groupSuppressAutoColumn: true,
     groupUseEntireRow: false,
-    groupAggFunction: groupAggFunction,
+    // groupAggFunction: groupAggFunction,
     groupIncludeFooter: true
 };
 
