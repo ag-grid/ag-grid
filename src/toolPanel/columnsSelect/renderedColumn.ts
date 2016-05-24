@@ -1,5 +1,5 @@
 import {
-    Utils as _,
+    Utils,
     SvgFactory,
     Autowired,
     Component,
@@ -94,8 +94,8 @@ export class RenderedColumn extends Component {
 
     private setIconVisibility(): void {
         var visible = this.column.isVisible();
-        _.setVisible(this.eColumnVisibleIcon, visible);
-        _.setVisible(this.eColumnHiddenIcon, !visible);
+        Utils.setVisible(this.eColumnVisibleIcon, visible);
+        Utils.setVisible(this.eColumnHiddenIcon, !visible);
     }
 
     public onColumnVisibilityChanged(): void {

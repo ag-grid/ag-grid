@@ -1,8 +1,6 @@
-import {Grid} from 'ag-grid/main';
-import {ToolPanel} from "./toolPanel";
+import {Grid} from "ag-grid/main";
 import {EnterpriseMenuFactory} from "./enterpriseMenu";
-import {RowGroupPanel} from "./rowGroupPanel";
-import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
+import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
 import {RangeController} from "./rangeController";
 import {ClipboardService} from "./clipboardService";
 import {GroupStage} from "./rowStages/groupStage";
@@ -11,12 +9,14 @@ import {EnterpriseBoot} from "./enterpriseBoot";
 import {StatusBar} from "./statusBar/statusBar";
 import {ContextMenuFactory} from "./contextMenu";
 import {ViewportRowModel} from "./viewport/viewportRowModel";
-import {LicenseManager} from "./licenseManager";
-import {MD5} from "./license/md5";
+import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
+import {ToolPanelComp} from "./toolPanel/toolPanelComp";
+import {RowGroupCompFactory} from "./rowGroupCompFactory";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
-Grid.setEnterpriseBeans([ToolPanel, EnterpriseMenuFactory, RowGroupPanel,
+Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory,
+    PivotColumnsPanel,
     ColumnSelectPanel, RangeController, ClipboardService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
-    StatusBar, LicenseManager, MD5], rowModelTypes);
+    StatusBar], rowModelTypes);

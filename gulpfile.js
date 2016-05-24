@@ -1,4 +1,4 @@
-var gulp = require('gulp-param')(require('gulp'), process.argv);
+var gulp = require('gulp');
 var gulpTypescript = require('gulp-typescript');
 var typescript = require('typescript');
 var header = require('gulp-header');
@@ -8,23 +8,30 @@ var clean = require('gulp-clean');
 var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
 var path = require('path');
-var replace = require('gulp-replace');
 
 var headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
+
 var bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 gulp.task('default', ['watch']);
 gulp.task('release', ['webpack-all']);
+
 gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
+
 gulp.task('webpack-minify-noStyle', ['tsc'], webpackTask.bind(null, true, false));
 gulp.task('webpack-noStyle', ['tsc'], webpackTask.bind(null, false, false));
 gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
 gulp.task('webpack-dev', ['tsc-dev'], webpackTask.bind(null, false, true));
+
 gulp.task('tsc', ['cleanDist'], tscTask);
+
 gulp.task('tsc-dev', ['copy-from-ag-grid'], tscTask);
+
 gulp.task('cleanDist', cleanDist);
+
 gulp.task('watch', ['webpack-dev'], watchTask);
+
 gulp.task('copy-from-ag-grid', copyFromAgGrid);
 
 function cleanDist() {
@@ -33,10 +40,9 @@ function cleanDist() {
         .pipe(clean());
 }
 
-function tscTask(release_info) {
+function tscTask() {
     var tsResult = gulp
         .src('src/**/*.ts')
-        .pipe(replace('@RELEASE_INFO@', release_info))
         .pipe(gulpTypescript({
             typescript: typescript,
             module: 'commonjs',

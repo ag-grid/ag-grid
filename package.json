@@ -32,9 +32,7 @@
     "webpack-stream": "3.1.0",
     "webpack": "1.12.12",
     "style-loader": "0.13.0",
-    "css-loader": "0.23.1",
-    "gulp-param": "1.0.3",
-    "gulp-replace": "0.5.4"
+    "css-loader": "0.23.1"
   },
   "peerDependencies": {
     "ag-grid": "4.1.x"

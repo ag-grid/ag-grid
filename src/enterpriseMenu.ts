@@ -19,7 +19,7 @@ import {
     MenuItemComponent,
     MenuItem
 } from "ag-grid/main";
-import {ColumnSelectPanel} from "./columnSelect/columnSelectPanel";
+import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
 
 var svgFactory = SvgFactory.getInstance();
 

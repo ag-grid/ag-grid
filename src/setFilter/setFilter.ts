@@ -1,4 +1,4 @@
-import {Utils as _, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
+import {Utils, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {Filter} from "ag-grid/main";
 import {SetFilterListItem} from "./setFilterListItem";
@@ -14,7 +14,7 @@ export class SetFilter extends Component implements Filter {
             '<div class="ag-filter-header-container">'+
                 '<label>'+
                     '<input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>'+
-                    '([SELECT ALL])'+
+                    '<span class="ag-filter-value">([SELECT ALL])</span>'+
                 '</label>'+
             '</div>'+
             '<div id="richList" class="ag-set-filter-list"></div>'+
@@ -119,7 +119,7 @@ export class SetFilter extends Component implements Filter {
         }
 
         var value = this.valueGetter(node);
-        value = _.makeNull(value);
+        value = Utils.makeNull(value);
 
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
@@ -187,7 +187,7 @@ export class SetFilter extends Component implements Filter {
                 this.filterChangedCallback();
             });
         } else {
-            _.removeElement(this.getGui(), '#applyPanel');
+            Utils.removeElement(this.getGui(), '#applyPanel');
         }
     }
 
