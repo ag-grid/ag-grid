@@ -269,10 +269,20 @@ export class GridPanel {
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+
         if (_.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
             this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
         }
+
+        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
+        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
+        // button in the browser). so this property allows the user to receive middle button clicks if
+        // they want.
+        if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
+            mouseEvent.preventDefault();
+        }
+
     }
 
     private addShortcutKeyListeners(): void {

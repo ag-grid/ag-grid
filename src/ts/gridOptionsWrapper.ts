@@ -127,6 +127,7 @@ export class GridOptionsWrapper {
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
+    public isSuppressMiddleClickScrolls() { return isTrue(this.gridOptions.suppressMiddleClickScrolls); }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
     public isSuppressContextMenu() { return isTrue(this.gridOptions.suppressContextMenu); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
