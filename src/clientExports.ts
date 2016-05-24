@@ -20,6 +20,8 @@ import {VirtualList} from "./rendering/virtualList";
 import {AbstractColumnDropPanel} from "./toolPanel/columnDrop/abstractColumnDropPanel";
 import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
 import {ToolPanelComp} from "./toolPanel/toolPanelComp";
+import {LicenseManager} from "./licenseManager";
+
 
 export function populateClientExports(exports: any): void {
 
@@ -53,4 +55,5 @@ export function populateClientExports(exports: any): void {
     exports.EnterpriseMenu = EnterpriseMenu;
     exports.RangeController = RangeController;
 
+    exports.LicenseManager = LicenseManager;
 }

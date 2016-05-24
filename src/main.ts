@@ -12,6 +12,8 @@ import {ViewportRowModel} from "./viewport/viewportRowModel";
 import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
 import {ToolPanelComp} from "./toolPanel/toolPanelComp";
 import {RowGroupCompFactory} from "./rowGroupCompFactory";
+import {LicenseManager} from "./licenseManager";
+import {MD5} from "./license/md5";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
@@ -19,4 +21,4 @@ Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFacto
     PivotColumnsPanel,
     ColumnSelectPanel, RangeController, ClipboardService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
-    StatusBar], rowModelTypes);
+    StatusBar, LicenseManager, MD5], rowModelTypes);
