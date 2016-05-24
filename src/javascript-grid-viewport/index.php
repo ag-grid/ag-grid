@@ -17,6 +17,10 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
+           To enable the ViewPort, set the grid property <i>rowModelType='viewport'</i>.
+   </p>
+
+    <p>
         The term 'viewport' is a common term in GUI's used to describe the visible area when scrolls are used
         to display content that is larger than the visible area. In ag-Grid, the viewport is referred to as the
         vertical scroll position, thus it defines the rows that are currently rendered by the grid.

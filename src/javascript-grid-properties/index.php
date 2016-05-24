@@ -261,6 +261,10 @@ include '../documentation-main/documentation_header.php';
                 will try to mirror the columns of the master.</td>
         </tr>
         <tr>
+            <th>rowModelType</th>
+            <td>Sets the row model type - enabled Virtual Scrolling, Pagination and ViewPort functionality. Defaults to 'normal'. Valid options are [pagination,virtual,viewport,normal]</td>
+        </tr>
+        <tr>
             <th>overlayLoadingTemplate</th>
             <td>Provide a template for 'loading' overlay if not happy with the provided.</td>
         </tr>
