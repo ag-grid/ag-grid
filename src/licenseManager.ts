@@ -10,10 +10,6 @@ export class LicenseManager {
     @Autowired('md5') private md5:MD5;
 
     public validateLicense():void {
-        if(window.location.hostname.slice(-"ag-grid.com".length) == "ag-grid.com" || LicenseManager.RELEASE_INFORMATION === '@RELEASE_INFO@') {
-            return;
-        }
-
         var gridReleaseDate = LicenseManager.getGridReleaseDate();
         var valid:boolean = false;
         var current:boolean = false;
@@ -37,14 +33,25 @@ export class LicenseManager {
         }
 
         if (!valid) {
-            alert("Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license.")
+            LicenseManager.outputMessage("********************************************* Invalid License **************************************************",
+                "* Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license. *");
         } else if(!current) {
-            alert("Your license for ag-Grid Enterprise expired on " + this.formatDate(expiry) + " but the version installed was released on " + this.formatDate(gridReleaseDate) + ". Please " +
-                "contact ag-Grid Support to renew your license");
+            LicenseManager.outputMessage("********************* License not compatible with installed version of ag-Grid Enterprise. *********************",
+                "Your license for ag-Grid Enterprise expired on " + LicenseManager.formatDate(expiry) + " but the version installed was released on " + LicenseManager.formatDate(gridReleaseDate) + ". Please " +
+                            "contact ag-Grid Support to renew your license");
         }
     }
 
-    private formatDate(date:any):string {
+    private static outputMessage(header:string, message:string) {
+        console.error("****************************************************************************************************************");
+        console.error("*************************************** ag-Grid Enterprise License *********************************************");
+        console.error(header);
+        console.error(message);
+        console.error("****************************************************************************************************************");
+        console.error("****************************************************************************************************************");
+    }
+
+    private static formatDate(date:any):string {
         var monthNames:[string] = [
             "January", "February", "March",
             "April", "May", "June", "July",
