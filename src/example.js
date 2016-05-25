@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     gridDiv = document.querySelector('#myGrid');
 
-    //agGrid.LicenseManager.setLicenseKey("Credit_Suisse_RDA_Clients_Only_Expires_25_JAN_2015_MTQyMjE0NDAwMDAwMA==410ee6adbb682189526b5f38cf3a80f9");
-    agGrid.LicenseManager.setLicenseKey("Credit_Suisse_RDA_Clients_Only_Expires_01_JAN_2018_MTUxNDc2NDgwMDAwMA==4af4d193a87f2b507e535d6df423df9a");
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 });

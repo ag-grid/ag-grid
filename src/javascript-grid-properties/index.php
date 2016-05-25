@@ -115,7 +115,12 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressFieldDotNotation</th>
             <td>If true, then dots (eg address.firstline) in field names are not treated as deep references.
-            Allows you to use dots in your field name if you prefer.</td>
+                Allows you to use dots in your field name if you prefer.</td>
+        </tr>
+        <tr>
+            <th>suppressMiddleClickScrolls</th>
+            <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
+            will use middle click to scroll the grid.</td>
         </tr>
         <tr>
             <th>enableCellExpressions</th>
@@ -254,6 +259,10 @@ include '../documentation-main/documentation_header.php';
             <th>slaveGrids</th>
             <td>A list of grids to treat as slaves. If a grid is a slave, it's columns and horizontal scrolling
                 will try to mirror the columns of the master.</td>
+        </tr>
+        <tr>
+            <th>rowModelType</th>
+            <td>Sets the row model type - enabled Virtual Scrolling, Pagination and ViewPort functionality. Defaults to 'normal'. Valid options are [pagination,virtual,viewport,normal]</td>
         </tr>
         <tr>
             <th>overlayLoadingTemplate</th>
