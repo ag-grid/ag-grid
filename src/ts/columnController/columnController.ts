@@ -722,12 +722,12 @@ export class ColumnController {
     }
 
     public getColumnState(): [any] {
-        if (!this.originalColumns || this.originalColumns.length < 0) {
+        if (!this.gridColumns || this.gridColumns.length < 0) {
             return <any>[];
         }
         var result = <any>[];
-        for (var i = 0; i < this.originalColumns.length; i++) {
-            var column = this.originalColumns[i];
+        for (var i = 0; i < this.gridColumns.length; i++) {
+            var column = this.gridColumns[i];
             var rowGroupIndex = this.rowGroupColumns.indexOf(column);
             var resultItem = {
                 colId: column.getColId(),
