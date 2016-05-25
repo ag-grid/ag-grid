@@ -16,8 +16,8 @@ function createImageSpan(imageMultiplier, image) {
  */
 function frostierYear(extraDaysFrost) {
     var model = gridOptions.api.getModel();
-    for (var i = 0; i < model.allRows.length; i++) {
-        var rowNode = model.allRows[i];
+    for (var i = 0; i < model.rowsToDisplay.length; i++) {
+        var rowNode = model.rowsToDisplay[i];
         rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
     }
 }
