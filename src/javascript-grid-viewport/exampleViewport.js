@@ -35,10 +35,10 @@ var gridOptions = {
 };
 
 function numberFormatter(params) {
-    if (params.value!=null && params.value!==undefined) {
+    if (typeof params.value === 'number') {
         return params.value.toFixed(2);
     } else {
-        return null;
+        return params.value;
     }
 }
 

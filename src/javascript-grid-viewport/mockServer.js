@@ -2,29 +2,7 @@ function MockServer() {
     this.connections = {};
     this.nextConnectionId = 0;
     setInterval( this.periodicallyUpdateData.bind(this), 100 );
-    // setInterval( this.periodicallyTest.bind(this), 1000 );
 }
-
-MockServer.prototype.periodicallyTest = function() {
-    var changes = [];
-
-    // pick a data item at random
-    var index = 0;
-    var dataItem = this.allData[index];
-
-    // change by a value between -5 and 5
-    var move = (Math.floor(10 * Math.random())) - 5;
-    var newValue = dataItem.volume + move;
-    dataItem.volume = newValue;
-
-    changes.push({
-        rowIndex: index,
-        columnId: 'volume',
-        newValue: dataItem.volume
-    });
-
-    this.informConnectionsOfChanges(changes);
-};
 
 MockServer.prototype.periodicallyUpdateData = function() {
 
