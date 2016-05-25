@@ -1,8 +1,8 @@
 <?php
 $key = "Keyboard Navigation";
-$pageTitle = "AngularJS Angular Grid Keyboard Navigation";
-$pageDescription = "AngularJS Angular Grid Keyboard Navigation";
-$pageKeyboards = "AngularJS Angular Grid Keyboard Navigation";
+$pageTitle = "ag-Grid Keyboard Navigation";
+$pageDescription = "ag-Grid Keyboard Navigation";
+$pageKeyboards = "ag-Grid Keyboard Navigation";
 include '../documentation-main/documentation_header.php';
 ?>
 

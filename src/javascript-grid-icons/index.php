@@ -1,8 +1,8 @@
 <?php
 $key = "Icons";
-$pageTitle = "AngularJS Angular Grid Icons";
-$pageDescription = "Angular Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.";
-$pageKeyboards = "AngularJS Angular Grid Pinning";
+$pageTitle = "ag-Grid Icons";
+$pageDescription = "ag-Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.";
+$pageKeyboards = "ag-Grid Pinning";
 include '../documentation-main/documentation_header.php';
 ?>
 

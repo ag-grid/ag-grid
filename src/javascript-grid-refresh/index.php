@@ -1,8 +1,8 @@
 <?php
 $key = "Refresh";
-$pageTitle = "AngularJS Angular Grid Refresh";
-$pageDescription = "It is possible to refresh Angular Grid in many ways. This page explains how to refresh cells inside the grid.";
-$pageKeyboards = "AngularJS Angular Grid Refresh";
+$pageTitle = "ag-Grid Refresh";
+$pageDescription = "It is possible to refresh ag-Grid in many ways. This page explains how to refresh cells inside the grid.";
+$pageKeyboards = "ag-Grid Refresh";
 include '../documentation-main/documentation_header.php';
 ?>
 

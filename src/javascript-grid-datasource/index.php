@@ -1,8 +1,8 @@
 <?php
 $key = "Datasource";
-$pageTitle = "Angular Grid Datasource";
-$pageDescription = "To do pagination or virtual paging, you need to set up a datasource. This page explains how to create an Angular Grid datasource.";
-$pageKeyboards = "Angular Grid Datasource";
+$pageTitle = "ag-Grid Datasource";
+$pageDescription = "To do pagination or virtual paging, you need to set up a datasource. This page explains how to create an ag-Grid datasource.";
+$pageKeyboards = "ag-Grid Datasource";
 include '../documentation-main/documentation_header.php';
 ?>
 

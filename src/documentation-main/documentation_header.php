@@ -402,6 +402,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-filtering/index.php">Set Filtering</a>
                 <?php } ?>
 
+                <?php if ($key == "License Key") { ?>
+                    <span class="sidebarLinkSelected">Setting The License Key</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-license/index.php">Set License Key</a>
+                <?php } ?>
+
                 <h4>
                     Examples
                 </h4>

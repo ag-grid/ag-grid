@@ -1,8 +1,8 @@
 <?php
 $key = "Resizing";
-$pageTitle = "AngularJS Angular Grid Resizing";
-$pageDescription = "AngularJS Angular Grid Resizing";
-$pageKeyboards = "AngularJS Angular Grid Resizing";
+$pageTitle = "ag-Grid Resizing";
+$pageDescription = "ag-Grid Resizing";
+$pageKeyboards = "ag-Grid Resizing";
 include '../documentation-main/documentation_header.php';
 ?>
 

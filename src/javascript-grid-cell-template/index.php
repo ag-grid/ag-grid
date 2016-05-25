@@ -1,8 +1,8 @@
 <?php
 $key = "Cell Templates";
-$pageTitle = "AngularJS Angular Grid Cell Templates";
-$pageDescription = "Angular Grid allows you to specify cell templates. Cell templates allow custom rendering of the cell given a provided template. This pages describes how to use them.";
-$pageKeyboards = "AngularJS Angular Grid Cell Templates";
+$pageTitle = "ag-Grid Cell Templates";
+$pageDescription = "ag-Grid allows you to specify cell templates. Cell templates allow custom rendering of the cell given a provided template. This pages describes how to use them.";
+$pageKeyboards = "ag-Grid Cell Templates";
 include '../documentation-main/documentation_header.php';
 ?>
 

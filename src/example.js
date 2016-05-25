@@ -574,9 +574,16 @@ function rowSelected(event) {
 
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
-    gridOptions.rowHeight = newTheme === 'ag-material' ? 48 : 25;
+    if(newTheme === 'ag-material') {
+        gridOptions.rowHeight = 48;
+        gridOptions.icons.checkboxChecked = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUZDBg4nGL/5AAAABtJREFUKM9j/D9pyX8GMgATA5lgVOOoxqGiEQAjZQNQjQTZtwAAAABJRU5ErkJggg=="/>';
+        gridOptions.icons.checkboxIndeterminate = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUZDiglI6ZxoAAAAEFJREFUKM9j/D9pyX8GMgATAwMDwxFDeaI1wNQyUmTj0NDIgi7AmBeDVeH/SUvwa0RXMAwChzKNpCS5o0YKlCU5AFJ0E0LWWWWpAAAAAElFTkSuQmCC"/>';
+    } else {
+        gridOptions.rowHeight = 25;
+        gridOptions.icons.checkboxChecked = undefined;
+        gridOptions.icons.checkboxUnchecked = undefined;
+    }
     gridOptions.api.onGroupExpandedOrCollapsed();
-
 }
 
 var filterCount = 0;

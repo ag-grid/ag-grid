@@ -1,8 +1,8 @@
 <?php
 $key = "Header Rendering";
-$pageTitle = "AngularJS Angular Grid Header Rendering";
-$pageDescription = "AngularJS Angular Grid Header Rendering";
-$pageKeyboards = "AngularJS Angular Grid Header Rendering";
+$pageTitle = "ag-Grid Header Rendering";
+$pageDescription = "ag-Grid Header Rendering";
+$pageKeyboards = "ag-Grid Header Rendering";
 include '../documentation-main/documentation_header.php';
 ?>
 
