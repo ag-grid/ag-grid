@@ -827,6 +827,7 @@ export class ColumnController {
             return rowGroupIndexA - rowGroupIndexB;
         });
 
+        this.setupGridColumns();
         this.updateModel();
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
@@ -1111,9 +1112,9 @@ export class ColumnController {
             this.gridHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.gridColumns = this.getColumnsFromTree(this.gridBalancedTree);
         } else {
-            this.gridBalancedTree = this.originalBalancedTree;
+            this.gridBalancedTree = this.originalBalancedTree.slice();
             this.gridHeaderRowCount = this.originalHeaderRowCount;
-            this.gridColumns = this.originalColumns;
+            this.gridColumns = this.originalColumns.slice();
         }
     }
 
