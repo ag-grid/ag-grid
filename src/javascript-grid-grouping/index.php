@@ -411,8 +411,8 @@ gridOptions.groupRowRenderer: function(params) {return params.node.key;};
         This example takes full control also, but uses the provided group renderer
     but configured differently by asking for a checkbox for selection:
         <pre><code>gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer: {
-    renderer: 'group',
+gridOptions.groupRowRenderer: 'group';
+gridOptions.groupRowRendererParams: {
     checkbox: true,
     // innerRenderer is optional, we could leave this out and use the default
     innerRenderer: function(params) {return params.node.key;},
