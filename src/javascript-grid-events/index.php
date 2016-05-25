@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>selectionChanged</th>
-            <td>Selection is changed. Event contains the selection.</td>
+            <td>Selection is changed. Use the grid API to get the new selection.</td>
         </tr>
         <tr>
             <th>cellValueChanged</th>
