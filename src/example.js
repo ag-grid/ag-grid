@@ -581,7 +581,7 @@ function onThemeChanged(newTheme) {
     } else {
         gridOptions.rowHeight = 25;
         gridOptions.icons.checkboxChecked = undefined;
-        gridOptions.icons.checkboxUnchecked = undefined;
+        gridOptions.icons.checkboxIndeterminate = undefined;
     }
     gridOptions.api.onGroupExpandedOrCollapsed();
 }
