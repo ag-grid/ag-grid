@@ -1,8 +1,8 @@
 <?php
 $key = "Sorting";
-$pageTitle = "AngularJS Angular Grid Sorting";
-$pageDescription = "AngularJS Angular Grid Sorting";
-$pageKeyboards = "AngularJS Angular Grid Sorting";
+$pageTitle = "ag-Grid Sorting";
+$pageDescription = "ag-Grid Sorting";
+$pageKeyboards = "ag-Grid Sorting";
 include '../documentation-main/documentation_header.php';
 ?>
 

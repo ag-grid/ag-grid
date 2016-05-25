@@ -1,8 +1,8 @@
 <?php
 $key = "Cell Styling";
-$pageTitle = "Angular Grid Cell Styling";
-$pageDescription = "You can change the CSS style in Angular Grid. This is done by providing style and class callbacks in the column definition.";
-$pageKeyboards = "Angular Grid Cell Styling CSS";
+$pageTitle = "ag-Grid Cell Styling";
+$pageDescription = "You can change the CSS style in ag-Grid. This is done by providing style and class callbacks in the column definition.";
+$pageKeyboards = "ag-Grid Cell Styling CSS";
 include '../documentation-main/documentation_header.php';
 ?>
 

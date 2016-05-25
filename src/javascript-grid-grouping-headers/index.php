@@ -1,8 +1,8 @@
 <?php
 $key = "Grouping Columns";
-$pageTitle = "AngularJS Angular Grid Group Columns ag-Grid";
-$pageDescription = "AngularJS Angular Grid Group Columns ag-Grid";
-$pageKeyboards = "AngularJS Angular Grid Group Columns ag-Grid";
+$pageTitle = "ag-Grid Group Columns ag-Grid";
+$pageDescription = "ag-Grid Group Columns ag-Grid";
+$pageKeyboards = "ag-Grid Group Columns ag-Grid";
 include '../documentation-main/documentation_header.php';
 ?>
 

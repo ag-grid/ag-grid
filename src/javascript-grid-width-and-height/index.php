@@ -1,8 +1,8 @@
 <?php
 $key = "Width & Height";
-$pageTitle = "Angular Grid Width and Height";
-$pageDescription = "Angular Grid Resizing";
-$pageKeyboards = "Angular Grid Resizing";
+$pageTitle = "ag-Grid Width and Height";
+$pageDescription = "ag-Grid Resizing";
+$pageKeyboards = "ag-Grid Resizing";
 include '../documentation-main/documentation_header.php';
 ?>
 

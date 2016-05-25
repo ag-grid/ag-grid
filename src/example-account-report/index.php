@@ -1,8 +1,8 @@
 <?php
 $key = "Styled Report";
-$pageTitle = "AngularJS as a Styled Report";
-$pageDescription = "How to make a Styled Report using Angular Grid. This page gives you an example you can follow.";
-$pageKeyboards = "AngularJS Angular Grid Styled Report";
+$pageTitle = "ag-Grid as a Styled Report";
+$pageDescription = "How to make a Styled Report using ag-Grid. This page gives you an example you can follow.";
+$pageKeyboards = "ag-Grid Styled Report";
 include '../documentation-main/documentation_header.php';
 ?>
 

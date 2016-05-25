@@ -1,8 +1,8 @@
 <?php
 $key = "Expressions and Context";
 $pageTitle = "Grid Expressions and Context Example";
-$pageDescription = "Angular Grid Expressions and Context example. Learn how to build a grid using Expressions and Context from Angular Grid";
-$pageKeyboards = "AngularJS Angular Grid expressions Context";
+$pageDescription = "ag-Grid Expressions and Context example. Learn how to build a grid using Expressions and Context from ag-Grid";
+$pageKeyboards = "ag-Grid expressions Context";
 include '../documentation-main/documentation_header.php';
 ?>
 

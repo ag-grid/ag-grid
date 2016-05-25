@@ -1,8 +1,8 @@
 <?php
 $key = "Grid API";
-$pageTitle = "Angular Compiling";
-$pageDescription = "Angular Grid API";
-$pageKeyboards = "Angular Grid API";
+$pageTitle = "ag-Grid API";
+$pageDescription = "ag-Grid API";
+$pageKeyboards = "ag-Grid API";
 include '../documentation-main/documentation_header.php';
 ?>
 

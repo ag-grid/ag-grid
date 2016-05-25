@@ -1,8 +1,8 @@
 <?php
 $key = "Virtual Paging / Infinite Scrolling";
-$pageTitle = "Angular Grid Virtual Paging";
-$pageDescription = "Angular Grid allows the data to stay on the server and only load data for what is currently visible in the GUI.";
-$pageKeyboards = "Angular Grid Virtual Paging";
+$pageTitle = "ag-Grid Virtual Paging";
+$pageDescription = "ag-Grid allows the data to stay on the server and only load data for what is currently visible in the GUI.";
+$pageKeyboards = "ag-Grid Virtual Paging";
 include '../documentation-main/documentation_header.php';
 ?>
 

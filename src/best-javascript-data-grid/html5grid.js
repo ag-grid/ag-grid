@@ -156,7 +156,7 @@
     var btDestroyGrid;
 
     // wait for the document to be loaded, otherwise
-    // Angular Grid will not find the div in the document.
+    // ag-Grid will not find the div in the document.
     document.addEventListener("DOMContentLoaded", function() {
         btBringGridBack = document.querySelector('#btBringGridBack');
         btDestroyGrid = document.querySelector('#btDestroyGrid');

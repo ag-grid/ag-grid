@@ -1,8 +1,8 @@
 <?php
 $key = "Floating";
-$pageTitle = "AngularJS Angular Grid Floating Header & Floating Footer";
-$pageDescription = "AngularJS Angular Grid Floating Header & Floating Footer";
-$pageKeyboards = "AngularJS Angular Grid Floating Header & Floating Footer";
+$pageTitle = "ag-Grid Floating Header & Floating Footer";
+$pageDescription = "ag-Grid Floating Header & Floating Footer";
+$pageKeyboards = "ag-Grid Floating Header & Floating Footer";
 include '../documentation-main/documentation_header.php';
 ?>
 

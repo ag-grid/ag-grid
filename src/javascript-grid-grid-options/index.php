@@ -1,8 +1,8 @@
 <?php
 $key = "Grid Options";
-$pageTitle = "Angular Grid Options";
-$pageDescription = "Angular Grid Options";
-$pageKeyboards = "Angular Grid Options";
+$pageTitle = "ag-Grid Options";
+$pageDescription = "ag-Grid Options";
+$pageKeyboards = "ag-Grid Options";
 include '../documentation-main/documentation_header.php';
 ?>
 

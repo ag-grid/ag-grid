@@ -1,8 +1,8 @@
 <?php
 $key = "Context";
-$pageTitle = "AngularJS Angular Grid Context";
-$pageDescription = "Angular Grid provides the ability to pass down values to the renderers or use in the rendering process. These are stored in the context in the grid options.";
-$pageKeyboards = "AngularJS Angular Grid Context";
+$pageTitle = "ag-Grid Context";
+$pageDescription = "ag-Grid provides the ability to pass down values to the renderers or use in the rendering process. These are stored in the context in the grid options.";
+$pageKeyboards = "ag-Grid Context";
 include '../documentation-main/documentation_header.php';
 ?>
 

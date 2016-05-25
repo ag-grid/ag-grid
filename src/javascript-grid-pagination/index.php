@@ -1,8 +1,8 @@
 <?php
 $key = "Pagination";
-$pageTitle = "Angular Grid Pagination";
-$pageDescription = "You can load data in pages from the server, delegating filtering and sorting to the server also. This page explains how to do this with Angular Grid.";
-$pageKeyboards = "Angular Grid Paging Pagination";
+$pageTitle = "ag-Grid Pagination";
+$pageDescription = "You can load data in pages from the server, delegating filtering and sorting to the server also. This page explains how to do this with ag-Grid.";
+$pageKeyboards = "ag-Grid Paging Pagination";
 include '../documentation-main/documentation_header.php';
 ?>
 

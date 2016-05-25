@@ -1,8 +1,8 @@
 <?php
 $key = "Selection";
-$pageTitle = "AngularJS Angular Grid Selection";
-$pageDescription = "AngularJS Angular Grid Selection";
-$pageKeyboards = "AngularJS Angular Grid Selection";
+$pageTitle = "ag-Grid Selection";
+$pageDescription = "ag-Grid Selection";
+$pageKeyboards = "ag-Grid Selection";
 include '../documentation-main/documentation_header.php';
 ?>
 

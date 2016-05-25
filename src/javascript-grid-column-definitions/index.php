@@ -1,8 +1,8 @@
 <?php
 $key = "Column Definitions";
 $pageTitle = "Column Definitions";
-$pageDescription = "Angular Grid Column Definitions";
-$pageKeyboards = "Angular Grid Column Definitions";
+$pageDescription = "ag-Grid Column Definitions";
+$pageKeyboards = "ag-Grid Column Definitions";
 include '../documentation-main/documentation_header.php';
 ?>
 
