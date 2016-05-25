@@ -81,9 +81,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> AngularJS 1.x</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php"><img inline src="/images/angularjs_small.png" width="20px"> AngularJS 1.x</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/index.php"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
