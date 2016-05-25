@@ -303,8 +303,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
             // if the group was open last time, then open it this time. however
             // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
             // setting will take effect.
-            if (groupState[key] === true) {
-                node.expanded = true;
+            if (typeof groupState[key] === 'boolean') {
+                node.expanded = groupState[key];
             }
         });
     }
