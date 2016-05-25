@@ -1,4 +1,4 @@
-var gulp = require('gulp');
+var gulp = require('gulp-param')(require('gulp'), process.argv);
 var gulpTypescript = require('gulp-typescript');
 var typescript = require('typescript');
 var header = require('gulp-header');
