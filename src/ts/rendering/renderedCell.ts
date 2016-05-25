@@ -447,7 +447,7 @@ export class RenderedCell extends Component {
     private addKeyPressListener(): void {
         var that = this;
         var keyPressListener = function(event: any) {
-            if (!that.editingCell) {
+            if (that.isCellEditable()) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
                     that.onSpaceKeyPressed();
