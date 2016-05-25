@@ -358,7 +358,6 @@ export class EnterpriseMenu {
         var doingGrouping = this.columnController.getRowGroupColumns().length>0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
 
-        result.push('separator');
         result.push('pinSubMenu');
         if (doingGrouping && !this.column.getColDef().suppressAggregation) {
             result.push('valueAggSubMenu');
