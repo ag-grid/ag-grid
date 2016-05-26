@@ -79,8 +79,8 @@
             </h2>
 
             <p>
-                ag-Grid free edition comes with standard features is released under MIT. There is no warranty or support.
-                ag-Grid-Enterprise comes with a commercial license, extra enterprise features and support. If you want
+                ag-Grid free edition comes with standard features and is released under MIT. There is no warranty or support.
+                ag-Grid-Enterprise comes with a commercial license, extra enterprise features, support and maintenance. If you want
                 to use ag-Grid-Enterprise, you must purchase an ag-Grid-Enterprise license.
             </p>
         </div>
