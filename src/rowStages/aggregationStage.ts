@@ -8,7 +8,8 @@ import {
     ValueService,
     RowNode,
     PivotService,
-    Column
+    Column,
+    IAggFunction
 } from "ag-grid/main";
 
 @Bean('aggregationStage')
@@ -18,6 +19,8 @@ export class AggregationStage implements IRowNodeStage {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('pivotService') private pivotService: PivotService;
+
+    private aggFunctionService = new AggFunctionService();
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
@@ -71,7 +74,7 @@ export class AggregationStage implements IRowNodeStage {
         pivotColumnDefs.forEach( pivotColumnDef => {
 
             var values: any[];
-            var valueColumn = (<any>pivotColumnDef).valueColumn;
+            var valueColumn: Column = (<any>pivotColumnDef).valueColumn;
 
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
@@ -130,71 +133,102 @@ export class AggregationStage implements IRowNodeStage {
         return values;
     }
     
-    private aggregateValues(values: any[], aggFunc: string): any {
-        switch (aggFunc) {
-            case Column.AGG_SUM: return this.aggFuncSum(values);
-            case Column.AGG_FIRST: return this.aggFuncFirst(values);
-            case Column.AGG_LAST: return this.aggFuncLast(values);
-            case Column.AGG_MIN: return this.aggFuncMin(values);
-            case Column.AGG_MAX: return this.aggFuncMax(values);
-        }
-    }
-    
-    private aggFuncSum(input: any[]): any {
-        var result: number = null;
-        input.forEach( value => {
-            if (typeof value === 'number') {
-                if (result === null) {
-                    result = value;
-                } else {
-                    result += value;
-                }
-            }
-        });
-        return result;
-    }
+    private aggregateValues(values: any[], aggFuncOrString: string | IAggFunction): any {
 
-    private aggFuncFirst(input: any[]): any {
-        if (input.length>=0) {
-            return input[0];
+        var aggFunction: IAggFunction;
+
+        if (typeof aggFuncOrString === 'string') {
+            aggFunction = this.aggFunctionService.getAggFunction(<string>aggFuncOrString);
         } else {
+            aggFunction = <IAggFunction> aggFuncOrString;
+        }
+
+        if (typeof aggFunction !== 'function') {
+            console.error(`ag-Grid: unrecognised aggregation function ${aggFuncOrString}`);
             return null;
         }
-    }
 
-    private aggFuncLast(input: any[]): any {
-        if (input.length>=0) {
-            return input[input.length-1];
-        } else {
-            return null;
-        }
-    }
-
-    private aggFuncMin(input: any[]): any {
-        var result: number = null;
-        input.forEach( value => {
-            if (typeof value === 'number') {
-                if (result === null) {
-                    result = value;
-                } else if (result > value) {
-                    result = value;
-                }
-            }
-        });
+        var result = aggFunction(values);
         return result;
     }
 
-    private aggFuncMax(input: any[]): any {
-        var result: number = null;
-        input.forEach( value => {
-            if (typeof value === 'number') {
-                if (result === null) {
-                    result = value;
-                } else if (result < value) {
-                    result = value;
-                }
-            }
-        });
-        return result;
-    }
 }
+
+class AggFunctionService {
+
+    private aggFunctionsMap: {[key: string]: IAggFunction} = {};
+
+    
+    constructor() {
+
+        this.aggFunctionsMap['sum'] = function(input: any[]): any {
+            var result: number = null;
+            input.forEach( value => {
+                if (typeof value === 'number') {
+                    if (result === null) {
+                        result = value;
+                    } else {
+                        result += value;
+                    }
+                }
+            });
+            return result;
+        };
+
+        this.aggFunctionsMap['first'] = function(input: any[]): any {
+            if (input.length>=0) {
+                return input[0];
+            } else {
+                return null;
+            }
+        };
+
+        this.aggFunctionsMap['last'] = function(input: any[]): any {
+            if (input.length>=0) {
+                return input[input.length-1];
+            } else {
+                return null;
+            }
+        };
+
+        this.aggFunctionsMap['min'] = function(input: any[]): any {
+            var result: number = null;
+            input.forEach( value => {
+                if (typeof value === 'number') {
+                    if (result === null) {
+                        result = value;
+                    } else if (result > value) {
+                        result = value;
+                    }
+                }
+            });
+            return result;
+        };
+
+        this.aggFunctionsMap['max'] = function(input: any[]): any {
+            var result: number = null;
+            input.forEach( value => {
+                if (typeof value === 'number') {
+                    if (result === null) {
+                        result = value;
+                    } else if (result < value) {
+                        result = value;
+                    }
+                }
+            });
+            return result;
+        };
+
+    }
+
+    public getAggFunction(name: string): IAggFunction {
+        return this.aggFunctionsMap[name];
+    }
+
+}
+
+// in time we will turn this into a factory that the user can register their own agg functions
+var aggFunctions = {
+
+
+};
