@@ -235,25 +235,33 @@ colDef.cellRendererParams = {
     <h3>Grouping with Aggregation</h3>
 
     <p>
-        You have two options for creating aggregates.
-        <ul>
-        <li>
-            <b>Option 1 - colDef.aggFunc:</b> Specify in the column definition what aggregation function
-            you want to apply to that column. Available aggregation functions are [sum,min,max].
-        </li>
-        <li>
-            <b>Option 2 - gridOptions.groupAggFunction:</b> provide a function to do the aggregation. This
-            gives you full control.
-        </li>
-        </ul>
+        When grouping, you can apply an aggregation function to any column to populate the group
+        row with values. You can pick from the grid's built in aggregation functions or
+        provide your own.
+    </p>
+    <p>
+        <b>Built In Functions: </b>Out of the box the grid provides <i>sum, min, max,
+        first, last</i>. To use one of these, set <i>colDef.aggFunc</i> to the string
+        of the function you require.
+    </p>
+    <p>
+        <b>User Provided Functions: </b>To provide your own function, set <i>colDef.aggFunction</i>
+        to your custom function. The function will be provided with an array of values that it should
+        aggregate onto one value that it then returns.
     </p>
 
-    <note>
-        It is not possible to mix the above two options. If you provide your own <i>groupAggFunction</i>
-        then any column <i>aggFunc</i> specified will be ignored.
-    </note>
+        <pre><code>// column that uses the built in 'sum' function
+colDef1.aggFunc = 'sum';
 
-    <h4>Example Option 1 - Summing Fields</h4>
+// column that uses a user provided function
+colDef2.aggFunc = function(values) {
+    var sum = 0;
+    values.forEach( function(value) {sum += value;} );
+    return sum;
+}
+</code></pre>
+
+    <h4>Example Option 1 - Simple Summing</h4>
 
     <p>
         The example below shows simple sum aggregation on fields gold, silver, bronze and total.
@@ -266,12 +274,19 @@ colDef.cellRendererParams = {
 
     <show-example example="example2"></show-example>
 
-    <h4>Example Option 2 - Custom Aggregation Function</h4>
+    <h4>Example Option 2 - Custom Aggregation Functions</h4>
 
     <p>
         The example below shows a complex custom aggregation over age giving
         a min and a max age. The aggregation function takes an array of rows and returns
-        one row that's an aggregate of the passed rows.
+        one row that's an aggregate of the passed rows. The function knows whether
+        it is working with leaf nodes or aggregated nodes by checking the type of the value.
+    </p>
+
+    <p>
+        The age columns is aggregated a second time with a custom average function.
+        The average function also needs to know if it is working with leaf nodes or
+        group nodes, as if it's group nodes then the average is weighted.
     </p>
 
     <p>
@@ -342,7 +357,7 @@ colDef.onCellValueChanged = function() {
     <p>
         When you set new data into the group by default all the group open/closed states are reset.
         If you want to keep the original state, then set the property <i>rememberGroupStateWhenNewData=true</i>.
-        The example below demonstrates this. Only have the data is shown in the grid at any given time,
+        The example below demonstrates this. Only half the data is shown in the grid at any given time,
         either the odd rows or the even rows. Hitting the 'Refresh Data' will set the data to 'the other half'.
         Note that not all groups are present in both sets (eg 'Afghanistan' is only present in one group) and
         as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
