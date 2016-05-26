@@ -23,6 +23,10 @@ export interface ColGroupDef extends AbstractColDef {
     marryChildren?: boolean;
 }
 
+export interface IAggFunction {
+    (input: any[]): any;
+}
+
 export interface ColDef extends AbstractColDef {
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
@@ -95,8 +99,8 @@ export interface ColDef extends AbstractColDef {
     /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     floatingCellFormatter?: (params: any) => string;
 
-    /** Name of function to use for aggregation. One of [sum,min,max]. */
-    aggFunc?: string;
+    /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
+    aggFunc?: string | IAggFunction;
 
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;

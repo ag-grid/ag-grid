@@ -140,7 +140,6 @@ export interface GridOptions {
     getRowClass?: Function;
     getRowHeight?: Function;
     headerCellRenderer?: any;
-    groupAggFunction?(nodes: any[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?(dataItem: any): NodeChildDetails;
