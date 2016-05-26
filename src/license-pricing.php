@@ -172,10 +172,10 @@
                             £350
                         </div>
                         <div>
-                            / developer
+                            / Developer per Application
                         </div>
                         <div style="padding-top: 10px;">
-                            Perpetual & OEM
+                            All License Perpetual
                         </div>
                     </td>
                 </tr>
@@ -352,12 +352,11 @@
         <div class="col-md-12">
 
             <h2>
-                Enterprise Bulk Licenses
+                Enterprise Bulk / Site Licenses
             </h2>
 
             <p>
-                A price plan does exist for bulk purchases. Get in touch to receive a quote for the number
-                of developers you have in mind.
+                We provide pricing for bulk and / or site license. Pricing availabe on request.
             </p>
 
         </div>
@@ -367,11 +366,11 @@
         <div class="col-md-12">
 
             <h2>
-                Enterprise OEM and Redistribution
+                Enterprise OEM and SAAS License
             </h2>
 
             <p>
-                License includes permission to OEM for internal and external applications.
+                We provide license for OEM and SAAS. Pricing availabe on request.
             </p>
 
         </div>

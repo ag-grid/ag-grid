@@ -43,6 +43,16 @@
                     <li>Company VAT number (EU only)</li>
                     <li>Number of licenses required (ie number of developers)</li>
                     <li>Email address to associate with your ag-Grid account</li>
+                    <li>License type, please advise one of the following:
+                        <ul>
+                            Developer Application License - for developing one application in your enterprise.
+                        </ul>
+                        <ul>
+                            Developer Site License - for developing any number of applications in your enterprise.
+                        </ul>
+                    </li>
+                    <li>Will you be selling ag-Grid as part of a SAAS (Software as a Service) offering?</li>
+                    <li>Will you be selling ag-Grid as part of an application (OEM)?</li>
                 </ul>
                 We will then get back to you with an invoice.
             </p>
