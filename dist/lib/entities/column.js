@@ -14,10 +14,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var eventService_1 = require("../eventService");
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var context_2 = require("../context/context");
 var columnUtils_1 = require("../columnController/columnUtils");
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -279,7 +278,7 @@ var Column = (function () {
         __metadata('design:type', columnUtils_1.ColumnUtils)
     ], Column.prototype, "columnUtils", void 0);
     __decorate([
-        context_2.PostConstruct, 
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

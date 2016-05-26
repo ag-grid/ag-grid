@@ -69,7 +69,7 @@ export declare class GridApi {
     selectIndex(index: any, tryMulti: any, suppressEvents: any): void;
     deselectIndex(index: number, suppressEvents?: boolean): void;
     selectNode(node: RowNode, tryMulti?: boolean, suppressEvents?: boolean): void;
-    deselectNode(node: any, suppressEvents?: boolean): void;
+    deselectNode(node: RowNode, suppressEvents?: boolean): void;
     selectAll(): void;
     deselectAll(): void;
     recomputeAggregates(): void;

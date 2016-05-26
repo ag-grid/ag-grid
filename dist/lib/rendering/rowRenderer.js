@@ -18,7 +18,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var selectionRendererFactory_1 = require("../selectionRendererFactory");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var expressionService_1 = require("../expressionService");
 var templateService_1 = require("../templateService");
@@ -53,7 +52,7 @@ var RowRenderer = (function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.onColumnEvent.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnEvent.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, this.refreshView.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.refreshView.bind(this, null));
         //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshView.bind(this, null));
@@ -439,17 +438,18 @@ var RowRenderer = (function () {
         var cellComponent = rowComponent.getRenderedCellForColumn(gridCell.column);
         return cellComponent;
     };
-    // called by the cell, when tab is pressed while editing
+    // called by the cell, when tab is pressed while editing.
+    // @return: true when navigation successful, otherwise false
     RowRenderer.prototype.moveFocusToNextCell = function (rowIndex, column, floating, shiftKey, startEditing) {
         var nextCell = new gridCell_1.GridCell(rowIndex, floating, column);
         while (true) {
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
-            var nextRenderedCell = this.getComponentForCell(nextCell);
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
-            if (!nextRenderedCell) {
-                return;
+            if (!nextCell) {
+                return false;
             }
+            var nextRenderedCell = this.getComponentForCell(nextCell);
             // if editing, but cell not editable, skip cell
             if (startEditing && !nextRenderedCell.isCellEditable()) {
                 continue;
@@ -475,7 +475,8 @@ var RowRenderer = (function () {
             if (this.rangeController) {
                 this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
             }
-            return;
+            // we successfully tabbed onto a grid cell, so return true
+            return true;
         }
     };
     __decorate([
@@ -490,10 +491,6 @@ var RowRenderer = (function () {
         context_1.Autowired('gridCore'), 
         __metadata('design:type', gridCore_1.GridCore)
     ], RowRenderer.prototype, "gridCore", void 0);
-    __decorate([
-        context_1.Autowired('selectionRendererFactory'), 
-        __metadata('design:type', selectionRendererFactory_1.SelectionRendererFactory)
-    ], RowRenderer.prototype, "selectionRendererFactory", void 0);
     __decorate([
         context_1.Autowired('gridPanel'), 
         __metadata('design:type', gridPanel_1.GridPanel)

@@ -171,23 +171,35 @@ var GridApi = (function () {
     };
     GridApi.prototype.selectIndex = function (index, tryMulti, suppressEvents) {
         console.log('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
-        this.selectionController.selectIndex(index, tryMulti, suppressEvents);
+        if (suppressEvents) {
+            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+        }
+        this.selectionController.selectIndex(index, tryMulti);
     };
     GridApi.prototype.deselectIndex = function (index, suppressEvents) {
         if (suppressEvents === void 0) { suppressEvents = false; }
         console.log('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
-        this.selectionController.deselectIndex(index, suppressEvents);
+        if (suppressEvents) {
+            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+        }
+        this.selectionController.deselectIndex(index);
     };
     GridApi.prototype.selectNode = function (node, tryMulti, suppressEvents) {
         if (tryMulti === void 0) { tryMulti = false; }
         if (suppressEvents === void 0) { suppressEvents = false; }
         console.log('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
-        node.setSelected(true, !tryMulti, suppressEvents);
+        if (suppressEvents) {
+            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+        }
+        node.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
     };
     GridApi.prototype.deselectNode = function (node, suppressEvents) {
         if (suppressEvents === void 0) { suppressEvents = false; }
         console.log('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
-        node.setSelected(false, false, suppressEvents);
+        if (suppressEvents) {
+            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+        }
+        node.setSelectedParams({ newValue: false });
     };
     GridApi.prototype.selectAll = function () {
         this.selectionController.selectAllRowNodes();
@@ -269,19 +281,19 @@ var GridApi = (function () {
         return this.getFilterApi(colDef);
     };
     GridApi.prototype.getFilterApi = function (key) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column) {
             return this.filterManager.getFilterApi(column);
         }
     };
     GridApi.prototype.destroyFilter = function (key) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column);
         }
     };
     GridApi.prototype.getColumnDef = function (key) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column) {
             return column.getColDef();
         }
@@ -323,7 +335,7 @@ var GridApi = (function () {
         this.gridCore.doLayout();
     };
     GridApi.prototype.getValue = function (colKey, rowNode) {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         return this.valueService.getValue(column, rowNode);
     };
     GridApi.prototype.addEventListener = function (eventType, listener) {
@@ -387,11 +399,11 @@ var GridApi = (function () {
         this.clipboardService.copyRangeDown();
     };
     GridApi.prototype.showColumnMenuAfterButtonClick = function (colKey, buttonElement) {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     };
     GridApi.prototype.showColumnMenuAfterMouseClick = function (colKey, mouseEvent) {
-        var column = this.columnController.getColumn(colKey);
+        var column = this.columnController.getOriginalColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     };
     __decorate([

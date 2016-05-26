@@ -23,7 +23,6 @@ var column_1 = require("../entities/column");
 var rowNode_1 = require("../entities/rowNode");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var expressionService_1 = require("../expressionService");
-var selectionRendererFactory_1 = require("../selectionRendererFactory");
 var rowRenderer_1 = require("./rowRenderer");
 var templateService_1 = require("../templateService");
 var columnController_1 = require("../columnController/columnController");
@@ -42,6 +41,7 @@ var popupService_1 = require("../widgets/popupService");
 var cellRendererFactory_1 = require("./cellRendererFactory");
 var cellRendererService_1 = require("./cellRendererService");
 var valueFormatterService_1 = require("./valueFormatterService");
+var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
 var RenderedCell = (function (_super) {
     __extends(RenderedCell, _super);
     function RenderedCell(column, node, rowIndex, scope, renderedRow) {
@@ -342,8 +342,12 @@ var RenderedCell = (function (_super) {
             // otherwise we just move to the next cell
             editNextCell = false;
         }
-        this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
-        event.preventDefault();
+        var foundCell = this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            event.preventDefault();
+        }
     };
     RenderedCell.prototype.onBackspaceOrDeleteKeyPressed = function (key) {
         if (!this.editingCell) {
@@ -366,23 +370,6 @@ var RenderedCell = (function (_super) {
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     };
-    /*
-        private addFocusListener(): void {
-            var that = this;
-            var focusListener = (event: any) => {
-    
-                // if the focus went into another cell, then we stop editing this cell
-                // if (that.editingCell &&!that.cellEditorInPopup && !that.gridCell.eq hasFocusLeftCell(event)) {
-                //     that.stopEditing();
-                // }
-            };
-            // this.eventService.
-            // this.focusService.addListener(focusListener);
-            // this.addDestroyFunc( () => {
-            //     this.focusService.removeListener(focusListener);
-            // });
-        }
-    */
     RenderedCell.prototype.addKeyPressListener = function () {
         var _this = this;
         var that = this;
@@ -479,11 +466,18 @@ var RenderedCell = (function (_super) {
         if (!this.isCellEditable()) {
             return;
         }
-        this.cellEditor = this.createCellEditor(keyPress, charPress);
-        if (!this.cellEditor.getGui) {
+        var cellEditor = this.createCellEditor(keyPress, charPress);
+        if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
+            if (cellEditor.destroy) {
+                cellEditor.destroy();
+            }
+            return;
+        }
+        if (!cellEditor.getGui) {
             console.warn("ag-Grid: cellEditor for column " + this.column.getId() + " is missing getGui() method");
             return;
         }
+        this.cellEditor = cellEditor;
         this.editingCell = true;
         this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
         this.setInlineEditingClass();
@@ -493,8 +487,8 @@ var RenderedCell = (function (_super) {
         else {
             this.addInCellEditor();
         }
-        if (this.cellEditor.afterGuiAttached) {
-            this.cellEditor.afterGuiAttached();
+        if (cellEditor.afterGuiAttached) {
+            cellEditor.afterGuiAttached();
         }
     };
     RenderedCell.prototype.addInCellEditor = function () {
@@ -530,10 +524,16 @@ var RenderedCell = (function (_super) {
     RenderedCell.prototype.focusCell = function (forceBrowserFocus) {
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     };
-    RenderedCell.prototype.stopEditing = function (reset) {
-        if (reset === void 0) { reset = false; }
+    // pass in 'true' to cancel the editing.
+    RenderedCell.prototype.stopEditing = function (cancel) {
+        if (cancel === void 0) { cancel = false; }
         this.editingCell = false;
-        if (!reset) {
+        // also have another option here to cancel after editing, so for example user could have a popup editor and
+        // it is closed by user clicking outside the editor. then the editor will close automatically (with false
+        // passed above) and we need to see if the editor wants to accept the new value.
+        var cancelAfterEnd = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
+        var acceptNewValue = !cancel && !cancelAfterEnd;
+        if (acceptNewValue) {
             var newValue = this.cellEditor.getValue();
             this.valueService.setValue(this.node, this.column, newValue);
             this.value = this.getValue();
@@ -780,9 +780,11 @@ var RenderedCell = (function (_super) {
             this.eCellWrapper = document.createElement('span');
             utils_1.Utils.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
             this.eGridCell.appendChild(this.eCellWrapper);
-            //this.createSelectionCheckbox();
-            this.eCheckbox = this.selectionRendererFactory.createSelectionCheckbox(this.node, this.renderedRow.addEventListener.bind(this.renderedRow));
-            this.eCellWrapper.appendChild(this.eCheckbox);
+            var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
+            this.context.wireBean(cbSelectionComponent);
+            cbSelectionComponent.init({ rowNode: this.node });
+            this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
+            this.addDestroyFunc(function () { return cbSelectionComponent.destroy(); });
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
             this.eSpanWithValue = document.createElement('span');
             utils_1.Utils.addCssClass(this.eSpanWithValue, 'ag-cell-value');
@@ -922,10 +924,6 @@ var RenderedCell = (function (_super) {
         context_1.Autowired('expressionService'), 
         __metadata('design:type', expressionService_1.ExpressionService)
     ], RenderedCell.prototype, "expressionService", void 0);
-    __decorate([
-        context_1.Autowired('selectionRendererFactory'), 
-        __metadata('design:type', selectionRendererFactory_1.SelectionRendererFactory)
-    ], RenderedCell.prototype, "selectionRendererFactory", void 0);
     __decorate([
         context_1.Autowired('rowRenderer'), 
         __metadata('design:type', rowRenderer_1.RowRenderer)

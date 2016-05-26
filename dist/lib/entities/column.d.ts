@@ -4,8 +4,7 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
-import { ColDef } from "./colDef";
-import { AbstractColDef } from "./colDef";
+import { ColDef, AbstractColDef } from "./colDef";
 import { RowNode } from "./rowNode";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     static EVENT_MOVING_CHANGED: string;

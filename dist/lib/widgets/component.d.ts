@@ -19,7 +19,7 @@ export declare class Component implements IEventEmitter {
     appendChild(newChild: Node | Component): void;
     setVisible(visible: boolean): void;
     destroy(): void;
-    addGuiEventListener(event: string, listener: () => void): void;
+    addGuiEventListener(event: string, listener: (event: any) => void): void;
     addDestroyableEventListener(eElement: HTMLElement | IEventEmitter, event: string, listener: (event?: any) => void): void;
     addDestroyFunc(func: () => void): void;
 }

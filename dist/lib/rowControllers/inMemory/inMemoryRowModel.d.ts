@@ -12,15 +12,13 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private selectionController;
     private eventService;
     private context;
+    private pivotService;
     private filterStage;
     private sortStage;
     private flattenStage;
     private groupStage;
     private aggregationStage;
-    private allRows;
-    private rowsAfterGroup;
-    private rowsAfterFilter;
-    private rowsAfterSort;
+    private rootNode;
     private rowsToDisplay;
     init(): void;
     getType(): string;
@@ -45,6 +43,7 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private doRowGrouping(groupState);
     private restoreGroupState(groupState);
     private doFilter();
+    private doPivot();
     setRowData(rowData: any[], refresh: boolean, firstId?: number): void;
     private getGroupState();
     private createRowNodesFromData(rowData, firstId?);

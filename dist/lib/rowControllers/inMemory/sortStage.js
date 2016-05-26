@@ -14,105 +14,81 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var context_1 = require("../../context/context");
-var context_2 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var sortController_1 = require("../../sortController");
 var valueService_1 = require("../../valueService");
-var utils_1 = require('../../utils');
+var utils_1 = require("../../utils");
 var SortStage = (function () {
     function SortStage() {
     }
-    SortStage.prototype.execute = function (rowsToSort) {
-        var sorting;
+    SortStage.prototype.execute = function (rowNode) {
+        // var sorting: any;
+        var sortOptions;
         // if the sorting is already done by the server, then we should not do it here
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sorting = false;
+        if (!this.gridOptionsWrapper.isEnableServerSideSorting()) {
+            sortOptions = this.sortController.getSortForRowController();
         }
-        else {
-            //see if there is a col we are sorting by
-            var sortingOptions = this.sortController.getSortForRowController();
-            sorting = sortingOptions.length > 0;
-        }
-        var result = rowsToSort.slice(0);
-        if (sorting) {
-            this.sortList(result, sortingOptions);
-        }
-        else {
-            // if no sorting, set all group children after sort to the original list.
-            // note: it is important to do this, even if doing server side sorting,
-            // to allow the rows to pass to the next stage (ie set the node value
-            // childrenAfterSort)
-            this.recursivelyResetSort(result);
-        }
-        return result;
+        this.sortRowNode(rowNode, sortOptions);
     };
-    SortStage.prototype.sortList = function (nodes, sortOptions) {
+    SortStage.prototype.sortRowNode = function (rowNode, sortOptions) {
+        var _this = this;
         // sort any groups recursively
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var node = nodes[i];
-            if (node.group && node.children) {
-                node.childrenAfterSort = node.childrenAfterFilter.slice(0);
-                this.sortList(node.childrenAfterSort, sortOptions);
+        rowNode.childrenAfterFilter.forEach(function (child) {
+            if (child.group) {
+                _this.sortRowNode(child, sortOptions);
             }
+        });
+        rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
+        var sortActive = utils_1.Utils.exists(sortOptions) && sortOptions.length > 0;
+        if (sortActive) {
+            rowNode.childrenAfterSort.sort(this.compareRowNodes.bind(this, sortOptions));
         }
-        var that = this;
-        function compare(nodeA, nodeB, column, isInverted) {
-            var valueA = that.valueService.getValue(column, nodeA);
-            var valueB = that.valueService.getValue(column, nodeB);
-            if (column.getColDef().comparator) {
+        this.updateChildIndexes(rowNode);
+    };
+    SortStage.prototype.compareRowNodes = function (sortOptions, nodeA, nodeB) {
+        // Iterate columns, return the first that doesn't match
+        for (var i = 0, len = sortOptions.length; i < len; i++) {
+            var sortOption = sortOptions[i];
+            // var compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
+            var isInverted = sortOption.inverter === -1;
+            var valueA = this.valueService.getValue(sortOption.column, nodeA);
+            var valueB = this.valueService.getValue(sortOption.column, nodeB);
+            var comparatorResult;
+            if (sortOption.column.getColDef().comparator) {
                 //if comparator provided, use it
-                return column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
+                comparatorResult = sortOption.column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
             }
             else {
                 //otherwise do our own comparison
-                return utils_1.Utils.defaultComparator(valueA, valueB);
+                comparatorResult = utils_1.Utils.defaultComparator(valueA, valueB);
+            }
+            if (comparatorResult !== 0) {
+                return comparatorResult * sortOption.inverter;
             }
         }
-        nodes.sort(function (nodeA, nodeB) {
-            // Iterate columns, return the first that doesn't match
-            for (var i = 0, len = sortOptions.length; i < len; i++) {
-                var sortOption = sortOptions[i];
-                var compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
-                if (compared !== 0) {
-                    return compared * sortOption.inverter;
-                }
-            }
-            // All matched, these are identical as far as the sort is concerned:
-            return 0;
-        });
-        this.updateChildIndexes(nodes);
+        // All matched, these are identical as far as the sort is concerned:
+        return 0;
     };
-    SortStage.prototype.recursivelyResetSort = function (rowNodes) {
-        if (!rowNodes) {
+    SortStage.prototype.updateChildIndexes = function (rowNode) {
+        if (utils_1.Utils.missing(rowNode.childrenAfterSort)) {
             return;
         }
-        for (var i = 0, l = rowNodes.length; i < l; i++) {
-            var item = rowNodes[i];
-            if (item.group && item.children) {
-                item.childrenAfterSort = item.childrenAfterFilter;
-                this.recursivelyResetSort(item.children);
-            }
-        }
-        this.updateChildIndexes(rowNodes);
-    };
-    SortStage.prototype.updateChildIndexes = function (nodes) {
-        for (var j = 0; j < nodes.length; j++) {
-            var node = nodes[j];
-            node.firstChild = j === 0;
-            node.lastChild = j === nodes.length - 1;
-            node.childIndex = j;
-        }
+        rowNode.childrenAfterSort.forEach(function (child, index) {
+            child.firstChild = index === 0;
+            child.lastChild = index === rowNode.childrenAfterSort.length - 1;
+            child.childIndex = index;
+        });
     };
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], SortStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_2.Autowired('sortController'), 
+        context_1.Autowired('sortController'), 
         __metadata('design:type', sortController_1.SortController)
     ], SortStage.prototype, "sortController", void 0);
     __decorate([
-        context_2.Autowired('valueService'), 
+        context_1.Autowired('valueService'), 
         __metadata('design:type', valueService_1.ValueService)
     ], SortStage.prototype, "valueService", void 0);
     SortStage = __decorate([

@@ -59,7 +59,7 @@ export class FilterManager {
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
             _.iterateArray(modelKeys, (colId) => {
-                var column = this.columnController.getColumn(colId);
+                var column = this.columnController.getOriginalColumn(colId);
                 if (!column) {
                     console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
                     return;
@@ -252,7 +252,7 @@ export class FilterManager {
     private aggregateRowForQuickFilter(node: RowNode) {
         var aggregatedText = '';
         var that = this;
-        this.columnController.getAllColumns().forEach(function (column: Column) {
+        this.columnController.getAllOriginalColumns().forEach(function (column: Column) {
             var value = that.valueService.getValue(column, node);
             if (value && value !== '') {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";

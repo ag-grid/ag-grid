@@ -41,5 +41,6 @@ export declare class ColumnGroup implements ColumnGroupChild {
     private addLeafColumns(leafColumns);
     getChildren(): ColumnGroupChild[];
     getColumnGroupShow(): string;
+    getOriginalColumnGroup(): OriginalColumnGroup;
     calculateDisplayedColumns(): void;
 }

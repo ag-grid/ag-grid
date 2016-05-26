@@ -38,6 +38,7 @@ export declare class GridOptionsWrapper {
     isSuppressCellSelection(): boolean;
     isSuppressMultiSort(): boolean;
     isGroupSuppressAutoColumn(): boolean;
+    isSuppressDragLeaveHidesColumns(): boolean;
     isForPrint(): boolean;
     isSuppressHorizontalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;

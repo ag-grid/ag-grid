@@ -218,7 +218,7 @@ export class GridPanel {
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
         //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
@@ -226,6 +226,9 @@ export class GridPanel {
 
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
         this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.onColumnsChanged.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
     }
@@ -266,10 +269,20 @@ export class GridPanel {
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+
         if (_.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
             this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
         }
+
+        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
+        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
+        // button in the browser). so this property allows the user to receive middle button clicks if
+        // they want.
+        if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
+            mouseEvent.preventDefault();
+        }
+
     }
 
     private addShortcutKeyListeners(): void {
@@ -489,7 +502,7 @@ export class GridPanel {
     }
 
     public ensureColumnVisible(key: any) {
-        var column = this.columnController.getColumn(key);
+        var column = this.columnController.getOriginalColumn(key);
         if (column.isPinned()) {
             console.warn('calling ensureIndexVisible on a '+column.getPinned()+' pinned column doesn\'t make sense for column ' + column.getColId());
             return;
@@ -737,8 +750,14 @@ export class GridPanel {
             targetPanel.scrollTop = newTopPosition;
         }
 
-        // if we don't prevent default, then the whole browser will scroll also as well as the grid
-        event.preventDefault();
+        // allow the option to pass mouse wheel events ot the browser
+        // https://github.com/ceolter/ag-grid/issues/800
+        // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
+        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+            // if we don't prevent default, then the whole browser will scroll also as well as the grid
+            event.preventDefault();
+        }
+
         return false;
     }
 

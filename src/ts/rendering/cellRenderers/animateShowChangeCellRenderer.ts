@@ -34,7 +34,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         this.refresh(params);
     }
 
-    public showDelta(params: any, delta: number): void {
+    private showDelta(params: any, delta: number): void {
 
         var absDelta = Math.abs(delta);
         var valueFormatted = params.formatValue(absDelta);
@@ -54,11 +54,6 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         _.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
         // class makes it red (in ag-fresh)
         _.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
-
-        // highlight the current value
-        _.addCssClass(this.eValue, 'ag-value-change-value-highlight');
-
-        this.setTimerToRemoveDelta();
     }
 
     private setTimerToRemoveDelta(): void {
@@ -98,6 +93,15 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             var delta = value - this.lastValue;
             this.showDelta(params, delta);
         }
+
+        // highlight the current value, but only if it's not new, otherwise it
+        // would get highlighted first time the value is shown
+        if (this.lastValue) {
+            _.addCssClass(this.eValue, 'ag-value-change-value-highlight');
+        }
+
+
+        this.setTimerToRemoveDelta();
 
         this.lastValue = value;
     }

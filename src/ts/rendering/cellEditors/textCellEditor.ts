@@ -3,11 +3,6 @@ import {Component} from "../../widgets/component";
 import {ICellEditor} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 
-enum StartState {
-    HighlightAll,
-    CursorAtEnd
-}
-
 export class TextCellEditor extends Component implements ICellEditor {
 
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
@@ -44,6 +39,13 @@ export class TextCellEditor extends Component implements ICellEditor {
         if (_.exists(startValue)) {
             eInput.value = startValue;
         }
+
+        this.addDestroyableEventListener(eInput, 'keydown', (event: KeyboardEvent)=> {
+            var isNavigationKey = event.keyCode===Constants.KEY_LEFT || event.keyCode===Constants.KEY_RIGHT;
+            if (isNavigationKey) {
+                event.stopPropagation();
+            }
+        });
     }
 
     public afterGuiAttached(): void {

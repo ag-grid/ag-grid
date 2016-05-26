@@ -1,11 +1,9 @@
-import {Bean} from "../../context/context";
-import {Autowired} from "../../context/context";
+import {Bean, Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
 import {RowNode} from "../../entities/rowNode";
-import {Column} from "../../entities/column";
 import {ValueService} from "../../valueService";
-import {Utils as _} from '../../utils';
+import {Utils as _} from "../../utils";
 
 @Bean('sortStage')
 export class SortStage {
@@ -14,96 +12,72 @@ export class SortStage {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('valueService') private valueService: ValueService;
 
-    public execute(rowsToSort: RowNode[]): RowNode[] {
-        var sorting: any;
+    public execute(rowNode: RowNode): any {
+        // var sorting: any;
+
+        var sortOptions: any;
 
         // if the sorting is already done by the server, then we should not do it here
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sorting = false;
-        } else {
-            //see if there is a col we are sorting by
-            var sortingOptions = this.sortController.getSortForRowController();
-            sorting = sortingOptions.length > 0;
+        if (!this.gridOptionsWrapper.isEnableServerSideSorting()) {
+            sortOptions = this.sortController.getSortForRowController();
         }
 
-        var result = rowsToSort.slice(0);
-
-        if (sorting) {
-            this.sortList(result, sortingOptions);
-        } else {
-            // if no sorting, set all group children after sort to the original list.
-            // note: it is important to do this, even if doing server side sorting,
-            // to allow the rows to pass to the next stage (ie set the node value
-            // childrenAfterSort)
-            this.recursivelyResetSort(result);
-        }
-
-        return result;
+        this.sortRowNode(rowNode, sortOptions);
     }
 
-    private sortList(nodes: RowNode[], sortOptions: any) {
+
+    private sortRowNode(rowNode: RowNode, sortOptions: any) {
 
         // sort any groups recursively
-        for (var i = 0, l = nodes.length; i < l; i++) { // critical section, no functional programming
-            var node = nodes[i];
-            if (node.group && node.children) {
-                node.childrenAfterSort = node.childrenAfterFilter.slice(0);
-                this.sortList(node.childrenAfterSort, sortOptions);
+        rowNode.childrenAfterFilter.forEach( child => {
+            if (child.group) {
+                this.sortRowNode(child, sortOptions);
             }
-        }
-
-        var that = this;
-
-        function compare(nodeA: RowNode, nodeB: RowNode, column: Column, isInverted: boolean) {
-            var valueA = that.valueService.getValue(column, nodeA);
-            var valueB = that.valueService.getValue(column, nodeB);
-            if (column.getColDef().comparator) {
-                //if comparator provided, use it
-                return column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
-            } else {
-                //otherwise do our own comparison
-                return _.defaultComparator(valueA, valueB);
-            }
-        }
-
-        nodes.sort(function (nodeA: RowNode, nodeB: RowNode) {
-            // Iterate columns, return the first that doesn't match
-            for (var i = 0, len = sortOptions.length; i < len; i++) {
-                var sortOption = sortOptions[i];
-                var compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
-                if (compared !== 0) {
-                    return compared * sortOption.inverter;
-                }
-            }
-            // All matched, these are identical as far as the sort is concerned:
-            return 0;
         });
 
-        this.updateChildIndexes(nodes);
+        rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
+
+        var sortActive = _.exists(sortOptions) && sortOptions.length > 0;
+        if (sortActive) {
+            rowNode.childrenAfterSort.sort(this.compareRowNodes.bind(this, sortOptions));
+        }
+
+        this.updateChildIndexes(rowNode);
     }
 
-    private recursivelyResetSort(rowNodes: RowNode[]) {
-        if (!rowNodes) {
-            return;
-        }
-        for (var i = 0, l = rowNodes.length; i < l; i++) {
-            var item = rowNodes[i];
-            if (item.group && item.children) {
-                item.childrenAfterSort = item.childrenAfterFilter;
-                this.recursivelyResetSort(item.children);
+    private compareRowNodes(sortOptions: any, nodeA: RowNode, nodeB: RowNode) {
+        // Iterate columns, return the first that doesn't match
+        for (var i = 0, len = sortOptions.length; i < len; i++) {
+            var sortOption = sortOptions[i];
+            // var compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
+
+            var isInverted = sortOption.inverter === -1;
+            var valueA = this.valueService.getValue(sortOption.column, nodeA);
+            var valueB = this.valueService.getValue(sortOption.column, nodeB);
+            var comparatorResult: number;
+            if (sortOption.column.getColDef().comparator) {
+                //if comparator provided, use it
+                comparatorResult = sortOption.column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
+            } else {
+                //otherwise do our own comparison
+                comparatorResult = _.defaultComparator(valueA, valueB);
+            }
+
+            if (comparatorResult !== 0) {
+                return comparatorResult * sortOption.inverter;
             }
         }
-
-        this.updateChildIndexes(rowNodes);
+        // All matched, these are identical as far as the sort is concerned:
+        return 0;
     }
 
+    private updateChildIndexes(rowNode: RowNode) {
+        if (_.missing(rowNode.childrenAfterSort)) { return; }
 
-    private updateChildIndexes(nodes: RowNode[]) {
-        for (var j = 0; j<nodes.length; j++) {
-            var node = nodes[j];
-            node.firstChild = j === 0;
-            node.lastChild = j === nodes.length - 1;
-            node.childIndex = j;
-        }
+        rowNode.childrenAfterSort.forEach( (child: RowNode, index: number) => {
+            child.firstChild = index === 0;
+            child.lastChild = index === rowNode.childrenAfterSort.length - 1;
+            child.childIndex = index;
+        });
     }
 }

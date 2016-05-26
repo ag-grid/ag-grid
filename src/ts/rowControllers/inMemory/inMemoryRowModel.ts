@@ -10,6 +10,7 @@ import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/c
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
+import {PivotService} from "../../columnController/pivotService";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -24,6 +25,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
+    // need to refactor this out, should it be a stage?
+    @Autowired('pivotService') private pivotService: PivotService;
+
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
     @Autowired('sortStage') private sortStage: IRowNodeStage;
@@ -33,23 +37,34 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     @Optional('groupStage') private groupStage: IRowNodeStage;
     @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
 
-    // the rows go through a pipeline of steps, each array below is the result
-    // after a certain step.
-    private allRows: RowNode[] = []; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
-    private rowsAfterGroup: RowNode[]; // rows in group form, stored in a tree (the parent / child bits of RowNode are used)
-    private rowsAfterFilter: RowNode[]; // after filtering
-    private rowsAfterSort: RowNode[]; // after sorting
+    // // the rows go through a pipeline of steps, each array below is the result
+    // // after a certain step.
+    // private allRows: RowNode[] = []; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
+    //
+    // private rowsAfterGroup: RowNode[]; // rows in group form, stored in a tree (the parent / child bits of RowNode are used)
+    // private rowsAfterFilter: RowNode[]; // after filtering
+    // private rowsAfterSort: RowNode[]; // after sorting
+
+    // top most node of the tree. the children are the user provided data.
+    private rootNode: RowNode;
+
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
     @PostConstruct
     public init(): void {
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshModel.bind(this, Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshModel.bind(this, Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, Constants.STEP_PIVOT));
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants.STEP_FILTER));
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
+
+        this.rootNode = new RowNode();
+        this.rootNode.group = true;
+        this.rootNode.allLeafChildren = [];
+        this.context.wireBean(this.rootNode);
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
@@ -77,7 +92,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 this.doRowGrouping(groupState);
             case constants.STEP_FILTER:
                 this.doFilter();
-            case constants.STEP_AGGREGATE:
+            // case constants.STEP_PIVOT:
+            //     this.doPivot();
+            case constants.STEP_AGGREGATE: // depends on agg fields
                 this.doAggregate();
             case constants.STEP_SORT:
                 this.doSort();
@@ -95,7 +112,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public isEmpty(): boolean {
-        return this.allRows === null || this.allRows.length === 0 || !this.columnController.isReady();
+        return _.missing(this.rootNode) || _.missing(this.rootNode.allLeafChildren)
+            || this.rootNode.allLeafChildren.length === 0 || !this.columnController.isReady();
     }
 
     public isRowsToRender(): boolean {
@@ -107,7 +125,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public getTopLevelNodes() {
-        return this.rowsAfterGroup;
+        return this.rootNode ? this.rootNode.childrenAfterGroup : null;
     }
 
     public getRow(index: number): RowNode {
@@ -181,15 +199,15 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public forEachNode(callback: Function) {
-        this.recursivelyWalkNodesAndCallback(this.rowsAfterGroup, callback, RecursionType.Normal, 0);
+        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterGroup, callback, RecursionType.Normal, 0);
     }
 
     public forEachNodeAfterFilter(callback: Function) {
-        this.recursivelyWalkNodesAndCallback(this.rowsAfterFilter, callback, RecursionType.AfterFilter, 0);
+        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterFilter, callback, RecursionType.AfterFilter, 0);
     }
 
     public forEachNodeAfterFilterAndSort(callback: Function) {
-        this.recursivelyWalkNodesAndCallback(this.rowsAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
+        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
     }
 
     // iterates through each item in memory, and calls the callback function
@@ -207,7 +225,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                     // depending on the recursion type, we pick a difference set of children
                     var nodeChildren: RowNode[];
                     switch (recursionType) {
-                        case RecursionType.Normal : nodeChildren = node.children; break;
+                        case RecursionType.Normal : nodeChildren = node.childrenAfterGroup; break;
                         case RecursionType.AfterFilter : nodeChildren = node.childrenAfterFilter; break;
                         case RecursionType.AfterFilterAndSort : nodeChildren = node.childrenAfterSort; break;
                     }
@@ -225,7 +243,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     // + gridApi.recomputeAggregates()
     public doAggregate() {
         if (this.aggregationStage) {
-            this.aggregationStage.execute(this.rowsAfterFilter);
+            this.aggregationStage.execute(this.rootNode);
         }
     }
 
@@ -233,14 +251,16 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
 
-        recursiveExpandOrCollapse(this.rowsAfterGroup);
+        if (this.rootNode){
+            recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
+        }
 
         function recursiveExpandOrCollapse(rowNodes: RowNode[]): void {
             if (!rowNodes) { return; }
             rowNodes.forEach( (rowNode: RowNode) => {
                 if (rowNode.group) {
                     rowNode.expanded = expand;
-                    recursiveExpandOrCollapse(rowNode.children);
+                    recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 }
             });
         }
@@ -249,46 +269,56 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doSort() {
-        this.rowsAfterSort = this.sortStage.execute(this.rowsAfterFilter);
+        this.sortStage.execute(this.rootNode);
     }
 
     private doRowGrouping(groupState: any) {
-        // grouping is enterprise only, so if service missing, skip the step
-        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
 
-        if (this.groupStage && !rowsAlreadyGrouped) {
+        // grouping is enterprise only, so if service missing, skip the step
+        // var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+
+        if (this.groupStage) {
 
             // remove old groups from the selection model, as we are about to replace them
             // with new groups
             this.selectionController.removeGroupsFromSelection();
 
-            this.rowsAfterGroup = this.groupStage.execute(this.allRows);
+            this.groupStage.execute(this.rootNode);
 
             this.restoreGroupState(groupState);
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
                 this.selectionController.updateGroupsFromChildrenSelections();
             }
+
         } else {
-            this.rowsAfterGroup = this.allRows;
+            this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
         }
     }
 
     private restoreGroupState(groupState: any): void {
         if (!groupState) { return; }
 
-        _.traverseNodesWithKey(this.rowsAfterGroup, (node: RowNode, key: string)=> {
+        _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string)=> {
             // if the group was open last time, then open it this time. however
             // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
             // setting will take effect.
-            if (groupState[key] === true) {
-                node.expanded = true;
+            if (typeof groupState[key] === 'boolean') {
+                node.expanded = groupState[key];
             }
         });
     }
 
     private doFilter() {
-        this.rowsAfterFilter = this.filterStage.execute(this.rowsAfterGroup);
+        this.filterStage.execute(this.rootNode);
+    }
+
+    private doPivot() {
+        this.pivotService.execute(this.rootNode);
+
+        // fire event here???
+        // pivotService.createPivotColumns()
+        // do pivot - create pivot columns?
     }
 
     // rows: the rows to put into the model
@@ -299,8 +329,17 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         var groupState = this.getGroupState();
 
         // place each row into a wrapper
-        this.allRows = this.createRowNodesFromData(rowData, firstId);
+        this.rootNode.allLeafChildren = this.createRowNodesFromData(rowData, firstId);
+        this.rootNode.childrenAfterFilter = null;
+        this.rootNode.childrenAfterGroup = null;
+        this.rootNode.childrenAfterSort = null;
+        this.rootNode.childrenMapped = null;
 
+        // this event kicks off:
+        // - clears selection
+        // - creates new pivot columns ??
+        // - updates filters
+        // - shows 'row rows' overlay if needed
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
         if (refresh) {
@@ -309,11 +348,11 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private getGroupState(): any {
-        if (!this.rowsAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
+        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
             return null;
         }
         var result: any = {};
-        _.traverseNodesWithKey(this.rowsAfterGroup, (node: RowNode, key: string)=> result[key] = node.expanded );
+        _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string)=> result[key] = node.expanded );
         return result;
     }
 
@@ -341,7 +380,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
                 if (nodeChildDetails && nodeChildDetails.group) {
                     node.group = true;
-                    node.children = recursiveFunction(nodeChildDetails.children, node, level + 1);
+                    node.childrenAfterGroup = recursiveFunction(nodeChildDetails.children, node, level + 1);
                     node.expanded = nodeChildDetails.expanded === true;
                     node.field = nodeChildDetails.field;
                     node.key = nodeChildDetails.key;
@@ -362,6 +401,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterSort);
+        // this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterSort);
+        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute(this.rootNode);
     }
 }

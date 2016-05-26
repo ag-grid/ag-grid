@@ -16,7 +16,7 @@ export interface AbstractColDef {
 
 export interface ColGroupDef extends AbstractColDef {
     /** Columns in this group */
-    children: AbstractColDef[];
+    children: (ColDef|ColGroupDef)[];
     /** Group ID */
     groupId?: string;
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
@@ -101,6 +101,9 @@ export interface ColDef extends AbstractColDef {
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
 
+    /** To pivot by this column by default, provide an index here. */
+    pivotIndex?: number;
+
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
 
@@ -130,6 +133,9 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true if you don't want to be able to group by this column */
     suppressRowGroup?: boolean;
+
+    /** Set to true if you don't want to be able to pivot by this column */
+    suppressPivot?: boolean;
 
     /** Set to true if you don't want to be able to aggregate by this column */
     suppressAggregation?: boolean;
