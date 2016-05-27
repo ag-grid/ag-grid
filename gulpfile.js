@@ -148,14 +148,17 @@ function webpackTask(minify, styles) {
 function stylusTask() {
 
     // Uncompressed
-    gulp.src('./src/styles/*.styl')
+    gulp.src('./node_modules/ag-grid/src/styles/*.styl')
         .pipe(foreach(function(stream, file) {
+            var currentTheme = path.basename(file.path, '.styl');
+            var themeName = currentTheme.replace('theme-','');
             return stream
                 .pipe(stylus({
                     use: nib(),
                     compress: false
                 }))
-                .pipe(gulp.dest('./dist/styles/'));
+                .pipe(replace('ag-common','ag-' + themeName))
+                .pipe(gulp.dest('./node_modules/ag-grid/dist/styles/'));
         }));
 
 }
