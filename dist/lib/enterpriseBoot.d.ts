@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.5
+// ag-grid-enterprise v4.2.6
 export declare class EnterpriseBoot {
     private static RICH_SELECT;
     private filterManager;
