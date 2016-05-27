@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.1
+// ag-grid-enterprise v4.2.2
 import { Component } from 'ag-grid/main';
 export interface VirtualListModel {
     getRowCount(): number;

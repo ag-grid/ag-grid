@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.1
+// ag-grid-enterprise v4.2.2
 import { IRowNodeStage, RowNode } from "ag-grid/main";
 export declare class AggregationStage implements IRowNodeStage {
     private gridOptionsWrapper;
