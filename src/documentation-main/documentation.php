@@ -20,11 +20,10 @@ include 'documentation_header.php';
 
     <div class="news-box">
         <div class="news-header">25th April 2016</div>
-        <div>ag-Grid 4.1.x released. Includes improved
-            <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering">Cell Rendering</a>,
-            new <a href="../javascript-grid-viewport/">Viewport</a> row model for big data. Lots of other smaller changes,
-            see <a href="../change-log/changeLogIndex.php">Change Log</a> for full details.
-            .</div>
+        <div>ag-Grid 4.2.x released. Includes new themes for Bootstrap and Material Design,
+            moving groups of columns together, 'shift selection' for selecting range of rows,
+            and a lot more. See <a href="../change-log/changeLogIndex.php">Change Log</a> for full details.
+            </div>
     </div>
 
 <!--    <div class="news-box">
@@ -146,6 +145,15 @@ include 'documentation_header.php';
     one or more of the below are complete. All of these are being developed out in coordination with
     large ag-Grid clients including one leading investment bank in London and one leading fund
     management company in Canada.
+</p>
+
+<h4>Pivoting (ag-Grid enterprise)</h4>
+
+<p>
+    Pivoting is the reason we haven't gotten much more done in the past few weeks, it's top of our
+    list and we are half way there with the implementation. When it is ready, you will be able to
+    pivot data inside ag-Grid similar to the pivot functionality in Excel. It will be controller
+    by the tool panel.
 </p>
 
 <h4>Pinnable Filters in Tool Panel (ag-Grid enterprise)</h4>
