@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.4
+// ag-grid-enterprise v4.2.7
 import { Component } from "ag-grid/main";
 export declare class ColumnSelectPanel extends Component {
     private columnController;

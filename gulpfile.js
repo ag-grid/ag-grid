@@ -1,3 +1,4 @@
+var gulpTypescript = require('gulp-typescript');
 var gulp = require('gulp');
 var typescript = require('typescript');
 var header = require('gulp-header');

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.4
+// ag-grid-enterprise v4.2.7
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -14,15 +14,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
-var renderedItem_1 = require("./renderedItem");
-var main_3 = require("ag-grid/main");
-var main_4 = require("ag-grid/main");
-var main_5 = require("ag-grid/main");
-var main_6 = require("ag-grid/main");
-var main_7 = require("ag-grid/main");
-var main_8 = require("ag-grid/main");
-var svgFactory = main_2.SvgFactory.getInstance();
+var svgFactory = main_1.SvgFactory.getInstance();
 var RenderedColumn = (function (_super) {
     __extends(RenderedColumn, _super);
     function RenderedColumn(column, columnDept, allowDragging) {
@@ -32,8 +24,9 @@ var RenderedColumn = (function (_super) {
         this.allowDragging = allowDragging;
     }
     RenderedColumn.prototype.init = function () {
+        this.displayName = this.columnController.getDisplayNameForCol(this.column);
         var eText = this.queryForHtmlElement('#eText');
-        eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
+        eText.innerHTML = this.displayName;
         eText.addEventListener('dblclick', this.onColumnVisibilityChanged.bind(this));
         this.setupVisibleIcons();
         var eIndent = this.queryForHtmlElement('#eIndent');
@@ -51,14 +44,15 @@ var RenderedColumn = (function (_super) {
         this.eColumnHiddenIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
         this.eColumnVisibleIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
         var columnStateChangedListener = this.onColumnStateChangedListener.bind(this);
-        this.column.addEventListener(main_7.Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
-        this.addDestroyFunc(function () { return _this.column.removeEventListener(main_7.Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener); });
+        this.column.addEventListener(main_1.Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
+        this.addDestroyFunc(function () { return _this.column.removeEventListener(main_1.Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener); });
         this.setIconVisibility();
     };
     RenderedColumn.prototype.addDragSource = function () {
         var dragSource = {
             eElement: this.getGui(),
-            dragItem: this.column
+            dragItemName: this.displayName,
+            dragItem: [this.column]
         };
         this.dragAndDropService.addDragSource(dragSource);
     };
@@ -80,26 +74,26 @@ var RenderedColumn = (function (_super) {
         '    <span id="eColumnVisibleIcon" class="ag-column-visible-icon"></span>' +
         '    <span id="eColumnHiddenIcon" class="ag-column-hidden-icon"></span>' +
         '  </span>' +
-        '    <span id="eText" class="ag-column-select-label"></span>' +
+        '  <span id="eText" class="ag-column-select-label"></span>' +
         '</div>';
     __decorate([
-        main_3.Autowired('columnController'), 
-        __metadata('design:type', main_4.ColumnController)
+        main_1.Autowired('columnController'), 
+        __metadata('design:type', main_1.ColumnController)
     ], RenderedColumn.prototype, "columnController", void 0);
     __decorate([
-        main_3.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_5.DragAndDropService)
+        main_1.Autowired('dragAndDropService'), 
+        __metadata('design:type', main_1.DragAndDropService)
     ], RenderedColumn.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_3.Autowired('gridPanel'), 
-        __metadata('design:type', main_6.GridPanel)
+        main_1.Autowired('gridPanel'), 
+        __metadata('design:type', main_1.GridPanel)
     ], RenderedColumn.prototype, "gridPanel", void 0);
     __decorate([
-        main_8.PostConstruct, 
+        main_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], RenderedColumn.prototype, "init", null);
     return RenderedColumn;
-})(renderedItem_1.RenderedItem);
+})(main_1.Component);
 exports.RenderedColumn = RenderedColumn;

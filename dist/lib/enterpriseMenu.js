@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.4
+// ag-grid-enterprise v4.2.7
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var columnSelectPanel_1 = require("./columnSelect/columnSelectPanel");
+var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var svgFactory = main_1.SvgFactory.getInstance();
 var EnterpriseMenuFactory = (function () {
     function EnterpriseMenuFactory() {
@@ -300,7 +300,6 @@ var EnterpriseMenu = (function () {
         var result = [];
         var doingGrouping = this.columnController.getRowGroupColumns().length > 0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-        result.push('separator');
         result.push('pinSubMenu');
         if (doingGrouping && !this.column.getColDef().suppressAggregation) {
             result.push('valueAggSubMenu');

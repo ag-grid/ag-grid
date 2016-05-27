@@ -1,7 +1,6 @@
-// ag-grid-enterprise v4.1.4
-import { RenderedItem } from "./renderedItem";
-import { Column } from "ag-grid/main";
-export declare class RenderedColumn extends RenderedItem {
+// ag-grid-enterprise v4.2.7
+import { Component, Column } from "ag-grid/main";
+export declare class RenderedColumn extends Component {
     private static TEMPLATE;
     private columnController;
     private dragAndDropService;
@@ -11,6 +10,7 @@ export declare class RenderedColumn extends RenderedItem {
     private eColumnVisibleIcon;
     private eColumnHiddenIcon;
     private allowDragging;
+    private displayName;
     constructor(column: Column, columnDept: number, allowDragging: boolean);
     init(): void;
     private setupVisibleIcons();

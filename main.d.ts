@@ -18,13 +18,12 @@ export * from './dist/lib/toolPanel/columnDrop/abstractColumnDropPanel';
 export * from './dist/lib/toolPanel/columnDrop/rowGroupColumnsPanel';
 export * from './dist/lib/toolPanel/columnDrop/pivotColumnsPanel';
 
-export * from './dist/lib/toolPanel/columnSelect/columnSelectPanel';
-export * from './dist/lib/toolPanel/columnSelect/renderedColumn';
-export * from './dist/lib/toolPanel/columnSelect/renderedGroup';
+export * from './dist/lib/toolPanel/columnsSelect/columnSelectPanel';
+export * from './dist/lib/toolPanel/columnsSelect/renderedColumn';
+export * from './dist/lib/toolPanel/columnsSelect/renderedGroup';
 
 export * from './dist/lib/clipboardService';
 export * from './dist/lib/contextMenu';
 export * from './dist/lib/enterpriseBoot';
 export * from './dist/lib/enterpriseMenu';
 export * from './dist/lib/rangeController';
-export * from './dist/lib/toolPanel';

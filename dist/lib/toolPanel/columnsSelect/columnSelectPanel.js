@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.4
+// ag-grid-enterprise v4.2.7
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -18,6 +18,7 @@ var renderedGroup_1 = require("./renderedGroup");
 var renderedColumn_1 = require("./renderedColumn");
 var ColumnSelectPanel = (function (_super) {
     __extends(ColumnSelectPanel, _super);
+    // we allow dragging in the toolPanel, but not when this component appears in the column menu
     function ColumnSelectPanel(allowDragging) {
         _super.call(this, ColumnSelectPanel.TEMPLATE);
         this.allowDragging = allowDragging;
@@ -48,7 +49,7 @@ var ColumnSelectPanel = (function (_super) {
         // only render group if user provided the definition
         var newDept;
         if (columnGroup.getColGroupDef()) {
-            var renderedGroup = new renderedGroup_1.RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this));
+            var renderedGroup = new renderedGroup_1.RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
             this.appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
