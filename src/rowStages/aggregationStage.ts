@@ -51,26 +51,32 @@ export class AggregationStage implements IRowNodeStage {
     }
 
     private aggregateRowNode(rowNode: RowNode, valueColumns: Column[], pivotColumns: Column[]): void {
+        
         var valueColumnsMissing = valueColumns.length === 0;
         var pivotColumnsMissing = pivotColumns.length === 0;
 
+        var aggResult: any;
         if (valueColumnsMissing) {
-            rowNode.data = null;
-            return;
-        }
-        
-        rowNode.data = {};
-
-        if (pivotColumnsMissing) {
-            valueColumns.forEach( valueColumn => {
-                var values = this.getValuesNormal(rowNode, valueColumn);
-                rowNode.data[valueColumn.getId()] = this.aggregateValues(values, valueColumn.getAggFunc());
-                return;
-            });
-            return;
+            aggResult = null;
+        } else if (pivotColumnsMissing) {
+            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, valueColumns);
+        } else {
+            aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
         }
 
+        rowNode.data = aggResult;
+
+        // if we are grouping, then it's possible there is a sibling footer
+        // to the group, so update the data here also if there is one
+        if (rowNode.sibling) {
+            rowNode.sibling.data = aggResult;
+        }
+    }
+
+    private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
+        var result: any = {};
         var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
+
         pivotColumnDefs.forEach( pivotColumnDef => {
 
             var values: any[];
@@ -85,10 +91,20 @@ export class AggregationStage implements IRowNodeStage {
                 values = this.getValuesPivotNonLeaf(rowNode, pivotColumnDef.colId);
             }
 
-            rowNode.data[pivotColumnDef.colId] = this.aggregateValues(values, valueColumn.getAggFunc());
+            result[pivotColumnDef.colId] = this.aggregateValues(values, valueColumn.getAggFunc());
 
         });
 
+        return result;
+    }
+
+    private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, valueColumns: Column[]): any {
+        var result: any = {};
+        valueColumns.forEach( valueColumn => {
+            var values = this.getValuesNormal(rowNode, valueColumn);
+            result[valueColumn.getId()] = this.aggregateValues(values, valueColumn.getAggFunc());
+        });
+        return result;
     }
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
