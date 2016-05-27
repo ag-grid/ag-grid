@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.0
+// ag-grid-enterprise v4.2.1
 import { IRowNodeStage, RowNode } from "ag-grid/main";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;
