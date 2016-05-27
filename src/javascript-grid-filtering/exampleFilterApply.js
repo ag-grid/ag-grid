@@ -8,7 +8,6 @@ var columnDefs = [
         filterParams: { apply: true }
     },
     {headerName: "Country", field: "country", width: 120,
-        filter: 'set',
         filterParams: { apply: true }
     },
     {headerName: "Year", field: "year", width: 90},
