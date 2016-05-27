@@ -41,7 +41,9 @@ export class ValueService {
         var result: any;
 
         // if there is a value getter, this gets precedence over a field
-        if (node.group && !userProvidedTheGroups) {
+        // - need to revisit this, we check 'data' as this is the way for the grid to
+        //   not render when on the footer row
+        if (data && node.group && !userProvidedTheGroups) {
             result = node.data ? node.data[column.getId()] : undefined;
         } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
