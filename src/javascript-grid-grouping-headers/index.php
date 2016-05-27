@@ -132,6 +132,16 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example1"></show-example>
 
+    <h3>Grouping Example - with marryChildren set</h3>
+
+    <p>
+        As above, here is a basic example of grouping in action, but this time we have
+        <pre>marryChildren: true</pre>
+        which will prevent any children of Athlete Details being moved to another grouping
+    </p>
+
+    <show-example example="example2"></show-example>
+
     <h4>Advanced Grouping Example</h4>
 
     <p>
