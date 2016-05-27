@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.2
+// ag-grid-enterprise v4.2.4
 var main_1 = require("ag-grid/main");
 var enterpriseMenu_1 = require("./enterpriseMenu");
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
