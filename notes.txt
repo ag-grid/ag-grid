@@ -22,3 +22,12 @@ ag-Grid-Enterprise
 + Commit all changes to Github (including built files in /dist)
 + Release in Github
 + Push to by running 'npm publish ./'
+
+ag-Grid-Docs
+
++ Update version in package.json
++ Commit to Github (do NOT include built files in /dist)
++ Run 'gulp release'
++ Copy dist folder to website (might be easier to zip it first, the explode zip in hostgater file manager)
+
+
