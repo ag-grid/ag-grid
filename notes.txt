@@ -6,6 +6,7 @@ ag-Grid
 + Update version in bower.json
 + Update version in package.json
 + Run 'gulp release'
++ Make sure any new files in 'dist' are added to Git
 + Commit all changes to Github (including built files in /dist)
 + Release in Github
 + Push to by running 'npm publish ./'
@@ -19,6 +20,7 @@ ag-Grid-Enterprise
 + Update version in package.json
 + Make sure correct ag-grid is in node_modules (it's a peer dependency, so wont get installed with npm install)
 + Run 'gulp release'
++ Make sure any new files in 'dist' are added to Git
 + Commit all changes to Github (including built files in /dist)
 + Release in Github
 + Push to by running 'npm publish ./'
