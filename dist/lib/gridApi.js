@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -135,6 +135,12 @@ var GridApi = (function () {
             console.log('cannot call onGroupExpandedOrCollapsed unless using normal row model');
         }
         this.inMemoryRowModel.refreshModel(constants_1.Constants.STEP_MAP, refreshFromIndex);
+    };
+    GridApi.prototype.refreshInMemoryRowModel = function () {
+        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+            console.log('cannot call refreshInMemoryRowModel unless using normal row model');
+        }
+        this.inMemoryRowModel.refreshModel(constants_1.Constants.STEP_EVERYTHING);
     };
     GridApi.prototype.expandAll = function () {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {

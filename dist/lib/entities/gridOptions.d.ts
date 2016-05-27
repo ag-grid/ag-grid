@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -32,6 +32,8 @@ export interface GridOptions {
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
     enableStatusBar?: boolean;
+    suppressMiddleClickScrolls?: boolean;
+    suppressPreventDefaultOnMouseWheel?: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;
@@ -122,7 +124,6 @@ export interface GridOptions {
     getRowClass?: Function;
     getRowHeight?: Function;
     headerCellRenderer?: any;
-    groupAggFunction?(nodes: any[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?(dataItem: any): NodeChildDetails;

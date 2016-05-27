@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -59,7 +59,6 @@ export declare class GridOptionsWrapper {
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
     getGroupDefaultExpanded(): number;
-    getGroupAggFunction(): (nodes: any[]) => any;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
     getGroupColumnDef(): ColDef;
@@ -74,6 +73,8 @@ export declare class GridOptionsWrapper {
     getViewportDatasource(): IViewportDatasource;
     isEnableSorting(): boolean;
     isEnableCellExpressions(): boolean;
+    isSuppressMiddleClickScrolls(): boolean;
+    isSuppressPreventDefaultOnMouseWheel(): boolean;
     isEnableServerSideSorting(): boolean;
     isSuppressContextMenu(): boolean;
     isEnableFilter(): boolean;

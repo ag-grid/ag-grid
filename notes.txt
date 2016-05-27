@@ -1,9 +1,13 @@
 
 Doing releases:
-1. Update version in bower.json
-2. Update version in package.json
-3. Remove 'exclude' from dist folders (in Niall's dev)
-4. gulp release
+
+ag-Grid
+
++ Update version in bower.json
++ Update version in package.json
++ Run 'gulp release'
++ Commit all changes to Github (including built files in /dist)
+
 -- build
 5. Push to node npm: npm publish ./
 

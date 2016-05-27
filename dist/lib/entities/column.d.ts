@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
-import { ColDef, AbstractColDef } from "./colDef";
+import { ColDef, AbstractColDef, IAggFunction } from "./colDef";
 import { RowNode } from "./rowNode";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     static EVENT_MOVING_CHANGED: string;
@@ -57,8 +57,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isSortNone(): boolean;
     getSortedAt(): number;
     setSortedAt(sortedAt: number): void;
-    setAggFunc(aggFunc: string): void;
-    getAggFunc(): string;
+    setAggFunc(aggFunc: string | IAggFunction): void;
+    getAggFunc(): string | IAggFunction;
     getLeft(): number;
     getRight(): number;
     setLeft(left: number): void;

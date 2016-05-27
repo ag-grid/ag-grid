@@ -1,10 +1,9 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Column } from "../entities/column";
 export declare class HeaderTemplateLoader {
-    static HEADER_CELL_DND_TEMPLATE: string;
     private static HEADER_CELL_TEMPLATE;
     private gridOptionsWrapper;
     createHeaderElement(column: Column): HTMLElement;

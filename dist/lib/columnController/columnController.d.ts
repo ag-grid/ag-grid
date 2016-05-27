@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -158,7 +158,6 @@ export declare class ColumnController {
     getColumnState(): [any];
     resetColumnState(): void;
     setColumnState(columnState: any[]): boolean;
-    getOriginalColumns(keys: any[]): Column[];
     getGridColumns(keys: any[]): Column[];
     getColumns(keys: any[], columnLookupCallback: (key: string | ColDef | Column) => Column): Column[];
     getColumnWithValidation(key: string | ColDef | Column): Column;

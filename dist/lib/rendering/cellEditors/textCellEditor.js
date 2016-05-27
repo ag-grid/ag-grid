@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12,11 +12,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 var constants_1 = require("../../constants");
 var component_1 = require("../../widgets/component");
 var utils_1 = require('../../utils');
-var StartState;
-(function (StartState) {
-    StartState[StartState["HighlightAll"] = 0] = "HighlightAll";
-    StartState[StartState["CursorAtEnd"] = 1] = "CursorAtEnd";
-})(StartState || (StartState = {}));
 var TextCellEditor = (function (_super) {
     __extends(TextCellEditor, _super);
     function TextCellEditor() {
@@ -45,6 +40,12 @@ var TextCellEditor = (function (_super) {
         if (utils_1.Utils.exists(startValue)) {
             eInput.value = startValue;
         }
+        this.addDestroyableEventListener(eInput, 'keydown', function (event) {
+            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_LEFT || event.keyCode === constants_1.Constants.KEY_RIGHT;
+            if (isNavigationKey) {
+                event.stopPropagation();
+            }
+        });
     };
     TextCellEditor.prototype.afterGuiAttached = function () {
         var eInput = this.getGui();

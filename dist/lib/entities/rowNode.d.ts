@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -8,6 +8,8 @@ export declare class RowNode {
     static EVENT_ROW_SELECTED: string;
     static EVENT_DATA_CHANGED: string;
     static EVENT_CELL_CHANGED: string;
+    static EVENT_MOUSE_ENTER: string;
+    static EVENT_MOUSE_LEAVE: string;
     private mainEventService;
     private gridOptionsWrapper;
     private selectionController;
@@ -92,4 +94,6 @@ export declare class RowNode {
     private selectChildNodes(newValue);
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
+    onMouseEnter(): void;
+    onMouseLeave(): void;
 }

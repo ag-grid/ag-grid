@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,20 +43,15 @@ var GridCore = (function () {
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             toolPanelGui = this.toolPanel.getGui();
         }
-        var northGui;
-        if (this.rowGroupColumnsPanel || this.pivotColumnsPanel) {
-            northGui = document.createElement('div');
-            if (this.rowGroupColumnsPanel) {
-                northGui.appendChild(this.rowGroupColumnsPanel.getGui());
-            }
-            if (this.pivotColumnsPanel) {
-                northGui.appendChild(this.pivotColumnsPanel.getGui());
-            }
+        var rowGroupGui;
+        if (this.rowGroupCompFactory) {
+            this.rowGroupComp = this.rowGroupCompFactory.create();
+            rowGroupGui = this.rowGroupComp.getGui();
         }
         this.eRootPanel = new borderLayout_1.BorderLayout({
             center: this.gridPanel.getLayout(),
             east: toolPanelGui,
-            north: northGui,
+            north: rowGroupGui,
             south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
             name: 'eRootPanel'
@@ -101,7 +96,7 @@ var GridCore = (function () {
         return eSouthPanel;
     };
     GridCore.prototype.onRowGroupChanged = function () {
-        if (!this.rowGroupColumnsPanel) {
+        if (!this.rowGroupComp) {
             return;
         }
         var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
@@ -258,13 +253,9 @@ var GridCore = (function () {
         __metadata('design:type', focusedCellController_1.FocusedCellController)
     ], GridCore.prototype, "focusedCellController", void 0);
     __decorate([
-        context_1.Optional('rowGroupColumnsPanel'), 
-        __metadata('design:type', component_1.Component)
-    ], GridCore.prototype, "rowGroupColumnsPanel", void 0);
-    __decorate([
-        context_1.Optional('pivotColumnsPanel'), 
-        __metadata('design:type', component_1.Component)
-    ], GridCore.prototype, "pivotColumnsPanel", void 0);
+        context_1.Optional('rowGroupCompFactory'), 
+        __metadata('design:type', Object)
+    ], GridCore.prototype, "rowGroupCompFactory", void 0);
     __decorate([
         context_1.Optional('toolPanel'), 
         __metadata('design:type', component_1.Component)

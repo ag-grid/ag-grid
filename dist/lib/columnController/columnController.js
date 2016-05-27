@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -555,6 +555,7 @@ var ColumnController = (function () {
     // does an action on a set of columns. provides common functionality for looking up the
     // columns based on key, getting a list of effected columns, and then updated the event
     // with either one column (if it was just one col) or a list of columns
+    // used by: autoResize, setVisible, setPinned
     ColumnController.prototype.actionOnColumns = function (keys, action, createEvent) {
         var _this = this;
         if (!keys || keys.length === 0) {
@@ -562,7 +563,7 @@ var ColumnController = (function () {
         }
         var updatedColumns = [];
         keys.forEach(function (key) {
-            var column = _this.getOriginalColumn(key);
+            var column = _this.getGridColumn(key);
             if (!column) {
                 return;
             }
@@ -616,12 +617,12 @@ var ColumnController = (function () {
         return result;
     };
     ColumnController.prototype.getColumnState = function () {
-        if (!this.originalColumns || this.originalColumns.length < 0) {
+        if (!this.gridColumns || this.gridColumns.length < 0) {
             return [];
         }
         var result = [];
-        for (var i = 0; i < this.originalColumns.length; i++) {
-            var column = this.originalColumns[i];
+        for (var i = 0; i < this.gridColumns.length; i++) {
+            var column = this.gridColumns[i];
             var rowGroupIndex = this.rowGroupColumns.indexOf(column);
             var resultItem = {
                 colId: column.getColId(),
@@ -715,13 +716,11 @@ var ColumnController = (function () {
             }
             return rowGroupIndexA - rowGroupIndexB;
         });
+        this.setupGridColumns();
         this.updateModel();
         var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
         return success;
-    };
-    ColumnController.prototype.getOriginalColumns = function (keys) {
-        return this.getColumns(keys, this.getOriginalColumn.bind(this));
     };
     ColumnController.prototype.getGridColumns = function (keys) {
         return this.getColumns(keys, this.getGridColumn.bind(this));
@@ -969,9 +968,9 @@ var ColumnController = (function () {
             this.gridColumns = this.getColumnsFromTree(this.gridBalancedTree);
         }
         else {
-            this.gridBalancedTree = this.originalBalancedTree;
+            this.gridBalancedTree = this.originalBalancedTree.slice();
             this.gridHeaderRowCount = this.originalHeaderRowCount;
-            this.gridColumns = this.originalColumns;
+            this.gridColumns = this.originalColumns.slice();
         }
     };
     ColumnController.prototype.updateGroupsAndDisplayedColumns = function () {

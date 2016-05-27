@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -23,6 +23,9 @@ export interface ColGroupDef extends AbstractColDef {
     groupId?: string;
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
+}
+export interface IAggFunction {
+    (input: any[]): any;
 }
 export interface ColDef extends AbstractColDef {
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
@@ -81,8 +84,8 @@ export interface ColDef extends AbstractColDef {
     cellFormatter?: (params: any) => string;
     /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     floatingCellFormatter?: (params: any) => string;
-    /** Name of function to use for aggregation. One of [sum,min,max]. */
-    aggFunc?: string;
+    /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
+    aggFunc?: string | IAggFunction;
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
     /** To pivot by this column by default, provide an index here. */

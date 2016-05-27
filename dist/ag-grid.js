@@ -1,4 +1,4 @@
-// ag-grid v4.1.5
+// ag-grid v4.2.0
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -65,6 +65,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	__webpack_require__(96);
 	__webpack_require__(98);
 	__webpack_require__(100);
+	__webpack_require__(102);
 
 
 /***/ },
@@ -73,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -108,10 +109,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var cssClassApplier_1 = __webpack_require__(72);
 	var headerContainer_1 = __webpack_require__(69);
 	var headerRenderer_1 = __webpack_require__(68);
-	var headerTemplateLoader_1 = __webpack_require__(74);
+	var headerTemplateLoader_1 = __webpack_require__(75);
 	var horizontalDragService_1 = __webpack_require__(71);
 	var moveColumnController_1 = __webpack_require__(76);
-	var renderedHeaderCell_1 = __webpack_require__(75);
+	var renderedHeaderCell_1 = __webpack_require__(74);
 	var renderedHeaderGroupCell_1 = __webpack_require__(70);
 	var standardMenu_1 = __webpack_require__(78);
 	var borderLayout_1 = __webpack_require__(30);
@@ -279,7 +280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -297,7 +298,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var oldToolPanelDragAndDropService_1 = __webpack_require__(77);
 	var gridPanel_1 = __webpack_require__(24);
 	var gridApi_1 = __webpack_require__(11);
-	var headerTemplateLoader_1 = __webpack_require__(74);
+	var headerTemplateLoader_1 = __webpack_require__(75);
 	var balancedColumnTreeBuilder_1 = __webpack_require__(19);
 	var displayedGroupCreator_1 = __webpack_require__(21);
 	var expressionService_1 = __webpack_require__(18);
@@ -416,7 +417,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -514,7 +515,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.isEnableColResize = function () { return isTrue(this.gridOptions.enableColResize); };
 	    GridOptionsWrapper.prototype.isSingleClickEdit = function () { return isTrue(this.gridOptions.singleClickEdit); };
 	    GridOptionsWrapper.prototype.getGroupDefaultExpanded = function () { return this.gridOptions.groupDefaultExpanded; };
-	    GridOptionsWrapper.prototype.getGroupAggFunction = function () { return this.gridOptions.groupAggFunction; };
 	    GridOptionsWrapper.prototype.getRowData = function () { return this.gridOptions.rowData; };
 	    GridOptionsWrapper.prototype.isGroupUseEntireRow = function () { return isTrue(this.gridOptions.groupUseEntireRow); };
 	    GridOptionsWrapper.prototype.getGroupColumnDef = function () { return this.gridOptions.groupColumnDef; };
@@ -529,6 +529,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.getViewportDatasource = function () { return this.gridOptions.viewportDatasource; };
 	    GridOptionsWrapper.prototype.isEnableSorting = function () { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); };
 	    GridOptionsWrapper.prototype.isEnableCellExpressions = function () { return isTrue(this.gridOptions.enableCellExpressions); };
+	    GridOptionsWrapper.prototype.isSuppressMiddleClickScrolls = function () { return isTrue(this.gridOptions.suppressMiddleClickScrolls); };
+	    GridOptionsWrapper.prototype.isSuppressPreventDefaultOnMouseWheel = function () { return isTrue(this.gridOptions.suppressPreventDefaultOnMouseWheel); };
 	    GridOptionsWrapper.prototype.isEnableServerSideSorting = function () { return isTrue(this.gridOptions.enableServerSideSorting); };
 	    GridOptionsWrapper.prototype.isSuppressContextMenu = function () { return isTrue(this.gridOptions.suppressContextMenu); };
 	    GridOptionsWrapper.prototype.isEnableFilter = function () { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); };
@@ -664,6 +666,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (options.rowsAlreadyGrouped) {
 	            console.warn('ag-grid: since version 3.4 rowsAlreadyGrouped no longer exists, please use getNodeChildDetails() instead');
 	        }
+	        if (options.groupAggFunction) {
+	            console.warn('ag-grid: since version 4.2.0 groupAggFunction no longer exists, please check documentation on how to do custom aggregations, aggFunc on the colDef can now be a function');
+	        }
 	    };
 	    GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
 	        if (this.gridOptions.localeTextFunc) {
@@ -763,7 +768,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -868,7 +873,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -930,7 +935,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1206,7 +1211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1881,7 +1886,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1929,7 +1934,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2102,10 +2107,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
 	        'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise', 'rowGroupPanelShow',
 	        'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
-	        'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns'
+	        'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
+	        'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel'
 	    ];
 	    ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
-	        'groupRowRenderer', 'groupAggFunction', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
+	        'groupRowRenderer', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
 	        'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
 	        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
 	        'getNodeChildDetails'];
@@ -2137,7 +2143,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2204,7 +2210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2339,6 +2345,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            console.log('cannot call onGroupExpandedOrCollapsed unless using normal row model');
 	        }
 	        this.inMemoryRowModel.refreshModel(constants_1.Constants.STEP_MAP, refreshFromIndex);
+	    };
+	    GridApi.prototype.refreshInMemoryRowModel = function () {
+	        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+	            console.log('cannot call refreshInMemoryRowModel unless using normal row model');
+	        }
+	        this.inMemoryRowModel.refreshModel(constants_1.Constants.STEP_EVERYTHING);
 	    };
 	    GridApi.prototype.expandAll = function () {
 	        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
@@ -2723,7 +2735,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2931,7 +2943,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -3486,6 +3498,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // does an action on a set of columns. provides common functionality for looking up the
 	    // columns based on key, getting a list of effected columns, and then updated the event
 	    // with either one column (if it was just one col) or a list of columns
+	    // used by: autoResize, setVisible, setPinned
 	    ColumnController.prototype.actionOnColumns = function (keys, action, createEvent) {
 	        var _this = this;
 	        if (!keys || keys.length === 0) {
@@ -3493,7 +3506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        var updatedColumns = [];
 	        keys.forEach(function (key) {
-	            var column = _this.getOriginalColumn(key);
+	            var column = _this.getGridColumn(key);
 	            if (!column) {
 	                return;
 	            }
@@ -3547,12 +3560,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return result;
 	    };
 	    ColumnController.prototype.getColumnState = function () {
-	        if (!this.originalColumns || this.originalColumns.length < 0) {
+	        if (!this.gridColumns || this.gridColumns.length < 0) {
 	            return [];
 	        }
 	        var result = [];
-	        for (var i = 0; i < this.originalColumns.length; i++) {
-	            var column = this.originalColumns[i];
+	        for (var i = 0; i < this.gridColumns.length; i++) {
+	            var column = this.gridColumns[i];
 	            var rowGroupIndex = this.rowGroupColumns.indexOf(column);
 	            var resultItem = {
 	                colId: column.getColId(),
@@ -3646,13 +3659,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            return rowGroupIndexA - rowGroupIndexB;
 	        });
+	        this.setupGridColumns();
 	        this.updateModel();
 	        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED);
 	        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
 	        return success;
-	    };
-	    ColumnController.prototype.getOriginalColumns = function (keys) {
-	        return this.getColumns(keys, this.getOriginalColumn.bind(this));
 	    };
 	    ColumnController.prototype.getGridColumns = function (keys) {
 	        return this.getColumns(keys, this.getGridColumn.bind(this));
@@ -3900,9 +3911,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.gridColumns = this.getColumnsFromTree(this.gridBalancedTree);
 	        }
 	        else {
-	            this.gridBalancedTree = this.originalBalancedTree;
+	            this.gridBalancedTree = this.originalBalancedTree.slice();
 	            this.gridHeaderRowCount = this.originalHeaderRowCount;
-	            this.gridColumns = this.originalColumns;
+	            this.gridColumns = this.originalColumns.slice();
 	        }
 	    };
 	    ColumnController.prototype.updateGroupsAndDisplayedColumns = function () {
@@ -4166,7 +4177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4349,7 +4360,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4643,7 +4654,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4800,7 +4811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4903,7 +4914,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4987,7 +4998,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5156,7 +5167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5205,7 +5216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5339,7 +5350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5426,7 +5437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6006,7 +6017,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6213,6 +6224,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (utils_1.Utils.exists(cell)) {
 	            //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
 	            this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
+	        }
+	        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
+	        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
+	        // button in the browser). so this property allows the user to receive middle button clicks if
+	        // they want.
+	        if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
+	            mouseEvent.preventDefault();
 	        }
 	    };
 	    GridPanel.prototype.addShortcutKeyListeners = function () {
@@ -6619,8 +6637,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var newTopPosition = this.eBodyViewport.scrollTop + wheelEvent.pixelY;
 	            targetPanel.scrollTop = newTopPosition;
 	        }
-	        // if we don't prevent default, then the whole browser will scroll also as well as the grid
-	        event.preventDefault();
+	        // allow the option to pass mouse wheel events ot the browser
+	        // https://github.com/ceolter/ag-grid/issues/800
+	        // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
+	        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+	            // if we don't prevent default, then the whole browser will scroll also as well as the grid
+	            event.preventDefault();
+	        }
 	        return false;
 	    };
 	    GridPanel.prototype.onColumnsChanged = function (event) {
@@ -6956,7 +6979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7057,7 +7080,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (event.getColumn()) {
 	            result.push(event.getColumn().getColId());
 	        }
-	        if (event.getColumns()) {
+	        else if (event.getColumns()) {
 	            event.getColumns().forEach(function (column) {
 	                result.push(column.getColId());
 	            });
@@ -7169,7 +7192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7301,7 +7324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7565,9 +7588,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RowNode.prototype.removeEventListener = function (eventType, listener) {
 	        this.eventService.removeEventListener(eventType, listener);
 	    };
+	    RowNode.prototype.onMouseEnter = function () {
+	        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_ENTER);
+	    };
+	    RowNode.prototype.onMouseLeave = function () {
+	        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
+	    };
 	    RowNode.EVENT_ROW_SELECTED = 'rowSelected';
 	    RowNode.EVENT_DATA_CHANGED = 'dataChanged';
 	    RowNode.EVENT_CELL_CHANGED = 'cellChanged';
+	    RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
+	    RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
 	    __decorate([
 	        context_1.Autowired('eventService'), 
 	        __metadata('design:type', eventService_1.EventService)
@@ -7603,7 +7634,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7847,7 +7878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7885,7 +7916,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var field = colDef.field;
 	        var result;
 	        // if there is a value getter, this gets precedence over a field
-	        if (node.group && !userProvidedTheGroups) {
+	        // - need to revisit this, we check 'data' as this is the way for the grid to
+	        //   not render when on the footer row
+	        if (data && node.group && !userProvidedTheGroups) {
 	            result = node.data ? node.data[column.getId()] : undefined;
 	        }
 	        else if (colDef.valueGetter) {
@@ -8051,7 +8084,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8312,7 +8345,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8437,7 +8470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8613,7 +8646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8645,7 +8678,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8719,7 +8752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8901,7 +8934,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8992,7 +9025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9052,6 +9085,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addCellFocusedListener();
 	        this.addNodeDataChangedListener();
 	        this.addColumnListener();
+	        this.addHoverFunctionality();
 	        this.attachContainers();
 	        this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
 	            eRow: this.eBodyRow,
@@ -9171,6 +9205,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.destroyFunctions.push(function () {
 	            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
 	        });
+	    };
+	    RenderedRow.prototype.addHoverFunctionality = function () {
+	        var _this = this;
+	        var onGuiMouseEnter = this.rowNode.onMouseEnter.bind(this.rowNode);
+	        var onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
+	        this.eLeftCenterAndRightRows.forEach(function (eRow) {
+	            eRow.addEventListener('mouseenter', onGuiMouseEnter);
+	            eRow.addEventListener('mouseleave', onGuiMouseLeave);
+	        });
+	        var onNodeMouseEnter = this.addHoverClass.bind(this, true);
+	        var onNodeMouseLeave = this.addHoverClass.bind(this, false);
+	        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+	        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
+	        this.destroyFunctions.push(function () {
+	            _this.eLeftCenterAndRightRows.forEach(function (eRow) {
+	                eRow.removeEventListener('mouseenter', onGuiMouseEnter);
+	                eRow.removeEventListener('mouseleave', onGuiMouseLeave);
+	            });
+	            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+	            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
+	        });
+	    };
+	    RenderedRow.prototype.addHoverClass = function (hover) {
+	        this.eLeftCenterAndRightRows.forEach(function (eRow) { return utils_1.Utils.addOrRemoveCssClass(eRow, 'ag-row-hover', hover); });
 	    };
 	    RenderedRow.prototype.addCellFocusedListener = function () {
 	        var _this = this;
@@ -9421,13 +9479,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    RenderedRow.prototype.createRowContainer = function () {
 	        var _this = this;
-	        var vRow = document.createElement('div');
-	        vRow.addEventListener("click", this.onRowClicked.bind(this));
-	        vRow.addEventListener("dblclick", function (event) {
+	        var eRow = document.createElement('div');
+	        eRow.addEventListener("click", this.onRowClicked.bind(this));
+	        eRow.addEventListener("dblclick", function (event) {
 	            var agEvent = _this.createEvent(event, _this);
 	            _this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
 	        });
-	        return vRow;
+	        return eRow;
 	    };
 	    RenderedRow.prototype.onRowClicked = function (event) {
 	        var agEvent = this.createEvent(event, this);
@@ -9479,7 +9537,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!colIds) {
 	            return;
 	        }
-	        var columnsToRefresh = this.columnController.getOriginalColumns(colIds);
+	        var columnsToRefresh = this.columnController.getGridColumns(colIds);
 	        this.forEachRenderedCell(function (renderedCell) {
 	            var colForCel = renderedCell.getColumn();
 	            if (columnsToRefresh.indexOf(colForCel) >= 0) {
@@ -9608,7 +9666,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9982,7 +10040,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this;
 	        var that = this;
 	        var keyPressListener = function (event) {
-	            if (!that.editingCell) {
+	            if (that.isCellEditable()) {
 	                var pressedChar = String.fromCharCode(event.charCode);
 	                if (pressedChar === ' ') {
 	                    that.onSpaceKeyPressed();
@@ -10609,7 +10667,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10743,7 +10801,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10786,20 +10844,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
 	            toolPanelGui = this.toolPanel.getGui();
 	        }
-	        var northGui;
-	        if (this.rowGroupColumnsPanel || this.pivotColumnsPanel) {
-	            northGui = document.createElement('div');
-	            if (this.rowGroupColumnsPanel) {
-	                northGui.appendChild(this.rowGroupColumnsPanel.getGui());
-	            }
-	            if (this.pivotColumnsPanel) {
-	                northGui.appendChild(this.pivotColumnsPanel.getGui());
-	            }
+	        var rowGroupGui;
+	        if (this.rowGroupCompFactory) {
+	            this.rowGroupComp = this.rowGroupCompFactory.create();
+	            rowGroupGui = this.rowGroupComp.getGui();
 	        }
 	        this.eRootPanel = new borderLayout_1.BorderLayout({
 	            center: this.gridPanel.getLayout(),
 	            east: toolPanelGui,
-	            north: northGui,
+	            north: rowGroupGui,
 	            south: eSouthPanel,
 	            dontFill: this.gridOptionsWrapper.isForPrint(),
 	            name: 'eRootPanel'
@@ -10844,7 +10897,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return eSouthPanel;
 	    };
 	    GridCore.prototype.onRowGroupChanged = function () {
-	        if (!this.rowGroupColumnsPanel) {
+	        if (!this.rowGroupComp) {
 	            return;
 	        }
 	        var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
@@ -11001,13 +11054,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:type', focusedCellController_1.FocusedCellController)
 	    ], GridCore.prototype, "focusedCellController", void 0);
 	    __decorate([
-	        context_1.Optional('rowGroupColumnsPanel'), 
-	        __metadata('design:type', component_1.Component)
-	    ], GridCore.prototype, "rowGroupColumnsPanel", void 0);
-	    __decorate([
-	        context_1.Optional('pivotColumnsPanel'), 
-	        __metadata('design:type', component_1.Component)
-	    ], GridCore.prototype, "pivotColumnsPanel", void 0);
+	        context_1.Optional('rowGroupCompFactory'), 
+	        __metadata('design:type', Object)
+	    ], GridCore.prototype, "rowGroupCompFactory", void 0);
 	    __decorate([
 	        context_1.Optional('toolPanel'), 
 	        __metadata('design:type', component_1.Component)
@@ -11044,7 +11093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11385,7 +11434,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11561,7 +11610,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12013,7 +12062,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12211,7 +12260,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12418,7 +12467,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12633,7 +12682,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12727,7 +12776,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12825,7 +12874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12837,11 +12886,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var constants_1 = __webpack_require__(8);
 	var component_1 = __webpack_require__(47);
 	var utils_1 = __webpack_require__(7);
-	var StartState;
-	(function (StartState) {
-	    StartState[StartState["HighlightAll"] = 0] = "HighlightAll";
-	    StartState[StartState["CursorAtEnd"] = 1] = "CursorAtEnd";
-	})(StartState || (StartState = {}));
 	var TextCellEditor = (function (_super) {
 	    __extends(TextCellEditor, _super);
 	    function TextCellEditor() {
@@ -12870,6 +12914,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (utils_1.Utils.exists(startValue)) {
 	            eInput.value = startValue;
 	        }
+	        this.addDestroyableEventListener(eInput, 'keydown', function (event) {
+	            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_LEFT || event.keyCode === constants_1.Constants.KEY_RIGHT;
+	            if (isNavigationKey) {
+	                event.stopPropagation();
+	            }
+	        });
 	    };
 	    TextCellEditor.prototype.afterGuiAttached = function () {
 	        var eInput = this.getGui();
@@ -12904,7 +12954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12956,7 +13006,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13019,7 +13069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13048,7 +13098,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13077,7 +13127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13148,7 +13198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13232,7 +13282,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13319,7 +13369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13360,9 +13410,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        utils_1.Utils.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
 	        // class makes it red (in ag-fresh)
 	        utils_1.Utils.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
-	        // highlight the current value
-	        utils_1.Utils.addCssClass(this.eValue, 'ag-value-change-value-highlight');
-	        this.setTimerToRemoveDelta();
 	    };
 	    AnimateShowChangeCellRenderer.prototype.setTimerToRemoveDelta = function () {
 	        var _this = this;
@@ -13399,6 +13446,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var delta = value - this.lastValue;
 	            this.showDelta(params, delta);
 	        }
+	        // highlight the current value, but only if it's not new, otherwise it
+	        // would get highlighted first time the value is shown
+	        if (this.lastValue) {
+	            utils_1.Utils.addCssClass(this.eValue, 'ag-value-change-value-highlight');
+	        }
+	        this.setTimerToRemoveDelta();
 	        this.lastValue = value;
 	    };
 	    AnimateShowChangeCellRenderer.TEMPLATE = '<span>' +
@@ -13416,7 +13469,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13699,7 +13752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13866,12 +13919,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    SvgFactory.prototype.createColumnIndeterminateIcon = function () {
 	        var eImg = document.createElement('img');
-	        eImg.src = 'data:image/gif;base64,R0lGODlhEAAQAOZOAP39/cfHx/X19YCAgP7+/r+/v/z8/Pb29vf39+rq6vDw8Ozs7PHx8dnZ2aamps3NzWJiYrCwsJaWlszMzFBQUK2trYWFhZCQkPPz8/r6+rGxsevr646OjnV1dfv7++Pj42tra+bm5nl5eWFhYcHBwbi4uIGBgfj4+P7+/42Njb6+vtjY2IyMjLW1te7u7qGhoZSUlJqamqqqquzs7UlJSaysrLq6uu3t7fT09LS0tGhoaEpKSg4ODj09Pbm5uTo6OhYWFsvLy93d3QoKCvn5+m5ubsTExOjo6FxcXPLy8oKCgunp6eXl5f///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4zLWMwMTEgNjYuMTQ1NjYxLCAyMDEyLzAyLzA2LTE0OjU2OjI3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBN0MyOEU2MzE1NDgxMUU2QjcxN0RFQzcyQ0QwODRDMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBN0MyOEU2NDE1NDgxMUU2QjcxN0RFQzcyQ0QwODRDMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkE3QzI4RTYxMTU0ODExRTZCNzE3REVDNzJDRDA4NEMwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkE3QzI4RTYyMTU0ODExRTZCNzE3REVDNzJDRDA4NEMwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAQAATgAsAAAAABAAEAAAB6eAToKDhIWGh4iJhgwaIDs9PzQgGgyFERRFBTlGAT4tOhQRgggcEA8GAgBNTQANHg8QHAglHQkHHgQkJDE1AggHCR0lIxIKSQAZQEM8SAcYCgoSIwUDHxsYGShNBE0uNwkfAwUnDgMTR0E4BEQzQksTAw4nggEWLDYyMEovKikWAYIMLGgQoMIFEyJEmLhQIcCKBQYACFgQgonFixZDbEilqKPHj4ICAQA7';
+	        eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUY1QTkyNDUxRTkzMTFFNkFEQzVDNjE1NDE4RDlEQUMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUY1QTkyNDYxRTkzMTFFNkFEQzVDNjE1NDE4RDlEQUMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5RjVBOTI0MzFFOTMxMUU2QURDNUM2MTU0MThEOURBQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5RjVBOTI0NDFFOTMxMUU2QURDNUM2MTU0MThEOURBQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Por9Q7gAAAGzSURBVHja1JOxSwJRHMffqXcqSoVBQ0FDNN7iIBxO5WA3NYoEjm0u/T2Bkw2ONZlgNEk4Bw6GiGiippmRnp76+n4PbWhpcOoHH57P+36/7/e8n4qUUmxSLrFhbRygoJwPq6tsgRMQB0cgtNINQA0UwCMYrX3rAAUB516v9zIejx+nUqm90WgUDIfDaq1WE9PpdK6q6mc2m+0WCoUX7K/hu+O5TPCBq0gkUiqXy0PbtqVlWXK5XDqwuE4mEzmfzyU11NJDr3C73SZOfeh0OtPxeCyR7oixlzhdVqtV2ev1nCB+Tw219NDrQRtJwzBCaF+bzWbsSGQyGVEsFoWmacLj8YjBYCBisZhIp9MC3Qhq6YEmyQ5OTdO8bTQak263K8m69d+FIOc5tfTQywAvTrmIRqM3pVLptd1uy3q9/nN3slgsZLPZlHxGDbX00Ou8ApfLxbdh+P3+MyTriURC7/f7+7hCsFKpCF3XvwKBQCuXyz3n8/ln/Bb3yH9iOAPcYAfsIiSEsAOsh9hvA99qDizwAVMDphbWd+zfwFBZTSOFfqBxJv4YPk6cDcYMVv7/n+lbgAEAtdcjOjP715MAAAAASUVORK5CYII=';
 	        return eImg;
 	    };
 	    SvgFactory.prototype.createGroupIcon = function () {
 	        var eImg = document.createElement('img');
 	        eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NUVCNUI1OUNENkYwMTFFNThGNjJDNUE3ODIwMEZERDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NUVCNUI1OURENkYwMTFFNThGNjJDNUE3ODIwMEZERDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1RUI1QjU5QUQ2RjAxMUU1OEY2MkM1QTc4MjAwRkRENyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo1RUI1QjU5QkQ2RjAxMUU1OEY2MkM1QTc4MjAwRkRENyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlkCTGoAAACDSURBVHjaYmRgYPjPgBswQun/+BT8X3x5DoZErG4KCj/3/DcMNZMNuRiYGPADRiRX4HYBJV5AB0QrhAGW//8hehgZES6FiaGLYzUAq7sxNf0nxQCsinHFAguegCPKBYxoYfAfWQxNnPgwINJVYMDEQCEYfLHASGoKRQlxPN7BqQggwAAN+SopPnDCwgAAAABJRU5ErkJggg==';
+	        return eImg;
+	    };
+	    SvgFactory.prototype.createPivotIcon = function () {
+	        var eImg = document.createElement('img');
+	        eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAitJREFUeNqcU01rE1EUPfPVJjFqdYw2pJQkNS2hYhQUiwj+AaugKFYUBWutG3HjokgNrroRKYKbglBBFF0o1IW404qClGIDxpYKTQgULZJmmpiYkPnwvmtNspPmweOcmXnnvPPufSOdjsf7AfjR3PiOU6OjV50mh9CqtmVJDlkNjWU3tPXEiA6hlS3Lkm3HQbFYxO5hnTF0pQ3Bwa3MAxc98F9wMd95TsOOswpzoRFa1TJNyaKHtTUD07cNdv9wx6jtNDNW53N369xyOiC0qmmanMAwcjh+/yimrr/D28kjf8WLizjY3c38YzKJw729zKcTCU4gtLUE+Xwejy+94gWfl5agKQr8uo4Eccu2USr48SWVQq5QWE/gcAJZuIgF5XIF5yf7GfcGg9Cos4O3UoiFw2jFLrx+/wtRet+3nkJoOAEbkJtty5g484I+yUivrODekxb4tmuInZhCuFPHyHAXZubnUTXNWgKhlc1qlY+gaZsw9PwkY4fPhxsDXvxcrWL25TE8G+8DFAOxSAQHotG6AWlrRXS52vD08ifGr5kM1+BBPIBkOo3flQpaNA2zCwug+8MGdkMCPoLbvQ0DDw8xRgIBBNvbsUoF6yK+h+pQJpN91JH9PT2NCWS1Ui4rNhtswZubPxi/LS9TTWxemKTK/9t1jtramEBo1Vw226pRvEfj3oaL6v3vVRYaoZXcodA12ePpbOZXtEuljEToprmZprpBvehn4Y8AAwDB0mLL0M405wAAAABJRU5ErkJggg==';
 	        return eImg;
 	    };
 	    SvgFactory.prototype.createAggregationIcon = function () {
@@ -14021,7 +14079,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14129,7 +14187,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14191,7 +14249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14274,7 +14332,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14497,7 +14555,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14611,7 +14669,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14654,7 +14712,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14686,7 +14744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14860,7 +14918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14989,7 +15047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15009,7 +15067,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var column_1 = __webpack_require__(15);
 	var context_2 = __webpack_require__(6);
 	var renderedHeaderGroupCell_1 = __webpack_require__(70);
-	var renderedHeaderCell_1 = __webpack_require__(75);
+	var renderedHeaderCell_1 = __webpack_require__(74);
 	var dragAndDropService_1 = __webpack_require__(73);
 	var moveColumnController_1 = __webpack_require__(76);
 	var columnController_1 = __webpack_require__(13);
@@ -15160,7 +15218,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15431,7 +15489,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15537,7 +15595,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15584,7 +15642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15603,7 +15661,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var context_1 = __webpack_require__(6);
 	var logger_1 = __webpack_require__(5);
 	var context_2 = __webpack_require__(6);
-	var headerTemplateLoader_1 = __webpack_require__(74);
 	var utils_1 = __webpack_require__(7);
 	var gridOptionsWrapper_1 = __webpack_require__(3);
 	var context_3 = __webpack_require__(6);
@@ -15792,15 +15849,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eGhost = null;
 	    };
 	    DragAndDropService.prototype.createGhost = function () {
-	        this.eGhost = utils_1.Utils.loadTemplate(headerTemplateLoader_1.HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE);
-	        this.eGhostIcon = this.eGhost.querySelector('#eGhostIcon');
+	        this.eGhost = utils_1.Utils.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+	        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
 	        if (this.lastDropTarget) {
 	            this.setGhostIcon(this.lastDropTarget.iconName);
 	        }
-	        var dragItem = this.dragSource.dragItem;
-	        var eText = this.eGhost.querySelector('#agText');
+	        var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
 	        eText.innerHTML = this.dragSource.dragItemName;
-	        this.eGhost.style.width = '200px'; //this.getActualWidth(dragItem) + 'px';
 	        this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
 	        this.eGhost.style.top = '20px';
 	        this.eGhost.style.left = '20px';
@@ -15863,6 +15918,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    DragAndDropService.ICON_LEFT = 'left';
 	    DragAndDropService.ICON_RIGHT = 'right';
 	    DragAndDropService.ICON_GROUP = 'group';
+	    DragAndDropService.GHOST_TEMPLATE = '<div class="ag-dnd-ghost">' +
+	        '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
+	        '  <div class="ag-dnd-ghost-label">' +
+	        '  </div>' +
+	        '</div>';
 	    __decorate([
 	        context_3.Autowired('gridOptionsWrapper'), 
 	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
@@ -15896,117 +15956,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
-	 * @link http://www.ag-grid.com/
-	 * @license MIT
-	 */
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var utils_1 = __webpack_require__(7);
-	var svgFactory_1 = __webpack_require__(59);
-	var gridOptionsWrapper_1 = __webpack_require__(3);
-	var context_1 = __webpack_require__(6);
-	var svgFactory = svgFactory_1.SvgFactory.getInstance();
-	var HeaderTemplateLoader = (function () {
-	    function HeaderTemplateLoader() {
-	    }
-	    HeaderTemplateLoader.prototype.createHeaderElement = function (column) {
-	        var params = {
-	            column: column,
-	            colDef: column.getColDef,
-	            context: this.gridOptionsWrapper.getContext(),
-	            api: this.gridOptionsWrapper.getApi()
-	        };
-	        // option 1 - see if user provided a template in colDef
-	        var userProvidedTemplate = column.getColDef().headerCellTemplate;
-	        if (typeof userProvidedTemplate === 'function') {
-	            var colDefFunc = userProvidedTemplate;
-	            userProvidedTemplate = colDefFunc(params);
-	        }
-	        // option 2 - check the gridOptions for cellTemplate
-	        if (!userProvidedTemplate && this.gridOptionsWrapper.getHeaderCellTemplate()) {
-	            userProvidedTemplate = this.gridOptionsWrapper.getHeaderCellTemplate();
-	        }
-	        // option 3 - check the gridOptions for templateFunction
-	        if (!userProvidedTemplate && this.gridOptionsWrapper.getHeaderCellTemplateFunc()) {
-	            var gridOptionsFunc = this.gridOptionsWrapper.getHeaderCellTemplateFunc();
-	            userProvidedTemplate = gridOptionsFunc(params);
-	        }
-	        // finally, if still no template, use the default
-	        if (!userProvidedTemplate) {
-	            userProvidedTemplate = this.createDefaultHeaderElement(column);
-	        }
-	        // template can be a string or a dom element, if string we need to convert to a dom element
-	        var result;
-	        if (typeof userProvidedTemplate === 'string') {
-	            result = utils_1.Utils.loadTemplate(userProvidedTemplate);
-	        }
-	        else if (utils_1.Utils.isNodeOrElement(userProvidedTemplate)) {
-	            result = userProvidedTemplate;
-	        }
-	        else {
-	            console.error('ag-Grid: header template must be a string or an HTML element');
-	        }
-	        return result;
-	    };
-	    HeaderTemplateLoader.prototype.createDefaultHeaderElement = function (column) {
-	        var eTemplate = utils_1.Utils.loadTemplate(HeaderTemplateLoader.HEADER_CELL_TEMPLATE);
-	        this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column, svgFactory.createArrowUpSvg);
-	        this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column, svgFactory.createArrowDownSvg);
-	        this.addInIcon(eTemplate, 'sortUnSort', '#agNoSort', column, svgFactory.createArrowUpDownSvg);
-	        this.addInIcon(eTemplate, 'menu', '#agMenu', column, svgFactory.createMenuSvg);
-	        this.addInIcon(eTemplate, 'filter', '#agFilter', column, svgFactory.createFilterSvg);
-	        return eTemplate;
-	    };
-	    HeaderTemplateLoader.prototype.addInIcon = function (eTemplate, iconName, cssSelector, column, defaultIconFactory) {
-	        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
-	        eTemplate.querySelector(cssSelector).appendChild(eIcon);
-	    };
-	    // used when cell is dragged
-	    HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE = '<div class="ag-header-cell ag-header-cell-ghost">' +
-	        '  <span id="eGhostIcon" class="ag-header-cell-ghost-icon ag-shake-left-to-right"></span>' +
-	        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
-	        '    <span id="agText" class="ag-header-cell-text"></span>' +
-	        '  </div>' +
-	        '</div>';
-	    HeaderTemplateLoader.HEADER_CELL_TEMPLATE = '<div class="ag-header-cell">' +
-	        '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +
-	        '  <span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-	        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
-	        '    <span id="agSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-	        '    <span id="agSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-	        '    <span id="agNoSort" class="ag-header-icon ag-sort-none-icon"></span>' +
-	        '    <span id="agFilter" class="ag-header-icon ag-filter-icon"></span>' +
-	        '    <span id="agText" class="ag-header-cell-text"></span>' +
-	        '  </div>' +
-	        '</div>';
-	    __decorate([
-	        context_1.Autowired('gridOptionsWrapper'), 
-	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-	    ], HeaderTemplateLoader.prototype, "gridOptionsWrapper", void 0);
-	    HeaderTemplateLoader = __decorate([
-	        context_1.Bean('headerTemplateLoader'), 
-	        __metadata('design:paramtypes', [])
-	    ], HeaderTemplateLoader);
-	    return HeaderTemplateLoader;
-	})();
-	exports.HeaderTemplateLoader = HeaderTemplateLoader;
-
-
-/***/ },
-/* 75 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16023,7 +15973,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var column_1 = __webpack_require__(15);
 	var filterManager_1 = __webpack_require__(43);
 	var columnController_1 = __webpack_require__(13);
-	var headerTemplateLoader_1 = __webpack_require__(74);
+	var headerTemplateLoader_1 = __webpack_require__(75);
 	var gridOptionsWrapper_1 = __webpack_require__(3);
 	var horizontalDragService_1 = __webpack_require__(71);
 	var gridCore_1 = __webpack_require__(40);
@@ -16377,12 +16327,115 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 75 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v4.2.0
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var utils_1 = __webpack_require__(7);
+	var svgFactory_1 = __webpack_require__(59);
+	var gridOptionsWrapper_1 = __webpack_require__(3);
+	var context_1 = __webpack_require__(6);
+	var svgFactory = svgFactory_1.SvgFactory.getInstance();
+	var HeaderTemplateLoader = (function () {
+	    function HeaderTemplateLoader() {
+	    }
+	    HeaderTemplateLoader.prototype.createHeaderElement = function (column) {
+	        var params = {
+	            column: column,
+	            colDef: column.getColDef,
+	            context: this.gridOptionsWrapper.getContext(),
+	            api: this.gridOptionsWrapper.getApi()
+	        };
+	        // option 1 - see if user provided a template in colDef
+	        var userProvidedTemplate = column.getColDef().headerCellTemplate;
+	        if (typeof userProvidedTemplate === 'function') {
+	            var colDefFunc = userProvidedTemplate;
+	            userProvidedTemplate = colDefFunc(params);
+	        }
+	        // option 2 - check the gridOptions for cellTemplate
+	        if (!userProvidedTemplate && this.gridOptionsWrapper.getHeaderCellTemplate()) {
+	            userProvidedTemplate = this.gridOptionsWrapper.getHeaderCellTemplate();
+	        }
+	        // option 3 - check the gridOptions for templateFunction
+	        if (!userProvidedTemplate && this.gridOptionsWrapper.getHeaderCellTemplateFunc()) {
+	            var gridOptionsFunc = this.gridOptionsWrapper.getHeaderCellTemplateFunc();
+	            userProvidedTemplate = gridOptionsFunc(params);
+	        }
+	        // finally, if still no template, use the default
+	        if (!userProvidedTemplate) {
+	            userProvidedTemplate = this.createDefaultHeaderElement(column);
+	        }
+	        // template can be a string or a dom element, if string we need to convert to a dom element
+	        var result;
+	        if (typeof userProvidedTemplate === 'string') {
+	            result = utils_1.Utils.loadTemplate(userProvidedTemplate);
+	        }
+	        else if (utils_1.Utils.isNodeOrElement(userProvidedTemplate)) {
+	            result = userProvidedTemplate;
+	        }
+	        else {
+	            console.error('ag-Grid: header template must be a string or an HTML element');
+	        }
+	        return result;
+	    };
+	    HeaderTemplateLoader.prototype.createDefaultHeaderElement = function (column) {
+	        var eTemplate = utils_1.Utils.loadTemplate(HeaderTemplateLoader.HEADER_CELL_TEMPLATE);
+	        this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column, svgFactory.createArrowUpSvg);
+	        this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column, svgFactory.createArrowDownSvg);
+	        this.addInIcon(eTemplate, 'sortUnSort', '#agNoSort', column, svgFactory.createArrowUpDownSvg);
+	        this.addInIcon(eTemplate, 'menu', '#agMenu', column, svgFactory.createMenuSvg);
+	        this.addInIcon(eTemplate, 'filter', '#agFilter', column, svgFactory.createFilterSvg);
+	        return eTemplate;
+	    };
+	    HeaderTemplateLoader.prototype.addInIcon = function (eTemplate, iconName, cssSelector, column, defaultIconFactory) {
+	        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+	        eTemplate.querySelector(cssSelector).appendChild(eIcon);
+	    };
+	    HeaderTemplateLoader.HEADER_CELL_TEMPLATE = '<div class="ag-header-cell">' +
+	        '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +
+	        '  <span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+	        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
+	        '    <span id="agSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+	        '    <span id="agSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+	        '    <span id="agNoSort" class="ag-header-icon ag-sort-none-icon"></span>' +
+	        '    <span id="agFilter" class="ag-header-icon ag-filter-icon"></span>' +
+	        '    <span id="agText" class="ag-header-cell-text"></span>' +
+	        '  </div>' +
+	        '</div>';
+	    __decorate([
+	        context_1.Autowired('gridOptionsWrapper'), 
+	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+	    ], HeaderTemplateLoader.prototype, "gridOptionsWrapper", void 0);
+	    HeaderTemplateLoader = __decorate([
+	        context_1.Bean('headerTemplateLoader'), 
+	        __metadata('design:paramtypes', [])
+	    ], HeaderTemplateLoader);
+	    return HeaderTemplateLoader;
+	})();
+	exports.HeaderTemplateLoader = HeaderTemplateLoader;
+
+
+/***/ },
 /* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16659,7 +16712,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16786,7 +16839,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16870,7 +16923,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16970,7 +17023,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17076,7 +17129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17189,7 +17242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17613,7 +17666,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17656,6 +17709,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_SORT));
 	        this.rootNode = new rowNode_1.RowNode();
 	        this.rootNode.group = true;
+	        this.rootNode.allLeafChildren = [];
 	        this.context.wireBean(this.rootNode);
 	        if (this.gridOptionsWrapper.isRowModelDefault()) {
 	            this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
@@ -17679,8 +17733,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.doRowGrouping(groupState);
 	            case constants_1.Constants.STEP_FILTER:
 	                this.doFilter();
-	            case constants_1.Constants.STEP_PIVOT:
-	                this.doPivot();
+	            // case constants.STEP_PIVOT:
+	            //     this.doPivot();
 	            case constants_1.Constants.STEP_AGGREGATE:
 	                this.doAggregate();
 	            case constants_1.Constants.STEP_SORT:
@@ -17866,8 +17920,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // if the group was open last time, then open it this time. however
 	            // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
 	            // setting will take effect.
-	            if (groupState[key] === true) {
-	                node.expanded = true;
+	            if (typeof groupState[key] === 'boolean') {
+	                node.expanded = groupState[key];
 	            }
 	        });
 	    };
@@ -18023,7 +18077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18063,7 +18117,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18176,7 +18230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18279,7 +18333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18323,7 +18377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18481,7 +18535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v4.1.5
+	 * @version v4.2.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18604,7 +18658,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, "ag-grid-ng2 {\n  display: inline-block;\n}\n.ag-root {\n/* set to relative, so absolute popups appear relative to this */\n  position: relative;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n/* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden;\n}\n.ag-font-style {\n  cursor: default;\n  font-size: 14px;\n/* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-no-scrolls {\n  white-space: nowrap;\n  display: inline-block;\n}\n.ag-scrolls {\n  height: 100%;\n}\n.ag-popup-backdrop {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 100%;\n  height: 100%;\n}\n.ag-header {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 100%;\n}\n.ag-pinned-left-header {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-header {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-scrolls .ag-header-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%;\n}\n.ag-no-scrolls .ag-header-container {\n  white-space: nowrap;\n}\n.ag-header-overlay {\n  display: block;\n  position: absolute;\n}\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  vertical-align: bottom;\n  text-align: center;\n  display: inline-block;\n  height: 100%;\n}\n.ag-header-cell-ghost {\n  font-size: 14px;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  position: absolute;\n  background: #e5e5e5;\n  border: 1px solid #000;\n  cursor: move;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  padding: 3px;\n  line-height: 1.4;\n}\n.ag-header-cell-ghost img {\n  vertical-align: middle;\n  border: 0px;\n}\n.ag-header-cell-ghost-icon {\n  float: left;\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-header-group-cell {\n  height: 100%;\n  display: inline-block;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-group-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-resize {\n  height: 100%;\n  width: 4px;\n  float: right;\n  cursor: col-resize;\n}\n.ag-header-expand-icon {\n  padding-left: 4px;\n}\n.ag-header-cell-menu-button {\n  float: right;\n}\n.ag-overlay-panel {\n  display: table;\n  width: 100%;\n  height: 100%;\n  pointer-events: none;\n}\n.ag-overlay-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.ag-body {\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-floating-top {\n  position: absolute;\n  left: 0px;\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-pinned-left-floating-top {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-floating-top {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-floating-bottom {\n  position: absolute;\n  left: 0px;\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-pinned-left-floating-bottom {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-floating-bottom {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-pinned-left-cols-viewport {\n  float: left;\n  overflow: hidden;\n}\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-pinned-right-cols-viewport {\n  float: right;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-body-viewport-wrapper {\n  height: 100%;\n}\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto;\n  height: 100%;\n}\n.ag-scrolls .ag-body-container {\n  position: relative;\n  display: inline-block;\n}\n.ag-scrolls .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%;\n}\n.ag-no-scrolls .ag-row {\n  position: relative;\n}\n.agile-gird-row:hover {\n  background-color: #f0f8ff;\n}\n.ag-row-group-panel {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-cell {\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute;\n}\n.ag-fade-out {\n  opacity: 1;\n  -ms-filter: none;\n  filter: none;\n  margin-right: 5px;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  -moz-transition: opacity 3s, margin-right 3s;\n  -o-transition: opacity 3s, margin-right 3s;\n  -ms-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  -moz-transition-timing-function: linear;\n  -o-transition-timing-function: linear;\n  -ms-transition-timing-function: linear;\n  transition-timing-function: linear;\n}\n.ag-fade-out-end {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n  margin-right: 10px;\n}\n.ag-cell-edit-input {\n  width: 100%;\n  height: 100%;\n}\n.ag-group-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-footer-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-large .ag-root {\n  font-size: 20px;\n}\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu-column-select-wrapper {\n  width: 200px;\n  height: 300px;\n}\n.ag-menu-list {\n  display: table;\n  border-collapse: collapse;\n}\n.ag-menu-option {\n  display: table-row;\n}\n.ag-menu-option-text {\n  display: table-cell;\n}\n.ag-menu-option-shortcut {\n  display: table-cell;\n}\n.ag-menu-option-icon {\n  display: table-cell;\n}\n.ag-menu-option-popup-pointer {\n  display: table-cell;\n}\n.ag-menu-separator {\n  display: table-row;\n}\n.ag-menu-separator-cell {\n  display: table-cell;\n}\n.ag-virtual-list-viewport {\n  overflow-x: auto;\n  height: 100%;\n  width: 100%;\n}\n.ag-virtual-list-container {\n  position: relative;\n  overflow: hidden;\n}\n.ag-rich-select {\n  outline: none;\n}\n.ag-rich-select-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-item {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n}\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%;\n}\n.ag-filter-filter {\n  width: 170px;\n  margin: 4px;\n}\n.ag-filter-select {\n  width: 110px;\n  margin: 4px 4px 0px 4px;\n}\n.ag-no-vertical-scroll .ag-scrolls {\n  height: unset;\n}\n.ag-no-vertical-scroll .ag-body {\n  height: unset;\n}\n.ag-no-vertical-scroll .ag-body-viewport-wrapper {\n  height: unset;\n}\n.ag-no-vertical-scroll .ag-body-viewport {\n  height: unset;\n}\n.ag-list-selection {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n}\n.ag-tool-panel {\n  width: 200px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-column-select-indent {\n  display: inline-block;\n}\n.ag-column-select-column {\n  margin-left: 14px;\n  white-space: nowrap;\n}\n.ag-column-select-column-group {\n  white-space: nowrap;\n}\n.ag-column-select-panel {\n  height: 100%;\n  overflow: auto;\n}\n.ag-hidden {\n  display: none;\n}\n.ag-faded {\n  opacity: 0.3;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)\";\n  filter: alpha(opacity=30);\n}\n.ag-shake-left-to-right {\n  -webkit-animation-name: ag-shake-left-to-right;\n  -moz-animation-name: ag-shake-left-to-right;\n  -o-animation-name: ag-shake-left-to-right;\n  -ms-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right;\n  -webkit-animation-duration: 0.2s;\n  -moz-animation-duration: 0.2s;\n  -o-animation-duration: 0.2s;\n  -ms-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  -moz-animation-iteration-count: infinite;\n  -o-animation-iteration-count: infinite;\n  -ms-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-direction: alternate;\n  -moz-animation-direction: alternate;\n  -o-animation-direction: alternate;\n  -ms-animation-direction: alternate;\n  animation-direction: alternate;\n}\n@-moz-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-o-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n", ""]);
+	exports.push([module.id, "ag-grid-ng2 {\n  display: inline-block;\n}\n.ag-root {\n/* set to relative, so absolute popups appear relative to this */\n  position: relative;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n/* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden;\n}\n.ag-font-style {\n  cursor: default;\n/* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-no-scrolls {\n  white-space: nowrap;\n  display: inline-block;\n}\n.ag-scrolls {\n  height: 100%;\n}\n.ag-popup-backdrop {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 100%;\n  height: 100%;\n}\n.ag-header {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 100%;\n}\n.ag-pinned-left-header {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-header {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-scrolls .ag-header-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%;\n}\n.ag-no-scrolls .ag-header-container {\n  white-space: nowrap;\n}\n.ag-header-overlay {\n  display: block;\n  position: absolute;\n}\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  vertical-align: bottom;\n  text-align: center;\n  display: inline-block;\n  height: 100%;\n}\n.ag-dnd-ghost {\n  font-size: 14px;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  position: absolute;\n  background: #e5e5e5;\n  border: 1px solid #000;\n  cursor: move;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  padding: 3px;\n  line-height: 1.4;\n}\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dnd-ghost-label {\n  display: inline-block;\n}\n.ag-header-group-cell {\n  height: 100%;\n  display: inline-block;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-group-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-resize {\n  height: 100%;\n  width: 4px;\n  float: right;\n  cursor: col-resize;\n}\n.ag-header-expand-icon {\n  padding-left: 4px;\n}\n.ag-header-cell-menu-button {\n  float: right;\n}\n.ag-overlay-panel {\n  display: table;\n  width: 100%;\n  height: 100%;\n  pointer-events: none;\n}\n.ag-overlay-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.ag-body {\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-floating-top {\n  position: absolute;\n  left: 0px;\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-pinned-left-floating-top {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-floating-top {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-floating-bottom {\n  position: absolute;\n  left: 0px;\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-pinned-left-floating-bottom {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-floating-bottom {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-pinned-left-cols-viewport {\n  float: left;\n  overflow: hidden;\n}\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-pinned-right-cols-viewport {\n  float: right;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-body-viewport-wrapper {\n  height: 100%;\n}\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto;\n  height: 100%;\n}\n.ag-scrolls .ag-body-container {\n  position: relative;\n  display: inline-block;\n}\n.ag-scrolls .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%;\n}\n.ag-no-scrolls .ag-row {\n  position: relative;\n}\n.agile-gird-row:hover {\n  background-color: #f0f8ff;\n}\n.ag-column-drop {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-column-drop-vertical {\n  height: 100%;\n}\n.ag-column-drop-vertical .ag-column-drop-cell {\n  display: block;\n}\n.ag-column-drop-vertical .ag-column-drop-empty-message {\n  display: block;\n}\n.ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right;\n  line-height: 16px;\n}\n.ag-cell {\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute;\n}\n.ag-fade-out {\n  opacity: 1;\n  -ms-filter: none;\n  filter: none;\n  margin-right: 5px;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  -moz-transition: opacity 3s, margin-right 3s;\n  -o-transition: opacity 3s, margin-right 3s;\n  -ms-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  -moz-transition-timing-function: linear;\n  -o-transition-timing-function: linear;\n  -ms-transition-timing-function: linear;\n  transition-timing-function: linear;\n}\n.ag-fade-out-end {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n  margin-right: 10px;\n}\n.ag-cell-edit-input {\n  width: 100%;\n  height: 100%;\n}\n.ag-group-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-footer-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-large .ag-root {\n  font-size: 20px;\n}\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu-column-select-wrapper {\n  width: 200px;\n  height: 300px;\n}\n.ag-menu-list {\n  display: table;\n  border-collapse: collapse;\n}\n.ag-menu-option {\n  display: table-row;\n}\n.ag-menu-option-text {\n  display: table-cell;\n}\n.ag-menu-option-shortcut {\n  display: table-cell;\n}\n.ag-menu-option-icon {\n  display: table-cell;\n}\n.ag-menu-option-popup-pointer {\n  display: table-cell;\n}\n.ag-menu-separator {\n  display: table-row;\n}\n.ag-menu-separator-cell {\n  display: table-cell;\n}\n.ag-virtual-list-viewport {\n  overflow-x: auto;\n  height: 100%;\n  width: 100%;\n}\n.ag-virtual-list-container {\n  position: relative;\n  overflow: hidden;\n}\n.ag-rich-select {\n  outline: none;\n}\n.ag-rich-select-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-item {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n}\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%;\n}\n.ag-filter-filter {\n  width: 170px;\n  margin: 4px;\n}\n.ag-filter-select {\n  width: 110px;\n  margin: 4px 4px 0px 4px;\n}\n.ag-no-vertical-scroll .ag-scrolls {\n  height: unset;\n}\n.ag-no-vertical-scroll .ag-body {\n  height: unset;\n}\n.ag-no-vertical-scroll .ag-body-viewport-wrapper {\n  height: unset;\n}\n.ag-no-vertical-scroll .ag-body-viewport {\n  height: unset;\n}\n.ag-list-selection {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n}\n.ag-tool-panel {\n  width: 200px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-column-select-indent {\n  display: inline-block;\n}\n.ag-column-select-column {\n  margin-left: 14px;\n  white-space: nowrap;\n}\n.ag-column-select-column-group {\n  white-space: nowrap;\n}\n.ag-column-select-panel {\n  height: 100%;\n  overflow: auto;\n}\n.ag-hidden {\n  display: none;\n}\n.ag-faded {\n  opacity: 0.3;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)\";\n  filter: alpha(opacity=30);\n}\n.ag-shake-left-to-right {\n  -webkit-animation-name: ag-shake-left-to-right;\n  -moz-animation-name: ag-shake-left-to-right;\n  -o-animation-name: ag-shake-left-to-right;\n  -ms-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right;\n  -webkit-animation-duration: 0.2s;\n  -moz-animation-duration: 0.2s;\n  -o-animation-duration: 0.2s;\n  -ms-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  -moz-animation-iteration-count: infinite;\n  -o-animation-iteration-count: infinite;\n  -ms-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-direction: alternate;\n  -moz-animation-direction: alternate;\n  -o-animation-direction: alternate;\n  -ms-animation-direction: alternate;\n  animation-direction: alternate;\n}\n@-moz-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-o-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n", ""]);
 
 	// exports
 
@@ -18954,7 +19008,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-blue {\n  line-height: 1.4;\n}\n.ag-blue img {\n  vertical-align: middle;\n  border: 0px;\n}\n.ag-blue .ag-root {\n  border: 1px solid #9bc2e6;\n  font: 10pt Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n}\n.ag-blue .ag-row-group-cell {\n  background: #5b9bd5;\n  border: 1px solid #808080;\n  padding: 2px;\n}\n.ag-blue .ag-row-group-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-row-group-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-blue .ag-row-group-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-blue .ag-row-group-cell-button:hover {\n  border: 1px solid #000;\n}\n.ag-blue .ag-row-group-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  border: 1px solid transparent;\n  color: #808080;\n}\n.ag-blue .ag-row-group-icon {\n  padding-right: 4px;\n}\n.ag-blue .ag-row-group-panel {\n  border-top: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n  padding: 4px;\n  background-color: #ddebf7;\n  color: #fff;\n}\n.ag-blue .ag-cell {\n  top: -1px;\n  letter-spacing: -0.02em;\n}\n.ag-blue .ag-cell-not-inline-editing {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-blue .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-blue .ag-cell-focus {\n  background: #fff;\n  border: 2px solid #217346;\n}\n.ag-blue .ag-cell-no-focus {\n  border-right: 1px dotted #9bc2e6;\n  border-top: 2px solid transparent;\n  border-left: 2px solid transparent;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-first-right-pinned {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-last-left-pinned {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-blue .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-blue .ag-cell-data-changed {\n  background: #87cefa;\n}\n.ag-blue .ag-cell-data-changed-animation {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-blue .ag-cell-data-changed:not(.ag-cell-focus) {\n  background: #87cefa;\n}\n.ag-blue .ag-cell-data-changed-animation:not(.ag-cell-focus) {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-blue .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-blue .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-blue .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-blue .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-blue .ag-value-change-value-highlight {\n  background-color: #add8e6;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-blue .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #000;\n  background-color: #fff;\n}\n.ag-blue .ag-rich-select-list {\n  background-color: #fff;\n  border-top: 1px solid #aaa;\n}\n.ag-blue .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-blue .ag-rich-select-list {\n  background-color: #fff;\n}\n.ag-blue .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-blue .ag-rich-select-row-selected {\n  background-color: #ddebf7;\n}\n.ag-blue .ag-header {\n  background-color: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-no-scrolls .ag-header-container {\n  background-color: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n}\n.ag-blue .ag-header-cell-moving-clone {\n  border-right: 1px solid #808080;\n  border-left: 1px solid #808080;\n  background-color: rgba(91,155,213,0.8);\n}\n.ag-blue .ag-header-cell-moving {\n  background-color: #9bc2e6;\n}\n.ag-blue .ag-header-group-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-pinned-right-header {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n  font-weight: bold;\n  color: #fff;\n}\n.ag-blue .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-blue .ag-header-group-cell-label {\n  padding: 4px;\n  font-weight: bold;\n  color: #fff;\n  padding-left: 10px;\n}\n.ag-blue .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-blue .ag-header-cell-menu-button {\n  color: #fff;\n  border: 1px solid #a6acb3;\n  padding: 2px;\n  margin-top: 3px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box;\n  -moz-box-sizing: content-box;\n  box-sizing: content-box;\n  line-height: 0px; /* normal line height, a space was appearing below the menu button */\n/* When using bootstrap, box-sizing was set to 'border-box' */\n}\n.ag-blue .ag-header-icon {\n  color: #fff;\n  stroke: #fff;\n  fill: #fff;\n}\n.ag-blue .ag-dark .ag-header-expand-icon:hover {\n  cursor: pointer;\n}\n.ag-blue .ag-row-odd {\n  background-color: #ddebf7;\n}\n.ag-blue .ag-row-even {\n  background-color: #fff;\n}\n.ag-blue .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-blue .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #a9a9a9;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-blue .ag-body {\n  background-color: #fafafa;\n}\n.ag-blue .ag-row-selected {\n  background-color: #c7c7c7;\n}\n.ag-blue .ag-group-cell-entire-row {\n  background-color: #fff;\n  font-weight: bold;\n  padding: 2px 4px;\n  border-bottom: solid 1px #9bc2e6;\n  overflow: hidden;\n  white-space: nowrap;\n}\n.ag-blue .ag-footer-cell-entire-row {\n  background-color: #fff;\n  font-weight: bold;\n  padding: 4px;\n  border-bottom: solid 1px #9bc2e6;\n}\n.ag-blue .ag-group-cell {\n  font-style: italic;\n}\n.ag-blue .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-blue .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-blue .ag-group-value {\n  padding-right: 2px;\n}\n.ag-blue .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-blue .ag-footer-cell {\n  font-style: italic;\n}\n.ag-blue .ag-menu {\n  border: 1px solid #7070a0;\n  background-color: #f0f0f0;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-blue .ag-menu .ag-tab-header {\n  background-color: #5b9bd5;\n}\n.ag-blue .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-blue .ag-menu .ag-tab-selected {\n  background-color: #9bc2e6;\n  border-right: 1px solid #7070a0;\n  border-left: 1px solid #7070a0;\n  border-top: 1px solid #7070a0;\n}\n.ag-blue .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-blue .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-blue .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-blue .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n  padding-right: 2px;\n}\n.ag-blue .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n  font: 10pt Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n}\n.ag-blue .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-blue .ag-filter-filter {\n  background-color: #fff;\n  border: 1px solid #c6c6c6;\n  width: 192px;\n}\n.ag-blue .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-blue .ag-filter-value:hover {\n  background-color: #39f;\n  border: 1px dotted #000;\n  color: #fff;\n}\n.ag-blue .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-blue .ag-paging-panel {\n  padding: 4px;\n}\n.ag-blue .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-blue .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-blue .ag-tool-panel {\n  background-color: #eee;\n  border-right: 1px solid #9bc2e6;\n  border-bottom: 1px solid #9bc2e6;\n  border-top: 1px solid #9bc2e6;\n}\n.ag-blue .ag-status-bar {\n  font-size: 12px;\n  height: 20px;\n  border-bottom: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n  background-color: #ddebf7;\n  color: #222;\n}\n.ag-blue .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-blue .ag-status-bar-item {\n  padding-left: 10px;\n}\n", ""]);
+	exports.push([module.id, ".ag-common {\n  line-height: 1.4;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-common img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-common .ag-root {\n  border: 1px solid #9bc2e6;\n}\n.ag-common .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-common .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-common .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-common .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-common .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-common .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-common .ag-cell-focus {\n  border: 2px solid #217346;\n}\n.ag-common .ag-cell-no-focus {\n  border-right: 1px dotted #9bc2e6;\n  border-top: 2px solid transparent;\n  border-left: 2px solid transparent;\n  border-bottom: 1px dotted #9bc2e6;\n}\n.ag-common .ag-cell-first-right-pinned {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-common .ag-cell-last-left-pinned {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-common .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-common .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-common .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-common .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-common .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-common .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-common .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #9bc2e6;\n  background-color: #fff;\n}\n.ag-common .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-row-selected {\n  background-color: #c7c7c7;\n}\n.ag-common .ag-header {\n  color: #fff;\n  background: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n  font-weight: 600;\n}\n.ag-common .ag-header-icon {\n  color: #fff;\n  stroke: none;\n  fill: #fff;\n}\n.ag-common .ag-no-scrolls .ag-header-container {\n  background: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-common .ag-header-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-common .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-common .ag-header-group-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-common .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-common .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-common .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-common .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-common .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-common .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-common .ag-pinned-right-header {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-common .ag-header-cell-menu-button:hover {\n  border: 1px solid #9bc2e6;\n}\n.ag-common .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-common .ag-body .ag-row {\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-body .ag-row-odd {\n  background-color: #ddebf7;\n}\n.ag-common .ag-body .ag-row-even {\n  background-color: #fff;\n}\n.ag-common .ag-body .ag-row-selected {\n  background-color: #c7c7c7;\n}\n.ag-common .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-common .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-common .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-common .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-common .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-common .ag-group-cell {\n  font-style: italic;\n}\n.ag-common .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-common .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-common .ag-group-value {\n  padding-right: 2px;\n}\n.ag-common .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-common .ag-footer-cell {\n  font-style: italic;\n}\n.ag-common .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n}\n.ag-common .ag-menu .ag-tab-header {\n  background-color: #5b9bd5;\n}\n.ag-common .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-common .ag-menu .ag-tab-selected {\n  background-color: #9bc2e6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-menu-option-active {\n  background-color: #c7c7c7;\n}\n.ag-common .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-common .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-common .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-common .ag-filter-apply-panel {\n  border-top: 1px solid ag-separatorcolor;\n  padding: 2px;\n}\n.ag-common .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-common .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-common .ag-paging-panel {\n  padding: 4px;\n}\n.ag-common .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-common .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-common .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: 1px solid #9bc2e6;\n  border-bottom: 1px solid #9bc2e6;\n  border-top: 1px solid #9bc2e6;\n  color: #222;\n}\n.ag-common .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 10pt;\n  height: 22px;\n  border-bottom: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n  padding: 2px;\n}\n.ag-common .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-common .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-common .ag-column-drop-cell {\n  background: #ddebf7;\n  color: #000;\n  border: 1px solid #808080;\n  padding: 2px;\n}\n.ag-common .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-common .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-common .ag-column-drop-cell-button:hover {\n  border: 1px solid #9bc2e6;\n}\n.ag-common .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-common .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-common .ag-column-drop {\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-common .ag-column-drop-horizontal {\n  border-top: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n}\n.ag-common .ag-column-drop-vertical {\n  border-top: 1px solid #9bc2e6;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-empty-message {\n  padding: 20px;\n}\n", ""]);
 
 	// exports
 
@@ -18994,7 +19048,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-dark {\n  line-height: 1.4;\n}\n.ag-dark img {\n  vertical-align: middle;\n  border: 0px;\n}\n.ag-dark .ag-root {\n  border: 1px solid #808080;\n  color: #e0e0e0;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n}\n.ag-dark .ag-row-group-cell {\n  background: #430000;\n  border: 1px solid #808080;\n  padding: 2px;\n}\n.ag-dark .ag-row-group-cell-ghost {\n  opacity: 0.3;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)\";\n  filter: alpha(opacity=30);\n}\n.ag-dark .ag-row-group-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dark .ag-row-group-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-dark .ag-row-group-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-row-group-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  border: 1px solid transparent;\n  color: #909090;\n}\n.ag-dark .ag-row-group-icon {\n  padding-right: 4px;\n}\n.ag-dark .ag-row-group-panel {\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 4px;\n  background-color: #403e3e;\n  color: #e0e0e0;\n}\n.ag-dark .ag-cell {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(100,160,160,0.4);\n}\n.ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(100,190,190,0.4);\n}\n.ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(100,220,220,0.4);\n}\n.ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(100,250,250,0.4);\n}\n.ag-dark .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-dark .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-dark .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-dark .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-dark .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-cell-highlight {\n  border: 1px solid #90ee90;\n}\n.ag-dark .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-dark .ag-cell-data-changed {\n  background-color: #5f9ea0;\n}\n.ag-dark .ag-cell-data-changed-animation {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-dark .ag-cell-data-changed:not(.ag-cell-focus) {\n  background-color: #5f9ea0;\n}\n.ag-dark .ag-cell-data-changed-animation:not(.ag-cell-focus) {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-dark .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-dark .ag-value-change-delta-up {\n  color: #adff2f;\n}\n.ag-dark .ag-value-change-delta-down {\n  color: #f00;\n}\n.ag-dark .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-dark .ag-value-change-value-highlight {\n  background-color: #d2691e;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-dark .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #000;\n  background-color: #eee;\n}\n.ag-dark .ag-rich-select-list {\n  background-color: #fff;\n  border-top: 1px solid #aaa;\n}\n.ag-dark .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-dark .ag-rich-select-list {\n  background-color: #fff;\n}\n.ag-dark .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-dark .ag-rich-select-row-selected {\n  background-color: #eee;\n}\n.ag-dark .ag-header {\n  background-color: #430000;\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-no-scrolls .ag-header-container {\n  background-color: #430000;\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n}\n.ag-dark .ag-header-cell-moving-clone {\n  border-right: 1px solid #808080;\n  border-left: 1px solid #808080;\n  background-color: rgba(43,0,0,0.8);\n}\n.ag-dark .ag-header-cell-moving {\n  background-color: #808080;\n}\n.ag-dark .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-dark .ag-header-cell-text {\n  padding: 2px;\n}\n.ag-dark .ag-header-group-cell-label {\n  font-weight: bold;\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-dark .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-dark .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box;\n  -moz-box-sizing: content-box;\n  box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */\n  line-height: 0px; /* normal line height, a space was appearing below the menu button */\n}\n.ag-dark .ag-header-cell-menu-button:hover {\n  border: 1px solid #e0e0e0;\n}\n.ag-dark .ag-header-icon {\n  stroke: #e0e0e0;\n  fill: #e0e0e0;\n}\n.ag-dark .ag-header-expand-icon:hover {\n  cursor: pointer;\n}\n.ag-dark .ag-row-odd {\n  background-color: #302e2e;\n}\n.ag-dark .ag-row-even {\n  background-color: #403e3e;\n}\n.ag-dark .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-dark .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #a9a9a9;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-dark .ag-body {\n  background-color: #ddd;\n}\n.ag-dark .ag-row-selected {\n  background-color: #000;\n}\n.ag-dark .ag-group-cell-entire-row {\n  background-color: #aaa;\n  color: 222;\n  padding: 4px;\n}\n.ag-dark .ag-footer-cell-entire-row {\n  background-color: #aaa;\n  color: 222;\n  padding: 4px;\n}\n.ag-dark .ag-group-cell {\n  font-style: italic;\n}\n.ag-dark .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-dark .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-dark .ag-group-value {\n  padding-right: 2px;\n}\n.ag-dark .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-dark .ag-footer-cell {\n  font-style: italic;\n}\n.ag-dark .ag-menu {\n  border: 1px solid #555;\n  background-color: #f0f0f0;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-dark .ag-menu .ag-tab-header {\n  background-color: #430000;\n}\n.ag-dark .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-dark .ag-menu .ag-tab-selected {\n  background-color: #403e3e;\n  border-right: 1px solid #555;\n  border-left: 1px solid #555;\n  border-top: 1px solid #555;\n}\n.ag-dark .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-dark .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-dark .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-dark .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-dark .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-dark .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-dark .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-dark .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-dark .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-dark .ag-paging-panel {\n  color: #000;\n  padding: 4px;\n}\n.ag-dark .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-dark .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-dark .ag-tool-panel {\n  background-color: #eee;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n}\n.ag-dark .ag-status-bar {\n  font-size: 12px;\n  height: 20px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n  background-color: #403e3e;\n  color: #e0e0e0;\n}\n.ag-dark .ag-status-bar-aggregations {\n  float: right;\n}\n", ""]);
+	exports.push([module.id, ".ag-common {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #ccc;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-common img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-common .ag-root {\n  border: 1px solid #808080;\n}\n.ag-common .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-common .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(100,160,160,0.4);\n}\n.ag-common .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(100,190,190,0.4);\n}\n.ag-common .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(100,220,220,0.4);\n}\n.ag-common .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(100,250,250,0.4);\n}\n.ag-common .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-common .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-common .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-common .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-common .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-cell-highlight {\n  border: 1px solid #90ee90;\n}\n.ag-common .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-common .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-common .ag-value-change-delta-up {\n  color: #adff2f;\n}\n.ag-common .ag-value-change-delta-down {\n  color: #f00;\n}\n.ag-common .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-common .ag-value-change-value-highlight {\n  background-color: #d2691e;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #302e2e;\n}\n.ag-common .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-list {\n  border-top: 1px solid #555;\n}\n.ag-common .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-row-selected {\n  background-color: #4a708b;\n}\n.ag-common .ag-header {\n  color: #e0e0e0;\n  background: #626262;\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-common .ag-header-icon {\n  color: #e0e0e0;\n  stroke: none;\n  fill: #e0e0e0;\n}\n.ag-common .ag-no-scrolls .ag-header-container {\n  background: #626262;\n  border-bottom: 1px solid #808080;\n}\n.ag-common .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-common .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-common .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-common .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-common .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-common .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-common .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-common .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-common .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-common .ag-body {\n  background-color: #302e2e;\n}\n.ag-common .ag-body .ag-row {\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-body .ag-row-odd {\n  background-color: #302e2e;\n}\n.ag-common .ag-body .ag-row-even {\n  background-color: #403e3e;\n}\n.ag-common .ag-body .ag-row-selected {\n  background-color: #4a708b;\n}\n.ag-common .ag-floating-top .ag-row {\n  background-color: #333;\n}\n.ag-common .ag-floating-bottom .ag-row {\n  background-color: #333;\n}\n.ag-common .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-common .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-common .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-common .ag-group-cell-entire-row {\n  background-color: #302e2e;\n  padding: 2px;\n}\n.ag-common .ag-footer-cell-entire-row {\n  background-color: #302e2e;\n  padding: 2px;\n}\n.ag-common .ag-group-cell {\n  font-style: italic;\n}\n.ag-common .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-common .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-common .ag-group-value {\n  padding-right: 2px;\n}\n.ag-common .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-common .ag-footer-cell {\n  font-style: italic;\n}\n.ag-common .ag-menu {\n  border: 1px solid #555;\n  background-color: #302e2e;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-common .ag-menu .ag-tab-header {\n  background-color: #626262;\n}\n.ag-common .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-common .ag-menu .ag-tab-selected {\n  background-color: #302e2e;\n  border-right: 1px solid #555;\n  border-left: 1px solid #555;\n  border-top: 1px solid #555;\n}\n.ag-common .ag-menu-separator {\n  border-top: 1px solid #555;\n}\n.ag-common .ag-menu-option-active {\n  background-color: #4a708b;\n}\n.ag-common .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-common .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-common .ag-filter-header-container {\n  border-bottom: 1px solid #555;\n}\n.ag-common .ag-filter-apply-panel {\n  border-top: 1px solid ag-separatorcolor;\n  padding: 2px;\n}\n.ag-common .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-common .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-common .ag-paging-panel {\n  padding: 4px;\n}\n.ag-common .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-common .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-common .ag-tool-panel {\n  background-color: #302e2e;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #ccc;\n}\n.ag-common .ag-status-bar {\n  color: #ccc;\n  background-color: #302e2e;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-common .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-common .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-common .ag-column-drop-cell {\n  background: #403e3e;\n  color: #e0e0e0;\n  border: 1px solid #666;\n  padding: 2px;\n}\n.ag-common .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-common .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-common .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-common .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-common .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-common .ag-column-drop {\n  padding: 4px;\n  background-color: #302e2e;\n}\n.ag-common .ag-column-drop-horizontal {\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-column-drop-vertical {\n  border-top: 1px solid #808080;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-empty-message {\n  padding: 20px;\n}\n.ag-common ::-webkit-scrollbar {\n  width: 12px;\n  height: 12px;\n  background: #302e2e;\n}\n.ag-common ::-webkit-scrollbar-thumb {\n  background-color: #626262;\n}\n.ag-common ::-webkit-scrollbar-corner {\n  background: #302e2e;\n}\n.ag-common select {\n  background-color: #302e2e;\n  color: #ccc;\n}\n.ag-common input {\n  background-color: #302e2e;\n  color: #ccc;\n}\n", ""]);
 
 	// exports
 
@@ -19034,7 +19088,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n}\n.ag-fresh img {\n  vertical-align: middle;\n  border: 0px;\n}\n.ag-fresh .ag-root {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-row-group-cell {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border: 1px solid #808080;\n  padding: 2px;\n}\n.ag-fresh .ag-row-group-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-row-group-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-row-group-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-fresh .ag-row-group-cell-button:hover {\n  border: 1px solid #000;\n}\n.ag-fresh .ag-row-group-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  border: 1px solid transparent;\n  color: #808080;\n}\n.ag-fresh .ag-row-group-icon {\n  padding-right: 4px;\n}\n.ag-fresh .ag-row-group-panel {\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 4px;\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-fresh .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-fresh .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-fresh .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-fresh .ag-cell-first-right-pinned {\n  border-left: 1px solid #000;\n}\n.ag-fresh .ag-cell-last-left-pinned {\n  border-right: 1px solid #000;\n}\n.ag-fresh .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-fresh .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-fresh .ag-cell-data-changed {\n  background-color: #add8e6;\n}\n.ag-fresh .ag-cell-data-changed-animation {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-cell-data-changed:not(.ag-cell-focus) {\n  background-color: #add8e6;\n}\n.ag-fresh .ag-cell-data-changed-animation:not(.ag-cell-focus) {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-fresh .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-fresh .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-fresh .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-fresh .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #000;\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-list {\n  background-color: #fff;\n  border-top: 1px solid #aaa;\n}\n.ag-fresh .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-row-selected {\n  background-color: #ddebf7;\n}\n.ag-fresh .ag-header {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-no-scrolls .ag-header-container {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-fresh .ag-header-cell-moving-clone {\n  border-right: 1px solid #808080;\n  border-left: 1px solid #808080;\n  background-color: rgba(220,220,220,0.8);\n}\n.ag-fresh .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-fresh .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-fresh .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-fresh .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-fresh .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box;\n  -moz-box-sizing: content-box;\n  box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */\n  line-height: 0px; /* normal line height, a space was appearing below the menu button */\n}\n.ag-fresh .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-menu-button:hover {\n  border: 1px solid #000;\n}\n.ag-fresh .ag-header-icon {\n  color: #800000;\n}\n.ag-fresh .ag-row-selected {\n  background-color: #b0e0e6 !important;\n}\n.ag-fresh .ag-body .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-body .ag-row-even {\n  background-color: #fff;\n}\n.ag-fresh .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-fresh .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #a9a9a9;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-fresh .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #a9a9a9;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-fresh .ag-body {\n  background-color: #fafafa;\n}\n.ag-fresh .ag-group-cell-entire-row {\n  background-color: #aaa;\n  padding: 4px;\n}\n.ag-fresh .ag-footer-cell-entire-row {\n  background-color: #aaa;\n  padding: 4px;\n}\n.ag-fresh .ag-group-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-fresh .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-fresh .ag-group-value {\n  padding-right: 2px;\n}\n.ag-fresh .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-fresh .ag-footer-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-menu {\n  border: 1px solid #000;\n  background-color: #f0f0f0;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-fresh .ag-menu .ag-tab-header {\n  background-color: #f8f8f8;\n}\n.ag-fresh .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-fresh .ag-menu .ag-tab-selected {\n  background-color: #f0f0f0;\n  border-right: 1px solid #000;\n  border-left: 1px solid #000;\n  border-top: 1px solid #000;\n}\n.ag-fresh .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-fresh .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-fresh .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-fresh .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-fresh .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-fresh .ag-paging-panel {\n  padding: 4px;\n}\n.ag-fresh .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-fresh .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-fresh .ag-tool-panel {\n  background-color: #eee;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n}\n.ag-fresh .ag-status-bar {\n  font-size: 12px;\n  height: 20px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-fresh .ag-status-bar-item {\n  padding-left: 10px;\n}\n", ""]);
+	exports.push([module.id, ".ag-common {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-common img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-common .ag-root {\n  border: 1px solid #808080;\n}\n.ag-common .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-common .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-common .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-common .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-common .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-common .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-common .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-common .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-common .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-common .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-common .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-common .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-common .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-common .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-common .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-common .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #fff;\n}\n.ag-common .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-common .ag-header {\n  color: #000;\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-common .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-common .ag-no-scrolls .ag-header-container {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-common .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-common .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-common .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-common .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-common .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-common .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-common .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-common .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-common .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-common .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-common .ag-body .ag-row {\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-body .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-common .ag-body .ag-row-even {\n  background-color: #fff;\n}\n.ag-common .ag-body .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-common .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-common .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-common .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-common .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-common .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-common .ag-group-cell {\n  font-style: italic;\n}\n.ag-common .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-common .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-common .ag-group-value {\n  padding-right: 2px;\n}\n.ag-common .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-common .ag-footer-cell {\n  font-style: italic;\n}\n.ag-common .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-common .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-common .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-common .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-common .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-common .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-common .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-common .ag-filter-apply-panel {\n  border-top: 1px solid ag-separatorcolor;\n  padding: 2px;\n}\n.ag-common .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-common .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-common .ag-paging-panel {\n  padding: 4px;\n}\n.ag-common .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-common .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-common .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #222;\n}\n.ag-common .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-common .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-common .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-common .ag-column-drop-cell {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  color: #000;\n  border: 1px solid #808080;\n  padding: 2px;\n}\n.ag-common .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-common .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-common .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-common .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-common .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-common .ag-column-drop {\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-common .ag-column-drop-horizontal {\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-common .ag-column-drop-vertical {\n  border-top: 1px solid #808080;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-empty-message {\n  padding: 20px;\n}\n", ""]);
 
 	// exports
 
@@ -19071,10 +19125,50 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports = module.exports = __webpack_require__(92)();
 	// imports
-	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic,100,300);", ""]);
+
 
 	// module
-	exports.push([module.id, ".ag-material {\n  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);\n  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);\n  font-family: \"Roboto\";\n}\n.ag-material img {\n  vertical-align: middle;\n}\n.ag-material .ag-root .ag-header {\n  color: rgba(0,0,0,0.54);\n  font-size: 12px;\n}\n.ag-material .ag-root .ag-header .ag-header-row {\n  border-bottom: 1px solid #ededed;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-material .ag-root .ag-header .ag-header-cell {\n  cursor: pointer;\n  font-weight: bold;\n  border-right: 1px solid #ededed;\n}\n.ag-material .ag-root .ag-header .ag-header-cell:first-child {\n  padding-right: 0;\n}\n.ag-material .ag-root .ag-sort-ascending-icon,\n.ag-material .ag-root .ag-sort-descending-icon {\n  display: none !important;\n}\n.ag-material .ag-root .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-material .ag-root .ag-header-cell-text:after {\n  position: absolute;\n  content: '';\n  background: url(\"data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' viewBox='0 0 24 24' preserveAspectRatio='xMidYMid meet'><path d='M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z'></path></svg>\") no-repeat;\n  width: 15px;\n  height: 15px;\n  margin: 0 10px;\n  display: none;\n}\n.ag-material .ag-root .ag-header-cell-sorted-asc,\n.ag-material .ag-root .ag-header-cell-sorted-desc {\n  color: rgba(0,0,0,0.87);\n}\n.ag-material .ag-root .ag-header-cell-sorted-asc .ag-header-cell-text:after,\n.ag-material .ag-root .ag-header-cell-sorted-desc .ag-header-cell-text:after {\n  display: initial;\n}\n.ag-material .ag-root .ag-header-cell-sorted-desc .ag-header-cell-text:after {\n  -webkit-transform: rotate(180deg);\n  -moz-transform: rotate(180deg);\n  -o-transform: rotate(180deg);\n  -ms-transform: rotate(180deg);\n  transform: rotate(180deg);\n  -webkit-transition: 0.2s linear;\n  -moz-transition: 0.2s linear;\n  -o-transition: 0.2s linear;\n  -ms-transition: 0.2s linear;\n  transition: 0.2s linear;\n}\n.ag-material .ag-root .ag-filter {\n  background: #fafafa;\n  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);\n  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);\n  margin-top: 24px;\n  padding: 6px;\n}\n.ag-material .ag-root .ag-body {\n  color: rgba(0,0,0,0.87);\n  font-size: 13px;\n  padding-top: 56px !important;\n}\n.ag-material .ag-root .ag-body .ag-row {\n  border-bottom: 1px solid #ededed;\n  height: 48px !important;\n  -webkit-transition: 0.2s background ease-in;\n  -moz-transition: 0.2s background ease-in;\n  -o-transition: 0.2s background ease-in;\n  -ms-transition: 0.2s background ease-in;\n  transition: 0.2s background ease-in;\n}\n.ag-material .ag-root .ag-body .ag-row:hover {\n  background: #eee;\n}\n.ag-material .ag-root .ag-body .ag-row.ag-row-selected {\n  background: #f5f5f5;\n}\n.ag-material .ag-root .ag-body .ag-cell {\n  left: -20px;\n  outline: none;\n  font-weight: 500;\n}\n.ag-material .ag-root .ag-body .ag-cell:first-child {\n  padding-right: 0;\n}\n.ag-selection-checkbox {\n  margin: 15px 4px;\n  cursor: pointer;\n  height: 18px;\n  width: 18px;\n}\n.ag-selection-checkbox:focus {\n  outline: none;\n}\n.ag-selection-checkbox + .ag-cell-value {\n  position: absolute;\n  left: 24px;\n  pointer-events: none;\n}\n.ag-selection-checkbox:checked + .ag-cell-value:before {\n  background: #ff4081;\n  border-color: #ff4081;\n}\n.ag-selection-checkbox:checked + .ag-cell-value:after {\n  border-bottom: 2px solid #fff;\n  border-left: 2px solid #fff;\n  border-bottom-left-radius: 1px;\n  content: '';\n  position: absolute;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 12px;\n  height: 6px;\n  margin: 5px 3px;\n  -webkit-transform: rotate(-45deg);\n  -moz-transform: rotate(-45deg);\n  -o-transform: rotate(-45deg);\n  -ms-transform: rotate(-45deg);\n  transform: rotate(-45deg);\n  left: -20px;\n}\n.ag-header .ag-selection-checkbox + .ag-cell-value {\n  top: 19px;\n}\n.ag-row-group-cell {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border: 1px solid #ededed;\n  padding: 2px;\n}\n.ag-row-group-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-row-group-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-row-group-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-row-group-cell-button:hover {\n  border: 1px solid #000;\n}\n.ag-row-group-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  border: 1px solid transparent;\n  color: #808080;\n}\n.ag-row-group-icon {\n  padding-right: 4px;\n}\n.ag-row-group-panel {\n  border: 1px solid #ededed;\n  padding: 4px;\n  background-color: #fff;\n}\n.ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-cell-no-focus {\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-cell-first-right-pinned {\n  border-left: 1px solid #000;\n}\n.ag-cell-last-left-pinned {\n  border-right: 1px solid #000;\n}\n.ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-cell-data-changed {\n  background-color: #add8e6;\n}\n.ag-cell-data-changed-animation {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-cell-data-changed:not(.ag-cell-focus) {\n  background-color: #add8e6;\n}\n.ag-cell-data-changed-animation:not(.ag-cell-focus) {\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #000;\n  background-color: #f6f6f6;\n}\n.ag-rich-select-value {\n  padding: 2px;\n}\n.ag-rich-select-list {\n  background-color: #fff;\n  border-top: 1px solid #aaa;\n}\n.ag-rich-select-row {\n  padding: 2px;\n}\n.ag-rich-select-row-selected {\n  background-color: #ddebf7;\n}\n.ag-no-scrolls .ag-header-container {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-header-cell-moving-clone {\n  border-right: 1px solid #808080;\n  border-left: 1px solid #808080;\n  background-color: rgba(220,220,220,0.8);\n}\n.ag-header-group-cell {\n  font-weight: bold;\n  border-right: 1px solid #ededed;\n}\n.ag-header-group-cell-with-group {\n  border-bottom: 1px solid #ededed;\n}\n.ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-header-group-cell-label {\n  padding: 4px;\n}\n.ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box;\n  -moz-box-sizing: content-box;\n  box-sizing: content-box; /* When using bootstrap, box-sizing was set to 'border-box' */\n  line-height: 0;\n}\n/* normal line height, a space was appearing below the menu button */\n.ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-header-cell-menu-button:hover {\n  border: 1px solid #000;\n}\n.ag-header-icon {\n  color: #800000;\n}\n.ag-row-selected {\n  background-color: #f0f0f0;\n}\n.ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #a9a9a9;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #a9a9a9;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-body {\n  background-color: #fff;\n}\n.ag-group-cell-entire-row {\n  background-color: #aaa;\n  padding: 4px;\n}\n.ag-footer-cell-entire-row {\n  background-color: #aaa;\n  padding: 4px;\n}\n.ag-group-cell {\n  font-style: italic;\n}\n.ag-group-expanded {\n  padding-right: 2px;\n}\n.ag-group-contracted {\n  padding-right: 2px;\n}\n.ag-group-value {\n  padding-right: 2px;\n}\n.ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-footer-cell {\n  font-style: italic;\n}\n.ag-menu {\n  border: 1px solid #000;\n  background-color: #f0f0f0;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-menu .ag-tab-header {\n  background-color: #f8f8f8;\n}\n.ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-menu .ag-tab-selected {\n  background-color: #f0f0f0;\n  border-right: 1px solid #000;\n  border-left: 1px solid #000;\n  border-top: 1px solid #000;\n}\n.ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-filter-value {\n  margin-left: 4px;\n}\n.ag-paging-panel {\n  padding: 4px;\n}\n.ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-tool-panel {\n  background-color: #fff;\n  border: 1px solid #eee;\n}\n.ag-status-bar {\n  font-size: 12px;\n  height: 20px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n  background-color: #f0f0f0;\n}\n.ag-status-bar-aggregations {\n  float: right;\n}\n.ag-status-bar-item {\n  padding-left: 10px;\n}\n", ""]);
+	exports.push([module.id, ".ag-common {\n  line-height: 1.4;\n  font-family: Roboto;\n  font-size: 14px;\n  color: #666;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-common img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-common .ag-root {\n  border: none;\n}\n.ag-common .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-common .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-common .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-common .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-common .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-common .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-common .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-common .ag-cell-no-focus {\n  border-right: none;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-common .ag-cell-first-right-pinned {\n  border-left: none;\n}\n.ag-common .ag-cell-last-left-pinned {\n  border-right: none;\n}\n.ag-common .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-common .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-common .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-common .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-common .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-common .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-common .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-rich-select {\n  font-size: 14px;\n  border: none;\n  background-color: #fff;\n}\n.ag-common .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-common .ag-header {\n  color: #666;\n  background: none;\n  border-bottom: none;\n  font-weight: normal;\n}\n.ag-common .ag-header-icon {\n  color: #666;\n  stroke: none;\n  fill: #666;\n}\n.ag-common .ag-no-scrolls .ag-header-container {\n  background: none;\n  border-bottom: none;\n}\n.ag-common .ag-header-cell {\n  border-right: none;\n}\n.ag-common .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-common .ag-header-group-cell {\n  border-right: none;\n}\n.ag-common .ag-header-group-cell-with-group {\n  border-bottom: none;\n}\n.ag-common .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-common .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-common .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-common .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-common .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-common .ag-pinned-right-header {\n  border-left: none;\n}\n.ag-common .ag-header-cell-menu-button:hover {\n  border: none;\n}\n.ag-common .ag-body {\n  background-color: #fff;\n}\n.ag-common .ag-body .ag-row {\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-body .ag-row-odd {\n  background-color: #fff;\n}\n.ag-common .ag-body .ag-row-even {\n  background-color: #fff;\n}\n.ag-common .ag-body .ag-row-selected {\n  background-color: #f5f5f5;\n}\n.ag-common .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-common .ag-overlay-loading-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-common .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-common .ag-group-cell-entire-row {\n  background-color: #fff;\n  padding: 2px;\n}\n.ag-common .ag-footer-cell-entire-row {\n  background-color: #fff;\n  padding: 2px;\n}\n.ag-common .ag-group-cell {\n  font-style: italic;\n}\n.ag-common .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-common .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-common .ag-group-value {\n  padding-right: 2px;\n}\n.ag-common .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-common .ag-footer-cell {\n  font-style: italic;\n}\n.ag-common .ag-menu {\n  border: 1px solid #808080;\n  background-color: #fff;\n  cursor: default;\n  font-family: Roboto;\n  font-size: 14px;\n}\n.ag-common .ag-menu .ag-tab-header {\n  background-color: #f6f6f6;\n}\n.ag-common .ag-menu .ag-tab {\n  padding: 6px 16px 6px 16px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-common .ag-menu .ag-tab-selected {\n  background-color: #fff;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n}\n.ag-common .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-common .ag-menu-option-icon {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-text {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-shortcut {\n  padding: 10px 6px 10px 20px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-popup-pointer {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-common .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-common .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-common .ag-filter-apply-panel {\n  border-top: 1px solid ag-separatorcolor;\n  padding: 2px;\n}\n.ag-common .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-common .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-common .ag-paging-panel {\n  padding: 4px;\n}\n.ag-common .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-common .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-common .ag-tool-panel {\n  background-color: #fff;\n  border-right: none;\n  border-bottom: none;\n  border-top: none;\n  color: #666;\n}\n.ag-common .ag-status-bar {\n  color: #666;\n  background-color: #fff;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: none;\n  border-left: none;\n  border-right: none;\n  padding: 2px;\n}\n.ag-common .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-common .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-common .ag-column-drop-cell {\n  background: none;\n  color: #000;\n  border: 1px solid #808080;\n  padding: 2px;\n}\n.ag-common .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-common .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-common .ag-column-drop-cell-button:hover {\n  border: none;\n}\n.ag-common .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-common .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-common .ag-column-drop {\n  padding: 4px;\n  background-color: #fff;\n}\n.ag-common .ag-column-drop-horizontal {\n  border-top: none;\n  border-left: none;\n  border-right: none;\n}\n.ag-common .ag-column-drop-vertical {\n  border-top: none;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-empty-message {\n  padding: 20px;\n}\n.ag-common .ag-row-hover {\n  background-color: #eee !important;\n}\n.ag-common .ag-cell-not-inline-editing {\n  padding-top: 15px;\n}\n.ag-common .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 102 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(103);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(93)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./theme-bootstrap.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./theme-bootstrap.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 103 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(92)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".ag-common {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #000;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-common img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-common .ag-root {\n  border: none;\n}\n.ag-common .ag-cell-not-inline-editing {\n  padding: 4px;\n}\n.ag-common .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-common .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-common .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-common .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-common .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-common .ag-cell-focus {\n  border: 2px solid #217346;\n}\n.ag-common .ag-cell-no-focus {\n  border-right: none;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-common .ag-cell-first-right-pinned {\n  border-left: none;\n}\n.ag-common .ag-cell-last-left-pinned {\n  border-right: none;\n}\n.ag-common .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-common .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-common .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-common .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-common .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-common .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-common .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-rich-select {\n  font-size: 14px;\n  border: none;\n  background-color: #fff;\n}\n.ag-common .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-common .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-common .ag-header {\n  color: #000;\n  background: none;\n  border-bottom: none;\n  font-weight: 600;\n}\n.ag-common .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-common .ag-no-scrolls .ag-header-container {\n  background: none;\n  border-bottom: none;\n}\n.ag-common .ag-header-cell {\n  border-right: none;\n}\n.ag-common .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-common .ag-header-group-cell {\n  border-right: none;\n}\n.ag-common .ag-header-group-cell-with-group {\n  border-bottom: none;\n}\n.ag-common .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-common .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-common .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-common .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-common .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-common .ag-pinned-right-header {\n  border-left: none;\n}\n.ag-common .ag-header-cell-menu-button:hover {\n  border: none;\n}\n.ag-common .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-common .ag-body .ag-row {\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-common .ag-body .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-common .ag-body .ag-row-even {\n  background-color: #fff;\n}\n.ag-common .ag-body .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-common .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-common .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-common .ag-overlay-loading-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-common .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-common .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 4px;\n}\n.ag-common .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 4px;\n}\n.ag-common .ag-group-cell {\n  font-style: italic;\n}\n.ag-common .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-common .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-common .ag-group-value {\n  padding-right: 2px;\n}\n.ag-common .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-common .ag-footer-cell {\n  font-style: italic;\n}\n.ag-common .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-common .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-common .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-common .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-common .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-common .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-common .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-common .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-common .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-common .ag-filter-apply-panel {\n  border-top: 1px solid ag-separatorcolor;\n  padding: 2px;\n}\n.ag-common .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-common .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-common .ag-paging-panel {\n  padding: 4px;\n}\n.ag-common .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-common .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-common .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: none;\n  border-bottom: none;\n  border-top: none;\n  color: #000;\n}\n.ag-common .ag-status-bar {\n  color: #000;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: none;\n  border-left: none;\n  border-right: none;\n  padding: 2px;\n}\n.ag-common .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-common .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-common .ag-column-drop-cell {\n  background: none;\n  color: #000;\n  border: 1px solid #808080;\n  padding: 2px;\n}\n.ag-common .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-common .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-common .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-common .ag-column-drop-cell-button:hover {\n  border: none;\n}\n.ag-common .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-common .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-common .ag-column-drop {\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-common .ag-column-drop-horizontal {\n  border-top: none;\n  border-left: none;\n  border-right: none;\n}\n.ag-common .ag-column-drop-vertical {\n  border-top: none;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-common .ag-column-drop-vertical .ag-column-drop-empty-message {\n  padding: 20px;\n}\n", ""]);
 
 	// exports
 

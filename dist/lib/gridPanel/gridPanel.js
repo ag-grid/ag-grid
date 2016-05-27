@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -207,6 +207,13 @@ var GridPanel = (function () {
         if (utils_1.Utils.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
             this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
+        }
+        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
+        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
+        // button in the browser). so this property allows the user to receive middle button clicks if
+        // they want.
+        if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
+            mouseEvent.preventDefault();
         }
     };
     GridPanel.prototype.addShortcutKeyListeners = function () {
@@ -613,8 +620,13 @@ var GridPanel = (function () {
             var newTopPosition = this.eBodyViewport.scrollTop + wheelEvent.pixelY;
             targetPanel.scrollTop = newTopPosition;
         }
-        // if we don't prevent default, then the whole browser will scroll also as well as the grid
-        event.preventDefault();
+        // allow the option to pass mouse wheel events ot the browser
+        // https://github.com/ceolter/ag-grid/issues/800
+        // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
+        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+            // if we don't prevent default, then the whole browser will scroll also as well as the grid
+            event.preventDefault();
+        }
         return false;
     };
     GridPanel.prototype.onColumnsChanged = function (event) {
