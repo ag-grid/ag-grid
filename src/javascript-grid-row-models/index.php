@@ -108,10 +108,10 @@ include '../documentation-main/documentation_header.php';
     <p>
         Which row model you use will depend on your application. Here are some rules of thumb:
         <ul>
-        <li>If you are not sure, use default. The grid can handle massive (100k+) amounts of data. The grid will only
+        <li>If you are not sure, use default In Memory. The grid can handle massive (100k+) amounts of data. The grid will only
         render what's visible on the screen (40 rows approx???) even if you have thousands of rows returned from your
         server. You will not kill the grid with too much data - rather your browser will run out of memory before
-        the grid gets into problems. So if you are unsure, go with 'normal' row model first and only change if you need another.</li>
+        the grid gets into problems. So if you are unsure, go with In Memory row model first and only change if you need another.</li>
         <li>If you do not want to shift all the data from your server to your client, as the amount of data is too
         large to shift over the network or to extract from the underlying datasource, then use either pagination
         or virtual paging. Each one takes data from the server in blocks. Pagination allows the user to view the

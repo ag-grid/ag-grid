@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Set the grid property <i></i> The user can bring up the context menu by right clicking on a cell.
+        The user can bring up the context menu by right clicking on a cell.
         By default, the context menu provides the values 'copy' and 'paste'. Copy will copy the selected
         cells or rows to the clipboard. Paste will always, forever, be disabled.</p>
 
