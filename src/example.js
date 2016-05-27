@@ -148,7 +148,6 @@ var gridOptions = {
 //toolPanelSuppressGroups: true,
 //toolPanelSuppressValues: true,
 //groupSuppressAutoColumn: true,
-//groupAggFunction: groupAggFunction,
 //groupAggFields: ['bankBalance','totalWinnings'],
     checkboxSelection: function (params) {
         // we show checkbox selection in the first column, unless we are grouping,

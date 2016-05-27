@@ -139,7 +139,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>aggFunc</th>
-            <td>Name of function to use for aggregation. One of [sum,min,max].</td>
+            <td>Name of function to use for aggregation. One of [sum,min,max,first,last]. 
+                Or provide your own agg function.</td>
         </tr>
         <tr>
             <th>rowGroupIndex</th>

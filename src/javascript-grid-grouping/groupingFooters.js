@@ -20,32 +20,8 @@ var gridOptions = {
     enableSorting: true,
     groupSuppressAutoColumn: true,
     groupUseEntireRow: false,
-    // groupAggFunction: groupAggFunction,
     groupIncludeFooter: true
 };
-
-function groupAggFunction(rows) {
-
-    var sums = {
-        gold: 0,
-        silver: 0,
-        bronze: 0,
-        total: 0
-    };
-
-    rows.forEach(function(row) {
-
-        var data = row.data;
-
-        sums.gold += data.gold;
-        sums.silver += data.silver;
-        sums.bronze += data.bronze;
-        sums.total += data.total;
-
-    });
-
-    return sums;
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

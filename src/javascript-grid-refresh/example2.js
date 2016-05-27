@@ -9,11 +9,11 @@ var columnDefs = [
     {
         headerName: 'Weekly Editable Values',
         children: [
-            {headerName: "Monday",  field: "mon", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-            {headerName: "Tuesday", field: "tue", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-            {headerName: "Wednesday", field: "wed", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-            {headerName: "Thursday", field: "thur", cellRenderer: valueCellRenderer, cellClassRules: classRules},
-            {headerName: "Friday", field: "fri", cellRenderer: valueCellRenderer, cellClassRules: classRules}
+            {headerName: "Monday",  field: "mon", cellRenderer: valueCellRenderer, cellClassRules: classRules, aggFunc: 'sum'},
+            {headerName: "Tuesday", field: "tue", cellRenderer: valueCellRenderer, cellClassRules: classRules, aggFunc: 'sum'},
+            {headerName: "Wednesday", field: "wed", cellRenderer: valueCellRenderer, cellClassRules: classRules, aggFunc: 'sum'},
+            {headerName: "Thursday", field: "thur", cellRenderer: valueCellRenderer, cellClassRules: classRules, aggFunc: 'sum'},
+            {headerName: "Friday", field: "fri", cellRenderer: valueCellRenderer, cellClassRules: classRules, aggFunc: 'sum'}
         ]
     }
 ];
@@ -77,32 +77,9 @@ function cellRendererHeaderCell(params) {
     }
 }
 
-function groupAggFunction(nodes) {
-
-    var sums = {
-        mon: 0,
-        tue: 0,
-        wed: 0,
-        thur: 0,
-        fri: 0
-    };
-
-    nodes.forEach(function(node) {
-        var data = node.data;
-        sums.mon += data.mon;
-        sums.tue += data.tue;
-        sums.wed += data.wed;
-        sums.thur += data.thur;
-        sums.fri += data.fri;
-    });
-
-    return sums;
-}
-
 var gridOptions = {
     groupIncludeFooter: true,
     groupDefaultExpanded: 1,
-    groupAggFunction: groupAggFunction,
     groupSuppressAutoColumn: true,
     columnDefs: columnDefs,
     rowData: data,

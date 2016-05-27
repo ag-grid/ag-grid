@@ -106,12 +106,6 @@ include '../documentation-main/documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <th>groupAggFunction(nodes, level)</th>
-            <td>If grouping, used to create complex aggregates. Provide a function to do the aggregation. Use this
-                if the default 'sum/min/max' aggregates provided is not enough.
-            </td>
-        </tr>
-        <tr>
             <th>groupRowRenderer</th>
             <td>If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default
                 presentation of the group. This is only used when groupUseEntireRow=true. This gives you full control

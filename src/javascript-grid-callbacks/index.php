@@ -81,7 +81,7 @@ include '../documentation-main/documentation_header.php';
             <td>Provide a function for custom header rendering.</td>
         </tr>
         <tr>
-            <th>groupRowInnerRenderer(params)<br/> groupAggFunction(params)<br/> groupRowRenderer(params)</th>
+            <th>groupRowInnerRenderer(params)<br/> groupRowRenderer(params)</th>
             <td>Callbacks for grouping. See the section on <a href="../javascript-grid-grouping/index.php#groupingCallbacks">row grouping</a> for detailed explanation.</td>
         </tr>
         <tr>

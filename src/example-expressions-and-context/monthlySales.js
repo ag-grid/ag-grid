@@ -18,25 +18,31 @@ var columnDefs = [
         headerName: 'Monthly Data',
         children: [
             {headerName : 'Jan', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
-                cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                cellClass: 'cell-figure', valueGetter: monthValueGetter,
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
 
             {headerName : 'Feb', field: 'feb', month: 1, cellRenderer: accountingCellRenderer,
-                cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                cellClass: 'cell-figure', valueGetter: monthValueGetter,
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
 
             {headerName : 'Mar', field: 'mar', month: 2, cellRenderer: accountingCellRenderer,
-                cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                cellClass: 'cell-figure', valueGetter: monthValueGetter,
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
 
             {headerName : 'Apr', field: 'apr', month: 3, cellRenderer: accountingCellRenderer,
-                cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                cellClass: 'cell-figure', valueGetter: monthValueGetter,
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
 
             {headerName : 'May', field: 'may', month: 4, cellRenderer: accountingCellRenderer,
-                cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                cellClass: 'cell-figure', valueGetter: monthValueGetter,
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
 
             {headerName : 'Jun', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
-                cellClass: 'cell-figure', valueGetter: monthValueGetter, cellClassRules: monthCellClassRules},
+                cellClass: 'cell-figure', valueGetter: monthValueGetter,
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
 
             {headerName : 'YTD', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
-                valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}}
+                valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}, aggFunc: 'sum'}
         ]
     },
     {
@@ -61,6 +67,7 @@ var gridOptions = {
     rowHeight: 22,
     onModelUpdated: modelUpdated,
     groupSelectsChildren: true,
+    enableRangeSelection: true,
     context: {
         month: 0,
         months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
@@ -77,8 +84,7 @@ var gridOptions = {
         groupContracted: '<i class="fa fa-plus-square-o"/>',
         columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
         columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
-    },
-    groupAggFunction: groupAggFunction
+    }
 };
 
 var monthNames = ['Budget Only', 'Year to Jan', 'Year to Feb', 'Year to Mar', 'Year to Apr', 'Year to May',
@@ -98,31 +104,6 @@ onChangeMonth = function(i) {
     document.querySelector('#monthName').innerHTML = monthNames[newMonth + 1];
     gridOptions.api.refreshView();
 };
-
-function groupAggFunction(rows) {
-
-    var aggFields = [
-            'jan_act','jan_bud','feb_act','feb_bud','mar_act','mar_bud',
-            'apr_act','apr_bud','may_act','may_bud','jun_act','jun_bud',
-            'jul_act','jul_bud','aug_act','aug_bud','sep_act','sep_bud',
-            'oct_act','oct_bud','nov_act','nov_bud','dec_act','dec_bud'];
-
-    var data = {};
-
-    for (var j = 0; j<aggFields.length; j++) {
-        data[aggFields[j]] = 0;
-    }
-
-    for (var i = 0; i<rows.length; i++) {
-        for (var k = 0; k<aggFields.length; k++) {
-            var aggField = aggFields[k];
-            var row = rows[i];
-            data[aggField] += row.data[aggField];
-        }
-    }
-
-    return data;
-}
 
 function onQuickFilterChanged(value) {
     gridOptions.api.setQuickFilter(value);
