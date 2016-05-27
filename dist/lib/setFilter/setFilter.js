@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.4
+// ag-grid-enterprise v4.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -258,7 +258,7 @@ var SetFilter = (function (_super) {
         '<div class="ag-filter-header-container">' +
         '<label>' +
         '<input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>' +
-        '([SELECT ALL])' +
+        '<span class="ag-filter-value">([SELECT ALL])</span>' +
         '</label>' +
         '</div>' +
         '<div id="richList" class="ag-set-filter-list"></div>' +

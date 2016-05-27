@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.4
+// ag-grid-enterprise v4.2.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -33,7 +33,7 @@ var RangeController = (function () {
         this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_GROUP_OPENED, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_MOVED, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_12.Events.EVENT_SORT_CHANGED, this.clearSelection.bind(this));
     };
@@ -58,7 +58,7 @@ var RangeController = (function () {
     };
     RangeController.prototype.addRange = function (rangeSelection) {
         var columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
-        var columnEnd = this.columnController.getColumn(rangeSelection.columnEnd);
+        var columnEnd = this.columnController.getOriginalColumn(rangeSelection.columnEnd);
         if (!columnStart || !columnEnd) {
             return;
         }

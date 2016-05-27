@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.1.4
+// ag-grid-enterprise v4.2.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,12 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var main_1 = require("ag-grid/main");
 var setFilter_1 = require("./setFilter/setFilter");
 var richSelectCellEditor_1 = require("./rendering/richSelect/richSelectCellEditor");
+var licenseManager_1 = require("./licenseManager");
 var EnterpriseBoot = (function () {
     function EnterpriseBoot() {
     }
     EnterpriseBoot.prototype.init = function () {
         this.filterManager.registerFilter('set', setFilter_1.SetFilter);
         this.cellEditorFactory.addCellEditor(EnterpriseBoot.RICH_SELECT, richSelectCellEditor_1.RichSelectCellEditor);
+        this.licenseManager.validateLicense();
     };
     EnterpriseBoot.RICH_SELECT = 'richSelect';
     __decorate([
@@ -27,6 +29,10 @@ var EnterpriseBoot = (function () {
         main_1.Autowired('cellEditorFactory'), 
         __metadata('design:type', main_1.CellEditorFactory)
     ], EnterpriseBoot.prototype, "cellEditorFactory", void 0);
+    __decorate([
+        main_1.Autowired('licenseManager'), 
+        __metadata('design:type', licenseManager_1.LicenseManager)
+    ], EnterpriseBoot.prototype, "licenseManager", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 
