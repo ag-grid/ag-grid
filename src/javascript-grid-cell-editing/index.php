@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
 
     // Gets called when editing is finished (ie if enter is pressed) - if returns true will cancel edit on completion
     // ie edit will not be saved to grid
-    isCancelBeforeStart(): boolean;
+    isCancelBeforeEnd(): boolean;
 }</pre>
 
     <p>
