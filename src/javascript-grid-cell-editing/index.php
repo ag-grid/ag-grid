@@ -86,6 +86,14 @@ include '../documentation-main/documentation_header.php';
     // Gets called once after initialised.
     // If you return true, the editor will appear in a popup
     isPopup?(): boolean;
+
+    // Gets called on each key stroke - if returns true will cancel edit before it starts
+    // ie before characters appear in an input for example
+    isCancelBeforeStart(): boolean;
+
+    // Gets called when editing is finished (ie if enter is pressed) - if returns true will cancel edit on completion
+    // ie edit will not be saved to grid
+    isCancelBeforeStart(): boolean;
 }</pre>
 
     <p>
