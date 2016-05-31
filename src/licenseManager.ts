@@ -1,6 +1,6 @@
-import {Bean, Autowired, PostConstruct} from "ag-grid/main";
-import {Utils as _} from "ag-grid/main";
-import {MD5} from "./license/md5";
+import {Bean, Autowired, PostConstruct} from 'ag-grid/main';
+import {Utils as _} from 'ag-grid/main';
+import {MD5} from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
@@ -14,7 +14,6 @@ export class LicenseManager {
         var valid:boolean = false;
         var current:boolean = false;
 
-        console.log("validating license: " + LicenseManager.licenseKey);
         if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
             var hashStart = LicenseManager.licenseKey.length - 32;
             var md5 = LicenseManager.licenseKey.substring(hashStart);
@@ -22,7 +21,7 @@ export class LicenseManager {
 
             if (md5 === this.md5.md5(license)) {
 
-                var restrictionHashed = license.substring(license.lastIndexOf("_") + 1, license.length);
+                var restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
                 var expiry = new Date(parseInt(LicenseManager.decode(restrictionHashed)));
 
                 if(!isNaN(expiry.getTime())) {
@@ -33,30 +32,32 @@ export class LicenseManager {
         }
 
         if (!valid) {
-            LicenseManager.outputMessage("********************************************* Invalid License **************************************************",
-                "* Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license. *");
+            LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
+                '* Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license. *');
         } else if(!current) {
-            LicenseManager.outputMessage("********************* License not compatible with installed version of ag-Grid Enterprise. *********************",
-                "Your license for ag-Grid Enterprise expired on " + LicenseManager.formatDate(expiry) + " but the version installed was released on " + LicenseManager.formatDate(gridReleaseDate) + ". Please " +
-                            "contact ag-Grid Support to renew your license");
+            var formattedExpiryDate= LicenseManager.formatDate(expiry);
+            var formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
+            LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
+                `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. Please ` +
+                            'contact ag-Grid Support to renew your license');
         }
     }
 
     private static outputMessage(header:string, message:string) {
-        console.error("****************************************************************************************************************");
-        console.error("*************************************** ag-Grid Enterprise License *********************************************");
+        console.error('****************************************************************************************************************');
+        console.error('*************************************** ag-Grid Enterprise License *********************************************');
         console.error(header);
         console.error(message);
-        console.error("****************************************************************************************************************");
-        console.error("****************************************************************************************************************");
+        console.error('****************************************************************************************************************');
+        console.error('****************************************************************************************************************');
     }
 
     private static formatDate(date:any):string {
         var monthNames:[string] = [
-            "January", "February", "March",
-            "April", "May", "June", "July",
-            "August", "September", "October",
-            "November", "December"
+            'January', 'February', 'March',
+            'April', 'May', 'June', 'July',
+            'August', 'September', 'October',
+            'November', 'December'
         ];
 
         var day = date.getDate();
@@ -72,12 +73,12 @@ export class LicenseManager {
     };
 
     private static decode(input:string):string {
-        var keystr:string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-        var t = "";
+        var keystr:string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        var t = '';
         var n:any, r:any, i:any;
         var s:any, o:any, u:any, a:any;
         var f:number = 0;
-        var e:string = input.replace(/[^A-Za-z0-9+/=]/g, "");
+        var e:string = input.replace(/[^A-Za-z0-9+/=]/g, '');
         while (f < e.length) {
             s = keystr.indexOf(e.charAt(f++));
             o = keystr.indexOf(e.charAt(f++));
@@ -100,8 +101,8 @@ export class LicenseManager {
 
 
     private static utf8_decode(input:string):string {
-        input = input.replace(/rn/g, "n");
-        var t = "";
+        input = input.replace(/rn/g, 'n');
+        var t = '';
         for (var n = 0; n < input.length; n++) {
             var r = input.charCodeAt(n);
             if (r < 128) {
