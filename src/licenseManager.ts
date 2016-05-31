@@ -14,7 +14,6 @@ export class LicenseManager {
         var valid:boolean = false;
         var current:boolean = false;
 
-        console.log("validating license: " + LicenseManager.licenseKey);
         if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
             var hashStart = LicenseManager.licenseKey.length - 32;
             var md5 = LicenseManager.licenseKey.substring(hashStart);
