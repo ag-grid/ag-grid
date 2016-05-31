@@ -4,28 +4,32 @@ var students = [
         last_name: 'Harrison',
         gender: 'Male',
         age: 12,
-        address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763'
+        address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
+        mood: "Happy"
     },
     {
         first_name: 'Mary',
         last_name: 'Wilson',
         gender: 'Female',
         age: 11,
-        address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215'
+        address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
+        mood: "Sad"
     },
     {
         first_name: 'Sadiq',
         last_name: 'Khan',
         gender: 'Male',
         age: 12,
-        address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186'
+        address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
+        mood: "Happy"
     },
     {
         first_name: 'Jerry',
         last_name: 'Mane',
         gender: 'Male',
         age: 12,
-        address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634'
+        address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
+        mood: "Happy"
     }
 ];
 
@@ -34,10 +38,14 @@ function getCharCodeFromEvent(event) {
     return (typeof event.which == "undefined") ? event.keyCode : event.which;
 }
 
+function isCharNumeric(charStr) {
+    return !!/\d/.test(charStr);
+}
+
 function isKeyPressedNumeric(event) {
     var charCode = getCharCodeFromEvent(event);
     var charStr = String.fromCharCode(charCode);
-    return !!/\d/.test(charStr);
+    return isCharNumeric(charStr);
 
 }
 
@@ -49,13 +57,12 @@ function NumericCellEditor() {
 NumericCellEditor.prototype.init = function (params) {
     // create the cell
     this.eInput = document.createElement('input');
-    this.eInput.value = params.value;
+    this.eInput.value = isCharNumeric(params.charPress) ? params.charPress : params.value;
 
     var that = this;
     this.eInput.addEventListener('keypress', function (event) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
-            that.eInput.select();
             if (event.preventDefault) event.preventDefault();
         }
     });
@@ -73,7 +80,6 @@ NumericCellEditor.prototype.getGui = function () {
 // focus and select can be done after the gui is attached
 NumericCellEditor.prototype.afterGuiAttached = function () {
     this.eInput.focus();
-    this.eInput.select();
 };
 
 // returns the new value after editing
@@ -112,8 +118,8 @@ GenderCellRenderer.prototype.init = function (params) {
     if (params.value === "" || params.value === undefined || params.value === null) {
         this.eGui = '';
     } else {
-        var flag = '<img border="0" width="15" height="10" src="../images/' + params.value.toLowerCase() + '.png">';
-        this.eGui = '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
+        var gender = '<img border="0" width="15" height="10" src="../images/' + params.value.toLowerCase() + '.png">';
+        this.eGui = '<span style="cursor: default;">' + gender + ' ' + params.value + '</span>';
     }
 };
 
@@ -121,6 +127,21 @@ GenderCellRenderer.prototype.getGui = function () {
     return this.eGui;
 };
 
+function MoodCellRenderer() {
+}
+
+MoodCellRenderer.prototype.init = function (params) {
+    if (params.value === "" || params.value === undefined || params.value === null) {
+        this.eGui = '';
+    } else {
+        var imgForMood = params.value === 'Happy' ? '../../images/smiley.png' : '../../images/smiley-sad.png';
+        this.eGui = '<img src="' + imgForMood + '" />';
+    }
+};
+
+MoodCellRenderer.prototype.getGui = function () {
+    return this.eGui;
+};
 
 function LargeTextCellEditor() {
 }
@@ -170,13 +191,65 @@ LargeTextCellEditor.prototype.isPopup = function () {
     return true;
 };
 
+function MoodEditor() {
+}
+
+MoodEditor.prototype.init = function (params) {
+    this.mood = params.value;
+
+    this.container = document.createElement('div');
+    this.container.style = "border-radius: 15px;background: #e6e6e6;padding: 15px;width: 100px;height: 30px;text-align:center;";
+
+    this.happyImg = document.createElement('img');
+    this.happyImg.src = '../../images/smiley.png';
+    this.happyImg.style = 'padding-right: 15px;display:inline-block;height: 25px;';
+
+    this.sadImg = document.createElement('img');
+    this.sadImg.src = '../../images/smiley-sad.png';
+    this.sadImg.style = 'padding-left: 15px;display:inline-block;height: 25px;';
+
+    this.container.appendChild(this.happyImg);
+    this.container.appendChild(this.sadImg);
+
+    var that = this;
+    this.happyImg.addEventListener('click', function (event) {
+        that.mood = 'Happy';
+        params.stopEditing();
+    });
+    this.sadImg.addEventListener('click', function (event) {
+        that.mood = 'Sad';
+        params.stopEditing();
+    });
+};
+
+// gets called once when grid ready to insert the element
+MoodEditor.prototype.getGui = function () {
+    return this.container;
+};
+
+MoodEditor.prototype.afterGuiAttached = function () {
+    this.container.focus();
+};
+
+MoodEditor.prototype.getValue = function () {
+    return this.mood;
+};
+
+// any cleanup we need to be done here
+MoodEditor.prototype.destroy = function () {
+};
+
+MoodEditor.prototype.isPopup = function () {
+    return true;
+};
+
 var columnDefs = [
     {headerName: "First Name", field: "first_name", width: 100, editable: true},
     {headerName: "Last Name", field: "last_name", width: 100, editable: true},
     {
         headerName: "Gender",
         field: "gender",
-        width: 120,
+        width: 90,
         editable: true,
         cellRenderer: GenderCellRenderer,
         cellEditor: 'richSelect',
@@ -188,16 +261,24 @@ var columnDefs = [
     {
         headerName: "Age",
         field: "age",
-        width: 110,
+        width: 70,
         editable: true,
         cellEditor: NumericCellEditor
+    },
+    {
+        headerName: "Mood",
+        field: "mood",
+        width: 70,
+        cellRenderer: MoodCellRenderer,
+        cellEditor: MoodEditor,
+        editable: true
     },
     {
         headerName: "Address",
         field: "address",
         width: 502,
         editable: true,
-        cellEditor: LargeTextCellEditor
+        cellEditor: 'largeText'
     }
 ];
 
