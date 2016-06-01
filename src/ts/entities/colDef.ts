@@ -55,8 +55,8 @@ export interface ColDef extends AbstractColDef {
     /** Whether this column is pinned or not. */
     pinned?: boolean | string;
 
-    /** If true, and if NOT using a cellRenderer, then the value will also be set as a tooltip for the cell*/
-    tooltipValue?: boolean;
+    /** The field where we get the tooltip on the object */
+    tooltipField?: string;
     
     /** Tooltip for the column header */
     headerTooltip?: string;

@@ -986,10 +986,12 @@ export class RenderedCell extends Component {
             var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;
             if (_.exists(valueToRender) && valueToRender !== '') {
                 this.eParentOfValue.innerHTML = valueToRender.toString();
-                if (colDef.tooltipValue) {
-                    this.eParentOfValue.setAttribute('title', valueToRender);
-                }
             }
+        }
+        if (colDef.tooltipField) {
+            var data = this.getDataForRow();
+            var tooltip = data[colDef.tooltipField];
+            this.eParentOfValue.setAttribute('title', tooltip);
         }
     }
 
