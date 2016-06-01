@@ -37,7 +37,7 @@ export class MenuList extends Component {
         this.removeOldChildPopup();
     }
 
-    public addMenuItems(menuItems: [string|MenuItem], defaultMenuItems: {[key: string]: MenuItem}): void {
+    public addMenuItems(menuItems: (string|MenuItem)[], defaultMenuItems: {[key: string]: MenuItem}): void {
         if (_.missing(menuItems)) { return; }
         menuItems.forEach( (listItem: MenuItem|string)=> {
             if (listItem === 'separator') {

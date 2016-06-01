@@ -208,7 +208,7 @@ export interface NodeChildDetails {
 }
 
 export interface GetContextMenuItemsParams {
-    defaultItems: [string],
+    defaultItems: string[],
     column: Column,
     node: RowNode,
     value: any,
@@ -218,7 +218,7 @@ export interface GetContextMenuItemsParams {
 }
 
 export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): [string|MenuItem]
+    (params: GetContextMenuItemsParams): (string|MenuItem)[]
 }
 
 export interface GetMainMenuItemsParams {
@@ -230,7 +230,7 @@ export interface GetMainMenuItemsParams {
 }
 
 export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): [string|MenuItem]
+    (params: GetMainMenuItemsParams): (string|MenuItem)[]
 }
 
 export interface ProcessRowParams {
