@@ -17,6 +17,8 @@ include '../documentation-main/documentation_header.php';
     <h3>Version 4.2.x</h3>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
+    <li>Enhancement: Added colDef.tooltipValue, so tooltip on cell is set to the value, handy if value is to large 
+        to fit into column, use can hover to get tooltip to read full value.</li>
 
 
     <h3>Version 4.2.x</h3>

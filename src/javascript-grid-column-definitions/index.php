@@ -80,6 +80,12 @@ include '../documentation-main/documentation_header.php';
             <td>Tooltip for the column header</td>
         </tr>
         <tr>
+            <th>tooltipValue</th>
+            <td>If true, value will also be set as the tooltip. This applies when NOT using a cellRenderer.
+                If using a cellRenderer, then the cellRenderer is responsible for the tooltip.
+            </td>
+        </tr>
+        <tr>
             <th>valueGetter(params)</th>
             <td>Expression or function to get the cells value.</td>
         </tr>

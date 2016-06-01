@@ -331,6 +331,7 @@ var defaultCols = [
         headerName: 'Game of Choice',
         children: [
             {headerName: "Game of Choice", field: "game.name", width: 180, editable: true, filter: 'set',
+                tooltipValue: true,
         cellClass: function () {
             return 'alphabet';
         },
