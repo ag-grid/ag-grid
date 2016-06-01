@@ -20,16 +20,17 @@ ag-header-foreground-1 = #666
 
 ag-separator-color = #d3d3d3
 
-ag-cell-focused-border = 1px solid darkgrey
-ag-cell-no-focus-border-right = none
+ag-cell-focused-border = 1px solid lightgrey
+ag-cell-no-focus-border-right = 1px solid transparent
 ag-cell-no-focus-border-top = 1px solid transparent
 ag-cell-no-focus-border-left = 1px solid transparent
-ag-cell-no-focus-border-bottom = 1px solid transparent
+ag-cell-no-focus-border-bottom = 1px solid lightgrey
 
 ag-cell-highlight-border = 1px solid darkgreen
 
 ag-cell-padding = 2px
 
+ag-row-selected-background-color = #F5F5F5
 ag-row-selected-background-color = #F5F5F5
 ag-row-odd-background-color = white
 ag-row-even-background-color = white
@@ -50,7 +51,7 @@ ag-button-background-1 = none
 ag-button-foreground-1 = #000
 ag-button-border-1 = #808080
 
-ag-header-font-weight = normal
+ag-header-font-weight = bold
 
 ag-tab-border = 1px solid transparent
 ag-tab-background = #f6f6f6
@@ -71,7 +72,17 @@ ag-menu-option-shortcut-padding = 10px 6px 10px 20px
   .ag-row-hover
     background-color #eeeeee !important
   .ag-cell-not-inline-editing
-    padding-top: 15px
+    padding-top 15px
   .ag-header-cell-menu-button:hover
     border 1px solid grey
 
+  .ag-header-cell-label
+    text-align left
+
+  .ag-header
+    border-bottom 1px solid grey
+
+  // we want checkbox to have more spacing to the right and left
+  .ag-selection-checkbox
+    padding-right 12px
+    padding-left 12px
