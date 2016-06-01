@@ -74,7 +74,7 @@ export class CsvCreator {
         var allColumns = params && params.allColumns;
         var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
-        var processCellCallback = params.processCellCallback;
+        var processCellCallback = params && params.processCellCallback;
 
         var columnsToExport: Column[];
         if (allColumns) {
