@@ -485,6 +485,10 @@ export class GridApi {
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 
+    public stopEditing(cancel: boolean = false): void {
+        this.rowRenderer.stopEditing(cancel);
+    }
+
     /*
     Taking these out, as we want to reconsider how we register components
     

@@ -276,7 +276,7 @@ export class RenderedRow {
         rowFocusedListener();
     }
 
-    private forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
+    public forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
         _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
             if (renderedCell) {
                 callback(renderedCell);
@@ -360,14 +360,6 @@ export class RenderedRow {
 
     public removeEventListener(eventType: string, listener: Function): void {
         this.renderedRowEventService.removeEventListener(eventType, listener);
-    }
-
-    public softRefresh(): void {
-        this.forEachRenderedCell( renderedCell => {
-            if (renderedCell.isVolatile()) {
-                renderedCell.refreshCell();
-            }
-        });
     }
 
     public getRenderedCellForColumn(column: Column): RenderedCell {

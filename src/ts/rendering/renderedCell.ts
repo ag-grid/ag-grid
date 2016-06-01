@@ -359,7 +359,7 @@ export class RenderedCell extends Component {
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
             this.eGridCell.setAttribute("tabindex", "-1");
         }
-
+        
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
         this.setInlineEditingClass();
@@ -622,7 +622,11 @@ export class RenderedCell extends Component {
     }
 
     // pass in 'true' to cancel the editing.
-    private stopEditing(cancel: boolean = false) {
+    public stopEditing(cancel: boolean = false) {
+        if (!this.editingCell) {
+            return;
+        }
+        
         this.editingCell = false;
 
         // also have another option here to cancel after editing, so for example user could have a popup editor and
