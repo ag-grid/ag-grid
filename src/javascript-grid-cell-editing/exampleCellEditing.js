@@ -278,7 +278,7 @@ var columnDefs = [
         field: "address",
         width: 502,
         editable: true,
-        cellEditor: 'largeText'
+        cellEditor: LargeTextCellEditor
     }
 ];
 
