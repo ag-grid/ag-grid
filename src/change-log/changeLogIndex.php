@@ -18,6 +18,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
     <li>Enhancement: Added colDef.tooltipField, so tooltip can be set on the cell.</li>
+    <li>Enhancement: Icons for drag and drop of columns are now all configurable.</li>
 
     <h3>Version 4.2.x</h3>
 
