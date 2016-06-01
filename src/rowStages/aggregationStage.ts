@@ -100,10 +100,13 @@ export class AggregationStage implements IRowNodeStage {
 
     private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, valueColumns: Column[]): any {
         var result: any = {};
-        valueColumns.forEach( valueColumn => {
-            var values = this.getValuesNormal(rowNode, valueColumn);
-            result[valueColumn.getId()] = this.aggregateValues(values, valueColumn.getAggFunc());
+
+        var values2d = this.getValuesNormal(rowNode, valueColumns);
+
+        valueColumns.forEach( (valueColumn: Column, index: number) => {
+            result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
+
         return result;
     }
 
@@ -133,22 +136,33 @@ export class AggregationStage implements IRowNodeStage {
         return values;
     }
 
-    private getValuesNormal(rowNode: RowNode, valueColumn: Column): any[] {
-        var values: any[] = [];
-        rowNode.childrenAfterFilter.forEach( rowNode => {
-            var value:any;
-            // if the row is a group, then it will only have an agg result value,
-            // which means valueGetter is never used.
-            if (rowNode.group) {
-                value = rowNode.data[valueColumn.getId()];
-            } else {
-                value = this.valueService.getValue(valueColumn, rowNode);
+    private getValuesNormal(rowNode: RowNode, valueColumns: Column[]): any[][] {
+        // create 2d array, of all values for all valueColumns
+        var values: any[][] = [];
+        valueColumns.forEach( ()=> values.push([]) );
+
+        var valueColumnCount = valueColumns.length;
+        var rowCount = rowNode.childrenAfterFilter.length;
+
+        for (var i = 0; i<rowCount; i++) {
+            var childNode = rowNode.childrenAfterFilter[i];
+            for (var j = 0; j<valueColumnCount; j++) {
+                var valueColumn = valueColumns[j];
+                var value: any;
+                // if the row is a group, then it will only have an agg result value,
+                // which means valueGetter is never used.
+                if (childNode.group) {
+                    value = childNode.data[valueColumn.getId()];
+                } else {
+                    value = this.valueService.getValueUsingSpecificData(valueColumn, childNode, childNode.data);
+                }
+                values[j].push(value);
             }
-            values.push(value);
-        });
+        }
+
         return values;
     }
-    
+
     private aggregateValues(values: any[], aggFuncOrString: string | IAggFunction): any {
 
         var aggFunction: IAggFunction;
@@ -174,20 +188,21 @@ class AggFunctionService {
 
     private aggFunctionsMap: {[key: string]: IAggFunction} = {};
 
-    
     constructor() {
 
         this.aggFunctionsMap['sum'] = function(input: any[]): any {
             var result: number = null;
-            input.forEach( value => {
-                if (typeof value === 'number') {
+            var length = input.length;
+            for (var i = 0; i<length; i++) {
+                if (typeof input[i] === 'number') {
                     if (result === null) {
-                        result = value;
+                        result = input[i];
                     } else {
-                        result += value;
+                        result += input[i];
                     }
                 }
-            });
+                result += i;
+            }
             return result;
         };
 
@@ -209,29 +224,31 @@ class AggFunctionService {
 
         this.aggFunctionsMap['min'] = function(input: any[]): any {
             var result: number = null;
-            input.forEach( value => {
-                if (typeof value === 'number') {
+            var length = input.length;
+            for (var i = 0; i<length; i++) {
+                if (typeof input[i] === 'number') {
                     if (result === null) {
-                        result = value;
-                    } else if (result > value) {
-                        result = value;
+                        result = input[i];
+                    } else if (result > input[i]) {
+                        result = input[i];
                     }
                 }
-            });
+            }
             return result;
         };
 
         this.aggFunctionsMap['max'] = function(input: any[]): any {
             var result: number = null;
-            input.forEach( value => {
-                if (typeof value === 'number') {
+            var length = input.length;
+            for (var i = 0; i<length; i++) {
+                if (typeof input[i] === 'number') {
                     if (result === null) {
-                        result = value;
-                    } else if (result < value) {
-                        result = value;
+                        result = input[i];
+                    } else if (result < input[i]) {
+                        result = input[i];
                     }
                 }
-            });
+            }
             return result;
         };
 
@@ -242,9 +259,3 @@ class AggFunctionService {
     }
 
 }
-
-// in time we will turn this into a factory that the user can register their own agg functions
-var aggFunctions = {
-
-
-};

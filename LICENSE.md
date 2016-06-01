@@ -36,11 +36,11 @@ Both DEVELOPER APPLICATION LICENSE and DEVELOPER SITE LICENSE must be combined w
 
 C) OEM LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include the Software within your application to be provided together as part of Your product for You to market, reproduce and distribute ag-Grid-Enterprise and/or Modifications to End Users, Distributors and Resellers solely as integrated into Your Applications;
 
-OEM LICENSE must be combined with one of either APPLICATION DEVELOPER LICENSE or SITE LICENSE.
+OEM LICENSE must be combined with one of either DEVELOPER APPLICATION LICENSE or DEVELOPER SITE LICENSE.
 
 D) SAAS LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include ag-Grid-Enterprise and/or Modifications within hosted environments solely as integrated into Your Applications.
 
-SAAS LICENSE must be combined with one of either APPLICATION DEVELOPER LICENSE or SITE LICENSE.
+SAAS LICENSE must be combined with one of either DEVELOPER APPLICATION LICENSE or DEVELOPER SITE LICENSE.
 
 B) TRIAL LICENCE: In addition to the other terms contained herein, and subject to Your compliance with this Agreement, We grant to You a revocable, non-exclusive, non-transferable and non-sub licensable licence to install and use the Software (the “Trial Licence”) strictly for Your internal evaluation and review purposes and not for production nor commercial purposes. This Trial Licence applies only if You have registered with Us for a Trial Licence of the Software and shall be effective for sixty (60) consecutive days following the date of registration (the “Trial Period”). You may only register for a Trial Licence once in any six month period. You agree not to use a Trial Licence for any purpose other than determining whether to purchase a licence to the Software. You are explicitly not permitted to distribute the Software to any user outside the Organisation. Your rights to use the Trial Licence will immediately terminate upon the earlier of: (i) the date of expiration of the Trial Period; or (ii) the date on which You purchase a licence for the Software. We reserve the right to terminate Your Trial Licence at any time in Our absolute and sole discretion.
 
