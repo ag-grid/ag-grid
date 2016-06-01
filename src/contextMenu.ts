@@ -32,7 +32,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private init(): void {
     }
 
-    private getMenuItems(node: RowNode, column: Column, value: any): [MenuItem|string] {
+    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItem|string)[] {
         var defaultMenuOptions: [string] = ['copy','paste','separator','toolPanel'];
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             var userFunc: GetContextMenuItems = this.gridOptionsWrapper.getContextMenuItemsFunc();
@@ -89,9 +89,9 @@ class ContextMenu extends Component {
     private menuList: MenuList;
     private hidePopupFunc: Function;
 
-    private menuItems: [MenuItem|string];
+    private menuItems: (MenuItem|string)[];
 
-    constructor(menuItems: [MenuItem|string]) {
+    constructor(menuItems: (MenuItem|string)[]) {
         super('<div class="ag-menu"></div>');
         this.menuItems = menuItems;
     }

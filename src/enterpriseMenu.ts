@@ -1,5 +1,5 @@
 import {
-    Utils as _,
+    Utils,
     SvgFactory,
     Bean,
     IMenuFactory,
@@ -334,7 +334,7 @@ export class EnterpriseMenu {
         return builtInMenuOptions;
     }
 
-    private getMenuItems(): [string|MenuItem] {
+    private getMenuItems(): (string|MenuItem)[] {
         var defaultMenuOptions = this.getDefaultMenuOptions();
 
         var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
@@ -352,8 +352,8 @@ export class EnterpriseMenu {
         }
     }
 
-    private getDefaultMenuOptions(): [string] {
-        var result: [string] = <[string]>[];
+    private getDefaultMenuOptions(): string[] {
+        var result: string[] = [];
 
         var doingGrouping = this.columnController.getRowGroupColumns().length>0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
@@ -427,7 +427,7 @@ export class EnterpriseMenu {
     private createColumnsPanel(): void {
 
         var eWrapperDiv = document.createElement('div');
-        _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
+        Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
         this.columnSelectPanel = new ColumnSelectPanel(false);
         this.context.wireBean(this.columnSelectPanel);
