@@ -37,12 +37,12 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Custom sorting is provided at a column level by configuring a comparator on the column definition.
-        The sort methods gets the value as well as the entire data row.
+        The sort methods gets the value as well as the row nodes.
     </p>
 
     <pre>
-colDef.comparator = function (value1, value2, data1, data2, isInverted) {
-    return value1 - value2;
+colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
+    return valueA - valueB;
 }</pre>
 
     <p>
