@@ -87,19 +87,32 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         // fallthrough in below switch is on purpose,
         // eg if STEP_FILTER, then all steps below this
         // step get done
+        // var start: number;
+        // console.log('======= start =======');
+
         switch (step) {
             case constants.STEP_EVERYTHING:
+                // start = new Date().getTime();
                 this.doRowGrouping(groupState);
+                // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
+                // start = new Date().getTime();
                 this.doFilter();
+                // console.log('filter = ' + (new Date().getTime() - start));
             // case constants.STEP_PIVOT:
             //     this.doPivot();
             case constants.STEP_AGGREGATE: // depends on agg fields
+                // start = new Date().getTime();
                 this.doAggregate();
+                // console.log('aggregation = ' + (new Date().getTime() - start));
             case constants.STEP_SORT:
+                // start = new Date().getTime();
                 this.doSort();
+                // console.log('sort = ' + (new Date().getTime() - start));
             case constants.STEP_MAP:
+                // start = new Date().getTime();
                 this.doRowsToDisplay();
+                // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, {fromIndex: fromIndex});
@@ -238,7 +251,6 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         return index;
     }
 
-
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     public doAggregate() {
@@ -339,7 +351,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         // - clears selection
         // - creates new pivot columns ??
         // - updates filters
-        // - shows 'row rows' overlay if needed
+        // - shows 'no rows' overlay if needed
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
         if (refresh) {

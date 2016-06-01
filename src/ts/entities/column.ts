@@ -70,6 +70,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     private eventService: EventService = new EventService();
 
+    private fieldContainsDots: boolean;
+
     constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
         this.visible = !colDef.hide;
@@ -100,7 +102,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
 
+        var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
+
         this.validate();
+    }
+
+    public isFieldContainsDots(): boolean {
+        return this.fieldContainsDots;
     }
 
     private validate(): void {
