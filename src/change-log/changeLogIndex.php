@@ -16,6 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Version 4.2.x</h3>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
+    <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
 
 
     <h3>Version 4.2.x</h3>

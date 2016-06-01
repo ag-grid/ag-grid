@@ -33,6 +33,10 @@ var students = [
     }
 ];
 
+function onBtStopEditing() {
+    gridOptions.api.stopEditing();
+}
+
 function getCharCodeFromEvent(event) {
     event = event || window.event;
     return (typeof event.which == "undefined") ? event.keyCode : event.which;

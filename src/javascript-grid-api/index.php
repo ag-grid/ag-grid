@@ -380,6 +380,11 @@ include '../documentation-main/documentation_header.php';
             <td>Shows the column menu after and positions it relative to the provided element (button click) or mouse
                 event. Use in conjunction with your own header template.</td>
         </tr>
+        <tr>
+            <th>stopEditing(cancel?)</th>
+            <td>If a cell is editing, it stops the editing. Pass 'true' if you don't want to cancel the editing
+                (ie don't accept changes).</td>
+        </tr>
     </table>
 
     <h2>

@@ -251,7 +251,8 @@ colDef.cellEditorParams = {
         <li><b>Navigation Key Down</b>: Editing will stop, accepting changes, and editing will move to the next cell
             in the direction of the navigation key.</li>
         <li><b>Popup Editor Closed</b>: If using popup editor, the popup is configured to close if you click
-        outside the editor. Closing the popup triggers the grid to stop editing.</li>
+            outside the editor. Closing the popup triggers the grid to stop editing.</li>
+        <li><b>gridApi.stopEditing()</b>: If you call stopEditing() on the grid API.</li>
     </ul>
     </p>
 
