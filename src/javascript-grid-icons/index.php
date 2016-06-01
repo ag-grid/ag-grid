@@ -15,19 +15,6 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The icons that can be changed are:
-        <ul>
-            <li>Sort icons on header</li>
-            <li>Filter icon on header</li>
-            <li>Menu icon on header</li>
-            <li>Group open / close icon in headers</li>
-            <li>Group expand / contact icon in rows</li>
-            <li>Checkbox checked / unchecked / indeterminate</li>
-            <li>Column select panel expand / contact column group</li>
-        </ul>
-    </p>
-
-    <p>
         The icons can either be set on the grid options (all icons) or on the column definition (all except group).
         If defined in both the grid options and column definitions, the column definition will get used. This
         allows you to specify defaults in the grid options to fall back on, and then provide individual icons for
@@ -40,21 +27,38 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <pre>
-gridOptions.icons = {
-    menu: myMenuIcon,
-    filter: myFilterIcon,
-    sortAscending: mySortAscIcon,
-    sortDescending: mySortDescIcon,
-    sortUnSort: myUnSortIcon,
-    groupExpanded: myGroupExpandedIcon,
-    groupContracted: myGroupContractedIcon,
-    columnGroupOpened: myGroupExpandedIcon,
-    columnGroupClosed: myGroupContractedIcon,
-    columnSelectOpen: myColumnSelectOpen,
-    columnSelectClosed: myColumnSelectClosed,
-    checkboxChecked: myCheckboxChecked,
-    checkboxUnchecked: myCheckboxUnchecked,
-    checkboxIndeterminate: myCheckboxIndeterminate
+    // column header items
+    menu
+    filter
+    sortAscending
+    sortDescending
+    sortUnSort
+        
+    // expand / contract row group
+    groupExpanded
+    groupContracted
+
+    // expand / contract column group
+    columnGroupOpened
+    columnGroupClosed
+
+    // tool panel column group open / close
+    columnSelectOpen
+    columnSelectClosed
+
+    // row checkbox selection
+    checkboxChecked
+    checkboxUnchecked
+    checkboxIndeterminate
+        
+    // when moving columns
+    columnMovePin // when column is to the left, before it gets pinned
+    columnMoveAdd // when adding a column
+    columnMoveHide // when removing a column
+    columnMoveMove // when moving a column
+    columnMoveLeft // when moving and scrolling left
+    columnMoveRight // when moving and scrolling right
+    columnMoveGroup // when about to drop into group panel
 }
 </pre>
 

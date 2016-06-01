@@ -51,7 +51,14 @@ var gridOptions = {
         sortDescending: '<i class="fa fa-long-arrow-up"/>',
         // use some strings from group
         groupExpanded: '<img src="minus.png" style="width: 15px;"/>',
-        groupContracted: '<img src="plus.png" style="width: 15px;"/>'
+        groupContracted: '<img src="plus.png" style="width: 15px;"/>',
+        columnMovePin: '<i class="fa fa-hand-grab-o"/>',
+        columnMoveAdd: '<i class="fa fa-plus-square-o"/>',
+        columnMoveHide: '<i class="fa fa-remove"/>',
+        columnMoveMove: '<i class="fa fa-chain"/>',
+        columnMoveLeft: '<i class="fa fa-arrow-left"/>',
+        columnMoveRight: '<i class="fa fa-arrow-right"/>',
+        columnMoveGroup: '<i class="fa fa-group"/>'
     }
 };
 
