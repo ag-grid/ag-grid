@@ -11,6 +11,14 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Intermediate</h2>
 
+    <note>
+        These tutorials were created in an older version of ag-Grid. The general principles are all still true,
+        however you will find items such as how to do grouping and aggregation have changed in never versions
+        of ag-Grid. The features are all still supported (and now better), just configured slightly differently.
+        To see how to do things with the latest release, see the documentation. It's easy keep the documentation
+        up to date with each release, but not easy to keep videos up to date.
+    </note>
+
     <p>
         This is an intermediate tutorial on how to use the grid. If you are just starting, you might
         find this a bit too difficult to follow. This tutorial introduces expressions, value getters,
