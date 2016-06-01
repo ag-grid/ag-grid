@@ -402,7 +402,7 @@ months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
-        aggFunc: 'sum',
+        // aggFunc: 'sum',
         //hide: true,
         cellClassRules: {
             'good-score': 'x > 50000',

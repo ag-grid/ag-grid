@@ -19,7 +19,7 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">25th April 2016</div>
+        <div class="news-header">28th May 2016</div>
         <div>ag-Grid 4.2.x released. Includes new themes for Bootstrap and Material Design,
             moving groups of columns together, 'shift selection' for selecting range of rows,
             and a lot more. See <a href="../change-log/changeLogIndex.php">Change Log</a> for full details.
