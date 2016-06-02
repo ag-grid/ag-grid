@@ -88,6 +88,11 @@
         <div class="quote-company">Code Dungeon</div>
     </div>
 
+    <div class="row quote">
+        <div class="quote-text">"We just made the move from Kendo to ag-grid and we love it. It’s fast and very flexible."</div>
+        <div class="quote-from">Jason Boorn</div>
+        <div class="quote-company">Senior Architect, Roobricks</div>
+    </div>
 
     <div class="row">
         <div class="col-md-9">    
