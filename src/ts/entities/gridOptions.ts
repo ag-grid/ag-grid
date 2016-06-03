@@ -65,6 +65,7 @@ export interface GridOptions {
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
+    quickFilterText?: string;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

@@ -211,7 +211,7 @@ export class GridApi {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
-    public setQuickFilter(newFilter:any) {
+    public setQuickFilter(newFilter:any): void {
         this.filterManager.setQuickFilter(newFilter)
     }
 
