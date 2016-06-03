@@ -336,6 +336,11 @@ include '../documentation-main/documentation_header.php';
                 is called in the order the rows are displayed in the grid.</td>
         </tr>
         <tr>
+            <th>forEachLeafNode(callback)</th>
+            <td>Similar to forEachNode, except lists all the leaf nodes. This effectively goes
+            through all the data that you provided the grid before the grid did any grouping.</td>
+        </tr>
+        <tr>
             <th>exportDataAsCsv(params)</th>
             <td>Does a CSV export of the grid's data.</td>
         </tr>

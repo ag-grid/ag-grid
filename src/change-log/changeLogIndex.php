@@ -20,6 +20,9 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: Added colDef.tooltipField, so tooltip can be set on the cell.</li>
     <li>Enhancement: Icons for drag and drop of columns are now all configurable.</li>
     <li>Enhancement: quickFilter is now a property, so cna be set during initialisation.</li>
+    <li>Enhancement: new API method forEachLeafNode()</li>
+    <li>Bugfix: SetFilter was failing when you loaded more data into the grid - filter didn't populate with new values correctly.</li>
+
 
     <h3>Version 4.2.x</h3>
 
