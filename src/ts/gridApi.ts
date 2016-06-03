@@ -322,6 +322,11 @@ export class GridApi {
         this.gridCore.ensureNodeVisible(comparator);
     }
 
+    public forEachLeafNode(callback: (rowNode: RowNode)=>void ) {
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
+        this.inMemoryRowModel.forEachLeafNode(callback);
+    }
+
     public forEachNode(callback: (rowNode: RowNode)=>void ) {
         this.rowModel.forEachNode(callback);
     }
