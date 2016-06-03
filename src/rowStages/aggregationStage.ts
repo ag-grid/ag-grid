@@ -154,7 +154,7 @@ export class AggregationStage implements IRowNodeStage {
                 if (childNode.group) {
                     value = childNode.data[valueColumn.getId()];
                 } else {
-                    value = this.valueService.getValueUsingSpecificData(valueColumn, childNode, childNode.data);
+                    value = this.valueService.getValueUsingSpecificData(valueColumn, childNode.data, childNode);
                 }
                 values[j].push(value);
             }
