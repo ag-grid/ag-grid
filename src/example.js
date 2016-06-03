@@ -137,6 +137,7 @@ var gridOptions = {
     enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
+    quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
 //suppressContextMenu: true,
