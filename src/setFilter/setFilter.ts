@@ -119,6 +119,9 @@ export class SetFilter extends Component implements Filter {
         }
 
         var value = this.valueGetter(node);
+        if (this.colDef.keyCreator) {
+            value = this.colDef.keyCreator( {value: value} );
+        }
         value = Utils.makeNull(value);
 
         if (Array.isArray(value)) {

@@ -113,6 +113,11 @@ export class SetFilterModel {
         this.rowModel.forEachLeafNode( (node: any)=> {
             if (!node.group) {
                 var value = this.valueGetter(node);
+
+                if (this.colDef.keyCreator) {
+                    value = this.colDef.keyCreator( {value: value} );
+                }
+
                 if (value === "" || value === undefined) {
                     value = null;
                 }
