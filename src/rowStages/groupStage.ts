@@ -10,7 +10,7 @@ import {
     EventService,
     RowNode,
     Column,
-    Utils as _
+    Utils
 } from "ag-grid/main";
 
 @Bean('groupStage')
@@ -25,8 +25,6 @@ export class GroupStage implements IRowNodeStage {
 
     public execute(rowNode: RowNode): void {
 
-        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        
         var groupedCols = this.columnController.getRowGroupColumns();
         var expandByDefault: number;
 
@@ -38,19 +36,19 @@ export class GroupStage implements IRowNodeStage {
 
         // putting this in a wrapper, so it's pass by reference
         var groupId = {value: -1};
-        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault, groupId, rowsAlreadyGrouped);
+        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault, groupId);
     }
 
-    private recursivelyGroup(rowNode: RowNode, groupColumns: Column[], level: number, expandByDefault: any, groupId: any, rowsAlreadyGrouped: boolean): void {
+    private recursivelyGroup(rowNode: RowNode, groupColumns: Column[], level: number, expandByDefault: any, groupId: any): void {
 
         var groupingThisLevel = level < groupColumns.length;
         rowNode.leafGroup = level === groupColumns.length;
 
-        if (groupingThisLevel && !rowsAlreadyGrouped) {
+        if (groupingThisLevel) {
             var groupColumn = groupColumns[level];
             this.setChildrenAfterGroup(rowNode, groupColumn, groupId, expandByDefault, level);
             rowNode.childrenAfterGroup.forEach( child => {
-                this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, groupId, rowsAlreadyGrouped);
+                this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, groupId);
             });
         } else {
             rowNode.childrenAfterGroup = rowNode.allLeafChildren;

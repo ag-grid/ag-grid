@@ -1,4 +1,4 @@
-import {Utils as _} from "ag-grid/main";
+import {Utils} from "ag-grid/main";
 import {ColDef} from "ag-grid/main";
 import {SetFilterParameters} from "ag-grid/main";
 
@@ -75,10 +75,10 @@ export class SetFilterModel {
 
     private createAllUniqueValues() {
         if (this.usingProvidedSet) {
-            this.allUniqueValues = _.toStrings(this.filterParams.values);
+            this.allUniqueValues = Utils.toStrings(this.filterParams.values);
         } else {
             var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            this.allUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
+            this.allUniqueValues = Utils.toStrings(uniqueValuesAsAnyObjects);
         }
 
         this.sortValues(this.allUniqueValues);
@@ -92,7 +92,7 @@ export class SetFilterModel {
         }
 
         var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-        this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
+        this.availableUniqueValues = Utils.toStrings(uniqueValuesAsAnyObjects);
         this.sortValues(this.availableUniqueValues);
     }
 
@@ -102,7 +102,7 @@ export class SetFilterModel {
         } else if (this.colDef.comparator) {
             values.sort(this.colDef.comparator);
         } else {
-            values.sort(_.defaultComparator);
+            values.sort(Utils.defaultComparator);
         }
     }
 
@@ -110,7 +110,7 @@ export class SetFilterModel {
         var uniqueCheck = <any>{};
         var result = <any>[];
 
-        this.rowModel.forEachNode( (node: any)=> {
+        this.rowModel.forEachLeafNode( (node: any)=> {
             if (!node.group) {
                 var value = this.valueGetter(node);
                 if (value === "" || value === undefined) {
@@ -145,7 +145,7 @@ export class SetFilterModel {
 
     //sets mini filter. returns true if it changed from last value, otherwise false
     public setMiniFilter(newMiniFilter: any) {
-        newMiniFilter = _.makeNull(newMiniFilter);
+        newMiniFilter = Utils.makeNull(newMiniFilter);
         if (this.miniFilter === newMiniFilter) {
             //do nothing if filter has not changed
             return false;
@@ -242,7 +242,7 @@ export class SetFilterModel {
             return null;
         }
         var selectedValues = <any>[];
-        _.iterateObject(this.selectedValuesMap, function (key: any) {
+        Utils.iterateObject(this.selectedValuesMap, function (key: any) {
             selectedValues.push(key);
         });
         return selectedValues;
@@ -255,8 +255,6 @@ export class SetFilterModel {
                 var newValue = model[i];
                 if (this.allUniqueValues.indexOf(newValue) >= 0) {
                     this.selectValue(model[i]);
-                } else {
-                    console.warn('Value ' + newValue + ' is not a valid value for filter');
                 }
             }
         } else {

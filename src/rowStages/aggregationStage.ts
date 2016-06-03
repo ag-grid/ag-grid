@@ -27,8 +27,8 @@ export class AggregationStage implements IRowNodeStage {
     public execute(rootNode: RowNode): any {
 
         // we don't do aggregation if user provided the groups
-        var userProvidedTheGroups = Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (userProvidedTheGroups) {
+        var rowsAlreadyGrouped = Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (rowsAlreadyGrouped) {
             return;
         }
 
