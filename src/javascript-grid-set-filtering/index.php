@@ -74,6 +74,16 @@ columnDefinition = {
         the set filter with an alternative comparator that doesn't depend on the row data.
     </note>
 
+    <h3>Complex Objects - keyCreator</h3>
+
+    <p>
+        If you are providing complex objects as values, then you need to provide <i>colDef.keyCreator</i> method in your
+        object for the set filter to work, giving a unique value for the object. This is because the set filter needs
+        a string key to identify the value. The example below demonstrates keyCreator with the country column by replacing
+        the country name in the data with a complex object of country name and code. If the keyCreator was not provided
+        on the colDef, the set filter would not work.
+    </p>
+
     <h3>Set Filters Example</h3>
 
     <p>

@@ -4,7 +4,8 @@ var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'set',
         filterParams: { cellHeight: 20, values: irishAthletes} },
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
-    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Country", field: "country", width: 140,
+        cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
@@ -17,11 +18,33 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true
+    enableFilter: true,
+    enableColResize: true
 };
+
+function countryCellRenderer(params) {
+    return params.value.name + ' (' + params.value.code + ')';
+}
+
+function countryKeyCreator(params) {
+    return params.value.name;
+}
 
 function onFilterChanged(value) {
     gridOptions.api.setQuickFilter(value);
+}
+
+function setDataIntoGrid(data) {
+    // hack the data, replace each country with an object of country name and code
+    data.forEach( function(row) {
+        var countryName = row.country;
+        var countryCode = countryName.substring(0,2).toUpperCase();
+        row.country = {
+            name: countryName,
+            code: countryCode
+        };
+    });
+    gridOptions.api.setRowData(data);
 }
 
 // setup the grid after the page has finished loading
@@ -37,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
+            setDataIntoGrid(httpResult);
         }
     };
 });

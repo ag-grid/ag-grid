@@ -88,6 +88,11 @@ include '../documentation-main/documentation_header.php';
             <td>Expression or function to get the cells value.</td>
         </tr>
         <tr>
+            <th>keyCreator(params)</th>
+            <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
+                want to use set filter on this field.</td>
+        </tr>
+        <tr>
             <th>headerValueGetter(params)</th>
             <td>Expression or function to get the cells value.</td>
         </tr>
