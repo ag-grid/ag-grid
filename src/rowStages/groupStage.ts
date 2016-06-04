@@ -66,8 +66,7 @@ export class GroupStage implements IRowNodeStage {
         rowNode.childrenMapped = {};
 
         rowNode.allLeafChildren.forEach( child => {
-
-            var groupKey = this.valueService.getValue(groupColumn, child);
+            var groupKey = this.getKeyForNode(groupColumn, child);
 
             var groupForChild = <RowNode> rowNode.childrenMapped[groupKey];
             if (!groupForChild) {
@@ -78,6 +77,20 @@ export class GroupStage implements IRowNodeStage {
 
             groupForChild.allLeafChildren.push(child);
         });
+    }
+
+    private getKeyForNode(groupColumn: Column, rowNode: RowNode): any {
+        var value = this.valueService.getValue(groupColumn, rowNode);
+        var result: any;
+        var keyCreator = groupColumn.getColDef().keyCreator;
+
+        if (keyCreator) {
+            result = keyCreator({value: value});
+        } else {
+            result = value;
+        }
+
+        return result;
     }
 
     private createGroup(groupColumn: Column, groupKey: string, parent: RowNode, groupId: any, expandByDefault: any, level: number): RowNode {
