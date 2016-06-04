@@ -90,7 +90,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>keyCreator(params)</th>
             <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
-                want to use set filter on this field.</td>
+                want to a) use set filter on this field or b) group by this field.</td>
         </tr>
         <tr>
             <th>headerValueGetter(params)</th>

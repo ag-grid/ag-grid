@@ -300,6 +300,31 @@ colDef2.aggFunc = function(values) {
 
     <show-example example="example3"></show-example>
 
+    <h3>Grouping Complex Objects with Keys</h3>
+
+    <p>
+        If your rowData has complex objects that you want to group by, then the default grouping
+        will convert each object to <i>"[object object]"</i> which will be useless to you. Instead
+        you need to get the grid to convert each object into a meaningful string to act as the key
+        for the group. You could add a 'toString' method to the objects - but this may not be possible
+        if you are working with JSON data. To get around this, use <i>colDef.keyCreator</i>, which
+        gets passed a value and should return the string key for that value.
+    </p>
+
+    <p>
+        The example below shows grouping on the county, with country an object within each row.
+        <pre>rowItem = {
+    athlete: 'Michael Phelps',
+    country: { // country is complex object, so need to provide colDef.keyCreator()
+        name: 'United States',
+        code: 'US'
+    }
+    ....
+}</pre>
+    </p>
+
+    <show-example example="exampleGroupingKeys"></show-example>
+
     <h3>Grouping Footers</h3>
 
     <p>

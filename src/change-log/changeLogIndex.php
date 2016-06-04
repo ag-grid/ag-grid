@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: quickFilter is now a property, so cna be set during initialisation.</li>
     <li>Enhancement: new API method forEachLeafNode()</li>
     <li>Enhancement: added suppressQuotes option to csv export</li>
+    <li>Enhancement: added colDef.keyCreator, to allow grouping and set filter on complex objects</li>
     <li>Bugfix: SetFilter was failing when you loaded more data into the grid - filter didn't populate with new values correctly.</li>
 
     <h3>Version 4.2.x</h3>
