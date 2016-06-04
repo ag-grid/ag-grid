@@ -15,6 +15,7 @@ export interface CsvExportParams {
     skipHeader?: boolean;
     skipFooters?: boolean;
     skipGroups?: boolean;
+    suppressQuotes?: boolean;
     fileName?: string;
     customHeader?: string;
     customFooter?: string;
@@ -74,6 +75,7 @@ export class CsvCreator {
         var allColumns = params && params.allColumns;
         var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
+        var suppressQuotes = params && params.suppressQuotes;
         var processCellCallback = params && params.processCellCallback;
 
         var columnsToExport: Column[];
@@ -102,7 +104,7 @@ export class CsvCreator {
                 if (index != 0) {
                     result += columnSeparator;
                 }
-                result += '"' + this.escape(nameForCol) + '"';
+                result += this.putInQuotes(nameForCol, suppressQuotes);
             });
             result += LINE_SEPARATOR;
         }
@@ -128,7 +130,7 @@ export class CsvCreator {
                 if (index != 0) {
                     result += columnSeparator;
                 }
-                result += '"' + this.escape(valueForCell) + '"';
+                result += this.putInQuotes(valueForCell, suppressQuotes);
             });
 
             result += LINE_SEPARATOR;
@@ -178,10 +180,11 @@ export class CsvCreator {
         return keys.reverse().join(' -> ');
     }
 
-    // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-    private escape(value: any): string {
+    private putInQuotes(value: any, suppressQuotes: boolean): string {
+        if (suppressQuotes) { return value; }
+
         if (value === null || value === undefined) {
-            return '';
+            return '""';
         }
 
         var stringValue: string;
@@ -190,11 +193,14 @@ export class CsvCreator {
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            console.warn('known value type during csv conversion');
+            console.warn('unknown value type during csv conversion');
             stringValue = '';
         }
 
-        return stringValue.replace(/"/g, "\"\"");
+        // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
+        var valueEscaped = stringValue.replace(/"/g, "\"\"");
+
+        return '"' + valueEscaped + '"';
     }
 
 }
