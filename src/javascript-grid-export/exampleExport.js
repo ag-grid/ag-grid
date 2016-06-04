@@ -31,6 +31,7 @@ function onBtExport() {
         skipGroups: getBooleanValue('#skipGroups'),
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
+        suppressQuotes: getBooleanValue('#suppressQuotes'),
         fileName: document.querySelector('#fileName').value,
         columnSeparator: document.querySelector('#columnSeparator').value
     };
