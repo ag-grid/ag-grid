@@ -12,7 +12,6 @@ ag-grid-ng2 {
 }
 .ag-font-style {
   cursor: default;
-  font-size: 14px;
 /* disable user mouse selection */
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -93,7 +92,7 @@ ag-grid-ng2 {
   display: inline-block;
   height: 100%;
 }
-.ag-header-cell-ghost {
+.ag-dnd-ghost {
   font-size: 14px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   position: absolute;
@@ -113,14 +112,14 @@ ag-grid-ng2 {
   padding: 3px;
   line-height: 1.4;
 }
-.ag-header-cell-ghost img {
-  vertical-align: middle;
-  border: 0px;
-}
-.ag-header-cell-ghost-icon {
+.ag-dnd-ghost-icon {
+  display: inline-block;
   float: left;
   padding-left: 2px;
   padding-right: 2px;
+}
+.ag-dnd-ghost-label {
+  display: inline-block;
 }
 .ag-header-group-cell {
   height: 100%;
@@ -295,11 +294,24 @@ ag-grid-ng2 {
 .agile-gird-row:hover {
   background-color: #f0f8ff;
 }
-.ag-row-group-panel {
+.ag-column-drop {
   width: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.ag-column-drop-vertical {
+  height: 100%;
+}
+.ag-column-drop-vertical .ag-column-drop-cell {
+  display: block;
+}
+.ag-column-drop-vertical .ag-column-drop-empty-message {
+  display: block;
+}
+.ag-column-drop-vertical .ag-column-drop-cell-button {
+  float: right;
+  line-height: 16px;
 }
 .ag-cell {
   display: inline-block;

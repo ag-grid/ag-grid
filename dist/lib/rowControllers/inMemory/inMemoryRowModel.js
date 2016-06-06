@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,6 +43,7 @@ var InMemoryRowModel = (function () {
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_SORT));
         this.rootNode = new rowNode_1.RowNode();
         this.rootNode.group = true;
+        this.rootNode.allLeafChildren = [];
         this.context.wireBean(this.rootNode);
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
@@ -66,8 +67,8 @@ var InMemoryRowModel = (function () {
                 this.doRowGrouping(groupState);
             case constants_1.Constants.STEP_FILTER:
                 this.doFilter();
-            case constants_1.Constants.STEP_PIVOT:
-                this.doPivot();
+            // case constants.STEP_PIVOT:
+            //     this.doPivot();
             case constants_1.Constants.STEP_AGGREGATE:
                 this.doAggregate();
             case constants_1.Constants.STEP_SORT:
@@ -253,8 +254,8 @@ var InMemoryRowModel = (function () {
             // if the group was open last time, then open it this time. however
             // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
             // setting will take effect.
-            if (groupState[key] === true) {
-                node.expanded = true;
+            if (typeof groupState[key] === 'boolean') {
+                node.expanded = groupState[key];
             }
         });
     };

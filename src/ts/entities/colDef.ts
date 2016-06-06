@@ -23,6 +23,10 @@ export interface ColGroupDef extends AbstractColDef {
     marryChildren?: boolean;
 }
 
+export interface IAggFunction {
+    (input: any[]): any;
+}
+
 export interface ColDef extends AbstractColDef {
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
@@ -51,11 +55,18 @@ export interface ColDef extends AbstractColDef {
     /** Whether this column is pinned or not. */
     pinned?: boolean | string;
 
+    /** The field where we get the tooltip on the object */
+    tooltipField?: string;
+    
     /** Tooltip for the column header */
     headerTooltip?: string;
 
     /** Expression or function to get the cells value. */
     valueGetter?: string | Function;
+
+    /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
+     * want to a) group by this field or b) use set filter on this field. */
+    keyCreator?: Function;
 
     /** To provide custom rendering to the header. */
     headerCellRenderer?: Function | Object;
@@ -95,8 +106,8 @@ export interface ColDef extends AbstractColDef {
     /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     floatingCellFormatter?: (params: any) => string;
 
-    /** Name of function to use for aggregation. One of [sum,min,max]. */
-    aggFunc?: string;
+    /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
+    aggFunc?: string | IAggFunction;
 
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;

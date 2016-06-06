@@ -105,8 +105,7 @@ export class MasterSlaveService {
         var result: string[] = [];
         if (event.getColumn()) {
             result.push(event.getColumn().getColId());
-        }
-        if (event.getColumns()) {
+        } else if (event.getColumns()) {
             event.getColumns().forEach( (column: Column) => {
                 result.push(column.getColId());
             });

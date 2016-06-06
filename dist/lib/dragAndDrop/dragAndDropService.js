@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,7 +19,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var context_1 = require("../context/context");
 var logger_1 = require("../logger");
 var context_2 = require("../context/context");
-var headerTemplateLoader_1 = require("../headerRendering/headerTemplateLoader");
 var utils_1 = require('../utils');
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_3 = require("../context/context");
@@ -208,15 +207,13 @@ var DragAndDropService = (function () {
         this.eGhost = null;
     };
     DragAndDropService.prototype.createGhost = function () {
-        this.eGhost = utils_1.Utils.loadTemplate(headerTemplateLoader_1.HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE);
-        this.eGhostIcon = this.eGhost.querySelector('#eGhostIcon');
+        this.eGhost = utils_1.Utils.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
         if (this.lastDropTarget) {
             this.setGhostIcon(this.lastDropTarget.iconName);
         }
-        var dragItem = this.dragSource.dragItem;
-        var eText = this.eGhost.querySelector('#agText');
+        var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
         eText.innerHTML = this.dragSource.dragItemName;
-        this.eGhost.style.width = '200px'; //this.getActualWidth(dragItem) + 'px';
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
@@ -279,6 +276,11 @@ var DragAndDropService = (function () {
     DragAndDropService.ICON_LEFT = 'left';
     DragAndDropService.ICON_RIGHT = 'right';
     DragAndDropService.ICON_GROUP = 'group';
+    DragAndDropService.GHOST_TEMPLATE = '<div class="ag-dnd-ghost">' +
+        '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
+        '  <div class="ag-dnd-ghost-label">' +
+        '  </div>' +
+        '</div>';
     __decorate([
         context_3.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)

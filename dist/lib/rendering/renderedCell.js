@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -374,7 +374,7 @@ var RenderedCell = (function (_super) {
         var _this = this;
         var that = this;
         var keyPressListener = function (event) {
-            if (!that.editingCell) {
+            if (that.isCellEditable()) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
                     that.onSpaceKeyPressed();

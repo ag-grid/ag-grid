@@ -1,10 +1,52 @@
 
 Doing releases:
-1. Update version in bower.json
-2. Update version in package.json
-3. Remove 'exclude' from dist folders (in Niall's dev)
-4. gulp release
--- build
-5. Push to node npm: npm publish ./
 
-6. update bower, package, and dependency versions in component
+ag-Grid
+
++ Update version in bower.json
++ Update version in package.json
++ Run 'gulp release'
++ Make sure any new files in 'dist' are added to Git
++ Commit all changes to Github (including built files in /dist)
++ Release in Github
++ Push to by running 'npm publish ./'
+
+Now if a new major version, go update and release:
+ag-grid-enterprise, ag-grid-react, ag-grid-ng2, ag-grid-react-example, ag-grid-ng2-example, ag-grid-commonjs-example
+
+ag-Grid-Enterprise
+
++ Update version in bower.json
++ Update version in package.json
++ Make sure it's referencing correct ag-Grid version
++ Make sure correct ag-grid is in node_modules (it's a peer dependency, so wont get installed with npm install)
++ Run 'gulp release'
++ Make sure any new files in 'dist' are added to Git
++ Commit all changes to Github (including built files in /dist)
++ Release in Github
++ Push to by running 'npm publish ./'
+
+ag-Grid-React
+
++ Update version in bower.json
++ Update version in package.json
++ Make sure it's referencing correct ag-Grid version
++ Run 'gulp'
++ Commit all changes to Github (including built files in /lib)
++ Release in Github
++ Push to by running 'npm publish ./'
+
+ag-Grid-React-Example
+
++ Update version in package.json
++ Make sure it's referencing correct ag-Grid version (including enterprise and react modules)
+
+
+ag-Grid-Docs
+
++ Update version in package.json
++ Commit to Github (do NOT include built files in /dist)
++ Run 'gulp release'
++ Copy dist folder to website (might be easier to zip it first, the explode zip in hostgater file manager)
+
+

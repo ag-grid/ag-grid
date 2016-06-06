@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,9 +41,6 @@ var AnimateShowChangeCellRenderer = (function (_super) {
         utils_1.Utils.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
         // class makes it red (in ag-fresh)
         utils_1.Utils.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
-        // highlight the current value
-        utils_1.Utils.addCssClass(this.eValue, 'ag-value-change-value-highlight');
-        this.setTimerToRemoveDelta();
     };
     AnimateShowChangeCellRenderer.prototype.setTimerToRemoveDelta = function () {
         var _this = this;
@@ -80,6 +77,12 @@ var AnimateShowChangeCellRenderer = (function (_super) {
             var delta = value - this.lastValue;
             this.showDelta(params, delta);
         }
+        // highlight the current value, but only if it's not new, otherwise it
+        // would get highlighted first time the value is shown
+        if (this.lastValue) {
+            utils_1.Utils.addCssClass(this.eValue, 'ag-value-change-value-highlight');
+        }
+        this.setTimerToRemoveDelta();
         this.lastValue = value;
     };
     AnimateShowChangeCellRenderer.TEMPLATE = '<span>' +

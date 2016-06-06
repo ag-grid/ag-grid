@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -264,9 +264,17 @@ var RowNode = (function () {
     RowNode.prototype.removeEventListener = function (eventType, listener) {
         this.eventService.removeEventListener(eventType, listener);
     };
+    RowNode.prototype.onMouseEnter = function () {
+        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_ENTER);
+    };
+    RowNode.prototype.onMouseLeave = function () {
+        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
+    };
     RowNode.EVENT_ROW_SELECTED = 'rowSelected';
     RowNode.EVENT_DATA_CHANGED = 'dataChanged';
     RowNode.EVENT_CELL_CHANGED = 'cellChanged';
+    RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
+    RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
     __decorate([
         context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)

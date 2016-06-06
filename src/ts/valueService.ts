@@ -21,10 +21,14 @@ export class ValueService {
     @Autowired('eventService') private eventService: EventService;
 
     private suppressDotNotation: boolean;
+    private cellExpressions: boolean;
+    private userProvidedTheGroups: boolean;
 
     @PostConstruct
     public init(): void {
         this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+        this.userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
     }
 
     public getValue(column: Column, node: RowNode): any {
@@ -33,26 +37,26 @@ export class ValueService {
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
 
-        var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-        var userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         var colDef = column.getColDef();
         var field = colDef.field;
 
         var result: any;
 
         // if there is a value getter, this gets precedence over a field
-        if (node.group && !userProvidedTheGroups) {
+        // - need to revisit this, we check 'data' as this is the way for the grid to
+        //   not render when on the footer row
+        if (data && node.group && !this.userProvidedTheGroups) {
             result = node.data ? node.data[column.getId()] : undefined;
         } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         } else if (field && data) {
-            result = this.getValueUsingField(data, field);
+            result = this.getValueUsingField(data, field, column.isFieldContainsDots());
         } else {
             result = undefined;
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
+        if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             var cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, node);
         }
@@ -60,12 +64,12 @@ export class ValueService {
         return result;
     }
 
-    private getValueUsingField(data: any, field: string): void {
+    private getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
         if (!field || !data) {
             return;
         }
         // if no '.', then it's not a deep value
-        if (this.suppressDotNotation || field.indexOf('.')<0) {
+        if (!fieldContainsDots) {
             return data[field];
         } else {
             // otherwise it is a deep value, so need to dig for it
@@ -115,7 +119,7 @@ export class ValueService {
         if (newValueHandler) {
             newValueHandler(paramsForCallbacks);
         } else {
-            this.setValueUsingField(data, field, newValue);
+            this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
         }
 
         // reset quick filter on this row
@@ -129,9 +133,9 @@ export class ValueService {
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
     }
 
-    private setValueUsingField(data: any, field: string, newValue: any): void {
+    private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): void {
         // if no '.', then it's not a deep value
-        if (this.suppressDotNotation || field.indexOf('.')<0) {
+        if (!isFieldContainsDots) {
             data[field] = newValue;
         } else {
             // otherwise it is a deep value, so need to dig for it

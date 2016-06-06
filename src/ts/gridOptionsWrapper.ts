@@ -99,6 +99,7 @@ export class GridOptionsWrapper {
     public getFloatingTopRowData(): any[] { return this.gridOptions.floatingTopRowData; }
     public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
 
+    public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
     public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
     public getRowStyle() { return this.gridOptions.rowStyle; }
@@ -112,7 +113,6 @@ export class GridOptionsWrapper {
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
-    public getGroupAggFunction() { return this.gridOptions.groupAggFunction; }
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }
@@ -157,6 +157,7 @@ export class GridOptionsWrapper {
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
+    public getGroupRowAggNodesFunc() { return this.gridOptions.groupRowAggNodes; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
@@ -265,6 +266,9 @@ export class GridOptionsWrapper {
         }
         if (options.rowsAlreadyGrouped) {
             console.warn('ag-grid: since version 3.4 rowsAlreadyGrouped no longer exists, please use getNodeChildDetails() instead');
+        }
+        if (options.groupAggFunction) {
+            console.warn('ag-grid: since version 4.3.x groupAggFunction is now called groupRowAggNodes');
         }
     }
 

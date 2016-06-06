@@ -239,11 +239,25 @@ export class RowRenderer {
     public softRefreshView() {
         var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
 
-        _.iterateObject(this.renderedRows, (key: any, renderedRow: RenderedRow)=> {
-            renderedRow.softRefresh();
+        this.forEachRenderedCell( renderedCell => {
+            if (renderedCell.isVolatile()) {
+                renderedCell.refreshCell();
+            }
         });
 
         this.restoreFocusedCell(focusedCell);
+    }
+
+    public stopEditing(cancel: boolean = false) {
+        this.forEachRenderedCell( renderedCell => {
+            renderedCell.stopEditing(cancel);
+        });
+    }
+    
+    public forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
+        _.iterateObject(this.renderedRows, (key: any, renderedRow: RenderedRow)=> {
+            renderedRow.forEachRenderedCell(callback);
+        });
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {

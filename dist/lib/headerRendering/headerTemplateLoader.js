@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -73,13 +73,6 @@ var HeaderTemplateLoader = (function () {
         var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
         eTemplate.querySelector(cssSelector).appendChild(eIcon);
     };
-    // used when cell is dragged
-    HeaderTemplateLoader.HEADER_CELL_DND_TEMPLATE = '<div class="ag-header-cell ag-header-cell-ghost">' +
-        '  <span id="eGhostIcon" class="ag-header-cell-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
-        '    <span id="agText" class="ag-header-cell-text"></span>' +
-        '  </div>' +
-        '</div>';
     HeaderTemplateLoader.HEADER_CELL_TEMPLATE = '<div class="ag-header-cell">' +
         '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +
         '  <span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +

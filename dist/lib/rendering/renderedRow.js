@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,6 +60,7 @@ var RenderedRow = (function () {
         this.addCellFocusedListener();
         this.addNodeDataChangedListener();
         this.addColumnListener();
+        this.addHoverFunctionality();
         this.attachContainers();
         this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
             eRow: this.eBodyRow,
@@ -179,6 +180,30 @@ var RenderedRow = (function () {
         this.destroyFunctions.push(function () {
             _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
         });
+    };
+    RenderedRow.prototype.addHoverFunctionality = function () {
+        var _this = this;
+        var onGuiMouseEnter = this.rowNode.onMouseEnter.bind(this.rowNode);
+        var onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
+        this.eLeftCenterAndRightRows.forEach(function (eRow) {
+            eRow.addEventListener('mouseenter', onGuiMouseEnter);
+            eRow.addEventListener('mouseleave', onGuiMouseLeave);
+        });
+        var onNodeMouseEnter = this.addHoverClass.bind(this, true);
+        var onNodeMouseLeave = this.addHoverClass.bind(this, false);
+        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
+        this.destroyFunctions.push(function () {
+            _this.eLeftCenterAndRightRows.forEach(function (eRow) {
+                eRow.removeEventListener('mouseenter', onGuiMouseEnter);
+                eRow.removeEventListener('mouseleave', onGuiMouseLeave);
+            });
+            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
+        });
+    };
+    RenderedRow.prototype.addHoverClass = function (hover) {
+        this.eLeftCenterAndRightRows.forEach(function (eRow) { return utils_1.Utils.addOrRemoveCssClass(eRow, 'ag-row-hover', hover); });
     };
     RenderedRow.prototype.addCellFocusedListener = function () {
         var _this = this;
@@ -429,13 +454,13 @@ var RenderedRow = (function () {
     };
     RenderedRow.prototype.createRowContainer = function () {
         var _this = this;
-        var vRow = document.createElement('div');
-        vRow.addEventListener("click", this.onRowClicked.bind(this));
-        vRow.addEventListener("dblclick", function (event) {
+        var eRow = document.createElement('div');
+        eRow.addEventListener("click", this.onRowClicked.bind(this));
+        eRow.addEventListener("dblclick", function (event) {
             var agEvent = _this.createEvent(event, _this);
             _this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
         });
-        return vRow;
+        return eRow;
     };
     RenderedRow.prototype.onRowClicked = function (event) {
         var agEvent = this.createEvent(event, this);
@@ -487,7 +512,7 @@ var RenderedRow = (function () {
         if (!colIds) {
             return;
         }
-        var columnsToRefresh = this.columnController.getOriginalColumns(colIds);
+        var columnsToRefresh = this.columnController.getGridColumns(colIds);
         this.forEachRenderedCell(function (renderedCell) {
             var colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel) >= 0) {

@@ -1,6 +1,6 @@
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {ColDef, AbstractColDef} from "./colDef";
+import {ColDef, AbstractColDef, IAggFunction} from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
 import {Autowired, PostConstruct} from "../context/context";
@@ -55,7 +55,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private visible: any;
     private pinned: string;
     private left: number;
-    private aggFunc: string;
+    private aggFunc: string | IAggFunction;
     private sort: string;
     private sortedAt: number;
     private moving = false;
@@ -69,6 +69,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private filterActive = false;
 
     private eventService: EventService = new EventService();
+
+    private fieldContainsDots: boolean;
 
     constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
@@ -100,7 +102,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
 
+        var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
+
         this.validate();
+    }
+
+    public isFieldContainsDots(): boolean {
+        return this.fieldContainsDots;
     }
 
     private validate(): void {
@@ -185,11 +194,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.sortedAt = sortedAt;
     }
 
-    public setAggFunc(aggFunc: string): void {
+    public setAggFunc(aggFunc: string | IAggFunction): void {
         this.aggFunc = aggFunc;
     }
 
-    public getAggFunc(): string {
+    public getAggFunc(): string | IAggFunction {
         return this.aggFunc;
     }
 

@@ -211,7 +211,7 @@ export class GridApi {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
-    public setQuickFilter(newFilter:any) {
+    public setQuickFilter(newFilter:any): void {
         this.filterManager.setQuickFilter(newFilter)
     }
 
@@ -320,6 +320,11 @@ export class GridApi {
 
     public ensureNodeVisible(comparator:any) {
         this.gridCore.ensureNodeVisible(comparator);
+    }
+
+    public forEachLeafNode(callback: (rowNode: RowNode)=>void ) {
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
+        this.inMemoryRowModel.forEachLeafNode(callback);
     }
 
     public forEachNode(callback: (rowNode: RowNode)=>void ) {
@@ -483,6 +488,10 @@ export class GridApi {
     public showColumnMenuAfterMouseClick(colKey: string|Column|ColDef, mouseEvent: MouseEvent): void {
         var column = this.columnController.getOriginalColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
+    }
+
+    public stopEditing(cancel: boolean = false): void {
+        this.rowRenderer.stopEditing(cancel);
     }
 
     /*

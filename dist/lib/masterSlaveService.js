@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,7 +101,7 @@ var MasterSlaveService = (function () {
         if (event.getColumn()) {
             result.push(event.getColumn().getColId());
         }
-        if (event.getColumns()) {
+        else if (event.getColumns()) {
             event.getColumns().forEach(function (column) {
                 result.push(column.getColId());
             });

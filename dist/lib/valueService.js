@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.1.5
+ * @version v4.2.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,7 +38,9 @@ var ValueService = (function () {
         var field = colDef.field;
         var result;
         // if there is a value getter, this gets precedence over a field
-        if (node.group && !userProvidedTheGroups) {
+        // - need to revisit this, we check 'data' as this is the way for the grid to
+        //   not render when on the footer row
+        if (data && node.group && !userProvidedTheGroups) {
             result = node.data ? node.data[column.getId()] : undefined;
         }
         else if (colDef.valueGetter) {

@@ -42,6 +42,8 @@ export class FilterManager {
     public init(): void {
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+
+        this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
     }
 
     public registerFilter(key: string, Filter: any): void {
@@ -170,26 +172,24 @@ export class FilterManager {
         return true;
     }
 
-    // returns true if it has changed (not just same value again)
-    public setQuickFilter(newFilter: any): boolean {
-        if (newFilter === undefined || newFilter === "") {
-            newFilter = null;
+    private parseQuickFilter(newFilter: string): string {
+        if (_.missing(newFilter) || newFilter === "") {
+            return null;
         }
-        if (this.quickFilter !== newFilter) {
-            if (this.gridOptionsWrapper.isRowModelVirtual()) {
-                console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
-                return;
-            }
 
-            //want 'null' to mean to filter, so remove undefined and empty string
-            if (newFilter === undefined || newFilter === "") {
-                newFilter = null;
-            }
-            if (newFilter !== null) {
-                newFilter = newFilter.toUpperCase();
-            }
-            this.quickFilter = newFilter;
+        if (this.gridOptionsWrapper.isRowModelVirtual()) {
+            console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
+            return null;
+        }
 
+        return newFilter.toUpperCase();
+    }
+
+    // returns true if it has changed (not just same value again)
+    public setQuickFilter(newFilter: any): void {
+        var parsedFilter = this.parseQuickFilter(newFilter);
+        if (this.quickFilter !== parsedFilter) {
+            this.quickFilter = parsedFilter;
             this.onFilterChanged();
         }
     }

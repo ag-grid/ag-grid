@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -18,10 +18,10 @@ export declare class GridCore {
     private quickFilterOnScope;
     private popupService;
     private focusedCellController;
-    private rowGroupColumnsPanel;
-    private pivotColumnsPanel;
+    private rowGroupCompFactory;
     private toolPanel;
     private statusBar;
+    private rowGroupComp;
     private finished;
     private doingVirtualPaging;
     private eRootPanel;

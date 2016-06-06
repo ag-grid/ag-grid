@@ -41,11 +41,14 @@ export class RenderedRow {
 
     private parentScope: any;
     private rowRenderer: RowRenderer;
-    private pinningLeft: boolean;
-    private pinningRight: boolean;
     private eBodyContainer: HTMLElement;
     private ePinnedLeftContainer: HTMLElement;
     private ePinnedRightContainer: HTMLElement;
+
+    // these are only used if this is a group row and the group spans the entire row
+    private eGroupRow: HTMLElement;
+    private eGroupRowPaddingCentre: HTMLElement;
+    private eGroupRowPaddingRight: HTMLElement;
 
     private destroyFunctions: Function[] = [];
 
@@ -70,8 +73,6 @@ export class RenderedRow {
 
     @PostConstruct
     public init(): void {
-        this.pinningLeft = this.columnController.isPinningLeft();
-        this.pinningRight = this.columnController.isPinningRight();
 
         this.createContainers();
 
@@ -81,7 +82,7 @@ export class RenderedRow {
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
         if (this.rowIsHeaderThatSpans) {
-            this.createGroupRow();
+            this.refreshGroupRow();
         } else {
             this.refreshCellsIntoRow();
         }
@@ -140,11 +141,15 @@ export class RenderedRow {
     }
 
     private onColumnChanged(event: ColumnChangeEvent): void {
-        // if row is a group row that spans, then it's not impacted by column changes
+        // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (this.rowIsHeaderThatSpans) {
-            return;
+            var columnPinned = event.getType() === Events.EVENT_COLUMN_PINNED;
+            if (columnPinned) {
+                this.refreshGroupRow();
+            }
+        } else {
+            this.refreshCellsIntoRow();
         }
-        this.refreshCellsIntoRow();
     }
 
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
@@ -276,7 +281,7 @@ export class RenderedRow {
         rowFocusedListener();
     }
 
-    private forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
+    public forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
         _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
             if (renderedCell) {
                 callback(renderedCell);
@@ -362,14 +367,6 @@ export class RenderedRow {
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }
 
-    public softRefresh(): void {
-        this.forEachRenderedCell( renderedCell => {
-            if (renderedCell.isVolatile()) {
-                renderedCell.refreshCell();
-            }
-        });
-    }
-
     public getRenderedCellForColumn(column: Column): RenderedCell {
         return this.renderedCells[column.getColId()];
     }
@@ -417,28 +414,46 @@ export class RenderedRow {
         return this.rowNode.group === true;
     }
 
-    private createGroupRow() {
-        var eGroupRow = this.createGroupSpanningEntireRowCell(false);
+    private refreshGroupRow(): void {
 
-        if (this.pinningLeft) {
-            this.ePinnedLeftRow.appendChild(eGroupRow);
-            var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
-            this.eBodyRow.appendChild(eGroupRowPadding);
-        } else {
-            this.eBodyRow.appendChild(eGroupRow);
+        // where the components go changes with pinning, it's easiest ot just remove from all containers
+        // and start again if the pinning changes
+        _.removeAllChildren(this.ePinnedLeftRow);
+        _.removeAllChildren(this.ePinnedRightRow);
+        _.removeAllChildren(this.eBodyRow);
+
+        // create main component if not already existing from previous refresh
+        if (!this.eGroupRow) {
+            this.eGroupRow = this.createGroupSpanningEntireRowCell(false);
         }
 
-        if (this.pinningRight) {
-            var ePinnedRightPadding = this.createGroupSpanningEntireRowCell(true);
-            this.ePinnedRightRow.appendChild(ePinnedRightPadding);
+        var pinningLeft = this.columnController.isPinningLeft();
+        var pinningRight = this.columnController.isPinningRight();
+
+        // if pinning left, then main component goes into left and we pad centre, otherwise it goes into centre
+        if (pinningLeft) {
+            this.ePinnedLeftRow.appendChild(this.eGroupRow);
+            if (!this.eGroupRowPaddingCentre) {
+                this.eGroupRowPaddingCentre = this.createGroupSpanningEntireRowCell(true);
+            }
+            this.eBodyRow.appendChild(this.eGroupRowPaddingCentre);
+        } else {
+            this.eBodyRow.appendChild(this.eGroupRow);
+        }
+
+        // main component is never in right, but if pinning right, we put padding into the right
+        if (pinningRight) {
+            if (!this.eGroupRowPaddingRight) {
+                this.eGroupRowPaddingRight = this.createGroupSpanningEntireRowCell(true);
+            }
+            this.ePinnedRightRow.appendChild(this.eGroupRowPaddingRight);
         }
     }
 
-    private createGroupSpanningEntireRowCell(padding: boolean) {
-        var eRow: any;
+    private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
+        var eRow: HTMLElement = document.createElement('span');
         // padding means we are on the right hand side of a pinned table, ie
         // in the main body.
-        eRow = document.createElement('span');
         if (!padding) {
             var cellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
             var cellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
@@ -470,7 +485,11 @@ export class RenderedRow {
                 _.assign(params, cellRendererParams);
             }
 
-            this.cellRendererService.useCellRenderer(cellRenderer, eRow, params);
+            var cellComponent = this.cellRendererService.useCellRenderer(cellRenderer, eRow, params);
+
+            if (cellComponent && cellComponent.destroy) {
+                this.destroyFunctions.push( () => cellComponent.destroy() );
+            }
         }
 
         if (this.rowNode.footer) {

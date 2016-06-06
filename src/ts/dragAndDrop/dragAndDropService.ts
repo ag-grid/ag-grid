@@ -1,5 +1,5 @@
 import {Logger} from "../logger";
-import {Qualifier} from "../context/context";
+import {Qualifier, PostConstruct} from "../context/context";
 import {LoggerFactory} from "../logger";
 import {Bean} from "../context/context";
 import {Column} from "../entities/column";
@@ -95,13 +95,24 @@ export class DragAndDropService {
     private dropTargets: DropTarget[] = [];
     private lastDropTarget: DropTarget;
 
-    private ePinnedIcon = svgFactory.createPinIcon();
-    private ePlusIcon = svgFactory.createPlusIcon();
-    private eHiddenIcon = svgFactory.createColumnHiddenIcon();
-    private eMoveIcon = svgFactory.createMoveIcon();
-    private eLeftIcon = svgFactory.createLeftIcon();
-    private eRightIcon = svgFactory.createRightIcon();
-    private eGroupIcon = svgFactory.createGroupIcon();
+    private ePinnedIcon: HTMLElement;
+    private ePlusIcon: HTMLElement;
+    private eHiddenIcon: HTMLElement;
+    private eMoveIcon: HTMLElement;
+    private eLeftIcon: HTMLElement;
+    private eRightIcon: HTMLElement;
+    private eGroupIcon: HTMLElement;
+
+    @PostConstruct
+    private init(): void {
+        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null, svgFactory.createPinIcon);
+        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null, svgFactory.createPlusIcon);
+        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null, svgFactory.createColumnHiddenIcon);
+        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null, svgFactory.createMoveIcon);
+        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null, svgFactory.createLeftIcon);
+        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
+        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
+    }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');

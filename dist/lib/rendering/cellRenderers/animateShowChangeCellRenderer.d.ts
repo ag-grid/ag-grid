@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.1.5
+// Type definitions for ag-grid v4.2.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -13,7 +13,7 @@ export declare class AnimateShowChangeCellRenderer extends Component implements 
     private refreshCount;
     constructor();
     init(params: any): void;
-    showDelta(params: any, delta: number): void;
+    private showDelta(params, delta);
     private setTimerToRemoveDelta();
     private hideDeltaValue();
     refresh(params: any): void;
