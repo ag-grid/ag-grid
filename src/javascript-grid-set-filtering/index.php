@@ -61,6 +61,8 @@ columnDefinition = {
             longer available (like what Excel does).</li>
         <li><b>comparator(a,b):</b> Comparator for sorting. If not provided, the colDef comparator is used. If colDef
             also not provided, the default (agGrid provided) comparator is used.</li>
+        <li><b>suppressSorting:</b> If true, sorting will not be done on the set filter values. Use this is providing
+            your own values and don't want them sorted as you are providing in the order you want.</li>
     </ul>
     </p>
 
