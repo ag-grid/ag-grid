@@ -23,8 +23,9 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: new API method forEachLeafNode()</li>
     <li>Enhancement: added suppressQuotes option to csv export</li>
     <li>Enhancement: added colDef.keyCreator, to allow grouping and set filter on complex objects</li>
+    <li>Enhancement: pagination datasource now gets context as a parameter</li>
     <li>Bugfix: SetFilter was failing when you loaded more data into the grid - filter didn't populate with new values correctly.</li>
-
+    
     <h3>Version 4.2.x</h3>
 
     <h4><b>Big Changes</b></h4>

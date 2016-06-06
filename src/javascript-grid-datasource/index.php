@@ -109,6 +109,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         <li><b>endRow:</b> The first row index to NOT get.</li>
         <li><b>successCallback:</b> Callback to call for the result when successful.</li>
         <li><b>failCallback:</b> Callback to call for the result when failed.</li>
+        <li><b>context:</b> The grid context object.</li>
     </ul>
     </p>
 
@@ -145,6 +146,11 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         blank (undefined, null or -1). This attribute is only used when in infinite scrolling / paging.
         Once the total record count is known, the total numbers of rows is fixed and cannot be
         changed for this grid (unless a new datasource is provided).
+    </p>
+
+    <p>
+        <b>context</b> is the grids context. Use this is you want to pass some context information
+        that the datasource then has access to.
     </p>
 
     <h4>Next Steps</h4>
