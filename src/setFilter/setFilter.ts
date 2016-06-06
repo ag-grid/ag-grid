@@ -32,6 +32,7 @@ export class SetFilter extends Component implements Filter {
     private filterModifiedCallback: any;
     private valueGetter: any;
     private colDef: any;
+    private suppressSorting: boolean;
 
     private eSelectAll: any;
     private eMiniFilter: any;
@@ -66,10 +67,11 @@ export class SetFilter extends Component implements Filter {
         this.filterModifiedCallback = params.filterModifiedCallback;
         this.valueGetter = params.valueGetter;
         this.colDef = params.colDef;
+        this.suppressSorting = this.filterParams && this.filterParams.suppressSorting;
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 
-        this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter);
+        this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter, this.suppressSorting);
         this.virtualList.setModel(new ModelWrapper(this.model));
 
         this.createGui();

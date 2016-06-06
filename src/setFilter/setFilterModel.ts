@@ -15,6 +15,7 @@ export class SetFilterModel {
     private miniFilter: any;
     private selectedValuesCount: any;
     private selectedValuesMap: any;
+    private suppressSorting: boolean;
 
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
@@ -23,7 +24,8 @@ export class SetFilterModel {
 
     private doesRowPassOtherFilters: any;
 
-    constructor(colDef: ColDef, rowModel: any, valueGetter: any, doesRowPassOtherFilters: any) {
+    constructor(colDef: ColDef, rowModel: any, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean) {
+        this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.rowModel = rowModel;
         this.valueGetter = valueGetter;
