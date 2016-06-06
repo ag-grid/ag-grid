@@ -3,15 +3,14 @@ var columnDefs = [
         comparator: agGrid.defaultGroupComparator,
         cellRenderer: 'group'
     },
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
-    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
-    {headerName: "Age", field: "age", width: 90},
+    {headerName: "Gold", field: "gold", width: 100},
+    {headerName: "Silver", field: "silver", width: 100},
+    {headerName: "Bronze", field: "bronze", width: 100},
+    {headerName: "Gold*pie", field: "goldPie", width: 100},
+    {headerName: "Silver*pie", field: "silverPie", width: 100},
+    {headerName: "Bronze*pie", field: "bronzePie", width: 100},
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
-    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, hide: true}
+    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1, hide: true}
 ];
 
 var gridOptions = {
@@ -19,8 +18,36 @@ var gridOptions = {
     rowData: null,
     groupUseEntireRow: false,
     enableSorting: true,
+    groupRowAggNodes: groupRowAggNodes,
     groupSuppressAutoColumn: true
 };
+
+function groupRowAggNodes(nodes) {
+    var result = {
+        gold: 0,
+        silver: 0,
+        bronze: 0,
+        goldPie: 0,
+        silverPie: 0,
+        bronzePie: 0
+    };
+    nodes.forEach( function(node) {
+        var data = node.data;
+        if (typeof data.gold === 'number') {
+            result.gold += data.gold;
+            result.goldPie += data.gold * Math.PI;
+        }
+        if (typeof data.silver === 'number') {
+            result.silver += data.silver;
+            result.silverPie += data.silver * Math.PI;
+        }
+        if (typeof data.bronze === 'number') {
+            result.bronze += data.bronze;
+            result.bronzePie += data.bronze * Math.PI;
+        }
+    });
+    return result;
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

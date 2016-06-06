@@ -106,21 +106,22 @@ include '../documentation-main/documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <th>groupRowRenderer</th>
+            <th>groupRowRenderer, groupRowRendererParams</th>
             <td>If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default
                 presentation of the group. This is only used when groupUseEntireRow=true. This gives you full control
-                of the row, so the grid will not provide any default expand / collapse or selection checkbox. The
-                renderer is a standard </td>
-        </tr>
-        <tr>
-            <th>groupRowRendererParams</th>
-            <td>Param for groupRowRenderer. See section on cellRendering for details.</td>
+                of the row, so the grid will not provide any default expand / collapse or selection checkbox.
+                See section on cellRendering for details on params.</td>
         </tr>
         <tr>
             <th>groupRowInnerRenderer</th>
             <td>Similar to groupRowRenderer, except the grid will provide a default shell for row which includes an
                 expand / collapse function. The innerRenderer is responsible for just the inside part of the row.</td>
         </tr>
+        <tr>
+            <th>groupRowAggNodes</th>
+            <td>Used for aggregation if you do NOT want to use the <i>colDef.aggFunc</i> facility.</td>
+        </tr>
+
     </table>
 
     <h3>Grouping columns</h3>
@@ -291,14 +292,30 @@ colDef2.aggFunc = function(values) {
     <show-example example="example4"></show-example>
 
 
-    <h3>Multi-Level Grouping with Aggregation</h3>
+    <h3>Grouping with Aggregation - using groupRowAggNodes Callback</h3>
 
     <p>
-        There is no limit to the number of fields you group on. The aggregation works regardless of the number
-        of levels been grouped. The example below shows multi level aggregation.
+        Using <i>colDef.aggFunc</i> is the preferred way of doing aggregations. However you may find scenarios
+        where you cannot defined you aggregations with respect to row values alone. Maybe you are aggregating
+        sales records in different currencies and you need to read the currency code from another column and then
+        convert the record to a common currency for aggregation - the point being you need data from more than
+        just one column, or you want to put the results into different columns to the inputs for the calculation.
+        For that reason, you can take control of the row aggregation by providing a groupRowAggNodes function as a grid callback.
     </p>
 
-    <show-example example="example3"></show-example>
+    <note>
+        Using <i>colDef.aggFunc</i> is the preferred way of doing aggregations, only use <i>groupRowAggNodes</i>
+        if you cannot achieve what you want as it will make your code more complex and be less likely to work with
+        future grid features like pivoting.
+    </note>
+
+    <p>
+        Below shows a contrived example using <i>groupRowAggNodes</i>. The example makes no sense, however it
+        serves the demonstration. It takes the number of medals as inputs and crates to outputs, one as a normal
+        sum and another by multiplying the result by Math.PI.
+    </p>
+    
+    <show-example example="exampleGroupRowAggNodes"></show-example>
 
     <h3>Grouping Complex Objects with Keys</h3>
 
