@@ -157,6 +157,7 @@ export class GridOptionsWrapper {
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
+    public getGroupRowAggNodesFunc() { return this.gridOptions.groupRowAggNodes; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
@@ -267,7 +268,7 @@ export class GridOptionsWrapper {
             console.warn('ag-grid: since version 3.4 rowsAlreadyGrouped no longer exists, please use getNodeChildDetails() instead');
         }
         if (options.groupAggFunction) {
-            console.warn('ag-grid: since version 4.2.0 groupAggFunction no longer exists, please check documentation on how to do custom aggregations, aggFunc on the colDef can now be a function');
+            console.warn('ag-grid: since version 4.3.x groupAggFunction is now called groupRowAggNodes');
         }
     }
 
