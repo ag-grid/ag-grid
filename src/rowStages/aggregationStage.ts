@@ -54,9 +54,12 @@ export class AggregationStage implements IRowNodeStage {
         
         var valueColumnsMissing = valueColumns.length === 0;
         var pivotColumnsMissing = pivotColumns.length === 0;
+        var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
 
         var aggResult: any;
-        if (valueColumnsMissing) {
+        if (userProvidedGroupRowAggNodes) {
+            aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
+        } else if (valueColumnsMissing) {
             aggResult = null;
         } else if (pivotColumnsMissing) {
             aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, valueColumns);
