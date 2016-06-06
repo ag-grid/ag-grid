@@ -94,6 +94,12 @@
         <div class="quote-company">Senior Architect, Roobricks</div>
     </div>
 
+    <div class="row quote">
+        <div class="quote-text">"I just wanted to say thank you for all the hard work you have put into ag-Grid.  I have been using the free version for about a year and have to say it is definitely the best grid framework out there."</div>
+        <div class="quote-from">Jordan Berry</div>
+        <div class="quote-company">CTO / Co-Founder, Interloop</div>
+    </div>
+
     <div class="row">
         <div class="col-md-9">    
             <hr/>
