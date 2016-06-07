@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.8
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var main_1 = require("ag-grid/main");
 var setFilter_1 = require("./setFilter/setFilter");
 var richSelectCellEditor_1 = require("./rendering/richSelect/richSelectCellEditor");
+var largeTextCellEditor_1 = require("./rendering/largeText/largeTextCellEditor");
 var licenseManager_1 = require("./licenseManager");
 var EnterpriseBoot = (function () {
     function EnterpriseBoot() {
@@ -18,9 +19,11 @@ var EnterpriseBoot = (function () {
     EnterpriseBoot.prototype.init = function () {
         this.filterManager.registerFilter('set', setFilter_1.SetFilter);
         this.cellEditorFactory.addCellEditor(EnterpriseBoot.RICH_SELECT, richSelectCellEditor_1.RichSelectCellEditor);
+        this.cellEditorFactory.addCellEditor(EnterpriseBoot.LARGE_TEXT, largeTextCellEditor_1.LargeTextCellEditor);
         this.licenseManager.validateLicense();
     };
     EnterpriseBoot.RICH_SELECT = 'richSelect';
+    EnterpriseBoot.LARGE_TEXT = 'largeText';
     __decorate([
         main_1.Autowired('filterManager'), 
         __metadata('design:type', main_1.FilterManager)

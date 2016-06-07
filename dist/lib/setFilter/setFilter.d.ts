@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.8
 import { Component } from "ag-grid/main";
 import { Filter } from "ag-grid/main";
 export declare class SetFilter extends Component implements Filter {
@@ -11,6 +11,7 @@ export declare class SetFilter extends Component implements Filter {
     private filterModifiedCallback;
     private valueGetter;
     private colDef;
+    private suppressSorting;
     private eSelectAll;
     private eMiniFilter;
     private api;

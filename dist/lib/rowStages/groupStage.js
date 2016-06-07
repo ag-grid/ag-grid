@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.8
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13,7 +13,6 @@ var GroupStage = (function () {
     function GroupStage() {
     }
     GroupStage.prototype.execute = function (rowNode) {
-        var rowsAlreadyGrouped = main_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         var groupedCols = this.columnController.getRowGroupColumns();
         var expandByDefault;
         if (this.gridOptionsWrapper.isGroupSuppressRow()) {
@@ -24,17 +23,17 @@ var GroupStage = (function () {
         }
         // putting this in a wrapper, so it's pass by reference
         var groupId = { value: -1 };
-        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault, groupId, rowsAlreadyGrouped);
+        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault, groupId);
     };
-    GroupStage.prototype.recursivelyGroup = function (rowNode, groupColumns, level, expandByDefault, groupId, rowsAlreadyGrouped) {
+    GroupStage.prototype.recursivelyGroup = function (rowNode, groupColumns, level, expandByDefault, groupId) {
         var _this = this;
         var groupingThisLevel = level < groupColumns.length;
         rowNode.leafGroup = level === groupColumns.length;
-        if (groupingThisLevel && !rowsAlreadyGrouped) {
+        if (groupingThisLevel) {
             var groupColumn = groupColumns[level];
             this.setChildrenAfterGroup(rowNode, groupColumn, groupId, expandByDefault, level);
             rowNode.childrenAfterGroup.forEach(function (child) {
-                _this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, groupId, rowsAlreadyGrouped);
+                _this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, groupId);
             });
         }
         else {
@@ -50,7 +49,7 @@ var GroupStage = (function () {
         rowNode.childrenAfterGroup = [];
         rowNode.childrenMapped = {};
         rowNode.allLeafChildren.forEach(function (child) {
-            var groupKey = _this.valueService.getValue(groupColumn, child);
+            var groupKey = _this.getKeyForNode(groupColumn, child);
             var groupForChild = rowNode.childrenMapped[groupKey];
             if (!groupForChild) {
                 groupForChild = _this.createGroup(groupColumn, groupKey, rowNode, groupId, expandByDefault, level);
@@ -59,6 +58,18 @@ var GroupStage = (function () {
             }
             groupForChild.allLeafChildren.push(child);
         });
+    };
+    GroupStage.prototype.getKeyForNode = function (groupColumn, rowNode) {
+        var value = this.valueService.getValue(groupColumn, rowNode);
+        var result;
+        var keyCreator = groupColumn.getColDef().keyCreator;
+        if (keyCreator) {
+            result = keyCreator({ value: value });
+        }
+        else {
+            result = value;
+        }
+        return result;
     };
     GroupStage.prototype.createGroup = function (groupColumn, groupKey, parent, groupId, expandByDefault, level) {
         var nextGroup = new main_1.RowNode();

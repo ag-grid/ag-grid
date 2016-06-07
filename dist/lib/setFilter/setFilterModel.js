@@ -1,7 +1,8 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.8
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
-    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters) {
+    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {
+        this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.rowModel = rowModel;
         this.valueGetter = valueGetter;
@@ -77,9 +78,12 @@ var SetFilterModel = (function () {
         var _this = this;
         var uniqueCheck = {};
         var result = [];
-        this.rowModel.forEachNode(function (node) {
+        this.rowModel.forEachLeafNode(function (node) {
             if (!node.group) {
                 var value = _this.valueGetter(node);
+                if (_this.colDef.keyCreator) {
+                    value = _this.colDef.keyCreator({ value: value });
+                }
                 if (value === "" || value === undefined) {
                     value = null;
                 }
@@ -202,9 +206,6 @@ var SetFilterModel = (function () {
                 var newValue = model[i];
                 if (this.allUniqueValues.indexOf(newValue) >= 0) {
                     this.selectValue(model[i]);
-                }
-                else {
-                    console.warn('Value ' + newValue + ' is not a valid value for filter');
                 }
             }
         }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.8
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -38,8 +38,9 @@ var SetFilter = (function (_super) {
         this.filterModifiedCallback = params.filterModifiedCallback;
         this.valueGetter = params.valueGetter;
         this.colDef = params.colDef;
+        this.suppressSorting = this.filterParams && this.filterParams.suppressSorting;
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.model = new setFilterModel_1.SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter);
+        this.model = new setFilterModel_1.SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter, this.suppressSorting);
         this.virtualList.setModel(new ModelWrapper(this.model));
         this.createGui();
         this.createApi();
@@ -79,6 +80,9 @@ var SetFilter = (function (_super) {
             return false;
         }
         var value = this.valueGetter(node);
+        if (this.colDef.keyCreator) {
+            value = this.colDef.keyCreator({ value: value });
+        }
         value = main_1.Utils.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
