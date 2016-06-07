@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.8
+// ag-grid-enterprise v4.2.9
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {

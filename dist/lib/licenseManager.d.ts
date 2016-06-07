@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.8
+// ag-grid-enterprise v4.2.9
 export declare class LicenseManager {
     private static RELEASE_INFORMATION;
     private static licenseKey;
