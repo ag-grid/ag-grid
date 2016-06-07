@@ -301,7 +301,7 @@ colDef.cellEditorParams = {
         <li><b>popupText</b>: Same as 'text' but as popup.</li>
         <li><b>popupSelect</b>: Same as 'select' but as popup.</li>
         <li><b>richSelect (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
-        and custom rendering to allow a richer experience than the standard select.</li>
+        <li><b>largeText (ag-Grid-Enterprise only)</b>: - A text popup that for inputting larger, multi-line text.</li>
     </ul>
     </p>
 
@@ -376,7 +376,7 @@ colDef.cellEditorParams = {
         <li>'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (ag-Grid-Enterprise only), with values supplied by complementing the editor parameters.</li>
         <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
         <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.</li>
-        <li>'Address' column uses a Component cell editor that allows editing of a larger text input via a custom 'textPopup'. This example also illustrates trapping key events (to allow custom behaviour for example on the Enter key). Tab & Esc (amongst others) will exit editing in this field.</li>
+        <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText' (ag-Grid-Enterprise only). Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
     </ul>
     </p>
 
