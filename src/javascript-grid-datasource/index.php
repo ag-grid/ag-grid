@@ -44,11 +44,11 @@ gridOptions.datasource = myDataSource;</pre>
 gridOptions.api.setDatasource(myDataSource);</pre>
 
     <p>
-        <b>Note:</b> If you call <i>setDatasource</i> or <i>onNewDatasource</i>, the grid will act assuming
+        <b>Note:</b> If you call <i>setDatasource</i> the grid will act assuming
         it's a new datasource, resetting the paging. However you can pass in the same datasource instance.
         So your application, for example, might have one instance of a datasource that is aware of some
         external filters, and when the filters change, you want to reset, but still keep the same datasource
-        instance. In this case, just call onNewDatasource() without actually changing the datasource.
+        instance. In this case, just call setDatasource() and pass the same datasource in again.
     </p>
 
     <h4>The Datasource Object</h4>
