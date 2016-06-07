@@ -147,83 +147,60 @@ MoodCellRenderer.prototype.getGui = function () {
     return this.eGui;
 };
 
-function LargeTextCellEditor() {
-}
-
-LargeTextCellEditor.prototype.init = function (params) {
-    this.textarea = document.createElement("textarea");
-    this.textarea.maxLength = "200";
-    this.textarea.cols = "60";
-    this.textarea.rows = "10";
-    this.textarea.value = params.value;
-
-    this.eInput = document.createElement("div");
-    this.eInput.appendChild(this.textarea);
-
-    // allow arrow keys and enter in the textarea
-    // tab, esc etc will still end the editing
-    this.textarea.addEventListener('keydown', function (event) {
-        var charCode = getCharCodeFromEvent(event);
-        if(charCode == 37 ||            // left
-                charCode == 38 ||       // up
-                charCode == 39 ||       // right
-                charCode == 40 ||       // down
-                charCode == 13) {       // enter
-            event.stopPropagation();
-        }
-    })
-};
-
-// gets called once when grid ready to insert the element
-LargeTextCellEditor.prototype.getGui = function () {
-    return this.eInput;
-};
-
-LargeTextCellEditor.prototype.afterGuiAttached = function () {
-    this.textarea.focus();
-};
-
-LargeTextCellEditor.prototype.getValue = function () {
-    return this.textarea.value;
-};
-
-// any cleanup we need to be done here
-LargeTextCellEditor.prototype.destroy = function () {
-};
-
-LargeTextCellEditor.prototype.isPopup = function () {
-    return true;
-};
-
 function MoodEditor() {
+    this.defaultImgStyle = 'padding-left:10px;padding-right:10px;height: 25px';
+    this.selectedImgStyle = 'padding-left:10px;padding-right:10px;height: 35px;width:35px';
 }
+
+MoodEditor.prototype.onKeyDown = function (event) {
+    var key = event.which || event.keyCode;
+    if (key == 37 ||  // left
+        key == 39) {  // right
+        this.toggleMood();
+        event.stopPropagation();
+    }
+};
+
+MoodEditor.prototype.toggleMood = function () {
+    this.selectMood(this.mood === 'Happy' ? 'Sad' : 'Happy');
+};
 
 MoodEditor.prototype.init = function (params) {
-    this.mood = params.value;
-
     this.container = document.createElement('div');
-    this.container.style = "border-radius: 15px;background: #e6e6e6;padding: 15px;width: 100px;height: 30px;text-align:center;";
+    this.container.style = "border-radius: 15px; border: 1px solid grey;background: #e6e6e6;padding: 15px;width: 100px;height: 30px;text-align:center;display:inline-block;outline:none";
+    this.container.tabIndex = "0";                // to allow the div to capture keypresses
 
     this.happyImg = document.createElement('img');
     this.happyImg.src = '../../images/smiley.png';
-    this.happyImg.style = 'padding-right: 15px;display:inline-block;height: 25px;';
+    this.happyImg.style = this.defaultImgStyle;
 
     this.sadImg = document.createElement('img');
     this.sadImg.src = '../../images/smiley-sad.png';
-    this.sadImg.style = 'padding-left: 15px;display:inline-block;height: 25px;';
+    this.sadImg.style = this.defaultImgStyle;
 
     this.container.appendChild(this.happyImg);
     this.container.appendChild(this.sadImg);
 
     var that = this;
     this.happyImg.addEventListener('click', function (event) {
-        that.mood = 'Happy';
+        that.selectMood('Happy');
         params.stopEditing();
     });
     this.sadImg.addEventListener('click', function (event) {
-        that.mood = 'Sad';
+        that.selectMood('Sad');
         params.stopEditing();
     });
+    this.container.addEventListener('keydown', function (event) {
+        that.onKeyDown(event)
+    });
+
+    this.selectMood(params.value);
+};
+
+MoodEditor.prototype.selectMood = function (mood) {
+    this.mood = mood;
+    this.happyImg.style = (mood === 'Happy') ? this.selectedImgStyle : this.defaultImgStyle;
+    this.sadImg.style = (mood === 'Sad') ? this.selectedImgStyle : this.defaultImgStyle;
 };
 
 // gets called once when grid ready to insert the element
@@ -282,7 +259,12 @@ var columnDefs = [
         field: "address",
         width: 502,
         editable: true,
-        cellEditor: LargeTextCellEditor
+        cellEditor: 'largeText',
+        cellEditorParams: {
+            maxLength: '300',   // override the editor defaults
+            cols: '50',
+            rows: '6'
+        }
     }
 ];
 
