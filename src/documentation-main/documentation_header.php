@@ -403,7 +403,7 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "License Key") { ?>
-                    <span class="sidebarLinkSelected">Setting The License Key</span>
+                    <span class="sidebarLinkSelected">Set License Key</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-license/index.php">Set License Key</a>
                 <?php } ?>
