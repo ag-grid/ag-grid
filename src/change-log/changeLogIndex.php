@@ -16,7 +16,6 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Version 4.2.x</h3>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
-    <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
     <li>Enhancement: Added colDef.tooltipField, so tooltip can be set on the cell.</li>
     <li>Enhancement: Icons for drag and drop of columns are now all configurable.</li>
     <li>Enhancement: quickFilter is now a property, so cna be set during initialisation.</li>
@@ -25,7 +24,6 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: added colDef.keyCreator, to allow grouping and set filter on complex objects</li>
     <li>Enhancement: pagination datasource now gets context as a parameter</li>
     <li>Enhancement: added largeText cell editor as an 'out of the box' editor</li>
-    <li>Enhancement: the console message for 'valid license' no longer happens, if your key is accepted, it will silently pass</li>
     <li>Bugfix: SetFilter was failing when you loaded more data into the grid - filter didn't populate with new values correctly.</li>
     
     <h3>Version 4.2.x</h3>
