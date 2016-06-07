@@ -36,13 +36,13 @@
   transition: left 0.2s;
 }
 .ag-material .ag-cell-focus {
-  border: 1px solid #a9a9a9;
+  border: 1px solid #d3d3d3;
 }
 .ag-material .ag-cell-no-focus {
-  border-right: none;
+  border-right: 1px solid transparent;
   border-top: 1px solid transparent;
   border-left: 1px solid transparent;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid #d3d3d3;
 }
 .ag-material .ag-cell-first-right-pinned {
   border-left: none;
@@ -106,11 +106,14 @@
 .ag-material .ag-rich-select-row-selected {
   background-color: #bde2e5;
 }
+.ag-material .ag-large-text {
+  border: none;
+}
 .ag-material .ag-header {
   color: #666;
   background: none;
   border-bottom: none;
-  font-weight: normal;
+  font-weight: bold;
 }
 .ag-material .ag-header-icon {
   color: #666;
@@ -302,7 +305,7 @@
   border-bottom: 1px solid #d3d3d3;
 }
 .ag-material .ag-filter-apply-panel {
-  border-top: 1px solid ag-separatorcolor;
+  border-top: 1px solid #d3d3d3;
   padding: 2px;
 }
 .ag-material .ag-filter-value {
@@ -404,4 +407,14 @@
 }
 .ag-material .ag-header-cell-menu-button:hover {
   border: 1px solid #808080;
+}
+.ag-material .ag-header-cell-label {
+  text-align: left;
+}
+.ag-material .ag-header {
+  border-bottom: 1px solid #808080;
+}
+.ag-material .ag-selection-checkbox {
+  padding-right: 12px;
+  padding-left: 12px;
 }

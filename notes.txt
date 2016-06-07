@@ -1,4 +1,3 @@
-
 Doing releases:
 
 ag-Grid
@@ -7,6 +6,8 @@ ag-Grid
 + Update version in package.json
 + Run 'gulp release'
 + Make sure any new files in 'dist' are added to Git
++ Note: its a good idea to exclude node_modules at this stage
++ Also worth synchornizing the ag-grid folder
 + Commit all changes to Github (including built files in /dist)
 + Release in Github
 + Push to by running 'npm publish ./'

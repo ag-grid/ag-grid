@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,47 +24,54 @@ var events_1 = require("./events");
 var eventService_1 = require("./eventService");
 var ValueService = (function () {
     function ValueService() {
+        this.initialised = false;
     }
     ValueService.prototype.init = function () {
         this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
+        this.userProvidedTheGroups = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        this.initialised = true;
     };
     ValueService.prototype.getValue = function (column, node) {
         return this.getValueUsingSpecificData(column, node.data, node);
     };
     ValueService.prototype.getValueUsingSpecificData = function (column, data, node) {
-        var cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-        var userProvidedTheGroups = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        // hack - the grid is getting refreshed before this bean gets initialised, race condition.
+        // really should have a way so they get initialised in the right order???
+        if (!this.initialised) {
+            this.init();
+        }
         var colDef = column.getColDef();
         var field = colDef.field;
         var result;
         // if there is a value getter, this gets precedence over a field
         // - need to revisit this, we check 'data' as this is the way for the grid to
         //   not render when on the footer row
-        if (data && node.group && !userProvidedTheGroups) {
+        if (data && node.group && !this.userProvidedTheGroups) {
             result = node.data ? node.data[column.getId()] : undefined;
         }
         else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         }
         else if (field && data) {
-            result = this.getValueUsingField(data, field);
+            result = this.getValueUsingField(data, field, column.isFieldContainsDots());
         }
         else {
             result = undefined;
         }
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
+        if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             var cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, node);
         }
         return result;
     };
-    ValueService.prototype.getValueUsingField = function (data, field) {
+    ValueService.prototype.getValueUsingField = function (data, field, fieldContainsDots) {
         if (!field || !data) {
             return;
         }
         // if no '.', then it's not a deep value
-        if (this.suppressDotNotation || field.indexOf('.') < 0) {
+        if (!fieldContainsDots) {
             return data[field];
         }
         else {
@@ -110,7 +117,7 @@ var ValueService = (function () {
             newValueHandler(paramsForCallbacks);
         }
         else {
-            this.setValueUsingField(data, field, newValue);
+            this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
         }
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
@@ -120,9 +127,9 @@ var ValueService = (function () {
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
     };
-    ValueService.prototype.setValueUsingField = function (data, field, newValue) {
+    ValueService.prototype.setValueUsingField = function (data, field, newValue, isFieldContainsDots) {
         // if no '.', then it's not a deep value
-        if (this.suppressDotNotation || field.indexOf('.') < 0) {
+        if (!isFieldContainsDots) {
             data[field] = newValue;
         }
         else {

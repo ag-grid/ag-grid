@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -161,10 +161,23 @@ var RowRenderer = (function () {
     };
     RowRenderer.prototype.softRefreshView = function () {
         var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
-        utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
-            renderedRow.softRefresh();
+        this.forEachRenderedCell(function (renderedCell) {
+            if (renderedCell.isVolatile()) {
+                renderedCell.refreshCell();
+            }
         });
         this.restoreFocusedCell(focusedCell);
+    };
+    RowRenderer.prototype.stopEditing = function (cancel) {
+        if (cancel === void 0) { cancel = false; }
+        this.forEachRenderedCell(function (renderedCell) {
+            renderedCell.stopEditing(cancel);
+        });
+    };
+    RowRenderer.prototype.forEachRenderedCell = function (callback) {
+        utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
+            renderedRow.forEachRenderedCell(callback);
+        });
     };
     RowRenderer.prototype.addRenderedRowListener = function (eventName, rowIndex, callback) {
         var renderedRow = this.renderedRows[rowIndex];

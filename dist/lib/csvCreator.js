@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,7 +61,8 @@ var CsvCreator = (function () {
         var allColumns = params && params.allColumns;
         var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
-        var processCellCallback = params.processCellCallback;
+        var suppressQuotes = params && params.suppressQuotes;
+        var processCellCallback = params && params.processCellCallback;
         var columnsToExport;
         if (allColumns) {
             columnsToExport = this.columnController.getAllOriginalColumns();
@@ -85,7 +86,7 @@ var CsvCreator = (function () {
                 if (index != 0) {
                     result += columnSeparator;
                 }
-                result += '"' + _this.escape(nameForCol) + '"';
+                result += _this.putInQuotes(nameForCol, suppressQuotes);
             });
             result += LINE_SEPARATOR;
         }
@@ -114,7 +115,7 @@ var CsvCreator = (function () {
                 if (index != 0) {
                     result += columnSeparator;
                 }
-                result += '"' + _this.escape(valueForCell) + '"';
+                result += _this.putInQuotes(valueForCell, suppressQuotes);
             });
             result += LINE_SEPARATOR;
         });
@@ -159,10 +160,12 @@ var CsvCreator = (function () {
         }
         return keys.reverse().join(' -> ');
     };
-    // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-    CsvCreator.prototype.escape = function (value) {
+    CsvCreator.prototype.putInQuotes = function (value, suppressQuotes) {
+        if (suppressQuotes) {
+            return value;
+        }
         if (value === null || value === undefined) {
-            return '';
+            return '""';
         }
         var stringValue;
         if (typeof value === 'string') {
@@ -172,10 +175,12 @@ var CsvCreator = (function () {
             stringValue = value.toString();
         }
         else {
-            console.warn('known value type during csv conversion');
+            console.warn('unknown value type during csv conversion');
             stringValue = '';
         }
-        return stringValue.replace(/"/g, "\"\"");
+        // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
+        var valueEscaped = stringValue.replace(/"/g, "\"\"");
+        return '"' + valueEscaped + '"';
     };
     __decorate([
         context_1.Autowired('rowModel'), 

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -11,6 +11,8 @@ export interface IInMemoryRowModel extends IRowModel {
     /** InMemory model only. If tree / group structure, returns the top level
      * nodes only. */
     getTopLevelNodes(): RowNode[];
+    /** InMemory model only. */
+    forEachLeafNode(callback: (rowNode: RowNode) => void): void;
     /** InMemory model only. */
     forEachNodeAfterFilter(callback: (rowNode: RowNode) => void): void;
     /** InMemory model only. */

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -46,6 +46,7 @@ export declare class GridOptionsWrapper {
     isSuppressFieldDotNotation(): boolean;
     getFloatingTopRowData(): any[];
     getFloatingBottomRowData(): any[];
+    getQuickFilterText(): string;
     isUnSortIcon(): boolean;
     isSuppressMenuHide(): boolean;
     getRowStyle(): any;
@@ -107,6 +108,7 @@ export declare class GridOptionsWrapper {
     getHeaderCellTemplate(): string;
     getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
     getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);
+    getGroupRowAggNodesFunc(): (nodes: RowNode[]) => any;
     getContextMenuItemsFunc(): GetContextMenuItems;
     getMainMenuItemsFunc(): GetMainMenuItems;
     getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams) => any;

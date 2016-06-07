@@ -106,6 +106,9 @@
 .ag-blue .ag-rich-select-row-selected {
   background-color: #c7c7c7;
 }
+.ag-blue .ag-large-text {
+  border: 1px solid #9bc2e6;
+}
 .ag-blue .ag-header {
   color: #fff;
   background: #5b9bd5;
@@ -302,7 +305,7 @@
   border-bottom: 1px solid #d3d3d3;
 }
 .ag-blue .ag-filter-apply-panel {
-  border-top: 1px solid ag-separatorcolor;
+  border-top: 1px solid #d3d3d3;
   padding: 2px;
 }
 .ag-blue .ag-filter-value {

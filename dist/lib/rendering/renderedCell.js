@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -527,6 +527,9 @@ var RenderedCell = (function (_super) {
     // pass in 'true' to cancel the editing.
     RenderedCell.prototype.stopEditing = function (cancel) {
         if (cancel === void 0) { cancel = false; }
+        if (!this.editingCell) {
+            return;
+        }
         this.editingCell = false;
         // also have another option here to cancel after editing, so for example user could have a popup editor and
         // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -859,6 +862,11 @@ var RenderedCell = (function (_super) {
             if (utils_1.Utils.exists(valueToRender) && valueToRender !== '') {
                 this.eParentOfValue.innerHTML = valueToRender.toString();
             }
+        }
+        if (colDef.tooltipField) {
+            var data = this.getDataForRow();
+            var tooltip = data[colDef.tooltipField];
+            this.eParentOfValue.setAttribute('title', tooltip);
         }
     };
     RenderedCell.prototype.formatValue = function (value) {

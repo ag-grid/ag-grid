@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,14 +40,12 @@ var RenderedRow = (function () {
     }
     RenderedRow.prototype.init = function () {
         var _this = this;
-        this.pinningLeft = this.columnController.isPinningLeft();
-        this.pinningRight = this.columnController.isPinningRight();
         this.createContainers();
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
         this.rowIsHeaderThatSpans = this.rowNode.group && groupHeaderTakesEntireRow;
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
         if (this.rowIsHeaderThatSpans) {
-            this.createGroupRow();
+            this.refreshGroupRow();
         }
         else {
             this.refreshCellsIntoRow();
@@ -98,11 +96,16 @@ var RenderedRow = (function () {
         });
     };
     RenderedRow.prototype.onColumnChanged = function (event) {
-        // if row is a group row that spans, then it's not impacted by column changes
+        // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (this.rowIsHeaderThatSpans) {
-            return;
+            var columnPinned = event.getType() === events_1.Events.EVENT_COLUMN_PINNED;
+            if (columnPinned) {
+                this.refreshGroupRow();
+            }
         }
-        this.refreshCellsIntoRow();
+        else {
+            this.refreshCellsIntoRow();
+        }
     };
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
@@ -299,13 +302,6 @@ var RenderedRow = (function () {
     RenderedRow.prototype.removeEventListener = function (eventType, listener) {
         this.renderedRowEventService.removeEventListener(eventType, listener);
     };
-    RenderedRow.prototype.softRefresh = function () {
-        this.forEachRenderedCell(function (renderedCell) {
-            if (renderedCell.isVolatile()) {
-                renderedCell.refreshCell();
-            }
-        });
-    };
     RenderedRow.prototype.getRenderedCellForColumn = function (column) {
         return this.renderedCells[column.getColId()];
     };
@@ -343,26 +339,41 @@ var RenderedRow = (function () {
     RenderedRow.prototype.isGroup = function () {
         return this.rowNode.group === true;
     };
-    RenderedRow.prototype.createGroupRow = function () {
-        var eGroupRow = this.createGroupSpanningEntireRowCell(false);
-        if (this.pinningLeft) {
-            this.ePinnedLeftRow.appendChild(eGroupRow);
-            var eGroupRowPadding = this.createGroupSpanningEntireRowCell(true);
-            this.eBodyRow.appendChild(eGroupRowPadding);
+    RenderedRow.prototype.refreshGroupRow = function () {
+        // where the components go changes with pinning, it's easiest ot just remove from all containers
+        // and start again if the pinning changes
+        utils_1.Utils.removeAllChildren(this.ePinnedLeftRow);
+        utils_1.Utils.removeAllChildren(this.ePinnedRightRow);
+        utils_1.Utils.removeAllChildren(this.eBodyRow);
+        // create main component if not already existing from previous refresh
+        if (!this.eGroupRow) {
+            this.eGroupRow = this.createGroupSpanningEntireRowCell(false);
+        }
+        var pinningLeft = this.columnController.isPinningLeft();
+        var pinningRight = this.columnController.isPinningRight();
+        // if pinning left, then main component goes into left and we pad centre, otherwise it goes into centre
+        if (pinningLeft) {
+            this.ePinnedLeftRow.appendChild(this.eGroupRow);
+            if (!this.eGroupRowPaddingCentre) {
+                this.eGroupRowPaddingCentre = this.createGroupSpanningEntireRowCell(true);
+            }
+            this.eBodyRow.appendChild(this.eGroupRowPaddingCentre);
         }
         else {
-            this.eBodyRow.appendChild(eGroupRow);
+            this.eBodyRow.appendChild(this.eGroupRow);
         }
-        if (this.pinningRight) {
-            var ePinnedRightPadding = this.createGroupSpanningEntireRowCell(true);
-            this.ePinnedRightRow.appendChild(ePinnedRightPadding);
+        // main component is never in right, but if pinning right, we put padding into the right
+        if (pinningRight) {
+            if (!this.eGroupRowPaddingRight) {
+                this.eGroupRowPaddingRight = this.createGroupSpanningEntireRowCell(true);
+            }
+            this.ePinnedRightRow.appendChild(this.eGroupRowPaddingRight);
         }
     };
     RenderedRow.prototype.createGroupSpanningEntireRowCell = function (padding) {
-        var eRow;
+        var eRow = document.createElement('span');
         // padding means we are on the right hand side of a pinned table, ie
         // in the main body.
-        eRow = document.createElement('span');
         if (!padding) {
             var cellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
             var cellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
@@ -391,7 +402,10 @@ var RenderedRow = (function () {
             if (cellRendererParams) {
                 utils_1.Utils.assign(params, cellRendererParams);
             }
-            this.cellRendererService.useCellRenderer(cellRenderer, eRow, params);
+            var cellComponent = this.cellRendererService.useCellRenderer(cellRenderer, eRow, params);
+            if (cellComponent && cellComponent.destroy) {
+                this.destroyFunctions.push(function () { return cellComponent.destroy(); });
+            }
         }
         if (this.rowNode.footer) {
             utils_1.Utils.addCssClass(eRow, 'ag-footer-cell-entire-row');

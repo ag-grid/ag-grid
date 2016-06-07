@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -28,7 +28,8 @@ export declare class FilterManager {
     isAdvancedFilterPresent(): boolean;
     isAnyFilterPresent(): boolean;
     private doesFilterPass(node, filterToSkip?);
-    setQuickFilter(newFilter: any): boolean;
+    private parseQuickFilter(newFilter);
+    setQuickFilter(newFilter: any): void;
     onFilterChanged(): void;
     isQuickFilterPresent(): boolean;
     doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;

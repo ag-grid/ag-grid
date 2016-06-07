@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,18 +62,29 @@ var InMemoryRowModel = (function () {
         // fallthrough in below switch is on purpose,
         // eg if STEP_FILTER, then all steps below this
         // step get done
+        // var start: number;
+        // console.log('======= start =======');
         switch (step) {
             case constants_1.Constants.STEP_EVERYTHING:
+                // start = new Date().getTime();
                 this.doRowGrouping(groupState);
+            // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_FILTER:
+                // start = new Date().getTime();
                 this.doFilter();
+            // console.log('filter = ' + (new Date().getTime() - start));
             // case constants.STEP_PIVOT:
             //     this.doPivot();
             case constants_1.Constants.STEP_AGGREGATE:
+                // start = new Date().getTime();
                 this.doAggregate();
+            // console.log('aggregation = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_SORT:
+                // start = new Date().getTime();
                 this.doSort();
+            // console.log('sort = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_MAP:
+                // start = new Date().getTime();
                 this.doRowsToDisplay();
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, { fromIndex: fromIndex });
@@ -158,6 +169,11 @@ var InMemoryRowModel = (function () {
             return 0;
         }
     };
+    InMemoryRowModel.prototype.forEachLeafNode = function (callback) {
+        if (this.rootNode.allLeafChildren) {
+            this.rootNode.allLeafChildren.forEach(function (rowNode, index) { return callback(rowNode, index); });
+        }
+    };
     InMemoryRowModel.prototype.forEachNode = function (callback) {
         this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterGroup, callback, RecursionType.Normal, 0);
     };
@@ -231,7 +247,10 @@ var InMemoryRowModel = (function () {
     };
     InMemoryRowModel.prototype.doRowGrouping = function (groupState) {
         // grouping is enterprise only, so if service missing, skip the step
-        // var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (rowsAlreadyGrouped) {
+            return;
+        }
         if (this.groupStage) {
             // remove old groups from the selection model, as we are about to replace them
             // with new groups
@@ -274,16 +293,11 @@ var InMemoryRowModel = (function () {
         // remember group state, so we can expand groups that should be expanded
         var groupState = this.getGroupState();
         // place each row into a wrapper
-        this.rootNode.allLeafChildren = this.createRowNodesFromData(rowData, firstId);
-        this.rootNode.childrenAfterFilter = null;
-        this.rootNode.childrenAfterGroup = null;
-        this.rootNode.childrenAfterSort = null;
-        this.rootNode.childrenMapped = null;
+        this.createRowNodesFromData(rowData, firstId);
         // this event kicks off:
         // - clears selection
-        // - creates new pivot columns ??
         // - updates filters
-        // - shows 'row rows' overlay if needed
+        // - shows 'no rows' overlay if needed
         this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_CHANGED);
         if (refresh) {
             this.refreshModel(constants_1.Constants.STEP_EVERYTHING, null, groupState);
@@ -298,22 +312,49 @@ var InMemoryRowModel = (function () {
         return result;
     };
     InMemoryRowModel.prototype.createRowNodesFromData = function (rowData, firstId) {
-        var that = this;
+        this.rootNode.childrenAfterFilter = null;
+        this.rootNode.childrenAfterGroup = null;
+        this.rootNode.childrenAfterSort = null;
+        this.rootNode.childrenMapped = null;
+        var context = this.context;
         if (!rowData) {
-            return [];
+            this.rootNode.allLeafChildren = [];
+            return;
         }
         var rowNodeId = utils_1.Utils.exists(firstId) ? firstId : 0;
         // func below doesn't have 'this' pointer, so need to pull out these bits
         var nodeChildDetailsFunc = this.gridOptionsWrapper.getNodeChildDetailsFunc();
         var suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        var rowsAlreadyGrouped = utils_1.Utils.exists(nodeChildDetailsFunc);
         // kick off recursion
         var result = recursiveFunction(rowData, null, 0);
-        return result;
+        if (rowsAlreadyGrouped) {
+            this.rootNode.childrenAfterGroup = result;
+            setLeafChildren(this.rootNode);
+        }
+        else {
+            this.rootNode.allLeafChildren = result;
+        }
+        function setLeafChildren(node) {
+            node.allLeafChildren = [];
+            if (node.childrenAfterGroup) {
+                node.childrenAfterGroup.forEach(function (childAfterGroup) {
+                    if (childAfterGroup.group) {
+                        if (childAfterGroup.allLeafChildren) {
+                            childAfterGroup.allLeafChildren.forEach(function (leafChild) { return node.allLeafChildren.push(leafChild); });
+                        }
+                    }
+                    else {
+                        node.allLeafChildren.push(childAfterGroup);
+                    }
+                });
+            }
+        }
         function recursiveFunction(rowData, parent, level) {
             var rowNodes = [];
             rowData.forEach(function (dataItem) {
                 var node = new rowNode_1.RowNode();
-                that.context.wireBean(node);
+                context.wireBean(node);
                 var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
                 if (nodeChildDetails && nodeChildDetails.group) {
                     node.group = true;
@@ -321,6 +362,8 @@ var InMemoryRowModel = (function () {
                     node.expanded = nodeChildDetails.expanded === true;
                     node.field = nodeChildDetails.field;
                     node.key = nodeChildDetails.key;
+                    // pull out all the leaf children and add to our node
+                    setLeafChildren(node);
                 }
                 if (parent && !suppressParentsInRowNodes) {
                     node.parent = parent;

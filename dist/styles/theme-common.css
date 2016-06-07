@@ -112,6 +112,9 @@ todo
 .ag-common .ag-rich-select-row-selected {
   background-color: ag-menu-option-active-color;
 }
+.ag-common .ag-large-text {
+  border: ag-border-1;
+}
 .ag-common .ag-header {
   color: ag-header-foreground-1;
   background: ag-header-background-1;
@@ -308,7 +311,7 @@ todo
   border-bottom: 1px solid ag-separator-color;
 }
 .ag-common .ag-filter-apply-panel {
-  border-top: 1px solid ag-separatorcolor;
+  border-top: 1px solid ag-separator-color;
   padding: 2px;
 }
 .ag-common .ag-filter-value {

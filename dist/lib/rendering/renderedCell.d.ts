@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -83,7 +83,7 @@ export declare class RenderedCell extends Component {
     private addInCellEditor();
     private addPopupCellEditor();
     focusCell(forceBrowserFocus: boolean): void;
-    private stopEditing(cancel?);
+    stopEditing(cancel?: boolean): void;
     private createParams();
     private createEvent(event, eventSource?);
     isCellEditable(): boolean;

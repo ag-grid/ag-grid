@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -90,6 +90,7 @@ export declare class GridApi {
     ensureColumnVisible(key: string | Column | ColDef): void;
     ensureIndexVisible(index: any): void;
     ensureNodeVisible(comparator: any): void;
+    forEachLeafNode(callback: (rowNode: RowNode) => void): void;
     forEachNode(callback: (rowNode: RowNode) => void): void;
     forEachNodeAfterFilter(callback: (rowNode: RowNode) => void): void;
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode) => void): void;
@@ -127,4 +128,5 @@ export declare class GridApi {
     copySelectedRangeDown(): void;
     showColumnMenuAfterButtonClick(colKey: string | Column | ColDef, buttonElement: HTMLElement): void;
     showColumnMenuAfterMouseClick(colKey: string | Column | ColDef, mouseEvent: MouseEvent): void;
+    stopEditing(cancel?: boolean): void;
 }
