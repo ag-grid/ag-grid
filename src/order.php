@@ -46,6 +46,9 @@
                     <li>License type, please advise one of the following:
                         <ul>
                             Developer Application License - for developing one application in your enterprise.
+                            <li style="list-style-type:none;">
+                                <ul>Application Name (this name is tied into the resulting License Key)</ul>
+                            </li>
                         </ul>
                         <ul>
                             Developer Site License - for developing any number of applications in your enterprise.
