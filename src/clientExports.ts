@@ -21,6 +21,7 @@ import {AbstractColumnDropPanel} from "./toolPanel/columnDrop/abstractColumnDrop
 import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
 import {ToolPanelComp} from "./toolPanel/toolPanelComp";
 import {LicenseManager} from "./licenseManager";
+import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
 
 
 export function populateClientExports(exports: any): void {
@@ -28,6 +29,8 @@ export function populateClientExports(exports: any): void {
     exports.RichSelectCellEditor = RichSelectCellEditor;
     exports.RichSelectRow = RichSelectRow;
     exports.VirtualList = VirtualList;
+
+    exports.LargeTextCellEditor = LargeTextCellEditor;
 
     exports.AggregationStage = AggregationStage;
     exports.GroupStage = GroupStage;
