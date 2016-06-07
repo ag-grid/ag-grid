@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     + New column API methods: setPivotColumns, removePivotColumn, removePivotColumns, addPivotColumn, addPivotColumns
 -->
 
-    <h3>Version 4.2.x</h3>
+    <h3>Version 4.2.x (ag-Grid 4.2.6, ag-Grid-Enterprise 4.2.9)</h3>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
     <li>Enhancement: Added colDef.tooltipField, so tooltip can be set on the cell.</li>
     <li>Enhancement: Icons for drag and drop of columns are now all configurable.</li>
