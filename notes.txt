@@ -44,6 +44,7 @@ ag-Grid-React-Example
 
 ag-Grid-Docs
 
++ Update 'notusedXXX' across the project to the next number
 + Update version in package.json
 + Commit to Github (do NOT include built files in /dist)
 + Run 'gulp release'

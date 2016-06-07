@@ -24,11 +24,14 @@ export class ValueService {
     private cellExpressions: boolean;
     private userProvidedTheGroups: boolean;
 
+    private initialised = false;
+
     @PostConstruct
     public init(): void {
         this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        this.initialised = true;
     }
 
     public getValue(column: Column, node: RowNode): any {
@@ -36,6 +39,10 @@ export class ValueService {
     }
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
+
+        // hack - the grid is getting refreshed before this bean gets initialised, race condition.
+        // really should have a way so they get initialised in the right order???
+        if (!this.initialised) { this.init(); }
 
         var colDef = column.getColDef();
         var field = colDef.field;
