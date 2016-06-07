@@ -3,6 +3,8 @@ export * from './dist/lib/rendering/richSelect/richSelectCellEditor';
 export * from './dist/lib/rendering/richSelect/richSelectRow';
 export * from './dist/lib/rendering/virtualList';
 
+export * from './dist/lib/rendering/largeText/largeTextCellEditor.ts';
+
 export * from './dist/lib/rowStages/aggregationStage';
 export * from './dist/lib/rowStages/groupStage';
 
