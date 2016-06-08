@@ -186,7 +186,7 @@ var gridOptions = {
             return '';
         }
     },
-// isScrollLag: function() { return false; },
+isScrollLag: function() { return true; },
 //suppressScrollLag: true,
 // floatingTopRowData: [{},{},{}],
 // floatingBottomRowData: [{},{},{}],
