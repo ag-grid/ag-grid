@@ -347,7 +347,8 @@ export class VirtualPageRowModel implements IRowModel {
             successCallback: successCallback,
             failCallback: failCallback,
             sortModel: sortModel,
-            filterModel: filterModel
+            filterModel: filterModel,
+            context: this.gridOptionsWrapper.getContext()
         };
 
         // check if old version of datasource used
