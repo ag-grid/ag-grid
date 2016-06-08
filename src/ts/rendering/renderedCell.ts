@@ -985,7 +985,9 @@ export class RenderedCell extends Component {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;
             if (_.exists(valueToRender) && valueToRender !== '') {
-                this.eParentOfValue.innerHTML = valueToRender.toString();
+                // not using innerHTML to prevent injection of HTML
+                // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
+                this.eParentOfValue.textContent = valueToRender.toString();
             }
         }
         if (colDef.tooltipField) {
