@@ -16,6 +16,8 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Version 4.3.x</h3>
     <li>Enhancement: new property suppressUseColIdForGroups</li>
+    <li>Enhancement: Safari now uses animation frames for scrolling (Chrome doesn't need it!!)</li>
+    <li>Bugfix: when 'groupSelectsChildren', the group was appear in the api.getSelectedNodes() - it shouldn't</li>
 
     <h3>Version 4.2.x (ag-Grid 4.2.6, ag-Grid-Enterprise 4.2.9)</h3>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
