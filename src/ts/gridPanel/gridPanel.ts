@@ -110,7 +110,10 @@ export class GridPanel {
 
     private forPrint: boolean;
     private scrollWidth: number;
+
+    private requestAnimationFrameExists = typeof requestAnimationFrame === 'function';
     private scrollLagCounter = 0;
+    private scrollLagTicking = false;
 
     private eBodyViewport: HTMLElement;
     private eRoot: HTMLElement;
@@ -910,37 +913,45 @@ export class GridPanel {
             return;
         }
 
-        this.eBodyViewport.addEventListener('scroll', () => {
-
+        var that = this;
+        function onBodyViewportScroll() {
             // we are always interested in horizontal scrolls of the body
-            var newLeftPosition = this.eBodyViewport.scrollLeft;
-            if (newLeftPosition !== this.lastLeftPosition) {
-                this.lastLeftPosition = newLeftPosition;
-                this.horizontallyScrollHeaderCenterAndFloatingCenter();
-                this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
+            var newLeftPosition = that.eBodyViewport.scrollLeft;
+            if (newLeftPosition !== that.lastLeftPosition) {
+                that.lastLeftPosition = newLeftPosition;
+                that.horizontallyScrollHeaderCenterAndFloatingCenter();
+                that.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
             }
 
             // if we are pinning to the right, then it's the right pinned container
             // that has the scroll.
-            if (!this.columnController.isPinningRight()) {
-                var newTopPosition = this.eBodyViewport.scrollTop;
-                if (newTopPosition !== this.lastTopPosition) {
-                    this.lastTopPosition = newTopPosition;
-                    this.verticallyScrollLeftPinned(newTopPosition);
-                    this.requestDrawVirtualRows();
+            if (!that.columnController.isPinningRight()) {
+                var newTopPosition = that.eBodyViewport.scrollTop;
+                if (newTopPosition !== that.lastTopPosition) {
+                    that.lastTopPosition = newTopPosition;
+                    that.verticallyScrollLeftPinned(newTopPosition);
+                    that.rowRenderer.drawVirtualRows();
                 }
             }
-        });
+        }
 
-        this.ePinnedRightColsViewport.addEventListener('scroll', () => {
-            var newTopPosition = this.ePinnedRightColsViewport.scrollTop;
-            if (newTopPosition !== this.lastTopPosition) {
-                this.lastTopPosition = newTopPosition;
-                this.verticallyScrollLeftPinned(newTopPosition);
-                this.verticallyScrollBody(newTopPosition);
-                this.requestDrawVirtualRows();
+        function onPinnedRightScroll() {
+            var newTopPosition = that.ePinnedRightColsViewport.scrollTop;
+            if (newTopPosition !== that.lastTopPosition) {
+                that.lastTopPosition = newTopPosition;
+                that.verticallyScrollLeftPinned(newTopPosition);
+                that.verticallyScrollBody(newTopPosition);
+                that.rowRenderer.drawVirtualRows();
             }
-        });
+        }
+
+        if (this.isUseScrollLag()) {
+            this.eBodyViewport.addEventListener('scroll', ()=> this.debounce(onBodyViewportScroll) );
+            this.ePinnedRightColsViewport.addEventListener('scroll', ()=> this.debounce(onPinnedRightScroll));
+        } else {
+            this.eBodyViewport.addEventListener('scroll', onBodyViewportScroll);
+            this.ePinnedRightColsViewport.addEventListener('scroll', onPinnedRightScroll);
+        }
 
         // this means the pinned panel was moved, which can only
         // happen when the user is navigating in the pinned container
@@ -951,32 +962,39 @@ export class GridPanel {
         });
     }
 
-    private requestDrawVirtualRows() {
+    private isUseScrollLag(): boolean {
         // if we are in IE or Safari, then we only redraw if there was no scroll event
         // in the 50ms following this scroll event. without this, these browsers have
         // a bad scrolling feel, where the redraws clog the scroll experience
         // (makes the scroll clunky and sticky). this method is like throttling
         // the scroll events.
-        var useScrollLag: boolean;
         // let the user override scroll lag option
         if (this.gridOptionsWrapper.isSuppressScrollLag()) {
-            useScrollLag = false;
+            return false;
         } else if (this.gridOptionsWrapper.getIsScrollLag()) {
-            useScrollLag = this.gridOptionsWrapper.getIsScrollLag()();
+            return this.gridOptionsWrapper.getIsScrollLag()();
         } else {
-            useScrollLag = _.isBrowserIE() || _.isBrowserSafari();
+            return _.isBrowserIE() || _.isBrowserSafari();
         }
-        if (useScrollLag) {
+    }
+
+    private debounce(callback: Function): void {
+        if (this.requestAnimationFrameExists && _.isBrowserSafari()) {
+            if (!this.scrollLagTicking) {
+                this.scrollLagTicking = true;
+                requestAnimationFrame( ()=> {
+                    callback();
+                    this.scrollLagTicking = false;
+                });
+            }
+        } else {
             this.scrollLagCounter++;
             var scrollLagCounterCopy = this.scrollLagCounter;
             setTimeout( ()=> {
                 if (this.scrollLagCounter === scrollLagCounterCopy) {
-                    this.rowRenderer.drawVirtualRows();
+                    callback();
                 }
             }, 50);
-        // all other browsers, afaik, are fine, so just do the redraw
-        } else {
-            this.rowRenderer.drawVirtualRows();
         }
     }
 
