@@ -296,7 +296,7 @@ colDef2.aggFunc = function(values) {
 
     <p>
         Using <i>colDef.aggFunc</i> is the preferred way of doing aggregations. However you may find scenarios
-        where you cannot defined you aggregations with respect to row values alone. Maybe you are aggregating
+        where you cannot define your aggregations with respect to row values alone. Maybe you are aggregating
         sales records in different currencies and you need to read the currency code from another column and then
         convert the record to a common currency for aggregation - the point being you need data from more than
         just one column, or you want to put the results into different columns to the inputs for the calculation.
@@ -310,12 +310,33 @@ colDef2.aggFunc = function(values) {
     </note>
 
     <p>
+        For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you
+        have a group defined as follows:
+        <pre>colDef = {
+    field: 'abby',
+    valueGetter: 'data.a + data.b',
+    colId: 'aaa'
+}</pre>
+    Then the result of the aggregation will be stored in <i>data.aaa</i> and not in 'abby'. Most of the time this
+    will not matter for you as the colId will default to the field if colId is missing and it doesn't violate uniqueness.
+    You need to be aware of this, as if you store the result in a place other than the colId, it won't work.
+    </p>
+
+    <p>
         Below shows a contrived example using <i>groupRowAggNodes</i>. The example makes no sense, however it
-        serves the demonstration. It takes the number of medals as inputs and crates to outputs, one as a normal
+        serves the demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal
         sum and another by multiplying the result by Math.PI.
     </p>
     
     <show-example example="exampleGroupRowAggNodes"></show-example>
+
+    <h4>suppressUseColIdForGroups</h4>
+
+    <p>
+        If you wish the grid to get the values as normal from the groups (ie fields and valueGetters) and not depend
+        on the colId then you can override this behaviour by setting the grid property
+        <i>suppressUseColIdForGroups=true</i>.
+    </p>
 
     <h3>Grouping Complex Objects with Keys</h3>
 

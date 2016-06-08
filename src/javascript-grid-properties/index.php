@@ -348,6 +348,11 @@ include '../documentation-main/documentation_header.php';
             <th>viewportRowModelBufferSize</th>
             <td>When using viewport row model, sets the buffer size for the viewport.</td>
         </tr>
+        <tr>
+            <th>suppressUseColIdForGroups</th>
+            <td>When true, the col id's are not used for values in the groups. To be used in conjunction
+            with groupRowAggNodes() callback.</td>
+        </tr>
 
     </table>
 </div>
