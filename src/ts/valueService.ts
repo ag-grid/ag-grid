@@ -23,6 +23,7 @@ export class ValueService {
     private suppressDotNotation: boolean;
     private cellExpressions: boolean;
     private userProvidedTheGroups: boolean;
+    private suppressUseColIdForGroups: boolean;
 
     private initialised = false;
 
@@ -31,6 +32,7 @@ export class ValueService {
         this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
         this.initialised = true;
     }
 
@@ -52,7 +54,7 @@ export class ValueService {
         // if there is a value getter, this gets precedence over a field
         // - need to revisit this, we check 'data' as this is the way for the grid to
         //   not render when on the footer row
-        if (data && node.group && !this.userProvidedTheGroups) {
+        if (data && node.group && !this.userProvidedTheGroups && !this.suppressUseColIdForGroups) {
             result = node.data ? node.data[column.getId()] : undefined;
         } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);

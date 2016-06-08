@@ -52,6 +52,7 @@ export interface GridOptions {
     suppressDragLeaveHidesColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
+    suppressUseColIdForGroups?: boolean;
     rowModelType?: string;
     enableRangeSelection?: boolean;
     suppressEnterprise?: boolean;
