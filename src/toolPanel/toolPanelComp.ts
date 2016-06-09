@@ -24,9 +24,6 @@ export class ToolPanelComp extends Component {
         this.columnSelectPanel = new ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
 
-        // this.addInWrapper(this.columnSelectPanel.getGui(), '50%');
-        this.getGui().appendChild(this.columnSelectPanel.getGui());
-
         var reducePanel = new ReduceColumnPanel();
         this.context.wireBean(reducePanel);
 
@@ -38,11 +35,10 @@ export class ToolPanelComp extends Component {
         this.context.wireBean(pivotColumnsPanel);
         this.context.wireBean(valueColumnsPanel);
 
-        // this.addInWrapper(reducePanel.getGui(), '5%');
-        // this.addInWrapper(valueColumnsPanel.getGui(), '15%');
-        // this.addInWrapper(rowGroupColumnsPanel.getGui(), '15%');
-        // this.addInWrapper(pivotColumnsPanel.getGui(), '15%');
+        // reducePanel.add
+
         this.getGui().appendChild(reducePanel.getGui());
+        this.getGui().appendChild(this.columnSelectPanel.getGui());
         this.getGui().appendChild(valueColumnsPanel.getGui());
         this.getGui().appendChild(rowGroupColumnsPanel.getGui());
         this.getGui().appendChild(pivotColumnsPanel.getGui());
