@@ -356,7 +356,7 @@
             </h2>
 
             <p>
-                We provide pricing for bulk and / or site license. Pricing availabe on request.
+                We provide pricing for bulk and / or site license. Pricing available on request.
             </p>
 
         </div>
