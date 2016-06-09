@@ -992,8 +992,10 @@ export class RenderedCell extends Component {
         }
         if (colDef.tooltipField) {
             var data = this.getDataForRow();
-            var tooltip = data[colDef.tooltipField];
-            this.eParentOfValue.setAttribute('title', tooltip);
+            if (_.exists(data)) {
+                var tooltip = data[colDef.tooltipField];
+                this.eParentOfValue.setAttribute('title', tooltip);
+            }
         }
     }
 

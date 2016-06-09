@@ -343,7 +343,6 @@ todo
     background ag-button-background-1
     color ag-button-foreground-1
     border ag-button-border-1
-    padding 2px
 
   .ag-column-drop-cell-ghost
     opacity 0.5
@@ -370,21 +369,35 @@ todo
     padding-right 4px
 
   .ag-column-drop
-    padding 4px
     background-color ag-background-1
 
   /* this is for the rowGroupPanel, that appears along the top of the grid */
   .ag-column-drop-horizontal
+    padding 4px 4px 4px 4px
     border-top ag-border-1
     border-left ag-border-1
     border-right ag-border-1
 
+    .ag-column-drop-cell
+      padding 2px
+
   /* this is for the column drops that appear in the toolPanel */
   .ag-column-drop-vertical
+    padding 4px 4px 10px 4px
     border-top ag-border-1
 
     .ag-column-drop-cell
       margin-top 2px
 
     .ag-column-drop-empty-message
-      padding 20px
+      text-align center
+      padding 5px
+
+  .ag-column-reduce
+    border-top ag-border-1
+    padding 4px
+    background-color ag-background-1
+
+    label
+      margin 0px
+      vertical-align middle
