@@ -18,7 +18,7 @@ export class ReduceColumnPanel extends Component {
         var id = ReduceColumnPanel.idSequence++;
         return `<div class="ag-column-reduce">
                 <label><input type="radio" class="ag-rb-all-rows" name="ag-column-reduce-radio-${id}"/> All Data</label>
-                <label><input type="radio" class="ag-rb-reduce" name="ag-column-reduce-radio-${id}"/> Reduced Data</label>
+                <label><input type="radio" class="ag-rb-reduce" name="ag-column-reduce-radio-${id}"/> Reduced</label>
             </div>`;
     }
 
