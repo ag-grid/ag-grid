@@ -96,4 +96,8 @@ export class Component implements IEventEmitter {
     public addDestroyFunc(func: ()=>void ): void {
         this.destroyFunctions.push(func);
     }
+    
+    public addCssClass(className: string): void {
+        _.addCssClass(this.getGui(), className);
+    }
 }

@@ -179,8 +179,8 @@ export class ColumnController {
     public setReduce(reduce: boolean): void {
         if (reduce === this.reduce) { return; }
         this.reduce = reduce;
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_REDUCE_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_REDUCE_CHANGED, event);
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {

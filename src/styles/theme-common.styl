@@ -384,7 +384,7 @@ todo
   /* this is for the column drops that appear in the toolPanel */
   .ag-column-drop-vertical
     padding 4px 4px 10px 4px
-    border-top ag-border-1
+    border-bottom ag-border-1
 
     .ag-column-drop-cell
       margin-top 2px
@@ -394,10 +394,14 @@ todo
       padding 5px
 
   .ag-column-reduce
-    border-top ag-border-1
+    border-bottom ag-border-1
     padding 4px
     background-color ag-background-1
 
     label
       margin 0px
       vertical-align middle
+
+  .ag-tool-panel
+    .ag-column-select-panel
+      border-bottom ag-border-1

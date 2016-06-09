@@ -18,12 +18,12 @@ export class PivotService {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
 
-    private uniqueValues: any;
+    private uniqueValues: any = {};
 
     private pivotColumnGroupDefs: (ColDef|ColGroupDef)[];
     private pivotColumnDefs: ColDef[];
 
-    private mapRowNode(rowNode: RowNode): void {
+    private mapRowNode(rowNode: RowNode, uniqueValues: any): void {
 
         var pivotColumns = this.columnController.getPivotColumns();
 
@@ -32,7 +32,7 @@ export class PivotService {
             return;
         }
 
-        rowNode.childrenMapped = this.mapChildren(rowNode.childrenAfterFilter, pivotColumns, 0, this.uniqueValues);
+        rowNode.childrenMapped = this.mapChildren(rowNode.childrenAfterFilter, pivotColumns, 0, uniqueValues);
     }
 
     public getUniqueValues(): any {
@@ -77,24 +77,40 @@ export class PivotService {
 
     public execute(rootNode: RowNode): any {
 
-        this.uniqueValues = {};
-        var that = this;
+        var uniqueValues: any = {};
 
-        function findLeafGroups(rowNode: RowNode): void {
-            if (rowNode.leafGroup) {
-                that.mapRowNode(rowNode);
-            } else {
-                rowNode.childrenAfterFilter.forEach( child => {
-                    findLeafGroups(child);
-                });
-            }
+        this.callMapRowNodeOnLeafGroups(rootNode, uniqueValues);
+
+        var json1 = JSON.stringify(uniqueValues);
+        var json2 = JSON.stringify(this.uniqueValues);
+
+        var uniqueValuesChanged = json1 !== json2;
+
+        // we only continue the below if the unique values are different, as otherwise
+        // the result will be the same as the last time we did it
+        if (!uniqueValuesChanged) {
+            console.log('unique values same');
+            return;
         }
 
-        findLeafGroups(rootNode);
+        console.log('unique values difference');
+
+        this.uniqueValues = uniqueValues;
 
         this.createPivotColumnDefs();
 
         this.columnController.onPivotValueChanged();
+    }
+
+    // recursive function, finds all leaf groups and calls mapRowNode with it
+    public callMapRowNodeOnLeafGroups(rowNode: RowNode, uniqueValues: any): void {
+        if (rowNode.leafGroup) {
+            this.mapRowNode(rowNode, uniqueValues);
+        } else {
+            rowNode.childrenAfterFilter.forEach( child => {
+                this.callMapRowNodeOnLeafGroups(child, uniqueValues);
+            });
+        }
     }
 
     public getPivotColumnGroupDefs(): (ColDef|ColGroupDef)[] {
