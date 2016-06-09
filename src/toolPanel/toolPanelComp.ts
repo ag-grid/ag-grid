@@ -2,6 +2,8 @@ import {Component, PostConstruct, Bean, Autowired, Context} from "ag-grid/main";
 import {ColumnSelectPanel} from "./columnsSelect/columnSelectPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
+import {ReduceColumnPanel} from "./columnDrop/reduceColumnPanel";
+import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 
 @Bean('toolPanel')
 export class ToolPanelComp extends Component {
@@ -22,16 +24,35 @@ export class ToolPanelComp extends Component {
         this.columnSelectPanel = new ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
 
-        this.addInWrapper(this.columnSelectPanel.getGui(), '100%');
+        // this.addInWrapper(this.columnSelectPanel.getGui(), '50%');
+        this.getGui().appendChild(this.columnSelectPanel.getGui());
 
-        var p2 = new RowGroupColumnsPanel(false);
-        var p4 = new PivotColumnsPanel(false);
+        var reducePanel = new ReduceColumnPanel();
+        this.context.wireBean(reducePanel);
 
-        this.context.wireBean(p2);
-        this.context.wireBean(p4);
+        var rowGroupColumnsPanel = new RowGroupColumnsPanel(false);
+        var pivotColumnsPanel = new PivotColumnsPanel(false);
+        var valueColumnsPanel = new ValuesColumnPanel(false);
 
-        // this.addInWrapper(p2.getGui(), '15%');
-        // this.addInWrapper(p4.getGui(), '15%');
+        this.context.wireBean(rowGroupColumnsPanel);
+        this.context.wireBean(pivotColumnsPanel);
+        this.context.wireBean(valueColumnsPanel);
+
+        // this.addInWrapper(reducePanel.getGui(), '5%');
+        // this.addInWrapper(valueColumnsPanel.getGui(), '15%');
+        // this.addInWrapper(rowGroupColumnsPanel.getGui(), '15%');
+        // this.addInWrapper(pivotColumnsPanel.getGui(), '15%');
+        this.getGui().appendChild(reducePanel.getGui());
+        this.getGui().appendChild(valueColumnsPanel.getGui());
+        this.getGui().appendChild(rowGroupColumnsPanel.getGui());
+        this.getGui().appendChild(pivotColumnsPanel.getGui());
+
+        this.addDestroyFunc( ()=> {
+            reducePanel.destroy();
+            rowGroupColumnsPanel.destroy();
+            pivotColumnsPanel.destroy();
+            valueColumnsPanel.destroy();
+        });
     }
 
     private addInWrapper(eElement: HTMLElement, height: string): void {

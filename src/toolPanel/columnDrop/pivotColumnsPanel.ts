@@ -23,7 +23,6 @@ import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
 var svgFactory = SvgFactory.getInstance();
 
-@Bean('pivotColumnsPanel')
 export class PivotColumnsPanel extends AbstractColumnDropPanel {
 
     @Autowired('columnController') private columnController: ColumnController;

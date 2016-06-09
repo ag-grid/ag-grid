@@ -8,6 +8,7 @@ import {
     GridPanel,
     Column,
     PostConstruct,
+    EventService,
     DragSource
 } from "ag-grid/main";
 
@@ -22,10 +23,13 @@ export class RenderedColumn extends Component {
         '    <span id="eColumnVisibleIcon" class="ag-column-visible-icon"></span>' +
         '    <span id="eColumnHiddenIcon" class="ag-column-hidden-icon"></span>' +
         '  </span>' +
+        '  <input class="ag-cb-operation" type="checkbox">' +
+        '  </input>' +
         '  <span id="eText" class="ag-column-select-label"></span>' +
         '</div>';
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
@@ -37,6 +41,8 @@ export class RenderedColumn extends Component {
     private allowDragging: boolean;
 
     private displayName: string;
+
+    private cbOperation: HTMLInputElement;
 
     constructor(column: Column, columnDept: number, allowDragging: boolean) {
         super(RenderedColumn.TEMPLATE);
@@ -60,6 +66,49 @@ export class RenderedColumn extends Component {
         if (this.allowDragging) {
             this.addDragSource();
         }
+
+        this.addDestroyableEventListener(this.eventService, 'columnValueChanged', this.onColumnsChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, 'columnPivotChanged', this.onColumnsChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, 'columnRowGroupChanged', this.onColumnsChanged.bind(this) );
+
+        this.cbOperation = this.queryForHtmlInputElement('.ag-cb-operation');
+        this.addDestroyableEventListener(this.cbOperation, 'change', this.onCbOperation.bind(this) );
+        this.onColumnsChanged();
+    }
+
+    private onCbOperation(): void {
+        var isPivot = this.columnController.getPivotColumns().indexOf(this.column) >= 0;
+        var isRowGroup = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        var isValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
+
+        var oldCheckedState = isPivot || isRowGroup || isValue;
+        var newCheckedState = this.cbOperation.checked;
+
+        if (newCheckedState !== oldCheckedState) {
+            if (newCheckedState) {
+                // turn on the operation
+                this.columnController.addRowGroupColumn(this.column);
+            } else {
+                // turn off the operation
+                if (isPivot) {
+                    this.columnController.removePivotColumn(this.column);
+                }
+                if (isValue) {
+                    this.columnController.removeValueColumn(this.column);
+                }
+                if (isRowGroup) {
+                    this.columnController.removeRowGroupColumn(this.column);
+                }
+            }
+        }
+    }
+
+    private onColumnsChanged(): void {
+        var isPivot = this.columnController.getPivotColumns().indexOf(this.column) >= 0;
+        var isRowGroup = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        var isValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
+        var checked = isPivot || isRowGroup || isValue;
+        this.cbOperation.checked = checked;
     }
 
     private setupVisibleIcons(): void {

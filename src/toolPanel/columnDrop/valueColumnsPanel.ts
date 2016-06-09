@@ -1,5 +1,4 @@
-import {
-    Utils as _,
+import {Utils,
     SvgFactory,
     Bean,
     Component,
@@ -17,13 +16,12 @@ import {
     Events,
     DraggingEvent,
     Column,
-    DragSource
-} from "ag-grid/main";
+    DragSource} from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
 var svgFactory = SvgFactory.getInstance();
 
-export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
+export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -47,44 +45,36 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
         });
 
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to group');
-        var title = localeTextFunc('groups', 'Groups');
+        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+        var title = localeTextFunc('values', 'Values');
 
         super.init({
-            dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            iconFactory: svgFactory.createGroupIcon,
+            dragAndDropIcon: DragAndDropService.ICON_AGGREGATE,
+            iconFactory: svgFactory.createAggregationIcon,
             emptyMessage: emptyMessage,
             title: title
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     }
 
-    protected isColumnDroppable(column:Column):boolean {
-        var columnGroupable = !column.getColDef().suppressRowGroup;
-        var columnNotAlreadyGrouped = !this.columnController.isColumnRowGrouped(column);
-        return columnGroupable && columnNotAlreadyGrouped;
+    protected isColumnDroppable(column: Column): boolean {
+        var columnValue = !column.getColDef().suppressAggregation;
+        var columnNotValue= !this.columnController.isColumnValue(column);
+        return columnValue && columnNotValue;
     }
 
-    protected removeColumns(columns: Column[]) {
-        // this panel only allows dragging columns (not column groups) so we are guaranteed
-        // the dragItem is a column
-        var rowGroupColumns = this.columnController.getRowGroupColumns();
-        columns.forEach( column => {
-            var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
-            if (columnIsGrouped) {
-                this.columnController.removeRowGroupColumn(column);
-                this.columnController.setColumnVisible(column, true);
-            }
-        });
+    protected removeColumns(columns: Column[]): void {
+        var columnsCurrentlyValueColumns = Utils.filter(columns, column => this.columnController.isColumnValue(column) );
+        this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
     }
 
     protected addColumns(columns: Column[]) {
-        this.columnController.addRowGroupColumns(columns);
+        this.columnController.addValueColumns(columns);
     }
 
     protected getExistingColumns(): Column[] {
-        return this.columnController.getRowGroupColumns();
+        return this.columnController.getValueColumns();
     }
 
 }
