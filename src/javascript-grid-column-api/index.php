@@ -180,6 +180,12 @@ include '../documentation-main/documentation_header.php';
             <td>Returns all the columns, regardless of visible or not.</td>
         </tr>
         <tr>
+            <th>getAllGridColumns()</th>
+            <td>Returns all the grid columns, same as getAllColumns(), except a) it has the order of the columns
+                that are presented in the grid and b) it's after the 'pivot' step, so if pivoting, has the value
+                columns for the pivot.</td>
+        </tr>
+        <tr>
             <th>getDisplayedCenterColumns(), getDisplayedLeftColumns(), getDisplayedRightColumns(), getAllDisplayedColumns()</th>
             <td>Returns all columns currently displayed (eg are visible and if in a group, the group is showing
                 the columns) for the pinned left, center and pinned right portions of the grid.</td>

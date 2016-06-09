@@ -145,7 +145,7 @@ var gridOptions = {
     groupColumnDef: groupColumn,
 //suppressCellSelection: true,
 //suppressMultiSort: true,
-    showToolPanel: window.innerWidth > 1000,
+    showToolPanel: true,//window.innerWidth > 1000,
 //toolPanelSuppressGroups: true,
 //toolPanelSuppressValues: true,
 //groupSuppressAutoColumn: true,
@@ -331,7 +331,7 @@ var defaultCols = [
         // column group 'Game of Choice'
         headerName: 'Game of Choice',
         children: [
-            {headerName: "Game of Choice", field: "game.name", width: 180, editable: true, filter: 'set',
+            {headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
                 tooltipField: 'gameName',
         cellClass: function () {
             return 'alphabet';
