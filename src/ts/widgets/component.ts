@@ -27,7 +27,7 @@ export class Component implements IEventEmitter {
     }
 
     private wireQuerySelectors(): void {
-        var metaData = (<any>this).__agBeanMetaData;
+        var metaData = (<any>this).__agComponentMetaData;
         if (!metaData || !metaData.querySelectors) { return; }
 
         if (!this.eGui) { return; }
@@ -40,8 +40,8 @@ export class Component implements IEventEmitter {
     private addAnnotatedEventListeners(): void {
         this.removeAnnotatedEventListeners();
 
-        var metaData = (<any>this).__agBeanMetaData;
-        if (!metaData || !metaData.eventListenerMethods) { return; }
+        var metaData = (<any>this).__agComponentMetaData;
+        if (!metaData || !metaData.listenerMethods) { return; }
 
         if (!this.eGui) { return; }
 
@@ -49,7 +49,7 @@ export class Component implements IEventEmitter {
             this.annotatedEventListeners = [];
         }
 
-        metaData.eventListenerMethods.forEach( (eventListener: any) => {
+        metaData.listenerMethods.forEach( (eventListener: any) => {
             var listener = (<any>this)[eventListener.methodName].bind(this);
             this.eGui.addEventListener(eventListener.eventName, listener);
             this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});

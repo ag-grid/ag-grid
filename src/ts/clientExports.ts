@@ -19,8 +19,13 @@ import {ColumnUtils} from "./columnController/columnUtils";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
 import {
-    Context, Autowired, PostConstruct, Optional, Bean, Qualifier, PreDestroy, EventListener,
-    QuerySelector
+    Context,
+    Autowired,
+    PostConstruct,
+    Optional,
+    Bean,
+    Qualifier,
+    PreDestroy
 } from "./context/context";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
@@ -85,6 +90,7 @@ import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
 import {PivotService} from "./columnController/pivotService";
+import {QuerySelector, Listener} from "./widgets/componentAnnotations";
 
 export function populateClientExports(exports: any): void {
 
@@ -110,7 +116,7 @@ export function populateClientExports(exports: any): void {
     exports.Optional = Optional;
     exports.Bean = Bean;
     exports.Qualifier = Qualifier;
-    exports.EventListener = EventListener;
+    exports.Listener = Listener;
     exports.QuerySelector = QuerySelector;
 
     // dragAndDrop
