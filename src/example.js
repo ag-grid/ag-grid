@@ -363,7 +363,7 @@ var defaultCols = [
         filterParams: {cellRenderer: currencyRenderer},
         // colId: 'sf',
         // valueGetter: '55',
-        aggFunc: 'sum',
+        // aggFunc: 'sum',
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
             sortDescending: '<i class="fa fa-sort-amount-desc"/>'
