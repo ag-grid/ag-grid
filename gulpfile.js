@@ -147,9 +147,8 @@ function webpackTask(minify, styles) {
 }
 
 function stylusTask() {
-
     // Uncompressed
-    gulp.src('src/styles/*.styl')
+    gulp.src(['src/styles/*.styl', '!src/styles/theme-common.styl'])
         .pipe(foreach(function(stream, file) {
             var currentTheme = path.basename(file.path, '.styl');
             var themeName = currentTheme.replace('theme-','');
@@ -158,10 +157,9 @@ function stylusTask() {
                     use: nib(),
                     compress: false
                 }))
-                .pipe(replace('ag-common','ag-' + themeName))
+                .pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)))
                 .pipe(gulp.dest('dist/styles/'));
         }));
-
 }
 
 function watchTask() {
