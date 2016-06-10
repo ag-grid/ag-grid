@@ -8,6 +8,7 @@ import {
     GridPanel,
     Column,
     PostConstruct,
+    QuerySelector,
     EventService,
     DragSource
 } from "ag-grid/main";
@@ -33,16 +34,15 @@ export class RenderedColumn extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
+    @QuerySelector('.ag-cb-operation') private cbOperation: HTMLInputElement;
+    @QuerySelector('#eColumnHiddenIcon') private eColumnVisibleIcon: HTMLInputElement;
+    @QuerySelector('#eColumnVisibleIcon') private eColumnHiddenIcon: HTMLInputElement;
+
     private column: Column;
     private columnDept: number;
 
-    private eColumnVisibleIcon: HTMLInputElement;
-    private eColumnHiddenIcon: HTMLInputElement;
     private allowDragging: boolean;
-
     private displayName: string;
-
-    private cbOperation: HTMLInputElement;
 
     constructor(column: Column, columnDept: number, allowDragging: boolean) {
         super(RenderedColumn.TEMPLATE);
@@ -71,7 +71,6 @@ export class RenderedColumn extends Component {
         this.addDestroyableEventListener(this.eventService, 'columnPivotChanged', this.onColumnsChanged.bind(this) );
         this.addDestroyableEventListener(this.eventService, 'columnRowGroupChanged', this.onColumnsChanged.bind(this) );
 
-        this.cbOperation = this.queryForHtmlInputElement('.ag-cb-operation');
         this.addDestroyableEventListener(this.cbOperation, 'change', this.onCbOperation.bind(this) );
         this.onColumnsChanged();
     }
@@ -112,14 +111,12 @@ export class RenderedColumn extends Component {
     }
 
     private setupVisibleIcons(): void {
-        this.eColumnHiddenIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnHiddenIcon');
-        this.eColumnVisibleIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnVisibleIcon');
-
         this.eColumnHiddenIcon.appendChild(svgFactory.createColumnHiddenIcon());
         this.eColumnVisibleIcon.appendChild(svgFactory.createColumnVisibleIcon());
 
-        this.eColumnHiddenIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
-        this.eColumnVisibleIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
+        //todo: remove these event listeners
+        this.addDestroyableEventListener(this.eColumnHiddenIcon, 'click', this.onColumnVisibilityChanged.bind(this));
+        this.addDestroyableEventListener(this.eColumnVisibleIcon, 'click', this.onColumnVisibilityChanged.bind(this));
 
         var columnStateChangedListener = this.onColumnStateChangedListener.bind(this);
         this.column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
