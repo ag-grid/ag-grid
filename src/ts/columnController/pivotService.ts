@@ -9,6 +9,18 @@ import {RowNode} from "../entities/rowNode";
 import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
 
+/**
+ * Service goes to all the leafGroups and places the children into buckets using
+ * the pivot columns as the keys. It also keeps track of all of the unique values,
+ * as these will end up as columns.
+ *
+ * If there are 2 or more pivot columns, then the buckets are 2d or more. That means
+ * buckets of buckets (or maps of maps), (or n-dimension arrays but they are not arrays
+ * they are maps).
+ *
+ * A leafGroup is a group that has normal rows as children, ie no groups as children.
+ */
+
 @Bean('pivotService')
 export class PivotService {
 
@@ -23,7 +35,67 @@ export class PivotService {
     private pivotColumnGroupDefs: (ColDef|ColGroupDef)[];
     private pivotColumnDefs: ColDef[];
 
-    private mapRowNode(rowNode: RowNode, uniqueValues: any): void {
+    private valueColumnsHashLastTime: string;
+
+    public execute(rootNode: RowNode): any {
+
+        var uniqueValues = this.bucketUpRowNodes(rootNode);
+
+        var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
+
+        var valueColumns = this.columnController.getValueColumns();
+        var valueColumnsHash = valueColumns.map( (column)=> column.getId() ).join('#');
+
+        var valueColumnsChanged = this.valueColumnsHashLastTime !== valueColumnsHash;
+        this.valueColumnsHashLastTime = valueColumnsHash;
+
+        if (uniqueValuesChanged || valueColumnsChanged) {
+            this.createPivotColumnDefs();
+            this.columnController.setAlternativeColumnDefs(this.pivotColumnGroupDefs);
+        }
+
+    }
+
+    private setUniqueValues(newValues: any): boolean {
+        var json1 = JSON.stringify(newValues);
+        var json2 = JSON.stringify(this.uniqueValues);
+
+        var uniqueValuesChanged = json1 !== json2;
+
+        // we only continue the below if the unique values are different, as otherwise
+        // the result will be the same as the last time we did it
+        if (uniqueValuesChanged) {
+            this.uniqueValues = newValues;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // returns true if values were different
+    private bucketUpRowNodes(rootNode: RowNode): any {
+
+        // accessed from inside inner function
+        var uniqueValues: any = {};
+        var that = this;
+
+        recursivelySearchForLeafNodes(rootNode);
+
+        return uniqueValues;
+
+        // finds all leaf groups and calls mapRowNode with it
+        function recursivelySearchForLeafNodes(rowNode: RowNode): void {
+            if (rowNode.leafGroup) {
+                that.bucketRowNode(rowNode, uniqueValues);
+            } else {
+                rowNode.childrenAfterFilter.forEach( child => {
+                    recursivelySearchForLeafNodes(child);
+                });
+            }
+        }
+    }
+
+    private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
 
         var pivotColumns = this.columnController.getPivotColumns();
 
@@ -32,14 +104,10 @@ export class PivotService {
             return;
         }
 
-        rowNode.childrenMapped = this.mapChildren(rowNode.childrenAfterFilter, pivotColumns, 0, uniqueValues);
+        rowNode.childrenMapped = this.bucketChildren(rowNode.childrenAfterFilter, pivotColumns, 0, uniqueValues);
     }
 
-    public getUniqueValues(): any {
-        return this.uniqueValues;
-    }
-    
-    private mapChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
+    private bucketChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
 
         var mappedChildren: any = {};
         var pivotColumn = pivotColumns[pivotIndex];
@@ -68,53 +136,11 @@ export class PivotService {
             var result: any = {};
             
             _.iterateObject(mappedChildren, (key: string, value: RowNode[])=> {
-                result[key] = this.mapChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
+                result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
             });
             
             return result;
         }
-    }
-
-    public execute(rootNode: RowNode): any {
-
-        var uniqueValues: any = {};
-
-        this.callMapRowNodeOnLeafGroups(rootNode, uniqueValues);
-
-        var json1 = JSON.stringify(uniqueValues);
-        var json2 = JSON.stringify(this.uniqueValues);
-
-        var uniqueValuesChanged = json1 !== json2;
-
-        // we only continue the below if the unique values are different, as otherwise
-        // the result will be the same as the last time we did it
-        if (!uniqueValuesChanged) {
-            console.log('unique values same');
-            return;
-        }
-
-        console.log('unique values difference');
-
-        this.uniqueValues = uniqueValues;
-
-        this.createPivotColumnDefs();
-
-        this.columnController.onPivotValueChanged();
-    }
-
-    // recursive function, finds all leaf groups and calls mapRowNode with it
-    public callMapRowNodeOnLeafGroups(rowNode: RowNode, uniqueValues: any): void {
-        if (rowNode.leafGroup) {
-            this.mapRowNode(rowNode, uniqueValues);
-        } else {
-            rowNode.childrenAfterFilter.forEach( child => {
-                this.callMapRowNodeOnLeafGroups(child, uniqueValues);
-            });
-        }
-    }
-
-    public getPivotColumnGroupDefs(): (ColDef|ColGroupDef)[] {
-        return this.pivotColumnGroupDefs;
     }
 
     public getPivotColumnDefs(): ColDef[] {

@@ -12,16 +12,59 @@ export class Component implements IEventEmitter {
 
     private childComponents: Component[] = [];
 
+    private annotatedEventListeners: any[] = [];
+
     constructor(template?: string) {
         if (template) {
-            this.eGui = _.loadTemplate(<string>template);
+            this.setTemplate(template);
         }
     }
 
     public setTemplate(template: string): void {
         this.eGui = _.loadTemplate(<string>template);
+        this.addAnnotatedEventListeners();
+        this.wireQuerySelectors();
     }
-    
+
+    private wireQuerySelectors(): void {
+        var metaData = (<any>this).__agBeanMetaData;
+        if (!metaData || !metaData.querySelectors) { return; }
+
+        if (!this.eGui) { return; }
+
+        metaData.querySelectors.forEach( (querySelector: any) => {
+            (<any>this)[querySelector.attributeName] = this.eGui.querySelector(querySelector.querySelector);
+        } );
+    }
+
+    private addAnnotatedEventListeners(): void {
+        this.removeAnnotatedEventListeners();
+
+        var metaData = (<any>this).__agBeanMetaData;
+        if (!metaData || !metaData.eventListenerMethods) { return; }
+
+        if (!this.eGui) { return; }
+
+        if (!this.annotatedEventListeners) {
+            this.annotatedEventListeners = [];
+        }
+
+        metaData.eventListenerMethods.forEach( (eventListener: any) => {
+            var listener = (<any>this)[eventListener.methodName].bind(this);
+            this.eGui.addEventListener(eventListener.eventName, listener);
+            this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
+        });
+    }
+
+    private removeAnnotatedEventListeners(): void {
+        if (!this.annotatedEventListeners) { return; }
+        if (!this.eGui) { return; }
+        this.annotatedEventListeners.forEach( (eventListener: any) => {
+            this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
+        });
+        this.annotatedEventListeners = null;
+    }
+
     public addEventListener(eventType: string, listener: Function): void {
         if (!this.localEventService) {
             this.localEventService = new EventService();
@@ -70,6 +113,7 @@ export class Component implements IEventEmitter {
     public destroy(): void {
         this.childComponents.forEach( childComponent => childComponent.destroy() );
         this.destroyFunctions.forEach( func => func() );
+        this.removeAnnotatedEventListeners();
     }
 
     public addGuiEventListener(event: string, listener: (event: any)=>void): void {
