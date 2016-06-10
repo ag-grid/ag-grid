@@ -17,6 +17,7 @@ var tsd = require('gulp-tsd');
 var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
 var replace = require('gulp-replace');
+var gulpIf = require('gulp-if');
 
 var jasmine = require('gulp-jasmine');
 
