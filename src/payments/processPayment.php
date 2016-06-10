@@ -52,7 +52,7 @@ if ($result->success) {
     $mail->addReplyTo('accounts@ag-grid.com', 'ag-Grid Accounts');
     $mail->isHTML(true);
 
-    $mail->Subject = 'ag-Grid Payment Received';
+    $mail->Subject = 'ag-Grid Payment Received (account '.$account->id.')';
     $mail->Body    = '<div style="padding: 20px;">Your payment of £'.$account->amount.' to account '.$account->id.' was received.</div><div style="padding: 20px;">Thank you for choosing ag-Grid.</div>';
     $mail->AltBody = 'Your payment of £'.$account->amount.' was received.';
 
