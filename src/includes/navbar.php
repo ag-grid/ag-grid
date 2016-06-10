@@ -16,7 +16,7 @@
                <span class="pull-left">
                    <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true"
                             frameborder="0" scrolling="0" width="120px" height="20px"
-                            style="position: relative; top: 3px;" class="hide-when-small">
+                            style="position: relative; top: 3px;" class="hide-when-medium">
                     </iframe>
                 </span>          
             </div>
