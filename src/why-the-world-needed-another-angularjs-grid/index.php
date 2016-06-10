@@ -396,7 +396,7 @@
 
                 <div class="quote-block">
                     <div class="quote">
-                        "Thanks for suck a amazing angular-grid, we loved that and we are using in our projects."
+                        "Thanks for such a amazing angular-grid, we loved that and we are using in our projects."
                     </div>
                     <div class="under-quote">
                         Urvish 27th March 2015 via ag-Grid Forum
