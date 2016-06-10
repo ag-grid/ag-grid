@@ -70,8 +70,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private onValueChanged(): void {
-        var pivotActive = this.columnController.getPivotColumns().length > 0;
-        if (pivotActive) {
+        if (this.columnController.isPivotActive()) {
             this.refreshModel(Constants.STEP_PIVOT);
         } else {
             this.refreshModel(Constants.STEP_AGGREGATE);

@@ -219,6 +219,7 @@ export class GridPanel {
 
     private addEventListeners(): void {
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_REDUCE_CHANGED, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
@@ -768,8 +769,9 @@ export class GridPanel {
     public onColumnsChanged(event: ColumnChangeEvent) {
 
         if (event.isContainerWidthImpacted()) {
-            this.setWidthsOfContainers();
+            // this.setWidthsOfContainers();
         }
+        this.setWidthsOfContainers();
 
         if (event.isPinnedPanelVisibilityImpacted()) {
             this.showPinnedColContainersIfNeeded();

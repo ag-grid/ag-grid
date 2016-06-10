@@ -39,6 +39,11 @@ export class PivotService {
 
     public execute(rootNode: RowNode): any {
 
+        if (!this.columnController.isPivotActive()) {
+            this.columnController.setSecondaryColumns(null);
+            return;
+        }
+        
         var uniqueValues = this.bucketUpRowNodes(rootNode);
 
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
@@ -51,7 +56,7 @@ export class PivotService {
 
         if (uniqueValuesChanged || valueColumnsChanged) {
             this.createPivotColumnDefs();
-            this.columnController.setAlternativeColumnDefs(this.pivotColumnGroupDefs);
+            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs);
         }
 
     }

@@ -134,6 +134,7 @@ export class ColumnController {
     private secondaryBalancedTree: OriginalColumnGroupChild[];
     private secondaryColumns: Column[];
     private secondaryHeaderRowCount = 0;
+    private secondaryColumnsPresent = false;
 
     // these are all columns that are available to the grid for rendering after pivot
     private gridBalancedTree: OriginalColumnGroupChild[];
@@ -618,6 +619,11 @@ export class ColumnController {
     // + rowController
     public getPivotColumns(): Column[] {
         return this.pivotColumns ? this.pivotColumns : [];
+    }
+
+    // + inMemoryRowModel
+    public isPivotActive(): boolean {
+        return this.pivotColumns && this.pivotColumns.length > 0;
     }
     
     // + toolPanel
@@ -1137,7 +1143,7 @@ export class ColumnController {
         } else {
             // we are reducing, so we ignore the visibility and show columns that
             // have an aggregation on them
-            return this.valueColumns;
+            return this.valueColumns.slice();
         }
     }
 
@@ -1164,17 +1170,28 @@ export class ColumnController {
         this.setFirstRightAndLastLeftPinned();
     }
 
-    public setAlternativeColumnDefs(colDefs: (ColDef|ColGroupDef)[]): void {
+    public isSecondaryColumnsPresent(): boolean {
+        return this.secondaryColumnsPresent;
+    }
 
-        if (colDefs && colDefs.length>0) {
+    public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[]): void {
+
+        var newColsPresent = colDefs && colDefs.length>0;
+        
+        // if not cols passed, and we had to cols anyway, then do nothing
+        if (!newColsPresent && !this.secondaryColumnsPresent) { return; }
+        
+        if (newColsPresent) {
             var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(colDefs);
             this.secondaryBalancedTree = balancedTreeResult.balancedTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
+            this.secondaryColumnsPresent = true;
         } else {
             this.secondaryBalancedTree = null;
             this.secondaryHeaderRowCount = -1;
             this.secondaryColumns = null;
+            this.secondaryColumnsPresent = false;
         }
 
         this.copyDownGridColumns();
