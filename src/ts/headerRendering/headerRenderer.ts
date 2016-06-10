@@ -54,11 +54,20 @@ export class HeaderRenderer {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
 
         // for resized, the individual cells take care of this, so don't need to refresh everything
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
 
         if (this.columnController.isReady()) {
+            this.refreshHeader();
+        }
+    }
+
+    private onColumnValueChanged(): void {
+        // if we are doing reduce, then adding / removing value columns
+        // has the impact of adding / removing the column visibility
+        if (this.columnController.isReduce()) {
             this.refreshHeader();
         }
     }

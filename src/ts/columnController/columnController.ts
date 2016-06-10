@@ -120,7 +120,6 @@ export class ColumnController {
     @Autowired('context') private context: Context;
     @Autowired('pivotService') private pivotService: PivotService;
 
-
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
     // provides a new set of column definitions. otherwise this tree is used to build up
@@ -132,11 +131,9 @@ export class ColumnController {
     // tree above (originalBalancedTree)
     private originalColumns: Column[]; // every column available
 
-
-
-    private alternativeBalancedTree: OriginalColumnGroupChild[];
-    private alternativeColumns: Column[];
-    private alternativeHeaderRowCount = 0;
+    private secondaryBalancedTree: OriginalColumnGroupChild[];
+    private secondaryColumns: Column[];
+    private secondaryHeaderRowCount = 0;
 
     // these are all columns that are available to the grid for rendering after pivot
     private gridBalancedTree: OriginalColumnGroupChild[];
@@ -182,6 +179,7 @@ export class ColumnController {
     public setReduce(reduce: boolean): void {
         if (reduce === this.reduce) { return; }
         this.reduce = reduce;
+        this.updateDisplayedColumns();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_REDUCE_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_REDUCE_CHANGED, event);
     }
@@ -315,7 +313,7 @@ export class ColumnController {
         // columns may differ, so need to work out all the columns again.
         // this is why why don't use 'actionOnColumns', as we need to do
         // this before we fire the event
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
@@ -338,7 +336,7 @@ export class ColumnController {
             }
         });
 
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
         
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
@@ -359,7 +357,7 @@ export class ColumnController {
         // as with changing rowGroupColumn, changing the pivot totally changes
         // the columns that are displayed, so we don't use 'actionOnColumns', as 
         // we need to do this before we fire the event
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGED, event);
@@ -382,7 +380,7 @@ export class ColumnController {
             }
         });
 
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGED, event);
@@ -410,6 +408,11 @@ export class ColumnController {
         });
 
         if (updatedColumns.length > 0) {
+
+            if (this.reduce) {
+                this.updateDisplayedColumns();
+            }
+
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED)
                 .withColumns(updatedColumns);
             if (updatedColumns.length===1) {
@@ -443,6 +446,11 @@ export class ColumnController {
         });
 
         if (updatedColumns.length > 0) {
+
+            if (this.reduce) {
+                this.updateDisplayedColumns();
+            }
+
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED)
                 .withColumns(updatedColumns);
             if (updatedColumns.length===1) {
@@ -525,7 +533,7 @@ export class ColumnController {
 
         _.moveInArray(this.gridColumns, columnsToMove, toIndex);
 
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_MOVED)
             .withToIndex(toIndex)
@@ -725,7 +733,7 @@ export class ColumnController {
 
         if (updatedColumns.length===0) {return;}
 
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
         var event = createEvent();
 
         event.withColumns(updatedColumns);
@@ -881,7 +889,7 @@ export class ColumnController {
         });
 
         this.copyDownGridColumns();
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
@@ -1042,7 +1050,7 @@ export class ColumnController {
 
         this.copyDownGridColumns();
 
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
         this.ready = true;
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
@@ -1123,13 +1131,23 @@ export class ColumnController {
         });
     }
 
-    private buildDisplayedFromGrid(): void {
+    private filterOutVisibleColumns(): Column[] {
+        if (this.secondaryColumns || !this.reduce) {
+            return _.filter(this.gridColumns, column => column.isVisible() );
+        } else {
+            // we are reducing, so we ignore the visibility and show columns that
+            // have an aggregation on them
+            return this.valueColumns;
+        }
+    }
+
+    private updateDisplayedColumns(): void {
 
         // save opened / closed state
         var oldGroupState = this.getColumnGroupState();
         this.createGroupAutoColumn();
 
-        var visibleColumns = _.filter(this.gridColumns, column => column.isVisible() );
+        var visibleColumns = this.filterOutVisibleColumns();
 
         if (this.groupAutoColumnActive) {
             visibleColumns.unshift(this.groupAutoColumn);
@@ -1145,27 +1163,22 @@ export class ColumnController {
 
         this.setFirstRightAndLastLeftPinned();
     }
-    //
-    // public onPivotValueChanged(): void {
-    //     // if we are pivoting, then we need to re-work the pivot columns
-    //     this.setupGridColumns();
-    // }
 
     public setAlternativeColumnDefs(colDefs: (ColDef|ColGroupDef)[]): void {
 
         if (colDefs && colDefs.length>0) {
             var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(colDefs);
-            this.alternativeBalancedTree = balancedTreeResult.balancedTree;
-            this.alternativeHeaderRowCount = balancedTreeResult.treeDept + 1;
-            this.alternativeColumns = this.getColumnsFromTree(this.alternativeBalancedTree);
+            this.secondaryBalancedTree = balancedTreeResult.balancedTree;
+            this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
+            this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
         } else {
-            this.alternativeBalancedTree = null;
-            this.alternativeHeaderRowCount = -1;
-            this.alternativeColumns = null;
+            this.secondaryBalancedTree = null;
+            this.secondaryHeaderRowCount = -1;
+            this.secondaryColumns = null;
         }
 
         this.copyDownGridColumns();
-        this.buildDisplayedFromGrid();
+        this.updateDisplayedColumns();
 
         var event = new ColumnChangeEvent(Events.EVENT_PIVOT_VALUE_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_PIVOT_VALUE_CHANGED, event);
@@ -1173,10 +1186,10 @@ export class ColumnController {
 
     // called from: setColumnState, setColumnDefs, setAlternativeColumnDefs
     private copyDownGridColumns(): void {
-        if (this.alternativeColumns) {
-            this.gridBalancedTree = this.alternativeBalancedTree.slice();
-            this.gridHeaderRowCount = this.alternativeHeaderRowCount;
-            this.gridColumns = this.alternativeColumns.slice();
+        if (this.secondaryColumns) {
+            this.gridBalancedTree = this.secondaryBalancedTree.slice();
+            this.gridHeaderRowCount = this.secondaryHeaderRowCount;
+            this.gridColumns = this.secondaryColumns.slice();
         } else {
             this.gridBalancedTree = this.originalBalancedTree.slice();
             this.gridHeaderRowCount = this.originalHeaderRowCount;
