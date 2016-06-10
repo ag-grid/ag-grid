@@ -407,8 +407,8 @@ months.forEach(function (month) {
         // aggFunc: 'sum',
         //hide: true,
         cellClassRules: {
-            'good-score': 'x > 50000',
-            'bad-score': 'x < 10000'
+            'good-score': 'typeof x === "number" && x > 50000',
+            'bad-score': 'typeof x === "number" && x < 10000'
         },
         newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
         filterCellRenderer: currencyRenderer,
@@ -533,7 +533,7 @@ function createRowItem(row, colCount) {
     rowItem.name = firstName + " " + lastName;
 
     rowItem.game = {
-        name: games[row % games.length],
+        name: games[Math.floor(row*13/17*19) % games.length],
         bought: booleanValues[row % booleanValues.length]
     };
     rowItem.gameName = 'toolTip: ' + rowItem.game.name.toUpperCase();
