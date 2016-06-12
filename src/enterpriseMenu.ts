@@ -359,7 +359,7 @@ export class EnterpriseMenu {
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
 
         result.push('pinSubMenu');
-        if (doingGrouping && !this.column.getColDef().suppressAggregation) {
+        if (doingGrouping && this.column.isDimension()) {
             result.push('valueAggSubMenu');
         }
         result.push('separator');
@@ -367,7 +367,7 @@ export class EnterpriseMenu {
         result.push('autoSizeAll');
         result.push('separator');
 
-        if (!this.column.getColDef().suppressRowGroup) {
+        if (this.column.isDimension()) {
             if (groupedByThisColumn) {
                 result.push('rowUnGroup');
             } else {

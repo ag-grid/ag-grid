@@ -1,7 +1,6 @@
-import {Utils,
+import {
+    Utils,
     SvgFactory,
-    Bean,
-    Component,
     Autowired,
     ColumnController,
     EventService,
@@ -9,14 +8,10 @@ import {Utils,
     LoggerFactory,
     DragAndDropService,
     GridOptionsWrapper,
-    GridPanel,
-    Logger,
-    DropTarget,
     PostConstruct,
     Events,
-    DraggingEvent,
-    Column,
-    DragSource} from "ag-grid/main";
+    Column
+} from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
 var svgFactory = SvgFactory.getInstance();
@@ -59,7 +54,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
-        var columnValue = !column.getColDef().suppressAggregation;
+        var columnValue = column.isMeasure();
         var columnNotValue= !this.columnController.isColumnValue(column);
         return columnValue && columnNotValue;
     }

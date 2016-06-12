@@ -1,5 +1,5 @@
 import {
-    Utils,
+    Context,
     SvgFactory,
     Autowired,
     Component,
@@ -13,6 +13,7 @@ import {
     Listener,
     PostConstruct,
     EventService,
+    AgCheckbox,
     DragSource
 } from "ag-grid/main";
 
@@ -22,11 +23,8 @@ export class RenderedColumn extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
-        '  <span id="eIndent" class="ag-column-select-indent"></span>' +
-        '  <span class="ag-column-group-icons">' +
-        '    <span class="ag-column-checked"></span>' +
-        '    <span class="ag-column-unchecked"></span>' +
-        '  </span>' +
+        '  <span class="ag-column-select-indent"></span>' +
+        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '  <span class="ag-column-select-label"></span>' +
         '</div>';
 
@@ -35,18 +33,19 @@ export class RenderedColumn extends Component {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('context') private context: Context;
 
-    @QuerySelector('.ag-column-checked') private eColumnCheckedIcon: HTMLElement;
-    @QuerySelector('.ag-column-unchecked') private eColumnUncheckedIcon: HTMLElement;
     @QuerySelector('.ag-column-select-label') private eText: HTMLElement;
-
-    private checked: boolean;
+    @QuerySelector('.ag-column-select-indent') private eIndent: HTMLElement;
+    @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
 
     private column: Column;
     private columnDept: number;
 
     private allowDragging: boolean;
     private displayName: string;
+
+    private processingColumnStateChange = false;
 
     constructor(column: Column, columnDept: number, allowDragging: boolean) {
         super(RenderedColumn.TEMPLATE);
@@ -60,43 +59,44 @@ export class RenderedColumn extends Component {
 
         this.eText.innerHTML = this.columnController.getDisplayNameForCol(this.column);
 
-        this.setupIcons();
-
-        var eIndent = <HTMLElement> this.queryForHtmlElement('#eIndent');
-        eIndent.style.width = (this.columnDept * 10) + 'px';
+        this.eIndent.style.width = (this.columnDept * 10) + 'px';
 
         if (this.allowDragging) {
             this.addDragSource();
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.checkIconVisibility.bind(this) );
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.checkIconVisibility.bind(this) );
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.checkIconVisibility.bind(this) );
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_REDUCE_CHANGED, this.checkIconVisibility.bind(this) );
-        this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.checkIconVisibility.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_REDUCE_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+
+        this.instantiate(this.context);
+
+        this.onColumnStateChanged();
+
+        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
+        this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
     }
 
-    private setupIcons(): void {
-
-        this.eColumnCheckedIcon.appendChild(Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
-        this.eColumnUncheckedIcon.appendChild(Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
-
-        this.checkIconVisibility();
-    }
-
-    @Listener('click')
     private onClick(): void {
-        this.checked = !this.checked;
+        this.cbSelect.toggle();
+    }
 
-        this.setIconVisibility();
+    private onChange(): void {
+        // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
+        // of a change in the model
+        if (this.processingColumnStateChange) { return; }
 
         // action in a timeout, as the action takes some time, we want to update the icons first
         // so the user gets nice feedback when they click. otherwise there would be a lag and the
         // user would think the checkboxes were clunky
-        if (this.checked) {
-            setTimeout(this.actionChecked.bind(this), 0);
+        if (this.cbSelect.isSelected()) {
+            // setTimeout(this.actionChecked.bind(this), 0);
+            this.actionChecked();
         } else {
-            setTimeout(this.actionUnChecked.bind(this), 0);
+            // setTimeout(this.actionUnChecked.bind(this), 0);
+            this.actionUnChecked();
         }
     }
 
@@ -124,7 +124,15 @@ export class RenderedColumn extends Component {
     private actionChecked(): void {
         // what we do depends on the reduce state
         if (this.columnController.isReduce()) {
-            this.columnController.addRowGroupColumn(this.column);
+            if (this.column.isMeasure()) {
+                if (!this.column.isValue()) {
+                    this.columnController.addValueColumn(this.column);
+                }
+            } else {
+                if (!this.column.isPivot() && !this.column.isRowGroup()) {
+                    this.columnController.addRowGroupColumn(this.column);
+                }
+            }
         } else {
             this.columnController.setColumnVisible(this.column, true);
         }
@@ -139,25 +147,19 @@ export class RenderedColumn extends Component {
         this.dragAndDropService.addDragSource(dragSource);
     }
 
-    private setIconVisibility(): void {
-        Utils.setVisible(this.eColumnCheckedIcon, this.checked);
-        Utils.setVisible(this.eColumnUncheckedIcon, !this.checked);
-    }
-
-    private checkIconVisibility(): void {
-
+    private onColumnStateChanged(): void {
+        this.processingColumnStateChange = true;
         if (this.columnController.isReduce()) {
             // if reducing, checkbox means column is one of pivot, value or group
-            var isPivot = this.columnController.getPivotColumns().indexOf(this.column) >= 0;
-            var isRowGroup = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-            var isValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
-            this.checked = isPivot || isRowGroup || isValue;
+            var isPivot = this.columnController.isColumnPivoted(this.column);
+            var isRowGroup = this.columnController.isColumnRowGrouped(this.column);
+            var isValue = this.columnController.isColumnValue(this.column);
+            this.cbSelect.setSelected(isPivot || isRowGroup || isValue);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.checked = this.column.isVisible();
+            this.cbSelect.setSelected(this.column.isVisible());
         }
-
-        this.setIconVisibility();
+        this.processingColumnStateChange = false;
     }
 
 }

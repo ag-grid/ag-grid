@@ -61,7 +61,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
-        var columnPivotable = !column.getColDef().suppressPivot;
+        var columnPivotable = column.isDimension();
         var columnNotAlreadyPivoted = !this.columnController.isColumnPivoted(column);
         return columnPivotable && columnNotAlreadyPivoted;
     }
