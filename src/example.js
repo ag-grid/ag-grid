@@ -248,10 +248,11 @@ function getContextMenuItems(params) {
 }
 
 var firstColumn = {
-        headerName: "Name",
-        field: "name",
+        headerName: 'Name',
+        field: 'name',
         width: 200,
         editable: true,
+        type: 'dimension',
         filter: PersonFilter,
         checkboxSelection: function (params) {
             // we put checkbox on the name if we are not doing no grouping
@@ -289,6 +290,7 @@ var defaultCols = [
         cellRenderer: CountryCellRenderer,
         // pivotIndex: 1,
         // rowGroupIndex: 1,
+        type: 'dimension',
         cellEditor: 'richSelect',
         cellEditorParams: {
             cellRenderer: CountryCellRenderer,
@@ -312,6 +314,7 @@ var defaultCols = [
         headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
         cellRenderer: languageCellRenderer,
         cellEditor: 'select',
+        type: 'dimension',
         // rowGroupIndex: 0,
         // pivotIndex: 0,
         cellEditorParams: {
@@ -336,6 +339,7 @@ var defaultCols = [
         cellClass: function () {
             return 'alphabet';
         },
+        type: 'dimension',
         //pinned: 'right',
         // rowGroupIndex: 1,
         icons: {
@@ -348,6 +352,7 @@ var defaultCols = [
         //pinned: 'right',
         // rowGroupIndex: 2,
         // pivotIndex: 1,
+        type: 'dimension',
         cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
         floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
@@ -359,34 +364,42 @@ var defaultCols = [
         groupId: 'performance',
         children: [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
-        filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-        filterParams: {cellRenderer: currencyRenderer},
-        // colId: 'sf',
-        // valueGetter: '55',
-        // aggFunc: 'sum',
-        icons: {
-            sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-            sortDescending: '<i class="fa fa-sort-amount-desc"/>'
-        }
-    },
-    {
-        headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-        suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
-                cellRenderer: function() { return 'Abra...'; } },
-            {headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-        suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
-                cellRenderer: function() { return '...cadabra!'; } }
-        ]
+                filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+                filterParams: {cellRenderer: currencyRenderer},
+                type: 'measure',
+                // colId: 'sf',
+                // valueGetter: '55',
+                // aggFunc: 'sum',
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-amount-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+                }
+            },
+            {
+                headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
+                type: 'dimension',
+                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+                cellRenderer: function() { return 'Abra...'; }
+            },
+            {
+                headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
+                type: 'dimension',
+                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+                cellRenderer: function() { return '...cadabra!'; }
+            }
+        ],
     },
     {
         headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
+        type: 'measure',
         filterParams: {cellRenderer: ratingFilterRenderer}
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
         aggFunc: 'sum',
+        type: 'measure',
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -404,6 +417,7 @@ months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
+        type: 'measure',
         // aggFunc: 'sum',
         //hide: true,
         cellClassRules: {
