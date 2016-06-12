@@ -1,6 +1,7 @@
 import {Utils as _} from '../utils';
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {Context} from "../context/context";
 
 export class Component implements IEventEmitter {
 
@@ -20,8 +21,57 @@ export class Component implements IEventEmitter {
         }
     }
 
+    public instantiate(context: Context): void {
+        this.instantiateRecurse(this.getGui(), context);
+    }
+
+    private instantiateRecurse(parentNode: Element, context: Context): void {
+        var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
+        for (var i = 0; i<childCount; i++) {
+            var childNode = parentNode.childNodes[i];
+            var newComponent = context.createComponent(childNode.nodeName);
+            if (newComponent) {
+                this.swapComponentForNode(newComponent, parentNode, childNode);
+            } else {
+                if (childNode.childNodes) {
+                    this.instantiateRecurse(<Element>childNode, context);
+                }
+            }
+        }
+    }
+
+    private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
+        parentNode.replaceChild(newComponent.getGui(), childNode);
+        this.copyAttributesFromNode(<Element>childNode, newComponent.getGui());
+        this.childComponents.push(newComponent);
+        this.swapInComponentForQuerySelectors(newComponent, childNode);
+    }
+
+    private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
+        var metaData = (<any>this).__agComponentMetaData;
+        if (!metaData || !metaData.querySelectors) { return; }
+
+        var thisNoType = <any> this;
+        metaData.querySelectors.forEach( (querySelector: any) => {
+            if (thisNoType[querySelector.attributeName]===childNode) {
+                thisNoType[querySelector.attributeName] = newComponent;
+            }
+        } );
+    }
+
+    private copyAttributesFromNode(fromNode: Element, toNode: Element): void {
+        if (fromNode.attributes) {
+            var count = fromNode.attributes.length;
+            for (var i = 0; i<count; i++) {
+                var attr = fromNode.attributes[i];
+                toNode.setAttribute(attr.name, attr.value);
+            }
+        }
+    }
+
     public setTemplate(template: string): void {
         this.eGui = _.loadTemplate(<string>template);
+        (<any>this.eGui).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
     }
@@ -32,8 +82,19 @@ export class Component implements IEventEmitter {
 
         if (!this.eGui) { return; }
 
+        var thisNoType = <any> this;
         metaData.querySelectors.forEach( (querySelector: any) => {
-            (<any>this)[querySelector.attributeName] = this.eGui.querySelector(querySelector.querySelector);
+            var resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
+            if (resultOfQuery) {
+                var backingComponent = (<any>resultOfQuery).__agComponent;
+                if (backingComponent) {
+                    thisNoType[querySelector.attributeName] = backingComponent;
+                } else {
+                    thisNoType[querySelector.attributeName] = resultOfQuery;
+                }
+            } else {
+                // put debug msg in here if query selector fails???
+            }
         } );
     }
 
@@ -76,6 +137,10 @@ export class Component implements IEventEmitter {
         if (this.localEventService) {
             this.localEventService.removeEventListener(eventType, listener);
         }
+    }
+
+    public dispatchEventAsync(eventType: string, event?: any): void {
+        setTimeout( ()=> this.dispatchEvent(eventType, event), 0);
     }
 
     public dispatchEvent(eventType: string, event?: any): void {

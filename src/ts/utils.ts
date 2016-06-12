@@ -13,6 +13,13 @@ export class Utils {
     private static isSafari: boolean;
     private static isIE: boolean;
 
+    static getNameOfClass(TheClass: any) {
+        var funcNameRegex = /function (.{1,})\(/;
+        var funcAsString = TheClass.toString();
+        var results  = (funcNameRegex).exec(funcAsString);
+        return (results && results.length > 1) ? results[1] : "";
+    }
+
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
         if (this.missing(object)) { return; }
         var keys = Object.keys(object);

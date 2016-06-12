@@ -154,9 +154,9 @@ export class ColumnController {
     private displayedRightColumns: Column[] = [];
     private displayedCenterColumns: Column[] = [];
 
-    private rowGroupColumns: Column[];
-    private valueColumns: Column[];
-    private pivotColumns: Column[];
+    private rowGroupColumns: Column[] = [];
+    private valueColumns: Column[] = [];
+    private pivotColumns: Column[] = [];
 
     private groupAutoColumn: Column;
     private groupAutoColumnActive: boolean;
@@ -303,12 +303,16 @@ export class ColumnController {
     }
 
     public addRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+        var updatedColumns: Column[] = [];
         keys.forEach( (key)=> {
             var column = this.getOriginalColumn(key);
-            if (column) {
+            if (column && !column.isRowGroup()) {
                 this.rowGroupColumns.push(column);
+                updatedColumns.push(column);
             }
         });
+
+        if (updatedColumns.length===0) { return; }
 
         // because we could be taking out columns, the displayed
         // columns may differ, so need to work out all the columns again.
@@ -316,11 +320,13 @@ export class ColumnController {
         // this before we fire the event
         this.updateDisplayedColumns();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
+        updatedColumns.forEach( column => column.setRowGroup(true) );
+
+        this.dispatchEventWithColumns(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, updatedColumns);
     }
 
     public setRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+        this.rowGroupColumns.forEach( column => column.setRowGroup(false) );
         this.rowGroupColumns.length = 0;
         this.addRowGroupColumns(keys);
     }
@@ -330,17 +336,22 @@ export class ColumnController {
     }
 
     public removeRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+        var updatedColumns: Column[] = [];
         keys.forEach( (key)=> {
             var column = this.getOriginalColumn(key);
-            if (column) {
+            if (column && column.isRowGroup()) {
                 _.removeFromArray(this.rowGroupColumns, column);
+                updatedColumns.push(column);
             }
         });
 
+        if (updatedColumns.length===0) { return; }
+
         this.updateDisplayedColumns();
-        
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
+
+        updatedColumns.forEach( column => column.setRowGroup(false) );
+
+        this.dispatchEventWithColumns(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, updatedColumns);
     }
     
     public removeRowGroupColumn(key: Column|ColDef|String): void {
@@ -348,23 +359,30 @@ export class ColumnController {
     }
 
     public addPivotColumns(keys: (Column|ColDef|String)[]): void {
+        var updatedColumns: Column[] = [];
+
         keys.forEach( (key)=> {
             var column = this.getOriginalColumn(key);
-            if (column) {
+            if (column && !column.isPivot()) {
                 this.pivotColumns.push(column);
+                updatedColumns.push(column);
             }
         });
+
+        if (updatedColumns.length===0) { return; }
 
         // as with changing rowGroupColumn, changing the pivot totally changes
         // the columns that are displayed, so we don't use 'actionOnColumns', as 
         // we need to do this before we fire the event
         this.updateDisplayedColumns();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGED, event);
+        updatedColumns.forEach( column => column.setPivot(true) );
+
+        this.dispatchEventWithColumns(Events.EVENT_COLUMN_PIVOT_CHANGED, updatedColumns);
     }
 
     public setPivotColumns(keys: (Column|ColDef|String)[]): void {
+        this.pivotColumns.forEach( column => column.setPivot(false) );
         this.pivotColumns.length = 0;
         this.addPivotColumns(keys);
     }
@@ -374,17 +392,23 @@ export class ColumnController {
     }
 
     public removePivotColumns(keys: (Column|ColDef|String)[]): void {
+        var updatedColumns: Column[] = [];
+
         keys.forEach( (key)=> {
             var column = this.getOriginalColumn(key);
-            if (column) {
+            if (column && column.isPivot()) {
                 _.removeFromArray(this.pivotColumns, column);
+                updatedColumns.push(column);
             }
         });
 
+        if (updatedColumns.length===0) { return; }
+
         this.updateDisplayedColumns();
 
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGED, event);
+        updatedColumns.forEach( column => column.setPivot(false) );
+
+        this.dispatchEventWithColumns(Events.EVENT_COLUMN_PIVOT_CHANGED, updatedColumns);
     }
 
     public removePivotColumn(key: Column|ColDef|String): void {
@@ -397,9 +421,7 @@ export class ColumnController {
 
         keys.forEach( (key) => {
             var column = this.getOriginalColumn(key);
-            if (!column) { return; }
-            var notValueColumn = !this.isColumnValue(column);
-            if (notValueColumn) {
+            if (column && !column.isValue()) {
                 if (!column.getAggFunc()) { // default to SUM if aggFunc is missing
                     column.setAggFunc(Column.AGG_SUM);
                 }
@@ -408,21 +430,15 @@ export class ColumnController {
             }
         });
 
-        if (updatedColumns.length > 0) {
+        if (updatedColumns.length === 0) { return; }
 
-            if (this.reduce) {
-                this.updateDisplayedColumns();
-            }
-
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED)
-                .withColumns(updatedColumns);
-            if (updatedColumns.length===1) {
-                event.withColumn(updatedColumns[0]);
-            }
-
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGED, event);
+        if (this.reduce) {
+            this.updateDisplayedColumns();
         }
+
+        updatedColumns.forEach( column => column.setValue(true) );
+
+        this.dispatchEventWithColumns(Events.EVENT_COLUMN_VALUE_CHANGED, updatedColumns);
     }
 
     public addValueColumn(column: Column): void {
@@ -438,29 +454,30 @@ export class ColumnController {
 
         keys.forEach( (key) => {
             var column = this.getOriginalColumn(key);
-            if (!column) { return; }
-            var isValueColumn = this.isColumnValue(column);
-            if (isValueColumn) {
+            if (column && column.isValue()) {
                 _.removeFromArray(this.valueColumns, column);
                 updatedColumns.push(column);
             }
         });
 
-        if (updatedColumns.length > 0) {
+        if (updatedColumns.length===0) { return; }
 
-            if (this.reduce) {
-                this.updateDisplayedColumns();
-            }
-
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED)
-                .withColumns(updatedColumns);
-            if (updatedColumns.length===1) {
-                event.withColumn(updatedColumns[0]);
-            }
-
-            var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGED, event);
+        if (this.reduce) {
+            this.updateDisplayedColumns();
         }
+
+        updatedColumns.forEach( column => column.setValue(false) );
+
+        this.dispatchEventWithColumns(Events.EVENT_COLUMN_VALUE_CHANGED, updatedColumns);
+    }
+
+    private dispatchEventWithColumns(eventName: string, columns: Column[]): void {
+        var event = new ColumnChangeEvent(eventName)
+            .withColumns(columns);
+        if (columns.length===1) {
+            event.withColumn(columns[0]);
+        }
+        this.eventService.dispatchEvent(eventName, event);
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths
@@ -832,6 +849,10 @@ export class ColumnController {
     public setColumnState(columnState: any[]): boolean {
         var oldColumnList = this.originalColumns;
         this.originalColumns = [];
+
+        this.rowGroupColumns.forEach( column => column.setRowGroup(false) );
+        this.valueColumns.forEach( column => column.setValue(false) );
+
         this.rowGroupColumns = [];
         this.valueColumns = [];
 
@@ -896,6 +917,9 @@ export class ColumnController {
 
         this.copyDownGridColumns();
         this.updateDisplayedColumns();
+
+        this.rowGroupColumns.forEach( column => column.setRowGroup(true) );
+        this.valueColumns.forEach( column => column.setValue(true) );
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
@@ -1068,11 +1092,13 @@ export class ColumnController {
     }
 
     private extractRowGroupColumns(): void {
+        this.rowGroupColumns.forEach( column => column.setRowGroup(false) );
         this.rowGroupColumns = [];
         // pull out the columns
         this.originalColumns.forEach( (column: Column) => {
             if (typeof column.getColDef().rowGroupIndex === 'number') {
                 this.rowGroupColumns.push(column);
+                column.setRowGroup(true);
             }
         });
         // then sort them
@@ -1082,11 +1108,13 @@ export class ColumnController {
     }
 
     private extractPivotColumns(): void {
+        this.pivotColumns.forEach( column => column.setPivot(false) );
         this.pivotColumns = [];
         // pull out the columns
         this.originalColumns.forEach( (column: Column) => {
             if (typeof column.getColDef().pivotIndex === 'number') {
                 this.pivotColumns.push(column);
+                column.setPivot(true);
             }
         });
         // then sort them
@@ -1396,8 +1424,7 @@ export class ColumnController {
                             return null;
                         }
                     },
-                    suppressAggregation: true,
-                    suppressRowGroup: true,
+                    type: 'none',
                     cellRenderer: 'group'
                 };
             }
@@ -1411,6 +1438,7 @@ export class ColumnController {
     }
 
     private createValueColumns(): void {
+        this.valueColumns.forEach( column => column.setValue(false) );
         this.valueColumns = [];
 
         // override with columns that have the aggFunc specified explicitly
@@ -1419,6 +1447,7 @@ export class ColumnController {
             if (column.getColDef().aggFunc) {
                 column.setAggFunc(column.getColDef().aggFunc);
                 this.valueColumns.push(column);
+                column.setValue(true);
             }
         }
     }

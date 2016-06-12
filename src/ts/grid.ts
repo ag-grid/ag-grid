@@ -47,6 +47,7 @@ import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {PivotService} from "./columnController/pivotService";
+import {AgCheckbox} from "./widgets/agCheckbox";
 
 export class Grid {
 
@@ -102,6 +103,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
                 CellEditorFactory, CellRendererService, ValueFormatterService],
+            components: [AgCheckbox],
             debug: !!gridOptions.debug
         });
 

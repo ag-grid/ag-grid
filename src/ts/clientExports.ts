@@ -91,6 +91,7 @@ import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
 import {PivotService} from "./columnController/pivotService";
 import {QuerySelector, Listener} from "./widgets/componentAnnotations";
+import {AgCheckbox} from "./widgets/agCheckbox";
 
 export function populateClientExports(exports: any): void {
 
@@ -194,6 +195,7 @@ export function populateClientExports(exports: any): void {
     exports.MenuItemComponent = MenuItemComponent;
     exports.Component = Component;
     exports.MenuList = MenuList;
+    exports.AgCheckbox = AgCheckbox;
 
     // root
     exports.CellNavigationService = CellNavigationService;

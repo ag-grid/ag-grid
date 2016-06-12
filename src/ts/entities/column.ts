@@ -33,6 +33,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // + renderedHeaderCell - marks the header with sort icon
     public static EVENT_SORT_CHANGED = 'filterChanged';
 
+    // + toolpanel, for gui updates
+    public static EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    // + toolpanel, for gui updates
+    public static EVENT_PIVOT_CHANGED = 'columnPivotChanged';
+    // + toolpanel, for gui updates
+    public static EVENT_VALUE_CHANGED = 'columnValueChanged';
+    
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
 
@@ -44,6 +51,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public static SORT_ASC = 'asc';
     public static SORT_DESC = 'desc';
+
+    public static TYPE_DIMENSION = 'dimension';
+    public static TYPE_MEASURE = 'measure';
+    public static TYPE_NONE = 'none';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
@@ -72,6 +83,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private eventService: EventService = new EventService();
 
     private fieldContainsDots: boolean;
+
+    private rowGroup = false;
+    private pivot = false;
+    private value = false;
 
     constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
@@ -107,6 +122,16 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
 
         this.validate();
+    }
+
+    public isDimension(): boolean {
+        return this.colDef.type === Column.TYPE_DIMENSION
+            || _.missing(this.colDef);
+    }
+
+    public isMeasure(): boolean {
+        return this.colDef.type === Column.TYPE_MEASURE
+            || _.missing(this.colDef);
     }
 
     public isFieldContainsDots(): boolean {
@@ -343,5 +368,38 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public setMinimum(): void {
         this.setActualWidth(this.minWidth);
+    }
+    
+    public setRowGroup(rowGroup: boolean): void {
+        if (this.rowGroup !== rowGroup) {
+            this.rowGroup = rowGroup;
+            this.eventService.dispatchEvent(Column.EVENT_ROW_GROUP_CHANGED, this);
+        }
+    }
+    
+    public isRowGroup(): boolean {
+        return this.rowGroup;
+    }
+
+    public setPivot(pivot: boolean): void {
+        if (this.pivot !== pivot) {
+            this.pivot = pivot;
+            this.eventService.dispatchEvent(Column.EVENT_PIVOT_CHANGED, this);
+        }
+    }
+
+    public isPivot(): boolean {
+        return this.pivot;
+    }
+
+    public setValue(value: boolean): void {
+        if (this.value !== value) {
+            this.value = value;
+            this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
+        }
+    }
+
+    public isValue(): boolean {
+        return this.value;
     }
 }

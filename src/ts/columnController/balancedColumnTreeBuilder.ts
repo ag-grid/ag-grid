@@ -137,6 +137,23 @@ export class BalancedColumnTreeBuilder {
             if (colDefNoType.headerGroupShow !== undefined) {
                 console.warn('ag-grid: colDef.headerGroupShow is invalid, should be columnGroupShow, please check documentation on how to do grouping as it changed in version 3');
             }
+
+            if (colDefNoType.suppressRowGroup !== undefined) {
+                console.warn('ag-grid: colDef.suppressRowGroup is deprecated, please use colDef.type instead');
+            }
+            if (colDefNoType.suppressAggregation !== undefined) {
+                console.warn('ag-grid: colDef.suppressAggregation is deprecated, please use colDef.type instead');
+            }
+            if (colDefNoType.suppressRowGroup !== undefined && colDefNoType.suppressAggregation !== undefined) {
+                colDefNoType.type = Column.TYPE_NONE;
+            } else {
+                if (colDefNoType.suppressRowGroup !== undefined) {
+                    colDefNoType.type = Column.TYPE_MEASURE;
+                }
+                if (colDefNoType.suppressAggregation !== undefined) {
+                    colDefNoType.type = Column.TYPE_DIMENSION;
+                }
+            }
         }
     }
 

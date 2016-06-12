@@ -1,5 +1,6 @@
 import {Utils as _} from "../utils";
 import {Logger} from "../logger";
+import {Component} from "../widgets/component";
 
 // steps in booting up:
 // 1. create all beans
@@ -13,6 +14,7 @@ import {Logger} from "../logger";
 export interface ContextParams {
     seed: any,
     beans: any[],
+    components: (new()=>Object)[],
     overrideBeans: any[],
     debug: boolean
 }
@@ -29,8 +31,10 @@ export class Context {
     private contextParams: ContextParams;
     private logger: Logger;
 
-    private destroyed = false;
+    private componentsMappedByName: {[key: string]: any} = {};
 
+    private destroyed = false;
+    
     public constructor(params: ContextParams) {
 
         if (!params || !params.beans) {
@@ -48,9 +52,39 @@ export class Context {
 
         this.wireBeans(beans);
 
+        this.setupComponents();
+
         this.logger.log('>> ag-Application Context ready - component is alive');
     }
 
+    private setupComponents(): void {
+        if (this.contextParams.components) {
+            this.contextParams.components.forEach( ComponentClass => this.addComponent(ComponentClass) )
+        }
+    }
+
+    private addComponent(ComponentClass: new()=>Object): void {
+        // get name of the class as a string
+        var className = _.getNameOfClass(ComponentClass);
+        // insert a dash after every capital letter
+        // var classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
+        var classEscaped = className.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+        // put all to upper case
+        var classUpperCase = classEscaped.toUpperCase();
+        // finally store
+        this.componentsMappedByName[classUpperCase] = ComponentClass;
+    }
+
+    public createComponent(key: string): Component {
+        if (this.componentsMappedByName && this.componentsMappedByName[key]) {
+            var newComponent = <Component> new this.componentsMappedByName[key];
+            this.wireBean(newComponent);
+            return newComponent;
+        } else {
+            return null;
+        }
+    }
+    
     public wireBean(bean: any): void {
         this.wireBeans([bean]);
     }
