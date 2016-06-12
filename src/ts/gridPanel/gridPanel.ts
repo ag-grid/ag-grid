@@ -170,11 +170,14 @@ export class GridPanel {
         return this.layout;
     }
 
+    private useScrollLag: boolean;
+
     @PostConstruct
     private init() {
 
         this.addEventListeners();
         this.addDragListeners();
+        this.useScrollLag = this.isUseScrollLag();
 
         this.layout = new BorderLayout({
             overlays: {
@@ -948,9 +951,9 @@ export class GridPanel {
             }
         }
 
-        if (this.isUseScrollLag()) {
-            this.eBodyViewport.addEventListener('scroll', ()=> this.debounce(onBodyViewportScroll) );
-            this.ePinnedRightColsViewport.addEventListener('scroll', ()=> this.debounce(onPinnedRightScroll));
+        if (this.useScrollLag) {
+            this.eBodyViewport.addEventListener('scroll', this.debounce.bind(this,onBodyViewportScroll) );
+            this.ePinnedRightColsViewport.addEventListener('scroll', this.debounce.bind(this,onPinnedRightScroll) );
         } else {
             this.eBodyViewport.addEventListener('scroll', onBodyViewportScroll);
             this.ePinnedRightColsViewport.addEventListener('scroll', onPinnedRightScroll);

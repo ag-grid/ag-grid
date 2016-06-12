@@ -445,15 +445,14 @@ export class RenderedCell extends Component {
     }
 
     private addKeyPressListener(): void {
-        var that = this;
-        var keyPressListener = function(event: any) {
-            if (that.isCellEditable()) {
+        var keyPressListener = (event: any)=> {
+            if (!this.editingCell) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
-                    that.onSpaceKeyPressed();
+                    this.onSpaceKeyPressed();
                 } else {
                     if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
-                        that.startEditingIfEnabled(null, pressedChar);
+                        this.startEditingIfEnabled(null, pressedChar);
                         // if we don't prevent default, then the keypress also gets applied to the text field
                         // (at least when doing the default editor), but we need to allow the editor to decide
                         // what it wants to do.
