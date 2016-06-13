@@ -58,6 +58,10 @@ function getNodeChildDetails(rowItem) {
     }
 }
 
+function onFilterChanged(value) {
+    gridOptions.api.setQuickFilter(value);
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');

@@ -536,7 +536,7 @@ function createData() {
 function createRowItem(row, colCount) {
     var rowItem = {};
 
-//create data for the known columns
+    //create data for the known columns
     var countryData = countries[row % countries.length];
     rowItem.country = countryData.country;
     rowItem.continent = countryData.continent;
@@ -552,12 +552,12 @@ function createRowItem(row, colCount) {
     };
     rowItem.gameName = 'toolTip: ' + rowItem.game.name.toUpperCase();
 
-    rowItem.bankBalance = ((Math.round(Math.random() * 10000000)) / 100) - 3000;
+    rowItem.bankBalance = 1;// ((Math.round(Math.random() * 10000000)) / 100) - 3000;
     rowItem.rating = (Math.round(Math.random() * 5));
 
     var totalWinnings = 0;
     months.forEach(function (month) {
-        var value = ((Math.round(Math.random() * 10000000)) / 100) - 20;
+        var value = 1;//((Math.round(Math.random() * 10000000)) / 100) - 20;
         rowItem[month.toLocaleLowerCase()] = value;
         totalWinnings += value;
     });
