@@ -18,13 +18,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>If you MUST use the UMD version of Angular 2, then use the plain Javascript version of ag-Grid.</p>
 
-    <h3>Angular 2 Still in Beta</h3>
+    <h3>Angular 2 Still in Release Candidate</h3>
 
     <p>
         ag-Grid's integration is been developed against beta versions of Angular 2.
         Until the final version is released, ag-Grid's integration with Angular 2
-        is also liable to change. The examples below work with Angular version 2.0.0-beta.0.
-        At the time of writing, that was the latest version.
+        is also liable to change. The examples below work with Angular version 2.0.0-rc.1
+        At the time of writing, that is the latest version.
     </p>
 
     <h3>Angular 2 Full Example</h3>
