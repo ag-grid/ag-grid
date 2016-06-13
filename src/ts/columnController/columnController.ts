@@ -200,12 +200,13 @@ export class ColumnController {
     }
 
     public autoSizeColumns(keys: (Column|ColDef|String)[]): void {
-        this.actionOnColumns(keys, (column: Column)=> {
+        this.actionOnGridColumns(keys, (column: Column): boolean => {
             var requiredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column);
             if (requiredWidth>0) {
                 var newWidth = this.normaliseColumnWidth(column, requiredWidth);
                 column.setActualWidth(newWidth);
             }
+            return true;
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true);
         });
@@ -303,26 +304,17 @@ export class ColumnController {
     }
 
     public addRowGroupColumns(keys: (Column|ColDef|String)[]): void {
-        var updatedColumns: Column[] = [];
-        keys.forEach( (key)=> {
-            var column = this.getOriginalColumn(key);
-            if (column && !column.isRowGroup()) {
+        this.actionOnOriginalColumns(keys, (column: Column)=> {
+            if (!column.isRowGroup()) {
                 this.rowGroupColumns.push(column);
-                updatedColumns.push(column);
+                column.setRowGroup(true);
+                return true;
+            } else {
+                return false;
             }
+        }, ()=> {
+            return new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
         });
-
-        if (updatedColumns.length===0) { return; }
-
-        // because we could be taking out columns, the displayed
-        // columns may differ, so need to work out all the columns again.
-        // this is why why don't use 'actionOnColumns', as we need to do
-        // this before we fire the event
-        this.updateDisplayedColumns();
-
-        updatedColumns.forEach( column => column.setRowGroup(true) );
-
-        this.dispatchEventWithColumns(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, updatedColumns);
     }
 
     public setRowGroupColumns(keys: (Column|ColDef|String)[]): void {
@@ -336,22 +328,17 @@ export class ColumnController {
     }
 
     public removeRowGroupColumns(keys: (Column|ColDef|String)[]): void {
-        var updatedColumns: Column[] = [];
-        keys.forEach( (key)=> {
-            var column = this.getOriginalColumn(key);
-            if (column && column.isRowGroup()) {
+        this.actionOnOriginalColumns(keys, (column: Column)=> {
+            if (column.isRowGroup()) {
                 _.removeFromArray(this.rowGroupColumns, column);
-                updatedColumns.push(column);
+                column.setRowGroup(false);
+                return true;
+            } else {
+                return false;
             }
+        }, ()=> {
+            return new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
         });
-
-        if (updatedColumns.length===0) { return; }
-
-        this.updateDisplayedColumns();
-
-        updatedColumns.forEach( column => column.setRowGroup(false) );
-
-        this.dispatchEventWithColumns(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, updatedColumns);
     }
     
     public removeRowGroupColumn(key: Column|ColDef|String): void {
@@ -359,26 +346,17 @@ export class ColumnController {
     }
 
     public addPivotColumns(keys: (Column|ColDef|String)[]): void {
-        var updatedColumns: Column[] = [];
-
-        keys.forEach( (key)=> {
-            var column = this.getOriginalColumn(key);
-            if (column && !column.isPivot()) {
+        this.actionOnOriginalColumns(keys, (column: Column)=> {
+            if (!column.isPivot()) {
                 this.pivotColumns.push(column);
-                updatedColumns.push(column);
+                column.setPivot(true);
+                return true;
+            } else {
+                return false;
             }
+        }, ()=> {
+            return new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
         });
-
-        if (updatedColumns.length===0) { return; }
-
-        // as with changing rowGroupColumn, changing the pivot totally changes
-        // the columns that are displayed, so we don't use 'actionOnColumns', as 
-        // we need to do this before we fire the event
-        this.updateDisplayedColumns();
-
-        updatedColumns.forEach( column => column.setPivot(true) );
-
-        this.dispatchEventWithColumns(Events.EVENT_COLUMN_PIVOT_CHANGED, updatedColumns);
     }
 
     public setPivotColumns(keys: (Column|ColDef|String)[]): void {
@@ -392,23 +370,17 @@ export class ColumnController {
     }
 
     public removePivotColumns(keys: (Column|ColDef|String)[]): void {
-        var updatedColumns: Column[] = [];
-
-        keys.forEach( (key)=> {
-            var column = this.getOriginalColumn(key);
-            if (column && column.isPivot()) {
+        this.actionOnOriginalColumns(keys, (column: Column)=> {
+            if (column.isPivot()) {
                 _.removeFromArray(this.pivotColumns, column);
-                updatedColumns.push(column);
+                column.setPivot(false);
+                return true;
+            } else {
+                return false;
             }
+        }, ()=> {
+            return new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
         });
-
-        if (updatedColumns.length===0) { return; }
-
-        this.updateDisplayedColumns();
-
-        updatedColumns.forEach( column => column.setPivot(false) );
-
-        this.dispatchEventWithColumns(Events.EVENT_COLUMN_PIVOT_CHANGED, updatedColumns);
     }
 
     public removePivotColumn(key: Column|ColDef|String): void {
@@ -416,29 +388,20 @@ export class ColumnController {
     }
 
     public addValueColumns(keys: (Column|ColDef|String)[]): void {
-
-        var updatedColumns: Column[] = [];
-
-        keys.forEach( (key) => {
-            var column = this.getOriginalColumn(key);
-            if (column && !column.isValue()) {
+        this.actionOnOriginalColumns(keys, (column: Column)=> {
+            if (!column.isValue()) {
                 if (!column.getAggFunc()) { // default to SUM if aggFunc is missing
                     column.setAggFunc(Column.AGG_SUM);
                 }
                 this.valueColumns.push(column);
-                updatedColumns.push(column);
+                column.setValue(true);
+                return true;
+            } else {
+                return false;
             }
+        }, ()=> {
+            return new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
         });
-
-        if (updatedColumns.length === 0) { return; }
-
-        if (this.reduce) {
-            this.updateDisplayedColumns();
-        }
-
-        updatedColumns.forEach( column => column.setValue(true) );
-
-        this.dispatchEventWithColumns(Events.EVENT_COLUMN_VALUE_CHANGED, updatedColumns);
     }
 
     public addValueColumn(column: Column): void {
@@ -450,25 +413,17 @@ export class ColumnController {
     }
 
     public removeValueColumns(keys: (Column|ColDef|String)[]): void {
-        var updatedColumns: Column[] = [];
-
-        keys.forEach( (key) => {
-            var column = this.getOriginalColumn(key);
-            if (column && column.isValue()) {
+        this.actionOnOriginalColumns(keys, (column: Column)=> {
+            if (column.isValue()) {
                 _.removeFromArray(this.valueColumns, column);
-                updatedColumns.push(column);
+                column.setValue(false);
+                return true;
+            } else {
+                return false;
             }
+        }, ()=> {
+            return new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
         });
-
-        if (updatedColumns.length===0) { return; }
-
-        if (this.reduce) {
-            this.updateDisplayedColumns();
-        }
-
-        updatedColumns.forEach( column => column.setValue(false) );
-
-        this.dispatchEventWithColumns(Events.EVENT_COLUMN_VALUE_CHANGED, updatedColumns);
     }
 
     private dispatchEventWithColumns(eventName: string, columns: Column[]): void {
@@ -706,8 +661,9 @@ export class ColumnController {
 
     public setColumnsVisible(keys: (Column|ColDef|String)[], visible: boolean): void {
         this.gridPanel.turnOnAnimationForABit();
-        this.actionOnColumns(keys, (column: Column)=> {
+        this.actionOnGridColumns(keys, (column: Column): boolean => {
             column.setVisible(visible);
+            return true;
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE).withVisible(visible);
         });
@@ -728,19 +684,37 @@ export class ColumnController {
             actualPinned = null;
         }
 
-        this.actionOnColumns(keys, (column: Column)=> {
+        this.actionOnGridColumns(keys, (column: Column): boolean => {
             column.setPinned(actualPinned);
+            return true;
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED).withPinned(actualPinned);
         });
+    }
+
+    private actionOnGridColumns(keys: (Column|ColDef|String)[],
+                                action: (column:Column) => boolean,
+                                createEvent: ()=>ColumnChangeEvent): void {
+        this.actionOnColumns(keys, this.getGridColumn.bind(this), action, createEvent);
+    }
+
+    private actionOnOriginalColumns(keys: (Column|ColDef|String)[],
+                                action: (column:Column) => boolean,
+                                createEvent: ()=>ColumnChangeEvent): void {
+        this.actionOnColumns(keys, this.getOriginalColumn.bind(this), action, createEvent);
     }
 
     // does an action on a set of columns. provides common functionality for looking up the
     // columns based on key, getting a list of effected columns, and then updated the event
     // with either one column (if it was just one col) or a list of columns
     // used by: autoResize, setVisible, setPinned
-    private actionOnColumns(keys: (Column|ColDef|String)[],
-                            action: (column:Column)=>void,
+    private actionOnColumns(// the column keys this action will be on
+                            keys: (Column|ColDef|String)[],
+                            columnLookup: (key: string|ColDef|Column)=> Column,
+                            // the action to do - if this returns false, the column was skipped
+                            // and won't be included in the event
+                            action: (column:Column) => boolean,
+                            // should return back a column event of the right type
                             createEvent: ()=>ColumnChangeEvent): void {
 
         if (!keys || keys.length===0) { return; }
@@ -748,10 +722,14 @@ export class ColumnController {
         var updatedColumns: Column[] = [];
 
         keys.forEach( (key: Column|ColDef|String)=> {
-            var column = this.getGridColumn(key);
+            var column = columnLookup(key);
             if (!column) {return;}
-            action(column);
-            updatedColumns.push(column);
+            // need to check for false with type (ie !== instead of !=)
+            // as not returning anything (undefined) would also be false
+            var resultOfAction = action(column);
+            if (resultOfAction!==false) {
+                updatedColumns.push(column);
+            }
         });
 
         if (updatedColumns.length===0) {return;}
