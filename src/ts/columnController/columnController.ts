@@ -19,7 +19,6 @@ import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
 import {defaultGroupComparator} from "../functions";
 import {Bean, Qualifier, Autowired, PostConstruct, Context} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
-import {PivotService} from "./pivotService";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -118,7 +117,6 @@ export class ColumnController {
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
-    @Autowired('pivotService') private pivotService: PivotService;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client

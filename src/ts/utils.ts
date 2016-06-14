@@ -708,3 +708,13 @@ export class Utils {
     }
 }
 
+export class NumberSequence {
+
+    private nextValue = 0;
+
+    public next() : number {
+        var valToReturn = this.nextValue;
+        this.nextValue++;
+        return valToReturn;
+    }
+}

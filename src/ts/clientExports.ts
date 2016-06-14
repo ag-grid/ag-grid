@@ -69,7 +69,7 @@ import {SelectionController} from "./selectionController";
 import {SortController} from "./sortController";
 import {SvgFactory} from "./svgFactory";
 import {TemplateService} from "./templateService";
-import {Utils} from "./utils";
+import {Utils, NumberSequence} from "./utils";
 import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
 import {GridRow} from "./entities/gridRow";
@@ -89,7 +89,6 @@ import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
-import {PivotService} from "./columnController/pivotService";
 import {QuerySelector, Listener} from "./widgets/componentAnnotations";
 import {AgCheckbox} from "./widgets/agCheckbox";
 
@@ -102,7 +101,6 @@ export function populateClientExports(exports: any): void {
     exports.ColumnUtils = ColumnUtils;
     exports.DisplayedGroupCreator = DisplayedGroupCreator;
     exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
-    exports.PivotService = PivotService;
 
     // components
     exports.ComponentUtil = ComponentUtil;
@@ -219,6 +217,7 @@ export function populateClientExports(exports: any): void {
     exports.SvgFactory = SvgFactory;
     exports.TemplateService = TemplateService;
     exports.Utils = Utils;
+    exports.NumberSequence = NumberSequence;
     exports.ValueService = ValueService;
 
 }

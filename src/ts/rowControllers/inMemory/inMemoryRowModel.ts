@@ -10,7 +10,6 @@ import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/c
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
-import {PivotService} from "../../columnController/pivotService";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -25,9 +24,6 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    // need to refactor this out, should it be a stage?
-    @Autowired('pivotService') private pivotService: PivotService;
-
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
     @Autowired('sortStage') private sortStage: IRowNodeStage;
@@ -36,6 +32,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     // enterprise stages
     @Optional('groupStage') private groupStage: IRowNodeStage;
     @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
+    @Optional('pivotStage') private pivotStage: IRowNodeStage;
 
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
@@ -334,11 +331,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doPivot() {
-        this.pivotService.execute(this.rootNode);
-
-        // fire event here???
-        // pivotService.createPivotColumns()
-        // do pivot - create pivot columns?
+        if (this.pivotStage) {
+            this.pivotStage.execute(this.rootNode);
+        }
     }
 
     // rows: the rows to put into the model

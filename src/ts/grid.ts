@@ -46,7 +46,6 @@ import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
-import {PivotService} from "./columnController/pivotService";
 import {AgCheckbox} from "./widgets/agCheckbox";
 
 export class Grid {
@@ -95,7 +94,7 @@ export class Grid {
             },
             beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, RowRenderer, PivotService,
+                FilterManager, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
                 TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,

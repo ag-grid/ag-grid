@@ -5,7 +5,6 @@ export * from './dist/lib/columnController/columnKeyCreator';
 export * from './dist/lib/columnController/columnUtils';
 export * from './dist/lib/columnController/displayedGroupCreator';
 export * from './dist/lib/columnController/groupInstanceIdCreator';
-export * from './dist/lib/columnController/pivotService';
 
 export * from './dist/lib/components/agGridNg1';
 export * from './dist/lib/components/agGridWebComponent';
