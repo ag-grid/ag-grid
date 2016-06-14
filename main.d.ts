@@ -21,6 +21,7 @@ export * from './dist/lib/toolPanel/toolPanelComp';
 export * from './dist/lib/toolPanel/columnDrop/abstractColumnDropPanel';
 export * from './dist/lib/toolPanel/columnDrop/rowGroupColumnsPanel';
 export * from './dist/lib/toolPanel/columnDrop/pivotColumnsPanel';
+export * from './dist/lib/toolPanel/columnDrop/pivotModePanel';
 
 export * from './dist/lib/toolPanel/columnsSelect/columnSelectPanel';
 export * from './dist/lib/toolPanel/columnsSelect/renderedColumn';

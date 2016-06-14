@@ -24,6 +24,7 @@ import {LicenseManager} from "./licenseManager";
 import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
+import {PivotModePanel} from "./toolPanel/columnDrop/pivotModePanel";
 
 
 export function populateClientExports(exports: any): void {
@@ -49,6 +50,7 @@ export function populateClientExports(exports: any): void {
     exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
     exports.PivotColumnsPanel = PivotColumnsPanel;
     exports.ToolPanelComp = ToolPanelComp;
+    exports.PivotModePanel = PivotModePanel;
 
     exports.ColumnSelectPanel = ColumnSelectPanel;
     exports.RenderedColumn = RenderedColumn;

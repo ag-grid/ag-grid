@@ -133,7 +133,7 @@ export class RenderedGroup extends Component {
         var childColumns = this.columnGroup.getLeafColumns();
         var selected = this.cbSelect.isSelected();
 
-        if (this.columnController.isReduce()) {
+        if (this.columnController.isPivotMode()) {
             if (selected) {
                 this.actionCheckedReduce(childColumns);
             } else {
@@ -200,7 +200,7 @@ export class RenderedGroup extends Component {
     }
 
     private onColumnStateChanged(): void {
-        var columnsReduced = this.columnController.isReduce();
+        var columnsReduced = this.columnController.isPivotMode();
 
         var visibleChildCount = 0;
         var hiddenChildCount = 0;

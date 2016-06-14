@@ -2,7 +2,7 @@ import {Component, PostConstruct, Bean, Autowired, Context} from "ag-grid/main";
 import {ColumnSelectPanel} from "./columnsSelect/columnSelectPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
-import {ReduceColumnPanel} from "./columnDrop/reduceColumnPanel";
+import {PivotModePanel} from "./columnDrop/pivotModePanel";
 import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 
 @Bean('toolPanel')
@@ -24,7 +24,7 @@ export class ToolPanelComp extends Component {
         this.columnSelectPanel = new ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
 
-        var reducePanel = new ReduceColumnPanel();
+        var reducePanel = new PivotModePanel();
         this.context.wireBean(reducePanel);
 
         var rowGroupColumnsPanel = new RowGroupColumnsPanel(false);

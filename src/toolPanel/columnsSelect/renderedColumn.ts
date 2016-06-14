@@ -103,7 +103,7 @@ export class RenderedColumn extends Component {
 
     private actionUnChecked(): void {
         // what we do depends on the reduce state
-        if (this.columnController.isReduce()) {
+        if (this.columnController.isPivotMode()) {
             // remove pivot if column is pivoted
             if (this.columnController.isColumnPivoted(this.column)) {
                 this.columnController.removePivotColumn(this.column);
@@ -124,7 +124,7 @@ export class RenderedColumn extends Component {
 
     private actionChecked(): void {
         // what we do depends on the reduce state
-        if (this.columnController.isReduce()) {
+        if (this.columnController.isPivotMode()) {
             if (this.column.isMeasure()) {
                 if (!this.column.isValue()) {
                     this.columnController.addValueColumn(this.column);
@@ -150,7 +150,7 @@ export class RenderedColumn extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        if (this.columnController.isReduce()) {
+        if (this.columnController.isPivotMode()) {
             // if reducing, checkbox means column is one of pivot, value or group
             var isPivot = this.columnController.isColumnPivoted(this.column);
             var isRowGroup = this.columnController.isColumnRowGrouped(this.column);

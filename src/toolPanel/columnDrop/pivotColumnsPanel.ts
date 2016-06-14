@@ -1,8 +1,6 @@
 import {
     Utils,
     SvgFactory,
-    Bean,
-    Component,
     Autowired,
     ColumnController,
     EventService,
@@ -10,14 +8,9 @@ import {
     LoggerFactory,
     DragAndDropService,
     GridOptionsWrapper,
-    GridPanel,
-    Logger,
-    DropTarget,
     PostConstruct,
     Events,
-    DraggingEvent,
-    Column,
-    DragSource
+    Column
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
