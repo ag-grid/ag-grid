@@ -22,6 +22,8 @@ import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
 import {ToolPanelComp} from "./toolPanel/toolPanelComp";
 import {LicenseManager} from "./licenseManager";
 import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
+import {PivotStage} from "./rowStages/pivotStage";
+import {PivotColDefService} from "./rowStages/pivotColDefService";
 
 
 export function populateClientExports(exports: any): void {
@@ -34,6 +36,8 @@ export function populateClientExports(exports: any): void {
 
     exports.AggregationStage = AggregationStage;
     exports.GroupStage = GroupStage;
+    exports.PivotColDefService = PivotColDefService;
+    exports.PivotStage = PivotStage;
 
     exports.SetFilter = SetFilter;
     exports.SetFilterModel = SetFilterModel;

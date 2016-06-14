@@ -7,10 +7,10 @@ import {
     ColumnController,
     ValueService,
     RowNode,
-    PivotService,
     Column,
     IAggFunction
 } from "ag-grid/main";
+import {PivotStage} from "./pivotStage";
 
 @Bean('aggregationStage')
 export class AggregationStage implements IRowNodeStage {
@@ -18,7 +18,7 @@ export class AggregationStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('pivotService') private pivotService: PivotService;
+    @Autowired('pivotStage') private pivotStage: PivotStage;
 
     private aggFunctionService = new AggFunctionService();
 
@@ -78,7 +78,7 @@ export class AggregationStage implements IRowNodeStage {
 
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         var result: any = {};
-        var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
+        var pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
 
         pivotColumnDefs.forEach( pivotColumnDef => {
 

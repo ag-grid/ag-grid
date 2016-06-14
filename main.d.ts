@@ -7,6 +7,8 @@ export * from './dist/lib/rendering/largeText/largeTextCellEditor';
 
 export * from './dist/lib/rowStages/aggregationStage';
 export * from './dist/lib/rowStages/groupStage';
+export * from './dist/lib/rowStages/pivotColDefService';
+export * from './dist/lib/rowStages/pivotStage';
 
 export * from './dist/lib/setFilter/setFilter';
 export * from './dist/lib/setFilter/setFilterModel';
