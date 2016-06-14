@@ -48,6 +48,7 @@ export * from './dist/lib/headerRendering/renderedHeaderCell';
 export * from './dist/lib/headerRendering/renderedHeaderGroupCell';
 export * from './dist/lib/headerRendering/standardMenu';
 
+export * from './dist/lib/interfaces/iAggregationFunctionService';
 export * from './dist/lib/interfaces/iClipboardService';
 export * from './dist/lib/interfaces/iContextMenuFactory';
 export * from './dist/lib/interfaces/iCompFactory';
