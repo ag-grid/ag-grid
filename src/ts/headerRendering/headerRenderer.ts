@@ -67,7 +67,7 @@ export class HeaderRenderer {
     private onColumnValueChanged(): void {
         // if we are doing reduce, then adding / removing value columns
         // has the impact of adding / removing the column visibility
-        if (this.columnController.isReduce()) {
+        if (this.columnController.isPivotMode()) {
             this.refreshHeader();
         }
     }

@@ -29,7 +29,7 @@ export class Component implements IEventEmitter {
         var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
         for (var i = 0; i<childCount; i++) {
             var childNode = parentNode.childNodes[i];
-            var newComponent = context.createComponent(childNode.nodeName);
+            var newComponent = context.createComponent(<Element>childNode);
             if (newComponent) {
                 this.swapComponentForNode(newComponent, parentNode, childNode);
             } else {
@@ -42,7 +42,6 @@ export class Component implements IEventEmitter {
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
         parentNode.replaceChild(newComponent.getGui(), childNode);
-        this.copyAttributesFromNode(<Element>childNode, newComponent.getGui());
         this.childComponents.push(newComponent);
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     }
@@ -57,16 +56,6 @@ export class Component implements IEventEmitter {
                 thisNoType[querySelector.attributeName] = newComponent;
             }
         } );
-    }
-
-    private copyAttributesFromNode(fromNode: Element, toNode: Element): void {
-        if (fromNode.attributes) {
-            var count = fromNode.attributes.length;
-            for (var i = 0; i<count; i++) {
-                var attr = fromNode.attributes[i];
-                toNode.setAttribute(attr.name, attr.value);
-            }
-        }
     }
 
     public setTemplate(template: string): void {
@@ -208,5 +197,14 @@ export class Component implements IEventEmitter {
     
     public addCssClass(className: string): void {
         _.addCssClass(this.getGui(), className);
+    }
+    
+    public getAttribute(key: string): string {
+        var eGui = this.getGui();
+        if (eGui) {
+            return eGui.getAttribute(key);
+        } else {
+            return null;
+        }
     }
 }

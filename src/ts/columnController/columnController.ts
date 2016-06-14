@@ -162,7 +162,7 @@ export class ColumnController {
     private ready = false;
     private logger: Logger;
 
-    private reduce = false;
+    private pivotMode = false;
 
     @PostConstruct
     public init(): void {
@@ -171,13 +171,13 @@ export class ColumnController {
         }
     }
 
-    public isReduce(): boolean {
-        return this.reduce || this.pivotColumns.length > 0;
+    public isPivotMode(): boolean {
+        return this.pivotMode || this.pivotColumns.length > 0;
     }
 
-    public setReduce(reduce: boolean): void {
-        if (reduce === this.reduce) { return; }
-        this.reduce = reduce;
+    public setPivotMode(reduce: boolean): void {
+        if (reduce === this.pivotMode) { return; }
+        this.pivotMode = reduce;
         this.updateDisplayedColumns();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_REDUCE_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_REDUCE_CHANGED, event);
@@ -1142,7 +1142,7 @@ export class ColumnController {
     }
 
     private filterOutVisibleColumns(): Column[] {
-        if (this.secondaryColumns || !this.reduce) {
+        if (this.secondaryColumns || !this.pivotMode) {
             return _.filter(this.gridColumns, column => column.isVisible() );
         } else {
             // we are reducing, so we ignore the visibility and show columns that

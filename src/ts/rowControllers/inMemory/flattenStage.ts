@@ -24,7 +24,7 @@ export class FlattenStage implements IRowNodeStage {
         // putting value into a wrapper so it's passed by reference
         var nextRowTop: NumberWrapper = {value: 0};
 
-        var reduce = this.columnController.isReduce();
+        var reduce = this.columnController.isPivotMode();
 
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are

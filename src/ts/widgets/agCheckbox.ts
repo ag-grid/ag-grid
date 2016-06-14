@@ -17,6 +17,7 @@ export class AgCheckbox extends Component {
         '  <span class="ag-checkbox-checked"></span>' +
         '  <span class="ag-checkbox-unchecked"></span>' +
         '  <span class="ag-checkbox-indeterminate"></span>' +
+        '  <span class="ag-checkbox-label"></span>' +
         '</span>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -24,6 +25,7 @@ export class AgCheckbox extends Component {
     @QuerySelector('.ag-checkbox-checked') private eChecked: HTMLElement;
     @QuerySelector('.ag-checkbox-unchecked') private eUnchecked: HTMLElement;
     @QuerySelector('.ag-checkbox-indeterminate') private eIndeterminate: HTMLElement;
+    @QuerySelector('.ag-checkbox-label') private eLabel: HTMLElement;
 
     private selected = false;
 
@@ -38,6 +40,11 @@ export class AgCheckbox extends Component {
         this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
         
         this.updateIcons();
+        
+        var label = this.getAttribute('label');
+        if (label) {
+            this.eLabel.innerText = label;
+        }
     }
     
     @Listener('click')

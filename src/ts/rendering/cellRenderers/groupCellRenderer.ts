@@ -81,7 +81,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                 paddingFactor = 10;
             }
             var paddingPx = node.level * paddingFactor;
-            var reducedLeafNode = this.columnController.isReduce() && this.rowNode.leafGroup;
+            var reducedLeafNode = this.columnController.isPivotMode() && this.rowNode.leafGroup;
             if (node.footer) {
                 paddingPx += 15;
             } else if (!node.group || reducedLeafNode) {
@@ -242,7 +242,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private showExpandAndContractIcons(): void {
 
-        var reducedLeafNode = this.columnController.isReduce() && this.rowNode.leafGroup;
+        var reducedLeafNode = this.columnController.isPivotMode() && this.rowNode.leafGroup;
 
         var expandable = this.rowNode.group && !this.rowNode.footer && !reducedLeafNode;
         if (expandable) {

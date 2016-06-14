@@ -46,13 +46,13 @@ export class Context {
         this.logger = new Logger('Context', this.contextParams.debug);
         this.logger.log('>> creating ag-Application Context');
 
+        this.setupComponents();
+
         this.createBeans();
 
         var beans = _.mapObject(this.beans, (beanEntry: BeanEntry) => beanEntry.beanInstance);
 
         this.wireBeans(beans);
-
-        this.setupComponents();
 
         this.logger.log('>> ag-Application Context ready - component is alive');
     }
@@ -75,16 +75,28 @@ export class Context {
         this.componentsMappedByName[classUpperCase] = ComponentClass;
     }
 
-    public createComponent(key: string): Component {
+    public createComponent(element: Element): Component {
+        var key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             var newComponent = <Component> new this.componentsMappedByName[key];
+            this.copyAttributesFromNode(element, newComponent.getGui());
             this.wireBean(newComponent);
             return newComponent;
         } else {
             return null;
         }
     }
-    
+
+    private copyAttributesFromNode(fromNode: Element, toNode: Element): void {
+        if (fromNode.attributes) {
+            var count = fromNode.attributes.length;
+            for (var i = 0; i<count; i++) {
+                var attr = fromNode.attributes[i];
+                toNode.setAttribute(attr.name, attr.value);
+            }
+        }
+    }
+
     public wireBean(bean: any): void {
         this.wireBeans([bean]);
     }
