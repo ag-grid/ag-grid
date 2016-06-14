@@ -25,9 +25,12 @@ import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
 import {PivotModePanel} from "./toolPanel/columnDrop/pivotModePanel";
+import {AggregationFunctionService} from "./aggregation/aggregationFunctionService";
 
 
 export function populateClientExports(exports: any): void {
+
+    exports.AggregationFunctionService = AggregationFunctionService;
 
     exports.RichSelectCellEditor = RichSelectCellEditor;
     exports.RichSelectRow = RichSelectRow;

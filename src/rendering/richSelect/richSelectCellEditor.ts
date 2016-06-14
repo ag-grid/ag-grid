@@ -1,5 +1,5 @@
 
-import {ICellEditor, ICellEditorParams, Component, Autowired, Context, Utils as _, Constants, ICellRenderer, ICellRendererFunc, CellRendererService} from "ag-grid/main";
+import {ICellEditor, ICellEditorParams, Component, Autowired, Context, Utils, Constants, ICellRenderer, ICellRendererFunc, CellRendererService} from "ag-grid/main";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
 
@@ -45,7 +45,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
         this.renderSelectedValue();
 
-        if (_.missing(params.values)) {
+        if (Utils.missing(params.values)) {
             console.log('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
@@ -102,7 +102,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
                 this.addDestroyFunc( ()=> result.destroy() );
             }
         } else {
-            if (_.exists(this.selectedValue)) {
+            if (Utils.exists(this.selectedValue)) {
                 eValue.innerHTML = this.selectedValue.toString();
             } else {
                 eValue.innerHTML = '';
@@ -141,7 +141,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         var row = Math.floor(mouseY / this.virtualList.getRowHeight());
         var value = this.params.values[row];
 
-        if (_.exists(value)) {
+        if (Utils.exists(value)) {
             this.setSelectedValue(value);
         }
     }

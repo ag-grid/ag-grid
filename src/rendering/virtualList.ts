@@ -1,4 +1,4 @@
-import {Component, PostConstruct, Autowired, Context, Utils as _} from 'ag-grid/main';
+import {Component, PostConstruct, Utils} from "ag-grid/main";
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -12,10 +12,6 @@ export class VirtualList extends Component {
         '<div class="ag-virtual-list-container">'+
         '</div>'+
         '</div>';
-
-    // '<div class="ag-filter-item">' +
-
-    @Autowired('context') private context: Context;
 
     private model: VirtualListModel;
 
@@ -85,7 +81,7 @@ export class VirtualList extends Component {
     }
 
     public refresh(): void {
-        if (_.missing(this.model)) {
+        if (Utils.missing(this.model)) {
             return;
         }
         this.eListContainer.style.height = (this.model.getRowCount() * this.rowHeight) + "px";
@@ -146,7 +142,7 @@ export class VirtualList extends Component {
     private insertRow(value: any, rowIndex: any) {
 
         var eDiv = document.createElement('div');
-        _.addCssClass(eDiv, 'ag-virtual-list-item');
+        Utils.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
 
         var rowComponent = this.componentCreator(value);

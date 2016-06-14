@@ -27,7 +27,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     constructor(horizontal: boolean) {
-        super(horizontal);
+        super(horizontal, true);
     }
 
     @PostConstruct

@@ -1,4 +1,6 @@
 
+export * from './dist/lib/aggregation/aggregationFunctionService';
+
 export * from './dist/lib/rendering/richSelect/richSelectCellEditor';
 export * from './dist/lib/rendering/richSelect/richSelectRow';
 export * from './dist/lib/rendering/virtualList';

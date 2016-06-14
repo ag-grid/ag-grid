@@ -1,6 +1,5 @@
 import {
     Utils,
-    SvgFactory,
     Component,
     Autowired,
     ColumnController,
@@ -17,6 +16,7 @@ import {
     Column,
     DragSource
 } from "ag-grid/main";
+import {ColumnComponent} from "./columnComponent";
 
 export interface AbstractColumnDropPanelParams {
     dragAndDropIcon:string;
@@ -47,15 +47,17 @@ export abstract class AbstractColumnDropPanel extends Component {
     private beans: AbstractColumnDropPanelBeans;
 
     private horizontal: boolean;
+    private valueColumn: boolean;
 
     protected abstract isColumnDroppable(column: Column): boolean;
     protected abstract removeColumns(columns: Column[]): void;
     protected abstract addColumns(columns: Column[]): void;
     protected abstract getExistingColumns(): Column[];
 
-    constructor(horizontal: boolean) {
+    constructor(horizontal: boolean, valueColumn: boolean) {
         super(`<div class="ag-column-drop ag-font-style ag-column-drop-${horizontal?'horizontal':'vertical'}"></div>`);
         this.horizontal = horizontal;
+        this.valueColumn = valueColumn;
     }
 
     public setBeans(beans: AbstractColumnDropPanelBeans): void {
@@ -160,7 +162,7 @@ export abstract class AbstractColumnDropPanel extends Component {
                 }
                 first = false;
 
-                var ghostCell = new ColumnComponent(column, this.dropTarget, true);
+                var ghostCell = new ColumnComponent(column, this.dropTarget, true, this.valueColumn);
                 ghostCell.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
                 this.beans.context.wireBean(ghostCell);
                 this.getGui().appendChild(ghostCell.getGui());
@@ -177,7 +179,7 @@ export abstract class AbstractColumnDropPanel extends Component {
             if (index > 0) {
                 this.addArrowToGui();
             }
-            var cell = new ColumnComponent(column, this.dropTarget, false);
+            var cell = new ColumnComponent(column, this.dropTarget, false, this.valueColumn);
             cell.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
             this.beans.context.wireBean(cell);
             this.getGui().appendChild(cell.getGui());
@@ -224,64 +226,6 @@ export abstract class AbstractColumnDropPanel extends Component {
             var eArrow = document.createElement('span');
             eArrow.innerHTML = '&#8594;';
             this.getGui().appendChild(eArrow);
-        }
-    }
-}
-
-class ColumnComponent extends Component {
-
-    public static EVENT_COLUMN_REMOVE = 'columnRemove';
-
-    private static TEMPLATE =
-        '<span class="ag-column-drop-cell">' +
-        '<span id="eText" class="ag-column-drop-cell-text"></span>' +
-        '<span id="btRemove" class="ag-column-drop-cell-button">&#10006;</span>' +
-        '</span>';
-
-    @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
-    @Autowired('columnController') columnController: ColumnController;
-    @Autowired('gridPanel') gridPanel: GridPanel;
-
-    private column: Column;
-    private dragSourceDropTarget: DropTarget;
-    private ghost: boolean;
-    private displayName: string;
-
-    constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean) {
-        super(ColumnComponent.TEMPLATE);
-        this.column = column;
-        this.dragSourceDropTarget = dragSourceDropTarget;
-        this.ghost = ghost;
-    }
-
-    @PostConstruct
-    public init(): void {
-        this.displayName = this.columnController.getDisplayNameForCol(this.column);
-        this.setupComponents();
-        if (!this.ghost) {
-            this.addDragSource();
-        }
-    }
-
-    private addDragSource(): void {
-        var dragSource: DragSource = {
-            eElement: this.getGui(),
-            dragItem: [this.column],
-            dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget
-        };
-        this.dragAndDropService.addDragSource(dragSource);
-    }
-
-    private setupComponents(): void {
-        var eText = <HTMLElement> this.getGui().querySelector('#eText');
-        var btRemove = <HTMLElement> this.getGui().querySelector('#btRemove');
-
-        eText.innerHTML = this.displayName;
-        this.addDestroyableEventListener(btRemove, 'click', ()=> this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE));
-
-        if (this.ghost) {
-            Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
     }
 }

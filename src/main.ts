@@ -16,10 +16,11 @@ import {LicenseManager} from "./licenseManager";
 import {MD5} from "./license/md5";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
+import {AggregationFunctionService} from "./aggregation/aggregationFunctionService";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
 Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
-    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
+    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggregationFunctionService,
     StatusBar, LicenseManager, MD5], rowModelTypes);
