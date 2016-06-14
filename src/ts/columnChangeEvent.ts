@@ -100,7 +100,7 @@ export class ColumnChangeEvent {
             this.type ===  Events.EVENT_COLUMN_GROUP_OPENED ||
             this.type ===  Events.EVENT_COLUMN_VISIBLE ||
             this.type ===  Events.EVENT_PIVOT_VALUE_CHANGED ||
-            this.type ===  Events.EVENT_COLUMN_REDUCE_CHANGED ||
+            this.type ===  Events.EVENT_COLUMN_PIVOT_MODE_CHANGED ||
             this.type ===  Events.EVENT_COLUMN_PINNED
     }
 
@@ -111,7 +111,7 @@ export class ColumnChangeEvent {
             this.type ===  Events.EVENT_COLUMN_RESIZED ||
             this.type ===  Events.EVENT_COLUMN_PINNED ||
             this.type ===  Events.EVENT_PIVOT_VALUE_CHANGED ||
-            this.type ===  Events.EVENT_COLUMN_REDUCE_CHANGED ||
+            this.type ===  Events.EVENT_COLUMN_PIVOT_MODE_CHANGED ||
             this.type ===  Events.EVENT_COLUMN_ROW_GROUP_CHANGED;
     }
 

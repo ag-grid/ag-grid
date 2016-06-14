@@ -5,7 +5,7 @@ export class Events {
     public static EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
 
     /** The reduce flag was changed */
-    public static EVENT_COLUMN_REDUCE_CHANGED = 'columnReduceChanged';
+    public static EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
     
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';

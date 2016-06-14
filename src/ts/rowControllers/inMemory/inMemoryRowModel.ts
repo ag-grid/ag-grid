@@ -49,7 +49,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants.STEP_FILTER));
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_REDUCE_CHANGED, this.refreshModel.bind(this, constants.STEP_MAP));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants.STEP_PIVOT));
 
         this.rootNode = new RowNode();
         this.rootNode.group = true;

@@ -172,15 +172,15 @@ export class ColumnController {
     }
 
     public isPivotMode(): boolean {
-        return this.pivotMode || this.pivotColumns.length > 0;
+        return this.pivotMode;
     }
 
     public setPivotMode(reduce: boolean): void {
         if (reduce === this.pivotMode) { return; }
         this.pivotMode = reduce;
         this.updateDisplayedColumns();
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_REDUCE_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_REDUCE_CHANGED, event);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, event);
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -593,7 +593,7 @@ export class ColumnController {
 
     // + inMemoryRowModel
     public isPivotActive(): boolean {
-        return this.pivotColumns && this.pivotColumns.length > 0;
+        return this.pivotColumns && this.pivotColumns.length > 0 && this.pivotMode;
     }
     
     // + toolPanel
