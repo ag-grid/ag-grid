@@ -66,7 +66,7 @@ export class RenderedColumn extends Component {
             this.addDragSource();
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_REDUCE_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
         this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this) );
         this.addDestroyableEventListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this) );
         this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this) );

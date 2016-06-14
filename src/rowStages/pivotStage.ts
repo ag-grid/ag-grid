@@ -32,12 +32,20 @@ export class PivotStage implements IRowNodeStage {
     private valueColumnsHashLastTime: string;
 
     public execute(rootNode: RowNode): any {
-
-        if (!this.columnController.isPivotActive()) {
-            this.columnController.setSecondaryColumns(null);
-            return;
+        if (this.columnController.isPivotActive()) {
+            this.executePivotOn(rootNode);
+        } else {
+            this.executePivotOff();
         }
+    }
 
+    private executePivotOff(): void {
+        this.valueColumnsHashLastTime = null;
+        this.uniqueValues = {};
+        this.columnController.setSecondaryColumns(null);
+    }
+
+    private executePivotOn(rootNode: RowNode): void {
         var uniqueValues = this.bucketUpRowNodes(rootNode);
 
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
@@ -54,7 +62,6 @@ export class PivotStage implements IRowNodeStage {
             this.pivotColumnDefs = result.pivotColumnDefs;
             this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs);
         }
-
     }
 
     private setUniqueValues(newValues: any): boolean {

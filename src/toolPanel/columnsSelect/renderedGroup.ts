@@ -84,7 +84,7 @@ export class RenderedGroup extends Component {
 
         this.addDestroyableEventListener(eText, 'click', ()=> this.cbSelect.setSelected(!this.cbSelect.isSelected()) );
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_REDUCE_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
 
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
