@@ -174,6 +174,11 @@ include '../documentation-main/documentation_header.php';
             <th>viewportChanged</th>
             <td>Informs when rows rendered into the DOM changes.</td>
         </tr>
+        <tr>
+            <th>dragStarted, dragStopped</th>
+            <td>When column dragging starts of stops. Useful if you want to wait until after a drag
+                event before doing an action.</td>
+        </tr>
 
     </table>
 
