@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.9
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,8 +17,8 @@ var AggregationStage = (function () {
     // + gridApi.recomputeAggregates()
     AggregationStage.prototype.execute = function (rootNode) {
         // we don't do aggregation if user provided the groups
-        var userProvidedTheGroups = main_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (userProvidedTheGroups) {
+        var rowsAlreadyGrouped = main_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (rowsAlreadyGrouped) {
             return;
         }
         var valueColumns = this.columnController.getValueColumns();
@@ -38,8 +38,12 @@ var AggregationStage = (function () {
     AggregationStage.prototype.aggregateRowNode = function (rowNode, valueColumns, pivotColumns) {
         var valueColumnsMissing = valueColumns.length === 0;
         var pivotColumnsMissing = pivotColumns.length === 0;
+        var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
         var aggResult;
-        if (valueColumnsMissing) {
+        if (userProvidedGroupRowAggNodes) {
+            aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
+        }
+        else if (valueColumnsMissing) {
             aggResult = null;
         }
         else if (pivotColumnsMissing) {
@@ -78,9 +82,9 @@ var AggregationStage = (function () {
     AggregationStage.prototype.aggregateRowNodeUsingValuesOnly = function (rowNode, valueColumns) {
         var _this = this;
         var result = {};
-        valueColumns.forEach(function (valueColumn) {
-            var values = _this.getValuesNormal(rowNode, valueColumn);
-            result[valueColumn.getId()] = _this.aggregateValues(values, valueColumn.getAggFunc());
+        var values2d = this.getValuesNormal(rowNode, valueColumns);
+        valueColumns.forEach(function (valueColumn, index) {
+            result[valueColumn.getId()] = _this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
         return result;
     };
@@ -106,21 +110,28 @@ var AggregationStage = (function () {
         });
         return values;
     };
-    AggregationStage.prototype.getValuesNormal = function (rowNode, valueColumn) {
-        var _this = this;
+    AggregationStage.prototype.getValuesNormal = function (rowNode, valueColumns) {
+        // create 2d array, of all values for all valueColumns
         var values = [];
-        rowNode.childrenAfterFilter.forEach(function (rowNode) {
-            var value;
-            // if the row is a group, then it will only have an agg result value,
-            // which means valueGetter is never used.
-            if (rowNode.group) {
-                value = rowNode.data[valueColumn.getId()];
+        valueColumns.forEach(function () { return values.push([]); });
+        var valueColumnCount = valueColumns.length;
+        var rowCount = rowNode.childrenAfterFilter.length;
+        for (var i = 0; i < rowCount; i++) {
+            var childNode = rowNode.childrenAfterFilter[i];
+            for (var j = 0; j < valueColumnCount; j++) {
+                var valueColumn = valueColumns[j];
+                var value;
+                // if the row is a group, then it will only have an agg result value,
+                // which means valueGetter is never used.
+                if (childNode.group) {
+                    value = childNode.data[valueColumn.getId()];
+                }
+                else {
+                    value = this.valueService.getValueUsingSpecificData(valueColumn, childNode.data, childNode);
+                }
+                values[j].push(value);
             }
-            else {
-                value = _this.valueService.getValue(valueColumn, rowNode);
-            }
-            values.push(value);
-        });
+        }
         return values;
     };
     AggregationStage.prototype.aggregateValues = function (values, aggFuncOrString) {
@@ -166,16 +177,18 @@ var AggFunctionService = (function () {
         this.aggFunctionsMap = {};
         this.aggFunctionsMap['sum'] = function (input) {
             var result = null;
-            input.forEach(function (value) {
-                if (typeof value === 'number') {
+            var length = input.length;
+            for (var i = 0; i < length; i++) {
+                if (typeof input[i] === 'number') {
                     if (result === null) {
-                        result = value;
+                        result = input[i];
                     }
                     else {
-                        result += value;
+                        result += input[i];
                     }
                 }
-            });
+                result += i;
+            }
             return result;
         };
         this.aggFunctionsMap['first'] = function (input) {
@@ -196,30 +209,32 @@ var AggFunctionService = (function () {
         };
         this.aggFunctionsMap['min'] = function (input) {
             var result = null;
-            input.forEach(function (value) {
-                if (typeof value === 'number') {
+            var length = input.length;
+            for (var i = 0; i < length; i++) {
+                if (typeof input[i] === 'number') {
                     if (result === null) {
-                        result = value;
+                        result = input[i];
                     }
-                    else if (result > value) {
-                        result = value;
+                    else if (result > input[i]) {
+                        result = input[i];
                     }
                 }
-            });
+            }
             return result;
         };
         this.aggFunctionsMap['max'] = function (input) {
             var result = null;
-            input.forEach(function (value) {
-                if (typeof value === 'number') {
+            var length = input.length;
+            for (var i = 0; i < length; i++) {
+                if (typeof input[i] === 'number') {
                     if (result === null) {
-                        result = value;
+                        result = input[i];
                     }
-                    else if (result < value) {
-                        result = value;
+                    else if (result < input[i]) {
+                        result = input[i];
                     }
                 }
-            });
+            }
             return result;
         };
     }
@@ -228,5 +243,3 @@ var AggFunctionService = (function () {
     };
     return AggFunctionService;
 })();
-// in time we will turn this into a factory that the user can register their own agg functions
-var aggFunctions = {};

@@ -6,21 +6,21 @@ import {
     Component,
     GridOptionsWrapper,
     ColumnController,
+    Events,
     GridPanel,
+    Context,
     DragSource,
     DragAndDropService,
     OriginalColumnGroup,
-    PostConstruct
+    PostConstruct,
+    QuerySelector,
+    EventService,
+    AgCheckbox
 } from "ag-grid/main";
 
 var svgFactory = SvgFactory.getInstance();
 
 export class RenderedGroup extends Component {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
@@ -28,12 +28,19 @@ export class RenderedGroup extends Component {
         '  <span class="ag-column-group-icons">' +
         '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
         '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
-        '    <span class="ag-column-visible-icon"></span>' +
-        '    <span class="ag-column-hidden-icon"></span>' +
-        '    <span class="ag-column-half-icon"></span>' +
         '  </span>' +
+        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '  <span id="eText" class="ag-column-select-column-group-label"></span>' +
         '</div>';
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('context') private context: Context;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('eventService') private eventService: EventService;
+
+    @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
 
     private columnGroup: OriginalColumnGroup;
     private expanded = true;
@@ -48,9 +55,7 @@ export class RenderedGroup extends Component {
 
     private displayName: string;
 
-    private eAllVisibleIcon: HTMLInputElement;
-    private eAllHiddenIcon: HTMLInputElement;
-    private eHalfVisibleIcon: HTMLInputElement;
+    private processingColumnStateChange = false;
 
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void, allowDragging: boolean) {
         super(RenderedGroup.TEMPLATE);
@@ -62,6 +67,8 @@ export class RenderedGroup extends Component {
 
     @PostConstruct
     public init(): void {
+        this.instantiate(this.context);
+
         var eText = this.queryForHtmlElement('#eText');
 
         this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
@@ -70,11 +77,16 @@ export class RenderedGroup extends Component {
         }
 
         eText.innerHTML = this.displayName;
-        eText.addEventListener('dblclick', this.onExpandOrContractClicked.bind(this));
         this.setupExpandContract();
 
         var eIndent = this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
+
+        this.addDestroyableEventListener(eText, 'click', ()=> this.cbSelect.setSelected(!this.cbSelect.isSelected()) );
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_REDUCE_CHANGED, this.onColumnStateChanged.bind(this) );
+
+        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
         this.setOpenClosedIcons();
 
@@ -82,35 +94,17 @@ export class RenderedGroup extends Component {
             this.addDragSource();
         }
 
-        this.setupVisibleIcons();
+        this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
     }
 
     private addVisibilityListenersToAllChildren(): void {
         this.columnGroup.getLeafColumns().forEach( column => {
-            this.addDestroyableEventListener(column, Column.EVENT_VISIBLE_CHANGED, this.setVisibleIcons.bind(this));
+            this.addDestroyableEventListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addDestroyableEventListener(column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this) );
+            this.addDestroyableEventListener(column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this) );
+            this.addDestroyableEventListener(column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this) );
         });
-    }
-
-    private setupVisibleIcons(): void {
-        this.eAllHiddenIcon = <HTMLInputElement> this.queryForHtmlElement('.ag-column-hidden-icon');
-        this.eAllVisibleIcon = <HTMLInputElement> this.queryForHtmlElement('.ag-column-visible-icon');
-        this.eHalfVisibleIcon = <HTMLInputElement> this.queryForHtmlElement('.ag-column-half-icon');
-
-        this.eAllHiddenIcon.appendChild(svgFactory.createColumnHiddenIcon());
-        this.eAllVisibleIcon.appendChild(svgFactory.createColumnVisibleIcon());
-        this.eHalfVisibleIcon.appendChild(svgFactory.createColumnIndeterminateIcon());
-
-        this.eAllHiddenIcon.addEventListener('click', this.setChildrenVisible.bind(this, true));
-        this.eAllVisibleIcon.addEventListener('click', this.setChildrenVisible.bind(this, false));
-        this.eHalfVisibleIcon.addEventListener('click', this.setChildrenVisible.bind(this, true));
-
-        // var columnStateChangedListener = this.onColumnStateChangedListener.bind(this);
-        // this.column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
-        // this.addDestroyFunc( ()=> this.column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener) );
-
-        this.setVisibleIcons();
-        // this.setIconVisibility();
     }
 
     private addDragSource(): void {
@@ -133,24 +127,115 @@ export class RenderedGroup extends Component {
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
     }
 
-    private setChildrenVisible(visible: boolean): void {
+    private onCheckboxChanged(): void {
+        if (this.processingColumnStateChange) { return; }
+
         var childColumns = this.columnGroup.getLeafColumns();
-        this.columnController.setColumnsVisible(childColumns, visible);
+        var selected = this.cbSelect.isSelected();
+
+        if (this.columnController.isReduce()) {
+            if (selected) {
+                this.actionCheckedReduce(childColumns);
+            } else {
+                this.actionUnCheckedReduce(childColumns)
+            }
+        } else {
+            this.columnController.setColumnsVisible(childColumns, selected);
+        }
     }
 
-    private setVisibleIcons(): void {
+    private actionUnCheckedReduce(columns: Column[]): void {
+
+        var columnsToUnPivot: Column[] = [];
+        var columnsToUnValue: Column[] = [];
+        var columnsToUnGroup: Column[] = [];
+
+        columns.forEach( column => {
+            if (column.isPivot()) {
+                columnsToUnPivot.push(column);
+            }
+            if (column.isRowGroup()) {
+                columnsToUnGroup.push(column);
+            }
+            if (column.isValue()) {
+                columnsToUnValue.push(column);
+            }
+        });
+
+        if (columnsToUnPivot.length>0) {
+            this.columnController.removePivotColumns(columnsToUnPivot);
+        }
+        if (columnsToUnGroup.length>0) {
+            this.columnController.removeRowGroupColumns(columnsToUnGroup);
+        }
+        if (columnsToUnValue.length>0) {
+            this.columnController.removeValueColumns(columnsToUnValue);
+        }
+    }
+
+    private actionCheckedReduce(columns: Column[]): void {
+
+        var columnsToValue: Column[] = [];
+        var columnsToGroup: Column[] = [];
+
+        columns.forEach( column => {
+            if (column.isMeasure()) {
+                if (!column.isValue()) {
+                    columnsToValue.push(column);
+                }
+            } else {
+                if (!column.isPivot() && !column.isRowGroup()) {
+                    columnsToGroup.push(column);
+                }
+            }
+        });
+
+        if (columnsToValue.length>0) {
+            this.columnController.addValueColumns(columnsToValue);
+        }
+        if (columnsToGroup.length>0) {
+            this.columnController.addRowGroupColumns(columnsToGroup);
+        }
+
+    }
+
+    private onColumnStateChanged(): void {
+        var columnsReduced = this.columnController.isReduce();
+
         var visibleChildCount = 0;
         var hiddenChildCount = 0;
+
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-            if (column.isVisible()) {
+            if (this.isColumnVisible(column, columnsReduced)) {
                 visibleChildCount++;
             } else {
                 hiddenChildCount++;
             }
         });
-        Utils.setVisible(this.eAllHiddenIcon, visibleChildCount===0);
-        Utils.setVisible(this.eAllVisibleIcon, hiddenChildCount===0);
-        Utils.setVisible(this.eHalfVisibleIcon, hiddenChildCount!==0 && visibleChildCount!==0);
+
+        var selectedValue: boolean;
+        if (visibleChildCount>0 && hiddenChildCount>0) {
+            selectedValue = null;
+        } else if (visibleChildCount > 0) {
+            selectedValue = true;
+        } else {
+            selectedValue = false;
+        }
+
+        this.processingColumnStateChange = true;
+        this.cbSelect.setSelected(selectedValue);
+        this.processingColumnStateChange = false;
+    }
+
+    private isColumnVisible(column: Column, columnsReduced: boolean): boolean {
+        if (columnsReduced) {
+            var pivoted = this.columnController.isColumnPivoted(column);
+            var grouped = this.columnController.isColumnRowGrouped(column);
+            var value = this.columnController.isColumnValue(column);
+            return pivoted || grouped || value;
+        } else {
+            return column.isVisible();
+        }
     }
 
     private onExpandOrContractClicked(): void {

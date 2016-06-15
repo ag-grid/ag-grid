@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.9
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");
 var renderedGroup_1 = require("./toolPanel/columnsSelect/renderedGroup");
@@ -22,10 +22,12 @@ var abstractColumnDropPanel_1 = require("./toolPanel/columnDrop/abstractColumnDr
 var pivotColumnsPanel_1 = require("./toolPanel/columnDrop/pivotColumnsPanel");
 var toolPanelComp_1 = require("./toolPanel/toolPanelComp");
 var licenseManager_1 = require("./licenseManager");
+var largeTextCellEditor_1 = require("./rendering/largeText/largeTextCellEditor");
 function populateClientExports(exports) {
     exports.RichSelectCellEditor = richSelectCellEditor_1.RichSelectCellEditor;
     exports.RichSelectRow = richSelectRow_1.RichSelectRow;
     exports.VirtualList = virtualList_1.VirtualList;
+    exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
     exports.AggregationStage = aggregationStage_1.AggregationStage;
     exports.GroupStage = groupStage_1.GroupStage;
     exports.SetFilter = setFilter_1.SetFilter;

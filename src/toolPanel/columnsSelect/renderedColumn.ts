@@ -1,13 +1,19 @@
 import {
-    Utils,
+    Context,
     SvgFactory,
     Autowired,
     Component,
     ColumnController,
     DragAndDropService,
+    GridOptionsWrapper,
     GridPanel,
     Column,
+    Events,
+    QuerySelector,
+    Listener,
     PostConstruct,
+    EventService,
+    AgCheckbox,
     DragSource
 } from "ag-grid/main";
 
@@ -17,26 +23,29 @@ export class RenderedColumn extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
-        '  <span id="eIndent" class="ag-column-select-indent"></span>' +
-        '  <span class="ag-column-group-icons">' +
-        '    <span id="eColumnVisibleIcon" class="ag-column-visible-icon"></span>' +
-        '    <span id="eColumnHiddenIcon" class="ag-column-hidden-icon"></span>' +
-        '  </span>' +
-        '  <span id="eText" class="ag-column-select-label"></span>' +
+        '  <span class="ag-column-select-indent"></span>' +
+        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
+        '  <span class="ag-column-select-label"></span>' +
         '</div>';
 
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('context') private context: Context;
+
+    @QuerySelector('.ag-column-select-label') private eText: HTMLElement;
+    @QuerySelector('.ag-column-select-indent') private eIndent: HTMLElement;
+    @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
 
     private column: Column;
     private columnDept: number;
 
-    private eColumnVisibleIcon: HTMLInputElement;
-    private eColumnHiddenIcon: HTMLInputElement;
     private allowDragging: boolean;
-
     private displayName: string;
+
+    private processingColumnStateChange = false;
 
     constructor(column: Column, columnDept: number, allowDragging: boolean) {
         super(RenderedColumn.TEMPLATE);
@@ -47,36 +56,87 @@ export class RenderedColumn extends Component {
 
     @PostConstruct
     public init(): void {
+
         this.displayName = this.columnController.getDisplayNameForCol(this.column);
-        var eText = <HTMLElement> this.queryForHtmlElement('#eText');
-        eText.innerHTML = this.displayName;
-        eText.addEventListener('dblclick', this.onColumnVisibilityChanged.bind(this));
+        this.eText.innerHTML = this.displayName;
 
-        this.setupVisibleIcons();
-
-        var eIndent = <HTMLElement> this.queryForHtmlElement('#eIndent');
-        eIndent.style.width = (this.columnDept * 10) + 'px';
+        this.eIndent.style.width = (this.columnDept * 10) + 'px';
 
         if (this.allowDragging) {
             this.addDragSource();
         }
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_REDUCE_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+
+        this.instantiate(this.context);
+
+        this.onColumnStateChanged();
+
+        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
+        this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
     }
 
-    private setupVisibleIcons(): void {
-        this.eColumnHiddenIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnHiddenIcon');
-        this.eColumnVisibleIcon = <HTMLInputElement> this.queryForHtmlElement('#eColumnVisibleIcon');
+    private onClick(): void {
+        this.cbSelect.toggle();
+    }
 
-        this.eColumnHiddenIcon.appendChild(svgFactory.createColumnHiddenIcon());
-        this.eColumnVisibleIcon.appendChild(svgFactory.createColumnVisibleIcon());
+    private onChange(): void {
+        // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
+        // of a change in the model
+        if (this.processingColumnStateChange) { return; }
 
-        this.eColumnHiddenIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
-        this.eColumnVisibleIcon.addEventListener('click', this.onColumnVisibilityChanged.bind(this));
+        // action in a timeout, as the action takes some time, we want to update the icons first
+        // so the user gets nice feedback when they click. otherwise there would be a lag and the
+        // user would think the checkboxes were clunky
+        if (this.cbSelect.isSelected()) {
+            // setTimeout(this.actionChecked.bind(this), 0);
+            this.actionChecked();
+        } else {
+            // setTimeout(this.actionUnChecked.bind(this), 0);
+            this.actionUnChecked();
+        }
+    }
 
-        var columnStateChangedListener = this.onColumnStateChangedListener.bind(this);
-        this.column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
-        this.addDestroyFunc( ()=> this.column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener) );
+    private actionUnChecked(): void {
+        // what we do depends on the reduce state
+        if (this.columnController.isReduce()) {
+            // remove pivot if column is pivoted
+            if (this.columnController.isColumnPivoted(this.column)) {
+                this.columnController.removePivotColumn(this.column);
+            }
+            // remove value if column is value
+            if (this.columnController.isColumnValue(this.column)) {
+                this.columnController.removeValueColumn(this.column);
+            }
+            // remove group if column is grouped
+            if (this.columnController.isColumnRowGrouped(this.column)) {
+                this.columnController.removeRowGroupColumn(this.column);
+            }
+        } else {
+            // if not reducing, then it's just column visibility
+            this.columnController.setColumnVisible(this.column, false);
+        }
+    }
 
-        this.setIconVisibility();
+    private actionChecked(): void {
+        // what we do depends on the reduce state
+        if (this.columnController.isReduce()) {
+            if (this.column.isMeasure()) {
+                if (!this.column.isValue()) {
+                    this.columnController.addValueColumn(this.column);
+                }
+            } else {
+                if (!this.column.isPivot() && !this.column.isRowGroup()) {
+                    this.columnController.addRowGroupColumn(this.column);
+                }
+            }
+        } else {
+            this.columnController.setColumnVisible(this.column, true);
+        }
     }
 
     private addDragSource(): void {
@@ -88,19 +148,19 @@ export class RenderedColumn extends Component {
         this.dragAndDropService.addDragSource(dragSource);
     }
 
-    private onColumnStateChangedListener(): void {
-        this.setIconVisibility();
-    }
-
-    private setIconVisibility(): void {
-        var visible = this.column.isVisible();
-        Utils.setVisible(this.eColumnVisibleIcon, visible);
-        Utils.setVisible(this.eColumnHiddenIcon, !visible);
-    }
-
-    public onColumnVisibilityChanged(): void {
-        var newValue = !this.column.isVisible();
-        this.columnController.setColumnVisible(this.column, newValue);
+    private onColumnStateChanged(): void {
+        this.processingColumnStateChange = true;
+        if (this.columnController.isReduce()) {
+            // if reducing, checkbox means column is one of pivot, value or group
+            var isPivot = this.columnController.isColumnPivoted(this.column);
+            var isRowGroup = this.columnController.isColumnRowGrouped(this.column);
+            var isValue = this.columnController.isColumnValue(this.column);
+            this.cbSelect.setSelected(isPivot || isRowGroup || isValue);
+        } else {
+            // if not reducing, the checkbox tells us if column is visible or not
+            this.cbSelect.setSelected(this.column.isVisible());
+        }
+        this.processingColumnStateChange = false;
     }
 
 }

@@ -1,5 +1,5 @@
 
-import {Component, Utils as _, Autowired, CellRendererService, ICellRendererFunc, ICellRenderer} from "ag-grid/main";
+import {Component, Utils, Autowired, CellRendererService, ICellRendererFunc, ICellRenderer} from "ag-grid/main";
 
 export class RichSelectRow extends Component {
 
@@ -17,7 +17,7 @@ export class RichSelectRow extends Component {
         if (childComponent && childComponent.destroy) {
             this.addDestroyFunc(childComponent.destroy.bind(childComponent));
         }
-        _.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
+        Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
     }
 
 }

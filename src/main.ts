@@ -18,7 +18,6 @@ import {MD5} from "./license/md5";
 var rowModelTypes = {viewport: ViewportRowModel};
 
 Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory,
-    PivotColumnsPanel,
-    ColumnSelectPanel, RangeController, ClipboardService,
+    PivotColumnsPanel, RangeController, ClipboardService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
     StatusBar, LicenseManager, MD5], rowModelTypes);

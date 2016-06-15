@@ -204,7 +204,6 @@ class AggFunctionService {
                         result += input[i];
                     }
                 }
-                result += i;
             }
             return result;
         };

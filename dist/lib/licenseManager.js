@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.9
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,9 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
-var md5_1 = require("./license/md5");
+var main_1 = require('ag-grid/main');
+var main_2 = require('ag-grid/main');
+var md5_1 = require('./license/md5');
 var LicenseManager = (function () {
     function LicenseManager() {
     }
@@ -18,13 +18,12 @@ var LicenseManager = (function () {
         var gridReleaseDate = LicenseManager.getGridReleaseDate();
         var valid = false;
         var current = false;
-        console.log("validating license: " + LicenseManager.licenseKey);
         if (!main_2.Utils.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
             var hashStart = LicenseManager.licenseKey.length - 32;
             var md5 = LicenseManager.licenseKey.substring(hashStart);
             var license = LicenseManager.licenseKey.substring(0, hashStart);
             if (md5 === this.md5.md5(license)) {
-                var restrictionHashed = license.substring(license.lastIndexOf("_") + 1, license.length);
+                var restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
                 var expiry = new Date(parseInt(LicenseManager.decode(restrictionHashed)));
                 if (!isNaN(expiry.getTime())) {
                     valid = true;
@@ -33,27 +32,29 @@ var LicenseManager = (function () {
             }
         }
         if (!valid) {
-            LicenseManager.outputMessage("********************************************* Invalid License **************************************************", "* Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license. *");
+            LicenseManager.outputMessage('********************************************* Invalid License **************************************************', '* Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license. *');
         }
         else if (!current) {
-            LicenseManager.outputMessage("********************* License not compatible with installed version of ag-Grid Enterprise. *********************", "Your license for ag-Grid Enterprise expired on " + LicenseManager.formatDate(expiry) + " but the version installed was released on " + LicenseManager.formatDate(gridReleaseDate) + ". Please " +
-                "contact ag-Grid Support to renew your license");
+            var formattedExpiryDate = LicenseManager.formatDate(expiry);
+            var formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
+            LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************', ("Your license for ag-Grid Enterprise expired on " + formattedExpiryDate + " but the version installed was released on " + formattedReleaseDate + ". Please ") +
+                'contact ag-Grid Support to renew your license');
         }
     };
     LicenseManager.outputMessage = function (header, message) {
-        console.error("****************************************************************************************************************");
-        console.error("*************************************** ag-Grid Enterprise License *********************************************");
+        console.error('****************************************************************************************************************');
+        console.error('*************************************** ag-Grid Enterprise License *********************************************');
         console.error(header);
         console.error(message);
-        console.error("****************************************************************************************************************");
-        console.error("****************************************************************************************************************");
+        console.error('****************************************************************************************************************');
+        console.error('****************************************************************************************************************');
     };
     LicenseManager.formatDate = function (date) {
         var monthNames = [
-            "January", "February", "March",
-            "April", "May", "June", "July",
-            "August", "September", "October",
-            "November", "December"
+            'January', 'February', 'March',
+            'April', 'May', 'June', 'July',
+            'August', 'September', 'October',
+            'November', 'December'
         ];
         var day = date.getDate();
         var monthIndex = date.getMonth();
@@ -65,12 +66,12 @@ var LicenseManager = (function () {
     };
     ;
     LicenseManager.decode = function (input) {
-        var keystr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-        var t = "";
+        var keystr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        var t = '';
         var n, r, i;
         var s, o, u, a;
         var f = 0;
-        var e = input.replace(/[^A-Za-z0-9+/=]/g, "");
+        var e = input.replace(/[^A-Za-z0-9+/=]/g, '');
         while (f < e.length) {
             s = keystr.indexOf(e.charAt(f++));
             o = keystr.indexOf(e.charAt(f++));
@@ -91,8 +92,8 @@ var LicenseManager = (function () {
         return t;
     };
     LicenseManager.utf8_decode = function (input) {
-        input = input.replace(/rn/g, "n");
-        var t = "";
+        input = input.replace(/rn/g, 'n');
+        var t = '';
         for (var n = 0; n < input.length; n++) {
             var r = input.charCodeAt(n);
             if (r < 128) {

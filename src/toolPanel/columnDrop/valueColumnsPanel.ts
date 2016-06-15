@@ -1,8 +1,6 @@
 import {
     Utils,
     SvgFactory,
-    Bean,
-    Component,
     Autowired,
     ColumnController,
     EventService,
@@ -10,20 +8,15 @@ import {
     LoggerFactory,
     DragAndDropService,
     GridOptionsWrapper,
-    GridPanel,
-    Logger,
-    DropTarget,
     PostConstruct,
     Events,
-    DraggingEvent,
-    Column,
-    DragSource
+    Column
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
 var svgFactory = SvgFactory.getInstance();
 
-export class PivotColumnsPanel extends AbstractColumnDropPanel {
+export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -47,36 +40,36 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
         });
 
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to pivot');
-        var title = localeTextFunc('pivots', 'Pivots');
+        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+        var title = localeTextFunc('values', 'Values');
 
         super.init({
-            dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            iconFactory: svgFactory.createPivotIcon,
+            dragAndDropIcon: DragAndDropService.ICON_AGGREGATE,
+            iconFactory: svgFactory.createAggregationIcon,
             emptyMessage: emptyMessage,
             title: title
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     }
 
     protected isColumnDroppable(column: Column): boolean {
-        var columnPivotable = column.isDimension();
-        var columnNotAlreadyPivoted = !this.columnController.isColumnPivoted(column);
-        return columnPivotable && columnNotAlreadyPivoted;
+        var columnValue = column.isMeasure();
+        var columnNotValue= !this.columnController.isColumnValue(column);
+        return columnValue && columnNotValue;
     }
 
     protected removeColumns(columns: Column[]): void {
-        var columnsPivoted = Utils.filter(columns, column => this.columnController.isColumnPivoted(column) );
-        this.columnController.removePivotColumns(columnsPivoted);
+        var columnsCurrentlyValueColumns = Utils.filter(columns, column => this.columnController.isColumnValue(column) );
+        this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
     }
 
     protected addColumns(columns: Column[]) {
-        this.columnController.addPivotColumns(columns);
+        this.columnController.addValueColumns(columns);
     }
 
     protected getExistingColumns(): Column[] {
-        return this.columnController.getPivotColumns();
+        return this.columnController.getValueColumns();
     }
 
 }

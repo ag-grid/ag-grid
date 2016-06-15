@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.7
+// ag-grid-enterprise v4.2.9
 import { IRowNodeStage, RowNode } from "ag-grid/main";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;
@@ -8,8 +8,9 @@ export declare class GroupStage implements IRowNodeStage {
     private eventService;
     private context;
     execute(rowNode: RowNode): void;
-    private recursivelyGroup(rowNode, groupColumns, level, expandByDefault, groupId, rowsAlreadyGrouped);
+    private recursivelyGroup(rowNode, groupColumns, level, expandByDefault, groupId);
     private setChildrenAfterGroup(rowNode, groupColumn, groupId, expandByDefault, level);
+    private getKeyForNode(groupColumn, rowNode);
     private createGroup(groupColumn, groupKey, parent, groupId, expandByDefault, level);
     private isExpanded(expandByDefault, level);
 }
