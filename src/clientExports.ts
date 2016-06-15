@@ -22,9 +22,15 @@ import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
 import {ToolPanelComp} from "./toolPanel/toolPanelComp";
 import {LicenseManager} from "./licenseManager";
 import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
+import {PivotStage} from "./rowStages/pivotStage";
+import {PivotColDefService} from "./rowStages/pivotColDefService";
+import {PivotModePanel} from "./toolPanel/columnDrop/pivotModePanel";
+import {AggregationFunctionService} from "./aggregation/aggregationFunctionService";
 
 
 export function populateClientExports(exports: any): void {
+
+    exports.AggregationFunctionService = AggregationFunctionService;
 
     exports.RichSelectCellEditor = RichSelectCellEditor;
     exports.RichSelectRow = RichSelectRow;
@@ -34,6 +40,8 @@ export function populateClientExports(exports: any): void {
 
     exports.AggregationStage = AggregationStage;
     exports.GroupStage = GroupStage;
+    exports.PivotColDefService = PivotColDefService;
+    exports.PivotStage = PivotStage;
 
     exports.SetFilter = SetFilter;
     exports.SetFilterModel = SetFilterModel;
@@ -45,6 +53,7 @@ export function populateClientExports(exports: any): void {
     exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
     exports.PivotColumnsPanel = PivotColumnsPanel;
     exports.ToolPanelComp = ToolPanelComp;
+    exports.PivotModePanel = PivotModePanel;
 
     exports.ColumnSelectPanel = ColumnSelectPanel;
     exports.RenderedColumn = RenderedColumn;

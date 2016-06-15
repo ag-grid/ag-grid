@@ -84,7 +84,7 @@ export class RenderedGroup extends Component {
 
         this.addDestroyableEventListener(eText, 'click', ()=> this.cbSelect.setSelected(!this.cbSelect.isSelected()) );
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_REDUCE_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
 
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
@@ -133,7 +133,7 @@ export class RenderedGroup extends Component {
         var childColumns = this.columnGroup.getLeafColumns();
         var selected = this.cbSelect.isSelected();
 
-        if (this.columnController.isReduce()) {
+        if (this.columnController.isPivotMode()) {
             if (selected) {
                 this.actionCheckedReduce(childColumns);
             } else {
@@ -200,7 +200,7 @@ export class RenderedGroup extends Component {
     }
 
     private onColumnStateChanged(): void {
-        var columnsReduced = this.columnController.isReduce();
+        var columnsReduced = this.columnController.isPivotMode();
 
         var visibleChildCount = 0;
         var hiddenChildCount = 0;

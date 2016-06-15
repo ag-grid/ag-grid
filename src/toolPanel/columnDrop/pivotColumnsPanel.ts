@@ -1,8 +1,6 @@
 import {
     Utils,
     SvgFactory,
-    Bean,
-    Component,
     Autowired,
     ColumnController,
     EventService,
@@ -10,14 +8,9 @@ import {
     LoggerFactory,
     DragAndDropService,
     GridOptionsWrapper,
-    GridPanel,
-    Logger,
-    DropTarget,
     PostConstruct,
     Events,
-    DraggingEvent,
-    Column,
-    DragSource
+    Column
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
@@ -34,7 +27,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     constructor(horizontal: boolean) {
-        super(horizontal);
+        super(horizontal, false);
     }
 
     @PostConstruct
@@ -57,7 +50,21 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
             title: title
         });
 
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onEverythingChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+
+        this.onEverythingChanged();
+    }
+
+    private onEverythingChanged(): void {
+        this.onPivotModeChanged();
+        this.refreshGui();
+    }
+
+    private onPivotModeChanged(): void {
+        var pivotMode = this.columnController.isPivotMode();
+        this.setVisible(pivotMode);
     }
 
     protected isColumnDroppable(column: Column): boolean {

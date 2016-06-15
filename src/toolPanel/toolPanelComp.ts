@@ -2,7 +2,7 @@ import {Component, PostConstruct, Bean, Autowired, Context} from "ag-grid/main";
 import {ColumnSelectPanel} from "./columnsSelect/columnSelectPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
-import {ReduceColumnPanel} from "./columnDrop/reduceColumnPanel";
+import {PivotModePanel} from "./columnDrop/pivotModePanel";
 import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 
 @Bean('toolPanel')
@@ -24,8 +24,8 @@ export class ToolPanelComp extends Component {
         this.columnSelectPanel = new ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
 
-        var reducePanel = new ReduceColumnPanel();
-        this.context.wireBean(reducePanel);
+        var pivotModePanel = new PivotModePanel();
+        this.context.wireBean(pivotModePanel);
 
         var rowGroupColumnsPanel = new RowGroupColumnsPanel(false);
         var pivotColumnsPanel = new PivotColumnsPanel(false);
@@ -35,26 +35,18 @@ export class ToolPanelComp extends Component {
         this.context.wireBean(pivotColumnsPanel);
         this.context.wireBean(valueColumnsPanel);
 
-        // reducePanel.add
-
-        this.getGui().appendChild(reducePanel.getGui());
+        this.getGui().appendChild(pivotModePanel.getGui());
         this.getGui().appendChild(this.columnSelectPanel.getGui());
         this.getGui().appendChild(valueColumnsPanel.getGui());
         this.getGui().appendChild(rowGroupColumnsPanel.getGui());
         this.getGui().appendChild(pivotColumnsPanel.getGui());
 
         this.addDestroyFunc( ()=> {
-            reducePanel.destroy();
+            pivotModePanel.destroy();
             rowGroupColumnsPanel.destroy();
             pivotColumnsPanel.destroy();
             valueColumnsPanel.destroy();
         });
     }
 
-    private addInWrapper(eElement: HTMLElement, height: string): void {
-        var eDiv = document.createElement('div');
-        eDiv.style.height = height;
-        eDiv.appendChild(eElement);
-        this.getGui().appendChild(eDiv);
-    }
 }

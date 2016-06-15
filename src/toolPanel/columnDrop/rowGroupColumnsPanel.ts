@@ -34,7 +34,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     constructor(horizontal: boolean) {
-        super(horizontal);
+        super(horizontal, false);
     }
 
     @PostConstruct

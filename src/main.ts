@@ -14,10 +14,13 @@ import {ToolPanelComp} from "./toolPanel/toolPanelComp";
 import {RowGroupCompFactory} from "./rowGroupCompFactory";
 import {LicenseManager} from "./licenseManager";
 import {MD5} from "./license/md5";
+import {PivotStage} from "./rowStages/pivotStage";
+import {PivotColDefService} from "./rowStages/pivotColDefService";
+import {AggregationFunctionService} from "./aggregation/aggregationFunctionService";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
 Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory,
-    PivotColumnsPanel, RangeController, ClipboardService,
-    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
+    PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
+    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggregationFunctionService,
     StatusBar, LicenseManager, MD5], rowModelTypes);

@@ -7,10 +7,11 @@ import {
     ColumnController,
     ValueService,
     RowNode,
-    PivotService,
     Column,
     IAggFunction
 } from "ag-grid/main";
+import {PivotStage} from "./pivotStage";
+import {AggregationFunctionService} from "../aggregation/aggregationFunctionService";
 
 @Bean('aggregationStage')
 export class AggregationStage implements IRowNodeStage {
@@ -18,9 +19,8 @@ export class AggregationStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('pivotService') private pivotService: PivotService;
-
-    private aggFunctionService = new AggFunctionService();
+    @Autowired('pivotStage') private pivotStage: PivotStage;
+    @Autowired('aggregationFunctionService') private aggregationFunctionService: AggregationFunctionService;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
@@ -51,7 +51,7 @@ export class AggregationStage implements IRowNodeStage {
     }
 
     private aggregateRowNode(rowNode: RowNode, valueColumns: Column[], pivotColumns: Column[]): void {
-        
+
         var valueColumnsMissing = valueColumns.length === 0;
         var pivotColumnsMissing = pivotColumns.length === 0;
         var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
@@ -78,7 +78,7 @@ export class AggregationStage implements IRowNodeStage {
 
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         var result: any = {};
-        var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
+        var pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
 
         pivotColumnDefs.forEach( pivotColumnDef => {
 
@@ -121,7 +121,7 @@ export class AggregationStage implements IRowNodeStage {
         });
         return values;
     }
-    
+
     private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
         var mapPointer = mappedSet;
         keys.forEach( key => mapPointer = mapPointer ? mapPointer[key] : null );
@@ -171,7 +171,7 @@ export class AggregationStage implements IRowNodeStage {
         var aggFunction: IAggFunction;
 
         if (typeof aggFuncOrString === 'string') {
-            aggFunction = this.aggFunctionService.getAggFunction(<string>aggFuncOrString);
+            aggFunction = this.aggregationFunctionService.getAggFunction(<string>aggFuncOrString);
         } else {
             aggFunction = <IAggFunction> aggFuncOrString;
         }
@@ -183,81 +183,6 @@ export class AggregationStage implements IRowNodeStage {
 
         var result = aggFunction(values);
         return result;
-    }
-
-}
-
-class AggFunctionService {
-
-    private aggFunctionsMap: {[key: string]: IAggFunction} = {};
-
-    constructor() {
-
-        this.aggFunctionsMap['sum'] = function(input: any[]): any {
-            var result: number = null;
-            var length = input.length;
-            for (var i = 0; i<length; i++) {
-                if (typeof input[i] === 'number') {
-                    if (result === null) {
-                        result = input[i];
-                    } else {
-                        result += input[i];
-                    }
-                }
-            }
-            return result;
-        };
-
-        this.aggFunctionsMap['first'] = function(input: any[]): any {
-            if (input.length>=0) {
-                return input[0];
-            } else {
-                return null;
-            }
-        };
-
-        this.aggFunctionsMap['last'] = function(input: any[]): any {
-            if (input.length>=0) {
-                return input[input.length-1];
-            } else {
-                return null;
-            }
-        };
-
-        this.aggFunctionsMap['min'] = function(input: any[]): any {
-            var result: number = null;
-            var length = input.length;
-            for (var i = 0; i<length; i++) {
-                if (typeof input[i] === 'number') {
-                    if (result === null) {
-                        result = input[i];
-                    } else if (result > input[i]) {
-                        result = input[i];
-                    }
-                }
-            }
-            return result;
-        };
-
-        this.aggFunctionsMap['max'] = function(input: any[]): any {
-            var result: number = null;
-            var length = input.length;
-            for (var i = 0; i<length; i++) {
-                if (typeof input[i] === 'number') {
-                    if (result === null) {
-                        result = input[i];
-                    } else if (result < input[i]) {
-                        result = input[i];
-                    }
-                }
-            }
-            return result;
-        };
-
-    }
-
-    public getAggFunction(name: string): IAggFunction {
-        return this.aggFunctionsMap[name];
     }
 
 }
