@@ -18,7 +18,7 @@ import {GridOptionsWrapper} from "ag-grid/main";
 import {Logger} from "ag-grid/main";
 import {PostConstruct} from "ag-grid/main";
 import {GridRow} from "ag-grid/main";
-import {Utils as _} from "ag-grid/main";
+import {Utils} from "ag-grid/main";
 import {GridCell} from "ag-grid/main";
 import {Events} from "ag-grid/main";
 import {RowNode} from "ag-grid/main";
@@ -106,7 +106,7 @@ export class ClipboardService implements IClipboardService {
     }
 
     private finishPasteFromClipboard(data: string) {
-        if (_.missingOrEmpty(data)) { return; }
+        if (Utils.missingOrEmpty(data)) { return; }
 
         var focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) { return; }
@@ -119,7 +119,7 @@ export class ClipboardService implements IClipboardService {
         // remove last row if empty, excel puts empty last row in
         var lastLine = parsedData[parsedData.length - 1];
         if (lastLine.length===1 && lastLine[0]==='') {
-            _.removeFromArray(parsedData, lastLine);
+            Utils.removeFromArray(parsedData, lastLine);
         }
 
         var currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
@@ -136,7 +136,7 @@ export class ClipboardService implements IClipboardService {
             updatedRowNodes.push(rowNode);
             var column = focusedCell.column;
             values.forEach( (value: any)=> {
-                if (_.missing(column)) { return; }
+                if (Utils.missing(column)) { return; }
                 if (!column.isCellEditable(rowNode)) { return; }
                 this.valueService.setValue(rowNode, column, value);
                 var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
@@ -163,10 +163,13 @@ export class ClipboardService implements IClipboardService {
     public copyToClipboard(): void {
         this.logger.log('copyToClipboard');
 
+        var selectedRowsToCopy = !this.selectionController.isEmpty()
+            && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
+
         // default is copy range if exists, otherwise rows
         if (this.rangeController.isMoreThanOneCell()) {
             this.copySelectedRangeToClipboard();
-        } else if (!this.selectionController.isEmpty()) {
+        } else if (selectedRowsToCopy) {
             this.copySelectedRowsToClipboard();
         } else if (!this.rangeController.isEmpty()) {
             this.copySelectedRangeToClipboard();
@@ -218,7 +221,7 @@ export class ClipboardService implements IClipboardService {
                 if (index != 0) {
                     data += '\t';
                 }
-                if (_.exists(value)) {
+                if (Utils.exists(value)) {
                     data += value;
                 }
                 var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
