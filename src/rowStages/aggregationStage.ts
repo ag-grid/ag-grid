@@ -8,10 +8,10 @@ import {
     ValueService,
     RowNode,
     Column,
-    IAggFunction
+    IAggFunc
 } from "ag-grid/main";
 import {PivotStage} from "./pivotStage";
-import {AggregationFunctionService} from "../aggregation/aggregationFunctionService";
+import {AggFuncService} from "../aggregation/aggregationFunctionService";
 
 @Bean('aggregationStage')
 export class AggregationStage implements IRowNodeStage {
@@ -20,7 +20,7 @@ export class AggregationStage implements IRowNodeStage {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('pivotStage') private pivotStage: PivotStage;
-    @Autowired('aggregationFunctionService') private aggregationFunctionService: AggregationFunctionService;
+    @Autowired('aggFuncService') private aggFuncService: AggFuncService;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
@@ -166,14 +166,14 @@ export class AggregationStage implements IRowNodeStage {
         return values;
     }
 
-    private aggregateValues(values: any[], aggFuncOrString: string | IAggFunction): any {
+    private aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any {
 
-        var aggFunction: IAggFunction;
+        var aggFunction: IAggFunc;
 
         if (typeof aggFuncOrString === 'string') {
-            aggFunction = this.aggregationFunctionService.getAggFunction(<string>aggFuncOrString);
+            aggFunction = this.aggFuncService.getAggFunc(<string>aggFuncOrString);
         } else {
-            aggFunction = <IAggFunction> aggFuncOrString;
+            aggFunction = <IAggFunc> aggFuncOrString;
         }
 
         if (typeof aggFunction !== 'function') {

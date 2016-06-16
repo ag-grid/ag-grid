@@ -1,26 +1,42 @@
 import {
-    IAggregationFunctionService, IAggFunction, Bean
+    IAggFuncService, IAggFunc, Bean, Utils, PostConstruct, Autowired, GridOptionsWrapper
 } from "ag-grid/main";
 
-@Bean('aggregationFunctionService')
-export class AggregationFunctionService implements IAggregationFunctionService {
+@Bean('aggFuncService')
+export class AggFuncService implements IAggFuncService {
 
-    private aggFunctionsMap: {[key: string]: IAggFunction} = {};
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    constructor() {
+    private aggFuncsMap: {[key: string]: IAggFunc} = {};
+
+    @PostConstruct
+    private init() {
         this.initialiseWithDefaultAggregations();
+        this.addAggFuncs(this.gridOptionsWrapper.getAggFuncs());
     }
 
     private initialiseWithDefaultAggregations(): void {
-        this.aggFunctionsMap['sum'] = aggSum;
-        this.aggFunctionsMap['first'] = aggFirst;
-        this.aggFunctionsMap['last'] = aggLast;
-        this.aggFunctionsMap['min'] = aggMin;
-        this.aggFunctionsMap['max'] = aggMax;
+        this.aggFuncsMap['sum'] = aggSum;
+        this.aggFuncsMap['first'] = aggFirst;
+        this.aggFuncsMap['last'] = aggLast;
+        this.aggFuncsMap['min'] = aggMin;
+        this.aggFuncsMap['max'] = aggMax;
     }
 
-    public getAggFunction(name: string): IAggFunction {
-        return this.aggFunctionsMap[name];
+    public addAggFuncs(aggFuncs: {[key: string]: IAggFunc}): void {
+        Utils.iterateObject(aggFuncs, this.addAggFunc.bind(this));
+    }
+
+    public addAggFunc(key: string, aggFunc: IAggFunc): void {
+        this.aggFuncsMap[key] = aggFunc;
+    }
+
+    public getAggFunc(name: string): IAggFunc {
+        return this.aggFuncsMap[name];
+    }
+
+    public clear(): void {
+        this.aggFuncsMap = {};
     }
 }
 

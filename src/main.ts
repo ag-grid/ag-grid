@@ -1,6 +1,5 @@
 import {Grid} from "ag-grid/main";
 import {EnterpriseMenuFactory} from "./enterpriseMenu";
-import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
 import {RangeController} from "./rangeController";
 import {ClipboardService} from "./clipboardService";
 import {GroupStage} from "./rowStages/groupStage";
@@ -16,11 +15,11 @@ import {LicenseManager} from "./licenseManager";
 import {MD5} from "./license/md5";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
-import {AggregationFunctionService} from "./aggregation/aggregationFunctionService";
+import {AggFuncService} from "./aggregation/aggregationFunctionService";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
 Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
-    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggregationFunctionService,
+    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
     StatusBar, LicenseManager, MD5], rowModelTypes);
