@@ -11,7 +11,7 @@ import {
     IAggFunc
 } from "ag-grid/main";
 import {PivotStage} from "./pivotStage";
-import {AggFuncService} from "../aggregation/aggregationFunctionService";
+import {AggFuncService} from "../aggregation/aggFuncService";
 
 @Bean('aggregationStage')
 export class AggregationStage implements IRowNodeStage {

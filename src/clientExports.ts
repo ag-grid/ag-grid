@@ -25,7 +25,7 @@ import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
 import {PivotModePanel} from "./toolPanel/columnDrop/pivotModePanel";
-import {AggFuncService} from "./aggregation/aggregationFunctionService";
+import {AggFuncService} from "./aggregation/aggFuncService";
 
 
 export function populateClientExports(exports: any): void {

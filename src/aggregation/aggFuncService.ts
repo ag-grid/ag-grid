@@ -9,8 +9,13 @@ export class AggFuncService implements IAggFuncService {
 
     private aggFuncsMap: {[key: string]: IAggFunc} = {};
 
+    private initialised = false;
+
     @PostConstruct
     private init() {
+        if (this.initialised) { return; }
+        this.initialised = true;
+
         this.initialiseWithDefaultAggregations();
         this.addAggFuncs(this.gridOptionsWrapper.getAggFuncs());
     }
@@ -28,10 +33,12 @@ export class AggFuncService implements IAggFuncService {
     }
 
     public addAggFunc(key: string, aggFunc: IAggFunc): void {
+        this.init();
         this.aggFuncsMap[key] = aggFunc;
     }
 
     public getAggFunc(name: string): IAggFunc {
+        this.init();
         return this.aggFuncsMap[name];
     }
 
