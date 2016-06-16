@@ -54,6 +54,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.rootNode = new RowNode();
         this.rootNode.group = true;
         this.rootNode.allLeafChildren = [];
+        this.rootNode.childrenAfterGroup = [];
+        this.rootNode.childrenAfterSort = [];
+        this.rootNode.childrenAfterFilter = [];
+
         this.context.wireBean(this.rootNode);
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
