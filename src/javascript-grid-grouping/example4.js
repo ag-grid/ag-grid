@@ -11,7 +11,7 @@ var columnDefs = [
     {headerName: "sum(gold)", field: "gold", width: 100, aggFunc: sumFunction},
     // and these two use the built in sum func
     {headerName: "sum(silver)", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "sum(bronze)", field: "bronze", width: 100, aggFunc: 'sum'},
+    {headerName: "abc(bronze)", field: "bronze", width: 100, aggFunc: 'sum'},
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
     {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1, hide: true}
 ];

@@ -19,6 +19,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: new property suppressUseColIdForGroups</li>
     <li>Enhancement: Safari now uses animation frames for scrolling (Chrome doesn't need it!!)</li>
     <li>Enhancement: when no using cellRenderer, node.textContent used instead of element.innerHTML, for security reasons to prevent malicious injection of Javascript.</li>
+    <li>Enhancement: new property 'suppressCopyRowsToClipboard' so selected cells will be copied to clipboard and not the selected row, if that's what user wants.</li>
     <li>Bugfix: when 'groupSelectsChildren', the group was appear in the api.getSelectedNodes() - it shouldn't</li>
 
     <h3>Version 4.2.x (ag-Grid-Enterprise 4.2.10)</h3>

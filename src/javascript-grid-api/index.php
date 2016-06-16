@@ -431,6 +431,10 @@ include '../documentation-main/documentation_header.php';
             <th>copySelectedRangeDown()</th>
             <td>Copies the selected range down, similar to Ctrl+D in Excel.</td>
         </tr>
+        <tr>
+            <th>addAggFunc(key, aggFunc), addAggFuncs(aggFuncs), clearAggFuncs()</th>
+            <td>Adding and clearing of aggregation functions.</td>
+        </tr>
     </table>
 </div>
 
