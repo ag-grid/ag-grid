@@ -34,3 +34,4 @@ export * from './dist/lib/contextMenu';
 export * from './dist/lib/enterpriseBoot';
 export * from './dist/lib/enterpriseMenu';
 export * from './dist/lib/rangeController';
+export * from './dist/lib/licenseManager';
