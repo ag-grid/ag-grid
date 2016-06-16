@@ -5,13 +5,14 @@ var columnDefs = [
     },
     // this column uses min and max func
     {headerName: "minMax(age)", field: "age", width: 90, cellRenderer: ageRenderer, aggFunc: minAndMaxAggFunction},
-    // here we use an average func
+    // here we use an average func and specify the fucntion directly
     {headerName: "avg(age)", field: "age", width: 90, aggFunc: avgAggFunction},
-    // here we use a custom sum func
-    {headerName: "sum(gold)", field: "gold", width: 100, aggFunc: sumFunction},
+    // here we use a custom sum function that was registered with the grid,
+    // which overrides the built in sum function
+    {headerName: "sum(gold)", field: "gold", width: 100, aggFunc: 'sum'},
     // and these two use the built in sum func
-    {headerName: "sum(silver)", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "abc(bronze)", field: "bronze", width: 100, aggFunc: 'sum'},
+    {headerName: "abc(silver)", field: "silver", width: 100, aggFunc: '123'},
+    {headerName: "xyz(bronze)", field: "bronze", width: 100, aggFunc: 'xyz'},
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
     {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1, hide: true}
 ];
@@ -22,8 +23,35 @@ var gridOptions = {
     groupUseEntireRow: false,
     enableSorting: true,
     enableColResize: true,
-    groupSuppressAutoColumn: true
+    groupSuppressAutoColumn: true,
+    aggFuncs: {
+        // this overrides the grids built in sum function
+        'sum': sumFunction,
+        // this adds another function called 'abc'
+        '123': oneTwoThreeFunc
+    },
+    onGridReady: function(params) {
+        // register xyz as a function - this gets called after the grid
+        // is initialised, so will be to late if we are providing rowData
+        // directly as a grid property
+        params.api.addAggFunc('xyz', xyzFunc);
+
+        // this has nothing to do with aggregation, just get cols to fit width
+        gridOptions.api.sizeColumnsToFit();
+    }
 };
+
+function oneTwoThreeFunc(nodes) {
+    // this is just an example, rather than working out an aggregation,
+    // we just return 123 each time, so you can see in the example 22 is the result
+    return 123;
+}
+
+function xyzFunc(nodes) {
+    // this is just an example, rather than working out an aggregation,
+    // we just return 22 each time, so you can see in the example 22 is the result
+    return 'xyz';
+}
 
 // age renderer prints min and max when a group, or just the value when a leaf node
 function ageRenderer(params) {

@@ -21,29 +21,51 @@ include '../documentation-main/documentation_header.php';
     <p>
         When grouping, you can apply an aggregation function to any column to populate the group
         row with values. You can pick from the grid's built in aggregation functions or
-        provide your own.
+        provide your own as follows:
     </p>
     <p>
-        <b>Built In Functions: </b>Out of the box the grid provides <i>sum, min, max,
-            first, last</i>. To use one of these, set <i>colDef.aggFunc</i> to the string
-        of the function you require.
+        <ol>
+        <li>
+            <b>Built In Functions: </b>Out of the box the grid provides <i>sum, min, max,
+                first, last</i>. To use one of these, set <i>colDef.aggFunc</i> to the string
+            of the function you require.
+        </li>
+        <li>
+            <b>User Registered Functions: </b>You can install your own aggregation functions into the
+            grid and reference them as if they were grid provided functions by calling api.addAggFunc(key,func).
+        </li>
+        <li>
+            <b>Direct Functions: </b>Lastly you can provide a
+            function directly by setting <i>colDef.aggFunc</i>
+            to your custom function. Direct functions do not appear in the toolPanel when selecting functions
+            for your columns.
+        </li>
+        </ol>
     </p>
+
     <p>
-        <b>User Provided Functions: </b>To provide your own function, set <i>colDef.aggFunction</i>
-        to your custom function. The function will be provided with an array of values that it should
+        Aggregation functions are provided with an array of values that it should
         aggregate onto one value that it then returns.
     </p>
 
-        <pre><code>// column that uses the built in 'sum' function
+        <pre><code><b>// Option 1: column that uses the built in 'sum' function</b>
 colDef1.aggFunc = 'sum';
 
-// column that uses a user provided function
-colDef2.aggFunc = function(values) {
+<b>// Option 2: register aggFunc to grid called 'abc', then reference by name</b>
+gridOptions.api.addAggFunc('abc', myCustomAggFunc);
+colDef2.aggFunc = 'abc';
+
+<b>// Option 2: column uses a function directly</b>
+colDef3.aggFunc = myCustomAggFunc;
+                
+<b>// this is the function 2 and 3 above are using</b>
+function myCustomAggFunc(values) {
     var sum = 0;
     values.forEach( function(value) {sum += value;} );
     return sum;
 }
 </code></pre>
+
 
     <h4>Example Option 1 - Simple Summing</h4>
 
@@ -56,16 +78,30 @@ colDef2.aggFunc = function(values) {
         and also the field to use for the leaf nodes (the athlete name).
     </p>
 
-    <show-example example="example2"></show-example>
+    <show-example example="exampleAggregation"></show-example>
 
     <h4>Example Option 2 - Custom Aggregation Functions</h4>
 
     <p>
-        The example below shows a complex custom aggregation over age giving
-        a min and a max age. The aggregation function takes an array of rows and returns
-        one row that's an aggregate of the passed rows. The function knows whether
-        it is working with leaf nodes or aggregated nodes by checking the type of the value.
+        The next example shows many custom aggregation functions configured in a variety
+        of ways and demonstrating different things aggrgation functions can do.
     </p>
+
+    <b>Min/Max on Age Column</b>
+
+    <p>
+        The function creates an aggregation over age giving a min and a max age. The function knows
+        whether it is working with leaf nodes (original row data items) or aggregated nodes (ie groups)
+        by checking the type of the value. If the value is a number, it's a row data item, otherwise
+        it's a group. This is because the result of the aggregation has two values based on one input
+        value.
+    </p>
+
+    <p>
+        The min/max function is set by placing the function directly as the <i>colDef.aggFunc</i>.
+    </p>
+
+    <b>Average on Age Column</b>
 
     <p>
         The age columns is aggregated a second time with a custom average function.
@@ -74,11 +110,57 @@ colDef2.aggFunc = function(values) {
     </p>
 
     <p>
-        This example also demonstrates configuring the group column along with the other columns. If the
-        grouping was turned off (via the API or the tool panel), the group column would remain in the grid.
+        The average function is also set by placing the function directly as the <i>colDef.aggFunc</i>.
     </p>
 
-    <show-example example="example4"></show-example>
+    <b>Sum on Gold</b>
+
+    <p>
+        The gold column gets a custom <i>sum</i> aggregated function. The new sum function doesn't do
+        anything different to the built in sum function, however it serves as a demonstration on how
+        you can override. Maybe you want to provide a sum function that uses for example the <i>math.js</i>
+        library.
+    </p>
+
+    <p>
+        The sum function is set using a <i>gridOptions</i> property.
+    </p>
+
+    <b>'123' on Silver</b>
+
+    <p>
+        The '123' function ignores the inputs and always returns the value 123. Because it is registered
+        as an aggregation function, it can be reference by name in the column definitions. Having a function
+        return the same thing isn't very useful, however for the example it demonstrates easily where in
+        the grid the function was used.
+    </p>
+
+    <p>
+        The '123' function, like 'sum', is set using a <i>gridOptions</i> property.
+    </p>
+
+    <b>'123' on Silver</b>
+
+    <p>
+        The 'xyz' function is another function with much use, however it demonstrates you can return anything
+        from an aggregation function - as long as your aggregation function can handle the result (if you have
+        groups inside groups) and as long as your cellRenderer can render the result (if using a cellRenderer).
+    </p>
+
+    <p>
+        The 'xyz' function is set using the API.
+    </p>
+
+    <p>
+        Note that the example below gives an error on the console saying it cannot find 'xyz'. This is because
+        it tries to aggregate the empty set when the grid is been initialised.
+        The same would happen if you set the data via the rowData property. It is because 'xyz' is set after
+        the grid is initialised. To prevent this error you should opt for setting the <i>aggFunc</i> as a grid
+        property (directly into the grid options)
+        or make sure that <i>aggFunc</i> is not used in any column until it is configured into the grid.
+    </p>
+
+    <show-example example="exampleAggFunc"></show-example>
 
     <h3>Grouping with Aggregation - using groupRowAggNodes Callback</h3>
 
