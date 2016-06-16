@@ -15,7 +15,7 @@ import {LicenseManager} from "./licenseManager";
 import {MD5} from "./license/md5";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
-import {AggFuncService} from "./aggregation/aggregationFunctionService";
+import {AggFuncService} from "./aggregation/aggFuncService";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
