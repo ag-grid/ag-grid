@@ -355,9 +355,21 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Grouping") { ?>
-                    <span class="sidebarLinkSelected">Grouping Rows & Aggregating</span>
+                    <span class="sidebarLinkSelected">Grouping Rows</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/index.php">Grouping Rows & Aggregating</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/index.php">Grouping Rows</a>
+                <?php } ?>
+
+                <?php if ($key == "Aggregation") { ?>
+                    <span class="sidebarLinkSelected">Aggregation</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/index.php">Aggregation</a>
+                <?php } ?>
+
+                <?php if ($key == "Pivoting") { ?>
+                    <span class="sidebarLinkSelected">Pivoting</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/index.php">Pivoting</a>
                 <?php } ?>
 
                 <?php if ($key == "Tool Panel") { ?>
