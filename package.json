@@ -37,7 +37,7 @@
     "zone.js": "^0.6.12"
   },
   "peerDependencies": {
-    "@angular/core":  "2.0.0-rc.1",
+    "@angular/core":  "~2.0.0-rc.2",
     "ag-grid": "4.2.x"
   },
   "dependencies": {
