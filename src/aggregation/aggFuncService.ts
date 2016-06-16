@@ -42,6 +42,10 @@ export class AggFuncService implements IAggFuncService {
         return this.aggFuncsMap[name];
     }
 
+    public getFuncNames(): string[] {
+        return Object.keys(this.aggFuncsMap);
+    }
+
     public clear(): void {
         this.aggFuncsMap = {};
     }

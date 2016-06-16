@@ -15,6 +15,7 @@ import {
     DragSource
 } from "ag-grid/main";
 import {VirtualList} from "../../rendering/virtualList";
+import {AggFuncService} from "../../aggregation/aggFuncService";
 
 export class ColumnComponent extends Component {
 
@@ -31,6 +32,7 @@ export class ColumnComponent extends Component {
     @Autowired('gridPanel') gridPanel: GridPanel;
     @Autowired('context') context: Context;
     @Autowired('popupService') popupService: PopupService;
+    @Autowired('aggFuncService') aggFuncService: AggFuncService;
 
     @QuerySelector('.ag-column-drop-cell-text') private eText: HTMLElement;
     @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
@@ -101,7 +103,7 @@ export class ColumnComponent extends Component {
     private onShowAggFuncSelection(): void {
         var virtualList = new VirtualList();
 
-        var rows = ['one','two','three'];
+        var rows = this.aggFuncService.getFuncNames();
 
         virtualList.setModel({
             getRow: function(index: number) { return rows[index]; },
@@ -133,6 +135,10 @@ export class ColumnComponent extends Component {
         virtualList.refresh();
     }
 
+    private selectAggItem(value: string): void {
+        this.columnController.setColumnAggFunction(this.column, value);
+    }
+
     private createAggSelect(hidePopup: ()=>void, value: any): Component {
         var comp = new AggItemComp(hidePopup, value.toString());
         return comp;
@@ -141,16 +147,12 @@ export class ColumnComponent extends Component {
 
 class AggItemComp extends Component {
 
-    private hidePopup: ()=>void;
+    private value: string;
 
-    constructor(hidePopup: ()=>void, value: string) {
+    constructor(itemSelected: ()=>void, value: string) {
         super('<div class="ag-select-agg-func-item"/>');
         this.getGui().innerText = value;
-        this.hidePopup = hidePopup;
-    }
-
-    @Listener('click')
-    private onClick(): void {
-        this.hidePopup();
+        this.value = value;
+        this.addGuiEventListener('click', itemSelected);
     }
 }
