@@ -10,7 +10,7 @@ import {ValueService} from "./valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
-import {ColDef} from "./entities/colDef";
+import {ColDef, IAggFunc} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
 import {Column} from "./entities/column";
@@ -30,6 +30,7 @@ import {IMenuFactory} from "./interfaces/iMenuFactory";
 import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
+import {IAggFuncService} from "./interfaces/iAggFuncService";
 
 @Bean('gridApi')
 export class GridApi {
@@ -54,6 +55,7 @@ export class GridApi {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
+    @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
@@ -110,8 +112,11 @@ export class GridApi {
     }
     
     public setRowData(rowData: any[]) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call setRowData unless using normal row model') }
-        this.inMemoryRowModel.setRowData(rowData, true);
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
+            console.log('cannot call setRowData unless using normal row model');
+        } else {
+            this.inMemoryRowModel.setRowData(rowData, true);
+        }
     }
 
     public setFloatingTopRowData(rows: any[]): void {
@@ -492,6 +497,24 @@ export class GridApi {
 
     public stopEditing(cancel: boolean = false): void {
         this.rowRenderer.stopEditing(cancel);
+    }
+
+    public addAggFunc(key: string, aggFunc: IAggFunc): void {
+        if (this.aggFuncService) {
+            this.aggFuncService.addAggFunc(key, aggFunc);
+        }
+    }
+
+    public addAggFuncs(aggFuncs: {[key: string]: IAggFunc}): void {
+        if (this.aggFuncService) {
+            this.aggFuncService.addAggFuncs(aggFuncs);
+        }
+    }
+
+    public clearAggFuncs(): void {
+        if (this.aggFuncService) {
+            this.aggFuncService.clear();
+        }
     }
 
     /*

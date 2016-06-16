@@ -11,7 +11,7 @@ import {EventService} from "./eventService";
 import {Constants} from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
-import {ColDef} from "./entities/colDef";
+import {ColDef, IAggFunc} from "./entities/colDef";
 import {Bean, Qualifier, Autowired, PostConstruct} from "./context/context";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {Events} from "./events";
@@ -131,6 +131,7 @@ export class GridOptionsWrapper {
     public isSuppressPreventDefaultOnMouseWheel() { return isTrue(this.gridOptions.suppressPreventDefaultOnMouseWheel); }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
     public isSuppressContextMenu() { return isTrue(this.gridOptions.suppressContextMenu); }
+    public isSuppressCopyRowsToClipboard() { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
@@ -143,6 +144,7 @@ export class GridOptionsWrapper {
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
+    public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
     public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }

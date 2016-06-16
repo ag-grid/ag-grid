@@ -1,6 +1,6 @@
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {ColDef, AbstractColDef, IAggFunction} from "./colDef";
+import {ColDef, AbstractColDef, IAggFunc} from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
 import {Autowired, PostConstruct} from "../context/context";
@@ -67,7 +67,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private visible: any;
     private pinned: string;
     private left: number;
-    private aggFunc: string | IAggFunction;
+    private aggFunc: string | IAggFunc;
     private sort: string;
     private sortedAt: number;
     private moving = false;
@@ -220,11 +220,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.sortedAt = sortedAt;
     }
 
-    public setAggFunc(aggFunc: string | IAggFunction): void {
+    public setAggFunc(aggFunc: string | IAggFunc): void {
         this.aggFunc = aggFunc;
     }
 
-    public getAggFunc(): string | IAggFunction {
+    public getAggFunc(): string | IAggFunc {
         return this.aggFunc;
     }
 

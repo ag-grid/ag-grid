@@ -17,7 +17,7 @@ export class ComponentUtil {
 
     public static OBJECT_PROPERTIES = [
         'rowStyle','context','groupColumnDef','localeText','icons','datasource','viewportDatasource',
-        'groupRowRendererParams'
+        'groupRowRendererParams', 'aggFuncs'
         //,'cellRenderers','cellEditors'
     ];
 
@@ -43,7 +43,8 @@ export class ComponentUtil {
         'suppressFieldDotNotation','enableRangeSelection','suppressEnterprise','rowGroupPanelShow',
         'suppressContextMenu','suppressMenuFilterPanel','suppressMenuMainPanel','suppressMenuColumnPanel',
         'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
-        'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups'
+        'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
+        'suppressCopyRowsToClipboard'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',

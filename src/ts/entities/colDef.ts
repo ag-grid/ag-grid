@@ -23,7 +23,7 @@ export interface ColGroupDef extends AbstractColDef {
     marryChildren?: boolean;
 }
 
-export interface IAggFunction {
+export interface IAggFunc {
     (input: any[]): any;
 }
 
@@ -111,7 +111,7 @@ export interface ColDef extends AbstractColDef {
     floatingCellFormatter?: (params: any) => string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
-    aggFunc?: string | IAggFunction;
+    aggFunc?: string | IAggFunc;
 
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
