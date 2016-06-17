@@ -27,7 +27,6 @@ export class PivotColDefService {
         };
     }
 
-
     // parentChildren - the list of colDefs we are adding to
     // @index - how far the column is from the top (also same as pivotKeys.length)
     // @uniqueValues - the values for which we should create a col for
