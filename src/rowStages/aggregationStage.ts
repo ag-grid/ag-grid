@@ -83,11 +83,11 @@ export class AggregationStage implements IRowNodeStage {
         pivotColumnDefs.forEach( pivotColumnDef => {
 
             var values: any[];
-            var valueColumn: Column = (<any>pivotColumnDef).valueColumn;
+            var valueColumn: Column = pivotColumnDef.pivotValueColumn;
 
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                var keys = (<any>pivotColumnDef).keys;
+                var keys = pivotColumnDef.pivotKeys;
                 values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, valueColumn);
             } else {
                 // value columns and pivot columns, non-leaf group
