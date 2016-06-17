@@ -26,6 +26,16 @@ include '../documentation-main/documentation_header.php';
 ];</pre>
     </p>
 
+    <h3>Dimensions and Measures</h3>
+
+    <p>A <b>dimension</b> column is a column that typically has a set of values. For example the dimension Country
+        can have values Ireland, United Kingdom, USA. When a column definition is marked as a dimension it informs
+        the grid the column should be selectable for grouping and pivoting.</p>
+
+    <p>A <b>measure</b> column is a column that typically has numbers as values. For example the dimension Bank Balance
+        can have values 234,242, 22,342, 33, 0.4441. When a column definition is marked as a measure it informs
+        the grid the column should be selectable for aggregations (values).</p>
+
     <h3>Grouping Auto Column</h3>
 
     <p>If row grouping is active, by default the grid will provide an additional column for displaying
