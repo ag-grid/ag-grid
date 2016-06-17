@@ -303,9 +303,9 @@ export class ColumnController {
 
     public addRowGroupColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (!column.isRowGroup()) {
+            if (!column.isRowGroupActive()) {
                 this.rowGroupColumns.push(column);
-                column.setRowGroup(true);
+                column.setRowGroupActive(true);
                 return true;
             } else {
                 return false;
@@ -316,7 +316,7 @@ export class ColumnController {
     }
 
     public setRowGroupColumns(keys: (Column|ColDef|String)[]): void {
-        this.rowGroupColumns.forEach( column => column.setRowGroup(false) );
+        this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
         this.rowGroupColumns.length = 0;
         this.addRowGroupColumns(keys);
     }
@@ -327,9 +327,9 @@ export class ColumnController {
 
     public removeRowGroupColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (column.isRowGroup()) {
+            if (column.isRowGroupActive()) {
                 _.removeFromArray(this.rowGroupColumns, column);
-                column.setRowGroup(false);
+                column.setRowGroupActive(false);
                 return true;
             } else {
                 return false;
@@ -345,9 +345,9 @@ export class ColumnController {
 
     public addPivotColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (!column.isPivot()) {
+            if (!column.isPivotActive()) {
                 this.pivotColumns.push(column);
-                column.setPivot(true);
+                column.setPivotActive(true);
                 return true;
             } else {
                 return false;
@@ -358,7 +358,7 @@ export class ColumnController {
     }
 
     public setPivotColumns(keys: (Column|ColDef|String)[]): void {
-        this.pivotColumns.forEach( column => column.setPivot(false) );
+        this.pivotColumns.forEach( column => column.setPivotActive(false) );
         this.pivotColumns.length = 0;
         this.addPivotColumns(keys);
     }
@@ -369,9 +369,9 @@ export class ColumnController {
 
     public removePivotColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (column.isPivot()) {
+            if (column.isPivotActive()) {
                 _.removeFromArray(this.pivotColumns, column);
-                column.setPivot(false);
+                column.setPivotActive(false);
                 return true;
             } else {
                 return false;
@@ -387,12 +387,12 @@ export class ColumnController {
 
     public addValueColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (!column.isValue()) {
+            if (!column.isMeasureActive()) {
                 if (!column.getAggFunc()) { // default to SUM if aggFunc is missing
                     column.setAggFunc(Column.AGG_SUM);
                 }
                 this.valueColumns.push(column);
-                column.setValue(true);
+                column.setMeasureActive(true);
                 return true;
             } else {
                 return false;
@@ -412,9 +412,9 @@ export class ColumnController {
 
     public removeValueColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (column.isValue()) {
+            if (column.isMeasureActive()) {
                 _.removeFromArray(this.valueColumns, column);
-                column.setValue(false);
+                column.setMeasureActive(false);
                 return true;
             } else {
                 return false;
@@ -826,8 +826,8 @@ export class ColumnController {
         var oldColumnList = this.originalColumns;
         this.originalColumns = [];
 
-        this.rowGroupColumns.forEach( column => column.setRowGroup(false) );
-        this.valueColumns.forEach( column => column.setValue(false) );
+        this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
+        this.valueColumns.forEach( column => column.setMeasureActive(false) );
 
         this.rowGroupColumns = [];
         this.valueColumns = [];
@@ -894,8 +894,8 @@ export class ColumnController {
         this.copyDownGridColumns();
         this.updateDisplayedColumns();
 
-        this.rowGroupColumns.forEach( column => column.setRowGroup(true) );
-        this.valueColumns.forEach( column => column.setValue(true) );
+        this.rowGroupColumns.forEach( column => column.setRowGroupActive(true) );
+        this.valueColumns.forEach( column => column.setMeasureActive(true) );
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
@@ -1077,13 +1077,13 @@ export class ColumnController {
     }
 
     private extractRowGroupColumns(): void {
-        this.rowGroupColumns.forEach( column => column.setRowGroup(false) );
+        this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
         this.rowGroupColumns = [];
         // pull out the columns
         this.originalColumns.forEach( (column: Column) => {
             if (typeof column.getColDef().rowGroupIndex === 'number') {
                 this.rowGroupColumns.push(column);
-                column.setRowGroup(true);
+                column.setRowGroupActive(true);
             }
         });
         // then sort them
@@ -1093,13 +1093,13 @@ export class ColumnController {
     }
 
     private extractPivotColumns(): void {
-        this.pivotColumns.forEach( column => column.setPivot(false) );
+        this.pivotColumns.forEach( column => column.setPivotActive(false) );
         this.pivotColumns = [];
         // pull out the columns
         this.originalColumns.forEach( (column: Column) => {
             if (typeof column.getColDef().pivotIndex === 'number') {
                 this.pivotColumns.push(column);
-                column.setPivot(true);
+                column.setPivotActive(true);
             }
         });
         // then sort them
@@ -1423,7 +1423,7 @@ export class ColumnController {
     }
 
     private createValueColumns(): void {
-        this.valueColumns.forEach( column => column.setValue(false) );
+        this.valueColumns.forEach( column => column.setMeasureActive(false) );
         this.valueColumns = [];
 
         // override with columns that have the aggFunc specified explicitly
@@ -1432,7 +1432,7 @@ export class ColumnController {
             if (column.getColDef().aggFunc) {
                 column.setAggFunc(column.getColDef().aggFunc);
                 this.valueColumns.push(column);
-                column.setValue(true);
+                column.setMeasureActive(true);
             }
         }
     }

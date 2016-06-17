@@ -370,36 +370,36 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.setActualWidth(this.minWidth);
     }
     
-    public setRowGroup(rowGroup: boolean): void {
+    public setRowGroupActive(rowGroup: boolean): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(Column.EVENT_ROW_GROUP_CHANGED, this);
         }
     }
     
-    public isRowGroup(): boolean {
+    public isRowGroupActive(): boolean {
         return this.rowGroupActive;
     }
 
-    public setPivot(pivot: boolean): void {
+    public setPivotActive(pivot: boolean): void {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(Column.EVENT_PIVOT_CHANGED, this);
         }
     }
 
-    public isPivot(): boolean {
+    public isPivotActive(): boolean {
         return this.pivotActive;
     }
 
-    public setValue(value: boolean): void {
+    public setMeasureActive(value: boolean): void {
         if (this.measureActive !== value) {
             this.measureActive = value;
             this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
         }
     }
 
-    public isValue(): boolean {
+    public isMeasureActive(): boolean {
         return this.measureActive;
     }
 }
