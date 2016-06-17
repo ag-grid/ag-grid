@@ -22,14 +22,6 @@ include '../documentation-main/documentation_header.php';
         Pivot mode is a mode inside the grid that allows pivots. To avoid confusion of terms, here are items defined
     </p>
 
-    <p>
-        <li>
-            <b>Dimension: </b>A column tpe
-        </li>
-    </p>
-
-    <p>Dimension and measures are industry standard terms in data warehousing. See wikipedia for it's definion
-    on <a href="https://en.wikipedia.org/wiki/Dimension_(data_warehouse)">Dimensions</a> and <a href="https://en.wikipedia.org/wiki/Measure_(data_warehouse)">Measures</a></p>
 
 </div>
 
