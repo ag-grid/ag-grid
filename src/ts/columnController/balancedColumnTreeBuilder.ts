@@ -154,6 +154,10 @@ export class BalancedColumnTreeBuilder {
                     colDefNoType.type = Column.TYPE_DIMENSION;
                 }
             }
+            if (colDefNoType.displayName) {
+                console.warn("ag-grid: Found displayName " + colDefNoType.displayName + ", please use headerName instead, displayName is deprecated.");
+                colDefNoType.headerName = colDefNoType.displayName;
+            }
         }
     }
 

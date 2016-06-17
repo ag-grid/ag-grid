@@ -960,12 +960,18 @@ export class ColumnController {
         return null;
     }
 
-    public getDisplayNameForCol(column: any): string {
+    public getDisplayNameForCol(column: any, includeAggFunc = false): string {
+        var headerName = this.getHeaderName(column);
+        if (includeAggFunc) {
+            return this.wrapHeaderNameWithAggFunc(column, headerName);
+        } else {
+            return headerName;
+        }
+    }
 
-        var colDef = column.colDef;
+    private getHeaderName(column: Column): string {
+        var colDef = column.getColDef();
         var headerValueGetter = colDef.headerValueGetter;
-
-        var headerName: string;
 
         if (headerValueGetter) {
             var params = {
@@ -976,27 +982,39 @@ export class ColumnController {
 
             if (typeof headerValueGetter === 'function') {
                 // valueGetter is a function, so just call it
-                headerName = headerValueGetter(params);
+                return headerValueGetter(params);
             } else if (typeof headerValueGetter === 'string') {
                 // valueGetter is an expression, so execute the expression
-                headerName = this.expressionService.evaluate(headerValueGetter, params);
+                return this.expressionService.evaluate(headerValueGetter, params);
             } else {
                 console.warn('ag-grid: headerValueGetter must be a function or a string');
+                return '';
             }
-
-        } else if (colDef.displayName) {
-            console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
-            headerName = colDef.displayName;
         } else {
-            headerName = colDef.headerName;
+            return colDef.headerName;
         }
+    }
 
-        return headerName;
-        // if (column.isValue()) {
-        //
-        // } else {
-        //     return
-        // }
+    private wrapHeaderNameWithAggFunc(column: Column, headerName: string): string {
+        // only columns with measure active can have aggregations
+        if (!column.isMeasureActive()) {
+            return headerName;
+        }
+        // only show aggs if we are either grouping or pivoting
+        if (!this.pivotMode && this.isRowGroupEmpty()) {
+            return headerName;
+        }
+        // otherwise we have a measure that is active, and we are doing aggregation on it
+        // var colDef = column.getColDef();
+        var aggFunc = column.getAggFunc();
+        var aggFuncString: string;
+
+        if (typeof aggFunc === 'string') {
+            aggFuncString = <string> aggFunc;
+        } else {
+            aggFuncString = 'func';
+        }
+        return `${aggFuncString}(${headerName})`;
     }
 
     // returns the group with matching colId and instanceId. If instanceId is missing,
