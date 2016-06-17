@@ -1,7 +1,7 @@
 import {Utils as _} from "../utils";
 import {ColumnGroup} from "../entities/columnGroup";
 import {Column} from "../entities/column";
-import {ColDef, AbstractColDef, ColGroupDef} from "../entities/colDef";
+import {ColDef, AbstractColDef, ColGroupDef, IAggFunc} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../expressionService";
@@ -446,8 +446,17 @@ export class ColumnController {
         return newWidth;
     }
 
-    public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean): void {
+    private getOriginalOrGridColumn(key: Column | string | ColDef): Column {
         var column = this.getOriginalColumn(key);
+        if (column) {
+            return column;
+        } else {
+            return this.getGridColumn(key);
+        }
+    }
+
+    public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean): void {
+        var column = this.getOriginalOrGridColumn(key);
         if (!column) {
             return;
         }
@@ -997,24 +1006,30 @@ export class ColumnController {
 
     private wrapHeaderNameWithAggFunc(column: Column, headerName: string): string {
         // only columns with measure active can have aggregations
-        if (!column.isMeasureActive()) {
-            return headerName;
-        }
-        // only show aggs if we are either grouping or pivoting
-        if (!this.pivotMode && this.isRowGroupEmpty()) {
-            return headerName;
-        }
-        // otherwise we have a measure that is active, and we are doing aggregation on it
-        // var colDef = column.getColDef();
-        var aggFunc = column.getAggFunc();
-        var aggFuncString: string;
+        var pivotValueColumn = column.getColDef().pivotValueColumn;
+        var pivotActiveOnThisColumn = _.exists(pivotValueColumn);
+        var aggFunc: string | IAggFunc = null;
 
-        if (typeof aggFunc === 'string') {
-            aggFuncString = <string> aggFunc;
+        // otherwise we have a measure that is active, and we are doing aggregation on it
+        if (pivotActiveOnThisColumn) {
+            aggFunc = pivotValueColumn.getAggFunc();
         } else {
-            aggFuncString = 'func';
+            var measureActive = column.isMeasureActive();
+            var aggregationPresent = this.pivotMode || !this.isRowGroupEmpty();
+
+            if (measureActive && aggregationPresent) {
+                aggFunc = column.getAggFunc();
+            } else {
+                // leave blank, no agg func
+            }
         }
-        return `${aggFuncString}(${headerName})`;
+
+        if (aggFunc) {
+            var aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'func';
+            return `${aggFuncString}(${headerName})`;
+        } else {
+            return headerName;
+        }
     }
 
     // returns the group with matching colId and instanceId. If instanceId is missing,

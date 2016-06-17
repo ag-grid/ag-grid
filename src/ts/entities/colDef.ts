@@ -3,6 +3,7 @@ import {SetFilterParameters} from "../filter/setFilterParameters";
 import {TextAndNumberFilterParameters} from "../filter/textAndNumberFilterParameters";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
+import {Column} from "./column";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -193,4 +194,11 @@ export interface ColDef extends AbstractColDef {
     
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
+
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotKeys?: string[];
+
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotValueColumn?: Column;
+
 }

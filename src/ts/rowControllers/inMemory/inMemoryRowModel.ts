@@ -381,6 +381,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
         if (!rowData) {
             this.rootNode.allLeafChildren = [];
+            this.rootNode.childrenAfterGroup = [];
             return;
         }
 
