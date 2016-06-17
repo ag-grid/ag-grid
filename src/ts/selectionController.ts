@@ -26,6 +26,8 @@ export class SelectionController {
     // used for shift selection, so we know where to start the range selection from
     private lastSelectedNode: RowNode;
 
+    private groupSelectsChildren: boolean;
+
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
@@ -40,6 +42,7 @@ export class SelectionController {
 
     @PostConstruct
     public init(): void {
+        this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
@@ -99,15 +102,26 @@ export class SelectionController {
     }
 
     public clearOtherNodes(rowNodeToKeepSelected: RowNode): void {
+        var groupsToRefresh: any = {};
         _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 this.selectedNodes[otherRowNode.id].setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
+                if (this.groupSelectsChildren && otherRowNode.parent) {
+                    groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
+                }
             }
+        });
+        _.iterateObject(groupsToRefresh, (key: string, group: RowNode) => {
+            group.calculateSelectedFromChildren();
         });
     }
 
     private onRowSelected(event: any): void {
         var rowNode = event.node;
+
+        // we do not store the group rows when the groups select children
+        if (this.groupSelectsChildren && rowNode.group) { return; }
+
         if (rowNode.isSelected()) {
             this.selectedNodes[rowNode.id] = rowNode;
         } else {
