@@ -20,6 +20,7 @@ import {
     MenuItem
 } from "ag-grid/main";
 import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
+import {AggFuncService} from "./aggregation/aggFuncService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -106,6 +107,7 @@ export class EnterpriseMenu {
     @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('aggFuncService') private aggFuncService: AggFuncService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -227,53 +229,17 @@ export class EnterpriseMenu {
 
         var columnIsAlreadyAggValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
 
-        cMenuList.addItem({
-            name: localeTextFunc('sum', 'Sum'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_SUM
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('min', 'Min'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_MIN);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MIN
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('max', 'Max'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_MAX);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MAX
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('first', 'First'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_FIRST);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_FIRST
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('last', 'Last'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_LAST);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_LAST
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('none', 'None'),
-            action: ()=> {
-                this.column.setAggFunc(null);
-                this.columnController.removeValueColumn(this.column);
-            },
-            checked: !columnIsAlreadyAggValue
+        var funcNames = this.aggFuncService.getFuncNames();
+
+        funcNames.forEach( (funcName)=> {
+            cMenuList.addItem({
+                name: localeTextFunc(funcName, funcName),
+                action: ()=> {
+                    this.columnController.setColumnAggFunction(this.column, funcName);
+                    this.columnController.addValueColumn(this.column);
+                },
+                checked: columnIsAlreadyAggValue && this.column.getAggFunc() === funcName
+            });
         });
 
         return cMenuList;
@@ -357,9 +323,10 @@ export class EnterpriseMenu {
 
         var doingGrouping = this.columnController.getRowGroupColumns().length>0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        var columnIsMeasure = this.column.isMeasure();
 
         result.push('pinSubMenu');
-        if (doingGrouping && this.column.isDimension()) {
+        if (doingGrouping && columnIsMeasure) {
             result.push('valueAggSubMenu');
         }
         result.push('separator');

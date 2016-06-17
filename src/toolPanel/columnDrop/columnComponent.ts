@@ -1,5 +1,4 @@
 import {
-    Listener,
     PopupService,
     Utils,
     Component,
@@ -42,6 +41,8 @@ export class ColumnComponent extends Component {
     private ghost: boolean;
     private displayName: string;
     private valueColumn: boolean;
+
+    private popupShowing = false;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, valueColumn: boolean) {
         super(ColumnComponent.TEMPLATE);
@@ -101,6 +102,10 @@ export class ColumnComponent extends Component {
     }
 
     private onShowAggFuncSelection(): void {
+
+        if (this.popupShowing) { return; }
+        this.popupShowing = true;
+
         var virtualList = new VirtualList();
 
         var rows = this.aggFuncService.getFuncNames();
@@ -119,10 +124,15 @@ export class ColumnComponent extends Component {
         ePopup.style.height = '100px';
         ePopup.style.width = this.getGui().clientWidth + 'px';
 
+        var popupHiddenFunc = () => {
+            virtualList.destroy();
+            this.popupShowing = false;
+        };
+
         var hidePopup = this.popupService.addAsModalPopup(
             ePopup,
             true,
-            virtualList.destroy.bind(virtualList)
+            popupHiddenFunc
         );
 
         virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
@@ -135,12 +145,14 @@ export class ColumnComponent extends Component {
         virtualList.refresh();
     }
 
-    private selectAggItem(value: string): void {
-        this.columnController.setColumnAggFunction(this.column, value);
-    }
-
     private createAggSelect(hidePopup: ()=>void, value: any): Component {
-        var comp = new AggItemComp(hidePopup, value.toString());
+
+        var itemSelected = ()=> {
+            hidePopup();
+            this.columnController.setColumnAggFunction(this.column, value);
+        };
+
+        var comp = new AggItemComp(itemSelected, value.toString());
         return comp;
     }
 }
@@ -155,4 +167,5 @@ class AggItemComp extends Component {
         this.value = value;
         this.addGuiEventListener('click', itemSelected);
     }
+
 }

@@ -102,6 +102,11 @@ export class StatusBar extends Component {
                             return;
                         }
 
+                        // see if value is wrapped, can happen when doing count() or avg() functions
+                        if (value.value) {
+                            value = value.value;
+                        }
+
                         if (typeof value === 'string') {
                             value = Number(value);
                         }
