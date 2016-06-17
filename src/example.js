@@ -178,7 +178,9 @@ var gridOptions = {
         // columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
         // columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
     },
-
+    aggFuncs: {
+        'zero': function() {return 0;}
+    },
     getBusinessKeyForNode: function (node) {
         if (node.data) {
             return node.data.name;
@@ -552,12 +554,12 @@ function createRowItem(row, colCount) {
     };
     rowItem.gameName = 'toolTip: ' + rowItem.game.name.toUpperCase();
 
-    rowItem.bankBalance = ((Math.round(Math.random() * 10000000)) / 100) - 3000;
-    rowItem.rating = (Math.round(Math.random() * 5));
+    rowItem.bankBalance = ((Math.round(pseudoRandom() * 10000000)) / 100) - 3000;
+    rowItem.rating = (Math.round(pseudoRandom() * 5));
 
     var totalWinnings = 0;
     months.forEach(function (month) {
-        var value = ((Math.round(Math.random() * 10000000)) / 100) - 20;
+        var value = ((Math.round(pseudoRandom() * 10000000)) / 100) - 20;
         rowItem[month.toLocaleLowerCase()] = value;
         totalWinnings += value;
     });
@@ -566,12 +568,22 @@ function createRowItem(row, colCount) {
     //create dummy data for the additional columns
     for (var col = defaultCols.length; col < colCount; col++) {
         var value;
-        var randomBit = Math.random().toString().substring(2, 5);
+        var randomBit = pseudoRandom().toString().substring(2, 5);
         value = colNames[col % colNames.length] + "-" + randomBit + " - (" + (row + 1) + "," + col + ")";
         rowItem["col" + col] = value;
     }
 
     return rowItem;
+}
+
+// taken from http://stackoverflow.com/questions/3062746/special-simple-random-number-generator
+var seed = 123456789;
+var m = Math.pow(2, 32);
+var a = 1103515245;
+var c = 12345;
+function pseudoRandom() {
+    seed = (a * seed + c) % m;
+    return seed / m;
 }
 
 function selectionChanged(event) {
@@ -812,7 +824,12 @@ function currencyRenderer(params) {
     } else if (isNaN(params.value)) {
         return 'NaN';
     } else {
-        return '&pound;' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        // if we are doing 'count', then we do not show pound sign
+        if (params.node.group && params.column.aggFunc === 'count') {
+            return params.value;
+        } else {
+            return '&pound;' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        }
     }
 }
 

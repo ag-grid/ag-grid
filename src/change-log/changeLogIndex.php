@@ -15,11 +15,12 @@ include '../documentation-main/documentation_header.php';
 -->
 
     <h3>Version 4.3.x</h3>
-    <li>Enhancement: added events dragStarted and dragStoped</li>
+    <li>Enhancement: added events dragStarted and dragStopped</li>
     <li>Enhancement: new property suppressUseColIdForGroups</li>
     <li>Enhancement: Safari now uses animation frames for scrolling (Chrome doesn't need it!!)</li>
     <li>Enhancement: when no using cellRenderer, node.textContent used instead of element.innerHTML, for security reasons to prevent malicious injection of Javascript.</li>
     <li>Enhancement: new property 'suppressCopyRowsToClipboard' so selected cells will be copied to clipboard and not the selected row, if that's what user wants.</li>
+    <li>Enhancement: user provided aggregation functions - now you can register your own aggregation functions with the grid</li>
 
     <h3>Version 4.2.x (ag-Grid 4.2.7, ag-Grid-Enterprise 4.2.10)</h3>
     <li>Bugfix: group selection was selecting groups when 'groupSelectsChildren=false' giving strange behaviours</li>
