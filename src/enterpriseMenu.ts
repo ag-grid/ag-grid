@@ -102,6 +102,8 @@ export class EnterpriseMenu {
     public static TAB_GENERAL = 'general';
     public static TAB_COLUMNS = 'columns';
 
+    public static MENU_ITEM_SEPARATOR = 'separator';
+
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('context') private context: Context;
@@ -302,6 +304,7 @@ export class EnterpriseMenu {
 
     private getMenuItems(): (string|MenuItem)[] {
         var defaultMenuOptions = this.getDefaultMenuOptions();
+        var result: (string|MenuItem)[];
 
         var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
@@ -312,10 +315,22 @@ export class EnterpriseMenu {
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: defaultMenuOptions
             });
-            return userOptions;
+            result = userOptions;
         } else {
-            return defaultMenuOptions;
+            result = defaultMenuOptions;
         }
+
+        if (result) {
+            for (var index = result.length - 2; index >= 0; index--) {
+                var thisOneSeparator = result[index]===EnterpriseMenu.MENU_ITEM_SEPARATOR;
+                var nextOneSeparator = result[index+1]===EnterpriseMenu.MENU_ITEM_SEPARATOR;
+                if (thisOneSeparator && nextOneSeparator) {
+                    result.splice(index+1, 1);
+                }
+            }
+        }
+
+        return result;
     }
 
     private getDefaultMenuOptions(): string[] {
@@ -329,10 +344,10 @@ export class EnterpriseMenu {
         if (doingGrouping && columnIsMeasure) {
             result.push('valueAggSubMenu');
         }
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('autoSizeThis');
         result.push('autoSizeAll');
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
         if (this.column.isDimension()) {
             if (groupedByThisColumn) {
@@ -341,7 +356,7 @@ export class EnterpriseMenu {
                 result.push('rowGroup');
             }
         }
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('resetColumns');
         result.push('toolPanel');
 

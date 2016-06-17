@@ -126,11 +126,11 @@ export class RenderedColumn extends Component {
         // what we do depends on the reduce state
         if (this.columnController.isPivotMode()) {
             if (this.column.isMeasure()) {
-                if (!this.column.isValue()) {
+                if (!this.column.isMeasureActive()) {
                     this.columnController.addValueColumn(this.column);
                 }
             } else {
-                if (!this.column.isPivot() && !this.column.isRowGroup()) {
+                if (!this.column.isPivotActive() && !this.column.isRowGroupActive()) {
                     this.columnController.addRowGroupColumn(this.column);
                 }
             }

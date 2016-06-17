@@ -151,13 +151,13 @@ export class RenderedGroup extends Component {
         var columnsToUnGroup: Column[] = [];
 
         columns.forEach( column => {
-            if (column.isPivot()) {
+            if (column.isPivotActive()) {
                 columnsToUnPivot.push(column);
             }
-            if (column.isRowGroup()) {
+            if (column.isRowGroupActive()) {
                 columnsToUnGroup.push(column);
             }
-            if (column.isValue()) {
+            if (column.isMeasureActive()) {
                 columnsToUnValue.push(column);
             }
         });
@@ -180,11 +180,11 @@ export class RenderedGroup extends Component {
 
         columns.forEach( column => {
             if (column.isMeasure()) {
-                if (!column.isValue()) {
+                if (!column.isMeasureActive()) {
                     columnsToValue.push(column);
                 }
             } else {
-                if (!column.isPivot() && !column.isRowGroup()) {
+                if (!column.isPivotActive() && !column.isRowGroupActive()) {
                     columnsToGroup.push(column);
                 }
             }
