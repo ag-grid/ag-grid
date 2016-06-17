@@ -6,9 +6,6 @@ $pageKeyboards = "ag-Grid JavaScript Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<h2>Work in Progress Movie - Pivoting</h2>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jCId-Lbg_6k" frameborder="0" allowfullscreen></iframe>
-
 <h2>
     Introduction
 </h2>
@@ -22,9 +19,8 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">7th June 2016</div>
-        <div>ag-Grid 4.2.x patch released. Includes bug fixes and minor changes. See <a href="../change-log/changeLogIndex.php">Change Log</a> for full details.
-            </div>
+        <div class="news-header">17th June 2016</div>
+        <div>ag-Grid 4.2.7 & ag-Grid-Enterprise 4.2.11 patches released. Includes bug fix for group selection and aggregation. See <a href="../change-log/changeLogIndex.php">Change Log</a> for full details.</div>
     </div>
 
 <!--    <div class="news-box">
@@ -156,6 +152,9 @@ include 'documentation_header.php';
     pivot data inside ag-Grid similar to the pivot functionality in Excel. It will be controller
     by the tool panel.
 </p>
+
+<h2>Work in Progress Movie - Pivoting</h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jCId-Lbg_6k" frameborder="0" allowfullscreen></iframe>
 
 <h4>Pinnable Filters in Tool Panel (ag-Grid enterprise)</h4>
 
