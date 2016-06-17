@@ -320,15 +320,9 @@ export class EnterpriseMenu {
             result = defaultMenuOptions;
         }
 
-        if (result) {
-            for (var index = result.length - 2; index >= 0; index--) {
-                var thisOneSeparator = result[index]===EnterpriseMenu.MENU_ITEM_SEPARATOR;
-                var nextOneSeparator = result[index+1]===EnterpriseMenu.MENU_ITEM_SEPARATOR;
-                if (thisOneSeparator && nextOneSeparator) {
-                    result.splice(index+1, 1);
-                }
-            }
-        }
+        // GUI looks weird when two separators are side by side. this can happen accidentally
+        // if we remove items from the menu then two separators can edit up adjacent.
+        Utils.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
         return result;
     }
