@@ -84,9 +84,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private fieldContainsDots: boolean;
 
-    private rowGroup = false;
-    private pivot = false;
-    private value = false;
+    private rowGroupActive = false;
+    private pivotActive = false;
+    private measureActive = false;
 
     constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
@@ -371,35 +371,35 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
     
     public setRowGroup(rowGroup: boolean): void {
-        if (this.rowGroup !== rowGroup) {
-            this.rowGroup = rowGroup;
+        if (this.rowGroupActive !== rowGroup) {
+            this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(Column.EVENT_ROW_GROUP_CHANGED, this);
         }
     }
     
     public isRowGroup(): boolean {
-        return this.rowGroup;
+        return this.rowGroupActive;
     }
 
     public setPivot(pivot: boolean): void {
-        if (this.pivot !== pivot) {
-            this.pivot = pivot;
+        if (this.pivotActive !== pivot) {
+            this.pivotActive = pivot;
             this.eventService.dispatchEvent(Column.EVENT_PIVOT_CHANGED, this);
         }
     }
 
     public isPivot(): boolean {
-        return this.pivot;
+        return this.pivotActive;
     }
 
     public setValue(value: boolean): void {
-        if (this.value !== value) {
-            this.value = value;
+        if (this.measureActive !== value) {
+            this.measureActive = value;
             this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
         }
     }
 
     public isValue(): boolean {
-        return this.value;
+        return this.measureActive;
     }
 }

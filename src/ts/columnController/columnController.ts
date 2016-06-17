@@ -965,6 +965,8 @@ export class ColumnController {
         var colDef = column.colDef;
         var headerValueGetter = colDef.headerValueGetter;
 
+        var headerName: string;
+
         if (headerValueGetter) {
             var params = {
                 colDef: colDef,
@@ -974,20 +976,27 @@ export class ColumnController {
 
             if (typeof headerValueGetter === 'function') {
                 // valueGetter is a function, so just call it
-                return headerValueGetter(params);
+                headerName = headerValueGetter(params);
             } else if (typeof headerValueGetter === 'string') {
                 // valueGetter is an expression, so execute the expression
-                return this.expressionService.evaluate(headerValueGetter, params);
+                headerName = this.expressionService.evaluate(headerValueGetter, params);
             } else {
                 console.warn('ag-grid: headerValueGetter must be a function or a string');
             }
 
         } else if (colDef.displayName) {
             console.warn("ag-grid: Found displayName " + colDef.displayName + ", please use headerName instead, displayName is deprecated.");
-            return colDef.displayName;
+            headerName = colDef.displayName;
         } else {
-            return colDef.headerName;
+            headerName = colDef.headerName;
         }
+
+        return headerName;
+        // if (column.isValue()) {
+        //
+        // } else {
+        //     return
+        // }
     }
 
     // returns the group with matching colId and instanceId. If instanceId is missing,
