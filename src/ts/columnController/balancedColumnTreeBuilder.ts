@@ -144,13 +144,13 @@ export class BalancedColumnTreeBuilder {
             if (colDefNoType.suppressAggregation !== undefined) {
                 console.warn('ag-grid: colDef.suppressAggregation is deprecated, please use colDef.type instead');
             }
-            if (colDefNoType.suppressRowGroup !== undefined && colDefNoType.suppressAggregation !== undefined) {
+            if (colDefNoType.suppressRowGroup && colDefNoType.suppressAggregation) {
                 colDefNoType.type = Column.TYPE_NONE;
             } else {
-                if (colDefNoType.suppressRowGroup !== undefined) {
+                if (colDefNoType.suppressRowGroup) {
                     colDefNoType.type = Column.TYPE_MEASURE;
                 }
-                if (colDefNoType.suppressAggregation !== undefined) {
+                if (colDefNoType.suppressAggregation) {
                     colDefNoType.type = Column.TYPE_DIMENSION;
                 }
             }

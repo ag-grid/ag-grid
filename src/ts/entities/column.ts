@@ -126,12 +126,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public isDimension(): boolean {
         return this.colDef.type === Column.TYPE_DIMENSION
-            || _.missing(this.colDef);
+            || _.missing(this.colDef.type);
     }
 
     public isMeasure(): boolean {
         return this.colDef.type === Column.TYPE_MEASURE
-            || _.missing(this.colDef);
+            || _.missing(this.colDef.type);
     }
 
     public isFieldContainsDots(): boolean {
