@@ -394,7 +394,7 @@ var defaultCols = [
     {
         headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
-        type: 'measure',
+        // type: 'measure',
         filterParams: {cellRenderer: ratingFilterRenderer}
     },
     {
