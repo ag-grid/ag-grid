@@ -32,8 +32,10 @@ export class AggregationStage implements IRowNodeStage {
             return;
         }
 
+        var pivotActive = this.columnController.isPivotActive();
+
         var measureColumns = this.columnController.getMeasureColumns();
-        var pivotColumns = this.columnController.getPivotColumns();
+        var pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
 
         this.recursivelyCreateAggData(rootNode, measureColumns, pivotColumns);
     }
