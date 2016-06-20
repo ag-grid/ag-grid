@@ -50,13 +50,13 @@ export class PivotStage implements IRowNodeStage {
 
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        var valueColumns = this.columnController.getValueColumns();
-        var valueColumnsHash = valueColumns.map( (column)=> column.getId() ).join('#');
+        var measureColumns = this.columnController.getMeasureColumns();
+        var measureColumnsHash = measureColumns.map( (column)=> column.getId() ).join('#');
 
-        var valueColumnsChanged = this.valueColumnsHashLastTime !== valueColumnsHash;
-        this.valueColumnsHashLastTime = valueColumnsHash;
+        var measureColumnsChanged = this.valueColumnsHashLastTime !== measureColumnsHash;
+        this.valueColumnsHashLastTime = measureColumnsHash;
 
-        if (uniqueValuesChanged || valueColumnsChanged) {
+        if (uniqueValuesChanged || measureColumnsChanged) {
             var result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
             this.pivotColumnDefs = result.pivotColumnDefs;

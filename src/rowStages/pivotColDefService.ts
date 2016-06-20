@@ -49,14 +49,14 @@ export class PivotColDefService {
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep);
             } else {
 
-                var valueColumns = this.columnController.getValueColumns();
+                var measureColumns = this.columnController.getMeasureColumns();
                 var valueGroup: ColGroupDef = {
                     children: [],
                     headerName: key
                 };
                 parentChildren.push(valueGroup);
-                valueColumns.forEach( valueColumn => {
-                    var colDef = this.createColDef(valueColumn, valueColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
+                measureColumns.forEach( measureColumn => {
+                    var colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
                     valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
                 });
@@ -81,7 +81,7 @@ export class PivotColDefService {
         colDef.colId = 'pivot_' + columnIdSequence.next();
 
         colDef.pivotKeys = pivotKeys;
-        colDef.pivotValueColumn = valueColumn;
+        colDef.pivotMeasureColumn = valueColumn;
 
         return colDef;
     }
