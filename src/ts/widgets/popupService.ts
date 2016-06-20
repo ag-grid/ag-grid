@@ -1,7 +1,6 @@
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {Constants} from "../constants";
 import {Bean, Autowired} from "../context/context";
-import {Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 
 @Bean('popupService')
@@ -125,8 +124,16 @@ export class PopupService {
             y += params.nudgeY;
         }
 
-        // if popup is overflowing to the right, move it left
+        // if popup is overflowing to the bottom, move it up
         if (params.keepWithinBounds) {
+            checkHorizontalOverflow();
+            checkVerticalOverflow();
+        }
+
+        params.ePopup.style.left = x + "px";
+        params.ePopup.style.top = y + "px";
+
+        function checkHorizontalOverflow(): void {
             var minWidth: number;
             if (params.minWidth > 0) {
                 minWidth = params.minWidth;
@@ -137,7 +144,7 @@ export class PopupService {
             }
 
             var widthOfParent = parentRect.right - parentRect.left;
-            var maxX = widthOfParent - minWidth;
+            var maxX = widthOfParent - minWidth - 5;
             if (x > maxX) { // move position left, back into view
                 x = maxX;
             }
@@ -146,8 +153,23 @@ export class PopupService {
             }
         }
 
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
+        function checkVerticalOverflow(): void {
+            var minHeight: number;
+            if (params.ePopup.clientWidth>0) {
+                minHeight = params.ePopup.clientHeight;
+            } else {
+                minHeight = 200;
+            }
+
+            var heightOfParent = parentRect.bottom - parentRect.top;
+            var maxY = heightOfParent - minHeight - 5;
+            if (y > maxY) { // move position left, back into view
+                y = maxY;
+            }
+            if (y < 0) { // in case the popup has a negative value
+                y = 0;
+            }
+        }
     }
 
     //adds an element to a div, but also listens to background checking for clicks,

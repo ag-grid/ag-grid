@@ -84,9 +84,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private fieldContainsDots: boolean;
 
-    private rowGroup = false;
-    private pivot = false;
-    private value = false;
+    private rowGroupActive = false;
+    private pivotActive = false;
+    private measureActive = false;
 
     constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
@@ -126,12 +126,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public isDimension(): boolean {
         return this.colDef.type === Column.TYPE_DIMENSION
-            || _.missing(this.colDef);
+            || _.missing(this.colDef.type);
     }
 
     public isMeasure(): boolean {
         return this.colDef.type === Column.TYPE_MEASURE
-            || _.missing(this.colDef);
+            || _.missing(this.colDef.type);
     }
 
     public isFieldContainsDots(): boolean {
@@ -370,36 +370,36 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.setActualWidth(this.minWidth);
     }
     
-    public setRowGroup(rowGroup: boolean): void {
-        if (this.rowGroup !== rowGroup) {
-            this.rowGroup = rowGroup;
+    public setRowGroupActive(rowGroup: boolean): void {
+        if (this.rowGroupActive !== rowGroup) {
+            this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(Column.EVENT_ROW_GROUP_CHANGED, this);
         }
     }
     
-    public isRowGroup(): boolean {
-        return this.rowGroup;
+    public isRowGroupActive(): boolean {
+        return this.rowGroupActive;
     }
 
-    public setPivot(pivot: boolean): void {
-        if (this.pivot !== pivot) {
-            this.pivot = pivot;
+    public setPivotActive(pivot: boolean): void {
+        if (this.pivotActive !== pivot) {
+            this.pivotActive = pivot;
             this.eventService.dispatchEvent(Column.EVENT_PIVOT_CHANGED, this);
         }
     }
 
-    public isPivot(): boolean {
-        return this.pivot;
+    public isPivotActive(): boolean {
+        return this.pivotActive;
     }
 
-    public setValue(value: boolean): void {
-        if (this.value !== value) {
-            this.value = value;
+    public setMeasureActive(value: boolean): void {
+        if (this.measureActive !== value) {
+            this.measureActive = value;
             this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
         }
     }
 
-    public isValue(): boolean {
-        return this.value;
+    public isMeasureActive(): boolean {
+        return this.measureActive;
     }
 }

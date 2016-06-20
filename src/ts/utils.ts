@@ -320,6 +320,18 @@ export class Utils {
         }
     }
 
+    static removeRepeatsFromArray<T>(array: T[], object: T) {
+        if (!array) { return; }
+        for (var index = array.length - 2; index >= 0; index--) {
+            var thisOneMatches = array[index]===object;
+            var nextOneMatches = array[index+1]===object;
+            if (thisOneMatches && nextOneMatches) {
+                array.splice(index+1, 1);
+            }
+        }
+
+    }
+    
     static removeFromArray<T>(array: T[], object: T) {
         if (array.indexOf(object) >= 0) {
             array.splice(array.indexOf(object), 1);
