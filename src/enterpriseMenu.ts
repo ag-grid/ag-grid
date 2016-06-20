@@ -20,6 +20,7 @@ import {
     MenuItem
 } from "ag-grid/main";
 import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
+import {AggFuncService} from "./aggregation/aggFuncService";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -87,7 +88,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
         var showColumnPanel = !this.gridOptionsWrapper.isSuppressMenuColumnPanel();
         var showMainPanel = !this.gridOptionsWrapper.isSuppressMenuMainPanel();
-        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel();
+        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel() && column.isFilterAllowed();
 
         return showColumnPanel || showMainPanel || showFilterPanel;
     }
@@ -101,11 +102,14 @@ export class EnterpriseMenu {
     public static TAB_GENERAL = 'general';
     public static TAB_COLUMNS = 'columns';
 
+    public static MENU_ITEM_SEPARATOR = 'separator';
+
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('aggFuncService') private aggFuncService: AggFuncService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -142,7 +146,7 @@ export class EnterpriseMenu {
             this.createMainPanel();
             tabItems.push(this.tabItemGeneral);
         }
-        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel()) {
+        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel() && this.column.isFilterAllowed()) {
             this.createFilterPanel();
             tabItems.push(this.tabItemFilter);
         }
@@ -225,55 +229,19 @@ export class EnterpriseMenu {
         this.context.wireBean(cMenuList);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        var columnIsAlreadyAggValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
+        var columnIsAlreadyAggValue = this.columnController.getMeasureColumns().indexOf(this.column) >= 0;
 
-        cMenuList.addItem({
-            name: localeTextFunc('sum', 'Sum'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_SUM);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_SUM
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('min', 'Min'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_MIN);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MIN
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('max', 'Max'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_MAX);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_MAX
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('first', 'First'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_FIRST);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_FIRST
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('last', 'Last'),
-            action: ()=> {
-                this.columnController.setColumnAggFunction(this.column, Column.AGG_LAST);
-                this.columnController.addValueColumn(this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === Column.AGG_LAST
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('none', 'None'),
-            action: ()=> {
-                this.column.setAggFunc(null);
-                this.columnController.removeValueColumn(this.column);
-            },
-            checked: !columnIsAlreadyAggValue
+        var funcNames = this.aggFuncService.getFuncNames();
+
+        funcNames.forEach( (funcName)=> {
+            cMenuList.addItem({
+                name: localeTextFunc(funcName, funcName),
+                action: ()=> {
+                    this.columnController.setColumnAggFunction(this.column, funcName);
+                    this.columnController.addMeasureColumn(this.column);
+                },
+                checked: columnIsAlreadyAggValue && this.column.getAggFunc() === funcName
+            });
         });
 
         return cMenuList;
@@ -336,6 +304,7 @@ export class EnterpriseMenu {
 
     private getMenuItems(): (string|MenuItem)[] {
         var defaultMenuOptions = this.getDefaultMenuOptions();
+        var result: (string|MenuItem)[];
 
         var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
@@ -346,10 +315,16 @@ export class EnterpriseMenu {
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: defaultMenuOptions
             });
-            return userOptions;
+            result = userOptions;
         } else {
-            return defaultMenuOptions;
+            result = defaultMenuOptions;
         }
+
+        // GUI looks weird when two separators are side by side. this can happen accidentally
+        // if we remove items from the menu then two separators can edit up adjacent.
+        Utils.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
+
+        return result;
     }
 
     private getDefaultMenuOptions(): string[] {
@@ -357,15 +332,16 @@ export class EnterpriseMenu {
 
         var doingGrouping = this.columnController.getRowGroupColumns().length>0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        var columnIsMeasure = this.column.isMeasure();
 
         result.push('pinSubMenu');
-        if (doingGrouping && this.column.isDimension()) {
+        if (doingGrouping && columnIsMeasure) {
             result.push('valueAggSubMenu');
         }
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('autoSizeThis');
         result.push('autoSizeAll');
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
         if (this.column.isDimension()) {
             if (groupedByThisColumn) {
@@ -374,7 +350,7 @@ export class EnterpriseMenu {
                 result.push('rowGroup');
             }
         }
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('resetColumns');
         result.push('toolPanel');
 

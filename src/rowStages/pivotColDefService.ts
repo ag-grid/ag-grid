@@ -27,7 +27,6 @@ export class PivotColDefService {
         };
     }
 
-
     // parentChildren - the list of colDefs we are adding to
     // @index - how far the column is from the top (also same as pivotKeys.length)
     // @uniqueValues - the values for which we should create a col for
@@ -35,7 +34,6 @@ export class PivotColDefService {
     private recursivelyAddGroup(parentChildren: (ColGroupDef|ColDef)[], pivotColumnDefs: ColDef[], index: number, uniqueValues: any,
                                 pivotKeys: string[], columnIdSequence: NumberSequence, levelsDeep: number): void {
 
-        // var column = pivotColumns[index];
         Utils.iterateObject(uniqueValues, (key: string, value: any)=> {
 
             var newPivotKeys = pivotKeys.slice(0);
@@ -51,25 +49,18 @@ export class PivotColDefService {
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep);
             } else {
 
-                var valueColumns = this.columnController.getValueColumns();
-
-                if (valueColumns.length===1) {
-                    var colDef = this.createColDef(valueColumns[0], key, newPivotKeys, columnIdSequence);
-                    parentChildren.push(colDef);
+                var measureColumns = this.columnController.getMeasureColumns();
+                var valueGroup: ColGroupDef = {
+                    children: [],
+                    headerName: key
+                };
+                parentChildren.push(valueGroup);
+                measureColumns.forEach( measureColumn => {
+                    var colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
+                    valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
-                } else {
-                    var valueGroup: ColGroupDef = {
-                        children: [],
-                        headerName: key
-                    };
-                    parentChildren.push(valueGroup);
-                    valueColumns.forEach( valueColumn => {
-                        var colDef = this.createColDef(valueColumn, valueColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
-                        valueGroup.children.push(colDef);
-                        pivotColumnDefs.push(colDef);
-                    });
-                    valueGroup.children.sort(this.headerNameComparator.bind(this));
-                }
+                });
+                valueGroup.children.sort(this.headerNameComparator.bind(this));
 
             }
             parentChildren.sort(this.headerNameComparator.bind(this));
@@ -89,8 +80,8 @@ export class PivotColDefService {
         colDef.headerName = headerName;
         colDef.colId = 'pivot_' + columnIdSequence.next();
 
-        (<any>colDef).keys = pivotKeys;
-        (<any>colDef).valueColumn = valueColumn;
+        colDef.pivotKeys = pivotKeys;
+        colDef.pivotMeasureColumn = valueColumn;
 
         return colDef;
     }

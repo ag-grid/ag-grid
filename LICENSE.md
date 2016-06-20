@@ -1,4 +1,4 @@
-ag-Grid-Enterprise Software Licence Agreement Version 1.4
+ag-Grid-Enterprise Software Licence Agreement Version 1.5
 
 THIS DOCUMENT IS A LEGAL AGREEMENT (the “Agreement”) BETWEEN AG GRID LTD. (“We,” “Us”) AND YOU OR THE ORGANISATION ON WHOSE BEHALF YOU ARE ENTERING INTO THIS AGREEMENT (“You”) IN RELATION TO AG-GRID-ENTERPRISE SOFTWARE. RIGHTS GRANTED HEREIN APPLY ONLY TO SOFTWARE FOR WHICH YOU HAVE PAID THE APPLICABLE FEE (AS INVOICED BY US TO YOU).
 
@@ -26,21 +26,21 @@ THIS LICENCE AGREEMENT DESCRIBES YOUR RIGHTS AND RESTRICTIONS WITH RESPECT TO TH
 
 2.LICENSE GRANT
 
-A) DEVELOPER APPLICATION LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for Licensed Developer(s) to use the Software to create Modifications and Applications for one named application ("Authorized Application" or "Authorized Project") within your Organisation. The Authorized Application has to be specified in the License Order. The Project License covers new versions and different editions of the Authorized Application as long as they are in the evolutionary line of it.
+A) APPLICATION DEVELOPER LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for Licensed Developer(s) to use the Software to create Modifications and Applications for one named application ("Authorized Application" or "Authorized Project") within your Organisation. The Authorized Application has to be specified in the License Order. The Project License covers new versions and different editions of the Authorized Application as long as they are in the evolutionary line of it.
 
-B) DEVELOPER SITE LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for Licensed Developer(s) to use the Software to create Modifications and Applications for multiple applications within your Organisation.
+B) SITE DEVELOPER LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for Licensed Developer(s) to use the Software to create Modifications and Applications for multiple applications within your Organisation.
 
-For both DEVELOPER APPLICATION LICENSE and DEVELOPER SITE LICENSE, all developers modifying JavaScript code as part of Your Modifications and Applications are required to be covered by the set of Licensed Developers. It is not permissible to only include a subset of such developers that will be directly using the Software. For example, if you have 5 developers working with JavaScript on your application, but only 2 directly working with ag-Grid, all 5 are required to be Licenced Developers.
+For both APPLICATION DEVELOPER LICENSE and SITE DEVELOPER LICENSE, all developers modifying JavaScript code as part of Your Modifications and Applications are required to be covered by the set of Licensed Developers. It is not permissible to only include a subset of such developers that will be directly using the Software. For example, if you have 5 developers working with JavaScript on your application, but only 2 directly working with ag-Grid, all 5 are required to be Licenced Developers.
 
-Both DEVELOPER APPLICATION LICENSE and DEVELOPER SITE LICENSE must be combined with one of OEM LICENSE and SAAS LICENSE if the built application is to be sold as a product or sold as part of a SAAS offering.
+Both APPLICATION DEVELOPER LICENSE and SITE DEVELOPER LICENSE must be combined with one of OEM LICENSE and SAAS LICENSE if the built application is to be sold as a product or sold as part of a SAAS offering.
 
 C) OEM LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include the Software within your application to be provided together as part of Your product for You to market, reproduce and distribute ag-Grid-Enterprise and/or Modifications to End Users, Distributors and Resellers solely as integrated into Your Applications;
 
-OEM LICENSE must be combined with one of either DEVELOPER APPLICATION LICENSE or DEVELOPER SITE LICENSE.
+OEM LICENSE must be combined with one of either APPLICATION DEVELOPER LICENSE or SITE DEVELOPER LICENSE.
 
 D) SAAS LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include ag-Grid-Enterprise and/or Modifications within hosted environments solely as integrated into Your Applications.
 
-SAAS LICENSE must be combined with one of either DEVELOPER APPLICATION LICENSE or DEVELOPER SITE LICENSE.
+SAAS LICENSE must be combined with one of either APPLICATION DEVELOPER LICENSE or SITE DEVELOPER LICENSE.
 
 E) TRIAL LICENCE: In addition to the other terms contained herein, and subject to Your compliance with this Agreement, We grant to You a revocable, non-exclusive, non-transferable and non-sub licensable licence to install and use the Software (the “Trial Licence”) strictly for Your internal evaluation and review purposes and not for production nor commercial purposes. This Trial Licence applies only if You have registered with Us for a Trial Licence of the Software and shall be effective for sixty (60) consecutive days following the date of registration (the “Trial Period”). You may only register for a Trial Licence once in any six month period. You agree not to use a Trial Licence for any purpose other than determining whether to purchase a licence to the Software. You are explicitly not permitted to distribute the Software to any user outside the Organisation. Your rights to use the Trial Licence will immediately terminate upon the earlier of: (i) the date of expiration of the Trial Period; or (ii) the date on which You purchase a licence for the Software. We reserve the right to terminate Your Trial Licence at any time in Our absolute and sole discretion.
 

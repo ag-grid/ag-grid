@@ -10,7 +10,6 @@ import {
     Column,
     Events,
     QuerySelector,
-    Listener,
     PostConstruct,
     EventService,
     AgCheckbox,
@@ -105,15 +104,15 @@ export class RenderedColumn extends Component {
         // what we do depends on the reduce state
         if (this.columnController.isPivotMode()) {
             // remove pivot if column is pivoted
-            if (this.columnController.isColumnPivoted(this.column)) {
+            if (this.column.isPivotActive()) {
                 this.columnController.removePivotColumn(this.column);
             }
             // remove value if column is value
-            if (this.columnController.isColumnValue(this.column)) {
-                this.columnController.removeValueColumn(this.column);
+            if (this.column.isMeasureActive()) {
+                this.columnController.removeMeasureColumn(this.column);
             }
             // remove group if column is grouped
-            if (this.columnController.isColumnRowGrouped(this.column)) {
+            if (this.column.isRowGroupActive()) {
                 this.columnController.removeRowGroupColumn(this.column);
             }
         } else {
@@ -126,11 +125,11 @@ export class RenderedColumn extends Component {
         // what we do depends on the reduce state
         if (this.columnController.isPivotMode()) {
             if (this.column.isMeasure()) {
-                if (!this.column.isValue()) {
-                    this.columnController.addValueColumn(this.column);
+                if (!this.column.isMeasureActive()) {
+                    this.columnController.addMeasureColumn(this.column);
                 }
             } else {
-                if (!this.column.isPivot() && !this.column.isRowGroup()) {
+                if (!this.column.isPivotActive() && !this.column.isRowGroupActive()) {
                     this.columnController.addRowGroupColumn(this.column);
                 }
             }
@@ -152,10 +151,10 @@ export class RenderedColumn extends Component {
         this.processingColumnStateChange = true;
         if (this.columnController.isPivotMode()) {
             // if reducing, checkbox means column is one of pivot, value or group
-            var isPivot = this.columnController.isColumnPivoted(this.column);
-            var isRowGroup = this.columnController.isColumnRowGrouped(this.column);
-            var isValue = this.columnController.isColumnValue(this.column);
-            this.cbSelect.setSelected(isPivot || isRowGroup || isValue);
+            var isPivot = this.column.isPivotActive();
+            var isRowGroup = this.column.isRowGroupActive();
+            var isMeasure = this.column.isMeasureActive();
+            this.cbSelect.setSelected(isPivot || isRowGroup || isMeasure);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
             this.cbSelect.setSelected(this.column.isVisible());

@@ -151,13 +151,13 @@ export class RenderedGroup extends Component {
         var columnsToUnGroup: Column[] = [];
 
         columns.forEach( column => {
-            if (column.isPivot()) {
+            if (column.isPivotActive()) {
                 columnsToUnPivot.push(column);
             }
-            if (column.isRowGroup()) {
+            if (column.isRowGroupActive()) {
                 columnsToUnGroup.push(column);
             }
-            if (column.isValue()) {
+            if (column.isMeasureActive()) {
                 columnsToUnValue.push(column);
             }
         });
@@ -169,7 +169,7 @@ export class RenderedGroup extends Component {
             this.columnController.removeRowGroupColumns(columnsToUnGroup);
         }
         if (columnsToUnValue.length>0) {
-            this.columnController.removeValueColumns(columnsToUnValue);
+            this.columnController.removeMeasureColumns(columnsToUnValue);
         }
     }
 
@@ -180,18 +180,18 @@ export class RenderedGroup extends Component {
 
         columns.forEach( column => {
             if (column.isMeasure()) {
-                if (!column.isValue()) {
+                if (!column.isMeasureActive()) {
                     columnsToValue.push(column);
                 }
             } else {
-                if (!column.isPivot() && !column.isRowGroup()) {
+                if (!column.isPivotActive() && !column.isRowGroupActive()) {
                     columnsToGroup.push(column);
                 }
             }
         });
 
         if (columnsToValue.length>0) {
-            this.columnController.addValueColumns(columnsToValue);
+            this.columnController.addMeasureColumns(columnsToValue);
         }
         if (columnsToGroup.length>0) {
             this.columnController.addRowGroupColumns(columnsToGroup);
@@ -229,9 +229,9 @@ export class RenderedGroup extends Component {
 
     private isColumnVisible(column: Column, columnsReduced: boolean): boolean {
         if (columnsReduced) {
-            var pivoted = this.columnController.isColumnPivoted(column);
-            var grouped = this.columnController.isColumnRowGrouped(column);
-            var value = this.columnController.isColumnValue(column);
+            var pivoted = column.isPivotActive();
+            var grouped = column.isRowGroupActive();
+            var value = column.isMeasureActive();
             return pivoted || grouped || value;
         } else {
             return column.isVisible();

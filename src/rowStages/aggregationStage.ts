@@ -32,37 +32,39 @@ export class AggregationStage implements IRowNodeStage {
             return;
         }
 
-        var valueColumns = this.columnController.getValueColumns();
-        var pivotColumns = this.columnController.getPivotColumns();
+        var pivotActive = this.columnController.isPivotActive();
 
-        this.recursivelyCreateAggData(rootNode, valueColumns, pivotColumns);
+        var measureColumns = this.columnController.getMeasureColumns();
+        var pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
+
+        this.recursivelyCreateAggData(rootNode, measureColumns, pivotColumns);
     }
 
-    private recursivelyCreateAggData(rowNode: RowNode, valueColumns: Column[], pivotColumns: Column[]) {
+    private recursivelyCreateAggData(rowNode: RowNode, measureColumns: Column[], pivotColumns: Column[]) {
 
         // aggregate all children first, as we use the result in this nodes calculations
         rowNode.childrenAfterFilter.forEach( child => {
             if (child.group) {
-                this.recursivelyCreateAggData(child, valueColumns, pivotColumns);
+                this.recursivelyCreateAggData(child, measureColumns, pivotColumns);
             }
         });
 
-        this.aggregateRowNode(rowNode, valueColumns, pivotColumns);
+        this.aggregateRowNode(rowNode, measureColumns, pivotColumns);
     }
 
-    private aggregateRowNode(rowNode: RowNode, valueColumns: Column[], pivotColumns: Column[]): void {
+    private aggregateRowNode(rowNode: RowNode, measureColumns: Column[], pivotColumns: Column[]): void {
 
-        var valueColumnsMissing = valueColumns.length === 0;
+        var measureColumnsMissing = measureColumns.length === 0;
         var pivotColumnsMissing = pivotColumns.length === 0;
         var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
 
         var aggResult: any;
         if (userProvidedGroupRowAggNodes) {
             aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
-        } else if (valueColumnsMissing) {
+        } else if (measureColumnsMissing) {
             aggResult = null;
         } else if (pivotColumnsMissing) {
-            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, valueColumns);
+            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, measureColumns);
         } else {
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
         }
@@ -83,11 +85,11 @@ export class AggregationStage implements IRowNodeStage {
         pivotColumnDefs.forEach( pivotColumnDef => {
 
             var values: any[];
-            var valueColumn: Column = (<any>pivotColumnDef).valueColumn;
+            var valueColumn: Column = pivotColumnDef.pivotMeasureColumn;
 
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                var keys = (<any>pivotColumnDef).keys;
+                var keys = pivotColumnDef.pivotKeys;
                 values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, valueColumn);
             } else {
                 // value columns and pivot columns, non-leaf group
