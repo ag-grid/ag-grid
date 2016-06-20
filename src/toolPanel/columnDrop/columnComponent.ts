@@ -21,10 +21,10 @@ export class ColumnComponent extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE =
-        '<span class="ag-column-drop-cell">' +
-        '<span class="ag-column-drop-cell-text"></span>' +
-        '<span class="ag-column-drop-cell-button">&#10006;</span>' +
-        '</span>';
+       `<span class="ag-column-drop-cell">
+          <span class="ag-column-drop-cell-text"></span>
+          <span class="ag-column-drop-cell-button">&#10006;</span>
+        </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
     @Autowired('columnController') columnController: ColumnController;
@@ -81,7 +81,7 @@ export class ColumnComponent extends Component {
         }
 
         if (this.valueColumn) {
-            this.addDestroyableEventListener(this.eText, 'click', this.onShowAggFuncSelection.bind(this) );
+            this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this) );
         }
     }
 
@@ -104,6 +104,7 @@ export class ColumnComponent extends Component {
     private onShowAggFuncSelection(): void {
 
         if (this.popupShowing) { return; }
+
         this.popupShowing = true;
 
         var virtualList = new VirtualList();
@@ -139,7 +140,8 @@ export class ColumnComponent extends Component {
 
         this.popupService.positionPopupUnderComponent({
             eventSource: this.getGui(),
-            ePopup: ePopup
+            ePopup: ePopup,
+            keepWithinBounds: true
         });
 
         virtualList.refresh();
