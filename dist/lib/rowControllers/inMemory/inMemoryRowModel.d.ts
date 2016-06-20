@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -33,6 +33,7 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     getRowIndexAtPixel(pixelToMatch: number): number;
     private isRowInPixel(rowNode, pixelToMatch);
     getRowCombinedHeight(): number;
+    forEachLeafNode(callback: Function): void;
     forEachNode(callback: Function): void;
     forEachNodeAfterFilter(callback: Function): void;
     forEachNodeAfterFilterAndSort(callback: Function): void;

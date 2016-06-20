@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -64,6 +64,7 @@ export interface GridOptions {
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
+    quickFilterText?: string;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -124,6 +125,7 @@ export interface GridOptions {
     getRowClass?: Function;
     getRowHeight?: Function;
     headerCellRenderer?: any;
+    groupRowAggNodes?(nodes: RowNode[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?(dataItem: any): NodeChildDetails;
@@ -184,7 +186,7 @@ export interface NodeChildDetails {
     key?: any;
 }
 export interface GetContextMenuItemsParams {
-    defaultItems: [string];
+    defaultItems: string[];
     column: Column;
     node: RowNode;
     value: any;
@@ -193,7 +195,7 @@ export interface GetContextMenuItemsParams {
     context: any;
 }
 export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): [string | MenuItem];
+    (params: GetContextMenuItemsParams): (string | MenuItem)[];
 }
 export interface GetMainMenuItemsParams {
     column: Column;
@@ -203,7 +205,7 @@ export interface GetMainMenuItemsParams {
     defaultItems: string[];
 }
 export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): [string | MenuItem];
+    (params: GetMainMenuItemsParams): (string | MenuItem)[];
 }
 export interface ProcessRowParams {
     eRow: HTMLElement;

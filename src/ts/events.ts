@@ -4,6 +4,9 @@ export class Events {
     public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
     public static EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
 
+    /** The reduce flag was changed */
+    public static EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
+    
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
 
@@ -63,4 +66,6 @@ export class Events {
     public static EVENT_GRID_READY = 'gridReady';
     public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
+    public static EVENT_DRAG_STARTED = 'dragStarted';
+    public static EVENT_DRAG_STOPPED = 'dragStopped';
 }

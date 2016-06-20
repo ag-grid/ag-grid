@@ -5,7 +5,6 @@ export * from './dist/lib/columnController/columnKeyCreator';
 export * from './dist/lib/columnController/columnUtils';
 export * from './dist/lib/columnController/displayedGroupCreator';
 export * from './dist/lib/columnController/groupInstanceIdCreator';
-export * from './dist/lib/columnController/pivotService';
 
 export * from './dist/lib/components/agGridNg1';
 export * from './dist/lib/components/agGridWebComponent';
@@ -49,6 +48,7 @@ export * from './dist/lib/headerRendering/renderedHeaderCell';
 export * from './dist/lib/headerRendering/renderedHeaderGroupCell';
 export * from './dist/lib/headerRendering/standardMenu';
 
+export * from './dist/lib/interfaces/iAggFuncService';
 export * from './dist/lib/interfaces/iClipboardService';
 export * from './dist/lib/interfaces/iContextMenuFactory';
 export * from './dist/lib/interfaces/iCompFactory';
@@ -98,6 +98,8 @@ export * from './dist/lib/widgets/menuItemComponent';
 export * from './dist/lib/widgets/component';
 export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
+export * from './dist/lib/widgets/componentAnnotations';
+export * from './dist/lib/widgets/agCheckbox';
 
 export * from './dist/lib/cellNavigationService';
 export * from './dist/lib/clientExports';

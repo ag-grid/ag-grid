@@ -18,7 +18,15 @@ import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
-import {Context, Autowired, PostConstruct, Optional, Bean, Qualifier, PreDestroy} from "./context/context";
+import {
+    Context,
+    Autowired,
+    PostConstruct,
+    Optional,
+    Bean,
+    Qualifier,
+    PreDestroy
+} from "./context/context";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {FilterManager} from "./filter/filterManager";
@@ -61,7 +69,7 @@ import {SelectionController} from "./selectionController";
 import {SortController} from "./sortController";
 import {SvgFactory} from "./svgFactory";
 import {TemplateService} from "./templateService";
-import {Utils} from "./utils";
+import {Utils, NumberSequence} from "./utils";
 import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
 import {GridRow} from "./entities/gridRow";
@@ -81,7 +89,8 @@ import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
-import {PivotService} from "./columnController/pivotService";
+import {QuerySelector, Listener} from "./widgets/componentAnnotations";
+import {AgCheckbox} from "./widgets/agCheckbox";
 
 export function populateClientExports(exports: any): void {
 
@@ -92,7 +101,6 @@ export function populateClientExports(exports: any): void {
     exports.ColumnUtils = ColumnUtils;
     exports.DisplayedGroupCreator = DisplayedGroupCreator;
     exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
-    exports.PivotService = PivotService;
 
     // components
     exports.ComponentUtil = ComponentUtil;
@@ -107,6 +115,8 @@ export function populateClientExports(exports: any): void {
     exports.Optional = Optional;
     exports.Bean = Bean;
     exports.Qualifier = Qualifier;
+    exports.Listener = Listener;
+    exports.QuerySelector = QuerySelector;
 
     // dragAndDrop
     exports.DragAndDropService = DragAndDropService;
@@ -183,6 +193,7 @@ export function populateClientExports(exports: any): void {
     exports.MenuItemComponent = MenuItemComponent;
     exports.Component = Component;
     exports.MenuList = MenuList;
+    exports.AgCheckbox = AgCheckbox;
 
     // root
     exports.CellNavigationService = CellNavigationService;
@@ -206,6 +217,7 @@ export function populateClientExports(exports: any): void {
     exports.SvgFactory = SvgFactory;
     exports.TemplateService = TemplateService;
     exports.Utils = Utils;
+    exports.NumberSequence = NumberSequence;
     exports.ValueService = ValueService;
 
 }

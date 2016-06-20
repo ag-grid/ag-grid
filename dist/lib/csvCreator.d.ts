@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -7,6 +7,7 @@ export interface CsvExportParams {
     skipHeader?: boolean;
     skipFooters?: boolean;
     skipGroups?: boolean;
+    suppressQuotes?: boolean;
     fileName?: string;
     customHeader?: string;
     customFooter?: string;
@@ -26,5 +27,5 @@ export declare class CsvCreator {
     private getHeaderName(callback, column);
     private processCell(rowNode, column, value, processCellCallback);
     private createValueForGroupNode(node);
-    private escape(value);
+    private putInQuotes(value, suppressQuotes);
 }

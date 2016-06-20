@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,14 +29,16 @@ var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var DragAndDropService = (function () {
     function DragAndDropService() {
         this.dropTargets = [];
-        this.ePinnedIcon = svgFactory.createPinIcon();
-        this.ePlusIcon = svgFactory.createPlusIcon();
-        this.eHiddenIcon = svgFactory.createColumnHiddenIcon();
-        this.eMoveIcon = svgFactory.createMoveIcon();
-        this.eLeftIcon = svgFactory.createLeftIcon();
-        this.eRightIcon = svgFactory.createRightIcon();
-        this.eGroupIcon = svgFactory.createGroupIcon();
     }
+    DragAndDropService.prototype.init = function () {
+        this.ePinnedIcon = utils_1.Utils.createIcon('columnMovePin', this.gridOptionsWrapper, null, svgFactory.createPinIcon);
+        this.ePlusIcon = utils_1.Utils.createIcon('columnMoveAdd', this.gridOptionsWrapper, null, svgFactory.createPlusIcon);
+        this.eHiddenIcon = utils_1.Utils.createIcon('columnMoveHide', this.gridOptionsWrapper, null, svgFactory.createColumnHiddenIcon);
+        this.eMoveIcon = utils_1.Utils.createIcon('columnMoveMove', this.gridOptionsWrapper, null, svgFactory.createMoveIcon);
+        this.eLeftIcon = utils_1.Utils.createIcon('columnMoveLeft', this.gridOptionsWrapper, null, svgFactory.createLeftIcon);
+        this.eRightIcon = utils_1.Utils.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
+        this.eGroupIcon = utils_1.Utils.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
+    };
     DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
         this.eBody = document.querySelector('body');
@@ -293,6 +295,12 @@ var DragAndDropService = (function () {
         context_3.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], DragAndDropService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], DragAndDropService.prototype, "init", null);
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory')), 
         __metadata('design:type', Function), 

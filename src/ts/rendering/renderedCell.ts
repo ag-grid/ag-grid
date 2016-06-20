@@ -445,15 +445,14 @@ export class RenderedCell extends Component {
     }
 
     private addKeyPressListener(): void {
-        var that = this;
-        var keyPressListener = function(event: any) {
-            if (that.isCellEditable()) {
+        var keyPressListener = (event: any)=> {
+            if (!this.editingCell) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
-                    that.onSpaceKeyPressed();
+                    this.onSpaceKeyPressed();
                 } else {
                     if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
-                        that.startEditingIfEnabled(null, pressedChar);
+                        this.startEditingIfEnabled(null, pressedChar);
                         // if we don't prevent default, then the keypress also gets applied to the text field
                         // (at least when doing the default editor), but we need to allow the editor to decide
                         // what it wants to do.
@@ -985,13 +984,17 @@ export class RenderedCell extends Component {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;
             if (_.exists(valueToRender) && valueToRender !== '') {
-                this.eParentOfValue.innerHTML = valueToRender.toString();
+                // not using innerHTML to prevent injection of HTML
+                // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
+                this.eParentOfValue.textContent = valueToRender.toString();
             }
         }
         if (colDef.tooltipField) {
             var data = this.getDataForRow();
-            var tooltip = data[colDef.tooltipField];
-            this.eParentOfValue.setAttribute('title', tooltip);
+            if (_.exists(data)) {
+                var tooltip = data[colDef.tooltipField];
+                this.eParentOfValue.setAttribute('title', tooltip);
+            }
         }
     }
 

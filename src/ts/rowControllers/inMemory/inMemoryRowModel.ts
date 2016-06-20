@@ -10,7 +10,6 @@ import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/c
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
-import {PivotService} from "../../columnController/pivotService";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
 
@@ -25,9 +24,6 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    // need to refactor this out, should it be a stage?
-    @Autowired('pivotService') private pivotService: PivotService;
-
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
     @Autowired('sortStage') private sortStage: IRowNodeStage;
@@ -36,14 +32,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     // enterprise stages
     @Optional('groupStage') private groupStage: IRowNodeStage;
     @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
-
-    // // the rows go through a pipeline of steps, each array below is the result
-    // // after a certain step.
-    // private allRows: RowNode[] = []; // the rows, in a list, as provided by the user, but wrapped in RowNode objects
-    //
-    // private rowsAfterGroup: RowNode[]; // rows in group form, stored in a tree (the parent / child bits of RowNode are used)
-    // private rowsAfterFilter: RowNode[]; // after filtering
-    // private rowsAfterSort: RowNode[]; // after sorting
+    @Optional('pivotStage') private pivotStage: IRowNodeStage;
 
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
@@ -55,15 +44,20 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshModel.bind(this, Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, Constants.STEP_PIVOT));
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants.STEP_FILTER));
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants.STEP_PIVOT));
 
         this.rootNode = new RowNode();
         this.rootNode.group = true;
         this.rootNode.allLeafChildren = [];
+        this.rootNode.childrenAfterGroup = [];
+        this.rootNode.childrenAfterSort = [];
+        this.rootNode.childrenAfterFilter = [];
+
         this.context.wireBean(this.rootNode);
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
@@ -75,7 +69,15 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     public getType(): string {
         return Constants.ROW_MODEL_TYPE_NORMAL;
     }
-    
+
+    private onValueChanged(): void {
+        if (this.columnController.isPivotActive()) {
+            this.refreshModel(Constants.STEP_PIVOT);
+        } else {
+            this.refreshModel(Constants.STEP_AGGREGATE);
+        }
+    }
+
     public refreshModel(step: number, fromIndex?: any, groupState?: any): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
@@ -99,8 +101,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 // start = new Date().getTime();
                 this.doFilter();
                 // console.log('filter = ' + (new Date().getTime() - start));
-            // case constants.STEP_PIVOT:
-            //     this.doPivot();
+            case constants.STEP_PIVOT:
+                this.doPivot();
             case constants.STEP_AGGREGATE: // depends on agg fields
                 // start = new Date().getTime();
                 this.doAggregate();
@@ -333,11 +335,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doPivot() {
-        this.pivotService.execute(this.rootNode);
-
-        // fire event here???
-        // pivotService.createPivotColumns()
-        // do pivot - create pivot columns?
+        if (this.pivotStage) {
+            this.pivotStage.execute(this.rootNode);
+        }
     }
 
     // rows: the rows to put into the model

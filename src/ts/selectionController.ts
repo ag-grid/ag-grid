@@ -26,6 +26,8 @@ export class SelectionController {
     // used for shift selection, so we know where to start the range selection from
     private lastSelectedNode: RowNode;
 
+    private groupSelectsChildren: boolean;
+
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
@@ -40,6 +42,7 @@ export class SelectionController {
 
     @PostConstruct
     public init(): void {
+        this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
@@ -99,15 +102,26 @@ export class SelectionController {
     }
 
     public clearOtherNodes(rowNodeToKeepSelected: RowNode): void {
+        var groupsToRefresh: any = {};
         _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 this.selectedNodes[otherRowNode.id].setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
+                if (this.groupSelectsChildren && otherRowNode.parent) {
+                    groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
+                }
             }
+        });
+        _.iterateObject(groupsToRefresh, (key: string, group: RowNode) => {
+            group.calculateSelectedFromChildren();
         });
     }
 
     private onRowSelected(event: any): void {
         var rowNode = event.node;
+
+        // we do not store the group rows when the groups select children
+        if (this.groupSelectsChildren && rowNode.group) { return; }
+
         if (rowNode.isSelected()) {
             this.selectedNodes[rowNode.id] = rowNode;
         } else {
@@ -195,17 +209,17 @@ export class SelectionController {
         // that we pick up, however it's good to clean it down, as we are still
         // left with entries pointing to 'undefined'
         this.selectedNodes = {};
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED)
+        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
     }
 
     public selectAllRowNodes() {
         if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
-            throw 'selectAll only available with norma row model, ie not virtual pagination';
+            throw 'selectAll only available with normal row model, ie not virtual pagination';
         }
         this.rowModel.forEachNode( (rowNode: RowNode) => {
-            rowNode.setSelectedParams({newValue: true, clearSelection: false, tailingNodeInSequence: true});
+            rowNode.selectThisNode(true);
         });
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED)
+        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
     }
 
     // Deprecated method

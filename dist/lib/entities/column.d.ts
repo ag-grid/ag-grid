@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -42,8 +42,10 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private maxWidth;
     private filterActive;
     private eventService;
+    private fieldContainsDots;
     constructor(colDef: ColDef, colId: String);
     initialise(): void;
+    isFieldContainsDots(): boolean;
     private validate();
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

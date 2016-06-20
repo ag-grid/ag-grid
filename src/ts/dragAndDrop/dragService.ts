@@ -1,9 +1,8 @@
-import {Bean, PreDestroy} from "../context/context";
-import {Autowired} from "../context/context";
-import {LoggerFactory} from "../logger";
-import {Logger} from "../logger";
-import {PostConstruct} from "../context/context";
-import {Utils as _} from '../utils';
+import {Bean, PreDestroy, Autowired, PostConstruct} from "../context/context";
+import {LoggerFactory, Logger} from "../logger";
+import {Utils as _} from "../utils";
+import {EventService} from "../eventService";
+import {Events} from "../events";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -11,6 +10,7 @@ import {Utils as _} from '../utils';
 export class DragService {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
+    @Autowired('eventService') private eventService: EventService;
 
     private currentDragParams: DragListenerParams;
     private dragging: boolean;
@@ -24,14 +24,23 @@ export class DragService {
 
     private destroyFunctions: (()=>void)[] = [];
 
+    private eBody: HTMLElement;
+
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('DragService');
+        this.eBody = <HTMLElement> document.querySelector('body');
     }
 
     @PreDestroy
     private destroy(): void {
         this.destroyFunctions.forEach( func => func() );
+    }
+
+    private setNoSelectToBody(noSelect: boolean): void {
+        if (_.exists(this.eBody)) {
+            _.addOrRemoveCssClass(this.eBody, 'ag-body-no-select', noSelect);
+        }
     }
 
     public addDragSource(params: DragListenerParams): void {
@@ -86,7 +95,9 @@ export class DragService {
                 return;
             } else {
                 this.dragging = true;
+                this.eventService.dispatchEvent(Events.EVENT_DRAG_STARTED);
                 this.currentDragParams.onDragStart(this.dragStartEvent);
+                this.setNoSelectToBody(true);
             }
         }
 
@@ -105,6 +116,9 @@ export class DragService {
         this.dragStartEvent = null;
         this.eventLastTime = null;
         this.dragging = false;
+
+        this.setNoSelectToBody(false);
+        this.eventService.dispatchEvent(Events.EVENT_DRAG_STOPPED);
     }
 }
 

@@ -23,11 +23,15 @@ export interface ColGroupDef extends AbstractColDef {
     marryChildren?: boolean;
 }
 
-export interface IAggFunction {
+export interface IAggFunc {
     (input: any[]): any;
 }
 
 export interface ColDef extends AbstractColDef {
+
+    /** The type of column, one of dimension, measure or none */
+    type?: string;
+
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc. */
@@ -107,7 +111,7 @@ export interface ColDef extends AbstractColDef {
     floatingCellFormatter?: (params: any) => string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
-    aggFunc?: string | IAggFunction;
+    aggFunc?: string | IAggFunc;
 
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
@@ -143,13 +147,10 @@ export interface ColDef extends AbstractColDef {
     suppressAutoSize?: boolean;
 
     /** Set to true if you don't want to be able to group by this column */
-    suppressRowGroup?: boolean;
-
-    /** Set to true if you don't want to be able to pivot by this column */
-    suppressPivot?: boolean;
+    // suppressRowGroup?: boolean;
 
     /** Set to true if you don't want to be able to aggregate by this column */
-    suppressAggregation?: boolean;
+    // suppressAggregation?: boolean;
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | (Function);

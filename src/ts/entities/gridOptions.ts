@@ -5,6 +5,7 @@ import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 import {MenuItem} from "../widgets/menuItemComponent";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
+import {IAggFunc} from "./colDef";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -52,6 +53,8 @@ export interface GridOptions {
     suppressDragLeaveHidesColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
+    suppressUseColIdForGroups?: boolean;
+    suppressCopyRowsToClipboard?: boolean;
     rowModelType?: string;
     enableRangeSelection?: boolean;
     suppressEnterprise?: boolean;
@@ -66,6 +69,7 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
+    aggFuncs: {[key: string]: IAggFunc};
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

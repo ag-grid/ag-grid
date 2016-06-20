@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -47,10 +47,15 @@ export interface ColDef extends AbstractColDef {
     hide?: boolean;
     /** Whether this column is pinned or not. */
     pinned?: boolean | string;
+    /** The field where we get the tooltip on the object */
+    tooltipField?: string;
     /** Tooltip for the column header */
     headerTooltip?: string;
     /** Expression or function to get the cells value. */
     valueGetter?: string | Function;
+    /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
+     * want to a) group by this field or b) use set filter on this field. */
+    keyCreator?: Function;
     /** To provide custom rendering to the header. */
     headerCellRenderer?: Function | Object;
     /** To provide a template for the header. */

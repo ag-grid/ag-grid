@@ -45,6 +45,7 @@ export class HeaderRenderer {
         // small compared to the body, so the cpu cost is low in comparison. it does mean we don't get any
         // animations.
 
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshHeader.bind(this));
@@ -53,11 +54,20 @@ export class HeaderRenderer {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.refreshHeader.bind(this));
         this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
 
         // for resized, the individual cells take care of this, so don't need to refresh everything
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
 
         if (this.columnController.isReady()) {
+            this.refreshHeader();
+        }
+    }
+
+    private onColumnValueChanged(): void {
+        // if we are doing reduce, then adding / removing value columns
+        // has the impact of adding / removing the column visibility
+        if (this.columnController.isPivotMode()) {
             this.refreshHeader();
         }
     }

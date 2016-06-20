@@ -1,12 +1,13 @@
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {ColDef, AbstractColDef, IAggFunction} from "./colDef";
+import {ColDef, AbstractColDef, IAggFunc} from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
 import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
+import {IEventEmitter} from "../interfaces/iEventEmitter";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -14,7 +15,7 @@ import {RowNode} from "./rowNode";
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
+export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
 
     // + renderedHeaderCell - for making header cell transparent when moving
     public static EVENT_MOVING_CHANGED = 'movingChanged';
@@ -32,6 +33,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     // + renderedHeaderCell - marks the header with sort icon
     public static EVENT_SORT_CHANGED = 'filterChanged';
 
+    // + toolpanel, for gui updates
+    public static EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    // + toolpanel, for gui updates
+    public static EVENT_PIVOT_CHANGED = 'columnPivotChanged';
+    // + toolpanel, for gui updates
+    public static EVENT_VALUE_CHANGED = 'columnValueChanged';
+    
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
 
@@ -44,6 +52,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     public static SORT_ASC = 'asc';
     public static SORT_DESC = 'desc';
 
+    public static TYPE_DIMENSION = 'dimension';
+    public static TYPE_MEASURE = 'measure';
+    public static TYPE_NONE = 'none';
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
@@ -55,7 +67,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private visible: any;
     private pinned: string;
     private left: number;
-    private aggFunc: string | IAggFunction;
+    private aggFunc: string | IAggFunc;
     private sort: string;
     private sortedAt: number;
     private moving = false;
@@ -71,6 +83,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private eventService: EventService = new EventService();
 
     private fieldContainsDots: boolean;
+
+    private rowGroup = false;
+    private pivot = false;
+    private value = false;
 
     constructor(colDef: ColDef, colId: String) {
         this.colDef = colDef;
@@ -106,6 +122,16 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
 
         this.validate();
+    }
+
+    public isDimension(): boolean {
+        return this.colDef.type === Column.TYPE_DIMENSION
+            || _.missing(this.colDef);
+    }
+
+    public isMeasure(): boolean {
+        return this.colDef.type === Column.TYPE_MEASURE
+            || _.missing(this.colDef);
     }
 
     public isFieldContainsDots(): boolean {
@@ -194,11 +220,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.sortedAt = sortedAt;
     }
 
-    public setAggFunc(aggFunc: string | IAggFunction): void {
+    public setAggFunc(aggFunc: string | IAggFunc): void {
         this.aggFunc = aggFunc;
     }
 
-    public getAggFunc(): string | IAggFunction {
+    public getAggFunc(): string | IAggFunc {
         return this.aggFunc;
     }
 
@@ -342,5 +368,38 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     public setMinimum(): void {
         this.setActualWidth(this.minWidth);
+    }
+    
+    public setRowGroup(rowGroup: boolean): void {
+        if (this.rowGroup !== rowGroup) {
+            this.rowGroup = rowGroup;
+            this.eventService.dispatchEvent(Column.EVENT_ROW_GROUP_CHANGED, this);
+        }
+    }
+    
+    public isRowGroup(): boolean {
+        return this.rowGroup;
+    }
+
+    public setPivot(pivot: boolean): void {
+        if (this.pivot !== pivot) {
+            this.pivot = pivot;
+            this.eventService.dispatchEvent(Column.EVENT_PIVOT_CHANGED, this);
+        }
+    }
+
+    public isPivot(): boolean {
+        return this.pivot;
+    }
+
+    public setValue(value: boolean): void {
+        if (this.value !== value) {
+            this.value = value;
+            this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
+        }
+    }
+
+    public isValue(): boolean {
+        return this.value;
     }
 }

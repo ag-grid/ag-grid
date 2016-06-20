@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -270,6 +270,8 @@ var RenderedHeaderCell = (function () {
             utils_1.Utils.removeFromParent(this.eHeaderCell.querySelector('#agNoSort'));
             return;
         }
+        // add sortable class for styling
+        utils_1.Utils.addCssClass(this.eHeaderCell, 'ag-header-cell-sortable');
         // add the event on the header, so when clicked, we do sorting
         if (eHeaderCellLabel) {
             eHeaderCellLabel.addEventListener("click", function (event) {

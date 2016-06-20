@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -11,12 +11,15 @@ export declare class ValueService {
     private columnController;
     private eventService;
     private suppressDotNotation;
+    private cellExpressions;
+    private userProvidedTheGroups;
+    private initialised;
     init(): void;
     getValue(column: Column, node: RowNode): any;
     getValueUsingSpecificData(column: Column, data: any, node: RowNode): any;
-    private getValueUsingField(data, field);
+    private getValueUsingField(data, field, fieldContainsDots);
     setValue(rowNode: RowNode, colKey: string | ColDef | Column, newValue: any): void;
-    private setValueUsingField(data, field, newValue);
+    private setValueUsingField(data, field, newValue, isFieldContainsDots);
     private executeValueGetter(valueGetter, data, column, node);
     private getValueCallback(data, node, field);
 }

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.5
+// Type definitions for ag-grid v4.2.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -16,7 +16,7 @@ export declare class MenuList extends Component {
     private childPopupRemoveFunc;
     constructor();
     clearActiveItem(): void;
-    addMenuItems(menuItems: [string | MenuItem], defaultMenuItems: {
+    addMenuItems(menuItems: (string | MenuItem)[], defaultMenuItems: {
         [key: string]: MenuItem;
     }): void;
     addItem(params: MenuItem): void;

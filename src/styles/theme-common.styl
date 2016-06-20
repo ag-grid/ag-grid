@@ -102,7 +102,7 @@ todo
   .ag-large-text
     border ag-border-1
 
-  .ag-large-textarea
+  .ag-large-textarea {}
 
   // HEADER SECTION
   .ag-header
@@ -343,7 +343,6 @@ todo
     background ag-button-background-1
     color ag-button-foreground-1
     border ag-button-border-1
-    padding 2px
 
   .ag-column-drop-cell-ghost
     opacity 0.5
@@ -370,21 +369,49 @@ todo
     padding-right 4px
 
   .ag-column-drop
-    padding 4px
     background-color ag-background-1
 
   /* this is for the rowGroupPanel, that appears along the top of the grid */
   .ag-column-drop-horizontal
+    padding 4px 4px 4px 4px
     border-top ag-border-1
     border-left ag-border-1
     border-right ag-border-1
 
+    .ag-column-drop-cell
+      padding 2px
+
   /* this is for the column drops that appear in the toolPanel */
   .ag-column-drop-vertical
-    border-top ag-border-1
+    padding 4px 4px 10px 4px
+    border-bottom ag-border-1
 
     .ag-column-drop-cell
       margin-top 2px
 
     .ag-column-drop-empty-message
-      padding 20px
+      text-align center
+      padding 5px
+
+  .ag-pivot-mode
+    border-bottom ag-border-1
+    padding 4px
+    background-color ag-background-1
+
+  .ag-tool-panel
+    .ag-column-select-panel
+      border-bottom ag-border-1
+
+  .ag-select-agg-func-popup
+    cursor default
+    position absolute
+    font-size 14px
+    background-color ag-select-background
+    border ag-border-1
+
+  .ag-select-agg-func-item
+    padding-left 2px
+    padding-right 2px
+
+  .ag-select-agg-func-item:hover
+    background-color ag-menu-option-active-color

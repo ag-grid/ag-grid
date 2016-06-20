@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -286,7 +286,8 @@ var VirtualPageRowModel = (function () {
             successCallback: successCallback,
             failCallback: failCallback,
             sortModel: sortModel,
-            filterModel: filterModel
+            filterModel: filterModel,
+            context: this.gridOptionsWrapper.getContext()
         };
         // check if old version of datasource used
         var getRowsParams = utils_1.Utils.getFunctionParameters(this.datasource.getRows);

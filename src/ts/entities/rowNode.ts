@@ -239,7 +239,7 @@ export class RowNode {
             // include any parent / child changes that this method caused
             this.mainEventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
 
-            // so if use next does shift-select, we know where to start the selection from
+            // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
                 this.selectionController.setLastSelectedNode(this);
             }

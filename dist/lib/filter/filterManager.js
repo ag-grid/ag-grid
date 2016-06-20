@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.5
+ * @version v4.2.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,6 +35,7 @@ var FilterManager = (function () {
     FilterManager.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
     };
     FilterManager.prototype.registerFilter = function (key, Filter) {
         this.availableFilters[key] = Filter;
@@ -152,24 +153,21 @@ var FilterManager = (function () {
         // all filters passed
         return true;
     };
+    FilterManager.prototype.parseQuickFilter = function (newFilter) {
+        if (utils_1.Utils.missing(newFilter) || newFilter === "") {
+            return null;
+        }
+        if (this.gridOptionsWrapper.isRowModelVirtual()) {
+            console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
+            return null;
+        }
+        return newFilter.toUpperCase();
+    };
     // returns true if it has changed (not just same value again)
     FilterManager.prototype.setQuickFilter = function (newFilter) {
-        if (newFilter === undefined || newFilter === "") {
-            newFilter = null;
-        }
-        if (this.quickFilter !== newFilter) {
-            if (this.gridOptionsWrapper.isRowModelVirtual()) {
-                console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
-                return;
-            }
-            //want 'null' to mean to filter, so remove undefined and empty string
-            if (newFilter === undefined || newFilter === "") {
-                newFilter = null;
-            }
-            if (newFilter !== null) {
-                newFilter = newFilter.toUpperCase();
-            }
-            this.quickFilter = newFilter;
+        var parsedFilter = this.parseQuickFilter(newFilter);
+        if (this.quickFilter !== parsedFilter) {
+            this.quickFilter = parsedFilter;
             this.onFilterChanged();
         }
     };
