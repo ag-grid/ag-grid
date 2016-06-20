@@ -1009,22 +1009,25 @@ export class ColumnController {
         var pivotValueColumn = column.getColDef().pivotValueColumn;
         var pivotActiveOnThisColumn = _.exists(pivotValueColumn);
         var aggFunc: string | IAggFunc = null;
+        var aggFuncFound: boolean;
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
             aggFunc = pivotValueColumn.getAggFunc();
+            aggFuncFound = true;
         } else {
             var measureActive = column.isMeasureActive();
             var aggregationPresent = this.pivotMode || !this.isRowGroupEmpty();
 
             if (measureActive && aggregationPresent) {
                 aggFunc = column.getAggFunc();
+                aggFuncFound = true;
             } else {
-                // leave blank, no agg func
+                aggFuncFound = false;
             }
         }
 
-        if (aggFunc) {
+        if (aggFuncFound) {
             var aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'func';
             return `${aggFuncString}(${headerName})`;
         } else {
