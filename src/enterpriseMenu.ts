@@ -88,7 +88,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
         var showColumnPanel = !this.gridOptionsWrapper.isSuppressMenuColumnPanel();
         var showMainPanel = !this.gridOptionsWrapper.isSuppressMenuMainPanel();
-        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel();
+        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel() && column.isFilterAllowed();
 
         return showColumnPanel || showMainPanel || showFilterPanel;
     }
@@ -146,7 +146,7 @@ export class EnterpriseMenu {
             this.createMainPanel();
             tabItems.push(this.tabItemGeneral);
         }
-        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel()) {
+        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel() && this.column.isFilterAllowed()) {
             this.createFilterPanel();
             tabItems.push(this.tabItemFilter);
         }
