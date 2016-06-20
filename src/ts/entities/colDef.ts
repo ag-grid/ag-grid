@@ -199,6 +199,6 @@ export interface ColDef extends AbstractColDef {
     pivotKeys?: string[];
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
-    pivotValueColumn?: Column;
+    pivotMeasureColumn?: Column;
 
 }
