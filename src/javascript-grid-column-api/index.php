@@ -202,26 +202,7 @@ include '../documentation-main/documentation_header.php';
                 at 'toIndex' using the new list (thus index locations will change to the right of
                 of the column after the removal).</td>
         </tr>
-        <tr>
-            <th>getRowGroupColumns()</th>
-            <td>Returns the row group columns.</td>
-        </tr>
-        <tr>
-            <th>addRowGroupColumn(colKey), addRowGroupColumns(colKeys)</th>
-            <td>Adds a row group column or list of columns.</td>
-        </tr>
-        <tr>
-            <th>removeRowGroupColumn(colKey), removeRowGroupColumns(colKeys)</th>
-            <td>Removes a row group column or list of columns.</td>
-        </tr>
-        <tr>
-            <th>setRowGroupColumns(colKeys)</th>
-            <td>Clears the row group columns, then sets to the provided set.</td>
-        </tr>
-        <tr>
-            <th>moveRowGroupColumn(fromIndex, toIndex)</th>
-            <td>Moves a row group column.</td>
-        </tr>
+
         <tr>
             <th>setColumnAggFunction(column, aggFunc)</th>
             <td>Sets the agg function for a column. Set to one of [min,max,sum].</td>
@@ -233,17 +214,39 @@ include '../documentation-main/documentation_header.php';
                 'columnWidth' events, so the consumer of events knows when it receives the last event in a stream.
                 The finished parameter is optional, it defaults to 'true'.</td>
         </tr>
+
         <tr>
-            <th>addValueColumn(column)</th>
-            <td>Adds a value column.</td>
+            <th>getRowGroupColumns(), addRowGroupColumn(colKey), addRowGroupColumns(colKeys),
+                removeRowGroupColumn(colKey), removeRowGroupColumns(colKeys), setRowGroupColumns(colKeys),
+                moveRowGroupColumn(fromIndex, toIndex)
+            </th>
+            <td>
+                Methods for management of column row groups.
+            </td>
         </tr>
+
         <tr>
-            <th>removeValueColumn(column)</th>
-            <td>Removes a value column</td>
+            <th>
+                setPivotColumns(colKeys), removePivotColumn(),
+                removePivotColumns(colKeys), addPivotColumn(colKey),
+                addPivotColumns(colKeys)
+            </th>
+            <td>
+                Methods for management of column pivots.
+            </td>
         </tr>
+
         <tr>
-            <th>getValueColumns()</th>
-            <td>Returns the value columns. Value columns are used for row aggregation.</td>
+            <th>
+                getMeasureColumns(),
+                removeMeasureColumn(colKey),
+                removeMeasureColumns(colKeys),
+                addMeasureColumn(colKey),
+                addMeasureColumns(colKeys)
+            </th>
+            <td>
+                Methods for management of column measures (for aggregation when grouping or pivoting).
+            </td>
         </tr>
     </table>
 
