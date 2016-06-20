@@ -143,11 +143,11 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         <b>Tool Panel</b><br>
-        The toolPanel will only ever display primary columns.
+        The toolPanel always displays primary columns.
     </p>
     <p>
         <b>Filtering</b><br>
-        Filters can only be set on primary columns.
+        Filters are always st on primary columns.
     </p>
     <p>
         <b>Sorting</b><br>
@@ -157,6 +157,27 @@ include '../documentation-main/documentation_header.php';
         <b>Get / Set State</b><br>
         what is the story with state?
     </p>
+
+    <h2>Pivoting with Filters</h2>
+
+    <p>Filtering is always on primary columns. It is not possible, nor would it make sense, to set a filter on a secondary column.</p>
+
+    <p>If pivoting and a filter changes then the set of secondary columns is recalculated
+    based on the newly available columns and aggregation is recalculated.</p>
+
+    <p>
+        You can change the filter on primary columns using the API at all times, regardless of what columns
+        (primary or secondary) are displayed in the grid.
+    </p>
+
+    <p>
+        Below demonstrates the impact of changing filter on pivoting. The pivot is executed on rowData after the
+        filter is complete. Notice that the last option, 'USA and Canada Equestrian' has no 'Canada' in the result
+        as there is no records for Canada and Equestrian.
+    </p>
+
+    <show-example example="examplePivotWithFilters"></show-example>
+
 
 </div>
 
