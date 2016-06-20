@@ -43,16 +43,10 @@
                     <li>Company VAT number (EU only)</li>
                     <li>Number of licenses required (ie number of developers)</li>
                     <li>Email address to associate with your ag-Grid account</li>
-                    <li>License type, please advise one of the following:
-                        <ul>
-                            Developer Application License - for developing one application in your enterprise.
-                            <li style="list-style-type:none;">
-                                <ul>Application Name (this name is tied into the resulting License Key)</ul>
-                            </li>
-                        </ul>
-                        <ul>
-                            Developer Site License - for developing any number of applications in your enterprise.
-                        </ul>
+                    <li>License type: A) Application Developer or B) Site Developer</li>
+                        <li style="list-style-type: none;">
+                            <ul>If Application Developer, provide your Application Name</ul>
+                        </li>
                     </li>
                     <li>Will you be selling ag-Grid as part of a SAAS (Software as a Service) offering?</li>
                     <li>Will you be selling ag-Grid as part of an application (OEM)?</li>
@@ -77,6 +71,8 @@
 
         </div>
     </div>
+
+    <?php include("includes/commonQuestions.php"); ?>
 
 </div>
 

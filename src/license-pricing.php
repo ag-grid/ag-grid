@@ -46,7 +46,6 @@
             width: 4%;
         }
         .titleCell {
-            font-weight: bold;
             font-family: Impact, Charcoal, sans-serif;
             font-size: 35px;
             background-color: #eee;
@@ -181,7 +180,7 @@
                             <span style="font-size: 20px; font-weight: bold;">
                                 £600
                             </span>
-                            per Site Application
+                            per Site Developer
                         </div>
                         <div style="padding-top: 20px;">
                             All License Perpetual
@@ -215,75 +214,23 @@
                 <tr>
                     <td class="benefitsCell tableCell">
 
-                        <div class="gridFeaturesTitle">
-                            Standard ag-Grid Features:
+                        <div class="gridFeature">
+                            Standard Grid Features<br/>
+                            (as per documentation)
                         </div>
-                        <div class="gridFeaturesList">
 
-                            <ul class="diamond-separated-list">
-                                <li>Column Pinning Left & Right</li>
-                                <li>Column Resizing</li>
-                                <li>Column Auto-Size to Fit Contents</li>
-                                <li>Variable Row Height</li>
-                                <li>Tree Data</li>
-                                <li>Data CSV Export</li>
-                                <li>In Grid Sorting</li>
-                                <li>Server Side Sorting</li>
-                                <li>In Grid Filtering</li>
-                                <li>Server Side Filtering</li>
-                                <li>Data Editing</li>
-                                <li>Keyboard Navigation</li>
-                                <li>Quick Search</li>
-                                <li>Column Grouping</li>
-                                <li>Row Selection</li>
-                                <li>Checkbox Selection</li>
-                                <li>Grid Data Context</li>
-                                <li>Value Getters</li>
-                                <li>Expressions</li>
-                                <li>Cell Styling</li>
-                                <li>CSS Themes</li>
-                                <li>Custom Rendering</li>
-                                <li>Frozen / Floating Rows</li>
-                                <li>Multi Level Header Grouping</li>
-                                <li>Header Templates</li>
-                                <li>Events</li>
-                                <li>Internationalisation</li>
-                                <li>Cross Browser</li>
-                                <li>Printable</li>
-                                <li>Grid API</li>
-                                <li>Sorting API</li>
-                                <li>Filtering API</li>
-                                <li>Column API</li>
-                                <li>Pagination</li>
-                                <li>Infinite Scrolling</li>
-                                <li>Floating Footers</li>
-                                <li>Master / Slave</li>
-                            </ul>
-
-                        </div>
 
                         <div class="gridFeaturePlus">Plus</div>
 
-                        <div class="gridFeature">Get help via Stack Overflow</div>
+                        <div class="gridFeature">Get help via Stack Overflow or Free Forum</div>
 
                     </td>
                     <td class="gapCol"/>
                     <td class="benefitsCell tableCell">
 
-                        <div class="gridFeaturesTitle">
-                            All Standard Features Plus:
-                        </div>
-                        <div class="gridFeaturesList">
-                            <ul class="diamond-separated-list">
-                                <li>Grouping and Aggregation of Data</li>
-                                <li>Excel-like Filtering</li>
-                                <li>Advanced Column Menu</li>
-                                <li>Context Menu</li>
-                                <li>Cell Range Selection</li>
-                                <li>Status Panel with Aggregation</li>
-                                <li>Clipboard Copy & Paste</li>
-                                <li>Tool Panel for Column Management</li>
-                            </ul>
+                        <div class="gridFeature">
+                            Standard and Enterprise Grid Features<br/>
+                            (as per documentation)
                         </div>
 
                         <div class="gridFeaturePlus">Plus</div>
@@ -344,97 +291,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                What is Application Developer vs Site Developer?
-            </h2>
-
-            <p>
-                Application developer license ties the license to one particular application within your organisation.
-                This is best if you a) have only one (or a fixed number) of applications you need to license or b) you
-                want to charge the license to a particular project(s).
-            </p>
-
-            <p>
-                Use site license if you want to cover a group
-                of developers developing any number of applications.
-            </p>
-
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                What is OEM and SaaS License?
-            </h2>
-
-            <p>
-                SaaS is <a href="https://en.wikipedia.org/wiki/Software_as_a_service">Software as a Service</a>.
-                If you will be <span style="text-decoration: underline;">selling</span>
-                ag-Grid as part of a SaaS then you require additional SaaS license.
-            </p>
-
-            <p>
-                OEM is <a href="https://en.wikipedia.org/wiki/Original_equipment_manufacturer">Original Equipment
-                Manufacturer</a>. If you will be <span style="text-decoration: underline;">selling</span>
-                ag-Grid as part of your product then you require additional OEM license.
-            </p>
-
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                Do Developers Have to be Named?
-            </h2>
-
-            <p>
-                No. If you license an application you provide the number of developers working on that application.
-                We trust that you do not go over the number of concurrent developers on that application at any
-                given time. Developers moving on and off projects is expected to be normal.
-            </p>
-
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                What does Perpetual Mean?
-            </h2>
-
-            <p>
-                The perpetual nature of the enterprise license means you can continue to use the version of
-                ag-Grid Enterprise, plus any release for one year, indefinitely. There is no requirement to
-                pay again to continue using the software. However if you wish to keep up to date with the
-                latest versions of ag-Grid after one year and continue with support, you must extend the
-                license.
-            </p>
-
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                Do You Provide Bulk or Other License Types?
-            </h2>
-
-            <p>
-                Yes. Get in touch and tell us what you are looking for and we can propose what we think is fair.
-            </p>
-
-        </div>
-    </div>
+    <?php include("includes/commonQuestions.php"); ?>
 
 </div>
 
