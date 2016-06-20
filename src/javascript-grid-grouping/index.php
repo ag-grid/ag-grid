@@ -43,8 +43,8 @@ include '../documentation-main/documentation_header.php';
             on <a href="https://en.wikipedia.org/wiki/Dimension_(data_warehouse)">Dimensions</a> and
             <a href="https://en.wikipedia.org/wiki/Measure_(data_warehouse)">Measures</a>.</p>
 
-        <p>This section talks about grouping (dimensions). Later sections talk about aggregation (measures)
-        and pivoting (dimensions).</p>
+        <p>This section talks about grouping (using dimensions). Later sections talk about aggregation (using measures)
+        and pivoting (using dimensions).</p>
     </note>
 
     <h3>Grouping Auto Column</h3>
