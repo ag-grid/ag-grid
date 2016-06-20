@@ -2,6 +2,7 @@ import {GridOptions} from "../entities/gridOptions";
 import {GridApi} from "../gridApi";
 import {Events} from "../events";
 import {Utils as _} from "../utils";
+import {ColumnApi} from "../columnController/columnController";
 
 export class ComponentUtil {
 
@@ -44,7 +45,7 @@ export class ComponentUtil {
         'suppressContextMenu','suppressMenuFilterPanel','suppressMenuMainPanel','suppressMenuColumnPanel',
         'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
-        'suppressCopyRowsToClipboard'
+        'suppressCopyRowsToClipboard','pivotMode'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
@@ -118,7 +119,7 @@ export class ComponentUtil {
     // change this method, the caller should know if it's initialised or not, plus 'initialised'
     // is not relevant for all component types.
     // maybe pass in the api and columnApi instead???
-    public static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi): void {
+    public static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi, columnApi: ColumnApi): void {
         //if (!component._initialised || !changes) { return; }
         if (!changes) { return; }
 
@@ -153,7 +154,7 @@ export class ComponentUtil {
         });
 
         if (changes.showToolPanel) {
-            api.showToolPanel(changes.showToolPanel.currentValue);
+            api.showToolPanel(ComponentUtil.toBoolean(changes.showToolPanel.currentValue));
         }
 
         if (changes.quickFilterText) {
@@ -181,7 +182,11 @@ export class ComponentUtil {
         }
 
         if (changes.headerHeight) {
-            api.setHeaderHeight(changes.headerHeight.currentValue);
+            api.setHeaderHeight(ComponentUtil.toNumber(changes.headerHeight.currentValue));
+        }
+        
+        if (changes.pivotMode) {
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
         }
     }
 

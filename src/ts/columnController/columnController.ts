@@ -54,6 +54,7 @@ export class ColumnApi {
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this._columnController.moveRowGroupColumn(fromIndex, toIndex); }
     public setColumnAggFunction(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunction(column, aggFunc); }
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
+    public setPivotMode(pivotMode: boolean): void { this._columnController.setPivotMode(pivotMode); }
 
     public getMeasureColumns(): Column[] { return this._columnController.getMeasureColumns(); }
     public removeMeasureColumn(colKey: (Column|ColDef|String)): void { this._columnController.removeMeasureColumn(colKey); }
@@ -184,6 +185,7 @@ export class ColumnController {
 
     @PostConstruct
     public init(): void {
+        this.pivotMode = this.gridOptionsWrapper.isPivotMode();
         if (this.gridOptionsWrapper.getColumnDefs()) {
             this.setColumnDefs(this.gridOptionsWrapper.getColumnDefs());
         }
@@ -193,9 +195,9 @@ export class ColumnController {
         return this.pivotMode;
     }
 
-    public setPivotMode(reduce: boolean): void {
-        if (reduce === this.pivotMode) { return; }
-        this.pivotMode = reduce;
+    public setPivotMode(pivotMode: boolean): void {
+        if (pivotMode === this.pivotMode) { return; }
+        this.pivotMode = pivotMode;
         this.updateDisplayedColumns();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, event);
@@ -1192,29 +1194,41 @@ export class ColumnController {
         });
     }
 
-    private filterOutVisibleColumns(): Column[] {
-        if (this.secondaryColumns || !this.pivotMode) {
-            return _.filter(this.gridColumns, column => column.isVisible() );
+    private calculateColumnsForDisplay(): Column[] {
+
+        var columnsForDisplay: Column[];
+
+        if (this.secondaryColumnsPresent) {
+            // always use secondary columns if they are there, these can be either in grid
+            // pivoting, or the user provided alternative columns
+            columnsForDisplay = this.gridColumns.slice();
+        } else if (this.pivotMode) {
+            // pivot mode is on, but we are not pivoting, so we only
+            // show columns we are aggregating on
+            columnsForDisplay = this.measureColumns.slice();
         } else {
-            // we are reducing, so we ignore the visibility and show columns that
-            // have an aggregation on them
-            return this.measureColumns.slice();
+            // not in pivot mode, so we use the visibility of the column
+            // to decide what is displayable
+            columnsForDisplay = _.filter(this.gridColumns, column => column.isVisible() );
         }
+
+        this.createGroupAutoColumn();
+
+        if (this.groupAutoColumnActive) {
+            columnsForDisplay.unshift(this.groupAutoColumn);
+        }
+
+        return columnsForDisplay;
     }
 
     private updateDisplayedColumns(): void {
 
         // save opened / closed state
         var oldGroupState = this.getColumnGroupState();
-        this.createGroupAutoColumn();
 
-        var visibleColumns = this.filterOutVisibleColumns();
+        var columnsForDisplay = this.calculateColumnsForDisplay();
 
-        if (this.groupAutoColumnActive) {
-            visibleColumns.unshift(this.groupAutoColumn);
-        }
-
-        this.buildDisplayedTrees(visibleColumns);
+        this.buildDisplayedTrees(columnsForDisplay);
 
         // restore opened / closed state
         this.setColumnGroupState(oldGroupState);

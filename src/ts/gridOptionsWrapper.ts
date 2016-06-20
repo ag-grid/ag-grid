@@ -73,6 +73,7 @@ export class GridOptionsWrapper {
     public isRowDeselection() { return isTrue(this.gridOptions.rowDeselection); }
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }
     public getContext() { return this.gridOptions.context; }
+    public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
 
     public isRowModelPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
     public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
