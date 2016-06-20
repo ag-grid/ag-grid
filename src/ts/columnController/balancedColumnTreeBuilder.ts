@@ -27,14 +27,14 @@ export class BalancedColumnTreeBuilder {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     }
 
-    public createBalancedColumnGroups(abstractColDefs: AbstractColDef[]): any {
+    public createBalancedColumnGroups(abstractColDefs: AbstractColDef[], primaryColumns: boolean): any {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that cold be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
         var columnKeyCreator = new ColumnKeyCreator();
 
         // create am unbalanced tree that maps the provided definitions
-        var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator);
+        var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator, primaryColumns);
         var treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -96,7 +96,7 @@ export class BalancedColumnTreeBuilder {
     }
 
     private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number,
-                                     columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
+                                     columnKeyCreator: ColumnKeyCreator, primaryColumns: boolean): OriginalColumnGroupChild[] {
 
         var result: OriginalColumnGroupChild[] = [];
 
@@ -110,13 +110,13 @@ export class BalancedColumnTreeBuilder {
                 var groupColDef = <ColGroupDef> abstractColDef;
                 var groupId = columnKeyCreator.getUniqueKey(groupColDef.groupId, null);
                 var originalGroup = new OriginalColumnGroup(groupColDef, groupId);
-                var children = this.recursivelyCreateColumns(groupColDef.children, level + 1, columnKeyCreator);
+                var children = this.recursivelyCreateColumns(groupColDef.children, level + 1, columnKeyCreator, primaryColumns);
                 originalGroup.setChildren(children);
                 result.push(originalGroup);
             } else {
                 var colDef = <ColDef> abstractColDef;
                 var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-                var column = new Column(colDef, colId);
+                var column = new Column(colDef, colId, primaryColumns);
                 this.context.wireBean(column);
                 result.push(column);
             }

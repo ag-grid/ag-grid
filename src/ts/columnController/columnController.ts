@@ -1098,7 +1098,7 @@ export class ColumnController {
     }
 
     public setColumnDefs(columnDefs: AbstractColDef[]) {
-        var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs);
+        var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);
         this.originalBalancedTree = balancedTreeResult.balancedTree;
         this.originalHeaderRowCount = balancedTreeResult.treeDept + 1;
 
@@ -1251,7 +1251,7 @@ export class ColumnController {
         if (!newColsPresent && !this.secondaryColumnsPresent) { return; }
         
         if (newColsPresent) {
-            var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(colDefs);
+            var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(colDefs, false);
             this.secondaryBalancedTree = balancedTreeResult.balancedTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
@@ -1473,7 +1473,7 @@ export class ColumnController {
             autoColDef.suppressMovable = true;
 
             var colId = 'ag-Grid-AutoColumn';
-            this.groupAutoColumn = new Column(autoColDef, colId);
+            this.groupAutoColumn = new Column(autoColDef, colId, true);
             this.context.wireBean(this.groupAutoColumn);
         }
     }

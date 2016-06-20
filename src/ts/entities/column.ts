@@ -88,12 +88,15 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private pivotActive = false;
     private measureActive = false;
 
-    constructor(colDef: ColDef, colId: String) {
+    private primary: boolean;
+
+    constructor(colDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
         this.visible = !colDef.hide;
         this.sort = colDef.sort;
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
+        this.primary = primary;
     }
 
     // this is done after constructor as it uses gridOptionsWrapper
@@ -124,6 +127,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.validate();
     }
 
+    public isPrimary(): boolean {
+        return this.primary;
+    }
+
+    public isFilterAllowed(): boolean {
+        return this.primary;
+    }
+    
     public isDimension(): boolean {
         return this.colDef.type === Column.TYPE_DIMENSION
             || _.missing(this.colDef.type);
