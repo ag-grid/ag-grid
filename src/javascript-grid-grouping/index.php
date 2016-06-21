@@ -26,27 +26,6 @@ include '../documentation-main/documentation_header.php';
 ];</pre>
     </p>
 
-    <note>
-        <p><b>Dimensions and Measures</b></p>
-
-        <p>A <b>dimension</b> column is a column that typically has a set of values. For example the dimension Country
-            can have values Ireland, United Kingdom, USA. When a column definition is marked as a dimension it informs
-            the grid the column should be selectable for grouping and pivoting. The grid GUI will only allow grouping
-            by dimensions.</p>
-
-        <p>A <b>measure</b> column is a column that typically has numbers as values. For example the dimension Bank Balance
-            can have values 234,242, 22,342, 33, 0.4441. When a column definition is marked as a measure it informs
-            the grid the column should be selectable for aggregations (values). The grid GUI will only allow aggregating
-            by measures.</p>
-
-        <p>Dimension and measures are industry standard terms in data warehousing. See wikipedia for it's definion
-            on <a href="https://en.wikipedia.org/wiki/Dimension_(data_warehouse)">Dimensions</a> and
-            <a href="https://en.wikipedia.org/wiki/Measure_(data_warehouse)">Measures</a>.</p>
-
-        <p>This section talks about grouping (using dimensions). Later sections talk about aggregation (using measures)
-        and pivoting (using dimensions).</p>
-    </note>
-
     <h3>Grouping Auto Column</h3>
 
     <p>If row grouping is active, by default the grid will provide an additional column for displaying

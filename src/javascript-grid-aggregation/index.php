@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Aggregation functions are provided with an array of values that it should
-        aggregate onto one value that it then returns.
+        aggregate into one value that it then returns.
     </p>
 
         <pre><code><b>// Option 1: column that uses the built in 'sum' function</b>
@@ -161,6 +161,24 @@ function myCustomAggFunc(values) {
     </p>
 
     <show-example example="exampleAggFunc"></show-example>
+
+    <h3>Initialising Aggregation</h3>
+
+    <p>
+        After the grid is initialised, there are two steps with regards setting up aggregation on a column:
+        <ol>
+            <li>Set the aggregation function on the column via <i>columnApi.setColumnAggFunc(colKey, aggFunc)</i></li>
+            <li>Add the columns as an aggregation column via <i>columnApi.addAggregationColumn(colKey)</i></li>
+        </ol>
+        In other words, you can have the aggFunc set on a column even though the column is not an aggregation column.
+        Likewise you can add and remove the column from the list of aggregated columns without removing
+        the aggFunc.
+    </p>
+
+    <p>
+        When the grid initialises, and column definitions that have <i>aggFunc</i> set will be automatically
+        added as aggregation functions.
+    </p>
 
     <h3>Grouping with Aggregation - using groupRowAggNodes Callback</h3>
 

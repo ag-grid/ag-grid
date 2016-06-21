@@ -22,18 +22,9 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Pivoting only makes sense when mixed with measures. If you turn a column into a pivot column, you must have
-        at least one measure active for the configuration to make sense.
-    </p>
-
-    <p>
-        The discussion below uses the following terms:
-        <ul>
-            <li>Pivot Mode: Global boolean setting for the grid. Pivot mode is either on or off.</li>
-            <li>Row Group Active: At least one column is added a row group column.</li>
-            <li>Measure Active: At least one column is added as a measure column.</li>
-            <li>Pivot Active: At least one column is added as a pivot column.</li>
-        </ul>
+        Pivoting only makes sense when mixed with aggregation. If you turn a column into a pivot column, you must have
+        at least one aggregation active for the configuration to make sense. For example, if pivoting by country, you
+        must provide something you are measuring such as 'gold medals per country'.
     </p>
 
     <h2>Pivot Mode</h2>
@@ -44,6 +35,10 @@ include '../documentation-main/documentation_header.php';
         <li>Only columns with Group, Pivot or Measure active will be included in the grid.</li>
         <li>Only aggregated rows will be shown, the lowest level rowData will not be displayed.</li>
     </ul>
+
+    <p>
+        If pivot mode is off, then adding or removing pivot columns will have not effect.
+    </p>
 
     <h2>Example - Simple Pivot</h2>
 

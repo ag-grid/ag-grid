@@ -1,6 +1,6 @@
 var columnDefs = [
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 1},
-    {headerName: "Year", field: "year", width: 90, pivotIndex: 1},
+    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 2},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
@@ -10,17 +10,20 @@ var columnDefs = [
 
 function onBtNormal() {
     this.gridOptions.columnApi.setPivotMode(false);
-    this.gridOptions.columnApi.removePivotColumn('year');
+    this.gridOptions.columnApi.setPivotColumns([]);
+    this.gridOptions.columnApi.setRowGroupColumns(['country','year']);
 }
 
 function onBtPivotMode() {
     this.gridOptions.columnApi.setPivotMode(true);
-    this.gridOptions.columnApi.removePivotColumn('year');
+    this.gridOptions.columnApi.setPivotColumns([]);
+    this.gridOptions.columnApi.setRowGroupColumns(['country','year']);
 }
 
 function onBtFullPivot() {
     this.gridOptions.columnApi.setPivotMode(true);
-    this.gridOptions.columnApi.addPivotColumn('year');
+    this.gridOptions.columnApi.setPivotColumns(['year']);
+    this.gridOptions.columnApi.setRowGroupColumns(['country']);
 }
 
 var gridOptions = {

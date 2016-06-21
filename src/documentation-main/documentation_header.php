@@ -354,22 +354,28 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/index.php">Viewport</a>
                 <?php } ?>
 
-                <?php if ($key == "Grouping") { ?>
-                    <span class="sidebarLinkSelected">Grouping Rows</span>
+                <?php if ($key == "Data Functions") { ?>
+                    <span class="sidebarLinkSelected">Data Functions</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/index.php">Grouping Rows</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-data-functions/index.php">Data Functions</a>
+                <?php } ?>
+
+                <?php if ($key == "Grouping") { ?>
+                    <span class="sidebarLinkSelected">&nbsp; Grouping Rows</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/index.php">&nbsp; Grouping Rows</a>
                 <?php } ?>
 
                 <?php if ($key == "Aggregation") { ?>
-                    <span class="sidebarLinkSelected">Aggregation</span>
+                    <span class="sidebarLinkSelected">&nbsp; Aggregation</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/index.php">Aggregation</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/index.php">&nbsp; Aggregation</a>
                 <?php } ?>
 
                 <?php if ($key == "Pivoting") { ?>
-                    <span class="sidebarLinkSelected">Pivoting</span>
+                    <span class="sidebarLinkSelected">&nbsp; Pivoting</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/index.php">Pivoting</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/index.php">&nbsp; Pivoting</a>
                 <?php } ?>
 
                 <?php if ($key == "Tool Panel") { ?>

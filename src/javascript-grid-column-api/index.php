@@ -204,7 +204,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
         <tr>
-            <th>setColumnAggFunction(column, aggFunc)</th>
+            <th>setColumnAggFunc(column, aggFunc)</th>
             <td>Sets the agg function for a column. Set to one of [min,max,sum].</td>
         </tr>
         <tr>
