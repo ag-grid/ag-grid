@@ -55,21 +55,21 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
     protected isColumnDroppable(column: Column): boolean {
         var columnValue = column.isMeasure();
-        var columnNotValue= !column.isMeasureActive();
+        var columnNotValue= !column.isAggregationActive();
         return columnValue && columnNotValue;
     }
 
     protected removeColumns(columns: Column[]): void {
-        var columnsCurrentlyValueColumns = Utils.filter(columns, (column: Column) => column.isMeasureActive() );
-        this.columnController.removeMeasureColumns(columnsCurrentlyValueColumns);
+        var columnsCurrentlyValueColumns = Utils.filter(columns, (column: Column) => column.isAggregationActive() );
+        this.columnController.removeAggregationColumns(columnsCurrentlyValueColumns);
     }
 
     protected addColumns(columns: Column[]) {
-        this.columnController.addMeasureColumns(columns);
+        this.columnController.addAggregationColumns(columns);
     }
 
     protected getExistingColumns(): Column[] {
-        return this.columnController.getMeasureColumns();
+        return this.columnController.getAggregationColumns();
     }
 
 }

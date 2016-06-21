@@ -29,7 +29,7 @@ export class PivotStage implements IRowNodeStage {
     private pivotColumnGroupDefs: (ColDef|ColGroupDef)[];
     private pivotColumnDefs: ColDef[];
 
-    private valueColumnsHashLastTime: string;
+    private aggregationColumnsHashLastTime: string;
 
     public execute(rootNode: RowNode): any {
         if (this.columnController.isPivotActive()) {
@@ -40,7 +40,7 @@ export class PivotStage implements IRowNodeStage {
     }
 
     private executePivotOff(): void {
-        this.valueColumnsHashLastTime = null;
+        this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
         this.columnController.setSecondaryColumns(null);
     }
@@ -50,13 +50,13 @@ export class PivotStage implements IRowNodeStage {
 
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        var measureColumns = this.columnController.getMeasureColumns();
-        var measureColumnsHash = measureColumns.map( (column)=> column.getId() ).join('#');
+        var aggregationColumns = this.columnController.getAggregationColumns();
+        var aggregationColumnsHash = aggregationColumns.map( (column)=> column.getId() ).join('#');
 
-        var measureColumnsChanged = this.valueColumnsHashLastTime !== measureColumnsHash;
-        this.valueColumnsHashLastTime = measureColumnsHash;
+        var aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
+        this.aggregationColumnsHashLastTime = aggregationColumnsHash;
 
-        if (uniqueValuesChanged || measureColumnsChanged) {
+        if (uniqueValuesChanged || aggregationColumnsChanged) {
             var result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
             this.pivotColumnDefs = result.pivotColumnDefs;

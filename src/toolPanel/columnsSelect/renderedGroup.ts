@@ -157,7 +157,7 @@ export class RenderedGroup extends Component {
             if (column.isRowGroupActive()) {
                 columnsToUnGroup.push(column);
             }
-            if (column.isMeasureActive()) {
+            if (column.isAggregationActive()) {
                 columnsToUnValue.push(column);
             }
         });
@@ -169,19 +169,19 @@ export class RenderedGroup extends Component {
             this.columnController.removeRowGroupColumns(columnsToUnGroup);
         }
         if (columnsToUnValue.length>0) {
-            this.columnController.removeMeasureColumns(columnsToUnValue);
+            this.columnController.removeAggregationColumns(columnsToUnValue);
         }
     }
 
     private actionCheckedReduce(columns: Column[]): void {
 
-        var columnsToValue: Column[] = [];
+        var columnsToAggregate: Column[] = [];
         var columnsToGroup: Column[] = [];
 
         columns.forEach( column => {
             if (column.isMeasure()) {
-                if (!column.isMeasureActive()) {
-                    columnsToValue.push(column);
+                if (!column.isAggregationActive()) {
+                    columnsToAggregate.push(column);
                 }
             } else {
                 if (!column.isPivotActive() && !column.isRowGroupActive()) {
@@ -190,8 +190,8 @@ export class RenderedGroup extends Component {
             }
         });
 
-        if (columnsToValue.length>0) {
-            this.columnController.addMeasureColumns(columnsToValue);
+        if (columnsToAggregate.length>0) {
+            this.columnController.addAggregationColumns(columnsToAggregate);
         }
         if (columnsToGroup.length>0) {
             this.columnController.addRowGroupColumns(columnsToGroup);
@@ -231,8 +231,8 @@ export class RenderedGroup extends Component {
         if (columnsReduced) {
             var pivoted = column.isPivotActive();
             var grouped = column.isRowGroupActive();
-            var value = column.isMeasureActive();
-            return pivoted || grouped || value;
+            var aggregated = column.isAggregationActive();
+            return pivoted || grouped || aggregated;
         } else {
             return column.isVisible();
         }

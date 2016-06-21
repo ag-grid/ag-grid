@@ -108,8 +108,8 @@ export class RenderedColumn extends Component {
                 this.columnController.removePivotColumn(this.column);
             }
             // remove value if column is value
-            if (this.column.isMeasureActive()) {
-                this.columnController.removeMeasureColumn(this.column);
+            if (this.column.isAggregationActive()) {
+                this.columnController.removeAggregationColumn(this.column);
             }
             // remove group if column is grouped
             if (this.column.isRowGroupActive()) {
@@ -125,8 +125,8 @@ export class RenderedColumn extends Component {
         // what we do depends on the reduce state
         if (this.columnController.isPivotMode()) {
             if (this.column.isMeasure()) {
-                if (!this.column.isMeasureActive()) {
-                    this.columnController.addMeasureColumn(this.column);
+                if (!this.column.isAggregationActive()) {
+                    this.columnController.addAggregationColumn(this.column);
                 }
             } else {
                 if (!this.column.isPivotActive() && !this.column.isRowGroupActive()) {
@@ -153,8 +153,8 @@ export class RenderedColumn extends Component {
             // if reducing, checkbox means column is one of pivot, value or group
             var isPivot = this.column.isPivotActive();
             var isRowGroup = this.column.isRowGroupActive();
-            var isMeasure = this.column.isMeasureActive();
-            this.cbSelect.setSelected(isPivot || isRowGroup || isMeasure);
+            var isAggregation = this.column.isAggregationActive();
+            this.cbSelect.setSelected(isPivot || isRowGroup || isAggregation);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
             this.cbSelect.setSelected(this.column.isVisible());
