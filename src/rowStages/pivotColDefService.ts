@@ -49,7 +49,7 @@ export class PivotColDefService {
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep);
             } else {
 
-                var measureColumns = this.columnController.getMeasureColumns();
+                var measureColumns = this.columnController.getAggregationColumns();
                 var valueGroup: ColGroupDef = {
                     children: [],
                     headerName: key

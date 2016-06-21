@@ -151,7 +151,7 @@ export class ColumnComponent extends Component {
 
         var itemSelected = ()=> {
             hidePopup();
-            this.columnController.setColumnAggFunction(this.column, value);
+            this.columnController.setColumnAggFunc(this.column, value);
         };
 
         var comp = new AggItemComp(itemSelected, value.toString());
