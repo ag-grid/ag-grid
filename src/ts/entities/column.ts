@@ -53,7 +53,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public static SORT_DESC = 'desc';
 
     public static TYPE_DIMENSION = 'dimension';
-    public static TYPE_MEASURE = 'measure';
+    public static TYPE_VALUE = 'value';
     public static TYPE_NONE = 'none';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -141,7 +141,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isMeasure(): boolean {
-        return this.colDef.type === Column.TYPE_MEASURE
+        return this.colDef.type === Column.TYPE_VALUE
             || _.missing(this.colDef.type);
     }
 
@@ -403,14 +403,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pivotActive;
     }
 
-    public setAggregationActive(value: boolean): void {
+    public setValueActive(value: boolean): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
             this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
         }
     }
 
-    public isAggregationActive(): boolean {
+    public isValueActive(): boolean {
         return this.aggregationActive;
     }
 }

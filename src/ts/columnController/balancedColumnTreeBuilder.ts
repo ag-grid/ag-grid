@@ -148,7 +148,7 @@ export class BalancedColumnTreeBuilder {
                 colDefNoType.type = Column.TYPE_NONE;
             } else {
                 if (colDefNoType.suppressRowGroup) {
-                    colDefNoType.type = Column.TYPE_MEASURE;
+                    colDefNoType.type = Column.TYPE_VALUE;
                 }
                 if (colDefNoType.suppressAggregation) {
                     colDefNoType.type = Column.TYPE_DIMENSION;
