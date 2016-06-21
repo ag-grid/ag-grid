@@ -109,6 +109,10 @@ include '../documentation-main/documentation_header.php';
             <td>The maximum width of the column while resizing.</td>
         </tr>
         <tr>
+            <th>type</th>
+            <td>One of 'dimension', 'value', 'none' or undefined. Used for aggregation while row grouping and pivoting</td>
+        </tr>
+        <tr>
             <th>cellClass</th>
             <td>Class to use for the cell. Can be string, array of strings, or function.</td>
         </tr>

@@ -28,7 +28,8 @@ function onBtFullPivot() {
 
 var gridOptions = {
     // set rowData to null or undefined to show loading panel by default
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    enableColResize: true
 };
 
 // setup the grid after the page has finished loading

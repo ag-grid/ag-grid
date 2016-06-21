@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
     <p>Pivot mode is required to be turned on for pivoting to work. When the grid is in pivot mode, the following
     will happen:</p>
     <ul>
-        <li>Only columns with Group, Pivot or Measure active will be included in the grid.</li>
+        <li>Only columns with Group, Pivot or Aggregation active will be included in the grid.</li>
         <li>Only aggregated rows will be shown, the lowest level rowData will not be displayed.</li>
     </ul>
 
@@ -49,7 +49,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Columns Date and Sport, although defined as columns, are not displayed in the grid as they have no group,
-        pivot or measure associated with them.
+        pivot or aggregation associated with them.
     </p>
 
     <show-example example="examplePivot"></show-example>
@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         It is possible to have pivot mode turned on even though there is no pivot active on the grid.
         In this scenario, the grid will display the data as normal but will strip out columns that
-        have no grouping or measure active.
+        have no grouping or aggregation active.
     </p>
 
     <p>
@@ -102,19 +102,19 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        When in pivot mode and not pivoting, only columns that have row group or measure active are included
-        in the grid. To add a column to the grid you either add it as a row group column or a measure column.
+        When in pivot mode and not pivoting, only columns that have row group or aggregation active are included
+        in the grid. To add a column to the grid you either add it as a row group column or an aggregated value column.
         Setting visibility on a column has no impact when in pivot mode. Checking a column in the toolPanel will
-        either add the column as a row group (if the column is configured as a dimension) or as a measure
-        (if the columns is configured as a measure).
+        either add the column as a row group (if the column is configured as a dimension) or as an aggregated value
+        (if the columns is configured as a value).
     </p>
 
     <p>
         When in pivot mode and pivoting, then the columns displayed in the grid are secondary columns (explained
-        below) and not the primary columns. The secondary columns are composed of the pivot and measure columns.
+        below) and not the primary columns. The secondary columns are composed of the pivot and aggregated value columns.
         To have a column included in the calculation of the secondary columns, it should be added as either a
-        pivot pivot or a measure column. As with pivot mode and not pivoting, checking a column in the toolPanel
-        while in pivot mode will add the column as a row group or a measure. You must drag the column to a pivot
+        pivot or an aggregated value column. As with pivot mode and not pivoting, checking a column in the toolPanel
+        while in pivot mode will add the column as a row group or an aggregated value. You must drag the column to a pivot
         drop zone in order to add it as a pivot column. As before, setting visibility on the column will have no
         effect when in pivot mode.
     </p>
@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         When pivot mode is off, the columns in the grid correspond to the column definitions provided in the
         grid configuration. When pivot mode is on and pivot is active, the columns in the grid are composed
-        by a matrix of the pivot columns and the measure columns.
+        by a matrix of the pivot columns and the aggregated value columns.
     </p>
 
     <p>For example, consider the columns from the examples {Year and Gold}. If a pivot is placed on Year

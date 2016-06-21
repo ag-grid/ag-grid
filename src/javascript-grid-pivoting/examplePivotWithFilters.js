@@ -51,6 +51,7 @@ function filterUsaAndCanadaEquestrian() {
 
 var gridOptions = {
     columnDefs: columnDefs,
+    enableColResize: true,
     pivotMode: true
 };
 

@@ -368,7 +368,7 @@ var defaultCols = [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                 filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: {cellRenderer: currencyRenderer},
-                type: 'measure',
+                type: 'value',
                 // colId: 'sf',
                 // valueGetter: '55',
                 // aggFunc: 'sum',
@@ -394,14 +394,14 @@ var defaultCols = [
     {
         headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
-        // type: 'measure',
+        // type: 'value',
         filterParams: {cellRenderer: ratingFilterRenderer}
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
         aggFunc: 'sum',
-        type: 'measure',
+        type: 'value',
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -419,7 +419,7 @@ months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
-        type: 'measure',
+        type: 'value',
         // aggFunc: 'sum',
         //hide: true,
         cellClassRules: {

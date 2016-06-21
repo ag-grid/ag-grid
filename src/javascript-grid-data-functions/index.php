@@ -48,9 +48,9 @@ include '../documentation-main/documentation_header.php';
         a pivot table in a Excel.
     </p>
 
-    <h4>Dimensions and Measures</h4>
+    <h4>Dimensions and Values</h4>
     <p>
-        A <b>dimension</b> column is a column that typically has a set of values. For example the dimension Country
+        A <b>dimension</b> column is a column that typically has a set for values. For example the dimension Country
         can have values Ireland, United Kingdom, USA. When a column definition is marked as a dimension it informs
         the grid the column should be selectable for grouping and pivoting.
     </p>
@@ -58,25 +58,20 @@ include '../documentation-main/documentation_header.php';
         The grid GUI will only allow grouping and pivoting by dimensions.
     </p>
     <p>
-        A <b>measure</b> column is a column that typically has numbers as values. For example the dimension Bank Balance
-        can have values £234,242 or £0.4441. When a column definition is marked as a measure it informs
+        A <b>value</b> column is a column that typically has numbers as values. For example the value column Bank Balance
+        can have values £234,242 or £0.4441. When a column definition is marked as a value it informs
         the grid the column should be selectable for aggregations.
     </p>
     <p>
-        The grid GUI will only allow aggregating by measures.
+        The grid GUI will only allow aggregating by value columns.
     </p>
     <p>
-        Dimension and measures are industry standard terms in data warehousing. See wikipedia for it's definion
+        Dimension and values are industry standard ideas in data warehousing. See wikipedia for definitions
         on <a href="https://en.wikipedia.org/wiki/Dimension_(data_warehouse)">Dimensions</a> and
-        <a href="https://en.wikipedia.org/wiki/Measure_(data_warehouse)">Measures</a>.
+        <a href="https://en.wikipedia.org/wiki/Measure_(data_warehouse)">Measures</a> (values are more accurately
+        called 'measures' in data warehousing, however we choose to call them 'values' in ag-Grid to be consistent
+        with Excel pivoting).
     </p>
-
-    <note>
-        The grid GUI does not present the terms dimensions, measures or aggregations. This is to keep
-        the GUI simple for users to understand. The concept of measures and aggregations is presented as
-        'Values', ie the toolPanel has a Values section where you drop columns to get aggregated (you drop
-        measure columns to get aggregated).
-    </note>
 
 </div>
 
