@@ -49,7 +49,7 @@ export class PopupEditorWrapper extends Component implements ICellEditor {
 
     public afterGuiAttached(): void {
         if (this.cellEditor.afterGuiAttached) {
-            this.cellEditor.afterGuiAttached();
+            this.cellEditor.afterGuiAttached( super.getGui() );
         }
     }
 
