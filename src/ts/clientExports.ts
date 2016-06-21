@@ -83,6 +83,7 @@ import {PopupSelectCellEditor} from "./rendering/cellEditors/popupSelectCellEdit
 import {PopupTextCellEditor} from "./rendering/cellEditors/popupTextCellEditor";
 import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
 import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
+import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 import {CellRendererService} from "./rendering/cellRendererService";
@@ -162,6 +163,7 @@ export function populateClientExports(exports: any): void {
     exports.PopupTextCellEditor = PopupTextCellEditor;
     exports.SelectCellEditor = SelectCellEditor;
     exports.TextCellEditor = TextCellEditor;
+    exports.LargeTextCellEditor = LargeTextCellEditor;
 
     // rendering / cellRenderers
     exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;

@@ -1,4 +1,3 @@
-
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PaginationController} from "./rowControllers/paginationController";
@@ -47,12 +46,15 @@ import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {AgCheckbox} from "./widgets/agCheckbox";
+import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
 
 export class Grid {
 
     private context: Context;
 
     private static enterpriseBeans: any[];
+
+    private static LARGE_TEXT = 'largeText';
 
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -105,6 +107,8 @@ export class Grid {
             components: [AgCheckbox],
             debug: !!gridOptions.debug
         });
+
+        this.context.getBean('cellEditorFactory').addCellEditor(Grid.LARGE_TEXT, LargeTextCellEditor);
 
         var eventService = this.context.getBean('eventService');
         var readyEvent = {

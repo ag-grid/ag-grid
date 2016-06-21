@@ -1,4 +1,3 @@
-
 export * from './dist/lib/columnController/balancedColumnTreeBuilder';
 export * from './dist/lib/columnController/columnController';
 export * from './dist/lib/columnController/columnKeyCreator';
@@ -15,6 +14,8 @@ export * from './dist/lib/context/context';
 export * from './dist/lib/dragAndDrop/dragAndDropService';
 export * from './dist/lib/dragAndDrop/dragService';
 export * from './dist/lib/dragAndDrop/oldToolPanelDragAndDropService';
+
+export * from './dist/lib/rendering/largeText/largeTextCellEditor';
 
 export * from './dist/lib/entities/colDef';
 export * from './dist/lib/entities/column';
