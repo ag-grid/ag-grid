@@ -52,7 +52,7 @@ export class ColumnApi {
     public getRowGroupColumns(): Column[] { return this._columnController.getRowGroupColumns(); }
     public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumnByIndex(fromIndex, toIndex); }
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this._columnController.moveRowGroupColumn(fromIndex, toIndex); }
-    public setColumnAggFunction(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunction(column, aggFunc); }
+    public setColumnAggFunct(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunc(column, aggFunc); }
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
     public setPivotMode(pivotMode: boolean): void { this._columnController.setPivotMode(pivotMode); }
 
@@ -120,6 +120,10 @@ export class ColumnApi {
     public addValueColumn(column: Column): void {
         console.error('ag-Grid: addValueColumn is deprecated, use addAggregationColumn');
         this._columnController.addAggregationColumn(column); 
+    }
+    public setColumnAggFunction(column: Column, aggFunc: string): void {
+        console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
+        this._columnController.setColumnAggFunc(column, aggFunc); 
     }
 
 }
@@ -501,7 +505,7 @@ export class ColumnController {
         }
     }
 
-    public setColumnAggFunction(column: Column, aggFunc: string): void {
+    public setColumnAggFunc(column: Column, aggFunc: string): void {
         column.setAggFunc(aggFunc);
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGED, event);
