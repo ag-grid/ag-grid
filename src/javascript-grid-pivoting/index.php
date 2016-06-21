@@ -153,7 +153,7 @@ include '../documentation-main/documentation_header.php';
         what is the story with state?
     </p>
 
-    <h2>Pivoting with Filters</h2>
+    <h2>Filtering with Pivot</h2>
 
     <p>Filtering is always on primary columns. It is not possible, nor would it make sense, to set a filter on a secondary column.</p>
 
@@ -171,8 +171,23 @@ include '../documentation-main/documentation_header.php';
         as there is no records for Canada and Equestrian.
     </p>
 
-    <show-example example="examplePivotWithFilters"></show-example>
+    <show-example example="exampleFilteringWithPivot"></show-example>
 
+    <h2>Sorting with Pivot</h2>
+
+    <p>
+        Sorting with pivot works as you would expect with the following exceptions:
+        <ul>
+            <li>If you change the pivot, the sorting is lost, as changing the pivot results in new
+            secondary columns getting generated which will loose the sort state.</li>
+        </ul>
+    </p>
+
+    <p>
+        The example below demonstrates sorting with pivot.
+    </p>
+    
+    <show-example example="exampleSortingWithPivot"></show-example>
 
 </div>
 

@@ -351,7 +351,11 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressUseColIdForGroups</th>
             <td>When true, the col id's are not used for values in the groups. To be used in conjunction
-            with groupRowAggNodes() callback.</td>
+                with groupRowAggNodes() callback.</td>
+        </tr>
+        <tr>
+            <th>suppressAggFuncInHeader</th>
+            <td>When true, column headers won't include the aggFunc, eg 'sum(Bank Balance)' will just be 'Bank Balance'.</td>
         </tr>
 
     </table>
