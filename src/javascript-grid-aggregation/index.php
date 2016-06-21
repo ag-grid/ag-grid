@@ -180,6 +180,14 @@ function myCustomAggFunc(values) {
         added as aggregation functions.
     </p>
 
+    <h2>suppressAggFuncInHeader</h2>
+
+    <p>
+        When aggregating, the column headers will include the aggregation function for the column. For example the
+        header <i>'Bank Balance'</i> will become <i>'sum(Bank Balance)'</i> if you have the sum aggregation active on the column.
+        To turn this off and display simply <i>'Bank Balance'</i> then set the grid property <i>suppressAggFuncInHeader</i>.
+    </p>
+
     <h3>Grouping with Aggregation - using groupRowAggNodes Callback</h3>
 
     <p>
