@@ -124,7 +124,7 @@ export class RenderedColumn extends Component {
     private actionChecked(): void {
         // what we do depends on the reduce state
         if (this.columnController.isPivotMode()) {
-            if (this.column.isMeasure()) {
+            if (this.column.isValue()) {
                 if (!this.column.isValueActive()) {
                     this.columnController.addValueColumn(this.column);
                 }

@@ -233,14 +233,21 @@ export class EnterpriseMenu {
 
         var funcNames = this.aggFuncService.getFuncNames();
 
+        var columnToUse: Column;
+        if (this.column.isPrimary()) {
+            columnToUse = this.column;
+        } else {
+            columnToUse = this.column.getColDef().pivotValueColumn;
+        }
+
         funcNames.forEach( (funcName)=> {
             cMenuList.addItem({
                 name: localeTextFunc(funcName, funcName),
                 action: ()=> {
-                    this.columnController.setColumnAggFunc(this.column, funcName);
-                    this.columnController.addValueColumn(this.column);
+                    this.columnController.setColumnAggFunc(columnToUse, funcName);
+                    this.columnController.addValueColumn(columnToUse);
                 },
-                checked: columnIsAlreadyAggValue && this.column.getAggFunc() === funcName
+                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName
             });
         });
 
@@ -332,12 +339,21 @@ export class EnterpriseMenu {
 
         var doingGrouping = this.columnController.getRowGroupColumns().length>0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-        var columnIsMeasure = this.column.isMeasure();
+        var columnIsValue = this.column.isValue();
+        var isPrimary = this.column.isPrimary();
 
         result.push('pinSubMenu');
-        if (doingGrouping && columnIsMeasure) {
+
+        var allowValueAgg =
+            // if primary, then only allow aggValue if grouping and it's a value columns
+            (isPrimary && doingGrouping && columnIsValue)
+            // secondary columns can always have aggValue, as it means it's a pivot value column
+            || !isPrimary;
+
+        if (allowValueAgg) {
             result.push('valueAggSubMenu');
         }
+
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('autoSizeThis');
         result.push('autoSizeAll');

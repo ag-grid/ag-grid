@@ -54,7 +54,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
-        var columnValue = column.isMeasure();
+        var columnValue = column.isValue();
         var columnNotValue= !column.isValueActive();
         return columnValue && columnNotValue;
     }
