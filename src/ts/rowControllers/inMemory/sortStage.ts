@@ -13,8 +13,6 @@ export class SortStage {
     @Autowired('valueService') private valueService: ValueService;
 
     public execute(rowNode: RowNode): any {
-        // var sorting: any;
-
         var sortOptions: any;
 
         // if the sorting is already done by the server, then we should not do it here
@@ -24,7 +22,6 @@ export class SortStage {
 
         this.sortRowNode(rowNode, sortOptions);
     }
-
 
     private sortRowNode(rowNode: RowNode, sortOptions: any) {
 
