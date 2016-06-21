@@ -238,6 +238,16 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>
+                getSecondaryPivotColumn(pivotKeys, valueColId)
+            </th>
+            <td>
+                Returns the pivot column for the given pivotKeys and valueColumn. Useful to then call
+                operations on the pivot column.
+            </td>
+        </tr>
+
+        <tr>
+            <th>
                 getValueColumns(),
                 removeValueColumn(colKey),
                 removeValueColumns(colKeys),

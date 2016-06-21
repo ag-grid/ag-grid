@@ -1,7 +1,6 @@
 var columnDefs = [
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
     {headerName: "Year", field: "year", width: 90, pivotIndex: 0},
-    {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 1},
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
     {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'}
@@ -14,6 +13,48 @@ var gridOptions = {
     suppressAggFuncInHeader: true,
     pivotMode: true
 };
+
+function clearSort() {
+    gridOptions.api.setSortModel({});
+}
+
+function sort2000Bronze() {
+    var column = findIdForColumn('2000','bronze');
+    var sort = [
+        {colId: column.getId(), sort: 'desc'}
+    ];
+    gridOptions.api.setSortModel(sort);
+}
+
+function sort2002Gold() {
+    var column = gridOptions.columnApi.getSecondaryPivotColumn(['2002'],'gold');
+    var sort = [
+        {colId: column.getId(), sort: 'desc'}
+    ];
+    gridOptions.api.setSortModel(sort);
+}
+
+function findIdForColumn(year, medal) {
+    var pivotColumns = gridOptions.columnApi.getAllGridColumns();
+    var foundColumn;
+
+    pivotColumns.forEach( function(column) {
+
+        var pivotKeys = column.getColDef().pivotKeys;
+        var pivotKey = pivotKeys[0];
+        var pivotKeyMatches = pivotKey === year;
+
+        var pivotValueColumn = column.getColDef().pivotValueColumn;
+        var pivotValueColId = pivotValueColumn.getColId();
+        var pivotValueMatches = pivotValueColId === medal;
+        
+        if (pivotKeyMatches && pivotValueMatches) {
+            foundColumn = column;
+        }
+    });
+
+    return foundColumn;
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
