@@ -300,8 +300,8 @@ colDef.cellEditorParams = {
         <li><b>select</b>: Simple editor that uses standard HTML Select.</li>
         <li><b>popupText</b>: Same as 'text' but as popup.</li>
         <li><b>popupSelect</b>: Same as 'select' but as popup.</li>
+        <li><b>largeText</b>: - A text popup that for inputting larger, multi-line text.</li>
         <li><b>richSelect (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
-        <li><b>largeText (ag-Grid-Enterprise only)</b>: - A text popup that for inputting larger, multi-line text.</li>
     </ul>
     </p>
 
@@ -376,7 +376,7 @@ colDef.cellEditorParams = {
         <li>'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (ag-Grid-Enterprise only), with values supplied by complementing the editor parameters.</li>
         <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
         <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.</li>
-        <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText' (ag-Grid-Enterprise only). Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
+        <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
     </ul>
     </p>
 
