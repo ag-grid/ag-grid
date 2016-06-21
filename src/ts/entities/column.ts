@@ -86,7 +86,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private rowGroupActive = false;
     private pivotActive = false;
-    private measureActive = false;
+    private aggregationActive = false;
 
     private primary: boolean;
 
@@ -403,14 +403,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pivotActive;
     }
 
-    public setMeasureActive(value: boolean): void {
-        if (this.measureActive !== value) {
-            this.measureActive = value;
+    public setAggregationActive(value: boolean): void {
+        if (this.aggregationActive !== value) {
+            this.aggregationActive = value;
             this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
         }
     }
 
-    public isMeasureActive(): boolean {
-        return this.measureActive;
+    public isAggregationActive(): boolean {
+        return this.aggregationActive;
     }
 }

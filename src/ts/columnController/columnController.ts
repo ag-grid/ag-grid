@@ -56,11 +56,11 @@ export class ColumnApi {
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
     public setPivotMode(pivotMode: boolean): void { this._columnController.setPivotMode(pivotMode); }
 
-    public getMeasureColumns(): Column[] { return this._columnController.getMeasureColumns(); }
-    public removeMeasureColumn(colKey: (Column|ColDef|String)): void { this._columnController.removeMeasureColumn(colKey); }
-    public removeMeasureColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removeMeasureColumns(colKeys); }
-    public addMeasureColumn(colKey: (Column|ColDef|String)): void { this._columnController.addMeasureColumn(colKey); }
-    public addMeasureColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.addMeasureColumns(colKeys); }
+    public getAggregationColumns(): Column[] { return this._columnController.getAggregationColumns(); }
+    public removeAggregationColumn(colKey: (Column|ColDef|String)): void { this._columnController.removeAggregationColumn(colKey); }
+    public removeAggregationColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removeAggregationColumns(colKeys); }
+    public addAggregationColumn(colKey: (Column|ColDef|String)): void { this._columnController.addAggregationColumn(colKey); }
+    public addAggregationColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.addAggregationColumns(colKeys); }
 
     public setRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.setRowGroupColumns(colKeys); }
     public removeRowGroupColumn(colKey: Column|ColDef|String): void { this._columnController.removeRowGroupColumn(colKey); }
@@ -110,16 +110,16 @@ export class ColumnApi {
     }
 
     public getValueColumns(): Column[] {
-        console.error('ag-Grid: getValueColumns is deprecated, use getMeasureColumns');
-        return this._columnController.getMeasureColumns(); 
+        console.error('ag-Grid: getValueColumns is deprecated, use getAggregationColumns');
+        return this._columnController.getAggregationColumns(); 
     }
     public removeValueColumn(column: Column): void {
-        console.error('ag-Grid: removeValueColumn is deprecated, use removeMeasureColumn');
-        this._columnController.removeMeasureColumn(column); 
+        console.error('ag-Grid: removeValueColumn is deprecated, use removeAggregationColumn');
+        this._columnController.removeAggregationColumn(column); 
     }
     public addValueColumn(column: Column): void {
-        console.error('ag-Grid: addValueColumn is deprecated, use addMeasureColumn');
-        this._columnController.addMeasureColumn(column); 
+        console.error('ag-Grid: addValueColumn is deprecated, use addAggregationColumn');
+        this._columnController.addAggregationColumn(column); 
     }
 
 }
@@ -172,7 +172,7 @@ export class ColumnController {
     private displayedCenterColumns: Column[] = [];
 
     private rowGroupColumns: Column[] = [];
-    private measureColumns: Column[] = [];
+    private aggregationColumns: Column[] = [];
     private pivotColumns: Column[] = [];
 
     private groupAutoColumn: Column;
@@ -405,14 +405,14 @@ export class ColumnController {
         this.removePivotColumns([key]);
     }
 
-    public addMeasureColumns(keys: (Column|ColDef|String)[]): void {
+    public addAggregationColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (!column.isMeasureActive()) {
+            if (!column.isAggregationActive()) {
                 if (!column.getAggFunc()) { // default to SUM if aggFunc is missing
                     column.setAggFunc(Column.AGG_SUM);
                 }
-                this.measureColumns.push(column);
-                column.setMeasureActive(true);
+                this.aggregationColumns.push(column);
+                column.setAggregationActive(true);
                 return true;
             } else {
                 return false;
@@ -422,19 +422,19 @@ export class ColumnController {
         });
     }
 
-    public addMeasureColumn(colKey: (Column|ColDef|String)): void {
-        this.addMeasureColumns([colKey]);
+    public addAggregationColumn(colKey: (Column|ColDef|String)): void {
+        this.addAggregationColumns([colKey]);
     }
 
-    public removeMeasureColumn(colKey: (Column|ColDef|String)): void {
-        this.removeMeasureColumns([colKey]);
+    public removeAggregationColumn(colKey: (Column|ColDef|String)): void {
+        this.removeAggregationColumns([colKey]);
     }
 
-    public removeMeasureColumns(keys: (Column|ColDef|String)[]): void {
+    public removeAggregationColumns(keys: (Column|ColDef|String)[]): void {
         this.actionOnOriginalColumns(keys, (column: Column)=> {
-            if (column.isMeasureActive()) {
-                _.removeFromArray(this.measureColumns, column);
-                column.setMeasureActive(false);
+            if (column.isAggregationActive()) {
+                _.removeFromArray(this.aggregationColumns, column);
+                column.setAggregationActive(false);
                 return true;
             } else {
                 return false;
@@ -611,8 +611,8 @@ export class ColumnController {
     }
 
     // + rowController
-    public getMeasureColumns(): Column[] {
-        return this.measureColumns ? this.measureColumns : [];
+    public getAggregationColumns(): Column[] {
+        return this.aggregationColumns ? this.aggregationColumns : [];
     }
 
     // + rowController
@@ -844,10 +844,10 @@ export class ColumnController {
         this.originalColumns = [];
 
         this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
-        this.measureColumns.forEach( column => column.setMeasureActive(false) );
+        this.aggregationColumns.forEach( column => column.setAggregationActive(false) );
 
         this.rowGroupColumns = [];
-        this.measureColumns = [];
+        this.aggregationColumns = [];
 
         var success = true;
 
@@ -871,7 +871,7 @@ export class ColumnController {
                 var aggFuncValid = [Column.AGG_MIN, Column.AGG_MAX, Column.AGG_SUM, Column.AGG_FIRST, Column.AGG_LAST].indexOf(stateItem.aggFunc) >= 0;
                 if (aggFuncValid) {
                     oldColumn.setAggFunc(stateItem.aggFunc);
-                    this.measureColumns.push(oldColumn);
+                    this.aggregationColumns.push(oldColumn);
                 } else {
                     oldColumn.setAggFunc(null);
                 }
@@ -912,7 +912,7 @@ export class ColumnController {
         this.updateDisplayedColumns();
 
         this.rowGroupColumns.forEach( column => column.setRowGroupActive(true) );
-        this.measureColumns.forEach( column => column.setMeasureActive(true) );
+        this.aggregationColumns.forEach( column => column.setAggregationActive(true) );
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
@@ -1013,18 +1013,18 @@ export class ColumnController {
     }
 
     private wrapHeaderNameWithAggFunc(column: Column, headerName: string): string {
-        // only columns with measure active can have aggregations
-        var pivotValueColumn = column.getColDef().pivotMeasureColumn;
-        var pivotActiveOnThisColumn = _.exists(pivotValueColumn);
+        // only columns with aggregation active can have aggregations
+        var pivotMeasureColumn = column.getColDef().pivotMeasureColumn;
+        var pivotActiveOnThisColumn = _.exists(pivotMeasureColumn);
         var aggFunc: string | IAggFunc = null;
         var aggFuncFound: boolean;
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
-            aggFunc = pivotValueColumn.getAggFunc();
+            aggFunc = pivotMeasureColumn.getAggFunc();
             aggFuncFound = true;
         } else {
-            var measureActive = column.isMeasureActive();
+            var measureActive = column.isAggregationActive();
             var aggregationPresent = this.pivotMode || !this.isRowGroupEmpty();
 
             if (measureActive && aggregationPresent) {
@@ -1205,7 +1205,7 @@ export class ColumnController {
         } else if (this.pivotMode) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
-            columnsForDisplay = this.measureColumns.slice();
+            columnsForDisplay = this.aggregationColumns.slice();
         } else {
             // not in pivot mode, so we use the visibility of the column
             // to decide what is displayable
@@ -1479,16 +1479,16 @@ export class ColumnController {
     }
 
     private createValueColumns(): void {
-        this.measureColumns.forEach( column => column.setMeasureActive(false) );
-        this.measureColumns = [];
+        this.aggregationColumns.forEach( column => column.setAggregationActive(false) );
+        this.aggregationColumns = [];
 
         // override with columns that have the aggFunc specified explicitly
         for (var i = 0; i < this.originalColumns.length; i++) {
             var column = this.originalColumns[i];
             if (column.getColDef().aggFunc) {
                 column.setAggFunc(column.getColDef().aggFunc);
-                this.measureColumns.push(column);
-                column.setMeasureActive(true);
+                this.aggregationColumns.push(column);
+                column.setAggregationActive(true);
             }
         }
     }
