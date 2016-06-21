@@ -81,7 +81,7 @@ export class PivotColDefService {
         colDef.colId = 'pivot_' + columnIdSequence.next();
 
         colDef.pivotKeys = pivotKeys;
-        colDef.pivotMeasureColumn = valueColumn;
+        colDef.pivotValueColumn = valueColumn;
 
         return colDef;
     }
