@@ -343,7 +343,7 @@ export class EnterpriseMenu {
         result.push('autoSizeAll');
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
-        if (this.column.isDimension()) {
+        if (this.column.isDimension() && this.column.isPrimary()) {
             if (groupedByThisColumn) {
                 result.push('rowUnGroup');
             } else {
