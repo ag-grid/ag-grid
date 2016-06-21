@@ -17,8 +17,9 @@ import {ColumnChangeEvent} from "../columnChangeEvent";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
 import {defaultGroupComparator} from "../functions";
-import {Bean, Qualifier, Autowired, PostConstruct, Context} from "../context/context";
+import {Bean, Qualifier, Autowired, PostConstruct, Context, Optional} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
+import {IAggFuncService} from "../interfaces/iAggFuncService";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -55,6 +56,7 @@ export class ColumnApi {
     public setColumnAggFunct(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunc(column, aggFunc); }
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
     public setPivotMode(pivotMode: boolean): void { this._columnController.setPivotMode(pivotMode); }
+    public isPivotMode(): boolean { return this._columnController.isPivotMode(); }
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column|ColDef|String): Column { return this._columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     public getAggregationColumns(): Column[] { return this._columnController.getAggregationColumns(); }
@@ -141,6 +143,7 @@ export class ColumnController {
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
+    @Optional('aggFuncService') private aggFuncService: IAggFuncService;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -832,23 +835,26 @@ export class ColumnController {
     }
 
     public getColumnState(): [any] {
-        if (!this.gridColumns || this.gridColumns.length < 0) {
+        if (_.missing(this.originalColumns)) {
             return <any>[];
         }
         var result = <any>[];
-        for (var i = 0; i < this.gridColumns.length; i++) {
-            var column = this.gridColumns[i];
-            var rowGroupIndex = this.rowGroupColumns.indexOf(column);
+
+        this.originalColumns.forEach( column => {
+            var rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
+            var pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
             var resultItem = {
                 colId: column.getColId(),
                 hide: !column.isVisible(),
                 aggFunc: column.getAggFunc() ? column.getAggFunc() : null,
                 width: column.getActualWidth(),
+                pivotIndex: pivotIndex,
                 pinned: column.getPinned(),
-                rowGroupIndex: rowGroupIndex >= 0 ? rowGroupIndex : null
+                rowGroupIndex: rowGroupIndex
             };
             result.push(resultItem);
-        }
+        });
+
         return result;
     }
 
@@ -865,6 +871,7 @@ export class ColumnController {
                     hide: column.getColDef().hide,
                     pinned: column.getColDef().pinned,
                     rowGroupIndex: column.getColDef().rowGroupIndex,
+                    pivotIndex: column.getColDef().pivotIndex,
                     width: column.getColDef().width
                 });
             });
@@ -873,84 +880,100 @@ export class ColumnController {
     }
 
     public setColumnState(columnState: any[]): boolean {
-        var oldColumnList = this.originalColumns;
-        this.originalColumns = [];
+        if (_.missingOrEmpty(this.originalColumns)) { return false; }
 
-        this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
-        this.valueColumns.forEach( column => column.setValueActive(false) );
+        // at the end below, this list will have all columns we got no state for
+        var columnsWithNoState = this.originalColumns.slice();
 
         this.rowGroupColumns = [];
         this.valueColumns = [];
+        this.pivotColumns = [];
 
         var success = true;
 
+        var rowGroupIndexes: {[key: string]: number} = {};
+        var pivotIndexes: {[key: string]: number} = {};
+
         if (columnState) {
             columnState.forEach( (stateItem: any)=> {
-                var oldColumn: Column = _.find(oldColumnList, 'colId', stateItem.colId);
-                if (!oldColumn) {
+                var column = this.getOriginalColumn(stateItem.colId);
+                if (!column) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
                     success = false;
-                    return;
-                }
-                // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-                oldColumn.setVisible(!stateItem.hide);
-                // sets pinned to 'left' or 'right'
-                oldColumn.setPinned(stateItem.pinned);
-                // if width provided and valid, use it, otherwise stick with the old width
-                if (stateItem.width >= this.gridOptionsWrapper.getMinColWidth()) {
-                    oldColumn.setActualWidth(stateItem.width);
-                }
-                // accept agg func only if valid
-                var aggFuncValid = [Column.AGG_MIN, Column.AGG_MAX, Column.AGG_SUM, Column.AGG_FIRST, Column.AGG_LAST].indexOf(stateItem.aggFunc) >= 0;
-                if (aggFuncValid) {
-                    oldColumn.setAggFunc(stateItem.aggFunc);
-                    this.valueColumns.push(oldColumn);
                 } else {
-                    oldColumn.setAggFunc(null);
+                    this.syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes);
+                    _.removeFromArray(columnsWithNoState, column);
                 }
-                // if rowGroup
-                if (typeof stateItem.rowGroupIndex === 'number' && stateItem.rowGroupIndex >= 0) {
-                    this.rowGroupColumns.push(oldColumn);
-                }
-                this.originalColumns.push(oldColumn);
-                oldColumnList.splice(oldColumnList.indexOf(oldColumn), 1);
             });
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-        oldColumnList.forEach( (oldColumn: Column) => {
-            oldColumn.setVisible(false);
-            oldColumn.setAggFunc(null);
-            oldColumn.setPinned(null);
-            this.originalColumns.push(oldColumn);
-        });
+        columnsWithNoState.forEach(this.syncColumnWithNoState.bind(this));
 
-        // sort the row group columns
-        this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
-            var rowGroupIndexA = -1;
-            var rowGroupIndexB = -1;
-            for (var i = 0; i<columnState.length; i++) {
-                var state = columnState[i];
-                if (state.colId === colA.getColId()) {
-                    rowGroupIndexA = state.rowGroupIndex;
-                }
-                if (state.colId === colB.getColId()) {
-                    rowGroupIndexB = state.rowGroupIndex;
-                }
-            }
-            return rowGroupIndexA - rowGroupIndexB;
-        });
+        // sort the lists according to the indexes that were provided
+        this.rowGroupColumns.sort(this.sortColumnListUsingIndexes.bind(this, rowGroupIndexes));
+        this.pivotColumns.sort(this.sortColumnListUsingIndexes.bind(this, pivotIndexes));
 
         this.copyDownGridColumns();
         this.updateDisplayedColumns();
-
-        this.rowGroupColumns.forEach( column => column.setRowGroupActive(true) );
-        this.valueColumns.forEach( column => column.setValueActive(true) );
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
 
         return success;
+    }
+
+    private sortColumnListUsingIndexes(indexes: {[key: string]: number}, colA: Column, colB: Column): number {
+        var indexA = indexes[colA.getId()];
+        var indexB = indexes[colB.getId()];
+        return indexA - indexB;
+    }
+
+    private syncColumnWithNoState(column: Column): void {
+        column.setVisible(false);
+        column.setAggFunc(null);
+        column.setPinned(null);
+        column.setRowGroupActive(false);
+        column.setPivotActive(false);
+        column.setValueActive(false);
+    }
+
+    private syncColumnWithStateItem(column: Column, stateItem: any,
+                                    rowGroupIndexes: {[key: string]: number},
+                                    pivotIndexes: {[key: string]: number}): void {
+        // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
+        column.setVisible(!stateItem.hide);
+        // sets pinned to 'left' or 'right'
+        column.setPinned(stateItem.pinned);
+        // if width provided and valid, use it, otherwise stick with the old width
+        if (stateItem.width >= this.gridOptionsWrapper.getMinColWidth()) {
+            column.setActualWidth(stateItem.width);
+        }
+
+        if (typeof stateItem.aggFunc === 'string') {
+            column.setAggFunc(stateItem.aggFunc);
+            column.setValueActive(true);
+            this.valueColumns.push(column);
+        } else {
+            column.setAggFunc(null);
+            column.setValueActive(false);
+        }
+
+        if (typeof stateItem.rowGroupIndex === 'number') {
+            this.rowGroupColumns.push(column);
+            column.setRowGroupActive(true);
+            rowGroupIndexes[column.getId()] = stateItem.rowGroupIndex;
+        } else {
+            column.setRowGroupActive(false);
+        }
+
+        if (typeof stateItem.pivotIndex === 'number') {
+            this.pivotColumns.push(column);
+            column.setPivotActive(true);
+            pivotIndexes[column.getId()] = stateItem.pivotIndex;
+        } else {
+            column.setPivotActive(false);
+        }
     }
 
     public getGridColumns(keys: any[]): Column[] {
