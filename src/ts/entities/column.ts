@@ -53,7 +53,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public static SORT_DESC = 'desc';
 
     public static TYPE_DIMENSION = 'dimension';
-    public static TYPE_MEASURE = 'measure';
+    public static TYPE_VALUE = 'value';
     public static TYPE_NONE = 'none';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -86,14 +86,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private rowGroupActive = false;
     private pivotActive = false;
-    private measureActive = false;
+    private aggregationActive = false;
 
-    constructor(colDef: ColDef, colId: String) {
+    private primary: boolean;
+
+    constructor(colDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
         this.visible = !colDef.hide;
         this.sort = colDef.sort;
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
+        this.primary = primary;
     }
 
     // this is done after constructor as it uses gridOptionsWrapper
@@ -124,13 +127,21 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.validate();
     }
 
+    public isPrimary(): boolean {
+        return this.primary;
+    }
+
+    public isFilterAllowed(): boolean {
+        return this.primary;
+    }
+    
     public isDimension(): boolean {
         return this.colDef.type === Column.TYPE_DIMENSION
             || _.missing(this.colDef.type);
     }
 
     public isMeasure(): boolean {
-        return this.colDef.type === Column.TYPE_MEASURE
+        return this.colDef.type === Column.TYPE_VALUE
             || _.missing(this.colDef.type);
     }
 
@@ -392,14 +403,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pivotActive;
     }
 
-    public setMeasureActive(value: boolean): void {
-        if (this.measureActive !== value) {
-            this.measureActive = value;
+    public setValueActive(value: boolean): void {
+        if (this.aggregationActive !== value) {
+            this.aggregationActive = value;
             this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
         }
     }
 
-    public isMeasureActive(): boolean {
-        return this.measureActive;
+    public isValueActive(): boolean {
+        return this.aggregationActive;
     }
 }

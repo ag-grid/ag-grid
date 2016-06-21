@@ -56,6 +56,7 @@ export interface GridOptions {
     suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     rowModelType?: string;
+    pivotMode?: boolean;
     enableRangeSelection?: boolean;
     suppressEnterprise?: boolean;
     // enterprise only

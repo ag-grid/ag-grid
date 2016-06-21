@@ -30,7 +30,7 @@ export interface IAggFunc {
 
 export interface ColDef extends AbstractColDef {
 
-    /** The type of column, one of dimension, measure or none */
+    /** The type of column, one of dimension, value or none */
     type?: string;
 
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
