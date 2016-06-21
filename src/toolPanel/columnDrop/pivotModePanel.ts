@@ -22,18 +22,19 @@ export class PivotModePanel extends Component {
     private init(): void {
         this.instantiate(this.context);
 
-        this.addDestroyableEventListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onRbReduce.bind(this) );
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onReduceChanged.bind(this));
+        this.addDestroyableEventListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     }
     
-    private onRbReduce(): void {
+    private onBtPivotMode(): void {
         var newValue = this.cbPivotMode.isSelected();
         if (newValue !== this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(newValue);
         }
     }
     
-    private onReduceChanged(): void {
+    private onPivotModeChanged(): void {
         var pivotModeActive = this.columnController.isPivotMode();
         this.cbPivotMode.setSelected(pivotModeActive);
     }
