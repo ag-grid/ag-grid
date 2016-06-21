@@ -1,8 +1,8 @@
 <?php
 $key = "Fresh Theme";
-$pageTitle = "ag-Grid Fresh Theme";
-$pageDescription = "ag-Grid Fresh Theme";
-$pageKeyboards = "ag-Grid Fresh Theme";
+$pageTitle = "ag-Grid Fresh Theme Data Grid";
+$pageDescription = "ag-Grid Fresh Theme Data Grid";
+$pageKeyboards = "ag-Grid Fresh Theme Data Grid";
 include '../documentation-main/documentation_header.php';
 ?>
 

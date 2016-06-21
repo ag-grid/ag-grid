@@ -62,6 +62,8 @@
 
         <?php include 'home/demo-1.php'; ?>
 
+        <?php include 'home/themes-demo.php'; ?>
+
         <?php include 'home/testimonials-2.php'; ?>
 
         <?php include 'home/demo-2.php'; ?>
@@ -87,5 +89,6 @@
 <script inline src="example-file-browser/fileBrowser.js"></script>
 <script inline src="javascript-grid-viewport/mockServer.js"></script>
 <script inline src="javascript-grid-viewport/exampleViewport.js"></script>
+<script inline src="home/example-themes.js"></script>
 
 <?php include_once("includes/analytics.php"); ?>

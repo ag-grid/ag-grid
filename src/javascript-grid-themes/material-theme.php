@@ -1,8 +1,8 @@
 <?php
 $key = "Material Theme";
-$pageTitle = "ag-Grid Material Theme";
-$pageDescription = "ag-Grid Material Theme";
-$pageKeyboards = "ag-Grid Material Theme";
+$pageTitle = "ag-Grid Material Design Data Grid";
+$pageDescription = "ag-Grid Material Design Data Grid";
+$pageKeyboards = "ag-Grid Material Design Data Grid";
 include '../documentation-main/documentation_header.php';
 ?>
 
