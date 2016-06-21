@@ -298,6 +298,32 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-styling/index.php">Layout & Styling</a>
                 <?php } ?>
 
+                <?php if ($key == "Fresh Theme") { ?>
+                    <span class="sidebarLinkSelected"><li>ag-Fresh Theme</li></span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php"><li>Fresh Theme</li></a>
+                <?php } ?>
+                <?php if ($key == "Blue Theme") { ?>
+                    <span class="sidebarLinkSelected"><li>Blue Theme</li></span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/blue-theme.php"><li>Blue Theme</li></a>
+                <?php } ?>
+                <?php if ($key == "Dark Theme") { ?>
+                    <span class="sidebarLinkSelected"><li>Dark Theme</li></span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/dark-theme.php"><li>Dark Theme</li></a>
+                <?php } ?>
+                <?php if ($key == "Material Theme") { ?>
+                    <span class="sidebarLinkSelected"><li>Material Theme</li></span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/material-theme.php"><li>Material Theme</li></a>
+                <?php } ?>
+                <?php if ($key == "Bootstrap Theme") { ?>
+                    <span class="sidebarLinkSelected"><li>Bootstrap Theme</li></span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php"><li>Bootstrap Theme</li></a>
+                <?php } ?>
+
                 <?php if ($key == "Icons") { ?>
                     <span class="sidebarLinkSelected">Icons</span>
                 <?php } else { ?>

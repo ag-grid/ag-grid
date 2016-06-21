@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
     ag-Grid is designed to have it's look and feel derived from a theme.
 
     <p/>
-    Out of the box, three themes are provided, ag-fresh, ag-blue and ag-dark.
+    Out of the box, five themes are provided, ag-fresh, ag-blue, ag-dark, ag-material and ag-bootstrap.
     <p/>
     To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
@@ -29,8 +29,8 @@ include '../documentation-main/documentation_header.php';
     <a href="https://github.com/ceolter/angular-grid/tree/master/src/styles">https://github.com/ceolter/angular-grid/tree/master/src/styles</a>
 
     <p/>
-    This section does not provide an example of building a theme because two themes
-    already come with ag-Grid.
+    This section does not provide an example of building a theme as a number of themes
+    are already provided with ag-Grid - these can be used as a basis for any additional themes you may wish to create.
 
     <div class="bigTitle">When to Style via Themes</div>
 
