@@ -238,14 +238,14 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>
-                getMeasureColumns(),
-                removeMeasureColumn(colKey),
-                removeMeasureColumns(colKeys),
-                addMeasureColumn(colKey),
-                addMeasureColumns(colKeys)
+                getAggregationColumns(),
+                removeAggregationColumn(colKey),
+                removeAggregationColumns(colKeys),
+                addAggregationColumn(colKey),
+                addAggregationColumns(colKeys)
             </th>
             <td>
-                Methods for management of column measures (for aggregation when grouping or pivoting).
+                Methods for management of column aggregates (for aggregation when grouping or pivoting).
             </td>
         </tr>
     </table>
