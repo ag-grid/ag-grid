@@ -1,8 +1,8 @@
 <?php
 $key = "Blue Theme";
-$pageTitle = "ag-Grid Blue Theme";
-$pageDescription = "ag-Grid Blue Theme";
-$pageKeyboards = "ag-Grid Blue Theme";
+$pageTitle = "ag-Grid Blue Theme Data Grid";
+$pageDescription = "ag-Grid Blue Theme Data Grid";
+$pageKeyboards = "ag-Grid Blue Theme Data Grid";
 include '../documentation-main/documentation_header.php';
 ?>
 

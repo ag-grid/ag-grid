@@ -299,7 +299,7 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Fresh Theme") { ?>
-                    <span class="sidebarLinkSelected"><li>ag-Fresh Theme</li></span>
+                    <span class="sidebarLinkSelected"><li>Fresh Theme</li></span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php"><li>Fresh Theme</li></a>
                 <?php } ?>
