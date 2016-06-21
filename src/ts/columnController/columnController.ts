@@ -55,6 +55,7 @@ export class ColumnApi {
     public setColumnAggFunct(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunc(column, aggFunc); }
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
     public setPivotMode(pivotMode: boolean): void { this._columnController.setPivotMode(pivotMode); }
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column|ColDef|String): Column { return this._columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     public getAggregationColumns(): Column[] { return this._columnController.getAggregationColumns(); }
     public removeAggregationColumn(colKey: (Column|ColDef|String)): void { this._columnController.removeValueColumn(colKey); }
@@ -207,6 +208,31 @@ export class ColumnController {
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, event);
     }
 
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column|ColDef|String): Column {
+
+        if (!this.secondaryColumnsPresent) {
+            return null;
+        }
+
+        var valueColumnToFind = this.getOriginalColumn(valueColKey);
+
+        var foundColumn: Column;
+        this.secondaryColumns.forEach( column => {
+
+            var thisPivotKeys = column.getColDef().pivotKeys;
+            var pivotValueColumn = column.getColDef().pivotValueColumn;
+
+            var pivotKeyMatches = _.compareArrays(thisPivotKeys, pivotKeys);
+            var pivotValueMatches = pivotValueColumn === valueColumnToFind;
+
+            if (pivotKeyMatches && pivotValueMatches) {
+                foundColumn = column;
+            }
+        });
+
+        return foundColumn;
+    }
+    
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
@@ -1025,14 +1051,14 @@ export class ColumnController {
         }
 
         // only columns with aggregation active can have aggregations
-        var pivotMeasureColumn = column.getColDef().pivotMeasureColumn;
-        var pivotActiveOnThisColumn = _.exists(pivotMeasureColumn);
+        var pivotValueColumn = column.getColDef().pivotValueColumn;
+        var pivotActiveOnThisColumn = _.exists(pivotValueColumn);
         var aggFunc: string | IAggFunc = null;
         var aggFuncFound: boolean;
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
-            aggFunc = pivotMeasureColumn.getAggFunc();
+            aggFunc = pivotValueColumn.getAggFunc();
             aggFuncFound = true;
         } else {
             var measureActive = column.isValueActive();
