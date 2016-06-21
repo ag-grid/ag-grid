@@ -229,7 +229,7 @@ export class EnterpriseMenu {
         this.context.wireBean(cMenuList);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        var columnIsAlreadyAggValue = this.column.isAggregationActive();
+        var columnIsAlreadyAggValue = this.column.isValueActive();
 
         var funcNames = this.aggFuncService.getFuncNames();
 
@@ -237,8 +237,8 @@ export class EnterpriseMenu {
             cMenuList.addItem({
                 name: localeTextFunc(funcName, funcName),
                 action: ()=> {
-                    this.columnController.setColumnAggFunction(this.column, funcName);
-                    this.columnController.addAggregationColumn(this.column);
+                    this.columnController.setColumnAggFunc(this.column, funcName);
+                    this.columnController.addValueColumn(this.column);
                 },
                 checked: columnIsAlreadyAggValue && this.column.getAggFunc() === funcName
             });

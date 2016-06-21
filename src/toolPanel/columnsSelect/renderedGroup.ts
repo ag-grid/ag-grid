@@ -157,7 +157,7 @@ export class RenderedGroup extends Component {
             if (column.isRowGroupActive()) {
                 columnsToUnGroup.push(column);
             }
-            if (column.isAggregationActive()) {
+            if (column.isValueActive()) {
                 columnsToUnValue.push(column);
             }
         });
@@ -169,7 +169,7 @@ export class RenderedGroup extends Component {
             this.columnController.removeRowGroupColumns(columnsToUnGroup);
         }
         if (columnsToUnValue.length>0) {
-            this.columnController.removeAggregationColumns(columnsToUnValue);
+            this.columnController.removeValueColumns(columnsToUnValue);
         }
     }
 
@@ -180,7 +180,7 @@ export class RenderedGroup extends Component {
 
         columns.forEach( column => {
             if (column.isMeasure()) {
-                if (!column.isAggregationActive()) {
+                if (!column.isValueActive()) {
                     columnsToAggregate.push(column);
                 }
             } else {
@@ -191,7 +191,7 @@ export class RenderedGroup extends Component {
         });
 
         if (columnsToAggregate.length>0) {
-            this.columnController.addAggregationColumns(columnsToAggregate);
+            this.columnController.addValueColumns(columnsToAggregate);
         }
         if (columnsToGroup.length>0) {
             this.columnController.addRowGroupColumns(columnsToGroup);
@@ -231,7 +231,7 @@ export class RenderedGroup extends Component {
         if (columnsReduced) {
             var pivoted = column.isPivotActive();
             var grouped = column.isRowGroupActive();
-            var aggregated = column.isAggregationActive();
+            var aggregated = column.isValueActive();
             return pivoted || grouped || aggregated;
         } else {
             return column.isVisible();
