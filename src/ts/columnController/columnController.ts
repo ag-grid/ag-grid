@@ -794,10 +794,13 @@ export class ColumnController {
         return this.displayedRightColumns.length > 0;
     }
 
-    public getAllColumnsIncludingAuto(): Column[] {
+    public getOriginalAndSecondaryAndAutoColumns(): Column[] {
         var result = this.originalColumns.slice(0);
         if (this.groupAutoColumnActive) {
             result.push(this.groupAutoColumn);
+        }
+        if (this.secondaryColumnsPresent) {
+            this.secondaryColumns.forEach( column => result.push(column) );
         }
         return result;
     }
@@ -1017,6 +1020,10 @@ export class ColumnController {
     }
 
     private wrapHeaderNameWithAggFunc(column: Column, headerName: string): string {
+        if (this.gridOptionsWrapper.isSuppressAggFuncInHeader()) {
+            return headerName;
+        }
+
         // only columns with aggregation active can have aggregations
         var pivotMeasureColumn = column.getColDef().pivotMeasureColumn;
         var pivotActiveOnThisColumn = _.exists(pivotMeasureColumn);
