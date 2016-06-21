@@ -140,7 +140,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             || _.missing(this.colDef.type);
     }
 
-    public isMeasure(): boolean {
+    public isValue(): boolean {
         return this.colDef.type === Column.TYPE_VALUE
             || _.missing(this.colDef.type);
     }
