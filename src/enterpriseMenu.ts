@@ -337,10 +337,13 @@ export class EnterpriseMenu {
     private getDefaultMenuOptions(): string[] {
         var result: string[] = [];
 
-        var doingGrouping = this.columnController.getRowGroupColumns().length>0;
+        var rowGroupCount = this.columnController.getRowGroupColumns().length;
+        var doingGrouping = rowGroupCount > 0;
+
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
         var columnIsValue = this.column.isValue();
         var isPrimary = this.column.isPrimary();
+        var pivotModeOn = this.columnController.isPivotMode();
 
         result.push('pinSubMenu');
 
@@ -371,7 +374,12 @@ export class EnterpriseMenu {
         result.push('toolPanel');
 
         // only add grouping expand/collapse if grouping
-        if (doingGrouping) {
+
+        // if pivoting, we only have expandable groups if grouping by 2 or more columns
+        // as the lowest level group is not expandable while pivoting.
+        // if not pivoting, then any active row group can be expanded.
+        var allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+        if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');
         }

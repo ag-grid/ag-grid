@@ -1,23 +1,26 @@
-import {Utils} from "ag-grid/main";
-import {Bean} from "ag-grid/main";
-import {IRangeController} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {LoggerFactory} from "ag-grid/main";
-import {GridPanel} from "ag-grid/main";
-import {IRowModel} from "ag-grid/main";
-import {EventService} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {RowRenderer} from "ag-grid/main";
-import {FocusedCellController} from "ag-grid/main";
-import {MouseEventService} from "ag-grid/main";
-import {Logger} from "ag-grid/main";
-import {RangeSelection} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
-import {Events} from "ag-grid/main";
-import {GridCell} from "ag-grid/main";
-import {AddRangeSelectionParams} from "ag-grid/main";
-import {GridRow} from "ag-grid/main";
-import {Column} from "ag-grid/main";
+import {
+    Utils,
+    Bean,
+    IRangeController,
+    Autowired,
+    LoggerFactory,
+    GridPanel,
+    IRowModel,
+    EventService,
+    ColumnController,
+    RowRenderer,
+    FocusedCellController,
+    MouseEventService,
+    Logger,
+    RangeSelection,
+    PostConstruct,
+    Events,
+    GridCell,
+    AddRangeSelectionParams,
+    GridRow,
+    Column,
+    GridOptionsWrapper
+} from "ag-grid/main";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {
@@ -30,6 +33,7 @@ export class RangeController implements IRangeController {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private logger: Logger;
 
@@ -55,6 +59,8 @@ export class RangeController implements IRangeController {
     }
 
     public setRangeToCell(cell: GridCell): void {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+
         var columns = this.updateSelectedColumns(cell.column, cell.column);
         if (!columns) { return; }
 
@@ -70,11 +76,15 @@ export class RangeController implements IRangeController {
     }
 
     public setRange(rangeSelection: AddRangeSelectionParams): void {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+
         this.cellRanges = [];
         this.addRange(rangeSelection);
     }
 
     public addRange(rangeSelection: AddRangeSelectionParams): void {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+
         var columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
         var columnEnd = this.columnController.getOriginalColumn(rangeSelection.columnEnd);
         if (!columnStart || !columnEnd) { return; }
@@ -182,6 +192,7 @@ export class RangeController implements IRangeController {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         // ctrlKey for windows, metaKey for Apple
         var multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
