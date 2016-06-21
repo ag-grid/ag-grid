@@ -238,6 +238,15 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>
+                isPivotMode(), setPivotMode(mode)
+            </th>
+            <td>
+                Methods to get / set the pivot mode.
+            </td>
+        </tr>
+        
+        <tr>
+            <th>
                 getSecondaryPivotColumn(pivotKeys, valueColId)
             </th>
             <td>

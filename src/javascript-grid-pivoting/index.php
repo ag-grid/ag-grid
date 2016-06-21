@@ -149,8 +149,9 @@ include '../documentation-main/documentation_header.php';
         Sorting can be on primary or secondary columns, depending on what is displayed inside the grid.
     </p>
     <p>
-        <b>Get / Set State</b><br>
-        what is the story with state?
+        <b>Column State</b><br>
+        Storing and restoring column state view the <i>columnApi.getColumnState()</i> and
+        <i>columnApi.setColumnState()</i> methods work solely on primary columns.
     </p>
     
     <h2>Looking up Secondary Columns</h2>
@@ -206,6 +207,22 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
     </p>
     
     <show-example example="exampleSortingWithPivot"></show-example>
+
+    <h2>Saving & Restoring Column State with Pivot</h2>
+
+    <p>
+        Saving and restoring column state works exclusively on primary columns. This makes sense as secondary
+        columns are produced from primary columns and row data. So assuming the row data and primary column
+        state is the same, the same secondary columns will result.
+    </p>
+
+    <p>
+        Below shows some examples of saving and restoring state with pivot in mind. Note that <i>pivotMode</i>
+        is not stored as part of the column state. If <i>pivotMode</i> is important to your columns state, it
+        needs to be stored separately.
+    </p>
+
+    <show-example example="exampleColumnStateWithPivot"></show-example>
 
 </div>
 
