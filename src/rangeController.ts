@@ -86,7 +86,7 @@ export class RangeController implements IRangeController {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         var columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
-        var columnEnd = this.columnController.getOriginalColumn(rangeSelection.columnEnd);
+        var columnEnd = this.columnController.getPrimaryColumn(rangeSelection.columnEnd);
         if (!columnStart || !columnEnd) { return; }
 
         var columns = this.updateSelectedColumns(columnStart, columnEnd);

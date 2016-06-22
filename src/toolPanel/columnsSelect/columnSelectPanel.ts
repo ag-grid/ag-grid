@@ -44,7 +44,7 @@ export class ColumnSelectPanel extends Component {
 
     public onColumnsChanged(): void {
         this.destroyAllRenderedElements();
-        this.columnTree = this.columnController.getOriginalColumnTree();
+        this.columnTree = this.columnController.getPrimaryColumnTree();
         this.recursivelyRenderComponents(this.columnTree, 0);
     }
 
