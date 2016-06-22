@@ -71,7 +71,7 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
-    aggFuncs: {[key: string]: IAggFunc};
+    aggFuncs?: {[key: string]: IAggFunc};
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
