@@ -1,4 +1,4 @@
-export * from './dist/lib/aggregation/aggregationFunctionService';
+export * from './dist/lib/aggregation/aggFuncService';
 
 export * from './dist/lib/rendering/richSelect/richSelectCellEditor';
 export * from './dist/lib/rendering/richSelect/richSelectRow';
