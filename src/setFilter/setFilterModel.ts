@@ -112,6 +112,11 @@ export class SetFilterModel {
         var uniqueCheck = <any>{};
         var result = <any>[];
 
+        if (!this.rowModel.forEachLeafNode) {
+            console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            return [];
+        }
+
         this.rowModel.forEachLeafNode( (node: any)=> {
             if (!node.group) {
                 var value = this.valueGetter(node);
