@@ -34,6 +34,9 @@ export class Events {
     /** One or more columns was resized. If just one, the column in the event is set. */
     public static EVENT_COLUMN_RESIZED = 'columnResized';
 
+    /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
+    public static EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
+    
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
 

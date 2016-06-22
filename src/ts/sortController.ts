@@ -45,7 +45,7 @@ export class SortController {
     }
 
     private clearSortBarThisColumn(columnToSkip: Column): void {
-        this.columnController.getOriginalAndSecondaryAndAutoColumns().forEach( (columnToClear: Column)=> {
+        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach( (columnToClear: Column)=> {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
                 columnToClear.setSort(null);
@@ -108,7 +108,7 @@ export class SortController {
         // first up, clear any previous sort
         var sortModelProvided = sortModel && sortModel.length > 0;
 
-        var allColumnsIncludingAuto = this.columnController.getOriginalAndSecondaryAndAutoColumns();
+        var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         allColumnsIncludingAuto.forEach( (column: Column)=> {
             var sortForCol: any = null;
             var sortedAt = -1;
@@ -138,7 +138,7 @@ export class SortController {
 
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
-        var allColumnsIncludingAuto = this.columnController.getOriginalAndSecondaryAndAutoColumns();
+        var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         var columnsWithSorting = <Column[]> _.filter(allColumnsIncludingAuto, (column:Column) => { return !!column.getSort();} );
 
         // put the columns in order of which one got sorted first

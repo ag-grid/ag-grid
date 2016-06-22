@@ -221,22 +221,11 @@ export class GridPanel {
     }
 
     private addEventListeners(): void {
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnsChanged.bind(this));
-        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.onColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
         this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.sizeHeaderAndBody.bind(this));
-
-        this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.sizeHeaderAndBody.bind(this));
-        this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.onColumnsChanged.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
     }
@@ -772,20 +761,14 @@ export class GridPanel {
         return false;
     }
 
-    public onColumnsChanged(event: ColumnChangeEvent) {
-
-        if (event.isContainerWidthImpacted()) {
-            // this.setWidthsOfContainers();
-        }
+    public onColumnResized(): void {
         this.setWidthsOfContainers();
+    }
 
-        if (event.isPinnedPanelVisibilityImpacted()) {
-            this.showPinnedColContainersIfNeeded();
-        }
-
-        if (event.getType()===Events.EVENT_COLUMN_EVERYTHING_CHANGED) {
-            this.sizeHeaderAndBody();
-        }
+    public onDisplayedColumnsChanged(): void {
+        this.setWidthsOfContainers();
+        this.showPinnedColContainersIfNeeded();
+        this.sizeHeaderAndBody();
     }
 
     private setWidthsOfContainers(): void {

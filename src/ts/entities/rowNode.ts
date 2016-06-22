@@ -103,7 +103,7 @@ export class RowNode {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
-        var column = this.columnController.getOriginalColumn(colKey);
+        var column = this.columnController.getPrimaryColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         var event = {column: column, newValue: newValue};
         this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);

@@ -45,15 +45,8 @@ export class HeaderRenderer {
         // small compared to the body, so the cpu cost is low in comparison. it does mean we don't get any
         // animations.
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_HEADER_HEIGHT_CHANGED, this.refreshHeader.bind(this));
-        this.eventService.addEventListener(Events.EVENT_PIVOT_VALUE_CHANGED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshHeader.bind(this));
+
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));

@@ -119,28 +119,18 @@ export class RenderedRow {
     }
 
     private addColumnListener(): void {
-        var columnListener = this.onColumnChanged.bind(this);
+        var columnListener = this.onDisplayedColumnsChanged.bind(this);
 
-        this.mainEventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_MOVED, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, columnListener);
-        this.mainEventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, columnListener);
-        this.mainEventService.addEventListener(Events.EVENT_COLUMN_PINNED, columnListener);
+        this.mainEventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.mainEventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
 
         this.destroyFunctions.push( () => {
-            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_GROUP_OPENED, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_MOVED, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, columnListener);
-            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, columnListener);
-            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_PINNED, columnListener);
+            this.mainEventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
         });
     }
 
-    private onColumnChanged(event: ColumnChangeEvent): void {
+    private onDisplayedColumnsChanged(event: ColumnChangeEvent): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (this.rowIsHeaderThatSpans) {
             var columnPinned = event.getType() === Events.EVENT_COLUMN_PINNED;
