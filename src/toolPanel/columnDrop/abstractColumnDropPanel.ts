@@ -1,20 +1,15 @@
 import {
     Utils,
     Component,
-    Autowired,
-    ColumnController,
     EventService,
     Context,
     LoggerFactory,
     DragAndDropService,
-    GridPanel,
     Logger,
     DropTarget,
-    PostConstruct,
     Events,
     DraggingEvent,
-    Column,
-    DragSource
+    Column
 } from "ag-grid/main";
 import {ColumnComponent} from "./columnComponent";
 
