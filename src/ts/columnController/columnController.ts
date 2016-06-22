@@ -781,8 +781,6 @@ export class ColumnController {
             }
         });
 
-        if (updatedColumns.length===0) {return;}
-
         this.updateDisplayedColumns();
         var event = createEvent();
 
@@ -1298,9 +1296,6 @@ export class ColumnController {
         this.updateGroupsAndDisplayedColumns();
 
         this.setFirstRightAndLastLeftPinned();
-
-        // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
-        this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
     }
 
     public isSecondaryColumnsPresent(): boolean {
@@ -1350,6 +1345,8 @@ export class ColumnController {
     private updateGroupsAndDisplayedColumns() {
         this.updateGroups();
         this.updateDisplayedColumnsFromTrees();
+        // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
+        this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
     }
 
     private updateDisplayedColumnsFromTrees() {
