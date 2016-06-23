@@ -355,7 +355,7 @@ export class ColumnController {
         return this.getWidthOfColsInList(this.displayedRightColumns);
     }
 
-    public addRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+    public addRowGroupColumns(keys: (Column|ColDef|String)[], columnsToIncludeInEvent?: Column[]): void {
         this.actionOnPrimaryColumns(keys, (column: Column)=> {
             if (!column.isRowGroupActive()) {
                 this.rowGroupColumns.push(column);
@@ -366,13 +366,17 @@ export class ColumnController {
             }
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
-        });
+        }, columnsToIncludeInEvent);
     }
 
     public setRowGroupColumns(keys: (Column|ColDef|String)[]): void {
-        this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
+        var updatedColumns: Column[] = [];
+        this.rowGroupColumns.forEach( column => {
+            column.setRowGroupActive(false);
+            updatedColumns.push(column);
+        } );
         this.rowGroupColumns.length = 0;
-        this.addRowGroupColumns(keys);
+        this.addRowGroupColumns(keys, updatedColumns);
     }
 
     public addRowGroupColumn(key: Column|ColDef|String): void {
@@ -397,7 +401,7 @@ export class ColumnController {
         this.removeRowGroupColumns([key]);
     }
 
-    public addPivotColumns(keys: (Column|ColDef|String)[]): void {
+    public addPivotColumns(keys: (Column|ColDef|String)[], columnsToIncludeInEvent?: Column[]): void {
         this.actionOnPrimaryColumns(keys, (column: Column)=> {
             if (!column.isPivotActive()) {
                 this.pivotColumns.push(column);
@@ -408,13 +412,17 @@ export class ColumnController {
             }
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
-        });
+        }, columnsToIncludeInEvent);
     }
 
     public setPivotColumns(keys: (Column|ColDef|String)[]): void {
-        this.pivotColumns.forEach( column => column.setPivotActive(false) );
+        var updatedColumns: Column[] = [];
+        this.pivotColumns.forEach( column => {
+            column.setPivotActive(false);
+            updatedColumns.push(column);
+        } );
         this.pivotColumns.length = 0;
-        this.addPivotColumns(keys);
+        this.addPivotColumns(keys, updatedColumns);
     }
 
     public addPivotColumn(key: Column|ColDef|String): void {
@@ -476,15 +484,6 @@ export class ColumnController {
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
         });
-    }
-
-    private dispatchEventWithColumns(eventName: string, columns: Column[]): void {
-        var event = new ColumnChangeEvent(eventName)
-            .withColumns(columns);
-        if (columns.length===1) {
-            event.withColumn(columns[0]);
-        }
-        this.eventService.dispatchEvent(eventName, event);
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths
@@ -743,14 +742,16 @@ export class ColumnController {
 
     private actionOnGridColumns(keys: (Column|ColDef|String)[],
                                 action: (column:Column) => boolean,
-                                createEvent: ()=>ColumnChangeEvent): void {
-        this.actionOnColumns(keys, this.getGridColumn.bind(this), action, createEvent);
+                                createEvent: ()=>ColumnChangeEvent,
+                                columnsToIncludeInEvent?: Column[]): void {
+        this.actionOnColumns(keys, this.getGridColumn.bind(this), action, createEvent, columnsToIncludeInEvent);
     }
 
     private actionOnPrimaryColumns(keys: (Column|ColDef|String)[],
                                    action: (column:Column) => boolean,
-                                   createEvent: ()=>ColumnChangeEvent): void {
-        this.actionOnColumns(keys, this.getPrimaryColumn.bind(this), action, createEvent);
+                                   createEvent: ()=>ColumnChangeEvent,
+                                   columnsToIncludeInEvent?: Column[]): void {
+        this.actionOnColumns(keys, this.getPrimaryColumn.bind(this), action, createEvent, columnsToIncludeInEvent);
     }
 
     // does an action on a set of columns. provides common functionality for looking up the
@@ -764,9 +765,10 @@ export class ColumnController {
                             // and won't be included in the event
                             action: (column:Column) => boolean,
                             // should return back a column event of the right type
-                            createEvent: ()=>ColumnChangeEvent): void {
+                            createEvent: ()=>ColumnChangeEvent,
+                            columnsToIncludeInEvent: Column[]): void {
 
-        if (!keys || keys.length===0) { return; }
+        if (_.missingOrEmpty(keys) && _.missingOrEmpty(columnsToIncludeInEvent)) { return; }
 
         var updatedColumns: Column[] = [];
 
@@ -781,7 +783,15 @@ export class ColumnController {
             }
         });
 
-        if (updatedColumns.length===0) { return; }
+        if (updatedColumns.length===0 && _.missingOrEmpty(columnsToIncludeInEvent)) { return; }
+
+        if (_.existsAndNotEmpty(columnsToIncludeInEvent)) {
+            columnsToIncludeInEvent.forEach( column => {
+                if (updatedColumns.indexOf(column) < 0) {
+                    updatedColumns.push(column);
+                }
+            });
+        }
 
         this.updateDisplayedColumns();
         var event = createEvent();
