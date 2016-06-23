@@ -38,6 +38,7 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     forEachNode(callback: Function): void;
     forEachNodeAfterFilter(callback: Function): void;
     forEachNodeAfterFilterAndSort(callback: Function): void;
+    forEachPivotNode(callback: Function): void;
     private recursivelyWalkNodesAndCallback(nodes, callback, recursionType, index);
     doAggregate(): void;
     expandOrCollapseAll(expand: boolean): void;

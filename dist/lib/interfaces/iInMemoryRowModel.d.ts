@@ -18,6 +18,8 @@ export interface IInMemoryRowModel extends IRowModel {
     /** InMemory model only. */
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode) => void): void;
     /** InMemory model only. */
+    forEachPivotNode(callback: (rowNode: RowNode) => void): void;
+    /** InMemory model only. */
     expandOrCollapseAll(expand: boolean): void;
     /** InMemory model only. */
     setRowData(rows: any[], refresh: boolean, firstId?: number): void;

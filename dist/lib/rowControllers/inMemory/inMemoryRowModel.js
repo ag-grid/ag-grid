@@ -28,6 +28,7 @@ var RecursionType;
     RecursionType[RecursionType["Normal"] = 0] = "Normal";
     RecursionType[RecursionType["AfterFilter"] = 1] = "AfterFilter";
     RecursionType[RecursionType["AfterFilterAndSort"] = 2] = "AfterFilterAndSort";
+    RecursionType[RecursionType["PivotNodes"] = 3] = "PivotNodes";
 })(RecursionType || (RecursionType = {}));
 ;
 var InMemoryRowModel = (function () {
@@ -43,6 +44,7 @@ var InMemoryRowModel = (function () {
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_PIVOT));
         this.rootNode = new rowNode_1.RowNode();
         this.rootNode.group = true;
+        this.rootNode.level = -1;
         this.rootNode.allLeafChildren = [];
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
@@ -194,6 +196,9 @@ var InMemoryRowModel = (function () {
     InMemoryRowModel.prototype.forEachNodeAfterFilterAndSort = function (callback) {
         this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
     };
+    InMemoryRowModel.prototype.forEachPivotNode = function (callback) {
+        this.recursivelyWalkNodesAndCallback([this.rootNode], callback, RecursionType.PivotNodes, 0);
+    };
     // iterates through each item in memory, and calls the callback function
     // nodes - the rowNodes to traverse
     // callback - the user provided callback
@@ -217,6 +222,10 @@ var InMemoryRowModel = (function () {
                             break;
                         case RecursionType.AfterFilterAndSort:
                             nodeChildren = node.childrenAfterSort;
+                            break;
+                        case RecursionType.PivotNodes:
+                            // for pivot, we don't go below leafGroup levels
+                            nodeChildren = !node.leafGroup ? node.childrenAfterSort : null;
                             break;
                     }
                     if (nodeChildren) {
