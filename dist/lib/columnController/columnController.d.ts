@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.0
+// Type definitions for ag-grid v5.0.0-alpha.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -128,12 +128,12 @@ export declare class ColumnController {
     getAllDisplayedColumns(): Column[];
     getPinnedLeftContainerWidth(): number;
     getPinnedRightContainerWidth(): number;
-    addRowGroupColumns(keys: (Column | ColDef | String)[]): void;
+    addRowGroupColumns(keys: (Column | ColDef | String)[], columnsToIncludeInEvent?: Column[]): void;
     setRowGroupColumns(keys: (Column | ColDef | String)[]): void;
     addRowGroupColumn(key: Column | ColDef | String): void;
     removeRowGroupColumns(keys: (Column | ColDef | String)[]): void;
     removeRowGroupColumn(key: Column | ColDef | String): void;
-    addPivotColumns(keys: (Column | ColDef | String)[]): void;
+    addPivotColumns(keys: (Column | ColDef | String)[], columnsToIncludeInEvent?: Column[]): void;
     setPivotColumns(keys: (Column | ColDef | String)[]): void;
     addPivotColumn(key: Column | ColDef | String): void;
     removePivotColumns(keys: (Column | ColDef | String)[]): void;
@@ -142,7 +142,6 @@ export declare class ColumnController {
     addValueColumn(colKey: (Column | ColDef | String)): void;
     removeValueColumn(colKey: (Column | ColDef | String)): void;
     removeValueColumns(keys: (Column | ColDef | String)[]): void;
-    private dispatchEventWithColumns(eventName, columns);
     private normaliseColumnWidth(column, newWidth);
     private getPrimaryOrGridColumn(key);
     setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean): void;
@@ -169,9 +168,9 @@ export declare class ColumnController {
     setColumnsVisible(keys: (Column | ColDef | String)[], visible: boolean): void;
     setColumnPinned(key: Column | ColDef | String, pinned: string | boolean): void;
     setColumnsPinned(keys: (Column | ColDef | String)[], pinned: string | boolean): void;
-    private actionOnGridColumns(keys, action, createEvent);
-    private actionOnPrimaryColumns(keys, action, createEvent);
-    private actionOnColumns(keys, columnLookup, action, createEvent);
+    private actionOnGridColumns(keys, action, createEvent, columnsToIncludeInEvent?);
+    private actionOnPrimaryColumns(keys, action, createEvent, columnsToIncludeInEvent?);
+    private actionOnColumns(keys, columnLookup, action, createEvent, columnsToIncludeInEvent);
     getDisplayedColBefore(col: any): Column;
     getDisplayedColAfter(col: Column): Column;
     isPinningLeft(): boolean;
