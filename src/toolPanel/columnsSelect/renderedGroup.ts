@@ -179,7 +179,7 @@ export class RenderedGroup extends Component {
         var columnsToGroup: Column[] = [];
 
         columns.forEach( column => {
-            if (column.isValue()) {
+            if (column.isAllowValue()) {
                 if (!column.isValueActive()) {
                     columnsToAggregate.push(column);
                 }

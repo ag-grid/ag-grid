@@ -341,7 +341,8 @@ export class EnterpriseMenu {
         var doingGrouping = rowGroupCount > 0;
 
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-        var columnIsValue = this.column.isValue();
+        var allowValue = this.column.isAllowValue();
+        var allowRowGroup = this.column.isAllowRowGroup();
         var isPrimary = this.column.isPrimary();
         var pivotModeOn = this.columnController.isPivotMode();
 
@@ -349,7 +350,7 @@ export class EnterpriseMenu {
 
         var allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
-            (isPrimary && doingGrouping && columnIsValue)
+            (isPrimary && doingGrouping && allowValue)
             // secondary columns can always have aggValue, as it means it's a pivot value column
             || !isPrimary;
 
@@ -362,7 +363,7 @@ export class EnterpriseMenu {
         result.push('autoSizeAll');
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
-        if (this.column.isDimension() && this.column.isPrimary()) {
+        if (allowRowGroup && this.column.isPrimary()) {
             if (groupedByThisColumn) {
                 result.push('rowUnGroup');
             } else {

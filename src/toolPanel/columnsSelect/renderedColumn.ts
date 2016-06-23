@@ -12,6 +12,7 @@ import {
     QuerySelector,
     PostConstruct,
     EventService,
+    Utils,
     AgCheckbox,
     DragSource
 } from "ag-grid/main";
@@ -23,6 +24,7 @@ export class RenderedColumn extends Component {
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
         '  <span class="ag-column-select-indent"></span>' +
+        '  <span class="ag-column-select-icon"></span>' +
         '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '  <span class="ag-column-select-label"></span>' +
         '</div>';
@@ -37,6 +39,7 @@ export class RenderedColumn extends Component {
     @QuerySelector('.ag-column-select-label') private eText: HTMLElement;
     @QuerySelector('.ag-column-select-indent') private eIndent: HTMLElement;
     @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
+    @QuerySelector('.ag-column-select-icon') private eIcon: HTMLElement;
 
     private column: Column;
     private columnDept: number;
@@ -61,6 +64,8 @@ export class RenderedColumn extends Component {
 
         this.eIndent.style.width = (this.columnDept * 10) + 'px';
 
+        // this.loadIcon();
+
         if (this.allowDragging) {
             this.addDragSource();
         }
@@ -77,6 +82,28 @@ export class RenderedColumn extends Component {
 
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
+    }
+
+    private loadIcon(): void {
+        // if (this.column.isAllowRowGroup()) {
+        //     this.eIcon.appendChild(Utils.createIconNoSpan('columnRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon));
+        // } else if (this.column.isAllowPivot()) {
+        //     this.eIcon.appendChild(Utils.createIconNoSpan('columnPivot', this.gridOptionsWrapper, null, svgFactory.createPivotIcon));
+        // } else if (this.column.isAllowValue()) {
+        //     this.eIcon.appendChild(Utils.createIconNoSpan('columnValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon));
+        // } else {
+        //     this.eIcon.appendChild(Utils.createIconNoSpan('columns', this.gridOptionsWrapper, null, svgFactory.createColumnIcon));
+        // }
+
+        // if (this.column.isAllowRowGroup()) {
+        //     this.eIcon.innerHTML = 'G';
+        // } else if (this.column.isAllowPivot()) {
+        //     this.eIcon.innerHTML = 'P';
+        // } else if (this.column.isAllowValue()) {
+        //     this.eIcon.innerHTML = 'V';
+        // } else {
+        //     this.eIcon.innerHTML = '-';
+        // }
     }
 
     private onClick(): void {
@@ -124,7 +151,7 @@ export class RenderedColumn extends Component {
     private actionChecked(): void {
         // what we do depends on the reduce state
         if (this.columnController.isPivotMode()) {
-            if (this.column.isValue()) {
+            if (this.column.isAllowValue()) {
                 if (!this.column.isValueActive()) {
                     this.columnController.addValueColumn(this.column);
                 }

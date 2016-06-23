@@ -53,7 +53,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column:Column):boolean {
-        var columnGroupable = column.isDimension();
+        var columnGroupable = column.isAllowRowGroup();
         var columnNotAlreadyGrouped = !column.isRowGroupActive();
         return columnGroupable && columnNotAlreadyGrouped;
     }
