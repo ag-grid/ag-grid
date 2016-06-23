@@ -781,6 +781,8 @@ export class ColumnController {
             }
         });
 
+        if (updatedColumns.length===0) { return; }
+
         this.updateDisplayedColumns();
         var event = createEvent();
 
@@ -1526,7 +1528,6 @@ export class ColumnController {
                             return null;
                         }
                     },
-                    type: 'none',
                     cellRenderer: 'group'
                 };
             }

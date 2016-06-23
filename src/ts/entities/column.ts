@@ -135,16 +135,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.primary;
     }
     
-    public isDimension(): boolean {
-        return this.colDef.type === Column.TYPE_DIMENSION
-            || _.missing(this.colDef.type);
-    }
-
-    public isValue(): boolean {
-        return this.colDef.type === Column.TYPE_VALUE
-            || _.missing(this.colDef.type);
-    }
-
     public isFieldContainsDots(): boolean {
         return this.fieldContainsDots;
     }
@@ -412,5 +402,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public isValueActive(): boolean {
         return this.aggregationActive;
+    }
+
+    public isAllowPivot(): boolean {
+        return this.colDef.enablePivot === true;
+    }
+
+    public isAllowValue(): boolean {
+        return this.colDef.enableValue === true;
+    }
+
+    public isAllowRowGroup(): boolean {
+        return this.colDef.enableRowGroup === true;
     }
 }

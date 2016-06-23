@@ -30,9 +30,6 @@ export interface IAggFunc {
 
 export interface ColDef extends AbstractColDef {
 
-    /** The type of column, one of dimension, value or none */
-    type?: string;
-
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc. */
@@ -147,11 +144,14 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
 
-    /** Set to true if you don't want to be able to group by this column */
-    // suppressRowGroup?: boolean;
+    /** If true, GUI will allow adding this columns as a row group */
+    enableRowGroup?: boolean;
 
-    /** Set to true if you don't want to be able to aggregate by this column */
-    // suppressAggregation?: boolean;
+    /** If true, GUI will allow adding this columns as a pivot */
+    enablePivot?: boolean;
+
+    /** If true, GUI will allow adding this columns as a value */
+    enableValue?: boolean;
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | (Function);
