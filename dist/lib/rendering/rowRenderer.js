@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,29 +41,30 @@ var RowRenderer = (function () {
         this.renderedRows = {};
         this.renderedTopFloatingRows = [];
         this.renderedBottomFloatingRows = [];
+        this.destroyFunctions = [];
     }
     RowRenderer.prototype.agWire = function (loggerFactory) {
         this.logger = this.loggerFactory.create('RowRenderer');
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     };
     RowRenderer.prototype.init = function () {
+        var _this = this;
         this.getContainersFromGridPanel();
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.onColumnEvent.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnEvent.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnEvent.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.onColumnEvent.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnEvent.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, this.refreshView.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.refreshView.bind(this, null));
-        //this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, this.refreshView.bind(this, null));
-        //this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshView.bind(this, null));
-        //this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, this.refreshView.bind(this, null));
+        var onColumnEventBound = this.onColumnEvent.bind(this);
+        var refreshViewBound = this.refreshView.bind(this);
+        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, onColumnEventBound);
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, onColumnEventBound);
+        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewBound);
+        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewBound);
+        this.destroyFunctions.push(function () {
+            _this.eventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, onColumnEventBound);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewBound);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewBound);
+        });
         this.refreshView();
     };
     RowRenderer.prototype.onColumnEvent = function (event) {
-        if (event.isContainerWidthImpacted()) {
-            this.setMainRowWidths();
-        }
+        this.setMainRowWidths();
     };
     RowRenderer.prototype.getContainersFromGridPanel = function () {
         this.eBodyContainer = this.gridPanel.getBodyContainer();
@@ -235,6 +236,7 @@ var RowRenderer = (function () {
         this.drawVirtualRows();
     };
     RowRenderer.prototype.destroy = function () {
+        this.destroyFunctions.forEach(function (func) { return func(); });
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRow(rowsToRemove);
     };

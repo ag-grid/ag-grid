@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,7 @@ var ValueService = (function () {
         this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.userProvidedTheGroups = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
         this.initialised = true;
     };
     ValueService.prototype.getValue = function (column, node) {
@@ -47,7 +48,7 @@ var ValueService = (function () {
         // if there is a value getter, this gets precedence over a field
         // - need to revisit this, we check 'data' as this is the way for the grid to
         //   not render when on the footer row
-        if (data && node.group && !this.userProvidedTheGroups) {
+        if (data && node.group && !this.userProvidedTheGroups && !this.suppressUseColIdForGroups) {
             result = node.data ? node.data[column.getId()] : undefined;
         }
         else if (colDef.valueGetter) {
@@ -88,7 +89,7 @@ var ValueService = (function () {
         }
     };
     ValueService.prototype.setValue = function (rowNode, colKey, newValue) {
-        var column = this.columnController.getOriginalColumn(colKey);
+        var column = this.columnController.getPrimaryColumn(colKey);
         if (!rowNode || !column) {
             return;
         }
@@ -168,7 +169,7 @@ var ValueService = (function () {
         }
     };
     ValueService.prototype.getValueCallback = function (data, node, field) {
-        var otherColumn = this.columnController.getOriginalColumn(field);
+        var otherColumn = this.columnController.getPrimaryColumn(field);
         if (otherColumn) {
             return this.getValueUsingSpecificData(otherColumn, data, node);
         }

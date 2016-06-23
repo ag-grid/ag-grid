@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,7 +44,7 @@ var RowNode = (function () {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     RowNode.prototype.setDataValue = function (colKey, newValue) {
-        var column = this.columnController.getOriginalColumn(colKey);
+        var column = this.columnController.getPrimaryColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         var event = { column: column, newValue: newValue };
         this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
@@ -163,7 +163,7 @@ var RowNode = (function () {
             // this is the very end of the 'action node', so we are finished all the updates,
             // include any parent / child changes that this method caused
             this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
-            // so if use next does shift-select, we know where to start the selection from
+            // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
                 this.selectionController.setLastSelectedNode(this);
             }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,7 +47,7 @@ var SortController = (function () {
         this.eventService.dispatchEvent(events_1.Events.EVENT_AFTER_SORT_CHANGED);
     };
     SortController.prototype.clearSortBarThisColumn = function (columnToSkip) {
-        this.columnController.getAllColumnsIncludingAuto().forEach(function (columnToClear) {
+        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
                 columnToClear.setSort(null);
@@ -103,7 +103,7 @@ var SortController = (function () {
         }
         // first up, clear any previous sort
         var sortModelProvided = sortModel && sortModel.length > 0;
-        var allColumnsIncludingAuto = this.columnController.getAllColumnsIncludingAuto();
+        var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         allColumnsIncludingAuto.forEach(function (column) {
             var sortForCol = null;
             var sortedAt = -1;
@@ -131,7 +131,7 @@ var SortController = (function () {
     };
     SortController.prototype.getColumnsWithSortingOrdered = function () {
         // pull out all the columns that have sorting set
-        var allColumnsIncludingAuto = this.columnController.getAllColumnsIncludingAuto();
+        var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         var columnsWithSorting = utils_1.Utils.filter(allColumnsIncludingAuto, function (column) { return !!column.getSort(); });
         // put the columns in order of which one got sorted first
         columnsWithSorting.sort(function (a, b) { return a.sortedAt - b.sortedAt; });

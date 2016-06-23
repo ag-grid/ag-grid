@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,10 +14,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
 var logger_1 = require("../logger");
-var context_3 = require("../context/context");
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
+var eventService_1 = require("../eventService");
+var events_1 = require("../events");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = (function () {
@@ -28,9 +28,15 @@ var DragService = (function () {
     }
     DragService.prototype.init = function () {
         this.logger = this.loggerFactory.create('DragService');
+        this.eBody = document.querySelector('body');
     };
     DragService.prototype.destroy = function () {
         this.destroyFunctions.forEach(function (func) { return func(); });
+    };
+    DragService.prototype.setNoSelectToBody = function (noSelect) {
+        if (utils_1.Utils.exists(this.eBody)) {
+            utils_1.Utils.addOrRemoveCssClass(this.eBody, 'ag-body-no-select', noSelect);
+        }
     };
     DragService.prototype.addDragSource = function (params) {
         var listener = this.onMouseDown.bind(this, params);
@@ -79,7 +85,9 @@ var DragService = (function () {
             }
             else {
                 this.dragging = true;
+                this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STARTED);
                 this.currentDragParams.onDragStart(this.dragStartEvent);
+                this.setNoSelectToBody(true);
             }
         }
         this.currentDragParams.onDragging(mouseEvent);
@@ -93,13 +101,19 @@ var DragService = (function () {
         this.dragStartEvent = null;
         this.eventLastTime = null;
         this.dragging = false;
+        this.setNoSelectToBody(false);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STOPPED);
     };
     __decorate([
-        context_2.Autowired('loggerFactory'), 
+        context_1.Autowired('loggerFactory'), 
         __metadata('design:type', logger_1.LoggerFactory)
     ], DragService.prototype, "loggerFactory", void 0);
     __decorate([
-        context_3.PostConstruct, 
+        context_1.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], DragService.prototype, "eventService", void 0);
+    __decorate([
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

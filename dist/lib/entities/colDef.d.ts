@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -7,6 +7,7 @@ import { SetFilterParameters } from "../filter/setFilterParameters";
 import { TextAndNumberFilterParameters } from "../filter/textAndNumberFilterParameters";
 import { ICellEditor } from "../rendering/cellEditors/iCellEditor";
 import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
+import { Column } from "./column";
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
     /** The name to render in the column header */
@@ -24,7 +25,7 @@ export interface ColGroupDef extends AbstractColDef {
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
 }
-export interface IAggFunction {
+export interface IAggFunc {
     (input: any[]): any;
 }
 export interface ColDef extends AbstractColDef {
@@ -90,7 +91,7 @@ export interface ColDef extends AbstractColDef {
     /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     floatingCellFormatter?: (params: any) => string;
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
-    aggFunc?: string | IAggFunction;
+    aggFunc?: string | IAggFunc;
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
     /** To pivot by this column by default, provide an index here. */
@@ -113,12 +114,12 @@ export interface ColDef extends AbstractColDef {
     suppressResize?: boolean;
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
-    /** Set to true if you don't want to be able to group by this column */
-    suppressRowGroup?: boolean;
-    /** Set to true if you don't want to be able to pivot by this column */
-    suppressPivot?: boolean;
-    /** Set to true if you don't want to be able to aggregate by this column */
-    suppressAggregation?: boolean;
+    /** If true, GUI will allow adding this columns as a row group */
+    enableRowGroup?: boolean;
+    /** If true, GUI will allow adding this columns as a pivot */
+    enablePivot?: boolean;
+    /** If true, GUI will allow adding this columns as a value */
+    enableValue?: boolean;
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | (Function);
     /** Callbacks for editing.See editing section for further details. */
@@ -151,4 +152,8 @@ export interface ColDef extends AbstractColDef {
     };
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotKeys?: string[];
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotValueColumn?: Column;
 }

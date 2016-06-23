@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -86,7 +86,7 @@ var FocusService = (function () {
             // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
             var colId = utils_1.Utils.getElementAttribute(eTarget, 'colid');
             if (utils_1.Utils.exists(colId) && utils_1.Utils.containsClass(eTarget, 'ag-cell')) {
-                var foundColumn = that.columnController.getOriginalColumn(colId);
+                var foundColumn = that.columnController.getGridColumn(colId);
                 if (foundColumn) {
                     column = foundColumn;
                 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,6 @@ var eventService_1 = require("../../eventService");
 var events_1 = require("../../events");
 var context_1 = require("../../context/context");
 var selectionController_1 = require("../../selectionController");
-var pivotService_1 = require("../../columnController/pivotService");
 var RecursionType;
 (function (RecursionType) {
     RecursionType[RecursionType["Normal"] = 0] = "Normal";
@@ -37,13 +36,17 @@ var InMemoryRowModel = (function () {
     InMemoryRowModel.prototype.init = function () {
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_EVERYTHING));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_AGGREGATE));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_PIVOT));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_FILTER));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_SORT));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_PIVOT));
         this.rootNode = new rowNode_1.RowNode();
         this.rootNode.group = true;
         this.rootNode.allLeafChildren = [];
+        this.rootNode.childrenAfterGroup = [];
+        this.rootNode.childrenAfterSort = [];
+        this.rootNode.childrenAfterFilter = [];
         this.context.wireBean(this.rootNode);
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
@@ -51,6 +54,14 @@ var InMemoryRowModel = (function () {
     };
     InMemoryRowModel.prototype.getType = function () {
         return constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
+    };
+    InMemoryRowModel.prototype.onValueChanged = function () {
+        if (this.columnController.isPivotActive()) {
+            this.refreshModel(constants_1.Constants.STEP_PIVOT);
+        }
+        else {
+            this.refreshModel(constants_1.Constants.STEP_AGGREGATE);
+        }
     };
     InMemoryRowModel.prototype.refreshModel = function (step, fromIndex, groupState) {
         // this goes through the pipeline of stages. what's in my head is similar
@@ -73,8 +84,8 @@ var InMemoryRowModel = (function () {
                 // start = new Date().getTime();
                 this.doFilter();
             // console.log('filter = ' + (new Date().getTime() - start));
-            // case constants.STEP_PIVOT:
-            //     this.doPivot();
+            case constants_1.Constants.STEP_PIVOT:
+                this.doPivot();
             case constants_1.Constants.STEP_AGGREGATE:
                 // start = new Date().getTime();
                 this.doAggregate();
@@ -282,10 +293,9 @@ var InMemoryRowModel = (function () {
         this.filterStage.execute(this.rootNode);
     };
     InMemoryRowModel.prototype.doPivot = function () {
-        this.pivotService.execute(this.rootNode);
-        // fire event here???
-        // pivotService.createPivotColumns()
-        // do pivot - create pivot columns?
+        if (this.pivotStage) {
+            this.pivotStage.execute(this.rootNode);
+        }
     };
     // rows: the rows to put into the model
     // firstId: the first id to use, used for paging, where we are not on the first page
@@ -319,6 +329,7 @@ var InMemoryRowModel = (function () {
         var context = this.context;
         if (!rowData) {
             this.rootNode.allLeafChildren = [];
+            this.rootNode.childrenAfterGroup = [];
             return;
         }
         var rowNodeId = utils_1.Utils.exists(firstId) ? firstId : 0;
@@ -409,10 +420,6 @@ var InMemoryRowModel = (function () {
         __metadata('design:type', context_1.Context)
     ], InMemoryRowModel.prototype, "context", void 0);
     __decorate([
-        context_1.Autowired('pivotService'), 
-        __metadata('design:type', pivotService_1.PivotService)
-    ], InMemoryRowModel.prototype, "pivotService", void 0);
-    __decorate([
         context_1.Autowired('filterStage'), 
         __metadata('design:type', Object)
     ], InMemoryRowModel.prototype, "filterStage", void 0);
@@ -432,6 +439,10 @@ var InMemoryRowModel = (function () {
         context_1.Optional('aggregationStage'), 
         __metadata('design:type', Object)
     ], InMemoryRowModel.prototype, "aggregationStage", void 0);
+    __decorate([
+        context_1.Optional('pivotStage'), 
+        __metadata('design:type', Object)
+    ], InMemoryRowModel.prototype, "pivotStage", void 0);
     __decorate([
         // the rows mapped to rows to display
         context_1.PostConstruct, 

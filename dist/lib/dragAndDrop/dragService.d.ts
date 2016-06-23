@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -6,6 +6,7 @@
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 export declare class DragService {
     private loggerFactory;
+    private eventService;
     private currentDragParams;
     private dragging;
     private eventLastTime;
@@ -14,8 +15,10 @@ export declare class DragService {
     private onMouseMoveListener;
     private logger;
     private destroyFunctions;
+    private eBody;
     private init();
     private destroy();
+    private setNoSelectToBody(noSelect);
     addDragSource(params: DragListenerParams): void;
     private onMouseDown(params, mouseEvent);
     private isEventNearStartEvent(event);

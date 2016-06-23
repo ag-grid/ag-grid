@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,13 +33,13 @@ var BalancedColumnTreeBuilder = (function () {
     BalancedColumnTreeBuilder.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     };
-    BalancedColumnTreeBuilder.prototype.createBalancedColumnGroups = function (abstractColDefs) {
+    BalancedColumnTreeBuilder.prototype.createBalancedColumnGroups = function (abstractColDefs, primaryColumns) {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that cold be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
         var columnKeyCreator = new columnKeyCreator_1.ColumnKeyCreator();
         // create am unbalanced tree that maps the provided definitions
-        var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator);
+        var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator, primaryColumns);
         var treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -92,7 +92,7 @@ var BalancedColumnTreeBuilder = (function () {
         }
         return maxDeptThisLevel;
     };
-    BalancedColumnTreeBuilder.prototype.recursivelyCreateColumns = function (abstractColDefs, level, columnKeyCreator) {
+    BalancedColumnTreeBuilder.prototype.recursivelyCreateColumns = function (abstractColDefs, level, columnKeyCreator, primaryColumns) {
         var _this = this;
         var result = [];
         if (!abstractColDefs) {
@@ -104,14 +104,14 @@ var BalancedColumnTreeBuilder = (function () {
                 var groupColDef = abstractColDef;
                 var groupId = columnKeyCreator.getUniqueKey(groupColDef.groupId, null);
                 var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(groupColDef, groupId);
-                var children = _this.recursivelyCreateColumns(groupColDef.children, level + 1, columnKeyCreator);
+                var children = _this.recursivelyCreateColumns(groupColDef.children, level + 1, columnKeyCreator, primaryColumns);
                 originalGroup.setChildren(children);
                 result.push(originalGroup);
             }
             else {
                 var colDef = abstractColDef;
                 var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-                var column = new column_1.Column(colDef, colId);
+                var column = new column_1.Column(colDef, colId, primaryColumns);
                 _this.context.wireBean(column);
                 result.push(column);
             }
@@ -129,6 +129,19 @@ var BalancedColumnTreeBuilder = (function () {
             }
             if (colDefNoType.headerGroupShow !== undefined) {
                 console.warn('ag-grid: colDef.headerGroupShow is invalid, should be columnGroupShow, please check documentation on how to do grouping as it changed in version 3');
+            }
+            if (colDefNoType.suppressRowGroup !== undefined) {
+                console.warn('ag-grid: colDef.suppressRowGroup is deprecated, please use colDef.type instead');
+            }
+            if (colDefNoType.suppressAggregation !== undefined) {
+                console.warn('ag-grid: colDef.suppressAggregation is deprecated, please use colDef.type instead');
+            }
+            if (colDefNoType.suppressRowGroup || colDefNoType.suppressAggregation) {
+                console.warn('ag-grid: colDef.suppressAggregation and colDef.suppressRowGroup are deprecated, use allowRowGroup, allowPivot and allowValue instead');
+            }
+            if (colDefNoType.displayName) {
+                console.warn("ag-grid: Found displayName " + colDefNoType.displayName + ", please use headerName instead, displayName is deprecated.");
+                colDefNoType.headerName = colDefNoType.displayName;
             }
         }
     };

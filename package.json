@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "4.2.6",
+  "version": "5.0.0-alpha.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
@@ -52,7 +52,7 @@
     "merge2": "0.3.6",
     "webpack-stream": "3.1.0",
     "webpack": "1.12.12",
-    "gulp-replace": "latest",
-    "gulp-if": "latest"
+    "gulp-replace": "0.5.4",
+    "gulp-if": "2.0.1"
   }
 }

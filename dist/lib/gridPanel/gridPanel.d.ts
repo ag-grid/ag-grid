@@ -1,10 +1,9 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
-import { ColumnChangeEvent } from "../columnChangeEvent";
 export declare class GridPanel {
     private masterSlaveService;
     private gridOptionsWrapper;
@@ -24,7 +23,9 @@ export declare class GridPanel {
     private logger;
     private forPrint;
     private scrollWidth;
+    private requestAnimationFrameExists;
     private scrollLagCounter;
+    private scrollLagTicking;
     private eBodyViewport;
     private eRoot;
     private eBody;
@@ -57,6 +58,7 @@ export declare class GridPanel {
     agWire(loggerFactory: LoggerFactory): void;
     private onRowDataChanged();
     getLayout(): BorderLayout;
+    private useScrollLag;
     private init();
     private disableBrowserDragging();
     private addEventListeners();
@@ -106,7 +108,8 @@ export declare class GridPanel {
     private centerMouseWheelListener(event);
     private pinnedLeftMouseWheelListener(event);
     private generalMouseWheelListener(event, targetPanel);
-    onColumnsChanged(event: ColumnChangeEvent): void;
+    onColumnResized(): void;
+    onDisplayedColumnsChanged(): void;
     private setWidthsOfContainers();
     private showPinnedColContainersIfNeeded();
     private sizeHeaderAndBody();
@@ -115,7 +118,8 @@ export declare class GridPanel {
     getHorizontalScrollPosition(): number;
     turnOnAnimationForABit(): void;
     private addScrollListener();
-    private requestDrawVirtualRows();
+    private isUseScrollLag();
+    private debounce(callback);
     horizontallyScrollHeaderCenterAndFloatingCenter(): void;
     private verticallyScrollLeftPinned(bodyTopPosition);
     private verticallyScrollBody(position);

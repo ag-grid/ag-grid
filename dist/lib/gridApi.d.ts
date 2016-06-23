@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { CsvExportParams } from "./csvCreator";
 import { MasterSlaveService } from "./masterSlaveService";
-import { ColDef } from "./entities/colDef";
+import { ColDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { IRowModel } from "./interfaces/iRowModel";
@@ -32,6 +32,7 @@ export declare class GridApi {
     private focusedCellController;
     private rangeController;
     private clipboardService;
+    private aggFuncService;
     private menuFactory;
     private cellRendererFactory;
     private cellEditorFactory;
@@ -129,4 +130,9 @@ export declare class GridApi {
     showColumnMenuAfterButtonClick(colKey: string | Column | ColDef, buttonElement: HTMLElement): void;
     showColumnMenuAfterMouseClick(colKey: string | Column | ColDef, mouseEvent: MouseEvent): void;
     stopEditing(cancel?: boolean): void;
+    addAggFunc(key: string, aggFunc: IAggFunc): void;
+    addAggFuncs(aggFuncs: {
+        [key: string]: IAggFunc;
+    }): void;
+    clearAggFuncs(): void;
 }

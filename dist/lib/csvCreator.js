@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -65,7 +65,7 @@ var CsvCreator = (function () {
         var processCellCallback = params && params.processCellCallback;
         var columnsToExport;
         if (allColumns) {
-            columnsToExport = this.columnController.getAllOriginalColumns();
+            columnsToExport = this.columnController.getAllPrimaryColumns();
         }
         else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
@@ -134,7 +134,7 @@ var CsvCreator = (function () {
             });
         }
         else {
-            return this.columnController.getDisplayNameForCol(column);
+            return this.columnController.getDisplayNameForCol(column, true);
         }
     };
     CsvCreator.prototype.processCell = function (rowNode, column, value, processCellCallback) {

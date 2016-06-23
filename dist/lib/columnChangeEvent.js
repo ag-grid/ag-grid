@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var events_1 = require("./events");
 var ColumnChangeEvent = (function () {
     function ColumnChangeEvent(type) {
         this.type = type;
@@ -80,25 +79,6 @@ var ColumnChangeEvent = (function () {
     };
     ColumnChangeEvent.prototype.getColumnGroup = function () {
         return this.columnGroup;
-    };
-    ColumnChangeEvent.prototype.isPinnedPanelVisibilityImpacted = function () {
-        return this.type === events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED ||
-            this.type === events_1.Events.EVENT_COLUMN_GROUP_OPENED ||
-            this.type === events_1.Events.EVENT_COLUMN_VISIBLE ||
-            this.type === events_1.Events.EVENT_PIVOT_VALUE_CHANGED ||
-            this.type === events_1.Events.EVENT_COLUMN_PINNED;
-    };
-    ColumnChangeEvent.prototype.isContainerWidthImpacted = function () {
-        return this.type === events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED ||
-            this.type === events_1.Events.EVENT_COLUMN_GROUP_OPENED ||
-            this.type === events_1.Events.EVENT_COLUMN_VISIBLE ||
-            this.type === events_1.Events.EVENT_COLUMN_RESIZED ||
-            this.type === events_1.Events.EVENT_COLUMN_PINNED ||
-            this.type === events_1.Events.EVENT_PIVOT_VALUE_CHANGED ||
-            this.type === events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED;
-    };
-    ColumnChangeEvent.prototype.isIndividualColumnResized = function () {
-        return this.type === events_1.Events.EVENT_COLUMN_RESIZED && this.column !== undefined && this.column !== null;
     };
     ColumnChangeEvent.prototype.isFinished = function () {
         return this.finished;

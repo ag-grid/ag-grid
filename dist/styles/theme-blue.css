@@ -352,7 +352,6 @@
   background: #ddebf7;
   color: #000;
   border: 1px solid #808080;
-  padding: 2px;
 }
 .ag-blue .ag-column-drop-cell-ghost {
   opacity: 0.5;
@@ -382,20 +381,47 @@
   padding-right: 4px;
 }
 .ag-blue .ag-column-drop {
-  padding: 4px;
   background-color: #f6f6f6;
 }
 .ag-blue .ag-column-drop-horizontal {
+  padding: 4px 4px 4px 4px;
   border-top: 1px solid #9bc2e6;
   border-left: 1px solid #9bc2e6;
   border-right: 1px solid #9bc2e6;
 }
+.ag-blue .ag-column-drop-horizontal .ag-column-drop-cell {
+  padding: 2px;
+}
 .ag-blue .ag-column-drop-vertical {
-  border-top: 1px solid #9bc2e6;
+  padding: 4px 4px 10px 4px;
+  border-bottom: 1px solid #9bc2e6;
 }
 .ag-blue .ag-column-drop-vertical .ag-column-drop-cell {
   margin-top: 2px;
 }
 .ag-blue .ag-column-drop-vertical .ag-column-drop-empty-message {
-  padding: 20px;
+  text-align: center;
+  padding: 5px;
+}
+.ag-blue .ag-pivot-mode {
+  border-bottom: 1px solid #9bc2e6;
+  padding: 4px;
+  background-color: #f6f6f6;
+}
+.ag-blue .ag-tool-panel .ag-column-select-panel {
+  border-bottom: 1px solid #9bc2e6;
+}
+.ag-blue .ag-select-agg-func-popup {
+  cursor: default;
+  position: absolute;
+  font-size: 14px;
+  background-color: #fff;
+  border: 1px solid #9bc2e6;
+}
+.ag-blue .ag-select-agg-func-item {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.ag-blue .ag-select-agg-func-item:hover {
+  background-color: #c7c7c7;
 }

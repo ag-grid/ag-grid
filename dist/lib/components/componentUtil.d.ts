@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { GridOptions } from "../entities/gridOptions";
 import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnController";
 export declare class ComponentUtil {
     static EVENTS: string[];
     private static EVENT_CALLBACKS;
@@ -17,7 +18,7 @@ export declare class ComponentUtil {
     static getEventCallbacks(): string[];
     static copyAttributesToGridOptions(gridOptions: GridOptions, component: any): GridOptions;
     static getCallbackForEvent(eventName: string): string;
-    static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi): void;
+    static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi, columnApi: ColumnApi): void;
     static toBoolean(value: any): boolean;
     static toNumber(value: any): number;
 }

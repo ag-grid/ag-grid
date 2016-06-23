@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,7 @@ var GroupCellRenderer = (function (_super) {
                 paddingFactor = 10;
             }
             var paddingPx = node.level * paddingFactor;
-            var reducedLeafNode = this.columnController.isReduce() && this.rowNode.leafGroup;
+            var reducedLeafNode = this.columnController.isPivotMode() && this.rowNode.leafGroup;
             if (node.footer) {
                 paddingPx += 15;
             }
@@ -213,7 +213,7 @@ var GroupCellRenderer = (function (_super) {
         this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_GROUP_OPENED, event);
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
-        var reducedLeafNode = this.columnController.isReduce() && this.rowNode.leafGroup;
+        var reducedLeafNode = this.columnController.isPivotMode() && this.rowNode.leafGroup;
         var expandable = this.rowNode.group && !this.rowNode.footer && !reducedLeafNode;
         if (expandable) {
             // if expandable, show one based on expand state

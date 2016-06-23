@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,26 +29,29 @@ var FlattenStage = (function () {
         var result = [];
         // putting value into a wrapper so it's passed by reference
         var nextRowTop = { value: 0 };
+        var reduce = this.columnController.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
-        var showRootNode = this.columnController.isReduce() && rootNode.leafGroup;
+        var showRootNode = reduce && rootNode.leafGroup;
         var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
-        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop);
+        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, reduce);
         return result;
     };
-    FlattenStage.prototype.recursivelyAddToRowsToDisplay = function (rowsToFlatten, result, nextRowTop) {
+    FlattenStage.prototype.recursivelyAddToRowsToDisplay = function (rowsToFlatten, result, nextRowTop, reduce) {
         if (utils_1.Utils.missingOrEmpty(rowsToFlatten)) {
             return;
         }
         var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         for (var i = 0; i < rowsToFlatten.length; i++) {
             var rowNode = rowsToFlatten[i];
-            var skipGroupNode = groupSuppressRow && rowNode.group;
+            var skipBecauseSuppressRow = groupSuppressRow && rowNode.group;
+            var skipBecauseReduce = reduce && !rowNode.group;
+            var skipGroupNode = skipBecauseReduce || skipBecauseSuppressRow;
             if (!skipGroupNode) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
             }
             if (rowNode.group && rowNode.expanded) {
-                this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop);
+                this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
                 // put a footer in if user is looking for it
                 if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
                     var footerNode = this.createFooterNode(rowNode);

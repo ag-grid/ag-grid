@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,6 @@ var SortStage = (function () {
     function SortStage() {
     }
     SortStage.prototype.execute = function (rowNode) {
-        // var sorting: any;
         var sortOptions;
         // if the sorting is already done by the server, then we should not do it here
         if (!this.gridOptionsWrapper.isEnableServerSideSorting()) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,7 +64,7 @@ var ComponentUtil = (function () {
     // change this method, the caller should know if it's initialised or not, plus 'initialised'
     // is not relevant for all component types.
     // maybe pass in the api and columnApi instead???
-    ComponentUtil.processOnChange = function (changes, gridOptions, api) {
+    ComponentUtil.processOnChange = function (changes, gridOptions, api, columnApi) {
         //if (!component._initialised || !changes) { return; }
         if (!changes) {
             return;
@@ -97,7 +97,7 @@ var ComponentUtil = (function () {
             }
         });
         if (changes.showToolPanel) {
-            api.showToolPanel(changes.showToolPanel.currentValue);
+            api.showToolPanel(ComponentUtil.toBoolean(changes.showToolPanel.currentValue));
         }
         if (changes.quickFilterText) {
             api.setQuickFilter(changes.quickFilterText.currentValue);
@@ -118,7 +118,10 @@ var ComponentUtil = (function () {
             api.setDatasource(changes.datasource.currentValue);
         }
         if (changes.headerHeight) {
-            api.setHeaderHeight(changes.headerHeight.currentValue);
+            api.setHeaderHeight(ComponentUtil.toNumber(changes.headerHeight.currentValue));
+        }
+        if (changes.pivotMode) {
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
         }
     };
     ComponentUtil.toBoolean = function (value) {
@@ -152,7 +155,7 @@ var ComponentUtil = (function () {
         'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType'];
     ComponentUtil.OBJECT_PROPERTIES = [
         'rowStyle', 'context', 'groupColumnDef', 'localeText', 'icons', 'datasource', 'viewportDatasource',
-        'groupRowRendererParams'
+        'groupRowRendererParams', 'aggFuncs'
     ];
     ComponentUtil.ARRAY_PROPERTIES = [
         'slaveGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData', 'columnDefs'
@@ -174,7 +177,8 @@ var ComponentUtil = (function () {
         'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise', 'rowGroupPanelShow',
         'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
         'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
-        'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel'
+        'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
+        'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader'
     ];
     ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
         'groupRowRenderer', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',

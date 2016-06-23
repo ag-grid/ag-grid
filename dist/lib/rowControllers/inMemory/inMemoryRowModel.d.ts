@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -12,16 +12,17 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private selectionController;
     private eventService;
     private context;
-    private pivotService;
     private filterStage;
     private sortStage;
     private flattenStage;
     private groupStage;
     private aggregationStage;
+    private pivotStage;
     private rootNode;
     private rowsToDisplay;
     init(): void;
     getType(): string;
+    private onValueChanged();
     refreshModel(step: number, fromIndex?: any, groupState?: any): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;

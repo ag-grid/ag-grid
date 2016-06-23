@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,10 +81,12 @@ var GridApi = (function () {
         }
     };
     GridApi.prototype.setRowData = function (rowData) {
-        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
+            this.inMemoryRowModel.setRowData(rowData, true);
+        }
+        else {
             console.log('cannot call setRowData unless using normal row model');
         }
-        this.inMemoryRowModel.setRowData(rowData, true);
     };
     GridApi.prototype.setFloatingTopRowData = function (rows) {
         this.floatingRowModel.setFloatingTopRowData(rows);
@@ -293,19 +295,19 @@ var GridApi = (function () {
         return this.getFilterApi(colDef);
     };
     GridApi.prototype.getFilterApi = function (key) {
-        var column = this.columnController.getOriginalColumn(key);
+        var column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.getFilterApi(column);
         }
     };
     GridApi.prototype.destroyFilter = function (key) {
-        var column = this.columnController.getOriginalColumn(key);
+        var column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column);
         }
     };
     GridApi.prototype.getColumnDef = function (key) {
-        var column = this.columnController.getOriginalColumn(key);
+        var column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
         }
@@ -347,7 +349,7 @@ var GridApi = (function () {
         this.gridCore.doLayout();
     };
     GridApi.prototype.getValue = function (colKey, rowNode) {
-        var column = this.columnController.getOriginalColumn(colKey);
+        var column = this.columnController.getPrimaryColumn(colKey);
         return this.valueService.getValue(column, rowNode);
     };
     GridApi.prototype.addEventListener = function (eventType, listener) {
@@ -411,16 +413,31 @@ var GridApi = (function () {
         this.clipboardService.copyRangeDown();
     };
     GridApi.prototype.showColumnMenuAfterButtonClick = function (colKey, buttonElement) {
-        var column = this.columnController.getOriginalColumn(colKey);
+        var column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     };
     GridApi.prototype.showColumnMenuAfterMouseClick = function (colKey, mouseEvent) {
-        var column = this.columnController.getOriginalColumn(colKey);
+        var column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     };
     GridApi.prototype.stopEditing = function (cancel) {
         if (cancel === void 0) { cancel = false; }
         this.rowRenderer.stopEditing(cancel);
+    };
+    GridApi.prototype.addAggFunc = function (key, aggFunc) {
+        if (this.aggFuncService) {
+            this.aggFuncService.addAggFunc(key, aggFunc);
+        }
+    };
+    GridApi.prototype.addAggFuncs = function (aggFuncs) {
+        if (this.aggFuncService) {
+            this.aggFuncService.addAggFuncs(aggFuncs);
+        }
+    };
+    GridApi.prototype.clearAggFuncs = function () {
+        if (this.aggFuncService) {
+            this.aggFuncService.clear();
+        }
     };
     __decorate([
         context_1.Autowired('csvCreator'), 
@@ -502,6 +519,10 @@ var GridApi = (function () {
         context_1.Optional('clipboardService'), 
         __metadata('design:type', Object)
     ], GridApi.prototype, "clipboardService", void 0);
+    __decorate([
+        context_1.Optional('aggFuncService'), 
+        __metadata('design:type', Object)
+    ], GridApi.prototype, "aggFuncService", void 0);
     __decorate([
         context_1.Autowired('menuFactory'), 
         __metadata('design:type', Object)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,6 +9,12 @@ var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 var Utils = (function () {
     function Utils() {
     }
+    Utils.getNameOfClass = function (TheClass) {
+        var funcNameRegex = /function (.{1,})\(/;
+        var funcAsString = TheClass.toString();
+        var results = (funcNameRegex).exec(funcAsString);
+        return (results && results.length > 1) ? results[1] : "";
+    };
     Utils.iterateObject = function (object, callback) {
         if (this.missing(object)) {
             return;
@@ -288,6 +294,18 @@ var Utils = (function () {
             }
         }
     };
+    Utils.removeRepeatsFromArray = function (array, object) {
+        if (!array) {
+            return;
+        }
+        for (var index = array.length - 2; index >= 0; index--) {
+            var thisOneMatches = array[index] === object;
+            var nextOneMatches = array[index + 1] === object;
+            if (thisOneMatches && nextOneMatches) {
+                array.splice(index + 1, 1);
+            }
+        }
+    };
     Utils.removeFromArray = function (array, object) {
         if (array.indexOf(object) >= 0) {
             array.splice(array.indexOf(object), 1);
@@ -329,6 +347,23 @@ var Utils = (function () {
         else {
             return 0;
         }
+    };
+    Utils.compareArrays = function (array1, array2) {
+        if (this.missing(array1) && this.missing(array2)) {
+            return true;
+        }
+        if (this.missing(array1) || this.missing(array2)) {
+            return false;
+        }
+        if (array1.length !== array2.length) {
+            return false;
+        }
+        for (var i = 0; i < array1.length; i++) {
+            if (array1[i] !== array2[i]) {
+                return false;
+            }
+        }
+        return true;
     };
     Utils.formatWidth = function (width) {
         if (typeof width === "number") {
@@ -667,3 +702,15 @@ var Utils = (function () {
     return Utils;
 })();
 exports.Utils = Utils;
+var NumberSequence = (function () {
+    function NumberSequence() {
+        this.nextValue = 0;
+    }
+    NumberSequence.prototype.next = function () {
+        var valToReturn = this.nextValue;
+        this.nextValue++;
+        return valToReturn;
+    };
+    return NumberSequence;
+})();
+exports.NumberSequence = NumberSequence;

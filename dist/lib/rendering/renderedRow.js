@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -77,25 +77,15 @@ var RenderedRow = (function () {
     };
     RenderedRow.prototype.addColumnListener = function () {
         var _this = this;
-        var columnListener = this.onColumnChanged.bind(this);
-        this.mainEventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_MOVED, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-        //this.mainEventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, columnListener);
-        this.mainEventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, columnListener);
-        this.mainEventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, columnListener);
+        var columnListener = this.onDisplayedColumnsChanged.bind(this);
+        this.mainEventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.mainEventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
         this.destroyFunctions.push(function () {
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_MOVED, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGE, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-            //this.mainEventService.removeEventListener(Events.EVENT_COLUMN_VALUE_CHANGE, columnListener);
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, columnListener);
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_COLUMN_PINNED, columnListener);
+            _this.mainEventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+            _this.mainEventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
         });
     };
-    RenderedRow.prototype.onColumnChanged = function (event) {
+    RenderedRow.prototype.onDisplayedColumnsChanged = function (event) {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (this.rowIsHeaderThatSpans) {
             var columnPinned = event.getType() === events_1.Events.EVENT_COLUMN_PINNED;

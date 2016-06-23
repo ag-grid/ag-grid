@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -372,16 +372,15 @@ var RenderedCell = (function (_super) {
     };
     RenderedCell.prototype.addKeyPressListener = function () {
         var _this = this;
-        var that = this;
         var keyPressListener = function (event) {
-            if (that.isCellEditable()) {
+            if (!_this.editingCell) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
-                    that.onSpaceKeyPressed();
+                    _this.onSpaceKeyPressed();
                 }
                 else {
                     if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0) {
-                        that.startEditingIfEnabled(null, pressedChar);
+                        _this.startEditingIfEnabled(null, pressedChar);
                         // if we don't prevent default, then the keypress also gets applied to the text field
                         // (at least when doing the default editor), but we need to allow the editor to decide
                         // what it wants to do.
@@ -860,13 +859,17 @@ var RenderedCell = (function (_super) {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             var valueToRender = utils_1.Utils.exists(valueFormatted) ? valueFormatted : this.value;
             if (utils_1.Utils.exists(valueToRender) && valueToRender !== '') {
-                this.eParentOfValue.innerHTML = valueToRender.toString();
+                // not using innerHTML to prevent injection of HTML
+                // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
+                this.eParentOfValue.textContent = valueToRender.toString();
             }
         }
         if (colDef.tooltipField) {
             var data = this.getDataForRow();
-            var tooltip = data[colDef.tooltipField];
-            this.eParentOfValue.setAttribute('title', tooltip);
+            if (utils_1.Utils.exists(data)) {
+                var tooltip = data[colDef.tooltipField];
+                this.eParentOfValue.setAttribute('title', tooltip);
+            }
         }
     };
     RenderedCell.prototype.formatValue = function (value) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,7 +42,7 @@ function initialiseAgGridWithWebComponents() {
     };
     AgileGridProto.onChange = function (changes) {
         if (this._initialised) {
-            componentUtil_1.ComponentUtil.processOnChange(changes, this._gridOptions, this.api);
+            componentUtil_1.ComponentUtil.processOnChange(changes, this._gridOptions, this.api, this.columnApi);
         }
     };
     AgileGridProto.__agGridGetProperty = function (key) {

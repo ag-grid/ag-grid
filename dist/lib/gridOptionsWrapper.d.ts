@@ -1,11 +1,11 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./entities/rowNode";
 import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
-import { ColDef } from "./entities/colDef";
+import { ColDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
@@ -23,6 +23,7 @@ export declare class GridOptionsWrapper {
     isRowDeselection(): boolean;
     isRowSelectionMulti(): boolean;
     getContext(): any;
+    isPivotMode(): boolean;
     isRowModelPagination(): boolean;
     isRowModelVirtual(): boolean;
     isRowModelViewport(): boolean;
@@ -78,6 +79,7 @@ export declare class GridOptionsWrapper {
     isSuppressPreventDefaultOnMouseWheel(): boolean;
     isEnableServerSideSorting(): boolean;
     isSuppressContextMenu(): boolean;
+    isSuppressCopyRowsToClipboard(): boolean;
     isEnableFilter(): boolean;
     isEnableServerSideFilter(): boolean;
     isSuppressScrollLag(): boolean;
@@ -85,10 +87,15 @@ export declare class GridOptionsWrapper {
     isSuppressColumnMoveAnimation(): boolean;
     isSuppressMenuColumnPanel(): boolean;
     isSuppressMenuFilterPanel(): boolean;
+    isSuppressUseColIdForGroups(): boolean;
+    isSuppressAggFuncInHeader(): boolean;
     isSuppressMenuMainPanel(): boolean;
     isEnableRangeSelection(): boolean;
     isRememberGroupStateWhenNewData(): boolean;
     getIcons(): any;
+    getAggFuncs(): {
+        [key: string]: IAggFunc;
+    };
     getIsScrollLag(): () => boolean;
     getSortingOrder(): string[];
     getSlaveGrids(): GridOptions[];

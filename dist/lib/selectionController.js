@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,6 +40,7 @@ var SelectionController = (function () {
         }
     };
     SelectionController.prototype.init = function () {
+        this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     };
     SelectionController.prototype.setLastSelectedNode = function (rowNode) {
@@ -93,14 +94,25 @@ var SelectionController = (function () {
     };
     SelectionController.prototype.clearOtherNodes = function (rowNodeToKeepSelected) {
         var _this = this;
+        var groupsToRefresh = {};
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 _this.selectedNodes[otherRowNode.id].setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
+                if (_this.groupSelectsChildren && otherRowNode.parent) {
+                    groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
+                }
             }
+        });
+        utils_1.Utils.iterateObject(groupsToRefresh, function (key, group) {
+            group.calculateSelectedFromChildren();
         });
     };
     SelectionController.prototype.onRowSelected = function (event) {
         var rowNode = event.node;
+        // we do not store the group rows when the groups select children
+        if (this.groupSelectsChildren && rowNode.group) {
+            return;
+        }
         if (rowNode.isSelected()) {
             this.selectedNodes[rowNode.id] = rowNode;
         }
@@ -180,10 +192,10 @@ var SelectionController = (function () {
     };
     SelectionController.prototype.selectAllRowNodes = function () {
         if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
-            throw 'selectAll only available with norma row model, ie not virtual pagination';
+            throw 'selectAll only available with normal row model, ie not virtual pagination';
         }
         this.rowModel.forEachNode(function (rowNode) {
-            rowNode.setSelectedParams({ newValue: true, clearSelection: false, tailingNodeInSequence: true });
+            rowNode.selectThisNode(true);
         });
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };

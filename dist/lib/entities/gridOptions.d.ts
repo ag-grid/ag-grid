@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v4.2.6
+// Type definitions for ag-grid v5.0.0-alpha.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -9,6 +9,7 @@ import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { MenuItem } from "../widgets/menuItemComponent";
 import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
+import { IAggFunc } from "./colDef";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -52,7 +53,11 @@ export interface GridOptions {
     suppressDragLeaveHidesColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
+    suppressUseColIdForGroups?: boolean;
+    suppressCopyRowsToClipboard?: boolean;
+    suppressAggFuncInHeader?: boolean;
     rowModelType?: string;
+    pivotMode?: boolean;
     enableRangeSelection?: boolean;
     suppressEnterprise?: boolean;
     rowGroupPanelShow?: string;
@@ -65,6 +70,9 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
+    aggFuncs?: {
+        [key: string]: IAggFunc;
+    };
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

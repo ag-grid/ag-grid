@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,7 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var constants_1 = require("../constants");
 var context_1 = require("../context/context");
 var gridCore_1 = require("../gridCore");
@@ -93,8 +93,14 @@ var PopupService = (function () {
         if (params.nudgeY) {
             y += params.nudgeY;
         }
-        // if popup is overflowing to the right, move it left
+        // if popup is overflowing to the bottom, move it up
         if (params.keepWithinBounds) {
+            checkHorizontalOverflow();
+            checkVerticalOverflow();
+        }
+        params.ePopup.style.left = x + "px";
+        params.ePopup.style.top = y + "px";
+        function checkHorizontalOverflow() {
             var minWidth;
             if (params.minWidth > 0) {
                 minWidth = params.minWidth;
@@ -106,7 +112,7 @@ var PopupService = (function () {
                 minWidth = 200;
             }
             var widthOfParent = parentRect.right - parentRect.left;
-            var maxX = widthOfParent - minWidth;
+            var maxX = widthOfParent - minWidth - 5;
             if (x > maxX) {
                 x = maxX;
             }
@@ -114,8 +120,23 @@ var PopupService = (function () {
                 x = 0;
             }
         }
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
+        function checkVerticalOverflow() {
+            var minHeight;
+            if (params.ePopup.clientWidth > 0) {
+                minHeight = params.ePopup.clientHeight;
+            }
+            else {
+                minHeight = 200;
+            }
+            var heightOfParent = parentRect.bottom - parentRect.top;
+            var maxY = heightOfParent - minHeight - 5;
+            if (y > maxY) {
+                y = maxY;
+            }
+            if (y < 0) {
+                y = 0;
+            }
+        }
     };
     //adds an element to a div, but also listens to background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving

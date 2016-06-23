@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,7 +52,7 @@ var FilterManager = (function () {
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
             utils_1.Utils.iterateArray(modelKeys, function (colId) {
-                var column = _this.columnController.getOriginalColumn(colId);
+                var column = _this.columnController.getPrimaryColumn(colId);
                 if (!column) {
                     console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
                     return;
@@ -218,7 +218,7 @@ var FilterManager = (function () {
     FilterManager.prototype.aggregateRowForQuickFilter = function (node) {
         var aggregatedText = '';
         var that = this;
-        this.columnController.getAllOriginalColumns().forEach(function (column) {
+        this.columnController.getAllPrimaryColumns().forEach(function (column) {
             var value = that.valueService.getValue(column, node);
             if (value && value !== '') {
                 aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";

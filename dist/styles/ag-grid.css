@@ -1,6 +1,15 @@
 ag-grid-ng2 {
   display: inline-block;
 }
+.ag-select-agg-func-popup {
+  position: absolute;
+}
+.ag-body-no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 .ag-root {
 /* set to relative, so absolute popups appear relative to this */
   position: relative;
@@ -300,9 +309,6 @@ ag-grid-ng2 {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.ag-column-drop-vertical {
-  height: 100%;
-}
 .ag-column-drop-vertical .ag-column-drop-cell {
   display: block;
 }
@@ -395,6 +401,7 @@ ag-grid-ng2 {
 .ag-menu-column-select-wrapper {
   width: 200px;
   height: 300px;
+  overflow: auto;
 }
 .ag-menu-list {
   display: table;
@@ -489,6 +496,7 @@ ag-grid-ng2 {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  overflow: auto;
 }
 .ag-column-select-indent {
   display: inline-block;
@@ -499,10 +507,6 @@ ag-grid-ng2 {
 }
 .ag-column-select-column-group {
   white-space: nowrap;
-}
-.ag-column-select-panel {
-  height: 100%;
-  overflow: auto;
 }
 .ag-hidden {
   display: none;

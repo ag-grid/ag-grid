@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,13 +81,15 @@ var popupSelectCellEditor_1 = require("./rendering/cellEditors/popupSelectCellEd
 var popupTextCellEditor_1 = require("./rendering/cellEditors/popupTextCellEditor");
 var selectCellEditor_1 = require("./rendering/cellEditors/selectCellEditor");
 var textCellEditor_1 = require("./rendering/cellEditors/textCellEditor");
+var largeTextCellEditor_1 = require("./rendering/largeText/largeTextCellEditor");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var groupCellRenderer_1 = require("./rendering/cellRenderers/groupCellRenderer");
 var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
 var dateCellEditor_1 = require("./rendering/cellEditors/dateCellEditor");
 var checkboxSelectionComponent_1 = require("./rendering/checkboxSelectionComponent");
-var pivotService_1 = require("./columnController/pivotService");
+var componentAnnotations_1 = require("./widgets/componentAnnotations");
+var agCheckbox_1 = require("./widgets/agCheckbox");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -96,7 +98,6 @@ function populateClientExports(exports) {
     exports.ColumnUtils = columnUtils_1.ColumnUtils;
     exports.DisplayedGroupCreator = displayedGroupCreator_1.DisplayedGroupCreator;
     exports.GroupInstanceIdCreator = groupInstanceIdCreator_1.GroupInstanceIdCreator;
-    exports.PivotService = pivotService_1.PivotService;
     // components
     exports.ComponentUtil = componentUtil_1.ComponentUtil;
     exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
@@ -109,6 +110,8 @@ function populateClientExports(exports) {
     exports.Optional = context_1.Optional;
     exports.Bean = context_1.Bean;
     exports.Qualifier = context_1.Qualifier;
+    exports.Listener = componentAnnotations_1.Listener;
+    exports.QuerySelector = componentAnnotations_1.QuerySelector;
     // dragAndDrop
     exports.DragAndDropService = dragAndDropService_1.DragAndDropService;
     exports.DragService = dragService_1.DragService;
@@ -147,6 +150,7 @@ function populateClientExports(exports) {
     exports.PopupTextCellEditor = popupTextCellEditor_1.PopupTextCellEditor;
     exports.SelectCellEditor = selectCellEditor_1.SelectCellEditor;
     exports.TextCellEditor = textCellEditor_1.TextCellEditor;
+    exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
     // rendering / cellRenderers
     exports.AnimateSlideCellRenderer = animateSlideCellRenderer_1.AnimateSlideCellRenderer;
     exports.GroupCellRenderer = groupCellRenderer_1.GroupCellRenderer;
@@ -173,6 +177,7 @@ function populateClientExports(exports) {
     exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
     exports.Component = component_1.Component;
     exports.MenuList = menuList_1.MenuList;
+    exports.AgCheckbox = agCheckbox_1.AgCheckbox;
     // root
     exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
     exports.ColumnChangeEvent = columnChangeEvent_1.ColumnChangeEvent;
@@ -195,6 +200,7 @@ function populateClientExports(exports) {
     exports.SvgFactory = svgFactory_1.SvgFactory;
     exports.TemplateService = templateService_1.TemplateService;
     exports.Utils = utils_1.Utils;
+    exports.NumberSequence = utils_1.NumberSequence;
     exports.ValueService = valueService_1.ValueService;
 }
 exports.populateClientExports = populateClientExports;

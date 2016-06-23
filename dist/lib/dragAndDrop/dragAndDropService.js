@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,6 +38,7 @@ var DragAndDropService = (function () {
         this.eLeftIcon = utils_1.Utils.createIcon('columnMoveLeft', this.gridOptionsWrapper, null, svgFactory.createLeftIcon);
         this.eRightIcon = utils_1.Utils.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
         this.eGroupIcon = utils_1.Utils.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
+        this.eAggregateIcon = utils_1.Utils.createIcon('columnMoveValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon);
     };
     DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
@@ -263,6 +264,9 @@ var DragAndDropService = (function () {
             case DragAndDropService.ICON_GROUP:
                 eIcon = this.eGroupIcon;
                 break;
+            case DragAndDropService.ICON_AGGREGATE:
+                eIcon = this.eAggregateIcon;
+                break;
             default:
                 eIcon = this.eHiddenIcon;
                 break;
@@ -278,6 +282,7 @@ var DragAndDropService = (function () {
     DragAndDropService.ICON_LEFT = 'left';
     DragAndDropService.ICON_RIGHT = 'right';
     DragAndDropService.ICON_GROUP = 'group';
+    DragAndDropService.ICON_AGGREGATE = 'aggregate';
     DragAndDropService.GHOST_TEMPLATE = '<div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
         '  <div class="ag-dnd-ghost-label">' +

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v4.2.6
+ * @version v5.0.0-alpha.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -116,7 +116,7 @@ var MasterSlaveService = (function () {
             var masterColumn = event.getColumn();
             var slaveColumn;
             if (masterColumn) {
-                slaveColumn = _this.columnController.getOriginalColumn(masterColumn.getColId());
+                slaveColumn = _this.columnController.getPrimaryColumn(masterColumn.getColId());
             }
             // if event was with respect to a master column, that is not present in this
             // grid, then we ignore the event
