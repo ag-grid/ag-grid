@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -19,7 +19,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var PivotColumnsPanel = (function (_super) {
     __extends(PivotColumnsPanel, _super);
     function PivotColumnsPanel(horizontal) {
-        _super.call(this, horizontal);
+        _super.call(this, horizontal, false);
     }
     PivotColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
@@ -37,16 +37,26 @@ var PivotColumnsPanel = (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
+        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onEverythingChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.onEverythingChanged();
+    };
+    PivotColumnsPanel.prototype.onEverythingChanged = function () {
+        this.onPivotModeChanged();
+        this.refreshGui();
+    };
+    PivotColumnsPanel.prototype.onPivotModeChanged = function () {
+        var pivotMode = this.columnController.isPivotMode();
+        this.setVisible(pivotMode);
     };
     PivotColumnsPanel.prototype.isColumnDroppable = function (column) {
-        var columnPivotable = !column.getColDef().suppressPivot;
-        var columnNotAlreadyPivoted = !this.columnController.isColumnPivoted(column);
-        return columnPivotable && columnNotAlreadyPivoted;
+        var allowPivot = column.isAllowPivot();
+        var columnNotAlreadyPivoted = !column.isPivotActive();
+        return allowPivot && columnNotAlreadyPivoted;
     };
     PivotColumnsPanel.prototype.removeColumns = function (columns) {
-        var _this = this;
-        var columnsPivoted = main_1.Utils.filter(columns, function (column) { return _this.columnController.isColumnPivoted(column); });
+        var columnsPivoted = main_1.Utils.filter(columns, function (column) { return column.isPivotActive(); });
         this.columnController.removePivotColumns(columnsPivoted);
     };
     PivotColumnsPanel.prototype.addColumns = function (columns) {
@@ -85,10 +95,6 @@ var PivotColumnsPanel = (function (_super) {
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], PivotColumnsPanel.prototype, "passBeansUp", null);
-    PivotColumnsPanel = __decorate([
-        main_1.Bean('pivotColumnsPanel'), 
-        __metadata('design:paramtypes', [Boolean])
-    ], PivotColumnsPanel);
     return PivotColumnsPanel;
 })(abstractColumnDropPanel_1.AbstractColumnDropPanel);
 exports.PivotColumnsPanel = PivotColumnsPanel;

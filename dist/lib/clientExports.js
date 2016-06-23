@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");
 var renderedGroup_1 = require("./toolPanel/columnsSelect/renderedGroup");
@@ -22,14 +22,19 @@ var abstractColumnDropPanel_1 = require("./toolPanel/columnDrop/abstractColumnDr
 var pivotColumnsPanel_1 = require("./toolPanel/columnDrop/pivotColumnsPanel");
 var toolPanelComp_1 = require("./toolPanel/toolPanelComp");
 var licenseManager_1 = require("./licenseManager");
-var largeTextCellEditor_1 = require("./rendering/largeText/largeTextCellEditor");
+var pivotStage_1 = require("./rowStages/pivotStage");
+var pivotColDefService_1 = require("./rowStages/pivotColDefService");
+var pivotModePanel_1 = require("./toolPanel/columnDrop/pivotModePanel");
+var aggFuncService_1 = require("./aggregation/aggFuncService");
 function populateClientExports(exports) {
+    exports.AggFuncService = aggFuncService_1.AggFuncService;
     exports.RichSelectCellEditor = richSelectCellEditor_1.RichSelectCellEditor;
     exports.RichSelectRow = richSelectRow_1.RichSelectRow;
     exports.VirtualList = virtualList_1.VirtualList;
-    exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
     exports.AggregationStage = aggregationStage_1.AggregationStage;
     exports.GroupStage = groupStage_1.GroupStage;
+    exports.PivotColDefService = pivotColDefService_1.PivotColDefService;
+    exports.PivotStage = pivotStage_1.PivotStage;
     exports.SetFilter = setFilter_1.SetFilter;
     exports.SetFilterModel = setFilterModel_1.SetFilterModel;
     exports.StatusBar = statusBar_1.StatusBar;
@@ -38,6 +43,7 @@ function populateClientExports(exports) {
     exports.RowGroupColumnsPanel = rowGroupColumnsPanel_1.RowGroupColumnsPanel;
     exports.PivotColumnsPanel = pivotColumnsPanel_1.PivotColumnsPanel;
     exports.ToolPanelComp = toolPanelComp_1.ToolPanelComp;
+    exports.PivotModePanel = pivotModePanel_1.PivotModePanel;
     exports.ColumnSelectPanel = columnSelectPanel_1.ColumnSelectPanel;
     exports.RenderedColumn = renderedColumn_1.RenderedColumn;
     exports.RenderedGroup = renderedGroup_1.RenderedGroup;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var main_1 = require("ag-grid/main");
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
+var aggFuncService_1 = require("./aggregation/aggFuncService");
 var svgFactory = main_1.SvgFactory.getInstance();
 var EnterpriseMenuFactory = (function () {
     function EnterpriseMenuFactory() {
@@ -54,7 +55,7 @@ var EnterpriseMenuFactory = (function () {
     EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
         var showColumnPanel = !this.gridOptionsWrapper.isSuppressMenuColumnPanel();
         var showMainPanel = !this.gridOptionsWrapper.isSuppressMenuMainPanel();
-        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel();
+        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel() && column.isFilterAllowed();
         return showColumnPanel || showMainPanel || showFilterPanel;
     };
     __decorate([
@@ -94,7 +95,7 @@ var EnterpriseMenu = (function () {
             this.createMainPanel();
             tabItems.push(this.tabItemGeneral);
         }
-        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel()) {
+        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel() && this.column.isFilterAllowed()) {
             this.createFilterPanel();
             tabItems.push(this.tabItemFilter);
         }
@@ -176,54 +177,24 @@ var EnterpriseMenu = (function () {
         var cMenuList = new main_1.MenuList();
         this.context.wireBean(cMenuList);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var columnIsAlreadyAggValue = this.columnController.getValueColumns().indexOf(this.column) >= 0;
-        cMenuList.addItem({
-            name: localeTextFunc('sum', 'Sum'),
-            action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_SUM);
-                _this.columnController.addValueColumn(_this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_SUM
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('min', 'Min'),
-            action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_MIN);
-                _this.columnController.addValueColumn(_this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_MIN
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('max', 'Max'),
-            action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_MAX);
-                _this.columnController.addValueColumn(_this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_MAX
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('first', 'First'),
-            action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_FIRST);
-                _this.columnController.addValueColumn(_this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_FIRST
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('last', 'Last'),
-            action: function () {
-                _this.columnController.setColumnAggFunction(_this.column, main_1.Column.AGG_LAST);
-                _this.columnController.addValueColumn(_this.column);
-            },
-            checked: columnIsAlreadyAggValue && this.column.getAggFunc() === main_1.Column.AGG_LAST
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('none', 'None'),
-            action: function () {
-                _this.column.setAggFunc(null);
-                _this.columnController.removeValueColumn(_this.column);
-            },
-            checked: !columnIsAlreadyAggValue
+        var columnIsAlreadyAggValue = this.column.isValueActive();
+        var funcNames = this.aggFuncService.getFuncNames();
+        var columnToUse;
+        if (this.column.isPrimary()) {
+            columnToUse = this.column;
+        }
+        else {
+            columnToUse = this.column.getColDef().pivotValueColumn;
+        }
+        funcNames.forEach(function (funcName) {
+            cMenuList.addItem({
+                name: localeTextFunc(funcName, funcName),
+                action: function () {
+                    _this.columnController.setColumnAggFunc(columnToUse, funcName);
+                    _this.columnController.addValueColumn(columnToUse);
+                },
+                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName
+            });
         });
         return cMenuList;
     };
@@ -281,6 +252,7 @@ var EnterpriseMenu = (function () {
     };
     EnterpriseMenu.prototype.getMenuItems = function () {
         var defaultMenuOptions = this.getDefaultMenuOptions();
+        var result;
         var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
             var userOptions = userFunc({
@@ -290,25 +262,38 @@ var EnterpriseMenu = (function () {
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: defaultMenuOptions
             });
-            return userOptions;
+            result = userOptions;
         }
         else {
-            return defaultMenuOptions;
+            result = defaultMenuOptions;
         }
+        // GUI looks weird when two separators are side by side. this can happen accidentally
+        // if we remove items from the menu then two separators can edit up adjacent.
+        main_1.Utils.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        return result;
     };
     EnterpriseMenu.prototype.getDefaultMenuOptions = function () {
         var result = [];
-        var doingGrouping = this.columnController.getRowGroupColumns().length > 0;
+        var rowGroupCount = this.columnController.getRowGroupColumns().length;
+        var doingGrouping = rowGroupCount > 0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        var allowValue = this.column.isAllowValue();
+        var allowRowGroup = this.column.isAllowRowGroup();
+        var isPrimary = this.column.isPrimary();
+        var pivotModeOn = this.columnController.isPivotMode();
         result.push('pinSubMenu');
-        if (doingGrouping && !this.column.getColDef().suppressAggregation) {
+        var allowValueAgg = 
+        // if primary, then only allow aggValue if grouping and it's a value columns
+        (isPrimary && doingGrouping && allowValue)
+            || !isPrimary;
+        if (allowValueAgg) {
             result.push('valueAggSubMenu');
         }
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('autoSizeThis');
         result.push('autoSizeAll');
-        result.push('separator');
-        if (!this.column.getColDef().suppressRowGroup) {
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        if (allowRowGroup && this.column.isPrimary()) {
             if (groupedByThisColumn) {
                 result.push('rowUnGroup');
             }
@@ -316,11 +301,15 @@ var EnterpriseMenu = (function () {
                 result.push('rowGroup');
             }
         }
-        result.push('separator');
+        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('resetColumns');
         result.push('toolPanel');
         // only add grouping expand/collapse if grouping
-        if (doingGrouping) {
+        // if pivoting, we only have expandable groups if grouping by 2 or more columns
+        // as the lowest level group is not expandable while pivoting.
+        // if not pivoting, then any active row group can be expanded.
+        var allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+        if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');
         }
@@ -376,6 +365,7 @@ var EnterpriseMenu = (function () {
     EnterpriseMenu.TAB_FILTER = 'filter';
     EnterpriseMenu.TAB_GENERAL = 'general';
     EnterpriseMenu.TAB_COLUMNS = 'columns';
+    EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
     __decorate([
         main_1.Autowired('columnController'), 
         __metadata('design:type', main_1.ColumnController)
@@ -396,6 +386,10 @@ var EnterpriseMenu = (function () {
         main_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', main_1.GridOptionsWrapper)
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('aggFuncService'), 
+        __metadata('design:type', aggFuncService_1.AggFuncService)
+    ], EnterpriseMenu.prototype, "aggFuncService", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 

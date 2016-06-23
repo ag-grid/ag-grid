@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {
@@ -78,6 +78,10 @@ var SetFilterModel = (function () {
         var _this = this;
         var uniqueCheck = {};
         var result = [];
+        if (!this.rowModel.forEachLeafNode) {
+            console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            return [];
+        }
         this.rowModel.forEachLeafNode(function (node) {
             if (!node.group) {
                 var value = _this.valueGetter(node);

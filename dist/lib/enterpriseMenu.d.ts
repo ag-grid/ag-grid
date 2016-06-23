@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 import { IMenuFactory, Column } from "ag-grid/main";
 export declare class EnterpriseMenuFactory implements IMenuFactory {
     private context;
@@ -15,11 +15,13 @@ export declare class EnterpriseMenu {
     static TAB_FILTER: string;
     static TAB_GENERAL: string;
     static TAB_COLUMNS: string;
+    static MENU_ITEM_SEPARATOR: string;
     private columnController;
     private filterManager;
     private context;
     private gridApi;
     private gridOptionsWrapper;
+    private aggFuncService;
     private tabbedLayout;
     private hidePopupFunc;
     private column;

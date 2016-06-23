@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,9 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
+var pivotStage_1 = require("./pivotStage");
+var aggFuncService_1 = require("../aggregation/aggFuncService");
 var AggregationStage = (function () {
     function AggregationStage() {
-        this.aggFunctionService = new AggFunctionService();
     }
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
@@ -21,33 +22,34 @@ var AggregationStage = (function () {
         if (rowsAlreadyGrouped) {
             return;
         }
-        var valueColumns = this.columnController.getValueColumns();
-        var pivotColumns = this.columnController.getPivotColumns();
-        this.recursivelyCreateAggData(rootNode, valueColumns, pivotColumns);
+        var pivotActive = this.columnController.isPivotActive();
+        var measureColumns = this.columnController.getAggregationColumns();
+        var pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
+        this.recursivelyCreateAggData(rootNode, measureColumns, pivotColumns);
     };
-    AggregationStage.prototype.recursivelyCreateAggData = function (rowNode, valueColumns, pivotColumns) {
+    AggregationStage.prototype.recursivelyCreateAggData = function (rowNode, measureColumns, pivotColumns) {
         var _this = this;
         // aggregate all children first, as we use the result in this nodes calculations
         rowNode.childrenAfterFilter.forEach(function (child) {
             if (child.group) {
-                _this.recursivelyCreateAggData(child, valueColumns, pivotColumns);
+                _this.recursivelyCreateAggData(child, measureColumns, pivotColumns);
             }
         });
-        this.aggregateRowNode(rowNode, valueColumns, pivotColumns);
+        this.aggregateRowNode(rowNode, measureColumns, pivotColumns);
     };
-    AggregationStage.prototype.aggregateRowNode = function (rowNode, valueColumns, pivotColumns) {
-        var valueColumnsMissing = valueColumns.length === 0;
+    AggregationStage.prototype.aggregateRowNode = function (rowNode, measureColumns, pivotColumns) {
+        var measureColumnsMissing = measureColumns.length === 0;
         var pivotColumnsMissing = pivotColumns.length === 0;
         var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
         var aggResult;
         if (userProvidedGroupRowAggNodes) {
             aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
         }
-        else if (valueColumnsMissing) {
+        else if (measureColumnsMissing) {
             aggResult = null;
         }
         else if (pivotColumnsMissing) {
-            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, valueColumns);
+            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, measureColumns);
         }
         else {
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
@@ -62,13 +64,13 @@ var AggregationStage = (function () {
     AggregationStage.prototype.aggregateRowNodeUsingValuesAndPivot = function (rowNode) {
         var _this = this;
         var result = {};
-        var pivotColumnDefs = this.pivotService.getPivotColumnDefs();
+        var pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
         pivotColumnDefs.forEach(function (pivotColumnDef) {
             var values;
-            var valueColumn = pivotColumnDef.valueColumn;
+            var valueColumn = pivotColumnDef.pivotValueColumn;
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                var keys = pivotColumnDef.keys;
+                var keys = pivotColumnDef.pivotKeys;
                 values = _this.getValuesFromMappedSet(rowNode.childrenMapped, keys, valueColumn);
             }
             else {
@@ -137,7 +139,7 @@ var AggregationStage = (function () {
     AggregationStage.prototype.aggregateValues = function (values, aggFuncOrString) {
         var aggFunction;
         if (typeof aggFuncOrString === 'string') {
-            aggFunction = this.aggFunctionService.getAggFunction(aggFuncOrString);
+            aggFunction = this.aggFuncService.getAggFunc(aggFuncOrString);
         }
         else {
             aggFunction = aggFuncOrString;
@@ -162,9 +164,13 @@ var AggregationStage = (function () {
         __metadata('design:type', main_1.ValueService)
     ], AggregationStage.prototype, "valueService", void 0);
     __decorate([
-        main_1.Autowired('pivotService'), 
-        __metadata('design:type', main_1.PivotService)
-    ], AggregationStage.prototype, "pivotService", void 0);
+        main_1.Autowired('pivotStage'), 
+        __metadata('design:type', pivotStage_1.PivotStage)
+    ], AggregationStage.prototype, "pivotStage", void 0);
+    __decorate([
+        main_1.Autowired('aggFuncService'), 
+        __metadata('design:type', aggFuncService_1.AggFuncService)
+    ], AggregationStage.prototype, "aggFuncService", void 0);
     AggregationStage = __decorate([
         main_1.Bean('aggregationStage'), 
         __metadata('design:paramtypes', [])
@@ -172,74 +178,3 @@ var AggregationStage = (function () {
     return AggregationStage;
 })();
 exports.AggregationStage = AggregationStage;
-var AggFunctionService = (function () {
-    function AggFunctionService() {
-        this.aggFunctionsMap = {};
-        this.aggFunctionsMap['sum'] = function (input) {
-            var result = null;
-            var length = input.length;
-            for (var i = 0; i < length; i++) {
-                if (typeof input[i] === 'number') {
-                    if (result === null) {
-                        result = input[i];
-                    }
-                    else {
-                        result += input[i];
-                    }
-                }
-                result += i;
-            }
-            return result;
-        };
-        this.aggFunctionsMap['first'] = function (input) {
-            if (input.length >= 0) {
-                return input[0];
-            }
-            else {
-                return null;
-            }
-        };
-        this.aggFunctionsMap['last'] = function (input) {
-            if (input.length >= 0) {
-                return input[input.length - 1];
-            }
-            else {
-                return null;
-            }
-        };
-        this.aggFunctionsMap['min'] = function (input) {
-            var result = null;
-            var length = input.length;
-            for (var i = 0; i < length; i++) {
-                if (typeof input[i] === 'number') {
-                    if (result === null) {
-                        result = input[i];
-                    }
-                    else if (result > input[i]) {
-                        result = input[i];
-                    }
-                }
-            }
-            return result;
-        };
-        this.aggFunctionsMap['max'] = function (input) {
-            var result = null;
-            var length = input.length;
-            for (var i = 0; i < length; i++) {
-                if (typeof input[i] === 'number') {
-                    if (result === null) {
-                        result = input[i];
-                    }
-                    else if (result < input[i]) {
-                        result = input[i];
-                    }
-                }
-            }
-            return result;
-        };
-    }
-    AggFunctionService.prototype.getAggFunction = function (name) {
-        return this.aggFunctionsMap[name];
-    };
-    return AggFunctionService;
-})();

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -17,6 +17,8 @@ var main_1 = require("ag-grid/main");
 var columnSelectPanel_1 = require("./columnsSelect/columnSelectPanel");
 var rowGroupColumnsPanel_1 = require("./columnDrop/rowGroupColumnsPanel");
 var pivotColumnsPanel_1 = require("./columnDrop/pivotColumnsPanel");
+var pivotModePanel_1 = require("./columnDrop/pivotModePanel");
+var valueColumnsPanel_1 = require("./columnDrop/valueColumnsPanel");
 var ToolPanelComp = (function (_super) {
     __extends(ToolPanelComp, _super);
     function ToolPanelComp() {
@@ -25,19 +27,25 @@ var ToolPanelComp = (function (_super) {
     ToolPanelComp.prototype.init = function () {
         this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(true);
         this.context.wireBean(this.columnSelectPanel);
-        this.addInWrapper(this.columnSelectPanel.getGui(), '100%');
-        var p2 = new rowGroupColumnsPanel_1.RowGroupColumnsPanel(false);
-        var p4 = new pivotColumnsPanel_1.PivotColumnsPanel(false);
-        this.context.wireBean(p2);
-        this.context.wireBean(p4);
-        // this.addInWrapper(p2.getGui(), '15%');
-        // this.addInWrapper(p4.getGui(), '15%');
-    };
-    ToolPanelComp.prototype.addInWrapper = function (eElement, height) {
-        var eDiv = document.createElement('div');
-        eDiv.style.height = height;
-        eDiv.appendChild(eElement);
-        this.getGui().appendChild(eDiv);
+        var pivotModePanel = new pivotModePanel_1.PivotModePanel();
+        this.context.wireBean(pivotModePanel);
+        var rowGroupColumnsPanel = new rowGroupColumnsPanel_1.RowGroupColumnsPanel(false);
+        var pivotColumnsPanel = new pivotColumnsPanel_1.PivotColumnsPanel(false);
+        var valueColumnsPanel = new valueColumnsPanel_1.ValuesColumnPanel(false);
+        this.context.wireBean(rowGroupColumnsPanel);
+        this.context.wireBean(pivotColumnsPanel);
+        this.context.wireBean(valueColumnsPanel);
+        this.getGui().appendChild(pivotModePanel.getGui());
+        this.getGui().appendChild(this.columnSelectPanel.getGui());
+        this.getGui().appendChild(valueColumnsPanel.getGui());
+        this.getGui().appendChild(rowGroupColumnsPanel.getGui());
+        this.getGui().appendChild(pivotColumnsPanel.getGui());
+        this.addDestroyFunc(function () {
+            pivotModePanel.destroy();
+            rowGroupColumnsPanel.destroy();
+            pivotColumnsPanel.destroy();
+            valueColumnsPanel.destroy();
+        });
     };
     ToolPanelComp.TEMPLATE = '<div class="ag-tool-panel"></div>';
     __decorate([

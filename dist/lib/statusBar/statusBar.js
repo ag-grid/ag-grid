@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -74,6 +74,10 @@ var StatusBar = (function (_super) {
                         // if empty cell, skip it, doesn't impact count or anything
                         if (main_1.Utils.missing(value) || value === '') {
                             return;
+                        }
+                        // see if value is wrapped, can happen when doing count() or avg() functions
+                        if (value.value) {
+                            value = value.value;
                         }
                         if (typeof value === 'string') {
                             value = Number(value);

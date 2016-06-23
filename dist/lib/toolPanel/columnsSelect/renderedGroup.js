@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -20,50 +20,42 @@ var RenderedGroup = (function (_super) {
     function RenderedGroup(columnGroup, columnDept, expandedCallback, allowDragging) {
         _super.call(this, RenderedGroup.TEMPLATE);
         this.expanded = true;
+        this.processingColumnStateChange = false;
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
         this.expandedCallback = expandedCallback;
         this.allowDragging = allowDragging;
     }
     RenderedGroup.prototype.init = function () {
+        var _this = this;
+        this.instantiate(this.context);
         var eText = this.queryForHtmlElement('#eText');
         this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         if (main_1.Utils.missing(this.displayName)) {
             this.displayName = '>>';
         }
         eText.innerHTML = this.displayName;
-        eText.addEventListener('dblclick', this.onExpandOrContractClicked.bind(this));
         this.setupExpandContract();
         var eIndent = this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
+        this.addDestroyableEventListener(eText, 'click', function () { return _this.cbSelect.setSelected(!_this.cbSelect.isSelected()); });
+        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.setOpenClosedIcons();
         if (this.allowDragging) {
             this.addDragSource();
         }
-        this.setupVisibleIcons();
+        this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
     };
     RenderedGroup.prototype.addVisibilityListenersToAllChildren = function () {
         var _this = this;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            _this.addDestroyableEventListener(column, main_1.Column.EVENT_VISIBLE_CHANGED, _this.setVisibleIcons.bind(_this));
+            _this.addDestroyableEventListener(column, main_1.Column.EVENT_VISIBLE_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addDestroyableEventListener(column, main_1.Column.EVENT_VALUE_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addDestroyableEventListener(column, main_1.Column.EVENT_PIVOT_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addDestroyableEventListener(column, main_1.Column.EVENT_ROW_GROUP_CHANGED, _this.onColumnStateChanged.bind(_this));
         });
-    };
-    RenderedGroup.prototype.setupVisibleIcons = function () {
-        this.eAllHiddenIcon = this.queryForHtmlElement('.ag-column-hidden-icon');
-        this.eAllVisibleIcon = this.queryForHtmlElement('.ag-column-visible-icon');
-        this.eHalfVisibleIcon = this.queryForHtmlElement('.ag-column-half-icon');
-        this.eAllHiddenIcon.appendChild(svgFactory.createColumnHiddenIcon());
-        this.eAllVisibleIcon.appendChild(svgFactory.createColumnVisibleIcon());
-        this.eHalfVisibleIcon.appendChild(svgFactory.createColumnIndeterminateIcon());
-        this.eAllHiddenIcon.addEventListener('click', this.setChildrenVisible.bind(this, true));
-        this.eAllVisibleIcon.addEventListener('click', this.setChildrenVisible.bind(this, false));
-        this.eHalfVisibleIcon.addEventListener('click', this.setChildrenVisible.bind(this, true));
-        // var columnStateChangedListener = this.onColumnStateChangedListener.bind(this);
-        // this.column.addEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener);
-        // this.addDestroyFunc( ()=> this.column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, columnStateChangedListener) );
-        this.setVisibleIcons();
-        // this.setIconVisibility();
     };
     RenderedGroup.prototype.addDragSource = function () {
         var dragSource = {
@@ -81,24 +73,108 @@ var RenderedGroup = (function (_super) {
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
     };
-    RenderedGroup.prototype.setChildrenVisible = function (visible) {
+    RenderedGroup.prototype.onCheckboxChanged = function () {
+        if (this.processingColumnStateChange) {
+            return;
+        }
         var childColumns = this.columnGroup.getLeafColumns();
-        this.columnController.setColumnsVisible(childColumns, visible);
+        var selected = this.cbSelect.isSelected();
+        if (this.columnController.isPivotMode()) {
+            if (selected) {
+                this.actionCheckedReduce(childColumns);
+            }
+            else {
+                this.actionUnCheckedReduce(childColumns);
+            }
+        }
+        else {
+            this.columnController.setColumnsVisible(childColumns, selected);
+        }
     };
-    RenderedGroup.prototype.setVisibleIcons = function () {
+    RenderedGroup.prototype.actionUnCheckedReduce = function (columns) {
+        var columnsToUnPivot = [];
+        var columnsToUnValue = [];
+        var columnsToUnGroup = [];
+        columns.forEach(function (column) {
+            if (column.isPivotActive()) {
+                columnsToUnPivot.push(column);
+            }
+            if (column.isRowGroupActive()) {
+                columnsToUnGroup.push(column);
+            }
+            if (column.isValueActive()) {
+                columnsToUnValue.push(column);
+            }
+        });
+        if (columnsToUnPivot.length > 0) {
+            this.columnController.removePivotColumns(columnsToUnPivot);
+        }
+        if (columnsToUnGroup.length > 0) {
+            this.columnController.removeRowGroupColumns(columnsToUnGroup);
+        }
+        if (columnsToUnValue.length > 0) {
+            this.columnController.removeValueColumns(columnsToUnValue);
+        }
+    };
+    RenderedGroup.prototype.actionCheckedReduce = function (columns) {
+        var columnsToAggregate = [];
+        var columnsToGroup = [];
+        columns.forEach(function (column) {
+            if (column.isAllowValue()) {
+                if (!column.isValueActive()) {
+                    columnsToAggregate.push(column);
+                }
+            }
+            else {
+                if (!column.isPivotActive() && !column.isRowGroupActive()) {
+                    columnsToGroup.push(column);
+                }
+            }
+        });
+        if (columnsToAggregate.length > 0) {
+            this.columnController.addValueColumns(columnsToAggregate);
+        }
+        if (columnsToGroup.length > 0) {
+            this.columnController.addRowGroupColumns(columnsToGroup);
+        }
+    };
+    RenderedGroup.prototype.onColumnStateChanged = function () {
+        var _this = this;
+        var columnsReduced = this.columnController.isPivotMode();
         var visibleChildCount = 0;
         var hiddenChildCount = 0;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            if (column.isVisible()) {
+            if (_this.isColumnVisible(column, columnsReduced)) {
                 visibleChildCount++;
             }
             else {
                 hiddenChildCount++;
             }
         });
-        main_1.Utils.setVisible(this.eAllHiddenIcon, visibleChildCount === 0);
-        main_1.Utils.setVisible(this.eAllVisibleIcon, hiddenChildCount === 0);
-        main_1.Utils.setVisible(this.eHalfVisibleIcon, hiddenChildCount !== 0 && visibleChildCount !== 0);
+        var selectedValue;
+        if (visibleChildCount > 0 && hiddenChildCount > 0) {
+            selectedValue = null;
+        }
+        else if (visibleChildCount > 0) {
+            selectedValue = true;
+        }
+        else {
+            selectedValue = false;
+        }
+        this.processingColumnStateChange = true;
+        this.cbSelect.setSelected(selectedValue);
+        this.processingColumnStateChange = false;
+    };
+    RenderedGroup.prototype.isColumnVisible = function (column, columnsReduced) {
+        if (columnsReduced) {
+            var pivoted = column.isPivotActive();
+            var grouped = column.isRowGroupActive();
+            var aggregated = column.isValueActive();
+            return pivoted || grouped || aggregated;
+        }
+        else {
+            return column.isVisible();
+        }
     };
     RenderedGroup.prototype.onExpandOrContractClicked = function () {
         this.expanded = !this.expanded;
@@ -118,10 +194,8 @@ var RenderedGroup = (function (_super) {
         '  <span class="ag-column-group-icons">' +
         '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
         '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
-        '    <span class="ag-column-visible-icon"></span>' +
-        '    <span class="ag-column-hidden-icon"></span>' +
-        '    <span class="ag-column-half-icon"></span>' +
         '  </span>' +
+        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '  <span id="eText" class="ag-column-select-column-group-label"></span>' +
         '</div>';
     __decorate([
@@ -137,9 +211,21 @@ var RenderedGroup = (function (_super) {
         __metadata('design:type', main_1.GridPanel)
     ], RenderedGroup.prototype, "gridPanel", void 0);
     __decorate([
+        main_1.Autowired('context'), 
+        __metadata('design:type', main_1.Context)
+    ], RenderedGroup.prototype, "context", void 0);
+    __decorate([
         main_1.Autowired('dragAndDropService'), 
         __metadata('design:type', main_1.DragAndDropService)
     ], RenderedGroup.prototype, "dragAndDropService", void 0);
+    __decorate([
+        main_1.Autowired('eventService'), 
+        __metadata('design:type', main_1.EventService)
+    ], RenderedGroup.prototype, "eventService", void 0);
+    __decorate([
+        main_1.QuerySelector('.ag-column-select-checkbox'), 
+        __metadata('design:type', main_1.AgCheckbox)
+    ], RenderedGroup.prototype, "cbSelect", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 

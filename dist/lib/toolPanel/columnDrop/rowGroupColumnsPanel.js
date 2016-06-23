@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -19,7 +19,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var RowGroupColumnsPanel = (function (_super) {
     __extends(RowGroupColumnsPanel, _super);
     function RowGroupColumnsPanel(horizontal) {
-        _super.call(this, horizontal);
+        _super.call(this, horizontal, false);
     }
     RowGroupColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
@@ -40,8 +40,8 @@ var RowGroupColumnsPanel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
     RowGroupColumnsPanel.prototype.isColumnDroppable = function (column) {
-        var columnGroupable = !column.getColDef().suppressRowGroup;
-        var columnNotAlreadyGrouped = !this.columnController.isColumnRowGrouped(column);
+        var columnGroupable = column.isAllowRowGroup();
+        var columnNotAlreadyGrouped = !column.isRowGroupActive();
         return columnGroupable && columnNotAlreadyGrouped;
     };
     RowGroupColumnsPanel.prototype.removeColumns = function (columns) {
@@ -93,10 +93,6 @@ var RowGroupColumnsPanel = (function (_super) {
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], RowGroupColumnsPanel.prototype, "passBeansUp", null);
-    RowGroupColumnsPanel = __decorate([
-        main_1.Bean('rowGroupColumnsPanel'), 
-        __metadata('design:paramtypes', [Boolean])
-    ], RowGroupColumnsPanel);
     return RowGroupColumnsPanel;
 })(abstractColumnDropPanel_1.AbstractColumnDropPanel);
 exports.RowGroupColumnsPanel = RowGroupColumnsPanel;

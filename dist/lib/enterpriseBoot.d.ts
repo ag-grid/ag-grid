@@ -1,7 +1,6 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 export declare class EnterpriseBoot {
     private static RICH_SELECT;
-    private static LARGE_TEXT;
     private filterManager;
     private cellEditorFactory;
     private licenseManager;

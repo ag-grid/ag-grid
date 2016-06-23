@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,19 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
-var main_3 = require("ag-grid/main");
-var main_4 = require("ag-grid/main");
-var main_5 = require("ag-grid/main");
-var main_6 = require("ag-grid/main");
-var main_7 = require("ag-grid/main");
-var main_8 = require("ag-grid/main");
-var main_9 = require("ag-grid/main");
-var main_10 = require("ag-grid/main");
-var main_11 = require("ag-grid/main");
-var main_12 = require("ag-grid/main");
-var main_13 = require("ag-grid/main");
-var main_14 = require("ag-grid/main");
 var RangeController = (function () {
     function RangeController() {
         this.bodyScrollListener = this.onBodyScroll.bind(this);
@@ -29,22 +16,25 @@ var RangeController = (function () {
     }
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_GROUP_OPENED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_MOVED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(main_12.Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
-        this.eventService.addEventListener(main_12.Events.EVENT_SORT_CHANGED, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_GROUP_OPENED, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_MOVED, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
+        this.eventService.addEventListener(main_1.Events.EVENT_SORT_CHANGED, this.clearSelection.bind(this));
     };
     RangeController.prototype.setRangeToCell = function (cell) {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
         var columns = this.updateSelectedColumns(cell.column, cell.column);
         if (!columns) {
             return;
         }
         var newRange = {
-            start: new main_13.GridCell(cell.rowIndex, cell.floating, cell.column),
-            end: new main_13.GridCell(cell.rowIndex, cell.floating, cell.column),
+            start: new main_1.GridCell(cell.rowIndex, cell.floating, cell.column),
+            end: new main_1.GridCell(cell.rowIndex, cell.floating, cell.column),
             columns: columns
         };
         this.cellRanges = [];
@@ -53,12 +43,18 @@ var RangeController = (function () {
         this.dispatchChangedEvent(true, false);
     };
     RangeController.prototype.setRange = function (rangeSelection) {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
         this.cellRanges = [];
         this.addRange(rangeSelection);
     };
     RangeController.prototype.addRange = function (rangeSelection) {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
         var columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
-        var columnEnd = this.columnController.getOriginalColumn(rangeSelection.columnEnd);
+        var columnEnd = this.columnController.getPrimaryColumn(rangeSelection.columnEnd);
         if (!columnStart || !columnEnd) {
             return;
         }
@@ -67,8 +63,8 @@ var RangeController = (function () {
             return;
         }
         var newRange = {
-            start: new main_13.GridCell(rangeSelection.rowStart, rangeSelection.floatingStart, columnStart),
-            end: new main_13.GridCell(rangeSelection.rowEnd, rangeSelection.floatingEnd, columnEnd),
+            start: new main_1.GridCell(rangeSelection.rowStart, rangeSelection.floatingStart, columnStart),
+            end: new main_1.GridCell(rangeSelection.rowEnd, rangeSelection.floatingEnd, columnEnd),
             columns: columns
         };
         if (!this.cellRanges) {
@@ -136,11 +132,11 @@ var RangeController = (function () {
         return matchingCount;
     };
     RangeController.prototype.isRowInRange = function (rowIndex, floating, cellRange) {
-        var row1 = new main_14.GridRow(cellRange.start.rowIndex, cellRange.start.floating);
-        var row2 = new main_14.GridRow(cellRange.end.rowIndex, cellRange.end.floating);
+        var row1 = new main_1.GridRow(cellRange.start.rowIndex, cellRange.start.floating);
+        var row2 = new main_1.GridRow(cellRange.end.rowIndex, cellRange.end.floating);
         var firstRow = row1.before(row2) ? row1 : row2;
         var lastRow = row1.before(row2) ? row2 : row1;
-        var thisRow = new main_14.GridRow(rowIndex, floating);
+        var thisRow = new main_1.GridRow(rowIndex, floating);
         if (thisRow.equals(firstRow) || thisRow.equals(lastRow)) {
             return true;
         }
@@ -151,6 +147,9 @@ var RangeController = (function () {
         }
     };
     RangeController.prototype.onDragStart = function (mouseEvent) {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
         // ctrlKey for windows, metaKey for Apple
         var multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
         if (main_1.Utils.missing(this.cellRanges) || !multiSelectKeyPressed) {
@@ -170,8 +169,8 @@ var RangeController = (function () {
     };
     RangeController.prototype.createNewActiveRange = function (cell) {
         this.activeRange = {
-            start: new main_13.GridCell(cell.rowIndex, cell.floating, cell.column),
-            end: new main_13.GridCell(cell.rowIndex, cell.floating, cell.column),
+            start: new main_1.GridCell(cell.rowIndex, cell.floating, cell.column),
+            end: new main_1.GridCell(cell.rowIndex, cell.floating, cell.column),
             columns: [cell.column]
         };
         this.cellRanges.push(this.activeRange);
@@ -181,7 +180,7 @@ var RangeController = (function () {
         this.dispatchChangedEvent(finished, started);
     };
     RangeController.prototype.dispatchChangedEvent = function (finished, started) {
-        this.eventService.dispatchEvent(main_12.Events.EVENT_RANGE_SELECTION_CHANGED, { finished: finished, started: started });
+        this.eventService.dispatchEvent(main_1.Events.EVENT_RANGE_SELECTION_CHANGED, { finished: finished, started: started });
     };
     RangeController.prototype.onDragStop = function () {
         if (!this.dragging) {
@@ -237,45 +236,49 @@ var RangeController = (function () {
         return columns;
     };
     __decorate([
-        main_3.Autowired('loggerFactory'), 
-        __metadata('design:type', main_4.LoggerFactory)
+        main_1.Autowired('loggerFactory'), 
+        __metadata('design:type', main_1.LoggerFactory)
     ], RangeController.prototype, "loggerFactory", void 0);
     __decorate([
-        main_3.Autowired('gridPanel'), 
-        __metadata('design:type', main_5.GridPanel)
+        main_1.Autowired('gridPanel'), 
+        __metadata('design:type', main_1.GridPanel)
     ], RangeController.prototype, "gridPanel", void 0);
     __decorate([
-        main_3.Autowired('rowModel'), 
+        main_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], RangeController.prototype, "rowModel", void 0);
     __decorate([
-        main_3.Autowired('eventService'), 
-        __metadata('design:type', main_6.EventService)
+        main_1.Autowired('eventService'), 
+        __metadata('design:type', main_1.EventService)
     ], RangeController.prototype, "eventService", void 0);
     __decorate([
-        main_3.Autowired('columnController'), 
-        __metadata('design:type', main_7.ColumnController)
+        main_1.Autowired('columnController'), 
+        __metadata('design:type', main_1.ColumnController)
     ], RangeController.prototype, "columnController", void 0);
     __decorate([
-        main_3.Autowired('rowRenderer'), 
-        __metadata('design:type', main_8.RowRenderer)
+        main_1.Autowired('rowRenderer'), 
+        __metadata('design:type', main_1.RowRenderer)
     ], RangeController.prototype, "rowRenderer", void 0);
     __decorate([
-        main_3.Autowired('focusedCellController'), 
-        __metadata('design:type', main_9.FocusedCellController)
+        main_1.Autowired('focusedCellController'), 
+        __metadata('design:type', main_1.FocusedCellController)
     ], RangeController.prototype, "focusedCellController", void 0);
     __decorate([
-        main_3.Autowired('mouseEventService'), 
-        __metadata('design:type', main_10.MouseEventService)
+        main_1.Autowired('mouseEventService'), 
+        __metadata('design:type', main_1.MouseEventService)
     ], RangeController.prototype, "mouseEventService", void 0);
     __decorate([
-        main_11.PostConstruct, 
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
+    ], RangeController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], RangeController.prototype, "init", null);
     RangeController = __decorate([
-        main_2.Bean('rangeController'), 
+        main_1.Bean('rangeController'), 
         __metadata('design:paramtypes', [])
     ], RangeController);
     return RangeController;

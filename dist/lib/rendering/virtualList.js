@@ -1,4 +1,4 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -13,7 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var main_1 = require('ag-grid/main');
+var main_1 = require("ag-grid/main");
 var VirtualList = (function (_super) {
     __extends(VirtualList, _super);
     function VirtualList() {
@@ -138,10 +138,6 @@ var VirtualList = (function (_super) {
         '<div class="ag-virtual-list-container">' +
         '</div>' +
         '</div>';
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], VirtualList.prototype, "context", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 

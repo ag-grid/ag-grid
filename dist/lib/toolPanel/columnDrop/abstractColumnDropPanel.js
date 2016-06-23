@@ -1,25 +1,18 @@
-// ag-grid-enterprise v4.2.9
+// ag-grid-enterprise v5.0.0-alpha.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 var main_1 = require("ag-grid/main");
+var columnComponent_1 = require("./columnComponent");
 var AbstractColumnDropPanel = (function (_super) {
     __extends(AbstractColumnDropPanel, _super);
-    function AbstractColumnDropPanel(horizontal) {
+    function AbstractColumnDropPanel(horizontal, valueColumn) {
         _super.call(this, "<div class=\"ag-column-drop ag-font-style ag-column-drop-" + (horizontal ? 'horizontal' : 'vertical') + "\"></div>");
         this.guiDestroyFunctions = [];
         this.horizontal = horizontal;
+        this.valueColumn = valueColumn;
     }
     AbstractColumnDropPanel.prototype.setBeans = function (beans) {
         this.beans = beans;
@@ -106,8 +99,8 @@ var AbstractColumnDropPanel = (function (_super) {
                     _this.addArrowToGui();
                 }
                 first = false;
-                var ghostCell = new ColumnComponent(column, _this.dropTarget, true);
-                ghostCell.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, _this.removeColumns.bind(_this, [column]));
+                var ghostCell = new columnComponent_1.ColumnComponent(column, _this.dropTarget, true, _this.valueColumn);
+                ghostCell.addEventListener(columnComponent_1.ColumnComponent.EVENT_COLUMN_REMOVE, _this.removeColumns.bind(_this, [column]));
                 _this.beans.context.wireBean(ghostCell);
                 _this.getGui().appendChild(ghostCell.getGui());
                 _this.guiDestroyFunctions.push(function () { return ghostCell.destroy(); });
@@ -121,8 +114,8 @@ var AbstractColumnDropPanel = (function (_super) {
             if (index > 0) {
                 _this.addArrowToGui();
             }
-            var cell = new ColumnComponent(column, _this.dropTarget, false);
-            cell.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, _this.removeColumns.bind(_this, [column]));
+            var cell = new columnComponent_1.ColumnComponent(column, _this.dropTarget, false, _this.valueColumn);
+            cell.addEventListener(columnComponent_1.ColumnComponent.EVENT_COLUMN_REMOVE, _this.removeColumns.bind(_this, [column]));
             _this.beans.context.wireBean(cell);
             _this.getGui().appendChild(cell.getGui());
             _this.guiDestroyFunctions.push(function () { return cell.destroy(); });
@@ -166,62 +159,3 @@ var AbstractColumnDropPanel = (function (_super) {
     return AbstractColumnDropPanel;
 })(main_1.Component);
 exports.AbstractColumnDropPanel = AbstractColumnDropPanel;
-var ColumnComponent = (function (_super) {
-    __extends(ColumnComponent, _super);
-    function ColumnComponent(column, dragSourceDropTarget, ghost) {
-        _super.call(this, ColumnComponent.TEMPLATE);
-        this.column = column;
-        this.dragSourceDropTarget = dragSourceDropTarget;
-        this.ghost = ghost;
-    }
-    ColumnComponent.prototype.init = function () {
-        this.displayName = this.columnController.getDisplayNameForCol(this.column);
-        this.setupComponents();
-        if (!this.ghost) {
-            this.addDragSource();
-        }
-    };
-    ColumnComponent.prototype.addDragSource = function () {
-        var dragSource = {
-            eElement: this.getGui(),
-            dragItem: [this.column],
-            dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget
-        };
-        this.dragAndDropService.addDragSource(dragSource);
-    };
-    ColumnComponent.prototype.setupComponents = function () {
-        var _this = this;
-        var eText = this.getGui().querySelector('#eText');
-        var btRemove = this.getGui().querySelector('#btRemove');
-        eText.innerHTML = this.displayName;
-        this.addDestroyableEventListener(btRemove, 'click', function () { return _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE); });
-        if (this.ghost) {
-            main_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
-        }
-    };
-    ColumnComponent.EVENT_COLUMN_REMOVE = 'columnRemove';
-    ColumnComponent.TEMPLATE = '<span class="ag-column-drop-cell">' +
-        '<span id="eText" class="ag-column-drop-cell-text"></span>' +
-        '<span id="btRemove" class="ag-column-drop-cell-button">&#10006;</span>' +
-        '</span>';
-    __decorate([
-        main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
-    ], ColumnComponent.prototype, "dragAndDropService", void 0);
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], ColumnComponent.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('gridPanel'), 
-        __metadata('design:type', main_1.GridPanel)
-    ], ColumnComponent.prototype, "gridPanel", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ColumnComponent.prototype, "init", null);
-    return ColumnComponent;
-})(main_1.Component);

@@ -1,12 +1,11 @@
-// ag-grid-enterprise v4.2.9
-import { Component } from 'ag-grid/main';
+// ag-grid-enterprise v5.0.0-alpha.0
+import { Component } from "ag-grid/main";
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
 }
 export declare class VirtualList extends Component {
     private static TEMPLATE;
-    private context;
     private model;
     private eListContainer;
     private rowsInBodyContainer;
