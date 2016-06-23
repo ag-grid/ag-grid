@@ -224,6 +224,14 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
 
     <show-example example="exampleColumnStateWithPivot"></show-example>
 
+    <h2>Pivot API</h2>
+    
+    <p>
+        Below shows examples of using the pivot API directly. Use this is you want to build out your own toolPanel.
+    </p>
+    
+    <show-example example="examplePivotApi"></show-example>
+    
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

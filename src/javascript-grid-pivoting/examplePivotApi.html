@@ -1,0 +1,22 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise.js?ignore=notused22"></script>
+    <script src="examplePivotApi.js"></script>
+</head>
+<body>
+    <div style="height: 100%; padding-top: 25px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+    <div style="padding: 4px; padding-left: 10px; position: absolute; top: 0px; left: 0px;">
+        <button onclick="gridOptions.columnApi.setPivotMode(true)">Pivot Mode On</button>
+        <button onclick="gridOptions.columnApi.setPivotMode(false)">Pivot Mode Off</button>
+
+        <button onclick="gridOptions.columnApi.addPivotColumn('country')">Pivot Country</button>
+        <button onclick="gridOptions.columnApi.addPivotColumns(['year','country'])">Pivot Year & Country</button>
+        <button onclick="gridOptions.columnApi.removePivotColumn('country')">Un-Pivot Country</button>
+
+        <button onclick="gridOptions.columnApi.setPivotColumns([])">Remove All Pivots</button>
+    </div>
+</body>
+</html>
