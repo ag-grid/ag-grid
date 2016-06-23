@@ -254,7 +254,8 @@ var firstColumn = {
         field: 'name',
         width: 200,
         editable: true,
-        type: 'dimension',
+        enableRowGroup: true,
+        enablePivot: true,
         filter: PersonFilter,
         checkboxSelection: function (params) {
             // we put checkbox on the name if we are not doing no grouping
@@ -292,7 +293,8 @@ var defaultCols = [
         cellRenderer: CountryCellRenderer,
         // pivotIndex: 1,
         // rowGroupIndex: 1,
-        type: 'dimension',
+        enableRowGroup: true,
+        enablePivot: true,
         cellEditor: 'richSelect',
         cellEditorParams: {
             cellRenderer: CountryCellRenderer,
@@ -316,7 +318,8 @@ var defaultCols = [
         headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
         cellRenderer: languageCellRenderer,
         cellEditor: 'select',
-        type: 'dimension',
+        enableRowGroup: true,
+        enablePivot: true,
         // rowGroupIndex: 0,
         // pivotIndex: 0,
         cellEditorParams: {
@@ -341,7 +344,8 @@ var defaultCols = [
         cellClass: function () {
             return 'alphabet';
         },
-        type: 'dimension',
+        enableRowGroup: true,
+        enablePivot: true,
         //pinned: 'right',
         // rowGroupIndex: 1,
         icons: {
@@ -354,7 +358,8 @@ var defaultCols = [
         //pinned: 'right',
         // rowGroupIndex: 2,
         // pivotIndex: 1,
-        type: 'dimension',
+        enableRowGroup: true,
+        enablePivot: true,
         cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
         floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
@@ -368,7 +373,7 @@ var defaultCols = [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                 filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: {cellRenderer: currencyRenderer},
-                type: 'value',
+                enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
                 // aggFunc: 'sum',
@@ -379,13 +384,15 @@ var defaultCols = [
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                type: 'dimension',
+                enableRowGroup: true,
+                enablePivot: true,
                 suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
                 cellRenderer: function() { return 'Abra...'; }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                type: 'dimension',
+                enableRowGroup: true,
+                enablePivot: true,
                 suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
                 cellRenderer: function() { return '...cadabra!'; }
             }
@@ -394,14 +401,16 @@ var defaultCols = [
     {
         headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
-        // type: 'value',
+        enableRowGroup: true,
+        enablePivot: true,
+        enableValue: true,
         filterParams: {cellRenderer: ratingFilterRenderer}
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
         aggFunc: 'sum',
-        type: 'value',
+        enableValue: true,
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -419,7 +428,7 @@ months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
-        type: 'value',
+        enableValue: true,
         // aggFunc: 'sum',
         //hide: true,
         cellClassRules: {

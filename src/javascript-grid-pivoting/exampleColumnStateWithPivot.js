@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, type: 'dimension'},
-    {headerName: "Age", field: "age", width: 90, type: 'value'},
-    {headerName: "Country", field: "country", width: 120, type: 'dimension'},
-    {headerName: "Year", field: "year", width: 90, type: 'dimension'},
-    {headerName: "Date", field: "date", width: 110, type: 'dimension'},
-    {headerName: "Sport", field: "sport", width: 110, type: 'dimension', pivotIndex: 1},
-    {headerName: "Gold", field: "gold", width: 100, type: 'value'},
-    {headerName: "Silver", field: "silver", width: 100, type: 'value'},
-    {headerName: "Bronze", field: "bronze", width: 100, type: 'value'},
-    {headerName: "Total", field: "total", width: 100, type: 'value'}
+    {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
+    {headerName: "Age", field: "age", width: 90, enableValue: true},
+    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true},
+    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
+    {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
+    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true, pivotIndex: 1},
+    {headerName: "Gold", field: "gold", width: 100, enableValue: true},
+    {headerName: "Silver", field: "silver", width: 100, enableValue: true},
+    {headerName: "Bronze", field: "bronze", width: 100, enableValue: true},
+    {headerName: "Total", field: "total", width: 100, enableValue: true}
 ];
 
 var gridOptions = {

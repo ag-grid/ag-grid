@@ -220,18 +220,19 @@ include '../documentation-main/documentation_header.php';
                 Useful for AngularJS 1.x cells only.</td>
         </tr>
         <tr>
-            <th>suppressRowGroup</th>
-            <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to row group by this column (via column menu or by dragging
-                to the group box).</td>
+            <th>enableRowGroup</th>
+            <td>(ag-Grid-Enterprise only) Set to true if you want to be able to row group by this column via the GUI.
+                This will not block if the API or properties are used to achieve row grouping.</td>
         </tr>
         <tr>
-            <th>suppressPivot</th>
-            <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to pivot by this column (via column menu or by dragging
-                to the pivot box).</td>
+            <th>enablePivot</th>
+            <td>(ag-Grid-Enterprise only) Set to true if you want to be able to pivot by this column via the GUI.
+                This will not block if the API or properties are used to achieve pivot.</td>
         </tr>
         <tr>
-            <th>suppressAggregation</th>
-            <td>(ag-Grid-Enterprise only) Set to true if you don't want the option to aggregate by this column (via column menu).</td>
+            <th>enableValue</th>
+            <td>(ag-Grid-Enterprise only) Set to true if you want to be able to aggregate by this column via the GUI.
+                This will not block if the API or properties are used to achieve aggregation.</td>
         </tr>
         <tr>
             <td>enableCellChangeFlash</td>
