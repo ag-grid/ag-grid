@@ -19,8 +19,19 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">17th June 2016</div>
-        <div>ag-Grid 4.2.7 & ag-Grid-Enterprise 4.2.11 patches released. Includes bug fix for group selection and aggregation. See <a href="../change-log/changeLogIndex.php">Change Log</a> for full details.</div>
+        <div class="news-header">
+            <img src='../images/panda.png'/>
+            &nbsp;
+            &nbsp;
+            23th June 2016
+            &nbsp;
+            &nbsp;
+            <img src='../images/panda.png'/>
+        </div>
+        <div>ag-Grid 5.0.0-alpha released. Allows you to preview the new pivoting functionality. See <a href="../archive/5.0.0-alpha/">5.0.0 Alpha Documentation</a> for full details.</div>
+        <div>
+
+        </div>
     </div>
 
 <!--    <div class="news-box">

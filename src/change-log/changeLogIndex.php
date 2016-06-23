@@ -14,13 +14,12 @@ include '../documentation-main/documentation_header.php';
     + New column API methods: setPivotColumns, removePivotColumn, removePivotColumns, addPivotColumn, addPivotColumns
 -->
 
-    <h3>Version 4.3.x</h3>
+    <h3>Version 5.0.x</h3>
     <li>Enhancement: added events dragStarted and dragStopped</li>
     <li>Enhancement: new property suppressUseColIdForGroups</li>
     <li>Enhancement: Safari now uses animation frames for scrolling (Chrome doesn't need it!!)</li>
     <li>Enhancement: when no using cellRenderer, node.textContent used instead of element.innerHTML, for security reasons to prevent malicious injection of Javascript.</li>
     <li>Enhancement: new property 'suppressCopyRowsToClipboard' so selected cells will be copied to clipboard and not the selected row, if that's what user wants.</li>
-    <li>Enhancement: user provided aggregation functions - now you can register your own aggregation functions with the grid</li>
     <li>Enhancement: popups are restricted to inside the grid when they appear - eg 'richSelect' doesn't appear outside of grid</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup, enablePivot and enableValue</li>
     
