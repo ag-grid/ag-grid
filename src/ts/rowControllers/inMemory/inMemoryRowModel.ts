@@ -11,7 +11,7 @@ import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
 
-enum RecursionType {Normal, AfterFilter, AfterFilterAndSort};
+enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
 @Bean('rowModel')
 export class InMemoryRowModel implements IInMemoryRowModel {
@@ -53,6 +53,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
         this.rootNode = new RowNode();
         this.rootNode.group = true;
+        this.rootNode.level = -1;
         this.rootNode.allLeafChildren = [];
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
@@ -231,6 +232,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
     }
 
+    public forEachPivotNode(callback: Function): void {
+        this.recursivelyWalkNodesAndCallback([this.rootNode], callback, RecursionType.PivotNodes, 0);
+    }
+
     // iterates through each item in memory, and calls the callback function
     // nodes - the rowNodes to traverse
     // callback - the user provided callback
@@ -249,6 +254,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                         case RecursionType.Normal : nodeChildren = node.childrenAfterGroup; break;
                         case RecursionType.AfterFilter : nodeChildren = node.childrenAfterFilter; break;
                         case RecursionType.AfterFilterAndSort : nodeChildren = node.childrenAfterSort; break;
+                        case RecursionType.PivotNodes :
+                            // for pivot, we don't go below leafGroup levels
+                            nodeChildren = !node.leafGroup ? node.childrenAfterSort : null; break;
                     }
                     if (nodeChildren) {
                         index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);

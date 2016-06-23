@@ -24,14 +24,14 @@ export class FlattenStage implements IRowNodeStage {
         // putting value into a wrapper so it's passed by reference
         var nextRowTop: NumberWrapper = {value: 0};
 
-        var reduce = this.columnController.isPivotMode();
+        var pivotMode = this.columnController.isPivotMode();
 
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
-        var showRootNode = reduce && rootNode.leafGroup;
+        var showRootNode = pivotMode && rootNode.leafGroup;
         var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
-        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, reduce);
+        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, pivotMode);
 
         return result;
     }
