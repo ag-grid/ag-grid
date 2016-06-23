@@ -229,6 +229,11 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
     <p>
         Below shows examples of using the pivot API directly. Use this is you want to build out your own toolPanel.
     </p>
+
+    <p>
+        The example also demonstrates exporting to CSV while using Pivot. Basically what you see inside the grid
+        is what will be exported.
+    </p>
     
     <show-example example="examplePivotApi"></show-example>
     
