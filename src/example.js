@@ -69,8 +69,6 @@ var groupColumn = {
         }
     },
     comparator: agGrid.defaultGroupComparator,
-    suppressAggregation: true,
-    suppressRowGroup: true,
     cellRenderer: 'group',
     cellRendererParams: {
         checkbox: true

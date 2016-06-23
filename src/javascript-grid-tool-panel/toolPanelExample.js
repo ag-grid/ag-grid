@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, suppressAggregation: true},
-    {headerName: "Age", field: "age", width: 90, suppressRowGroup: true},
-    {headerName: "Country", field: "country", width: 120, suppressAggregation: true},
-    {headerName: "Year", field: "year", width: 90, suppressAggregation: true},
-    {headerName: "Date", field: "date", width: 110, suppressAggregation: true},
-    {headerName: "Sport", field: "sport", width: 110, suppressAggregation: true},
-    {headerName: "Gold", field: "gold", width: 100, hide: true, suppressRowGroup: true},
-    {headerName: "Silver", field: "silver", width: 100, hide: true, suppressRowGroup: true},
-    {headerName: "Bronze", field: "bronze", width: 100, hide: true, suppressRowGroup: true},
-    {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100, suppressAggregation: true, suppressRowGroup: true}
+    {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
+    {headerName: "Age", field: "age", width: 90, enableValue: true},
+    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true},
+    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
+    {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
+    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true},
+    {headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true},
+    {headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true},
+    {headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true},
+    {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
 ];
 
 var gridOptions = {

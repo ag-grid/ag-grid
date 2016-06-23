@@ -299,29 +299,29 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Fresh Theme") { ?>
-                    <span class="sidebarLinkSelected"><li>Fresh Theme</li></span>
+                    <span class="sidebarLinkSelected">&nbsp;  Fresh Theme</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php"><li>Fresh Theme</li></a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php">&nbsp;  Fresh Theme</a>
                 <?php } ?>
                 <?php if ($key == "Blue Theme") { ?>
-                    <span class="sidebarLinkSelected"><li>Blue Theme</li></span>
+                    <span class="sidebarLinkSelected">&nbsp;  Blue Theme</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/blue-theme.php"><li>Blue Theme</li></a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/blue-theme.php">&nbsp;  Blue Theme</a>
                 <?php } ?>
                 <?php if ($key == "Dark Theme") { ?>
-                    <span class="sidebarLinkSelected"><li>Dark Theme</li></span>
+                    <span class="sidebarLinkSelected">&nbsp;  Dark Theme</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/dark-theme.php"><li>Dark Theme</li></a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/dark-theme.php">&nbsp;  Dark Theme</a>
                 <?php } ?>
                 <?php if ($key == "Material Theme") { ?>
-                    <span class="sidebarLinkSelected"><li>Material Theme</li></span>
+                    <span class="sidebarLinkSelected">&nbsp;  Material Theme</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/material-theme.php"><li>Material Theme</li></a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/material-theme.php">&nbsp;  Material Theme</a>
                 <?php } ?>
                 <?php if ($key == "Bootstrap Theme") { ?>
-                    <span class="sidebarLinkSelected"><li>Bootstrap Theme</li></span>
+                    <span class="sidebarLinkSelected">&nbsp;  Bootstrap Theme</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php"><li>Bootstrap Theme</li></a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php">&nbsp;  Bootstrap Theme</a>
                 <?php } ?>
 
                 <?php if ($key == "Icons") { ?>

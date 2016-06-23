@@ -42,35 +42,18 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Pivot Mode</h4>
     <p>
-        Pivot mode is a mode of operation where the grid only focuses on columns that are included in
+        Pivot mode is a mode of operation where the grid only uses columns that are included in
         a row grouping, aggregation or pivot. The rowData detail is also not shown (you cannot open up
         groups all the way down and view the lowest level detail). Pivot mode is similar to viewing
-        a pivot table in a Excel.
+        a pivot table in a Excel. When in pivot mode, column visibility is ignored.
     </p>
 
-    <h4>Dimensions and Values</h4>
+    <h4>Allow Pivot, Row Group, Value</h4>
     <p>
-        A <b>dimension</b> column is a column that typically has a set for values. For example the dimension Country
-        can have values Ireland, United Kingdom, USA. When a column definition is marked as a dimension it informs
-        the grid the column should be selectable for grouping and pivoting.
-    </p>
-    <p>
-        The grid GUI will only allow grouping and pivoting by dimensions.
-    </p>
-    <p>
-        A <b>value</b> column is a column that typically has numbers as values. For example the value column Bank Balance
-        can have values £234,242 or £0.4441. When a column definition is marked as a value it informs
-        the grid the column should be selectable for aggregations.
-    </p>
-    <p>
-        The grid GUI will only allow aggregating by value columns.
-    </p>
-    <p>
-        Dimension and values are industry standard ideas in data warehousing. See wikipedia for definitions
-        on <a href="https://en.wikipedia.org/wiki/Dimension_(data_warehouse)">Dimensions</a> and
-        <a href="https://en.wikipedia.org/wiki/Measure_(data_warehouse)">Measures</a> (values are more accurately
-        called 'measures' in data warehousing, however we choose to call them 'values' in ag-Grid to be consistent
-        with Excel pivoting).
+        Every column can be added as a row group, pivot or value (for aggregation) using the grid API or
+        configuration. However you need to mark the column definition with one or more of <i>allowRowGroup, allowPivot
+        or allowValue</i> to allow the function via the GUI. If these flags are not set, the GUI will not allow
+        the functions, however you API and configuration will not be impacted.
     </p>
 
 </div>
