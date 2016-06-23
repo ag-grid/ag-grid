@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.1
+// ag-grid-enterprise v5.0.0-alpha.2
 import { Component, EventService, Context, LoggerFactory, DragAndDropService, Column } from "ag-grid/main";
 export interface AbstractColumnDropPanelParams {
     dragAndDropIcon: string;
