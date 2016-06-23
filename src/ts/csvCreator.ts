@@ -65,6 +65,7 @@ export class CsvCreator {
         }
         var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
 
+        var that = this;
         var result = '';
 
         var skipGroups = params && params.skipGroups;
@@ -77,9 +78,14 @@ export class CsvCreator {
         var columnSeparator = (params && params.columnSeparator) || ',';
         var suppressQuotes = params && params.suppressQuotes;
         var processCellCallback = params && params.processCellCallback;
+        var processHeaderCallback = params && params.processHeaderCallback;
+
+        // when in pivot mode, we always render cols on screen, never 'all columns'
+        var isPivotMode = this.columnController.isPivotMode();
+        var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         var columnsToExport: Column[];
-        if (allColumns) {
+        if (allColumns && !isPivotMode) {
             columnsToExport = this.columnController.getAllPrimaryColumns();
         } else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
@@ -95,49 +101,61 @@ export class CsvCreator {
 
         // first pass, put in the header names of the cols
         if (!skipHeader) {
-            columnsToExport.forEach( (column: Column, index: number)=> {
-
-                var nameForCol = this.getHeaderName(params.processHeaderCallback, column);
-                if (nameForCol === null || nameForCol === undefined) {
-                    nameForCol = '';
-                }
-                if (index != 0) {
-                    result += columnSeparator;
-                }
-                result += this.putInQuotes(nameForCol, suppressQuotes);
-            });
+            columnsToExport.forEach(processHeaderColumn);
             result += LINE_SEPARATOR;
         }
 
-        inMemoryRowModel.forEachNodeAfterFilterAndSort( (node: RowNode) => {
+        if (isPivotMode) {
+            inMemoryRowModel.forEachPivotNode(processRow);
+        } else {
+            inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+        }
+
+        if (includeCustomFooter) {
+            result += params.customFooter;
+        }
+
+        function processRow(node: RowNode): void {
             if (skipGroups && node.group) { return; }
 
             if (skipFooters && node.footer) { return; }
 
             if (onlySelected && !node.isSelected()) { return; }
 
+            // if we are in pivotMode, then the grid will show the root node only
+            // if it's not a leaf group
+            var nodeIsRootNode = node.level===-1;
+            if (nodeIsRootNode && !node.leafGroup) { return; }
+
             columnsToExport.forEach( (column: Column, index: number)=> {
                 var valueForCell: any;
-                if (node.group && index === 0) {
-                    valueForCell =  this.createValueForGroupNode(node);
+                if (node.group && isRowGrouping && index === 0) {
+                    valueForCell =  that.createValueForGroupNode(node);
                 } else {
-                    valueForCell =  this.valueService.getValue(column, node);
+                    valueForCell =  that.valueService.getValue(column, node);
                 }
-                valueForCell = this.processCell(node, column, valueForCell, processCellCallback);
+                valueForCell = that.processCell(node, column, valueForCell, processCellCallback);
                 if (valueForCell === null || valueForCell === undefined) {
                     valueForCell = '';
                 }
                 if (index != 0) {
                     result += columnSeparator;
                 }
-                result += this.putInQuotes(valueForCell, suppressQuotes);
+                result += that.putInQuotes(valueForCell, suppressQuotes);
             });
 
             result += LINE_SEPARATOR;
-        });
+        }
 
-        if (includeCustomFooter) {
-            result += params.customFooter;
+        function processHeaderColumn(column: Column, index: number): void {
+            var nameForCol = that.getHeaderName(processHeaderCallback, column);
+            if (nameForCol === null || nameForCol === undefined) {
+                nameForCol = '';
+            }
+            if (index != 0) {
+                result += columnSeparator;
+            }
+            result += that.putInQuotes(nameForCol, suppressQuotes);
         }
 
         return result;
