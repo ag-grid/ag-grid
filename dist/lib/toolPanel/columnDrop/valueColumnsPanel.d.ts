@@ -1,7 +1,7 @@
 // ag-grid-enterprise v5.0.0-alpha.1
 import { Column } from "ag-grid/main";
 import { AbstractColumnDropPanel } from "./abstractColumnDropPanel";
-export declare class PivotColumnsPanel extends AbstractColumnDropPanel {
+export declare class ValuesColumnPanel extends AbstractColumnDropPanel {
     private columnController;
     private eventService;
     private gridOptionsWrapper;
@@ -10,8 +10,6 @@ export declare class PivotColumnsPanel extends AbstractColumnDropPanel {
     private dragAndDropService;
     constructor(horizontal: boolean);
     private passBeansUp();
-    private onEverythingChanged();
-    private onPivotModeChanged();
     protected isColumnDroppable(column: Column): boolean;
     protected removeColumns(columns: Column[]): void;
     protected addColumns(columns: Column[]): void;

@@ -16,12 +16,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var main_1 = require("ag-grid/main");
 var abstractColumnDropPanel_1 = require("./abstractColumnDropPanel");
 var svgFactory = main_1.SvgFactory.getInstance();
-var PivotColumnsPanel = (function (_super) {
-    __extends(PivotColumnsPanel, _super);
-    function PivotColumnsPanel(horizontal) {
-        _super.call(this, horizontal, false);
+var ValuesColumnPanel = (function (_super) {
+    __extends(ValuesColumnPanel, _super);
+    function ValuesColumnPanel(horizontal) {
+        _super.call(this, horizontal, true);
     }
-    PivotColumnsPanel.prototype.passBeansUp = function () {
+    ValuesColumnPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
             eventService: this.eventService,
             context: this.context,
@@ -29,72 +29,61 @@ var PivotColumnsPanel = (function (_super) {
             dragAndDropService: this.dragAndDropService
         });
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to pivot');
-        var title = localeTextFunc('pivots', 'Pivots');
+        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+        var title = localeTextFunc('values', 'Values');
         _super.prototype.init.call(this, {
-            dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
-            iconFactory: svgFactory.createPivotIcon,
+            dragAndDropIcon: main_1.DragAndDropService.ICON_AGGREGATE,
+            iconFactory: svgFactory.createAggregationIcon,
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onEverythingChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshGui.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.onEverythingChanged();
+        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     };
-    PivotColumnsPanel.prototype.onEverythingChanged = function () {
-        this.onPivotModeChanged();
-        this.refreshGui();
+    ValuesColumnPanel.prototype.isColumnDroppable = function (column) {
+        var columnValue = column.isAllowValue();
+        var columnNotValue = !column.isValueActive();
+        return columnValue && columnNotValue;
     };
-    PivotColumnsPanel.prototype.onPivotModeChanged = function () {
-        var pivotMode = this.columnController.isPivotMode();
-        this.setVisible(pivotMode);
+    ValuesColumnPanel.prototype.removeColumns = function (columns) {
+        var columnsCurrentlyValueColumns = main_1.Utils.filter(columns, function (column) { return column.isValueActive(); });
+        this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
     };
-    PivotColumnsPanel.prototype.isColumnDroppable = function (column) {
-        var allowPivot = column.isAllowPivot();
-        var columnNotAlreadyPivoted = !column.isPivotActive();
-        return allowPivot && columnNotAlreadyPivoted;
+    ValuesColumnPanel.prototype.addColumns = function (columns) {
+        this.columnController.addValueColumns(columns);
     };
-    PivotColumnsPanel.prototype.removeColumns = function (columns) {
-        var columnsPivoted = main_1.Utils.filter(columns, function (column) { return column.isPivotActive(); });
-        this.columnController.removePivotColumns(columnsPivoted);
-    };
-    PivotColumnsPanel.prototype.addColumns = function (columns) {
-        this.columnController.addPivotColumns(columns);
-    };
-    PivotColumnsPanel.prototype.getExistingColumns = function () {
-        return this.columnController.getPivotColumns();
+    ValuesColumnPanel.prototype.getExistingColumns = function () {
+        return this.columnController.getAggregationColumns();
     };
     __decorate([
         main_1.Autowired('columnController'), 
         __metadata('design:type', main_1.ColumnController)
-    ], PivotColumnsPanel.prototype, "columnController", void 0);
+    ], ValuesColumnPanel.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
         __metadata('design:type', main_1.EventService)
-    ], PivotColumnsPanel.prototype, "eventService", void 0);
+    ], ValuesColumnPanel.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', main_1.GridOptionsWrapper)
-    ], PivotColumnsPanel.prototype, "gridOptionsWrapper", void 0);
+    ], ValuesColumnPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('context'), 
         __metadata('design:type', main_1.Context)
-    ], PivotColumnsPanel.prototype, "context", void 0);
+    ], ValuesColumnPanel.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('loggerFactory'), 
         __metadata('design:type', main_1.LoggerFactory)
-    ], PivotColumnsPanel.prototype, "loggerFactory", void 0);
+    ], ValuesColumnPanel.prototype, "loggerFactory", void 0);
     __decorate([
         main_1.Autowired('dragAndDropService'), 
         __metadata('design:type', main_1.DragAndDropService)
-    ], PivotColumnsPanel.prototype, "dragAndDropService", void 0);
+    ], ValuesColumnPanel.prototype, "dragAndDropService", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
-    ], PivotColumnsPanel.prototype, "passBeansUp", null);
-    return PivotColumnsPanel;
+    ], ValuesColumnPanel.prototype, "passBeansUp", null);
+    return ValuesColumnPanel;
 })(abstractColumnDropPanel_1.AbstractColumnDropPanel);
-exports.PivotColumnsPanel = PivotColumnsPanel;
+exports.ValuesColumnPanel = ValuesColumnPanel;
