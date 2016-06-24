@@ -845,29 +845,44 @@ export class ColumnController {
         return result;
     }
 
+    private createStateItemFromColumn(column: Column): any {
+        var rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
+        var pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
+        var resultItem = {
+            colId: column.getColId(),
+            hide: !column.isVisible(),
+            aggFunc: column.getAggFunc() ? column.getAggFunc() : null,
+            width: column.getActualWidth(),
+            pivotIndex: pivotIndex,
+            pinned: column.getPinned(),
+            rowGroupIndex: rowGroupIndex
+        };
+        return resultItem;
+    }
+
     public getColumnState(): [any] {
         if (_.missing(this.primaryColumns)) {
             return <any>[];
         }
-        var result = <any>[];
 
-        this.primaryColumns.forEach( column => {
-            var rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
-            var pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
-            var resultItem = {
-                colId: column.getColId(),
-                hide: !column.isVisible(),
-                aggFunc: column.getAggFunc() ? column.getAggFunc() : null,
-                width: column.getActualWidth(),
-                pivotIndex: pivotIndex,
-                pinned: column.getPinned(),
-                rowGroupIndex: rowGroupIndex
-            };
-            result.push(resultItem);
-        });
+        var columnStateList = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
-        return result;
+        if (!this.pivotMode) {
+            this.orderColumnStateList(columnStateList);
+        }
+        
+        return columnStateList;
     }
+
+    private orderColumnStateList(columnStateList: any[]): void {
+        var gridColumnIds = this.gridColumns.map( column => column.getColId() );
+        columnStateList.sort( (itemA: any, itemB: any) => {
+            var posA = gridColumnIds.indexOf(itemA.colId);
+            var posB = gridColumnIds.indexOf(itemB.colId);
+            return posA - posB;
+        });
+    }
+
 
     public resetColumnState(): void {
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
@@ -926,6 +941,14 @@ export class ColumnController {
         this.pivotColumns.sort(this.sortColumnListUsingIndexes.bind(this, pivotIndexes));
 
         this.copyDownGridColumns();
+
+        var orderOfColIds = columnState.map( stateItem => stateItem.colId );
+        this.gridColumns.sort( (colA: Column, colB: Column)=> {
+            var indexA = orderOfColIds.indexOf(colA.getId());
+            var indexB = orderOfColIds.indexOf(colB.getId());
+            return indexA - indexB;
+        });
+
         this.updateDisplayedColumns();
 
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
