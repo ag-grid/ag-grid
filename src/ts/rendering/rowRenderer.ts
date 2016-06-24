@@ -204,7 +204,7 @@ export class RowRenderer {
         }
     }
 
-    public refreshView(refreshEvent?: any) {
+    public refreshView(refreshEvent?: any, suppressFocus = false) {
         this.logger.log('refreshView');
 
         var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
@@ -223,20 +223,20 @@ export class RowRenderer {
         this.refreshAllVirtualRows(refreshFromIndex);
         this.refreshAllFloatingRows();
 
-        this.restoreFocusedCell(focusedCell);
+        this.restoreFocusedCell(focusedCell, suppressFocus);
     }
 
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
     // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
     // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
     // edited cell).
-    private restoreFocusedCell(gridCell: GridCell): void {
-        if (gridCell) {
+    private restoreFocusedCell(gridCell: GridCell, suppressFocus: boolean): void {
+        if (gridCell && !suppressFocus) {
             this.focusedCellController.setFocusedCell(gridCell.rowIndex, gridCell.column, gridCell.floating, true);
         }
     }
 
-    public softRefreshView() {
+    public softRefreshView(suppressFocus: boolean) {
         var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
 
         this.forEachRenderedCell( renderedCell => {
@@ -245,7 +245,7 @@ export class RowRenderer {
             }
         });
 
-        this.restoreFocusedCell(focusedCell);
+        this.restoreFocusedCell(focusedCell, suppressFocus);
     }
 
     public stopEditing(cancel: boolean = false) {
@@ -265,7 +265,7 @@ export class RowRenderer {
         renderedRow.addEventListener(eventName, callback);
     }
 
-    public refreshRows(rowNodes: RowNode[]): void {
+    public refreshRows(rowNodes: RowNode[], suppressFocus: boolean): void {
         if (!rowNodes || rowNodes.length==0) {
             return;
         }
@@ -286,7 +286,7 @@ export class RowRenderer {
         // add draw them again
         this.drawVirtualRows();
 
-        this.restoreFocusedCell(focusedCell);
+        this.restoreFocusedCell(focusedCell, suppressFocus);
     }
 
     public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
