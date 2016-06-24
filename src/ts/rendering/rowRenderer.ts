@@ -72,6 +72,9 @@ export class RowRenderer {
 
     private destroyFunctions: Function[] = [];
 
+    private leftBounds: number;
+    private rightBounds: number;
+
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = this.loggerFactory.create('RowRenderer');
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
@@ -86,7 +89,7 @@ export class RowRenderer {
 
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, onColumnEventBound);
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, onColumnEventBound);
-
+        
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, refreshViewBound);
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewBound);
 
@@ -98,6 +101,16 @@ export class RowRenderer {
         });
 
         this.refreshView();
+    }
+
+    public setLeftAndRightBounds(leftBounds: number, rightBounds: number): void {
+        if (leftBounds!==this.leftBounds || rightBounds!==this.rightBounds) {
+            this.leftBounds = leftBounds;
+            this.rightBounds = rightBounds;
+            this.forEachRenderedRow( (key: string, renderedRow: RenderedRow) => {
+                renderedRow.setLeftAndRightBounds(leftBounds, rightBounds);
+            });
+        }
     }
 
     public onColumnEvent(event: ColumnChangeEvent): void {
@@ -189,9 +202,7 @@ export class RowRenderer {
 
         // if no cols, don't draw row - can we get rid of this???
         var columns = this.columnController.getAllDisplayedColumns();
-        if (!columns || columns.length == 0) {
-            return;
-        }
+        if (_.missingOrEmpty(columns)) { return; }
 
         if (rowNodes) {
             rowNodes.forEach( (node: RowNode, rowIndex: number) => {
@@ -201,6 +212,7 @@ export class RowRenderer {
                     pinnedLeftContainer,
                     pinnedRightContainer,
                     node, rowIndex);
+                renderedRow.setLeftAndRightBounds(this.leftBounds, this.rightBounds);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             })
@@ -261,6 +273,12 @@ export class RowRenderer {
         _.iterateObject(this.renderedRows, (key: any, renderedRow: RenderedRow)=> {
             renderedRow.forEachRenderedCell(callback);
         });
+    }
+
+    private forEachRenderedRow(callback: (key: string, renderedCell: RenderedRow)=>void): void {
+        _.iterateObject(this.renderedRows, callback);
+        _.iterateObject(this.renderedTopFloatingRows, callback);
+        _.iterateObject(this.renderedBottomFloatingRows, callback);
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
@@ -499,13 +517,12 @@ export class RowRenderer {
     private insertRow(node: any, rowIndex: any) {
         var columns = this.columnController.getAllDisplayedColumns();
         // if no cols, don't draw row
-        if (!columns || columns.length == 0) {
-            return;
-        }
+        if (_.missingOrEmpty(columns)) { return; }
 
         var renderedRow = new RenderedRow(this.$scope,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex);
+        renderedRow.setLeftAndRightBounds(this.leftBounds, this.rightBounds);
         this.context.wireBean(renderedRow);
 
         this.renderedRows[rowIndex] = renderedRow;

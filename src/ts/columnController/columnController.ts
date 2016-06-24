@@ -32,7 +32,7 @@ export class ColumnApi {
     public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
     public getColumn(key: any): Column { return this._columnController.getPrimaryColumn(key); }
     public setColumnState(columnState: any): boolean { return this._columnController.setColumnState(columnState); }
-    public getColumnState(): [any] { return this._columnController.getColumnState(); }
+    public getColumnState(): any[] { return this._columnController.getColumnState(); }
     public resetColumnState(): void { this._columnController.resetColumnState(); }
     public isPinning(): boolean { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); }
     public isPinningLeft(): boolean { return this._columnController.isPinningLeft(); }
@@ -103,7 +103,7 @@ export class ColumnApi {
         console.error('ag-Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState);
     }
-    public getState(): [any] {
+    public getState(): any[] {
         console.error('ag-Grid: getState is deprecated, use getColumnState');
         return this.getColumnState();
     }
@@ -179,6 +179,10 @@ export class ColumnController {
     private displayedLeftColumns: Column[] = [];
     private displayedRightColumns: Column[] = [];
     private displayedCenterColumns: Column[] = [];
+    // all three lists above combined
+    private allDisplayedColumns: Column[] = [];
+    // same as above, except trimmed down to only columns within the viewport
+    private allDisplayedVirtualColumns: Column[] = [];
 
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
@@ -192,11 +196,44 @@ export class ColumnController {
 
     private pivotMode = false;
 
+    // for horizontal visualisation of columns
+    private totalWidth: number;
+    private scrollPosition: number;
+
+    private viewportLeft: number;
+    private viewportRight: number;
+
     @PostConstruct
     public init(): void {
         this.pivotMode = this.gridOptionsWrapper.isPivotMode();
         if (this.gridOptionsWrapper.getColumnDefs()) {
             this.setColumnDefs(this.gridOptionsWrapper.getColumnDefs());
+        }
+    }
+
+    private setViewportLeftAndRight(): void {
+        this.viewportLeft = this.scrollPosition;
+        this.viewportRight = this.totalWidth + this.scrollPosition;
+    }
+
+    private checkDisplayedCenterColumns(): void {
+        // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
+        if (_.exists(this.displayedCenterColumns)) {
+            var hashBefore = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
+            this.updateDisplayedCenterVirtualColumns();
+            var hashAfter = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
+            if (hashBefore !== hashAfter) {
+                this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
+            }
+        }
+    }
+
+    public setWidthAndScrollPosition(totalWidth: number, scrollPosition: number): void {
+        if (totalWidth!==this.totalWidth || scrollPosition!==this.scrollPosition) {
+            this.totalWidth = totalWidth;
+            this.scrollPosition = scrollPosition;
+            this.setViewportLeftAndRight();
+            this.checkDisplayedCenterColumns();
         }
     }
 
@@ -220,7 +257,7 @@ export class ColumnController {
 
         var valueColumnToFind = this.getPrimaryColumn(valueColKey);
 
-        var foundColumn: Column;
+        var foundColumn: Column = null;
         this.secondaryColumns.forEach( column => {
 
             var thisPivotKeys = column.getColDef().pivotKeys;
@@ -337,13 +374,14 @@ export class ColumnController {
 
     // + csvCreator
     public getAllDisplayedColumns(): Column[] {
-        // order we add the arrays together is important, so the result
-        // has the columns left to right, as they appear on the screen.
-        return this.displayedLeftColumns
-            .concat(this.displayedCenterColumns)
-            .concat(this.displayedRightColumns);
+        return this.allDisplayedColumns;
     }
 
+    // + csvCreator
+    public getAllDisplayedVirtualColumns(): Column[] {
+        return this.allDisplayedVirtualColumns;
+    }
+    
     // used by:
     // + angularGrid -> setting pinned body width
     // todo: this needs to be cached
@@ -532,6 +570,9 @@ export class ColumnController {
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         }
+        // if (finished) {
+            this.checkDisplayedCenterColumns();
+        // }
     }
 
     public setColumnAggFunc(column: Column, aggFunc: string): void {
@@ -860,7 +901,7 @@ export class ColumnController {
         return resultItem;
     }
 
-    public getColumnState(): [any] {
+    public getColumnState(): any[] {
         if (_.missing(this.primaryColumns)) {
             return <any>[];
         }
@@ -1380,14 +1421,22 @@ export class ColumnController {
     private updateGroupsAndDisplayedColumns() {
         this.updateGroups();
         this.updateDisplayedColumnsFromTrees();
+        this.updateDisplayedCenterVirtualColumns();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
         this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
     }
 
-    private updateDisplayedColumnsFromTrees() {
+    private updateDisplayedColumnsFromTrees(): void {
         this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
-        this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
         this.addToDisplayedColumns(this.displayedCentreColumnTree, this.displayedCenterColumns);
+        this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
+
+        // order we add the arrays together is important, so the result
+        // has the columns left to right, as they appear on the screen.
+        this.allDisplayedColumns = this.displayedLeftColumns
+            .concat(this.displayedCenterColumns)
+            .concat(this.displayedRightColumns);
+
         this.setLeftValues();
     }
 
@@ -1418,6 +1467,26 @@ export class ColumnController {
                 displayedColumns.push(child);
             }
         });
+    }
+
+    public updateDisplayedCenterVirtualColumns(): void {
+        var centerColumnsInViewport: Column[] = [];
+        this.displayedCenterColumns.forEach( column => {
+            // only out if both sides of columns are to the left or to the right of the boundary
+            var columnLeft = column.getLeft();
+            var columnRight = column.getLeft() + column.getActualWidth();
+            var columnToMuchLeft = columnLeft < this.viewportLeft && columnRight < this.viewportLeft;
+            var columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
+
+            var includeThisCol = !columnToMuchLeft && !columnToMuchRight;
+            // only include the col if it's in the viewport
+            if (includeThisCol) {
+                centerColumnsInViewport.push(column);
+            }
+        });
+        this.allDisplayedVirtualColumns = centerColumnsInViewport
+                .concat(this.displayedLeftColumns)
+                .concat(this.displayedRightColumns);
     }
 
     // called from api

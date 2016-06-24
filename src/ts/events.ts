@@ -36,7 +36,10 @@ export class Events {
 
     /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
     public static EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
-    
+
+    /** The list of virtual columns has changed, results from viewport changing */
+    public static EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
+
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
 

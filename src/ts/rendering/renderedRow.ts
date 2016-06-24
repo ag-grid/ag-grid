@@ -54,6 +54,10 @@ export class RenderedRow {
 
     private renderedRowEventService: EventService;
 
+    private initialised = false;
+    private leftBounds: number;
+    private rightBounds: number;
+
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
@@ -69,6 +73,15 @@ export class RenderedRow {
 
         this.rowIndex = rowIndex;
         this.rowNode = node;
+
+    }
+
+    public setLeftAndRightBounds(leftBounds: number, rightBounds: number): void {
+        this.leftBounds = leftBounds;
+        this.rightBounds = rightBounds;
+        if (this.initialised) {
+            this.refreshCellsIntoRow();
+        }
     }
 
     @PostConstruct
@@ -116,16 +129,21 @@ export class RenderedRow {
         if (this.scope) {
             this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
         }
+
+        this.initialised = true;
     }
 
     private addColumnListener(): void {
         var columnListener = this.onDisplayedColumnsChanged.bind(this);
+        var virtualListener = this.onVirtualColumnsChanged.bind(this);
 
         this.mainEventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.mainEventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
         this.mainEventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
 
         this.destroyFunctions.push( () => {
             this.mainEventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+            this.mainEventService.removeEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
             this.mainEventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
         });
     }
@@ -142,13 +160,20 @@ export class RenderedRow {
         }
     }
 
+    private onVirtualColumnsChanged(event: ColumnChangeEvent): void {
+        // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
+        if (!this.rowIsHeaderThatSpans) {
+            this.refreshCellsIntoRow();
+        }
+    }
+
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
     private refreshCellsIntoRow() {
 
-        var columns = this.columnController.getAllDisplayedColumns();
-
+        var columns = this.columnController.getAllDisplayedVirtualColumns();
+        
         var renderedCellKeys = Object.keys(this.renderedCells);
 
         columns.forEach( (column: Column) => {

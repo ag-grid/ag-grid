@@ -7,7 +7,7 @@ export class Constants {
     static STEP_AGGREGATE = 4;
     static STEP_PIVOT = 5;
 
-    static ROW_BUFFER_SIZE = 5;
+    static ROW_BUFFER_SIZE = 10;
 
     static KEY_BACKSPACE = 8;
     static KEY_TAB = 9;

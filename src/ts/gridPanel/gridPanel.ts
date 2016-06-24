@@ -192,6 +192,7 @@ export class GridPanel {
         this.layout.addSizeChangeListener(this.sizeHeaderAndBody.bind(this));
 
         this.addScrollListener();
+        this.setLeftAndRightBounds();
 
         if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
             this.eBodyViewport.style.overflowX = 'hidden';
@@ -799,7 +800,6 @@ export class GridPanel {
         this.eBodyViewportWrapper.style.marginRight = pinnedRightWidth;
     }
 
-
     private showPinnedColContainersIfNeeded() {
         // no need to do this if not using scrolls
         if (this.forPrint) {
@@ -833,6 +833,8 @@ export class GridPanel {
             // out naturally by the browser. it whatever size that's needed to fit.
             return;
         }
+
+        this.setLeftAndRightBounds();
 
         var heightOfContainer = this.layout.getCentreHeight();
         if (!heightOfContainer) {
@@ -913,6 +915,7 @@ export class GridPanel {
                 that.lastLeftPosition = newLeftPosition;
                 that.horizontallyScrollHeaderCenterAndFloatingCenter();
                 that.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
+                that.setLeftAndRightBounds();
             }
 
             // if we are pinning to the right, then it's the right pinned container
@@ -952,6 +955,12 @@ export class GridPanel {
         this.ePinnedLeftColsViewport.addEventListener('scroll', () => {
             this.ePinnedLeftColsViewport.scrollTop = 0;
         });
+    }
+
+    private setLeftAndRightBounds(): void {
+        var scrollPosition = this.eBodyViewport.scrollLeft;
+        var totalWidth = this.eBody.offsetWidth;
+        this.columnController.setWidthAndScrollPosition(totalWidth, scrollPosition);
     }
 
     private isUseScrollLag(): boolean {
