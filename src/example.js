@@ -138,6 +138,7 @@ var gridOptions = {
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+    // suppressColumnVirtualisation: true,
 //suppressContextMenu: true,
 //suppressFieldDotNotation: true,
     groupColumnDef: groupColumn,
@@ -462,7 +463,7 @@ function getColCount() {
         case '10x100':
             return 100;
         default:
-            return 100;
+            return 22;
     }
 }
 
