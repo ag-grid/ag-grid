@@ -1470,8 +1470,24 @@ export class ColumnController {
     }
 
     public updateDisplayedCenterVirtualColumns(): void {
-        var centerColumnsInViewport: Column[] = [];
-        this.displayedCenterColumns.forEach( column => {
+
+        var filteredCenterColumns: Column[];
+
+        if (this.gridOptionsWrapper.isSuppressColumnVirtualisation()) {
+            // no virtualisation, so don't filter
+            filteredCenterColumns = this.displayedCenterColumns;
+        } else {
+            // filter out that should be visible
+            filteredCenterColumns = this.filterOutColumnsWithinViewport(this.displayedCenterColumns);
+        }
+
+        this.allDisplayedVirtualColumns = filteredCenterColumns
+                .concat(this.displayedLeftColumns)
+                .concat(this.displayedRightColumns);
+    }
+
+    private filterOutColumnsWithinViewport(columns: Column[]): Column[] {
+        var result = _.filter(columns, column => {
             // only out if both sides of columns are to the left or to the right of the boundary
             var columnLeft = column.getLeft();
             var columnRight = column.getLeft() + column.getActualWidth();
@@ -1479,14 +1495,9 @@ export class ColumnController {
             var columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
 
             var includeThisCol = !columnToMuchLeft && !columnToMuchRight;
-            // only include the col if it's in the viewport
-            if (includeThisCol) {
-                centerColumnsInViewport.push(column);
-            }
+            return includeThisCol;
         });
-        this.allDisplayedVirtualColumns = centerColumnsInViewport
-                .concat(this.displayedLeftColumns)
-                .concat(this.displayedRightColumns);
+        return result;
     }
 
     // called from api

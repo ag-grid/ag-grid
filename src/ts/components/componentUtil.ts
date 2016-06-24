@@ -45,7 +45,7 @@ export class ComponentUtil {
         'suppressContextMenu','suppressMenuFilterPanel','suppressMenuMainPanel','suppressMenuColumnPanel',
         'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
-        'suppressCopyRowsToClipboard','pivotMode', 'suppressAggFuncInHeader'
+        'suppressCopyRowsToClipboard','pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',

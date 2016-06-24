@@ -72,6 +72,7 @@ export interface GridOptions {
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
     aggFuncs?: {[key: string]: IAggFunc};
+    suppressColumnVirtualisation?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
