@@ -21,6 +21,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: when no using cellRenderer, node.textContent used instead of element.innerHTML, for security reasons to prevent malicious injection of Javascript.</li>
     <li>Enhancement: new property 'suppressCopyRowsToClipboard' so selected cells will be copied to clipboard and not the selected row, if that's what user wants.</li>
     <li>Enhancement: popups are restricted to inside the grid when they appear - eg 'richSelect' doesn't appear outside of grid</li>
+    <li>Enhancement: now get/set column state takes into consideration column order</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup, enablePivot and enableValue</li>
     
     <h3>Version 4.2.x (ag-Grid 4.2.7, ag-Grid-Enterprise 4.2.11)</h3>
