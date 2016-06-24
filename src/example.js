@@ -462,7 +462,7 @@ function getColCount() {
         case '10x100':
             return 100;
         default:
-            return 22;
+            return 100;
     }
 }
 
