@@ -30,7 +30,7 @@ export class HeaderContainer {
 
     private pinned: string;
 
-    private headerElements: IRenderedHeaderElement[] = [];
+    private headerElements: {[key: string]: IRenderedHeaderElement} = {};
 
     private dropTarget: DropTarget;
 
@@ -68,10 +68,8 @@ export class HeaderContainer {
     }
 
     public removeAllChildren(): void {
-        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
-            headerElement.destroy();
-        });
-        this.headerElements.length = 0;
+        this.forEachHeaderElement( headerElement => headerElement.destroy() );
+        this.headerElements = {};
         _.removeAllChildren(this.eContainer);
     }
 
@@ -106,8 +104,15 @@ export class HeaderContainer {
                     return;
                 }
 
+                var headerId: string;
+                if (child instanceof ColumnGroup) {
+                    headerId = child.getGroupId();
+                } else {
+                    headerId = child.getDefinition().field;
+                }
+
                 var renderedHeaderElement = this.createHeaderElement(child);
-                this.headerElements.push(renderedHeaderElement);
+                this.headerElements[headerId] = renderedHeaderElement;
                 var eGui = renderedHeaderElement.getGui();
                 eRow.appendChild(eGui);
             });
@@ -115,6 +120,16 @@ export class HeaderContainer {
             this.eContainer.appendChild(eRow);
         }
 
+    }
+
+    public getCellForCol(column: Column): HTMLElement {
+
+        var headerElement = this.headerElements[column.getColId()];
+        if (headerElement) {
+            return headerElement.getGui();
+        } else {
+            return null;
+        }
     }
 
     private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {
@@ -144,8 +159,14 @@ export class HeaderContainer {
     }
 
     public onIndividualColumnResized(column: Column): void {
-        this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
-            headerElement.onIndividualColumnResized(column);
+        this.forEachHeaderElement( headerElement => headerElement.onIndividualColumnResized(column) );
+    }
+
+    private forEachHeaderElement(callback: (headerElement: IRenderedHeaderElement)=>void): void {
+        _.iterateObject(this.headerElements, (key: any, headerElement: IRenderedHeaderElement)=> {
+            if (headerElement) {
+                callback(headerElement);
+            }
         });
     }
 
