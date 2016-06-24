@@ -131,8 +131,8 @@ export class GridApi {
         this.columnController.setColumnDefs(colDefs);
     }
 
-    public refreshRows(rowNodes: RowNode[], suppressFocus = false): void {
-        this.rowRenderer.refreshRows(rowNodes, suppressFocus);
+    public refreshRows(rowNodes: RowNode[]): void {
+        this.rowRenderer.refreshRows(rowNodes);
     }
 
     public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
@@ -143,12 +143,12 @@ export class GridApi {
         this.rowRenderer.rowDataChanged(rows);
     }
 
-    public refreshView(suppressFocus = false) {
-        this.rowRenderer.refreshView(null, suppressFocus);
+    public refreshView() {
+        this.rowRenderer.refreshView(null);
     }
 
-    public softRefreshView(suppressFocus = false) {
-        this.rowRenderer.softRefreshView(suppressFocus);
+    public softRefreshView() {
+        this.rowRenderer.softRefreshView();
     }
 
     public refreshGroupRows() {
