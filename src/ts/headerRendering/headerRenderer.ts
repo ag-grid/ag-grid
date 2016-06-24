@@ -62,6 +62,7 @@ export class HeaderRenderer {
     // this is called from the API and refreshes everything, should be broken out
     // into refresh everything vs just something changed
     public refreshHeader() {
+        console.log('refreshHeader');
         this.pinnedLeftContainer.removeAllChildren();
         this.pinnedRightContainer.removeAllChildren();
         this.centerContainer.removeAllChildren();

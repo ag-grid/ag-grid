@@ -223,7 +223,7 @@ export class ColumnController {
             this.updateDisplayedCenterVirtualColumns();
             var hashAfter = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
             if (hashBefore !== hashAfter) {
-                this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
+                this.eventService.dispatchEvent(Events.EVENT_VIRTUAL_COLUMNS_CHANGED);
             }
         }
     }
