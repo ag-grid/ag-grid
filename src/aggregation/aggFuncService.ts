@@ -5,6 +5,14 @@ import {
 @Bean('aggFuncService')
 export class AggFuncService implements IAggFuncService {
 
+    private static AGG_SUM = 'sum';
+    private static AGG_FIRST = 'first';
+    private static AGG_LAST = 'last';
+    private static AGG_MIN = 'min';
+    private static AGG_MAX = 'max';
+    private static AGG_COUNT = 'count';
+    private static AGG_AVG = 'avg';
+
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     private aggFuncsMap: {[key: string]: IAggFunc} = {};
@@ -21,13 +29,27 @@ export class AggFuncService implements IAggFuncService {
     }
 
     private initialiseWithDefaultAggregations(): void {
-        this.aggFuncsMap['sum'] = aggSum;
-        this.aggFuncsMap['first'] = aggFirst;
-        this.aggFuncsMap['last'] = aggLast;
-        this.aggFuncsMap['min'] = aggMin;
-        this.aggFuncsMap['max'] = aggMax;
-        this.aggFuncsMap['count'] = aggCount;
-        this.aggFuncsMap['avg'] = aggAvg;
+        this.aggFuncsMap[AggFuncService.AGG_SUM] = aggSum;
+        this.aggFuncsMap[AggFuncService.AGG_FIRST] = aggFirst;
+        this.aggFuncsMap[AggFuncService.AGG_LAST] = aggLast;
+        this.aggFuncsMap[AggFuncService.AGG_MIN] = aggMin;
+        this.aggFuncsMap[AggFuncService.AGG_MAX] = aggMax;
+        this.aggFuncsMap[AggFuncService.AGG_COUNT] = aggCount;
+        this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
+    }
+
+    public getDefaultAggFunc(): string {
+        if (this.aggFuncsMap[AggFuncService.AGG_SUM]) {
+            // use 'sum' if it's still there (ie user has not removed it)
+            return AggFuncService.AGG_SUM;
+        } else {
+            var allKeys = this.getFuncNames();
+            if (Utils.existsAndNotEmpty(allKeys)) {
+                return allKeys[0];
+            } else {
+                return null;
+            }
+        }
     }
 
     public addAggFuncs(aggFuncs: {[key: string]: IAggFunc}): void {
