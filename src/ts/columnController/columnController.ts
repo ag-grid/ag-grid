@@ -570,9 +570,7 @@ export class ColumnController {
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         }
-        // if (finished) {
-            this.checkDisplayedCenterColumns();
-        // }
+        this.checkDisplayedCenterColumns();
     }
 
     public setColumnAggFunc(column: Column, aggFunc: string): void {

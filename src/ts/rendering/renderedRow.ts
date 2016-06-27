@@ -55,8 +55,6 @@ export class RenderedRow {
     private renderedRowEventService: EventService;
 
     private initialised = false;
-    private leftBounds: number;
-    private rightBounds: number;
 
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
@@ -73,15 +71,6 @@ export class RenderedRow {
 
         this.rowIndex = rowIndex;
         this.rowNode = node;
-
-    }
-
-    public setLeftAndRightBounds(leftBounds: number, rightBounds: number): void {
-        this.leftBounds = leftBounds;
-        this.rightBounds = rightBounds;
-        if (this.initialised) {
-            this.refreshCellsIntoRow();
-        }
     }
 
     @PostConstruct

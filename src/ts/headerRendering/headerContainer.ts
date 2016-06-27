@@ -2,7 +2,7 @@ import {Utils as _} from '../utils';
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {ColumnGroup} from "../entities/columnGroup";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Autowired} from "../context/context";
+import {Autowired, PreDestroy} from "../context/context";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {Column} from "../entities/column";
 import {Context} from "../context/context";
@@ -14,6 +14,8 @@ import {ColumnController} from "../columnController/columnController";
 import {DropTarget} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {PostConstruct} from "../context/context";
+import {EventService} from "../eventService";
+import {Events} from "../events";
 
 export class HeaderContainer {
 
@@ -23,6 +25,7 @@ export class HeaderContainer {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('eventService') private eventService: EventService;
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
@@ -43,6 +46,15 @@ export class HeaderContainer {
 
     @PostConstruct
     public init(): void {
+        this.setupDragAndDrop();
+        // this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshHeader.bind(this));
+        // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
+        // if pivoting, then the columns have changed
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshAllColumns.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshAllColumns.bind(this));
+    }
+
+    private setupDragAndDrop(): void {
         var moveColumnController = new MoveColumnController(this.pinned);
         this.context.wireBean(moveColumnController);
 
@@ -67,7 +79,7 @@ export class HeaderContainer {
         this.dragAndDropService.addDropTarget(this.dropTarget);
     }
 
-    public removeAllChildren(): void {
+    private removeAllChildren(): void {
         this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
             headerElement.destroy();
         });
@@ -75,7 +87,7 @@ export class HeaderContainer {
         _.removeAllChildren(this.eContainer);
     }
 
-    public insertHeaderRowsIntoContainer(): void {
+    private insertHeaderRowsIntoContainer(): void {
 
         var cellTree = this.columnController.getDisplayedColumnGroups(this.pinned);
 
@@ -147,6 +159,11 @@ export class HeaderContainer {
         this.headerElements.forEach( (headerElement: IRenderedHeaderElement) => {
             headerElement.onIndividualColumnResized(column);
         });
+    }
+
+    public refreshAllColumns() {
+        this.removeAllChildren();
+        this.insertHeaderRowsIntoContainer();
     }
 
 }

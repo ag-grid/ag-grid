@@ -72,9 +72,6 @@ export class RowRenderer {
 
     private destroyFunctions: Function[] = [];
 
-    private leftBounds: number;
-    private rightBounds: number;
-
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = this.loggerFactory.create('RowRenderer');
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
@@ -84,33 +81,24 @@ export class RowRenderer {
     public init(): void {
         this.getContainersFromGridPanel();
         
-        var onColumnEventBound = this.onColumnEvent.bind(this);
-        var refreshViewBound = this.refreshView.bind(this);
+        var columnListener = this.onColumnEvent.bind(this);
+        var refreshViewListener = this.refreshView.bind(this);
 
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, onColumnEventBound);
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, onColumnEventBound);
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
         
-        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, refreshViewBound);
-        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewBound);
+        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, refreshViewListener);
+        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
 
         this.destroyFunctions.push( () => {
-            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, onColumnEventBound);
+            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
 
-            this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, refreshViewBound);
-            this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewBound);
+            this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, refreshViewListener);
+            this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
         });
 
         this.refreshView();
-    }
-
-    public setLeftAndRightBounds(leftBounds: number, rightBounds: number): void {
-        if (leftBounds!==this.leftBounds || rightBounds!==this.rightBounds) {
-            this.leftBounds = leftBounds;
-            this.rightBounds = rightBounds;
-            this.forEachRenderedRow( (key: string, renderedRow: RenderedRow) => {
-                renderedRow.setLeftAndRightBounds(leftBounds, rightBounds);
-            });
-        }
     }
 
     public onColumnEvent(event: ColumnChangeEvent): void {
@@ -212,7 +200,6 @@ export class RowRenderer {
                     pinnedLeftContainer,
                     pinnedRightContainer,
                     node, rowIndex);
-                renderedRow.setLeftAndRightBounds(this.leftBounds, this.rightBounds);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             })
@@ -522,7 +509,6 @@ export class RowRenderer {
         var renderedRow = new RenderedRow(this.$scope,
             this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex);
-        renderedRow.setLeftAndRightBounds(this.leftBounds, this.rightBounds);
         this.context.wireBean(renderedRow);
 
         this.renderedRows[rowIndex] = renderedRow;

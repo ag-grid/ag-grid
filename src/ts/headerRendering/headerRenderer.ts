@@ -46,6 +46,8 @@ export class HeaderRenderer {
         // animations.
 
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshHeader.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshHeader.bind(this));
+
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
@@ -62,14 +64,6 @@ export class HeaderRenderer {
     // this is called from the API and refreshes everything, should be broken out
     // into refresh everything vs just something changed
     public refreshHeader() {
-        console.log('refreshHeader');
-        this.pinnedLeftContainer.removeAllChildren();
-        this.pinnedRightContainer.removeAllChildren();
-        this.centerContainer.removeAllChildren();
-
-        this.pinnedLeftContainer.insertHeaderRowsIntoContainer();
-        this.pinnedRightContainer.insertHeaderRowsIntoContainer();
-        this.centerContainer.insertHeaderRowsIntoContainer();
 
         // if forPrint, overlay is missing
         var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
