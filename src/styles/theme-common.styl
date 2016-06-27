@@ -40,8 +40,13 @@ todo
   .ag-cell-range-selected-4:not(.ag-cell-focus)
     background-color ag-range-selected-color-4
 
-  .ag-column-moving .ag-cell
-    transition left 0.2s
+  .ag-column-moving
+    .ag-cell
+      transition left 0.2s
+    .ag-header-cell
+      transition left 0.2s
+    .ag-header-group-cell
+      transition left 0.2s
 
   .ag-cell-focus
     border ag-cell-focused-border

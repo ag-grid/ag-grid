@@ -10,6 +10,7 @@ import {Autowired, PostConstruct} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragSource, DropTarget, DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -28,18 +29,15 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
     private groupWidthStart: number;
     private childrenWidthStarts: number[];
-    private parentScope: any;
     private destroyFunctions: (()=>void)[] = [];
 
     private eRoot: HTMLElement;
 
     private displayName: string;
 
-    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, parentScope: any, dragSourceDropTarget: DropTarget) {
+    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget) {
         this.columnGroup = columnGroup;
-        this.parentScope = parentScope;
         this.eRoot = eRoot;
-        this.parentScope = parentScope;
         this.dragSourceDropTarget = dragSourceDropTarget;
     }
 
@@ -67,6 +65,9 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         this.setupLabel();
         this.setupMove();
         this.setWidth();
+
+        var setLeftFeature = new SetLeftFeature(this.columnGroup, this.eHeaderGroupCell);
+        this.destroyFunctions.push(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
     private setupLabel(): void {

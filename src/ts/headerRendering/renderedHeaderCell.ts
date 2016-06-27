@@ -12,6 +12,7 @@ import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragAndDropService, DropTarget, DragSource} from "../dragAndDrop/dragAndDropService";
 import {SortController} from "../sortController";
+import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 
 export class RenderedHeaderCell implements IRenderedHeaderElement {
 
@@ -26,6 +27,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('$scope') private $scope: any;
 
     private eHeaderCell: HTMLElement;
     private eRoot: HTMLElement;
@@ -34,7 +36,6 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     private childScope: any;
 
     private startWidth: number;
-    private parentScope: any;
     private dragSourceDropTarget: DropTarget;
 
     private displayName: string;
@@ -44,9 +45,8 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     // of 'if / else' mapping to things that got created.
     private destroyFunctions: (()=>void)[] = [];
 
-    constructor(column: Column, parentScope: any, eRoot: HTMLElement, dragSourceDropTarget: DropTarget) {
+    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget) {
         this.column = column;
-        this.parentScope = parentScope;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
     }
@@ -56,7 +56,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
         _.addCssClass(this.eHeaderCell, 'ag-header-cell');
 
-        this.createScope(this.parentScope);
+        this.createScope();
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
 
@@ -74,6 +74,9 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         this.setupFilterIcon();
         this.setupText();
         this.setupWidth();
+
+        var setLeftFeature = new SetLeftFeature(this.column, this.eHeaderCell);
+        this.destroyFunctions.push(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
     private setupTooltip(): void {
@@ -151,9 +154,9 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         });
     }
 
-    private createScope(parentScope: any): void {
+    private createScope(): void {
         if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
-            this.childScope = parentScope.$new();
+            this.childScope = this.$scope.$new();
             this.childScope.colDef = this.column.getColDef();
             this.childScope.colDefWrapper = this.column;
             this.childScope.context = this.gridOptionsWrapper.getContext();

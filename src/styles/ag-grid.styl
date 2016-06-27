@@ -67,8 +67,10 @@ ag-grid-ng2
     overflow hidden
     height 100%
 
-.ag-header-row {}
-    //position absolute
+.ag-header-row
+    // the children are 'position absolute' which means we need position at
+    // this level for the children to be relative to this cell
+    position absolute
 
 .ag-scrolls .ag-header-container
     box-sizing border-box
@@ -89,6 +91,7 @@ ag-grid-ng2
     text-align center
     display inline-block
     height 100%
+    position absolute
     //float left // safari doesn't align if we don't float
 
 // the ghost header cell doesn't live inside the grid, it's parent is the body element,
@@ -125,6 +128,7 @@ ag-grid-ng2
     box-sizing border-box
     text-overflow ellipsis
     overflow hidden
+    position absolute
     //float: left // safari doesn't align if we don't float
 
 // we needed to have display of table-cell below,

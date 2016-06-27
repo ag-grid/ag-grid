@@ -45,9 +45,10 @@ export class HeaderRenderer {
         // small compared to the body, so the cpu cost is low in comparison. it does mean we don't get any
         // animations.
 
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshHeader.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.resetHeader.bind(this));
 
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.setPinnedColContainerWidth.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshHeader.bind(this));
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
@@ -61,39 +62,53 @@ export class HeaderRenderer {
         }
     }
 
-    // this is called from the API and refreshes everything, should be broken out
-    // into refresh everything vs just something changed
-    public refreshHeader() {
+    private resetHeader(): void {
+        this.setHeight();
 
-        // if forPrint, overlay is missing
-        var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
-
-        // we can probably get rid of this when we no longer need the overlay
-        var dept = this.columnController.getColumnDept();
-        if (this.eHeaderOverlay) {
-            this.eHeaderOverlay.style.height = rowHeight + 'px';
-            this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
-        }
+        this.pinnedLeftContainer.reset();
+        this.pinnedRightContainer.reset();
+        this.centerContainer.reset();
 
         this.setPinnedColContainerWidth();
     }
 
+    // this is called from the API and refreshes everything, should be broken out
+    // into refresh everything vs just something changed
+    public refreshHeader() {
+
+        this.setHeight();
+
+        this.pinnedLeftContainer.refresh();
+        this.pinnedRightContainer.refresh();
+        this.centerContainer.refresh();
+
+        this.setPinnedColContainerWidth();
+    }
+
+    private setHeight(): void {
+        // if forPrint, overlay is missing
+        if (this.eHeaderOverlay) {
+            var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
+            // we can probably get rid of this when we no longer need the overlay
+            var dept = this.columnController.getHeaderRowCount();
+            this.eHeaderOverlay.style.height = rowHeight + 'px';
+            this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
+        }
+    }
+    
     public setPinnedColContainerWidth() {
         if (this.gridOptionsWrapper.isForPrint()) {
             // pinned col doesn't exist when doing forPrint
             return;
         }
 
-        var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth() + 'px';
-        this.eHeaderViewport.style.marginLeft = pinnedLeftWidth;
+        var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth();
+        this.eHeaderViewport.style.marginLeft = pinnedLeftWidth + 'px';
+        this.pinnedLeftContainer.setWidth(pinnedLeftWidth);
 
-        var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth() + 'px';
-        this.eHeaderViewport.style.marginRight = pinnedRightWidth;
+        var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth();
+        this.eHeaderViewport.style.marginRight = pinnedRightWidth + 'px';
+        this.pinnedRightContainer.setWidth(pinnedRightWidth);
     }
 
-    public onIndividualColumnResized(column: Column): void {
-        this.pinnedLeftContainer.onIndividualColumnResized(column);
-        this.pinnedRightContainer.onIndividualColumnResized(column);
-        this.centerContainer.onIndividualColumnResized(column);
-    }
 }

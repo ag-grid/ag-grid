@@ -10,6 +10,8 @@ export class ColumnGroup implements ColumnGroupChild {
     public static HEADER_GROUP_SHOW_OPEN = 'open';
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
 
+    public static EVENT_LEFT_CHANGED = 'leftChanged';
+
     // all the children of this group, regardless of whether they are opened or closed
     private children: ColumnGroupChild[];
     // depends on the open/closed state of the group, only displaying columns are stored here
@@ -20,6 +22,7 @@ export class ColumnGroup implements ColumnGroupChild {
     private originalColumnGroup: OriginalColumnGroup;
 
     private moving = false;
+    private left: number;
     private eventService: EventService = new EventService();
 
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number) {
@@ -35,6 +38,36 @@ export class ColumnGroup implements ColumnGroupChild {
             return this.originalColumnGroup.getColGroupDef().headerName;
         } else {
             return null;
+        }
+    }
+
+    public checkLeft(): void {
+        // first get all children to setLeft, as it impacts our decision below
+        this.displayedChildren.forEach( (child: ColumnGroupChild) => {
+            if (child instanceof ColumnGroup) {
+                (<ColumnGroup>child).checkLeft();
+            }
+        });
+
+        // set our left based on first displayed column
+        if (this.displayedChildren.length > 0) {
+            var firstChildLeft = this.displayedChildren[0].getLeft();
+            this.setLeft(firstChildLeft);
+        } else {
+            // this should never happen, as if we have no displayed columns, then
+            // this groups should not even exist.
+            this.setLeft(null);
+        }
+    }
+
+    public getLeft(): number {
+        return this.left;
+    }
+
+    public setLeft(left: number) {
+        if (this.left !== left) {
+            this.left = left;
+            this.eventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
         }
     }
 

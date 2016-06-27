@@ -47,7 +47,8 @@ export interface DraggingEvent {
     x: number,
     y: number,
     direction: string,
-    dragSource: DragSource
+    dragSource: DragSource,
+    fromNudge: boolean
 }
 
 @Bean('dragAndDropService')
@@ -139,7 +140,7 @@ export class DragAndDropService {
 
     public nudge(): void {
         if (this.dragging) {
-            this.onDragging(this.eventLastTime);
+            this.onDragging(this.eventLastTime, true);
         }
     }
 
@@ -159,7 +160,7 @@ export class DragAndDropService {
 
         this.dragItem.forEach( column => column.setMoving(false) );
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
-            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null);
+            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
         }
         this.lastDropTarget = null;
@@ -167,7 +168,7 @@ export class DragAndDropService {
         this.removeGhost();
     }
 
-    private onDragging(mouseEvent: MouseEvent): void {
+    private onDragging(mouseEvent: MouseEvent, fromNudge: boolean): void {
 
         var direction = this.workOutDirection(mouseEvent);
         this.eventLastTime = mouseEvent;
@@ -178,27 +179,27 @@ export class DragAndDropService {
         var dropTarget = _.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
 
         if (dropTarget!==this.lastDropTarget) {
-            this.leaveLastTargetIfExists(mouseEvent, direction);
-            this.enterDragTargetIfExists(dropTarget, mouseEvent, direction);
+            this.leaveLastTargetIfExists(mouseEvent, direction, fromNudge);
+            this.enterDragTargetIfExists(dropTarget, mouseEvent, direction, fromNudge);
             this.lastDropTarget = dropTarget;
         } else if (dropTarget) {
-            var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction);
+            var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
     }
 
-    private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, direction: string): void {
+    private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, direction: string, fromNudge: boolean): void {
         if (!dropTarget) { return; }
 
-        var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction);
+        var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
         dropTarget.onDragEnter(dragEnterEvent);
         this.setGhostIcon(dropTarget.iconName);
     }
 
-    private leaveLastTargetIfExists(mouseEvent: MouseEvent, direction: string): void {
+    private leaveLastTargetIfExists(mouseEvent: MouseEvent, direction: string, fromNudge: boolean): void {
         if (!this.lastDropTarget) { return; }
 
-        var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, direction);
+        var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, direction, fromNudge);
         this.lastDropTarget.onDragLeave(dragLeaveEvent);
         this.setGhostIcon(null);
     }
@@ -248,7 +249,7 @@ export class DragAndDropService {
         return direction;
     }
 
-    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string): DraggingEvent {
+    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string, fromNudge: boolean): DraggingEvent {
 
         // localise x and y to the target component
         var rect = dropTarget.eContainer.getBoundingClientRect();
@@ -260,7 +261,8 @@ export class DragAndDropService {
             x: x,
             y: y,
             direction: direction,
-            dragSource: this.dragSource
+            dragSource: this.dragSource,
+            fromNudge: fromNudge
         };
 
         return dropTargetEvent;

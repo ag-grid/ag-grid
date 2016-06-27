@@ -15,7 +15,7 @@ import {IEventEmitter} from "../interfaces/iEventEmitter";
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
+export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     // + renderedHeaderCell - for making header cell transparent when moving
     public static EVENT_MOVING_CHANGED = 'movingChanged';
@@ -43,18 +43,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
 
-    public static AGG_SUM = 'sum';
-    public static AGG_MIN = 'min';
-    public static AGG_MAX = 'max';
-    public static AGG_FIRST = 'first';
-    public static AGG_LAST = 'last';
-
     public static SORT_ASC = 'asc';
     public static SORT_DESC = 'desc';
-
-    public static TYPE_DIMENSION = 'dimension';
-    public static TYPE_VALUE = 'value';
-    public static TYPE_NONE = 'none';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
@@ -268,6 +258,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         } else {
             this.pinned = null;
         }
+
+        // console.log(`setColumnsPinned ${this.getColId()} ${this.pinned}`);
+
     }
 
     public setFirstRightPinned(firstRightPinned: boolean): void {

@@ -50,7 +50,8 @@ export class MoveColumnController {
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        if (!this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+        var hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
+        if (hideColumnOnExit) {
             var columns = draggingEvent.dragSource.dragItem;
             this.columnController.setColumnsVisible(columns, false);
         }

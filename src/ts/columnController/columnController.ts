@@ -174,6 +174,9 @@ export class ColumnController {
     private displayedRightColumnTree: ColumnGroupChild[];
     private displayedCentreColumnTree: ColumnGroupChild[];
 
+    // same column groups as in the trees above, except trimmed to only groups within the viewport
+    
+
     // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
     // displayed trees, however it also takes into account if the groups are open or not.
     private displayedLeftColumns: Column[] = [];
@@ -489,7 +492,8 @@ export class ColumnController {
         this.actionOnPrimaryColumns(keys, (column: Column)=> {
             if (!column.isValueActive()) {
                 if (!column.getAggFunc()) { // default to SUM if aggFunc is missing
-                    column.setAggFunc(Column.AGG_SUM);
+                    var defaultAggFunc = this.aggFuncService.getDefaultAggFunc();
+                    column.setAggFunc(defaultAggFunc);
                 }
                 this.valueColumns.push(column);
                 column.setValueActive(true);
@@ -1208,28 +1212,6 @@ export class ColumnController {
         return result;
     }
 
-    public getColumnDept(): number {
-
-        var dept = 0;
-        getDept(this.getAllDisplayedColumnGroups(), 1);
-        return dept;
-
-        function getDept(children: ColumnGroupChild[], currentDept: number) {
-            if (dept < currentDept) {
-                dept = currentDept;
-            }
-            if (dept > currentDept) {
-                return;
-            }
-            children.forEach( (child: ColumnGroupChild) => {
-                if (child instanceof ColumnGroup) {
-                    var columnGroup = <ColumnGroup> child;
-                    getDept(columnGroup.getChildren(), currentDept+1);
-                }
-            });
-        }
-    }
-
     public setColumnDefs(columnDefs: AbstractColDef[]) {
         var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);
         this.primaryBalancedTree = balancedTreeResult.balancedTree;
@@ -1414,6 +1396,8 @@ export class ColumnController {
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
         }
+        var event = new ColumnChangeEvent(Events.EVENT_GRID_COLUMNS_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_GRID_COLUMNS_CHANGED, event);
     }
 
     private updateGroupsAndDisplayedColumns() {
@@ -1440,6 +1424,11 @@ export class ColumnController {
 
     // sets the left pixel position of each column
     private setLeftValues(): void {
+        this.setLeftValuesOfColumns();
+        this.setLeftValuesOfGroups();
+    }
+
+    private setLeftValuesOfColumns(): void {
         // go through each list of displayed columns
         var allColumns = this.primaryColumns.slice(0);
         [this.displayedLeftColumns,this.displayedRightColumns,this.displayedCenterColumns].forEach( columns => {
@@ -1455,6 +1444,18 @@ export class ColumnController {
         // we don't want the animation of the cell floating in from the old position, whatever that was.
         allColumns.forEach( (column: Column) => {
             column.setLeft(null);
+        });
+    }
+
+    private setLeftValuesOfGroups(): void {
+        // a groups left value is the lest left value of it's children
+        [this.displayedLeftColumnTree,this.displayedRightColumnTree,this.displayedCentreColumnTree].forEach( columns => {
+            columns.forEach( column => {
+                if (column instanceof ColumnGroup) {
+                    var columnGroup = <ColumnGroup> column;
+                    columnGroup.checkLeft();
+                }
+            });
         });
     }
 
@@ -1483,6 +1484,7 @@ export class ColumnController {
                 .concat(this.displayedLeftColumns)
                 .concat(this.displayedRightColumns);
     }
+
 
     private filterOutColumnsWithinViewport(columns: Column[]): Column[] {
         var result = _.filter(columns, column => {

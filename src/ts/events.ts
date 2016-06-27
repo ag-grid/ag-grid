@@ -16,6 +16,9 @@ export class Events {
     /** A pivot column was added, removed or order changed. */
     public static EVENT_PIVOT_VALUE_CHANGED = 'pivotValueChanged';
 
+    /** The list of grid columns has changed. */
+    public static EVENT_GRID_COLUMNS_CHANGED = 'gridColumnsChanged';
+
     /** A value column was added, removed or agg function was changed. */
     public static EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
 

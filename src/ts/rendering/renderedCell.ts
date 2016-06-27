@@ -27,6 +27,7 @@ import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
+import {SetLeftFeature} from "./features/setLeftFeature";
 
 export class RenderedCell extends Component {
 
@@ -199,24 +200,6 @@ export class RenderedCell extends Component {
         }
     }
 
-    private setLeftOnCell(): void {
-        var leftChangedListener = () => {
-            var newLeft = this.column.getLeft();
-            if (_.exists(newLeft)) {
-                this.eGridCell.style.left = this.column.getLeft() + 'px';
-            } else {
-                this.eGridCell.style.left = '';
-            }
-        };
-
-        this.column.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
-        this.addDestroyFunc( () => {
-            this.column.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
-        });
-
-        leftChangedListener();
-    }
-
     private addRangeSelectedListener(): void {
         if (!this.rangeController) {
             return;
@@ -344,7 +327,6 @@ export class RenderedCell extends Component {
         this.value = this.getValue();
         this.checkboxSelection = this.calculateCheckboxSelection();
 
-        this.setLeftOnCell();
         this.setWidthOnCell();
         this.setPinnedClasses();
         this.addRangeSelectedListener();
@@ -354,6 +336,9 @@ export class RenderedCell extends Component {
         this.addKeyDownListener();
         this.addKeyPressListener();
         // this.addFocusListener();
+
+        var setLeftFeature = new SetLeftFeature(this.column, this.eGridCell);
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
