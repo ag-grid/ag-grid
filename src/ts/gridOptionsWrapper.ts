@@ -113,6 +113,7 @@ export class GridOptionsWrapper {
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
+    public isEnableGroupEdit() { return isTrue(this.gridOptions.enableGroupEdit); }
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }

@@ -213,7 +213,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandOrContract.bind(this));
         this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandOrContract.bind(this));
-        this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onExpandOrContract.bind(this));
+        if(!this.gridOptionsWrapper.isEnableGroupEdit()){
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onExpandOrContract.bind(this));
+        }
 
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
