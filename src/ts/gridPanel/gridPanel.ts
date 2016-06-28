@@ -6,7 +6,7 @@ import {RowRenderer} from "../rendering/rowRenderer";
 import {FloatingRowModel} from "../rowControllers/floatingRowModel";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
-import {Bean, Qualifier, Autowired, PostConstruct, Optional} from "../context/context";
+import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {ColumnChangeEvent} from "../columnChangeEvent";
@@ -104,6 +104,7 @@ export class GridPanel {
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('$scope') private $scope: any;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -150,12 +151,21 @@ export class GridPanel {
 
     private animationThreadCount = 0;
 
+    private destroyFunctions: Function[] = [];
+
+    private useScrollLag: boolean;
+
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.scrollWidth = _.getScrollbarWidth();
         this.logger = loggerFactory.create('GridPanel');
         this.findElements();
+    }
+
+    @PreDestroy
+    private destroy() {
+        this.destroyFunctions.forEach(func => func());
     }
 
     private onRowDataChanged(): void {
@@ -169,8 +179,6 @@ export class GridPanel {
     public getLayout(): BorderLayout {
         return this.layout;
     }
-
-    private useScrollLag: boolean;
 
     @PostConstruct
     private init() {
@@ -208,6 +216,35 @@ export class GridPanel {
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
         this.addCellListeners();
+
+        if (this.$scope) {
+            this.addAngularApplyCheck();
+        }
+    }
+
+    private addAngularApplyCheck(): void {
+        // this makes sure if we queue up requests, we only execute oe
+        var applyTriggered = false;
+
+        var listener = ()=> {
+            // only need to do one apply at a time
+            if (applyTriggered) { return; }
+            applyTriggered = true; // mark 'need apply' to true
+            setTimeout( ()=> {
+                applyTriggered = false;
+                this.$scope.$apply();
+            }, 0);
+        };
+
+        // these are the events we need to do an apply after - these are the ones that can end up
+        // with columns added or removed
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
+        this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
+
+        this.destroyFunctions.push( ()=> {
+            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
+            this.eventService.removeEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
+        });
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)

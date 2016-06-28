@@ -115,11 +115,16 @@ export class RenderedRow {
             context: this.gridOptionsWrapper.getContext()
         });
 
-        if (this.scope) {
-            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
-        }
+        this.angular1Compile();
 
         this.initialised = true;
+    }
+
+    private angular1Compile(): void {
+        if (this.scope) {
+            console.log('angular1Compile');
+            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
+        }
     }
 
     private addColumnListener(): void {
@@ -146,6 +151,7 @@ export class RenderedRow {
             }
         } else {
             this.refreshCellsIntoRow();
+            this.angular1Compile();
         }
     }
 
@@ -153,6 +159,7 @@ export class RenderedRow {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (!this.rowIsHeaderThatSpans) {
             this.refreshCellsIntoRow();
+            this.angular1Compile();
         }
     }
 
