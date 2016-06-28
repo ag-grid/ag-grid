@@ -174,8 +174,9 @@ export class ColumnController {
     private displayedRightColumnTree: ColumnGroupChild[];
     private displayedCentreColumnTree: ColumnGroupChild[];
 
-    // same column groups as in the trees above, except trimmed to only groups within the viewport
-    
+    private displayedLeftHeaderRows: {[row: number]: ColumnGroupChild[]};
+    private displayedRightHeaderRows: {[row: number]: ColumnGroupChild[]};
+    private displayedCentreHeaderRows: {[row: number]: ColumnGroupChild[]};
 
     // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
     // displayed trees, however it also takes into account if the groups are open or not.
@@ -223,7 +224,7 @@ export class ColumnController {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
         if (_.exists(this.displayedCenterColumns)) {
             var hashBefore = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
-            this.updateDisplayedCenterVirtualColumns();
+            this.updateVirtualSets();
             var hashAfter = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
             if (hashBefore !== hashAfter) {
                 this.eventService.dispatchEvent(Events.EVENT_VIRTUAL_COLUMNS_CHANGED);
@@ -236,7 +237,9 @@ export class ColumnController {
             this.totalWidth = totalWidth;
             this.scrollPosition = scrollPosition;
             this.setViewportLeftAndRight();
-            this.checkDisplayedCenterColumns();
+            if (this.ready) {
+                this.checkDisplayedCenterColumns();
+            }
         }
     }
 
@@ -244,6 +247,33 @@ export class ColumnController {
         return this.pivotMode;
     }
 
+    // public getVirtualRowGroup(dept: number): ColumnGroup[] {
+    //     var columnGroups = [];
+    //
+    //     var groupsAtDept: ColumnGroupChild[] = [];
+    //     var cellTree = this.columnController.getDisplayedColumnGroups(this.pinned);
+    //     this.addTreeNodesAtDept(cellTree, this.dept, nodesAtDept);
+    //
+    //
+    //     return columnGroups;
+    //
+    // }
+    //
+    // private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {
+    //     cellTree.forEach( (abstractColumn) => {
+    //         if (dept===0) {
+    //             result.push(abstractColumn);
+    //         } else if (abstractColumn instanceof ColumnGroup) {
+    //             var columnGroup = <ColumnGroup> abstractColumn;
+    //             this.addTreeNodesAtDept(columnGroup.getDisplayedChildren(), dept-1, result);
+    //         } else {
+    //             // we are looking for children past a column, so have come to the end,
+    //             // do nothing, and because the tree is balanced, the result of this recursion
+    //             // will be an empty list.
+    //         }
+    //     });
+    // }
+    
     public setPivotMode(pivotMode: boolean): void {
         if (pivotMode === this.pivotMode) { return; }
         this.pivotMode = pivotMode;
@@ -1396,14 +1426,38 @@ export class ColumnController {
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
         }
+        
+        this.clearDisplayedColumns();
+        
         var event = new ColumnChangeEvent(Events.EVENT_GRID_COLUMNS_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_GRID_COLUMNS_CHANGED, event);
     }
 
+    // gets called after we copy down grid columns, to make sure any part of the gui
+    // that tries to draw, eg the header, it will get empty lists of columns rather
+    // than stale columns. for example, the header will received gridColumnsChanged
+    // event, so will try and draw, but it will draw successfully when it acts on the
+    // virtualColumnsChanged event
+    private clearDisplayedColumns(): void {
+        this.displayedLeftColumnTree = [];
+        this.displayedRightColumnTree = [];
+        this.displayedCentreColumnTree = [];
+
+        this.displayedLeftHeaderRows = {};
+        this.displayedRightHeaderRows = {};
+        this.displayedCentreHeaderRows = {};
+
+        this.displayedLeftColumns = [];
+        this.displayedRightColumns = [];
+        this.displayedCenterColumns = [];
+        this.allDisplayedColumns = [];
+        this.allDisplayedVirtualColumns = [];
+    }
+    
     private updateGroupsAndDisplayedColumns() {
         this.updateGroups();
         this.updateDisplayedColumnsFromTrees();
-        this.updateDisplayedCenterVirtualColumns();
+        this.updateVirtualSets();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
         this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
     }
@@ -1468,23 +1522,95 @@ export class ColumnController {
         });
     }
 
-    public updateDisplayedCenterVirtualColumns(): void {
-
+    private updateDisplayedCenterVirtualColumns(): any {
         var filteredCenterColumns: Column[];
 
         if (this.gridOptionsWrapper.isSuppressColumnVirtualisation()) {
             // no virtualisation, so don't filter
             filteredCenterColumns = this.displayedCenterColumns;
         } else {
-            // filter out that should be visible
+            // filter out what should be visible
             filteredCenterColumns = this.filterOutColumnsWithinViewport(this.displayedCenterColumns);
         }
 
         this.allDisplayedVirtualColumns = filteredCenterColumns
-                .concat(this.displayedLeftColumns)
-                .concat(this.displayedRightColumns);
+            .concat(this.displayedLeftColumns)
+            .concat(this.displayedRightColumns);
+
+        // return map of virtual col id's, for easy lookup when building the groups.
+        // the map will be colId=>true, ie col id's mapping to 'true'.
+        var result: any = {};
+        this.allDisplayedVirtualColumns.forEach( (col: Column) => {
+            result[col.getId()] = true;
+        });
+        return result;
     }
 
+    public getVirtualHeaderGroupRow(type: string, dept: number): ColumnGroupChild[] {
+        var result: ColumnGroupChild[];
+        switch (type) {
+            case Column.PINNED_LEFT:
+                result = this.displayedLeftHeaderRows[dept];
+                break;
+            case Column.PINNED_RIGHT:
+                result = this.displayedRightHeaderRows[dept];
+                break;
+            default:
+                result = this.displayedCentreHeaderRows[dept];
+                break;
+        }
+        if (_.missing(result)) {
+            result = [];
+        }
+        return result;
+    }
+    
+    private updateDisplayedVirtualGroups(virtualColIds: any): void {
+
+        // go through each group, see if any of it's cols are displayed, and if yes,
+        // then this group is included
+
+        this.displayedLeftHeaderRows = {};
+        this.displayedRightHeaderRows = {};
+        this.displayedCentreHeaderRows = {};
+
+        testGroup(this.displayedLeftColumnTree, this.displayedLeftHeaderRows, 0);
+        testGroup(this.displayedRightColumnTree, this.displayedRightHeaderRows, 0);
+        testGroup(this.displayedCentreColumnTree, this.displayedCentreHeaderRows, 0);
+        
+        function testGroup(children: ColumnGroupChild[], result: {[row: number]: ColumnGroupChild[]}, dept: number): boolean {
+            var returnValue = false;
+
+            for (var i = 0; i<children.length; i++) {
+                // see if this item is within viewport
+                var child = children[i];
+                var addThisItem: boolean;
+                if (child instanceof Column) {
+                    // for column, test if column is included
+                    addThisItem = virtualColIds[child.getId()] === true;
+                } else {
+                    // if group, base decision on children
+                    var columnGroup = <ColumnGroup> child;
+                    addThisItem = testGroup(columnGroup.getDisplayedChildren(), result, dept+1);
+                }
+
+                if (addThisItem) {
+                    returnValue = true;
+                    if (!result[dept]) {
+                        result[dept] = [];
+                    }
+                    result[dept].push(child);
+                }
+            }
+
+            return returnValue;
+        }
+    }
+
+    private updateVirtualSets(): void {
+        var virtualColIds = this.updateDisplayedCenterVirtualColumns();
+        this.updateDisplayedVirtualGroups(virtualColIds);
+    }
 
     private filterOutColumnsWithinViewport(columns: Column[]): Column[] {
         var result = _.filter(columns, column => {

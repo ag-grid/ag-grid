@@ -117,6 +117,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.validate();
     }
 
+    public getUniqueId(): string {
+        return this.getId();
+    }
+
     public isPrimary(): boolean {
         return this.primary;
     }

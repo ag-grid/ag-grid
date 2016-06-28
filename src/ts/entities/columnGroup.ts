@@ -13,22 +13,26 @@ export class ColumnGroup implements ColumnGroupChild {
     public static EVENT_LEFT_CHANGED = 'leftChanged';
 
     // all the children of this group, regardless of whether they are opened or closed
-    private children: ColumnGroupChild[];
+    private children:ColumnGroupChild[];
     // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren: ColumnGroupChild[] = [];
+    private displayedChildren:ColumnGroupChild[] = [];
 
-    private groupId: string;
-    private instanceId: number;
-    private originalColumnGroup: OriginalColumnGroup;
+    private groupId:string;
+    private instanceId:number;
+    private originalColumnGroup:OriginalColumnGroup;
 
     private moving = false;
-    private left: number;
-    private eventService: EventService = new EventService();
+    private left:number;
+    private eventService:EventService = new EventService();
 
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number) {
+    constructor(originalColumnGroup:OriginalColumnGroup, groupId:string, instanceId:number) {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
+    }
+
+    public getUniqueId(): string {
+        return this.groupId + '_' + this.instanceId;
     }
 
     // returns header name if it exists, otherwise null. if will not exist if

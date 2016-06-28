@@ -2,7 +2,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {Column} from "../entities/column";
-import {Bean, Autowired, Context, PostConstruct} from "../context/context";
+import {Bean, Autowired, Context, PostConstruct, PreDestroy} from "../context/context";
 import {HeaderContainer} from "./headerContainer";
 import {EventService} from "../eventService";
 import {Events} from "../events";
@@ -45,10 +45,9 @@ export class HeaderRenderer {
         // small compared to the body, so the cpu cost is low in comparison. it does mean we don't get any
         // animations.
 
-        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.resetHeader.bind(this));
+        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.setPinnedColContainerWidth.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshHeader.bind(this));
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
@@ -62,13 +61,15 @@ export class HeaderRenderer {
         }
     }
 
-    private resetHeader(): void {
+    @PreDestroy
+    private destroy(): void {
+        this.pinnedLeftContainer.destroy();
+        this.pinnedRightContainer.destroy();
+        this.centerContainer.destroy();
+    }
+
+    private onGridColumnsChanged(): void {
         this.setHeight();
-
-        this.pinnedLeftContainer.reset();
-        this.pinnedRightContainer.reset();
-        this.centerContainer.reset();
-
         this.setPinnedColContainerWidth();
     }
 

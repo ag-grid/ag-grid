@@ -52,21 +52,21 @@ export class HeaderContainer {
     @PostConstruct
     private init(): void {
         this.setupDragAndDrop();
-        // this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshHeader.bind(this));
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refresh.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refresh.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refresh.bind(this));
+        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.refresh.bind(this));
     }
 
-    @PreDestroy
-    private destroy(): void {
+    public destroy(): void {
         this.removeHeaderRowComps();
     }
 
-    public reset(): void {
-        this.removeHeaderRowComps();
-    }
+    // private onGridColumnsChanged(): void {
+    //     this.removeHeaderRowComps();
+    //     this.createHeaderRowComps();
+    // }
     
     public refresh() {
         this.removeHeaderRowComps();
@@ -107,18 +107,17 @@ export class HeaderContainer {
     }
 
     private createHeaderRowComps(): void {
-
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
         var rowCount = this.columnController.getHeaderRowCount();
         
         for (var dept = 0; dept<rowCount; dept++) {
-            var headerRowComp = new HeaderRowComp(dept, this.pinned, this.eRoot, this.dropTarget);
+            var groupRow = dept !== (rowCount - 1);
+            var headerRowComp = new HeaderRowComp(dept, groupRow, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());
         }
-
     }
 
 }
