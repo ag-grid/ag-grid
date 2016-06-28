@@ -152,8 +152,8 @@ export interface GridOptions {
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?(dataItem: any): NodeChildDetails;
-    getContextMenuItems?: GetContextMenuItems,
-    getMainMenuItems?: GetMainMenuItems,
+    getContextMenuItems?: GetContextMenuItems;
+    getMainMenuItems?: GetMainMenuItems;
     processRowPostCreate?(params: ProcessRowParams): void;
     processCellForClipboard?(params: ProcessCellForExportParams): any;
 
