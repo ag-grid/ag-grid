@@ -38,23 +38,15 @@ export class HeaderRenderer {
         this.context.wireBean(this.pinnedRightContainer);
         this.context.wireBean(this.centerContainer);
 
-        // unlike the table data, the header more often 'refreshes everything' as a way to redraw, rather than
-        // do delta changes based on the event. this is because groups have bigger impacts, eg a column move
-        // can end up in a group splitting into two, or joining into one. this complexity makes the job much
-        // harder to do delta updates. instead we just shotgun - which is fine, as the header is relatively
-        // small compared to the body, so the cpu cost is low in comparison. it does mean we don't get any
-        // animations.
-
+        // when grid columns change, it means the number of rows in the header has changed and it's all new columns
         this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.setPinnedColContainerWidth.bind(this));
-
-        // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
-        // if pivoting, then the columns have changed
+        // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
 
         // for resized, the individual cells take care of this, so don't need to refresh everything
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.setPinnedColContainerWidth.bind(this));
 
         if (this.columnController.isReady()) {
             this.refreshHeader();
@@ -70,7 +62,6 @@ export class HeaderRenderer {
 
     private onGridColumnsChanged(): void {
         this.setHeight();
-        this.setPinnedColContainerWidth();
     }
 
     // this is called from the API and refreshes everything, should be broken out

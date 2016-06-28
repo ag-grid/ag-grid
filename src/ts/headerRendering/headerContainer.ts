@@ -54,25 +54,26 @@ export class HeaderContainer {
         this.setupDragAndDrop();
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-        // this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refresh.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refresh.bind(this));
-        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.refresh.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     }
 
     public destroy(): void {
         this.removeHeaderRowComps();
     }
 
-    // private onGridColumnsChanged(): void {
-    //     this.removeHeaderRowComps();
-    //     this.createHeaderRowComps();
-    // }
-    
-    public refresh() {
+    // grid cols have changed - this also means the number of rows in the header can have
+    // changed. so we remove all the old rows and insert new ones for a complete refresh
+    private onGridColumnsChanged() {
         this.removeHeaderRowComps();
         this.createHeaderRowComps();
     }
 
+    // we expose this for gridOptions.api.refreshHeader() to call
+    public refresh(): void {
+        this.onGridColumnsChanged();
+    }
+    
     private setupDragAndDrop(): void {
         var moveColumnController = new MoveColumnController(this.pinned);
         this.context.wireBean(moveColumnController);
