@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: added property layoutInterval, to allow overriding of the layout interval.</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup, enablePivot and enableValue</li>
     <li>Bugfix: AngularJS bindings were not getting cells updated when columns added and removed</li>
-    <li>Bugfix: Popups were triggering a scollbar to flicker on and off when showing (eg show column menu, a scrollbar appeard and then dissappeared in the grid)</li>
+    <li>Bugfix: Popups were triggering a scrollbar to flicker on and off when showing (eg show column menu, a scrollbar appeard and then dissappeared in the grid)</li>
 
 
     <h3>Version 4.2.x (ag-Grid 4.2.7, ag-Grid-Enterprise 4.2.11)</h3>
