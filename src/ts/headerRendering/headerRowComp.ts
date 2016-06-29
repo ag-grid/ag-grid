@@ -63,8 +63,16 @@ export class HeaderRowComp extends Component {
         this.getGui().style.top = (this.dept * rowHeight) + 'px';
         this.getGui().style.height = rowHeight + 'px';
 
-        this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        var virtualColumnsChangedListener = this.onVirtualColumnsChanged.bind(this);
+        var displayedColumnsChangedListener = this.onDisplayedColumnsChanged.bind(this);
+
+        this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualColumnsChangedListener);
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
+
+        this.addDestroyFunc( ()=> {
+            this.eventService.removeEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualColumnsChangedListener);
+            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
+        });
 
         this.onVirtualColumnsChanged();
     }

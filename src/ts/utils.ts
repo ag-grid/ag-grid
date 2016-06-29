@@ -4,6 +4,19 @@ import {RowNode} from "./entities/rowNode";
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 
+// util class, only used when debugging, for printing time to console
+export class Timer {
+
+    private timestamp = new Date().getTime();
+    
+    public print(msg: string) {
+        var duration = (new Date().getTime()) - this.timestamp;
+        console.log(`${msg} = ${duration}`);
+        this.timestamp = new Date().getTime();
+    }
+    
+}
+
 export class Utils {
 
     // taken from:
