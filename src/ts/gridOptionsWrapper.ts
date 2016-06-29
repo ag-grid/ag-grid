@@ -207,6 +207,14 @@ export class GridOptionsWrapper {
         }
     }
 
+    public getLayoutInterval(): number {
+        if (typeof this.gridOptions.layoutInterval === 'number') {
+            return this.gridOptions.layoutInterval;
+        } else {
+            return Constants.LAYOUT_INTERVAL;
+        }
+    }
+    
     public getMinColWidth() {
         if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;

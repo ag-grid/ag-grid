@@ -73,6 +73,7 @@ export interface GridOptions {
     quickFilterText?: string;
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
+    layoutInterval?: number;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

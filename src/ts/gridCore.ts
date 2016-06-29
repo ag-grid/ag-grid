@@ -169,12 +169,21 @@ export class GridCore {
 
     private periodicallyDoLayout() {
         if (!this.finished) {
-            var that = this;
-            setTimeout(function () {
-                that.doLayout();
-                that.gridPanel.periodicallyCheck();
-                that.periodicallyDoLayout();
-            }, 500);
+            var intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
+            // if interval is negative, this stops the layout from happening
+            if (intervalMillis>0){
+                setTimeout( () => {
+                    this.doLayout();
+                    this.gridPanel.periodicallyCheck();
+                    this.periodicallyDoLayout();
+                }, intervalMillis);
+            } else {
+                // if user provided negative number, we still do the check every 5 seconds,
+                // in case the user turns the number positive again
+                setTimeout( () => {
+                    this.periodicallyDoLayout();
+                }, 5000);
+            }
         }
     }
 
