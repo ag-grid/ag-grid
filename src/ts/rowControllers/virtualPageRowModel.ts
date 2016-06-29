@@ -358,7 +358,10 @@ export class VirtualPageRowModel implements IRowModel {
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
         }
 
-        this.datasource.getRows(params);
+        // put in timeout, to force result to be async
+        setTimeout( ()=> {
+            this.datasource.getRows(params);
+        }, 0);
 
         function successCallback(rows: any, lastRowIndex: any) {
             if (that.requestIsDaemon(datasourceVersionCopy)) {

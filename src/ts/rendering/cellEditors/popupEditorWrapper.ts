@@ -60,4 +60,17 @@ export class PopupEditorWrapper extends Component implements ICellEditor {
     public isPopup(): boolean {
         return true;
     }
+
+    public isCancelBeforeStart(): boolean {
+        if (this.cellEditor.isCancelBeforeStart) {
+            return this.cellEditor.isCancelBeforeStart();
+        }
+    }
+
+    public isCancelAfterEnd(): boolean {
+        if (this.cellEditor.isCancelAfterEnd) {
+            return this.cellEditor.isCancelAfterEnd();
+        }
+    }
+
 }
