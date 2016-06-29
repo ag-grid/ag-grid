@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -175,7 +175,7 @@ var RowNode = (function () {
     RowNode.prototype.doRowRangeSelection = function () {
         var _this = this;
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
-        // if lastSelectedNode is missing, we start at the firstrow
+        // if lastSelectedNode is missing, we start at the first row
         var firstRowHit = !lastSelectedNode;
         var lastRowHit = false;
         var lastRow;
@@ -210,6 +210,7 @@ var RowNode = (function () {
         if (groupsSelectChildren) {
             this.calculatedSelectedForAllGroupNodes();
         }
+        this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };
     RowNode.prototype.isParentOfNode = function (potentialParent) {
         var parentNode = this.parent;

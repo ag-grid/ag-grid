@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -10,6 +10,7 @@ export declare class Constants {
     static STEP_AGGREGATE: number;
     static STEP_PIVOT: number;
     static ROW_BUFFER_SIZE: number;
+    static LAYOUT_INTERVAL: number;
     static KEY_BACKSPACE: number;
     static KEY_TAB: number;
     static KEY_ENTER: number;

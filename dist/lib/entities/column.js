@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,6 +60,9 @@ var Column = (function () {
         var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = utils_1.Utils.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.validate();
+    };
+    Column.prototype.getUniqueId = function () {
+        return this.getId();
     };
     Column.prototype.isPrimary = function () {
         return this.primary;
@@ -178,6 +181,7 @@ var Column = (function () {
         else {
             this.pinned = null;
         }
+        // console.log(`setColumnsPinned ${this.getColId()} ${this.pinned}`);
     };
     Column.prototype.setFirstRightPinned = function (firstRightPinned) {
         if (this.firstRightPinned !== firstRightPinned) {
@@ -319,16 +323,8 @@ var Column = (function () {
     Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
     Column.PINNED_RIGHT = 'right';
     Column.PINNED_LEFT = 'left';
-    Column.AGG_SUM = 'sum';
-    Column.AGG_MIN = 'min';
-    Column.AGG_MAX = 'max';
-    Column.AGG_FIRST = 'first';
-    Column.AGG_LAST = 'last';
     Column.SORT_ASC = 'asc';
     Column.SORT_DESC = 'desc';
-    Column.TYPE_DIMENSION = 'dimension';
-    Column.TYPE_VALUE = 'value';
-    Column.TYPE_NONE = 'none';
     __decorate([
         context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)

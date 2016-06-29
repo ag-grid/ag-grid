@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,6 +19,7 @@ export declare class GridPanel {
     private csvCreator;
     private mouseEventService;
     private focusedCellController;
+    private $scope;
     private layout;
     private logger;
     private forPrint;
@@ -55,11 +56,14 @@ export declare class GridPanel {
     private lastLeftPosition;
     private lastTopPosition;
     private animationThreadCount;
+    private destroyFunctions;
+    private useScrollLag;
     agWire(loggerFactory: LoggerFactory): void;
+    private destroy();
     private onRowDataChanged();
     getLayout(): BorderLayout;
-    private useScrollLag;
     private init();
+    private addAngularApplyCheck();
     private disableBrowserDragging();
     private addEventListeners();
     private addDragListeners();
@@ -118,6 +122,7 @@ export declare class GridPanel {
     getHorizontalScrollPosition(): number;
     turnOnAnimationForABit(): void;
     private addScrollListener();
+    private setLeftAndRightBounds();
     private isUseScrollLag();
     private debounce(callback);
     horizontallyScrollHeaderCenterAndFloatingCenter(): void;

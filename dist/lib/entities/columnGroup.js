@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,6 +16,9 @@ var ColumnGroup = (function () {
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
     }
+    ColumnGroup.prototype.getUniqueId = function () {
+        return this.groupId + '_' + this.instanceId;
+    };
     // returns header name if it exists, otherwise null. if will not exist if
     // this group is a padding group, as they don't have colGroupDef's
     ColumnGroup.prototype.getHeaderName = function () {
@@ -24,6 +27,33 @@ var ColumnGroup = (function () {
         }
         else {
             return null;
+        }
+    };
+    ColumnGroup.prototype.checkLeft = function () {
+        // first get all children to setLeft, as it impacts our decision below
+        this.displayedChildren.forEach(function (child) {
+            if (child instanceof ColumnGroup) {
+                child.checkLeft();
+            }
+        });
+        // set our left based on first displayed column
+        if (this.displayedChildren.length > 0) {
+            var firstChildLeft = this.displayedChildren[0].getLeft();
+            this.setLeft(firstChildLeft);
+        }
+        else {
+            // this should never happen, as if we have no displayed columns, then
+            // this groups should not even exist.
+            this.setLeft(null);
+        }
+    };
+    ColumnGroup.prototype.getLeft = function () {
+        return this.left;
+    };
+    ColumnGroup.prototype.setLeft = function (left) {
+        if (this.left !== left) {
+            this.left = left;
+            this.eventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
         }
     };
     ColumnGroup.prototype.addEventListener = function (eventType, listener) {
@@ -172,6 +202,7 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
     ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
+    ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
     return ColumnGroup;
 })();
 exports.ColumnGroup = ColumnGroup;

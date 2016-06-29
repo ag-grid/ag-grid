@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -78,6 +78,7 @@ export declare class GridOptionsWrapper {
     isSuppressMiddleClickScrolls(): boolean;
     isSuppressPreventDefaultOnMouseWheel(): boolean;
     isEnableServerSideSorting(): boolean;
+    isSuppressColumnVirtualisation(): boolean;
     isSuppressContextMenu(): boolean;
     isSuppressCopyRowsToClipboard(): boolean;
     isEnableFilter(): boolean;
@@ -126,6 +127,7 @@ export declare class GridOptionsWrapper {
     setHeaderHeight(headerHeight: number): void;
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
+    getLayoutInterval(): number;
     getMinColWidth(): number;
     getMaxColWidth(): number;
     getColWidth(): number;

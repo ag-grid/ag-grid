@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,7 +39,8 @@ var MoveColumnController = (function () {
         this.onDragging(draggingEvent, true);
     };
     MoveColumnController.prototype.onDragLeave = function (draggingEvent) {
-        if (!this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+        var hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
+        if (hideColumnOnExit) {
             var columns = draggingEvent.dragSource.dragItem;
             this.columnController.setColumnsVisible(columns, false);
         }

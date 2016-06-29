@@ -35,6 +35,20 @@
   -ms-transition: left 0.2s;
   transition: left 0.2s;
 }
+.ag-fresh .ag-column-moving .ag-header-cell {
+  -webkit-transition: left 0.2s;
+  -moz-transition: left 0.2s;
+  -o-transition: left 0.2s;
+  -ms-transition: left 0.2s;
+  transition: left 0.2s;
+}
+.ag-fresh .ag-column-moving .ag-header-group-cell {
+  -webkit-transition: left 0.2s;
+  -moz-transition: left 0.2s;
+  -o-transition: left 0.2s;
+  -ms-transition: left 0.2s;
+  transition: left 0.2s;
+}
 .ag-fresh .ag-cell-focus {
   border: 1px solid #a9a9a9;
 }
@@ -182,20 +196,20 @@
 .ag-fresh .ag-body {
   background-color: #f6f6f6;
 }
-.ag-fresh .ag-body .ag-row {
+.ag-fresh .ag-body-container .ag-row {
   -webkit-transition: background-color 0.1s;
   -moz-transition: background-color 0.1s;
   -o-transition: background-color 0.1s;
   -ms-transition: background-color 0.1s;
   transition: background-color 0.1s;
 }
-.ag-fresh .ag-body .ag-row-odd {
+.ag-fresh .ag-body-container .ag-row-odd {
   background-color: #f6f6f6;
 }
-.ag-fresh .ag-body .ag-row-even {
+.ag-fresh .ag-body-container .ag-row-even {
   background-color: #fff;
 }
-.ag-fresh .ag-body .ag-row-selected {
+.ag-fresh .ag-body-container .ag-row-selected {
   background-color: #b0e0e6;
 }
 .ag-fresh .ag-floating-top .ag-row {

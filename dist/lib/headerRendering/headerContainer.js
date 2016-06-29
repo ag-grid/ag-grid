@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,27 +14,50 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var utils_1 = require('../utils');
-var columnGroup_1 = require("../entities/columnGroup");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_1 = require("../context/context");
 var column_1 = require("../entities/column");
 var context_2 = require("../context/context");
-var renderedHeaderGroupCell_1 = require("./renderedHeaderGroupCell");
-var renderedHeaderCell_1 = require("./renderedHeaderCell");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var moveColumnController_1 = require("./moveColumnController");
 var columnController_1 = require("../columnController/columnController");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var context_3 = require("../context/context");
+var eventService_1 = require("../eventService");
+var events_1 = require("../events");
+var headerRowComp_1 = require("./headerRowComp");
 var HeaderContainer = (function () {
     function HeaderContainer(eContainer, eViewport, eRoot, pinned) {
-        this.headerElements = [];
+        this.headerRowComps = [];
         this.eContainer = eContainer;
         this.eRoot = eRoot;
         this.pinned = pinned;
         this.eViewport = eViewport;
     }
+    HeaderContainer.prototype.setWidth = function (width) {
+        this.eContainer.style.width = width + 'px';
+    };
     HeaderContainer.prototype.init = function () {
+        this.setupDragAndDrop();
+        // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
+        // if pivoting, then the columns have changed
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+    };
+    HeaderContainer.prototype.destroy = function () {
+        this.removeHeaderRowComps();
+    };
+    // grid cols have changed - this also means the number of rows in the header can have
+    // changed. so we remove all the old rows and insert new ones for a complete refresh
+    HeaderContainer.prototype.onGridColumnsChanged = function () {
+        this.removeHeaderRowComps();
+        this.createHeaderRowComps();
+    };
+    // we expose this for gridOptions.api.refreshHeader() to call
+    HeaderContainer.prototype.refresh = function () {
+        this.onGridColumnsChanged();
+    };
+    HeaderContainer.prototype.setupDragAndDrop = function () {
         var moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned);
         this.context.wireBean(moveColumnController);
         var secondaryContainers;
@@ -61,74 +84,24 @@ var HeaderContainer = (function () {
         };
         this.dragAndDropService.addDropTarget(this.dropTarget);
     };
-    HeaderContainer.prototype.removeAllChildren = function () {
-        this.headerElements.forEach(function (headerElement) {
-            headerElement.destroy();
+    HeaderContainer.prototype.removeHeaderRowComps = function () {
+        this.headerRowComps.forEach(function (headerRowComp) {
+            headerRowComp.destroy();
         });
-        this.headerElements.length = 0;
+        this.headerRowComps.length = 0;
         utils_1.Utils.removeAllChildren(this.eContainer);
     };
-    HeaderContainer.prototype.insertHeaderRowsIntoContainer = function () {
-        var _this = this;
-        var cellTree = this.columnController.getDisplayedColumnGroups(this.pinned);
+    HeaderContainer.prototype.createHeaderRowComps = function () {
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
-        var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
-        for (var dept = 0;; dept++) {
-            var nodesAtDept = [];
-            this.addTreeNodesAtDept(cellTree, dept, nodesAtDept);
-            // we want to break the for loop when we get to an empty set of cells,
-            // that's how we know we have finished rendering the last row.
-            if (nodesAtDept.length === 0) {
-                break;
-            }
-            var eRow = document.createElement('div');
-            eRow.className = 'ag-header-row';
-            eRow.style.top = (dept * rowHeight) + 'px';
-            eRow.style.height = rowHeight + 'px';
-            nodesAtDept.forEach(function (child) {
-                // skip groups that have no displayed children. this can happen when the group is broken,
-                // and this section happens to have nothing to display for the open / closed state
-                if (child instanceof columnGroup_1.ColumnGroup && child.getDisplayedChildren().length == 0) {
-                    return;
-                }
-                var renderedHeaderElement = _this.createHeaderElement(child);
-                _this.headerElements.push(renderedHeaderElement);
-                var eGui = renderedHeaderElement.getGui();
-                eRow.appendChild(eGui);
-            });
-            this.eContainer.appendChild(eRow);
+        var rowCount = this.columnController.getHeaderRowCount();
+        for (var dept = 0; dept < rowCount; dept++) {
+            var groupRow = dept !== (rowCount - 1);
+            var headerRowComp = new headerRowComp_1.HeaderRowComp(dept, groupRow, this.pinned, this.eRoot, this.dropTarget);
+            this.context.wireBean(headerRowComp);
+            this.headerRowComps.push(headerRowComp);
+            this.eContainer.appendChild(headerRowComp.getGui());
         }
-    };
-    HeaderContainer.prototype.addTreeNodesAtDept = function (cellTree, dept, result) {
-        var _this = this;
-        cellTree.forEach(function (abstractColumn) {
-            if (dept === 0) {
-                result.push(abstractColumn);
-            }
-            else if (abstractColumn instanceof columnGroup_1.ColumnGroup) {
-                var columnGroup = abstractColumn;
-                _this.addTreeNodesAtDept(columnGroup.getDisplayedChildren(), dept - 1, result);
-            }
-            else {
-            }
-        });
-    };
-    HeaderContainer.prototype.createHeaderElement = function (columnGroupChild) {
-        var result;
-        if (columnGroupChild instanceof columnGroup_1.ColumnGroup) {
-            result = new renderedHeaderGroupCell_1.RenderedHeaderGroupCell(columnGroupChild, this.eRoot, this.$scope, this.dropTarget);
-        }
-        else {
-            result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.$scope, this.eRoot, this.dropTarget);
-        }
-        this.context.wireBean(result);
-        return result;
-    };
-    HeaderContainer.prototype.onIndividualColumnResized = function (column) {
-        this.headerElements.forEach(function (headerElement) {
-            headerElement.onIndividualColumnResized(column);
-        });
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'), 
@@ -154,6 +127,10 @@ var HeaderContainer = (function () {
         context_1.Autowired('gridPanel'), 
         __metadata('design:type', gridPanel_1.GridPanel)
     ], HeaderContainer.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], HeaderContainer.prototype, "eventService", void 0);
     __decorate([
         context_3.PostConstruct, 
         __metadata('design:type', Function), 

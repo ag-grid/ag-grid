@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -6,8 +6,7 @@ import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { ColDef, AbstractColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
+export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     static EVENT_MOVING_CHANGED: string;
     static EVENT_LEFT_CHANGED: string;
     static EVENT_WIDTH_CHANGED: string;
@@ -21,16 +20,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     static EVENT_VALUE_CHANGED: string;
     static PINNED_RIGHT: string;
     static PINNED_LEFT: string;
-    static AGG_SUM: string;
-    static AGG_MIN: string;
-    static AGG_MAX: string;
-    static AGG_FIRST: string;
-    static AGG_LAST: string;
     static SORT_ASC: string;
     static SORT_DESC: string;
-    static TYPE_DIMENSION: string;
-    static TYPE_VALUE: string;
-    static TYPE_NONE: string;
     private gridOptionsWrapper;
     private columnUtils;
     private colDef;
@@ -56,6 +47,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private primary;
     constructor(colDef: ColDef, colId: String, primary: boolean);
     initialise(): void;
+    getUniqueId(): string;
     isPrimary(): boolean;
     isFilterAllowed(): boolean;
     isFieldContainsDots(): boolean;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,7 +13,8 @@ var Constants = (function () {
     Constants.STEP_MAP = 3;
     Constants.STEP_AGGREGATE = 4;
     Constants.STEP_PIVOT = 5;
-    Constants.ROW_BUFFER_SIZE = 5;
+    Constants.ROW_BUFFER_SIZE = 10;
+    Constants.LAYOUT_INTERVAL = 500;
     Constants.KEY_BACKSPACE = 8;
     Constants.KEY_TAB = 9;
     Constants.KEY_ENTER = 13;

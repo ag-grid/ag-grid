@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -14,6 +14,8 @@ export declare class Events {
     static EVENT_COLUMN_PIVOT_CHANGED: string;
     /** A pivot column was added, removed or order changed. */
     static EVENT_PIVOT_VALUE_CHANGED: string;
+    /** The list of grid columns has changed. */
+    static EVENT_GRID_COLUMNS_CHANGED: string;
     /** A value column was added, removed or agg function was changed. */
     static EVENT_COLUMN_VALUE_CHANGED: string;
     /** A column was moved */
@@ -28,6 +30,8 @@ export declare class Events {
     static EVENT_COLUMN_RESIZED: string;
     /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
     static EVENT_DISPLAYED_COLUMNS_CHANGED: string;
+    /** The list of virtual columns has changed, results from viewport changing */
+    static EVENT_VIRTUAL_COLUMNS_CHANGED: string;
     /** A row group was opened / closed */
     static EVENT_ROW_GROUP_OPENED: string;
     static EVENT_ROW_DATA_CHANGED: string;

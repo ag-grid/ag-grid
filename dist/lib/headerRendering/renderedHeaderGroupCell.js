@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,14 +23,13 @@ var horizontalDragService_1 = require("./horizontalDragService");
 var context_1 = require("../context/context");
 var cssClassApplier_1 = require("./cssClassApplier");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
+var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var RenderedHeaderGroupCell = (function () {
-    function RenderedHeaderGroupCell(columnGroup, eRoot, parentScope, dragSourceDropTarget) {
+    function RenderedHeaderGroupCell(columnGroup, eRoot, dragSourceDropTarget) {
         this.destroyFunctions = [];
         this.columnGroup = columnGroup;
-        this.parentScope = parentScope;
         this.eRoot = eRoot;
-        this.parentScope = parentScope;
         this.dragSourceDropTarget = dragSourceDropTarget;
     }
     RenderedHeaderGroupCell.prototype.getGui = function () {
@@ -50,6 +49,8 @@ var RenderedHeaderGroupCell = (function () {
         this.setupLabel();
         this.setupMove();
         this.setWidth();
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.eHeaderGroupCell);
+        this.destroyFunctions.push(setLeftFeature.destroy.bind(setLeftFeature));
     };
     RenderedHeaderGroupCell.prototype.setupLabel = function () {
         // no renderer, default text render

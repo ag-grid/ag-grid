@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,7 @@ var RenderedRow = (function () {
     function RenderedRow(parentScope, rowRenderer, eBodyContainer, ePinnedLeftContainer, ePinnedRightContainer, node, rowIndex) {
         this.renderedCells = {};
         this.destroyFunctions = [];
+        this.initialised = false;
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
@@ -39,7 +40,6 @@ var RenderedRow = (function () {
         this.rowNode = node;
     }
     RenderedRow.prototype.init = function () {
-        var _this = this;
         this.createContainers();
         var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
         this.rowIsHeaderThatSpans = this.rowNode.group && groupHeaderTakesEntireRow;
@@ -71,17 +71,26 @@ var RenderedRow = (function () {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         });
+        this.angular1Compile();
+        this.initialised = true;
+    };
+    RenderedRow.prototype.angular1Compile = function () {
+        var _this = this;
         if (this.scope) {
+            console.log('angular1Compile');
             this.eLeftCenterAndRightRows.forEach(function (row) { return _this.$compile(row)(_this.scope); });
         }
     };
     RenderedRow.prototype.addColumnListener = function () {
         var _this = this;
         var columnListener = this.onDisplayedColumnsChanged.bind(this);
+        var virtualListener = this.onVirtualColumnsChanged.bind(this);
         this.mainEventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.mainEventService.addEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
         this.mainEventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
         this.destroyFunctions.push(function () {
             _this.mainEventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+            _this.mainEventService.removeEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
             _this.mainEventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
         });
     };
@@ -95,6 +104,14 @@ var RenderedRow = (function () {
         }
         else {
             this.refreshCellsIntoRow();
+            this.angular1Compile();
+        }
+    };
+    RenderedRow.prototype.onVirtualColumnsChanged = function (event) {
+        // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
+        if (!this.rowIsHeaderThatSpans) {
+            this.refreshCellsIntoRow();
+            this.angular1Compile();
         }
     };
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
@@ -102,7 +119,7 @@ var RenderedRow = (function () {
     // container (ie into pinned)
     RenderedRow.prototype.refreshCellsIntoRow = function () {
         var _this = this;
-        var columns = this.columnController.getAllDisplayedColumns();
+        var columns = this.columnController.getAllDisplayedVirtualColumns();
         var renderedCellKeys = Object.keys(this.renderedCells);
         columns.forEach(function (column) {
             var renderedCell = _this.getOrCreateCell(column);

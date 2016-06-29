@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -123,13 +123,24 @@ var GridCore = (function () {
         window.addEventListener('resize', this.windowResizeListener);
     };
     GridCore.prototype.periodicallyDoLayout = function () {
+        var _this = this;
         if (!this.finished) {
-            var that = this;
-            setTimeout(function () {
-                that.doLayout();
-                that.gridPanel.periodicallyCheck();
-                that.periodicallyDoLayout();
-            }, 500);
+            var intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
+            // if interval is negative, this stops the layout from happening
+            if (intervalMillis > 0) {
+                setTimeout(function () {
+                    _this.doLayout();
+                    _this.gridPanel.periodicallyCheck();
+                    _this.periodicallyDoLayout();
+                }, intervalMillis);
+            }
+            else {
+                // if user provided negative number, we still do the check every 5 seconds,
+                // in case the user turns the number positive again
+                setTimeout(function () {
+                    _this.periodicallyDoLayout();
+                }, 5000);
+            }
         }
     };
     GridCore.prototype.showToolPanel = function (show) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,6 +42,7 @@ var cellRendererFactory_1 = require("./cellRendererFactory");
 var cellRendererService_1 = require("./cellRendererService");
 var valueFormatterService_1 = require("./valueFormatterService");
 var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
+var setLeftFeature_1 = require("./features/setLeftFeature");
 var RenderedCell = (function (_super) {
     __extends(RenderedCell, _super);
     function RenderedCell(column, node, rowIndex, scope, renderedRow) {
@@ -145,23 +146,6 @@ var RenderedCell = (function (_super) {
             // otherwise it's a normal node, just return data as normal
             return this.node.data;
         }
-    };
-    RenderedCell.prototype.setLeftOnCell = function () {
-        var _this = this;
-        var leftChangedListener = function () {
-            var newLeft = _this.column.getLeft();
-            if (utils_1.Utils.exists(newLeft)) {
-                _this.eGridCell.style.left = _this.column.getLeft() + 'px';
-            }
-            else {
-                _this.eGridCell.style.left = '';
-            }
-        };
-        this.column.addEventListener(column_1.Column.EVENT_LEFT_CHANGED, leftChangedListener);
-        this.addDestroyFunc(function () {
-            _this.column.removeEventListener(column_1.Column.EVENT_LEFT_CHANGED, leftChangedListener);
-        });
-        leftChangedListener();
     };
     RenderedCell.prototype.addRangeSelectedListener = function () {
         var _this = this;
@@ -280,7 +264,6 @@ var RenderedCell = (function (_super) {
     RenderedCell.prototype.init = function () {
         this.value = this.getValue();
         this.checkboxSelection = this.calculateCheckboxSelection();
-        this.setLeftOnCell();
         this.setWidthOnCell();
         this.setPinnedClasses();
         this.addRangeSelectedListener();
@@ -290,6 +273,8 @@ var RenderedCell = (function (_super) {
         this.addKeyDownListener();
         this.addKeyPressListener();
         // this.addFocusListener();
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.eGridCell);
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
             this.eGridCell.setAttribute("tabindex", "-1");
@@ -443,7 +428,8 @@ var RenderedCell = (function (_super) {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 onKeyDown: this.onKeyDown.bind(this),
-                stopEditing: this.stopEditingAndFocus.bind(this)
+                stopEditing: this.stopEditingAndFocus.bind(this),
+                eGridCell: this.eGridCell
             };
             if (colDef.cellEditorParams) {
                 utils_1.Utils.assign(params, colDef.cellEditorParams);

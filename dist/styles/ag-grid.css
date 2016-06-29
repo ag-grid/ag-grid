@@ -77,6 +77,9 @@ ag-grid-ng2 {
   overflow: hidden;
   height: 100%;
 }
+.ag-scrolls .ag-header-row {
+  position: absolute;
+}
 .ag-scrolls .ag-header-container {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -100,6 +103,7 @@ ag-grid-ng2 {
   text-align: center;
   display: inline-block;
   height: 100%;
+  position: absolute;
 }
 .ag-dnd-ghost {
   font-size: 14px;
@@ -139,6 +143,7 @@ ag-grid-ng2 {
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
+  position: absolute;
 }
 .ag-header-group-cell-label {
   -o-text-overflow: ellipsis;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,8 @@ var Events = (function () {
     Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
     /** A pivot column was added, removed or order changed. */
     Events.EVENT_PIVOT_VALUE_CHANGED = 'pivotValueChanged';
+    /** The list of grid columns has changed. */
+    Events.EVENT_GRID_COLUMNS_CHANGED = 'gridColumnsChanged';
     /** A value column was added, removed or agg function was changed. */
     Events.EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
     /** A column was moved */
@@ -32,6 +34,8 @@ var Events = (function () {
     Events.EVENT_COLUMN_RESIZED = 'columnResized';
     /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
     Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
+    /** The list of virtual columns has changed, results from viewport changing */
+    Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
     /** A row group was opened / closed */
     Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
     Events.EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
