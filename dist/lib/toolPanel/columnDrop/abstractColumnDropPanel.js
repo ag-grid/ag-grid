@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.3
+// ag-grid-enterprise v5.0.0-alpha.4
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
