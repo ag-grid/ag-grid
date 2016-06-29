@@ -505,7 +505,8 @@ export class RenderedCell extends Component {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 onKeyDown: this.onKeyDown.bind(this),
-                stopEditing: this.stopEditingAndFocus.bind(this)
+                stopEditing: this.stopEditingAndFocus.bind(this),
+                eGridCell: this.eGridCell
             };
 
             if (colDef.cellEditorParams) {
