@@ -195,6 +195,12 @@ MyCellEditor.prototype.isPopup = function() {
             <th>stopEditing</th>
             <td>Callback to tell grid to stop editing the current cell.</td>
         </tr>
+        <tr>
+            <th>eGridCell</th>
+            <td>A reference to the DOM element representing the grid cell that your component will live inside.
+                Useful if you want to add event listeners or classes at this level. This is the DOM element that
+                gets browser focus when selecting cells.</td>
+        </tr>
     </table>
 
     <h3>Complementing cellEditor Params</h3>

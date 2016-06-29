@@ -23,8 +23,10 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: popups are restricted to inside the grid when they appear - eg 'richSelect' doesn't appear outside of grid</li>
     <li>Enhancement: now get/set column state takes into consideration column order</li>
     <li>Enhancement: column virtualisation, with property suppressColumnVirtualisation to turn it off</li>
+    <li>Enhancement: eGridCell added to params of cellEditor</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup, enablePivot and enableValue</li>
-    
+    <li>Bugfix: AngularJS bindings were not getting cells updated when columns added and removed</li>
+
     <h3>Version 4.2.x (ag-Grid 4.2.7, ag-Grid-Enterprise 4.2.11)</h3>
     <li>Bugfix: group selection was selecting groups when 'groupSelectsChildren=false' giving strange behaviours</li>
 
