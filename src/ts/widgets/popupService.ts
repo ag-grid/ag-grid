@@ -182,6 +182,9 @@ export class PopupService {
             return;
         }
 
+        eChild.style.top = '0px';
+        eChild.style.left = '0px';
+
         var popupAlreadyShown = _.isVisible(eChild);
         if (popupAlreadyShown) {
             return;
