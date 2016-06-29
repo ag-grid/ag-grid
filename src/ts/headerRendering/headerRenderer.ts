@@ -20,6 +20,8 @@ export class HeaderRenderer {
     private pinnedRightContainer: HeaderContainer;
     private centerContainer: HeaderContainer;
 
+    private childContainers: HeaderContainer[];
+
     private eHeaderViewport: HTMLElement;
     private eRoot: HTMLElement;
     private eHeaderOverlay: HTMLElement;
@@ -30,13 +32,17 @@ export class HeaderRenderer {
         this.eRoot = this.gridPanel.getRoot();
         this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
 
-        this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, this.eRoot, Column.PINNED_LEFT);
-        this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, this.eRoot, Column.PINNED_RIGHT);
         this.centerContainer = new HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), this.eRoot, null);
+        this.childContainers = [this.centerContainer];
 
-        this.context.wireBean(this.pinnedLeftContainer);
-        this.context.wireBean(this.pinnedRightContainer);
-        this.context.wireBean(this.centerContainer);
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, this.eRoot, Column.PINNED_LEFT);
+            this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, this.eRoot, Column.PINNED_RIGHT);
+            this.childContainers.push(this.pinnedLeftContainer);
+            this.childContainers.push(this.pinnedRightContainer);
+        }
+
+        this.childContainers.forEach( container => this.context.wireBean(container) );
 
         // when grid columns change, it means the number of rows in the header has changed and it's all new columns
         this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
@@ -55,9 +61,7 @@ export class HeaderRenderer {
 
     @PreDestroy
     private destroy(): void {
-        this.pinnedLeftContainer.destroy();
-        this.pinnedRightContainer.destroy();
-        this.centerContainer.destroy();
+        this.childContainers.forEach( container => container.destroy() );
     }
 
     private onGridColumnsChanged(): void {
@@ -70,9 +74,7 @@ export class HeaderRenderer {
 
         this.setHeight();
 
-        this.pinnedLeftContainer.refresh();
-        this.pinnedRightContainer.refresh();
-        this.centerContainer.refresh();
+        this.childContainers.forEach( container => container.refresh() );
 
         this.setPinnedColContainerWidth();
     }
@@ -89,10 +91,8 @@ export class HeaderRenderer {
     }
     
     public setPinnedColContainerWidth() {
-        if (this.gridOptionsWrapper.isForPrint()) {
-            // pinned col doesn't exist when doing forPrint
-            return;
-        }
+        // pinned col doesn't exist when doing forPrint
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth();
         this.eHeaderViewport.style.marginLeft = pinnedLeftWidth + 'px';

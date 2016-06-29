@@ -1525,7 +1525,8 @@ export class ColumnController {
     private updateDisplayedCenterVirtualColumns(): any {
         var filteredCenterColumns: Column[];
 
-        if (this.gridOptionsWrapper.isSuppressColumnVirtualisation()) {
+        var skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation() || this.gridOptionsWrapper.isForPrint();
+        if (skipVirtualisation) {
             // no virtualisation, so don't filter
             filteredCenterColumns = this.displayedCenterColumns;
         } else {
@@ -1691,6 +1692,8 @@ export class ColumnController {
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         });
+
+        this.checkDisplayedCenterColumns();
 
         function moveToNotSpread(column: Column) {
             _.removeFromArray(colsToSpread, column);

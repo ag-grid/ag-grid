@@ -995,6 +995,7 @@ export class GridPanel {
     }
 
     private setLeftAndRightBounds(): void {
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
         var scrollPosition = this.eBodyViewport.scrollLeft;
         var totalWidth = this.eBody.offsetWidth;
         this.columnController.setWidthAndScrollPosition(totalWidth, scrollPosition);
