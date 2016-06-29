@@ -1,1 +1,1 @@
-// ag-grid-enterprise v5.0.0-alpha.2
+// ag-grid-enterprise v5.0.0-alpha.3

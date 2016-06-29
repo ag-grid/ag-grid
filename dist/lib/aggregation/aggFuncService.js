@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.2
+// ag-grid-enterprise v5.0.0-alpha.3
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -23,13 +23,28 @@ var AggFuncService = (function () {
         this.addAggFuncs(this.gridOptionsWrapper.getAggFuncs());
     };
     AggFuncService.prototype.initialiseWithDefaultAggregations = function () {
-        this.aggFuncsMap['sum'] = aggSum;
-        this.aggFuncsMap['first'] = aggFirst;
-        this.aggFuncsMap['last'] = aggLast;
-        this.aggFuncsMap['min'] = aggMin;
-        this.aggFuncsMap['max'] = aggMax;
-        this.aggFuncsMap['count'] = aggCount;
-        this.aggFuncsMap['avg'] = aggAvg;
+        this.aggFuncsMap[AggFuncService.AGG_SUM] = aggSum;
+        this.aggFuncsMap[AggFuncService.AGG_FIRST] = aggFirst;
+        this.aggFuncsMap[AggFuncService.AGG_LAST] = aggLast;
+        this.aggFuncsMap[AggFuncService.AGG_MIN] = aggMin;
+        this.aggFuncsMap[AggFuncService.AGG_MAX] = aggMax;
+        this.aggFuncsMap[AggFuncService.AGG_COUNT] = aggCount;
+        this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
+    };
+    AggFuncService.prototype.getDefaultAggFunc = function () {
+        if (this.aggFuncsMap[AggFuncService.AGG_SUM]) {
+            // use 'sum' if it's still there (ie user has not removed it)
+            return AggFuncService.AGG_SUM;
+        }
+        else {
+            var allKeys = this.getFuncNames();
+            if (main_1.Utils.existsAndNotEmpty(allKeys)) {
+                return allKeys[0];
+            }
+            else {
+                return null;
+            }
+        }
     };
     AggFuncService.prototype.addAggFuncs = function (aggFuncs) {
         main_1.Utils.iterateObject(aggFuncs, this.addAggFunc.bind(this));
@@ -48,6 +63,13 @@ var AggFuncService = (function () {
     AggFuncService.prototype.clear = function () {
         this.aggFuncsMap = {};
     };
+    AggFuncService.AGG_SUM = 'sum';
+    AggFuncService.AGG_FIRST = 'first';
+    AggFuncService.AGG_LAST = 'last';
+    AggFuncService.AGG_MIN = 'min';
+    AggFuncService.AGG_MAX = 'max';
+    AggFuncService.AGG_COUNT = 'count';
+    AggFuncService.AGG_AVG = 'avg';
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', main_1.GridOptionsWrapper)
