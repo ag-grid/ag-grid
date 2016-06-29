@@ -252,7 +252,7 @@ export class RowNode {
     private doRowRangeSelection(): void {
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
 
-        // if lastSelectedNode is missing, we start at the firstrow
+        // if lastSelectedNode is missing, we start at the first row
         var firstRowHit = !lastSelectedNode;
         var lastRowHit = false;
         var lastRow: RowNode;
@@ -294,6 +294,8 @@ export class RowNode {
         if (groupsSelectChildren) {
             this.calculatedSelectedForAllGroupNodes();
         }
+
+        this.mainEventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
     }
 
     private isParentOfNode(potentialParent: RowNode): boolean {
