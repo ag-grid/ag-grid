@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,21 +25,21 @@ var context_1 = require("../context/context");
 var cssClassApplier_1 = require("./cssClassApplier");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var sortController_1 = require("../sortController");
+var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var RenderedHeaderCell = (function () {
-    function RenderedHeaderCell(column, parentScope, eRoot, dragSourceDropTarget) {
+    function RenderedHeaderCell(column, eRoot, dragSourceDropTarget) {
         // for better structured code, anything we need to do when this column gets destroyed,
         // we put a function in here. otherwise we would have a big destroy function with lots
         // of 'if / else' mapping to things that got created.
         this.destroyFunctions = [];
         this.column = column;
-        this.parentScope = parentScope;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
     }
     RenderedHeaderCell.prototype.init = function () {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
         utils_1.Utils.addCssClass(this.eHeaderCell, 'ag-header-cell');
-        this.createScope(this.parentScope);
+        this.createScope();
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
         // label div
@@ -54,6 +54,8 @@ var RenderedHeaderCell = (function () {
         this.setupFilterIcon();
         this.setupText();
         this.setupWidth();
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.eHeaderCell);
+        this.destroyFunctions.push(setLeftFeature.destroy.bind(setLeftFeature));
     };
     RenderedHeaderCell.prototype.setupTooltip = function () {
         var colDef = this.column.getColDef();
@@ -120,10 +122,10 @@ var RenderedHeaderCell = (function () {
             func();
         });
     };
-    RenderedHeaderCell.prototype.createScope = function (parentScope) {
+    RenderedHeaderCell.prototype.createScope = function () {
         var _this = this;
         if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
-            this.childScope = parentScope.$new();
+            this.childScope = this.$scope.$new();
             this.childScope.colDef = this.column.getColDef();
             this.childScope.colDefWrapper = this.column;
             this.childScope.context = this.gridOptionsWrapper.getContext();
@@ -361,6 +363,10 @@ var RenderedHeaderCell = (function () {
         context_1.Autowired('sortController'), 
         __metadata('design:type', sortController_1.SortController)
     ], RenderedHeaderCell.prototype, "sortController", void 0);
+    __decorate([
+        context_1.Autowired('$scope'), 
+        __metadata('design:type', Object)
+    ], RenderedHeaderCell.prototype, "$scope", void 0);
     __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 

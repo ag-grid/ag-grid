@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -267,6 +267,7 @@ var VirtualPageRowModel = (function () {
         }
     };
     VirtualPageRowModel.prototype.loadPage = function (pageNumber) {
+        var _this = this;
         this.pageLoadsInProgress.push(pageNumber);
         var startRow = pageNumber * this.pageSize;
         var endRow = (pageNumber + 1) * this.pageSize;
@@ -295,7 +296,10 @@ var VirtualPageRowModel = (function () {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
         }
-        this.datasource.getRows(params);
+        // put in timeout, to force result to be async
+        setTimeout(function () {
+            _this.datasource.getRows(params);
+        }, 0);
         function successCallback(rows, lastRowIndex) {
             if (that.requestIsDaemon(datasourceVersionCopy)) {
                 return;

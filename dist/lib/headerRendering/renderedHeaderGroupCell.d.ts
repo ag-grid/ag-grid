@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -18,11 +18,10 @@ export declare class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     private dragSourceDropTarget;
     private groupWidthStart;
     private childrenWidthStarts;
-    private parentScope;
     private destroyFunctions;
     private eRoot;
     private displayName;
-    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, parentScope: any, dragSourceDropTarget: DropTarget);
+    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget);
     getGui(): HTMLElement;
     onIndividualColumnResized(column: Column): void;
     init(): void;

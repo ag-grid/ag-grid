@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -17,16 +17,16 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     private gridOptionsWrapper;
     private dragAndDropService;
     private sortController;
+    private $scope;
     private eHeaderCell;
     private eRoot;
     private column;
     private childScope;
     private startWidth;
-    private parentScope;
     private dragSourceDropTarget;
     private displayName;
     private destroyFunctions;
-    constructor(column: Column, parentScope: any, eRoot: HTMLElement, dragSourceDropTarget: DropTarget);
+    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget);
     init(): void;
     private setupTooltip();
     private setupText();
@@ -34,7 +34,7 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     private setupWidth();
     getGui(): HTMLElement;
     destroy(): void;
-    private createScope(parentScope);
+    private createScope();
     private addAttributes();
     private setupMenu();
     showMenu(eventSource: HTMLElement): void;

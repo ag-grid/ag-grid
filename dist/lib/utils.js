@@ -1,11 +1,24 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
+// util class, only used when debugging, for printing time to console
+var Timer = (function () {
+    function Timer() {
+        this.timestamp = new Date().getTime();
+    }
+    Timer.prototype.print = function (msg) {
+        var duration = (new Date().getTime()) - this.timestamp;
+        console.log(msg + " = " + duration);
+        this.timestamp = new Date().getTime();
+    };
+    return Timer;
+})();
+exports.Timer = Timer;
 var Utils = (function () {
     function Utils() {
     }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -147,6 +147,8 @@ var PopupService = (function () {
             console.warn('ag-grid: could not find the body of the document, document.body is empty');
             return;
         }
+        eChild.style.top = '0px';
+        eChild.style.left = '0px';
         var popupAlreadyShown = utils_1.Utils.isVisible(eChild);
         if (popupAlreadyShown) {
             return;

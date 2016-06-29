@@ -1,10 +1,14 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
+export declare class Timer {
+    private timestamp;
+    print(msg: string): void;
+}
 export declare class Utils {
     private static isSafari;
     private static isIE;

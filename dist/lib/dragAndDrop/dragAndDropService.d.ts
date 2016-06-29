@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -33,6 +33,7 @@ export interface DraggingEvent {
     y: number;
     direction: string;
     dragSource: DragSource;
+    fromNudge: boolean;
 }
 export declare class DragAndDropService {
     private gridOptionsWrapper;
@@ -72,13 +73,13 @@ export declare class DragAndDropService {
     nudge(): void;
     private onDragStart(dragSource, mouseEvent);
     private onDragStop(mouseEvent);
-    private onDragging(mouseEvent);
-    private enterDragTargetIfExists(dropTarget, mouseEvent, direction);
-    private leaveLastTargetIfExists(mouseEvent, direction);
+    private onDragging(mouseEvent, fromNudge);
+    private enterDragTargetIfExists(dropTarget, mouseEvent, direction, fromNudge);
+    private leaveLastTargetIfExists(mouseEvent, direction, fromNudge);
     private isMouseOnDropTarget(mouseEvent, dropTarget);
     addDropTarget(dropTarget: DropTarget): void;
     workOutDirection(event: MouseEvent): string;
-    createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string): DraggingEvent;
+    createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string, fromNudge: boolean): DraggingEvent;
     private positionGhost(event);
     private removeGhost();
     private createGhost();

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.2
+// Type definitions for ag-grid v5.0.0-alpha.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -15,7 +15,7 @@ export declare class ColumnApi {
     getDisplayNameForCol(column: any): string;
     getColumn(key: any): Column;
     setColumnState(columnState: any): boolean;
-    getColumnState(): [any];
+    getColumnState(): any[];
     resetColumnState(): void;
     isPinning(): boolean;
     isPinningLeft(): boolean;
@@ -65,7 +65,7 @@ export declare class ColumnApi {
     hideColumns(colIds: any, hide: any): void;
     hideColumn(colId: any, hide: any): void;
     setState(columnState: any): boolean;
-    getState(): [any];
+    getState(): any[];
     resetState(): void;
     getValueColumns(): Column[];
     removeValueColumn(column: Column): void;
@@ -96,9 +96,14 @@ export declare class ColumnController {
     private displayedLeftColumnTree;
     private displayedRightColumnTree;
     private displayedCentreColumnTree;
+    private displayedLeftHeaderRows;
+    private displayedRightHeaderRows;
+    private displayedCentreHeaderRows;
     private displayedLeftColumns;
     private displayedRightColumns;
     private displayedCenterColumns;
+    private allDisplayedColumns;
+    private allDisplayedVirtualColumns;
     private rowGroupColumns;
     private valueColumns;
     private pivotColumns;
@@ -107,7 +112,14 @@ export declare class ColumnController {
     private ready;
     private logger;
     private pivotMode;
+    private totalWidth;
+    private scrollPosition;
+    private viewportLeft;
+    private viewportRight;
     init(): void;
+    private setViewportLeftAndRight();
+    private checkDisplayedCenterColumns();
+    setWidthAndScrollPosition(totalWidth: number, scrollPosition: number): void;
     isPivotMode(): boolean;
     setPivotMode(pivotMode: boolean): void;
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | ColDef | String): Column;
@@ -126,6 +138,7 @@ export declare class ColumnController {
     getDisplayedColumnGroups(type: string): ColumnGroupChild[];
     isColumnDisplayed(column: Column): boolean;
     getAllDisplayedColumns(): Column[];
+    getAllDisplayedVirtualColumns(): Column[];
     getPinnedLeftContainerWidth(): number;
     getPinnedRightContainerWidth(): number;
     addRowGroupColumns(keys: (Column | ColDef | String)[], columnsToIncludeInEvent?: Column[]): void;
@@ -176,7 +189,9 @@ export declare class ColumnController {
     isPinningLeft(): boolean;
     isPinningRight(): boolean;
     getPrimaryAndSecondaryAndAutoColumns(): Column[];
-    getColumnState(): [any];
+    private createStateItemFromColumn(column);
+    getColumnState(): any[];
+    private orderColumnStateList(columnStateList);
     resetColumnState(): void;
     setColumnState(columnState: any[]): boolean;
     private sortColumnListUsingIndexes(indexes, colA, colB);
@@ -192,7 +207,6 @@ export declare class ColumnController {
     private getHeaderName(column);
     private wrapHeaderNameWithAggFunc(column, headerName);
     getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup;
-    getColumnDept(): number;
     setColumnDefs(columnDefs: AbstractColDef[]): void;
     isReady(): boolean;
     private extractRowGroupColumns();
@@ -205,10 +219,18 @@ export declare class ColumnController {
     isSecondaryColumnsPresent(): boolean;
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
     private copyDownGridColumns();
+    private clearDisplayedColumns();
     private updateGroupsAndDisplayedColumns();
     private updateDisplayedColumnsFromTrees();
     private setLeftValues();
+    private setLeftValuesOfColumns();
+    private setLeftValuesOfGroups();
     private addToDisplayedColumns(displayedColumnTree, displayedColumns);
+    private updateDisplayedCenterVirtualColumns();
+    getVirtualHeaderGroupRow(type: string, dept: number): ColumnGroupChild[];
+    private updateDisplayedVirtualGroups(virtualColIds);
+    private updateVirtualSets();
+    private filterOutColumnsWithinViewport(columns);
     sizeColumnsToFit(gridWidth: any): void;
     private buildDisplayedTrees(visibleColumns);
     private updateGroups();

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.2
+ * @version v5.0.0-alpha.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,16 +50,17 @@ var RowRenderer = (function () {
     RowRenderer.prototype.init = function () {
         var _this = this;
         this.getContainersFromGridPanel();
-        var onColumnEventBound = this.onColumnEvent.bind(this);
-        var refreshViewBound = this.refreshView.bind(this);
-        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, onColumnEventBound);
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, onColumnEventBound);
-        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewBound);
-        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewBound);
+        var columnListener = this.onColumnEvent.bind(this);
+        var refreshViewListener = this.refreshView.bind(this);
+        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
         this.destroyFunctions.push(function () {
-            _this.eventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, onColumnEventBound);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewBound);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewBound);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
         });
         this.refreshView();
     };
@@ -125,7 +126,7 @@ var RowRenderer = (function () {
         renderedRows.length = 0;
         // if no cols, don't draw row - can we get rid of this???
         var columns = this.columnController.getAllDisplayedColumns();
-        if (!columns || columns.length == 0) {
+        if (utils_1.Utils.missingOrEmpty(columns)) {
             return;
         }
         if (rowNodes) {
@@ -179,6 +180,11 @@ var RowRenderer = (function () {
         utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
             renderedRow.forEachRenderedCell(callback);
         });
+    };
+    RowRenderer.prototype.forEachRenderedRow = function (callback) {
+        utils_1.Utils.iterateObject(this.renderedRows, callback);
+        utils_1.Utils.iterateObject(this.renderedTopFloatingRows, callback);
+        utils_1.Utils.iterateObject(this.renderedBottomFloatingRows, callback);
     };
     RowRenderer.prototype.addRenderedRowListener = function (eventName, rowIndex, callback) {
         var renderedRow = this.renderedRows[rowIndex];
@@ -381,7 +387,7 @@ var RowRenderer = (function () {
     RowRenderer.prototype.insertRow = function (node, rowIndex) {
         var columns = this.columnController.getAllDisplayedColumns();
         // if no cols, don't draw row
-        if (!columns || columns.length == 0) {
+        if (utils_1.Utils.missingOrEmpty(columns)) {
             return;
         }
         var renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, node, rowIndex);
