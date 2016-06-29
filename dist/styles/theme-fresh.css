@@ -196,20 +196,20 @@
 .ag-fresh .ag-body {
   background-color: #f6f6f6;
 }
-.ag-fresh .ag-body-container .ag-row {
+.ag-fresh .ag-row {
   -webkit-transition: background-color 0.1s;
   -moz-transition: background-color 0.1s;
   -o-transition: background-color 0.1s;
   -ms-transition: background-color 0.1s;
   transition: background-color 0.1s;
 }
-.ag-fresh .ag-body-container .ag-row-odd {
+.ag-fresh .ag-row-odd {
   background-color: #f6f6f6;
 }
-.ag-fresh .ag-body-container .ag-row-even {
+.ag-fresh .ag-row-even {
   background-color: #fff;
 }
-.ag-fresh .ag-body-container .ag-row-selected {
+.ag-fresh .ag-row-selected {
   background-color: #b0e0e6;
 }
 .ag-fresh .ag-floating-top .ag-row {
