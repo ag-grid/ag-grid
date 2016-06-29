@@ -234,6 +234,12 @@ include '../documentation-main/documentation_header.php';
             <td>enableCellChangeFlash</td>
             <td>Set to true to get grid to flash the cell when it's refreshed.</td>
         </tr>
+        <tr>
+            <td>layoutInterval</td>
+            <td>The grid will check it's size 500ms and lay itself out again if the size changes - such as your browser
+            changes size, or your application changes the size of the div the grid live inside. If you want something
+            other than 500ms, set this to a number of milliseconds. To stop the periodic layout, set it to -1.</td>
+        </tr>
     </table>
 
     <h2>Properties for Column Groups</h2>
