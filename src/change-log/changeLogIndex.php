@@ -25,6 +25,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: column virtualisation, with property suppressColumnVirtualisation to turn it off</li>
     <li>Enhancement: eGridCell added to params of cellEditor</li>
     <li>Enhancement: added property layoutInterval, to allow overriding of the layout interval.</li>
+    <li>Enhancement: added property 'suppressFocusAfterRefresh', so grid doesn't set focus back on focused cell if not required.</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup, enablePivot and enableValue</li>
     <li>Bugfix: AngularJS bindings were not getting cells updated when columns added and removed</li>
     <li>Bugfix: Popups were triggering a scrollbar to flicker on and off when showing (eg show column menu, a scrollbar appeard and then dissappeared in the grid)</li>

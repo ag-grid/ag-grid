@@ -292,6 +292,15 @@ include '../documentation-main/documentation_header.php';
             <th>enableCellChangeFlash</th>
             <td>Set to true to have cells flash after data changes.</td>
         </tr>
+        <tr>
+            <th>suppressCopyRowsToClipboard</th>
+            <td>Set to true to only have range selection, and not row selection, copied to clipboard.</td>
+        </tr>
+        <tr>
+            <th>suppressFocusAfterRefresh</th>
+            <td>Set to true to not set focus back on the grid after a refresh. This can avoid issues where you
+                want to keep the focus on another part of the browser.</td>
+        </tr>
 
     </table>
 
