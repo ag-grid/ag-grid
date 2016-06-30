@@ -188,20 +188,20 @@
 .ag-blue .ag-body {
   background-color: #f6f6f6;
 }
-.ag-blue .ag-body-container .ag-row {
+.ag-blue .ag-row {
   -webkit-transition: background-color 0.1s;
   -moz-transition: background-color 0.1s;
   -o-transition: background-color 0.1s;
   -ms-transition: background-color 0.1s;
   transition: background-color 0.1s;
 }
-.ag-blue .ag-body-container .ag-row-odd {
+.ag-blue .ag-row-odd {
   background-color: #ddebf7;
 }
-.ag-blue .ag-body-container .ag-row-even {
+.ag-blue .ag-row-even {
   background-color: #fff;
 }
-.ag-blue .ag-body-container .ag-row-selected {
+.ag-blue .ag-row-selected {
   background-color: #c7c7c7;
 }
 .ag-blue .ag-floating-top .ag-row {
