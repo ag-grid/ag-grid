@@ -46,6 +46,12 @@ export class FocusedCellController {
     // grid cell will still be focused as far as the grid is conerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellIfBrowserFocused(): GridCell {
+        // This checks to see if the browser is even in focus. 
+        // One should not pull focus when on a different window all together.
+        if (!document.hasFocus()) {
+            return null;
+        }
+
         if (!this.focusedCell) {
             return null;
         }
