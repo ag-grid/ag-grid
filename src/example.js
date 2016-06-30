@@ -226,7 +226,7 @@ var gridOptions = {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
     },
     onRangeSelectionChanged: function (event) {
-        //console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
+        console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
     getContextMenuItems: getContextMenuItems
 };

@@ -86,6 +86,15 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <show-example example="toolPanelExample"></show-example>
+
+    <h3>Suppress Example</h3>
+
+    <p>
+        Below shows using the suppress properties items to hide Pivot Mode, Row Groups, Values and Pivots sections.
+    </p>
+    
+    <show-example example="exampleToolPanelSuppress"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
