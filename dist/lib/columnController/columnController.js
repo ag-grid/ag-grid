@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.4
+ * @version v5.0.0-alpha.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -92,6 +92,7 @@ var ColumnApi = (function () {
     ColumnApi.prototype.getAllDisplayedColumnGroups = function () { return this._columnController.getAllDisplayedColumnGroups(); };
     ColumnApi.prototype.autoSizeColumn = function (key) { return this._columnController.autoSizeColumn(key); };
     ColumnApi.prototype.autoSizeColumns = function (keys) { return this._columnController.autoSizeColumns(keys); };
+    ColumnApi.prototype.setSecondaryColumns = function (colDefs) { this._columnController.setSecondaryColumns(colDefs); };
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
     ColumnApi.prototype.columnGroupOpened = function (group, newValue) {
         console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.4
+// Type definitions for ag-grid v5.0.0-alpha.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -61,6 +61,7 @@ export declare class ColumnApi {
     getAllDisplayedColumnGroups(): ColumnGroupChild[];
     autoSizeColumn(key: Column | ColDef | String): void;
     autoSizeColumns(keys: (Column | ColDef | String)[]): void;
+    setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
     columnGroupOpened(group: ColumnGroup | string, newValue: boolean): void;
     hideColumns(colIds: any, hide: any): void;
     hideColumn(colId: any, hide: any): void;

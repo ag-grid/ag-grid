@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.4
+ * @version v5.0.0-alpha.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -139,8 +139,7 @@ var RowRenderer = (function () {
     };
     RowRenderer.prototype.refreshView = function (refreshEvent) {
         this.logger.log('refreshView');
-        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
-        this.focusedCellController.getFocusedCell();
+        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
         var refreshFromIndex = refreshEvent ? refreshEvent.fromIndex : null;
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
@@ -162,7 +161,7 @@ var RowRenderer = (function () {
         }
     };
     RowRenderer.prototype.softRefreshView = function () {
-        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
         this.forEachRenderedCell(function (renderedCell) {
             if (renderedCell.isVolatile()) {
                 renderedCell.refreshCell();
@@ -194,7 +193,7 @@ var RowRenderer = (function () {
         if (!rowNodes || rowNodes.length == 0) {
             return;
         }
-        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
         // we only need to be worried about rendered rows, as this method is
         // called to whats rendered. if the row isn't rendered, we don't care
         var indexesToRemove = [];

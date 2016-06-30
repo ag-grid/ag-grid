@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.4
+// Type definitions for ag-grid v5.0.0-alpha.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -13,7 +13,7 @@ export declare class FocusedCellController {
     private init();
     clearFocusedCell(): void;
     getFocusedCell(): GridCell;
-    getFocusCellIfBrowserFocused(): GridCell;
+    getFocusCellToUseAfterRefresh(): GridCell;
     private getGridCellForDomElement(eBrowserCell);
     setFocusedCell(rowIndex: number, colKey: Column | ColDef | string, floating: string, forceBrowserFocus?: boolean): void;
     isCellFocused(gridCell: GridCell): boolean;
