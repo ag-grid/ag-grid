@@ -17,8 +17,10 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
-    toolPanelSuppressGroups?: boolean;
+    toolPanelSuppressRowGroups?: boolean;
     toolPanelSuppressValues?: boolean;
+    toolPanelSuppressPivots?: boolean;
+    toolPanelSuppressPivotMode?: boolean;
     suppressRowClickSelection?: boolean;
     suppressCellSelection?: boolean;
     sortingOrder?: string[];
@@ -75,6 +77,8 @@ export interface GridOptions {
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
     layoutInterval?: number;
+    rowGroupPassive?: boolean;
+    pivotPassive?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

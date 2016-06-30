@@ -84,6 +84,8 @@ export class ColumnApi {
     public autoSizeColumn(key: Column|ColDef|String): void {return this._columnController.autoSizeColumn(key); }
     public autoSizeColumns(keys: (Column|ColDef|String)[]): void {return this._columnController.autoSizeColumns(keys); }
 
+    public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[]): void { this._columnController.setSecondaryColumns(colDefs); }
+
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 
     public columnGroupOpened(group: ColumnGroup|string, newValue: boolean): void {

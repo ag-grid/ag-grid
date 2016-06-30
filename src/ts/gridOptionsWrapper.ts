@@ -82,8 +82,10 @@ export class GridOptionsWrapper {
 
     public isSuppressFocusAfterRefresh() { return isTrue(this.gridOptions.suppressFocusAfterRefresh); }
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
-    public isToolPanelSuppressGroups() { return isTrue(this.gridOptions.toolPanelSuppressGroups); }
+    public isToolPanelSuppressRowGroups() { return isTrue(this.gridOptions.toolPanelSuppressRowGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
+    public isToolPanelSuppressPivots() { return isTrue(this.gridOptions.toolPanelSuppressPivots); }
+    public isToolPanelSuppressPivotMode() { return isTrue(this.gridOptions.toolPanelSuppressPivotMode); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
@@ -100,6 +102,8 @@ export class GridOptionsWrapper {
     public isSuppressFieldDotNotation() { return isTrue(this.gridOptions.suppressFieldDotNotation); }
     public getFloatingTopRowData(): any[] { return this.gridOptions.floatingTopRowData; }
     public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
+    public isRowGroupPassive() { return isTrue(this.gridOptions.rowGroupPassive); }
+    public isPivotPassive() { return isTrue(this.gridOptions.pivotPassive); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }

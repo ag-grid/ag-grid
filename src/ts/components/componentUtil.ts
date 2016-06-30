@@ -33,7 +33,7 @@ export class ComponentUtil {
     ];
 
     public static BOOLEAN_PROPERTIES = [
-        'toolPanelSuppressGroups','toolPanelSuppressValues',
+        'toolPanelSuppressRowGroups','toolPanelSuppressValues','toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
         'suppressRowClickSelection','suppressCellSelection','suppressHorizontalScroll','debug',
         'enableColResize','enableCellExpressions','enableSorting','enableServerSideSorting',
         'enableFilter','enableServerSideFilter','angularCompileRows','angularCompileFilters',
@@ -47,7 +47,7 @@ export class ComponentUtil {
         'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard','pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
-        'suppressFocusAfterRefresh'
+        'suppressFocusAfterRefresh', 'rowGroupPassive', 'pivotPassive'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
