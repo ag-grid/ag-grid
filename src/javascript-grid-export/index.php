@@ -65,6 +65,27 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <h3>
+        What Gets Exported
+    </h3>
+
+    <p>
+        The same data that is in the grid gets exported, but none of the GUI representation of the data will be.
+        What this means is:
+        <ul>
+            <li>The raw values, and not the result of cellRenderer, will get used, meaning:
+                <ul>
+                    <li>cellRenderers will NOT be used.</li>
+                    <li>valueGetters will be used.</li>
+                    <li>cellFormatters will NOT be used (use <i>processCellCallback</i> instead).</li>
+                </ul>
+            </li>
+            <li>If row grouping, all data will be exported regardless of groups open or closed.</li>
+            <li>If row grouping with footers (groupIncludeFooter=true) the footers will NOT be used -
+                this is a GUI addition that happens for displaying the data in the grid.</li>
+        </ul>
+    </p>
+
+    <h3>
         Example
     </h3>
     <p>
