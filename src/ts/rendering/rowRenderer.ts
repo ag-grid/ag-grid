@@ -209,9 +209,7 @@ export class RowRenderer {
     public refreshView(refreshEvent?: any) {
         this.logger.log('refreshView');
 
-        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
-
-        this.focusedCellController.getFocusedCell();
+        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         var refreshFromIndex: number = refreshEvent ? refreshEvent.fromIndex : null;
 
@@ -239,7 +237,7 @@ export class RowRenderer {
     }
 
     public softRefreshView() {
-        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         this.forEachRenderedCell( renderedCell => {
             if (renderedCell.isVolatile()) {
@@ -278,7 +276,7 @@ export class RowRenderer {
             return;
         }
 
-        var focusedCell = this.focusedCellController.getFocusCellIfBrowserFocused();
+        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         // we only need to be worried about rendered rows, as this method is
         // called to whats rendered. if the row isn't rendered, we don't care

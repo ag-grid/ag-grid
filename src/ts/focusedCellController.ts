@@ -45,11 +45,15 @@ export class FocusedCellController {
     // first focus a cell, then second click outside the grid, as then the
     // grid cell will still be focused as far as the grid is conerned,
     // however the browser focus will have moved somewhere else.
-    public getFocusCellIfBrowserFocused(): GridCell {
+    public getFocusCellToUseAfterRefresh(): GridCell {
+        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
+            return null;
+        }
+        
         if (!this.focusedCell) {
             return null;
         }
-
+        
         var browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
         if (!browserFocusedCell) {
             return null;

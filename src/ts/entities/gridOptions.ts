@@ -56,6 +56,7 @@ export interface GridOptions {
     suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     suppressAggFuncInHeader?: boolean;
+    suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
     enableRangeSelection?: boolean;
