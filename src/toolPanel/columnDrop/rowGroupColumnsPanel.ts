@@ -59,20 +59,28 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected removeColumns(columns: Column[]) {
-        // this panel only allows dragging columns (not column groups) so we are guaranteed
-        // the dragItem is a column
-        var rowGroupColumns = this.columnController.getRowGroupColumns();
-        columns.forEach( column => {
-            var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
-            if (columnIsGrouped) {
-                this.columnController.removeRowGroupColumn(column);
-                this.columnController.setColumnVisible(column, true);
-            }
-        });
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, {columns: columns} );
+        } else {
+            // this panel only allows dragging columns (not column groups) so we are guaranteed
+            // the dragItem is a column
+            var rowGroupColumns = this.columnController.getRowGroupColumns();
+            columns.forEach( column => {
+                var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
+                if (columnIsGrouped) {
+                    this.columnController.removeRowGroupColumn(column);
+                    this.columnController.setColumnVisible(column, true);
+                }
+            });
+        }
     }
 
     protected addColumns(columns: Column[]) {
-        this.columnController.addRowGroupColumns(columns);
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, {columns: columns} );
+        } else {
+            this.columnController.addRowGroupColumns(columns);
+        }
     }
 
     protected getExistingColumns(): Column[] {

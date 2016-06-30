@@ -1,4 +1,4 @@
-import {Component, PostConstruct, Bean, Autowired, Context} from "ag-grid/main";
+import {Component, GridOptionsWrapper, PostConstruct, Bean, Autowired, Context} from "ag-grid/main";
 import {ColumnSelectPanel} from "./columnsSelect/columnSelectPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
@@ -11,8 +11,7 @@ export class ToolPanelComp extends Component {
     private static TEMPLATE = '<div class="ag-tool-panel"></div>';
 
     @Autowired('context') private context: Context;
-
-    private columnSelectPanel: ColumnSelectPanel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     constructor() {
         super(ToolPanelComp.TEMPLATE);
@@ -21,32 +20,30 @@ export class ToolPanelComp extends Component {
     @PostConstruct
     public init(): void {
 
-        this.columnSelectPanel = new ColumnSelectPanel(true);
-        this.context.wireBean(this.columnSelectPanel);
+        if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
+            this.addComponent(new PivotModePanel())
+        }
 
-        var pivotModePanel = new PivotModePanel();
-        this.context.wireBean(pivotModePanel);
+        this.addComponent(new ColumnSelectPanel(true));
 
-        var rowGroupColumnsPanel = new RowGroupColumnsPanel(false);
-        var pivotColumnsPanel = new PivotColumnsPanel(false);
-        var valueColumnsPanel = new ValuesColumnPanel(false);
+        if (!this.gridOptionsWrapper.isToolPanelSuppressRowGroups()) {
+            this.addComponent(new RowGroupColumnsPanel(false));
+        }
 
-        this.context.wireBean(rowGroupColumnsPanel);
-        this.context.wireBean(pivotColumnsPanel);
-        this.context.wireBean(valueColumnsPanel);
+        if (!this.gridOptionsWrapper.isToolPanelSuppressValues()) {
+            this.addComponent(new ValuesColumnPanel(false));
+        }
 
-        this.getGui().appendChild(pivotModePanel.getGui());
-        this.getGui().appendChild(this.columnSelectPanel.getGui());
-        this.getGui().appendChild(valueColumnsPanel.getGui());
-        this.getGui().appendChild(rowGroupColumnsPanel.getGui());
-        this.getGui().appendChild(pivotColumnsPanel.getGui());
-
-        this.addDestroyFunc( ()=> {
-            pivotModePanel.destroy();
-            rowGroupColumnsPanel.destroy();
-            pivotColumnsPanel.destroy();
-            valueColumnsPanel.destroy();
-        });
+        if (!this.gridOptionsWrapper.isToolPanelSuppressPivots()) {
+            this.addComponent(new PivotColumnsPanel(false));
+        }
     }
 
+    private addComponent(component: Component): void {
+        this.context.wireBean(component);
+        this.getGui().appendChild(component.getGui());
+        this.addDestroyFunc( ()=> {
+            component.destroy();
+        });
+    }
 }

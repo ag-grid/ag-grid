@@ -74,12 +74,20 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected removeColumns(columns: Column[]): void {
-        var columnsPivoted = Utils.filter(columns, (column: Column) => column.isPivotActive() );
-        this.columnController.removePivotColumns(columnsPivoted);
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, {columns: columns} );
+        } else {
+            var columnsPivoted = Utils.filter(columns, (column: Column) => column.isPivotActive() );
+            this.columnController.removePivotColumns(columnsPivoted);
+        }
     }
 
     protected addColumns(columns: Column[]) {
-        this.columnController.addPivotColumns(columns);
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, {columns: columns} );
+        } else {
+            this.columnController.addPivotColumns(columns);
+        }
     }
 
     protected getExistingColumns(): Column[] {
