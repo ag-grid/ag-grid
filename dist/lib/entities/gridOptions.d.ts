@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.4
+// Type definitions for ag-grid v5.0.0-alpha.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -17,8 +17,10 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
-    toolPanelSuppressGroups?: boolean;
+    toolPanelSuppressRowGroups?: boolean;
     toolPanelSuppressValues?: boolean;
+    toolPanelSuppressPivots?: boolean;
+    toolPanelSuppressPivotMode?: boolean;
     suppressRowClickSelection?: boolean;
     suppressCellSelection?: boolean;
     sortingOrder?: string[];
@@ -56,6 +58,7 @@ export interface GridOptions {
     suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     suppressAggFuncInHeader?: boolean;
+    suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
     enableRangeSelection?: boolean;
@@ -75,6 +78,8 @@ export interface GridOptions {
     };
     suppressColumnVirtualisation?: boolean;
     layoutInterval?: number;
+    rowGroupPassive?: boolean;
+    pivotPassive?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

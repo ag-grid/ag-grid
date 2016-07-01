@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.4
+ * @version v5.0.0-alpha.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,7 +47,10 @@ var FocusedCellController = (function () {
     // first focus a cell, then second click outside the grid, as then the
     // grid cell will still be focused as far as the grid is conerned,
     // however the browser focus will have moved somewhere else.
-    FocusedCellController.prototype.getFocusCellIfBrowserFocused = function () {
+    FocusedCellController.prototype.getFocusCellToUseAfterRefresh = function () {
+        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
+            return null;
+        }
         if (!this.focusedCell) {
             return null;
         }
