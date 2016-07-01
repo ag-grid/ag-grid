@@ -10,7 +10,7 @@ import {
     GridOptionsWrapper,
     EventService,
     Events,
-    Utils as _,
+    Utils,
     SelectionController,
     IViewportDatasource
 } from "ag-grid/main";
@@ -164,7 +164,7 @@ export class ViewportRowModel implements IRowModel {
     }
 
     private setRowData(rowData: {[key: number]: any}): void {
-        _.iterateObject(rowData, (indexStr: string, dataItem: any) => {
+        Utils.iterateObject(rowData, (indexStr: string, dataItem: any) => {
             var index = parseInt(indexStr);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.

@@ -16,10 +16,11 @@ import {MD5} from "./license/md5";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
 import {AggFuncService} from "./aggregation/aggFuncService";
+import {PivotCompFactory} from "./pivotCompFactory";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
-Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory,
+Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
     StatusBar, LicenseManager, MD5], rowModelTypes);
