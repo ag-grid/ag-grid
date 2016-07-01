@@ -26,8 +26,11 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
+    private horizontal: boolean;
+
     constructor(horizontal: boolean) {
         super(horizontal, false);
+        this.horizontal = horizontal;
     }
 
     @PostConstruct
@@ -50,21 +53,43 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
             title: title
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onEverythingChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshGui.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
 
-        this.onEverythingChanged();
+        this.refresh();
     }
 
-    private onEverythingChanged(): void {
-        this.onPivotModeChanged();
+    private refresh(): void {
+        this.checkVisibility();
         this.refreshGui();
     }
 
-    private onPivotModeChanged(): void {
+    private checkVisibility(): void {
         var pivotMode = this.columnController.isPivotMode();
-        this.setVisible(pivotMode);
+
+        if (this.horizontal) {
+            // what we do for horizontal (ie the pivot panel at the top) depends
+            // on the user property as well as pivotMode.
+            switch (this.gridOptionsWrapper.getPivotPanelShow()) {
+                case 'always':
+                    this.setVisible(pivotMode);
+                    break;
+                case 'onlyWhenPivoting':
+                    var pivotActive = this.columnController.isPivotActive();
+                    this.setVisible(pivotMode && pivotActive);
+                    break;
+                default:
+                    // never show it
+                    this.setVisible(false);
+                    break;
+            }
+        } else {
+            // in toolPanel, the pivot panel is always shown when pivot mode is on
+            this.setVisible(pivotMode);
+        }
+
+
     }
 
     protected isColumnDroppable(column: Column): boolean {
