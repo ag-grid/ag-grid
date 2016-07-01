@@ -103,6 +103,7 @@ var gridOptions = {
 //debug: true,
 //suppressEnterprise: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
+    pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
 //minColWidth: 50,
 //maxColWidth: 300,
 //rowsBuffer: 1,

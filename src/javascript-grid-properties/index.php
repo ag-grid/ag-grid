@@ -317,8 +317,14 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowGroupPanelShow</th>
-            <td>When to show the 'row group panel' (where you drag rows to group). Default
+            <td>When to show the 'row group panel' (where you drag rows to group)  at the top. Default
                 is never. Set to either 'always' or 'onlyWhenGrouping'.</td>
+        </tr>
+        <tr>
+            <th>pivotPanelShow</th>
+            <td>When to show the 'pivot panel' (where you drag rows to pivot) at the top. Default
+                is never. Set to either 'always' or 'onlyWhenPivoting'. Note that the pivot panel
+                will never show if pivotMode is off.</td>
         </tr>
         <tr>
             <th>suppressContextMenu</th>
