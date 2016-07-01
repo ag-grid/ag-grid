@@ -5,6 +5,8 @@ import {Context} from "../context/context";
 
 export class Component implements IEventEmitter {
 
+    public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
+
     private eGui: HTMLElement;
 
     private destroyFunctions: (()=>void)[] = [];
@@ -14,6 +16,8 @@ export class Component implements IEventEmitter {
     private childComponents: Component[] = [];
 
     private annotatedEventListeners: any[] = [];
+
+    private visible = true;
 
     constructor(template?: string) {
         if (template) {
@@ -160,10 +164,22 @@ export class Component implements IEventEmitter {
         }
     }
 
-    public setVisible(visible: boolean): void {
-        _.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+    public isVisible(): boolean {
+        return this.visible;
     }
 
+    public setVisible(visible: boolean): void {
+        if (visible !== this.visible) {
+            this.visible = visible;
+            _.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+            this.dispatchEvent(Component.EVENT_VISIBLE_CHANGED, {visible: this.visible});
+        }
+    }
+
+    public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
+        _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+    }
+    
     public destroy(): void {
         this.childComponents.forEach( childComponent => childComponent.destroy() );
         this.destroyFunctions.forEach( func => func() );

@@ -25,6 +25,7 @@ export class BorderLayout {
     private childPanels: any;
     private centerHeightLastTime: any;
     private centerWidthLastTime: any;
+    private centerLeftMarginLastTime: any;
 
     private sizeChangeListeners = <any>[];
     private overlays: any;
@@ -243,25 +244,26 @@ export class BorderLayout {
             centerWidth = 0;
         }
 
+        var atLeastOneChanged = false;
+
+        if (this.centerLeftMarginLastTime !== westWidth) {
+            this.centerLeftMarginLastTime = westWidth;
+            this.eCenterWrapper.style.marginLeft = westWidth + 'px';
+            atLeastOneChanged = true;
+        }
+
         if (this.centerWidthLastTime !== centerWidth) {
             this.centerWidthLastTime = centerWidth;
             this.eCenterWrapper.style.width = centerWidth + 'px';
-            return true; // return true because there was a change
-        } else {
-            return false;
+            atLeastOneChanged = true;
         }
+
+        return atLeastOneChanged;
     }
 
     public setEastVisible(visible: any) {
         if (this.eEastWrapper) {
             this.eEastWrapper.style.display = visible ? '' : 'none';
-        }
-        this.doLayout();
-    }
-
-    public setNorthVisible(visible: any) {
-        if (this.eNorthWrapper) {
-            this.eNorthWrapper.style.display = visible ? '' : 'none';
         }
         this.doLayout();
     }
@@ -295,10 +297,4 @@ export class BorderLayout {
         }
     }
 
-    public setSouthVisible(visible: any) {
-        if (this.eSouthWrapper) {
-            this.eSouthWrapper.style.display = visible ? '' : 'none';
-        }
-        this.doLayout();
-    }
 }
