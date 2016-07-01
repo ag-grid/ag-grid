@@ -1,9 +1,10 @@
-// ag-grid-enterprise v5.0.0-alpha.4
+// ag-grid-enterprise v5.0.0-alpha.5
 import { Component } from "ag-grid/main";
 export declare class ToolPanelComp extends Component {
     private static TEMPLATE;
     private context;
-    private columnSelectPanel;
+    private gridOptionsWrapper;
     constructor();
     init(): void;
+    private addComponent(component);
 }

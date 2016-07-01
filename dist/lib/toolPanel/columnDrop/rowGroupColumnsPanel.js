@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.4
+// ag-grid-enterprise v5.0.0-alpha.5
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -46,19 +46,29 @@ var RowGroupColumnsPanel = (function (_super) {
     };
     RowGroupColumnsPanel.prototype.removeColumns = function (columns) {
         var _this = this;
-        // this panel only allows dragging columns (not column groups) so we are guaranteed
-        // the dragItem is a column
-        var rowGroupColumns = this.columnController.getRowGroupColumns();
-        columns.forEach(function (column) {
-            var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
-            if (columnIsGrouped) {
-                _this.columnController.removeRowGroupColumn(column);
-                _this.columnController.setColumnVisible(column, true);
-            }
-        });
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, { columns: columns });
+        }
+        else {
+            // this panel only allows dragging columns (not column groups) so we are guaranteed
+            // the dragItem is a column
+            var rowGroupColumns = this.columnController.getRowGroupColumns();
+            columns.forEach(function (column) {
+                var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
+                if (columnIsGrouped) {
+                    _this.columnController.removeRowGroupColumn(column);
+                    _this.columnController.setColumnVisible(column, true);
+                }
+            });
+        }
     };
     RowGroupColumnsPanel.prototype.addColumns = function (columns) {
-        this.columnController.addRowGroupColumns(columns);
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, { columns: columns });
+        }
+        else {
+            this.columnController.addRowGroupColumns(columns);
+        }
     };
     RowGroupColumnsPanel.prototype.getExistingColumns = function () {
         return this.columnController.getRowGroupColumns();

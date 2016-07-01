@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.4
+// ag-grid-enterprise v5.0.0-alpha.5
 var main_1 = require("ag-grid/main");
 var enterpriseMenu_1 = require("./enterpriseMenu");
 var rangeController_1 = require("./rangeController");

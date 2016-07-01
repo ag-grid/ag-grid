@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.4
+// ag-grid-enterprise v5.0.0-alpha.5
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -56,11 +56,21 @@ var PivotColumnsPanel = (function (_super) {
         return allowPivot && columnNotAlreadyPivoted;
     };
     PivotColumnsPanel.prototype.removeColumns = function (columns) {
-        var columnsPivoted = main_1.Utils.filter(columns, function (column) { return column.isPivotActive(); });
-        this.columnController.removePivotColumns(columnsPivoted);
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, { columns: columns });
+        }
+        else {
+            var columnsPivoted = main_1.Utils.filter(columns, function (column) { return column.isPivotActive(); });
+            this.columnController.removePivotColumns(columnsPivoted);
+        }
     };
     PivotColumnsPanel.prototype.addColumns = function (columns) {
-        this.columnController.addPivotColumns(columns);
+        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, { columns: columns });
+        }
+        else {
+            this.columnController.addPivotColumns(columns);
+        }
     };
     PivotColumnsPanel.prototype.getExistingColumns = function () {
         return this.columnController.getPivotColumns();

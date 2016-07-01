@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.4
+// ag-grid-enterprise v5.0.0-alpha.5
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -25,26 +25,25 @@ var ToolPanelComp = (function (_super) {
         _super.call(this, ToolPanelComp.TEMPLATE);
     }
     ToolPanelComp.prototype.init = function () {
-        this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(true);
-        this.context.wireBean(this.columnSelectPanel);
-        var pivotModePanel = new pivotModePanel_1.PivotModePanel();
-        this.context.wireBean(pivotModePanel);
-        var rowGroupColumnsPanel = new rowGroupColumnsPanel_1.RowGroupColumnsPanel(false);
-        var pivotColumnsPanel = new pivotColumnsPanel_1.PivotColumnsPanel(false);
-        var valueColumnsPanel = new valueColumnsPanel_1.ValuesColumnPanel(false);
-        this.context.wireBean(rowGroupColumnsPanel);
-        this.context.wireBean(pivotColumnsPanel);
-        this.context.wireBean(valueColumnsPanel);
-        this.getGui().appendChild(pivotModePanel.getGui());
-        this.getGui().appendChild(this.columnSelectPanel.getGui());
-        this.getGui().appendChild(valueColumnsPanel.getGui());
-        this.getGui().appendChild(rowGroupColumnsPanel.getGui());
-        this.getGui().appendChild(pivotColumnsPanel.getGui());
+        if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
+            this.addComponent(new pivotModePanel_1.PivotModePanel());
+        }
+        this.addComponent(new columnSelectPanel_1.ColumnSelectPanel(true));
+        if (!this.gridOptionsWrapper.isToolPanelSuppressRowGroups()) {
+            this.addComponent(new rowGroupColumnsPanel_1.RowGroupColumnsPanel(false));
+        }
+        if (!this.gridOptionsWrapper.isToolPanelSuppressValues()) {
+            this.addComponent(new valueColumnsPanel_1.ValuesColumnPanel(false));
+        }
+        if (!this.gridOptionsWrapper.isToolPanelSuppressPivots()) {
+            this.addComponent(new pivotColumnsPanel_1.PivotColumnsPanel(false));
+        }
+    };
+    ToolPanelComp.prototype.addComponent = function (component) {
+        this.context.wireBean(component);
+        this.getGui().appendChild(component.getGui());
         this.addDestroyFunc(function () {
-            pivotModePanel.destroy();
-            rowGroupColumnsPanel.destroy();
-            pivotColumnsPanel.destroy();
-            valueColumnsPanel.destroy();
+            component.destroy();
         });
     };
     ToolPanelComp.TEMPLATE = '<div class="ag-tool-panel"></div>';
@@ -52,6 +51,10 @@ var ToolPanelComp = (function (_super) {
         main_1.Autowired('context'), 
         __metadata('design:type', main_1.Context)
     ], ToolPanelComp.prototype, "context", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
+    ], ToolPanelComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 
