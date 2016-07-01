@@ -65,6 +65,7 @@ export interface GridOptions {
     suppressEnterprise?: boolean;
     // enterprise only
     rowGroupPanelShow?: string;
+    pivotPanelShow?: string;
     suppressContextMenu?: boolean;
     suppressMenuFilterPanel?: boolean;
     suppressMenuMainPanel?: boolean;

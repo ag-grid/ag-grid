@@ -124,6 +124,7 @@ export class GridOptionsWrapper {
     public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }
     public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
     public getRowGroupPanelShow() { return this.gridOptions.rowGroupPanelShow; }
+    public getPivotPanelShow() { return this.gridOptions.pivotPanelShow; }
     public isAngularCompileRows() { return isTrue(this.gridOptions.angularCompileRows); }
     public isAngularCompileFilters() { return isTrue(this.gridOptions.angularCompileFilters); }
     public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
