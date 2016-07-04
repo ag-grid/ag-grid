@@ -101,8 +101,6 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
-        console.log('asfsadkfhslkdahsdlkjfdh');
-
         // this will contain all columns that are potential drops
         var dragColumns = draggingEvent.dragSource.dragItem;
 

@@ -54,6 +54,9 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
+        // we never allow grouping of secondary columns
+        if (!column.isPrimary()) { return false; }
+
         var columnValue = column.isAllowValue();
         var columnNotValue= !column.isValueActive();
         return columnValue && columnNotValue;

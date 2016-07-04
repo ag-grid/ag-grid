@@ -88,6 +88,9 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
+        // we never allow grouping of secondary columns
+        if (!column.isPrimary()) { return false; }
+
         var allowPivot = column.isAllowPivot();
         var columnNotAlreadyPivoted = !column.isPivotActive();
         return allowPivot && columnNotAlreadyPivoted;

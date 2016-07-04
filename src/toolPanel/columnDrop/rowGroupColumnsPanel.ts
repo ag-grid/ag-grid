@@ -53,6 +53,9 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column:Column):boolean {
+        // we never allow grouping of secondary columns
+        if (!column.isPrimary()) { return false; }
+
         var columnGroupable = column.isAllowRowGroup();
         var columnNotAlreadyGrouped = !column.isRowGroupActive();
         return columnGroupable && columnNotAlreadyGrouped;
