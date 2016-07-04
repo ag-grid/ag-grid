@@ -19,6 +19,9 @@ export class BodyDropPivotTarget {
         var dragColumns = draggingEvent.dragSource.dragItem;
 
         dragColumns.forEach( column => {
+            // we don't allow adding secondary columns
+            if (!column.isPrimary()) { return; }
+
             if (column.isAllowValue()) {
                 if (!column.isValueActive()) {
                     this.columnsToAggregate.push(column);
