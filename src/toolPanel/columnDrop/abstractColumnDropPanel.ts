@@ -55,6 +55,10 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.valueColumn = valueColumn;
     }
 
+    public isHorizontal(): boolean {
+        return this.horizontal;
+    }
+
     public setBeans(beans: AbstractColumnDropPanelBeans): void {
         this.beans = beans;
     }
@@ -84,7 +88,7 @@ export abstract class AbstractColumnDropPanel extends Component {
 
     private setupDropTarget(): void {
         this.dropTarget = {
-            eContainer: this.getGui(),
+            getContainer: this.getGui.bind(this),
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
@@ -97,6 +101,8 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
+        console.log('asfsadkfhslkdahsdlkjfdh');
+
         // this will contain all columns that are potential drops
         var dragColumns = draggingEvent.dragSource.dragItem;
 

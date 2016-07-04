@@ -26,11 +26,8 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
-    private horizontal: boolean;
-
     constructor(horizontal: boolean) {
         super(horizontal, false);
-        this.horizontal = horizontal;
     }
 
     @PostConstruct
@@ -68,7 +65,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     private checkVisibility(): void {
         var pivotMode = this.columnController.isPivotMode();
 
-        if (this.horizontal) {
+        if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
             // on the user property as well as pivotMode.
             switch (this.gridOptionsWrapper.getPivotPanelShow()) {
@@ -88,8 +85,6 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
             this.setVisible(pivotMode);
         }
-
-
     }
 
     protected isColumnDroppable(column: Column): boolean {
