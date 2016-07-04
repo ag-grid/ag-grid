@@ -248,33 +248,6 @@ export class ColumnController {
     public isPivotMode(): boolean {
         return this.pivotMode;
     }
-
-    // public getVirtualRowGroup(dept: number): ColumnGroup[] {
-    //     var columnGroups = [];
-    //
-    //     var groupsAtDept: ColumnGroupChild[] = [];
-    //     var cellTree = this.columnController.getDisplayedColumnGroups(this.pinned);
-    //     this.addTreeNodesAtDept(cellTree, this.dept, nodesAtDept);
-    //
-    //
-    //     return columnGroups;
-    //
-    // }
-    //
-    // private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {
-    //     cellTree.forEach( (abstractColumn) => {
-    //         if (dept===0) {
-    //             result.push(abstractColumn);
-    //         } else if (abstractColumn instanceof ColumnGroup) {
-    //             var columnGroup = <ColumnGroup> abstractColumn;
-    //             this.addTreeNodesAtDept(columnGroup.getDisplayedChildren(), dept-1, result);
-    //         } else {
-    //             // we are looking for children past a column, so have come to the end,
-    //             // do nothing, and because the tree is balanced, the result of this recursion
-    //             // will be an empty list.
-    //         }
-    //     });
-    // }
     
     public setPivotMode(pivotMode: boolean): void {
         if (pivotMode === this.pivotMode) { return; }

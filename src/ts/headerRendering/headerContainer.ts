@@ -1,22 +1,13 @@
-import {Utils as _} from '../utils';
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnGroup} from "../entities/columnGroup";
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Autowired, PreDestroy} from "../context/context";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {Column} from "../entities/column";
-import {Context} from "../context/context";
-import {RenderedHeaderGroupCell} from "./renderedHeaderGroupCell";
-import {RenderedHeaderCell} from "./renderedHeaderCell";
-import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
-import {MoveColumnController} from "./moveColumnController";
+import {Autowired, Context, PostConstruct} from "../context/context";
+import {DragAndDropService, DropTarget} from "../dragAndDrop/dragAndDropService";
 import {ColumnController} from "../columnController/columnController";
-import {DropTarget} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
-import {PostConstruct} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {HeaderRowComp} from "./headerRowComp";
+import {BodyDropTarget} from "./bodyDropTarget";
 
 export class HeaderContainer {
 
@@ -75,28 +66,9 @@ export class HeaderContainer {
     }
     
     private setupDragAndDrop(): void {
-        var moveColumnController = new MoveColumnController(this.pinned);
-        this.context.wireBean(moveColumnController);
-
-        var secondaryContainers: HTMLElement[];
-        switch (this.pinned) {
-            case Column.PINNED_LEFT: secondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
-            case Column.PINNED_RIGHT: secondaryContainers = this.gridPanel.getDropTargetPinnedRightContainers(); break;
-            default: secondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
-        }
-
-        var icon = this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
-
-        this.dropTarget = {
-            eContainer: this.eViewport ? this.eViewport : this.eContainer,
-            iconName: icon,
-            eSecondaryContainers: secondaryContainers,
-            onDragging: moveColumnController.onDragging.bind(moveColumnController),
-            onDragEnter: moveColumnController.onDragEnter.bind(moveColumnController),
-            onDragLeave: moveColumnController.onDragLeave.bind(moveColumnController),
-            onDragStop: moveColumnController.onDragStop.bind(moveColumnController)
-        };
-        this.dragAndDropService.addDropTarget(this.dropTarget);
+        var dropContainer = this.eViewport ? this.eViewport : this.eContainer;
+        var bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
+        this.context.wireBean(bodyDropTarget );
     }
 
     private removeHeaderRowComps(): void {

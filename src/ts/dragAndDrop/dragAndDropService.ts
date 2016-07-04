@@ -16,30 +16,33 @@ var svgFactory = SvgFactory.getInstance();
 
 export interface DragSource {
     /** Element which, when dragged, will kick off the DnD process */
-    eElement: HTMLElement,
+    eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItem: Column[],
+    dragItem: Column[];
     /** This name appears in the ghost icon when dragging */
-    dragItemName: string,
+    dragItemName: string;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
-    dragSourceDropTarget?: DropTarget
+    dragSourceDropTarget?: DropTarget;
 }
 
 export interface DropTarget {
     /** The main container that will get the drop. */
-    eContainer: HTMLElement,
+    getContainer(): HTMLElement;
     /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
      * in the header as well as the body (main rows and floating rows) of the grid. */
-    eSecondaryContainers?: HTMLElement[],
+    getSecondaryContainers?(): HTMLElement[];
+    /** Icon to show when drag is over*/
+    getIconName?(): string;
 
-    /** Icon to show when */
-    iconName?: string,
-
-    onDragEnter?: (params: DraggingEvent)=>void,
-    onDragLeave?: (params: DraggingEvent)=>void,
-    onDragging?: (params: DraggingEvent)=>void,
-    onDragStop?: (params: DraggingEvent)=>void
+    /** Callback for when drag enters */
+    onDragEnter?(params: DraggingEvent): void;
+    /** Callback for when drag leaves */
+    onDragLeave?(params: DraggingEvent): void;
+    /** Callback for when dragging */
+    onDragging?(params: DraggingEvent): void;
+    /** Callback for when drag stops */
+    onDragStop?(params: DraggingEvent): void;
 }
 
 export interface DraggingEvent {
@@ -75,13 +78,6 @@ export class DragAndDropService {
         '  <div class="ag-dnd-ghost-label">' +
         '  </div>' +
         '</div>';
-
-    // '<div class="ag-header-cell ag-header-cell-ghost">' +
-    // '  <span id="eGhostIcon" class="ag-header-cell-ghost-icon ag-shake-left-to-right"></span>' +
-    // '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
-    // '    <span id="agText" class="ag-header-cell-text"></span>' +
-    // '  </div>' +
-    // '</div>';
 
     private logger: Logger;
 
@@ -193,7 +189,7 @@ export class DragAndDropService {
 
         var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
         dropTarget.onDragEnter(dragEnterEvent);
-        this.setGhostIcon(dropTarget.iconName);
+        this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
 
     private leaveLastTargetIfExists(mouseEvent: MouseEvent, direction: string, fromNudge: boolean): void {
@@ -204,15 +200,21 @@ export class DragAndDropService {
         this.setGhostIcon(null);
     }
 
+    private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[] {
+        var containers = [dropTarget.getContainer()];
+        var secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
+        if (secondaryContainers) {
+            containers = containers.concat(secondaryContainers);
+        }
+        return containers;
+    }
+
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
-        var ePrimaryAndSecondaryContainers = [dropTarget.eContainer];
-        if (dropTarget.eSecondaryContainers) {
-            ePrimaryAndSecondaryContainers = ePrimaryAndSecondaryContainers.concat(dropTarget.eSecondaryContainers);
-        }
+        var allContainers = this.getAllContainersFromDropTarget(dropTarget);
 
         var gotMatch: boolean = false;
-        ePrimaryAndSecondaryContainers.forEach( (eContainer: HTMLElement) => {
+        allContainers.forEach( (eContainer: HTMLElement) => {
             if (!eContainer) { return; } // secondary can be missing
             var rect = eContainer.getBoundingClientRect();
 
@@ -252,7 +254,7 @@ export class DragAndDropService {
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string, fromNudge: boolean): DraggingEvent {
 
         // localise x and y to the target component
-        var rect = dropTarget.eContainer.getBoundingClientRect();
+        var rect = dropTarget.getContainer().getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
 
@@ -316,7 +318,7 @@ export class DragAndDropService {
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
         if (this.lastDropTarget) {
-            this.setGhostIcon(this.lastDropTarget.iconName);
+            this.setGhostIcon(this.lastDropTarget.getIconName ? this.lastDropTarget.getIconName() : null);
         }
 
         var eText = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-label');
@@ -328,26 +330,6 @@ export class DragAndDropService {
         this.eGhost.style.left = '20px';
         this.eBody.appendChild(this.eGhost);
     }
-
-/*
-// took this out as it wasn't making sense when dragging from the side panel, as it was possible to drag
-   columns that were not visible - which is fine, as you are selecting from all columns here. what should be
-   done is we check what columns to include in the drag depending on what started to drag - but that is to
-   much coding for now, so just hardcoding the width to 200px for now.
-    private getActualWidth(columns: Column[]): number {
-        var totalColWidth = 0;
-
-        // we only include displayed columns so hidden columns do not add space as this would look weird,
-        // if for example moving a group with 5 cols, but only 1 displayed, we want ghost to be just the width
-        // of the 1 displayed column
-        var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
-        var displayedColumns = _.filter(columns, column => allDisplayedColumns.indexOf(column) >= 0 );
-
-        displayedColumns.forEach( column => totalColWidth += column.getActualWidth() );
-
-        return totalColWidth;
-    }
-*/
 
     public setGhostIcon(iconName: string, shake = false): void {
         _.removeAllChildren(this.eGhostIcon);
