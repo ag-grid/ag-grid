@@ -1,29 +1,32 @@
 
-import {Bean} from "ag-grid/main";
-import {IClipboardService} from "ag-grid/main";
-import {Autowired} from "ag-grid/main";
-import {CsvCreator} from "ag-grid/main";
-import {LoggerFactory} from "ag-grid/main";
-import {SelectionController} from "ag-grid/main";
+import {
+    Bean,
+    IClipboardService,
+    Autowired,
+    CsvCreator,
+    LoggerFactory,
+    SelectionController,
+    IRowModel,
+    FloatingRowModel,
+    ValueService,
+    FocusedCellController,
+    RowRenderer,
+    ColumnController,
+    EventService,
+    CellNavigationService,
+    GridOptionsWrapper,
+    Logger,
+    PostConstruct,
+    GridRow,
+    Utils,
+    GridCore,
+    GridCell,
+    Events,
+    RowNode,
+    Column,
+    Constants
+} from "ag-grid/main";
 import {RangeController} from "./rangeController";
-import {IRowModel} from "ag-grid/main";
-import {FloatingRowModel} from "ag-grid/main";
-import {ValueService} from "ag-grid/main";
-import {FocusedCellController} from "ag-grid/main";
-import {RowRenderer} from "ag-grid/main";
-import {ColumnController} from "ag-grid/main";
-import {EventService} from "ag-grid/main";
-import {CellNavigationService} from "ag-grid/main";
-import {GridOptionsWrapper} from "ag-grid/main";
-import {Logger} from "ag-grid/main";
-import {PostConstruct} from "ag-grid/main";
-import {GridRow} from "ag-grid/main";
-import {Utils} from "ag-grid/main";
-import {GridCell} from "ag-grid/main";
-import {Events} from "ag-grid/main";
-import {RowNode} from "ag-grid/main";
-import {Column} from "ag-grid/main";
-import {Constants} from "ag-grid/main";
 
 @Bean('clipboardService')
 export class ClipboardService implements IClipboardService {
@@ -41,6 +44,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridCore') private gridCore: GridCore;
 
     private logger: Logger;
 
@@ -295,7 +299,9 @@ export class ClipboardService implements IClipboardService {
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0.0';
 
-        document.body.appendChild(eTempInput);
+        var guiRoot = this.gridCore.getRootGui();
+
+        guiRoot.appendChild(eTempInput);
 
         try {
             var result = callbackNow(eTempInput);
@@ -307,10 +313,10 @@ export class ClipboardService implements IClipboardService {
         if (callbackAfter) {
             setTimeout( ()=> {
                 callbackAfter(eTempInput);
-                document.body.removeChild(eTempInput);
+                guiRoot.removeChild(eTempInput);
             }, 0);
         } else {
-            document.body.removeChild(eTempInput);
+            guiRoot.removeChild(eTempInput);
         }
     }
 
