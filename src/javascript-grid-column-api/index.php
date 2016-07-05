@@ -227,7 +227,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>
-                setPivotColumns(colKeys), removePivotColumn(),
+                getPivotColumns(), setPivotColumns(colKeys), removePivotColumn(),
                 removePivotColumns(colKeys), addPivotColumn(colKey),
                 addPivotColumns(colKeys)
             </th>
