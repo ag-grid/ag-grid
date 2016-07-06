@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.5
+// ag-grid-enterprise v5.0.0-alpha.6
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -40,6 +40,10 @@ var ValuesColumnPanel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     };
     ValuesColumnPanel.prototype.isColumnDroppable = function (column) {
+        // we never allow grouping of secondary columns
+        if (!column.isPrimary()) {
+            return false;
+        }
         var columnValue = column.isAllowValue();
         var columnNotValue = !column.isValueActive();
         return columnValue && columnNotValue;

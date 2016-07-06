@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.5
+// ag-grid-enterprise v5.0.0-alpha.6
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -37,20 +37,44 @@ var PivotColumnsPanel = (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onEverythingChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshGui.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.onEverythingChanged();
+        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
+        this.refresh();
     };
-    PivotColumnsPanel.prototype.onEverythingChanged = function () {
-        this.onPivotModeChanged();
+    PivotColumnsPanel.prototype.refresh = function () {
+        this.checkVisibility();
         this.refreshGui();
     };
-    PivotColumnsPanel.prototype.onPivotModeChanged = function () {
+    PivotColumnsPanel.prototype.checkVisibility = function () {
         var pivotMode = this.columnController.isPivotMode();
-        this.setVisible(pivotMode);
+        if (this.isHorizontal()) {
+            // what we do for horizontal (ie the pivot panel at the top) depends
+            // on the user property as well as pivotMode.
+            switch (this.gridOptionsWrapper.getPivotPanelShow()) {
+                case 'always':
+                    this.setVisible(pivotMode);
+                    break;
+                case 'onlyWhenPivoting':
+                    var pivotActive = this.columnController.isPivotActive();
+                    this.setVisible(pivotMode && pivotActive);
+                    break;
+                default:
+                    // never show it
+                    this.setVisible(false);
+                    break;
+            }
+        }
+        else {
+            // in toolPanel, the pivot panel is always shown when pivot mode is on
+            this.setVisible(pivotMode);
+        }
     };
     PivotColumnsPanel.prototype.isColumnDroppable = function (column) {
+        // we never allow grouping of secondary columns
+        if (!column.isPrimary()) {
+            return false;
+        }
         var allowPivot = column.isAllowPivot();
         var columnNotAlreadyPivoted = !column.isPivotActive();
         return allowPivot && columnNotAlreadyPivoted;

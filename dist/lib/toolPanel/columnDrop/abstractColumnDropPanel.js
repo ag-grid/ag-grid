@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.5
+// ag-grid-enterprise v5.0.0-alpha.6
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -14,6 +14,9 @@ var AbstractColumnDropPanel = (function (_super) {
         this.horizontal = horizontal;
         this.valueColumn = valueColumn;
     }
+    AbstractColumnDropPanel.prototype.isHorizontal = function () {
+        return this.horizontal;
+    };
     AbstractColumnDropPanel.prototype.setBeans = function (beans) {
         this.beans = beans;
     };
@@ -38,7 +41,7 @@ var AbstractColumnDropPanel = (function (_super) {
     };
     AbstractColumnDropPanel.prototype.setupDropTarget = function () {
         this.dropTarget = {
-            eContainer: this.getGui(),
+            getContainer: this.getGui.bind(this),
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
