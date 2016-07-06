@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Data functions in ag-Grid are <b>row grouping</b>, <b>pivoting</b> and <b>aggregation</b>. All of these
-        terms are related but each is a detailed topic by itself. Below gives a summary of the difference functions
+        terms are related but each is a detailed topic by itself. Below gives a summary of the different functions
         to help frame the detailed explanations.
     </p>
 
