@@ -229,8 +229,10 @@ export class GridCore {
         }
 
         this.toolPanelShowing = show;
-        this.toolPanel.setVisible(show);
-        this.eRootPanel.doLayout();
+        if (this.toolPanel) {
+            this.toolPanel.setVisible(show);
+            this.eRootPanel.doLayout();
+        }
     }
 
     public isToolPanelShowing() {

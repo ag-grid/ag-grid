@@ -55,8 +55,8 @@ export class Events {
     public static EVENT_COLUMN_ROW_GROUP_ADD_REQUEST = 'columnRowGroupAddRequest';
     public static EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST = 'columnRowGroupRemoveRequest';
 
-    public static EVENT_COLUMN_PIVOT_ADD_REQUEST = 'columnRowGroupAddRequest';
-    public static EVENT_COLUMN_PIVOT_REMOVE_REQUEST = 'columnRowGroupRemoveRequest';
+    public static EVENT_COLUMN_PIVOT_ADD_REQUEST = 'columnPivotAddRequest';
+    public static EVENT_COLUMN_PIVOT_REMOVE_REQUEST = 'columnPivotRemoveRequest';
 
     public static EVENT_FLASH_CELLS = 'clipboardPaste';
     public static EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
