@@ -1,15 +1,17 @@
-// Type definitions for ag-grid v5.0.0-alpha.5
+// Type definitions for ag-grid v5.0.0-alpha.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { Context } from "../context/context";
 export declare class Component implements IEventEmitter {
+    static EVENT_VISIBLE_CHANGED: string;
     private eGui;
     private destroyFunctions;
     private localEventService;
     private childComponents;
     private annotatedEventListeners;
+    private visible;
     constructor(template?: string);
     instantiate(context: Context): void;
     private instantiateRecurse(parentNode, context);
@@ -27,7 +29,9 @@ export declare class Component implements IEventEmitter {
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
     appendChild(newChild: Node | Component): void;
+    isVisible(): boolean;
     setVisible(visible: boolean): void;
+    addOrRemoveCssClass(className: string, addOrRemove: boolean): void;
     destroy(): void;
     addGuiEventListener(event: string, listener: (event: any) => void): void;
     addDestroyableEventListener(eElement: HTMLElement | IEventEmitter, event: string, listener: (event?: any) => void): void;

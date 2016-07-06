@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -106,7 +106,7 @@ var DragAndDropService = (function () {
         }
         var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
         dropTarget.onDragEnter(dragEnterEvent);
-        this.setGhostIcon(dropTarget.iconName);
+        this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     };
     DragAndDropService.prototype.leaveLastTargetIfExists = function (mouseEvent, direction, fromNudge) {
         if (!this.lastDropTarget) {
@@ -116,14 +116,19 @@ var DragAndDropService = (function () {
         this.lastDropTarget.onDragLeave(dragLeaveEvent);
         this.setGhostIcon(null);
     };
+    DragAndDropService.prototype.getAllContainersFromDropTarget = function (dropTarget) {
+        var containers = [dropTarget.getContainer()];
+        var secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
+        if (secondaryContainers) {
+            containers = containers.concat(secondaryContainers);
+        }
+        return containers;
+    };
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
     DragAndDropService.prototype.isMouseOnDropTarget = function (mouseEvent, dropTarget) {
-        var ePrimaryAndSecondaryContainers = [dropTarget.eContainer];
-        if (dropTarget.eSecondaryContainers) {
-            ePrimaryAndSecondaryContainers = ePrimaryAndSecondaryContainers.concat(dropTarget.eSecondaryContainers);
-        }
+        var allContainers = this.getAllContainersFromDropTarget(dropTarget);
         var gotMatch = false;
-        ePrimaryAndSecondaryContainers.forEach(function (eContainer) {
+        allContainers.forEach(function (eContainer) {
             if (!eContainer) {
                 return;
             } // secondary can be missing
@@ -159,7 +164,7 @@ var DragAndDropService = (function () {
     };
     DragAndDropService.prototype.createDropTargetEvent = function (dropTarget, event, direction, fromNudge) {
         // localise x and y to the target component
-        var rect = dropTarget.eContainer.getBoundingClientRect();
+        var rect = dropTarget.getContainer().getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
         var dropTargetEvent = {
@@ -214,7 +219,7 @@ var DragAndDropService = (function () {
         this.eGhost = utils_1.Utils.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
         if (this.lastDropTarget) {
-            this.setGhostIcon(this.lastDropTarget.iconName);
+            this.setGhostIcon(this.lastDropTarget.getIconName ? this.lastDropTarget.getIconName() : null);
         }
         var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
         eText.innerHTML = this.dragSource.dragItemName;
@@ -223,25 +228,6 @@ var DragAndDropService = (function () {
         this.eGhost.style.left = '20px';
         this.eBody.appendChild(this.eGhost);
     };
-    /*
-    // took this out as it wasn't making sense when dragging from the side panel, as it was possible to drag
-       columns that were not visible - which is fine, as you are selecting from all columns here. what should be
-       done is we check what columns to include in the drag depending on what started to drag - but that is to
-       much coding for now, so just hardcoding the width to 200px for now.
-        private getActualWidth(columns: Column[]): number {
-            var totalColWidth = 0;
-    
-            // we only include displayed columns so hidden columns do not add space as this would look weird,
-            // if for example moving a group with 5 cols, but only 1 displayed, we want ghost to be just the width
-            // of the 1 displayed column
-            var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
-            var displayedColumns = _.filter(columns, column => allDisplayedColumns.indexOf(column) >= 0 );
-    
-            displayedColumns.forEach( column => totalColWidth += column.getActualWidth() );
-    
-            return totalColWidth;
-        }
-    */
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
         utils_1.Utils.removeAllChildren(this.eGhostIcon);

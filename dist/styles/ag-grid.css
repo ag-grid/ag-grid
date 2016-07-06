@@ -324,6 +324,9 @@ ag-grid-ng2 {
   float: right;
   line-height: 16px;
 }
+.ag-column-drop-horizontal {
+  white-space: nowrap;
+}
 .ag-cell {
   display: inline-block;
   white-space: nowrap;
@@ -520,6 +523,10 @@ ag-grid-ng2 {
   opacity: 0.3;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
   filter: alpha(opacity=30);
+}
+.ag-width-half {
+  width: 50%;
+  display: inline-block;
 }
 .ag-shake-left-to-right {
   -webkit-animation-name: ag-shake-left-to-right;

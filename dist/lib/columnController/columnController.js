@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,7 +60,6 @@ var ColumnApi = (function () {
     ColumnApi.prototype.getDisplayedCenterColumns = function () { return this._columnController.getDisplayedCenterColumns(); };
     ColumnApi.prototype.getDisplayedRightColumns = function () { return this._columnController.getDisplayedRightColumns(); };
     ColumnApi.prototype.getAllDisplayedColumns = function () { return this._columnController.getAllDisplayedColumns(); };
-    ColumnApi.prototype.getRowGroupColumns = function () { return this._columnController.getRowGroupColumns(); };
     ColumnApi.prototype.moveColumn = function (fromIndex, toIndex) { this._columnController.moveColumnByIndex(fromIndex, toIndex); };
     ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this._columnController.moveRowGroupColumn(fromIndex, toIndex); };
     ColumnApi.prototype.setColumnAggFunct = function (column, aggFunc) { this._columnController.setColumnAggFunc(column, aggFunc); };
@@ -81,11 +80,13 @@ var ColumnApi = (function () {
     ColumnApi.prototype.removeRowGroupColumns = function (colKeys) { this._columnController.removeRowGroupColumns(colKeys); };
     ColumnApi.prototype.addRowGroupColumn = function (colKey) { this._columnController.addRowGroupColumn(colKey); };
     ColumnApi.prototype.addRowGroupColumns = function (colKeys) { this._columnController.addRowGroupColumns(colKeys); };
+    ColumnApi.prototype.getRowGroupColumns = function () { return this._columnController.getRowGroupColumns(); };
     ColumnApi.prototype.setPivotColumns = function (colKeys) { this._columnController.setPivotColumns(colKeys); };
     ColumnApi.prototype.removePivotColumn = function (colKey) { this._columnController.removePivotColumn(colKey); };
     ColumnApi.prototype.removePivotColumns = function (colKeys) { this._columnController.removePivotColumns(colKeys); };
     ColumnApi.prototype.addPivotColumn = function (colKey) { this._columnController.addPivotColumn(colKey); };
     ColumnApi.prototype.addPivotColumns = function (colKeys) { this._columnController.addPivotColumns(colKeys); };
+    ColumnApi.prototype.getPivotColumns = function () { return this._columnController.getPivotColumns(); };
     ColumnApi.prototype.getLeftDisplayedColumnGroups = function () { return this._columnController.getLeftDisplayedColumnGroups(); };
     ColumnApi.prototype.getCenterDisplayedColumnGroups = function () { return this._columnController.getCenterDisplayedColumnGroups(); };
     ColumnApi.prototype.getRightDisplayedColumnGroups = function () { return this._columnController.getRightDisplayedColumnGroups(); };
@@ -202,32 +203,6 @@ var ColumnController = (function () {
     ColumnController.prototype.isPivotMode = function () {
         return this.pivotMode;
     };
-    // public getVirtualRowGroup(dept: number): ColumnGroup[] {
-    //     var columnGroups = [];
-    //
-    //     var groupsAtDept: ColumnGroupChild[] = [];
-    //     var cellTree = this.columnController.getDisplayedColumnGroups(this.pinned);
-    //     this.addTreeNodesAtDept(cellTree, this.dept, nodesAtDept);
-    //
-    //
-    //     return columnGroups;
-    //
-    // }
-    //
-    // private addTreeNodesAtDept(cellTree: ColumnGroupChild[], dept: number, result: ColumnGroupChild[]): void {
-    //     cellTree.forEach( (abstractColumn) => {
-    //         if (dept===0) {
-    //             result.push(abstractColumn);
-    //         } else if (abstractColumn instanceof ColumnGroup) {
-    //             var columnGroup = <ColumnGroup> abstractColumn;
-    //             this.addTreeNodesAtDept(columnGroup.getDisplayedChildren(), dept-1, result);
-    //         } else {
-    //             // we are looking for children past a column, so have come to the end,
-    //             // do nothing, and because the tree is balanced, the result of this recursion
-    //             // will be an empty list.
-    //         }
-    //     });
-    // }
     ColumnController.prototype.setPivotMode = function (pivotMode) {
         if (pivotMode === this.pivotMode) {
             return;

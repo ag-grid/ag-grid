@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,9 +9,9 @@ var column_1 = require("./column");
 var OriginalColumnGroup = (function () {
     function OriginalColumnGroup(colGroupDef, groupId) {
         this.expandable = false;
-        this.expanded = false;
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
+        this.expanded = colGroupDef && !!colGroupDef.openByDefault;
     }
     OriginalColumnGroup.prototype.setExpanded = function (expanded) {
         this.expanded = expanded;

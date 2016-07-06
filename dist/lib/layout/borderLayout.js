@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -197,24 +197,22 @@ var BorderLayout = (function () {
         if (centerWidth < 0) {
             centerWidth = 0;
         }
+        var atLeastOneChanged = false;
+        if (this.centerLeftMarginLastTime !== westWidth) {
+            this.centerLeftMarginLastTime = westWidth;
+            this.eCenterWrapper.style.marginLeft = westWidth + 'px';
+            atLeastOneChanged = true;
+        }
         if (this.centerWidthLastTime !== centerWidth) {
             this.centerWidthLastTime = centerWidth;
             this.eCenterWrapper.style.width = centerWidth + 'px';
-            return true; // return true because there was a change
+            atLeastOneChanged = true;
         }
-        else {
-            return false;
-        }
+        return atLeastOneChanged;
     };
     BorderLayout.prototype.setEastVisible = function (visible) {
         if (this.eEastWrapper) {
             this.eEastWrapper.style.display = visible ? '' : 'none';
-        }
-        this.doLayout();
-    };
-    BorderLayout.prototype.setNorthVisible = function (visible) {
-        if (this.eNorthWrapper) {
-            this.eNorthWrapper.style.display = visible ? '' : 'none';
         }
         this.doLayout();
     };
@@ -243,12 +241,6 @@ var BorderLayout = (function () {
             console.log('ag-Grid: unknown overlay');
             this.hideOverlay();
         }
-    };
-    BorderLayout.prototype.setSouthVisible = function (visible) {
-        if (this.eSouthWrapper) {
-            this.eSouthWrapper.style.display = visible ? '' : 'none';
-        }
-        this.doLayout();
     };
     return BorderLayout;
 })();
