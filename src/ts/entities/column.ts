@@ -142,6 +142,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
                 console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
             }
         }
+        if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
+            console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
+        }
     }
     
     public addEventListener(eventType: string, listener: Function): void {
