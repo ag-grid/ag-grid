@@ -10,11 +10,12 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
     private groupId: string;
 
     private expandable = false;
-    private expanded = false;
+    private expanded: boolean;
 
     constructor(colGroupDef: ColGroupDef, groupId: string) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
+        this.expanded = colGroupDef && !!colGroupDef.openByDefault;
     }
 
     public setExpanded(expanded: boolean): void {
