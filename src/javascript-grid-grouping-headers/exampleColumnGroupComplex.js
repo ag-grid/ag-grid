@@ -27,11 +27,13 @@ var columnDefs = [
                                             {
                                                 headerName: "Group F",
                                                 groupId: "GroupF",
+                                                openByDefault: true,
                                                 children: [
                                                     {headerName: "Gold 1", field: "gold", width: 100, filter: 'number'},
                                                     {
                                                         headerName: "Group G",
                                                         groupId: "GroupG",
+                                                        openByDefault: true,
                                                         children: [
                                                             {headerName: "Silver 1", field: "silver", width: 100, filter: 'number'},
                                                             {

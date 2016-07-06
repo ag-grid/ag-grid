@@ -142,7 +142,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example2"></show-example>
 
-    <h4>Advanced Grouping Example</h4>
+    <h3>Advanced Grouping Example</h3>
 
     <p>
         And here, to hammer in the 'no limit to the number of levels or groups', we have a more
@@ -154,6 +154,11 @@ include '../documentation-main/documentation_header.php';
         The example also shows using the API to open and close groups. To do this, you will need
         to provide your groups with an ID during the definition, or look up the groups ID via the API
         (as an ID is generated if you don't provide one).
+    </p>
+
+    <p>
+        The example also demonstrates <i>colDef.openByDefault</i> property, where it sets this on F
+        and G groups, resulting in these groups appearing as open by default.
     </p>
 
     <show-example example="exampleColumnGroupComplex"></show-example>

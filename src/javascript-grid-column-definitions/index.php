@@ -261,7 +261,11 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>marryChildren</th>
             <td>Set to 'true' to keep columns in this group beside each other in the grid. Moving the columns outside
-            of the group (and hence breaking the group) is not allowed.</td>
+                of the group (and hence breaking the group) is not allowed.</td>
+        </tr>
+        <tr>
+            <th>openByDefault</th>
+            <td>Set to 'true' if this group should be opened by default.</td>
         </tr>
     </table>
 
