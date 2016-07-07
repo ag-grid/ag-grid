@@ -71,6 +71,7 @@ export class DragAndDropService {
     public static ICON_RIGHT = 'right';
     public static ICON_GROUP = 'group';
     public static ICON_AGGREGATE = 'aggregate';
+    public static ICON_PIVOT = 'pivot';
 
     public static GHOST_TEMPLATE =
         '<div class="ag-dnd-ghost">' +
@@ -101,6 +102,7 @@ export class DragAndDropService {
     private eRightIcon: HTMLElement;
     private eGroupIcon: HTMLElement;
     private eAggregateIcon: HTMLElement;
+    private ePivotIcon: HTMLElement;
 
     @PostConstruct
     private init(): void {
@@ -112,6 +114,7 @@ export class DragAndDropService {
         this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
         this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
         this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon);
+        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null, svgFactory.createPivotIcon);
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -342,6 +345,7 @@ export class DragAndDropService {
             case DragAndDropService.ICON_RIGHT: eIcon = this.eRightIcon; break;
             case DragAndDropService.ICON_GROUP: eIcon = this.eGroupIcon; break;
             case DragAndDropService.ICON_AGGREGATE: eIcon = this.eAggregateIcon; break;
+            case DragAndDropService.ICON_PIVOT: eIcon = this.ePivotIcon; break;
             default: eIcon = this.eHiddenIcon; break;
         }
         this.eGhostIcon.appendChild(eIcon);
