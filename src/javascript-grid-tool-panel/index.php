@@ -95,6 +95,16 @@ include '../documentation-main/documentation_header.php';
     
     <show-example example="exampleToolPanelSuppress"></show-example>
 
+    <h3>Read Only Functions</h3>
+
+    <p>
+        By setting the property <i>functionsReadOnly=true</i>, the grid will prevent changes to group, pivot or
+        values through the GUI. This is useful if you want to show the user the group, pivot and values panel,
+        so they can see what columns are used, but prevent them from making changes to the selection.
+    </p>
+
+    <show-example example="exampleToolPanelReadonly"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
