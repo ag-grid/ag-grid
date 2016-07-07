@@ -1319,17 +1319,13 @@ export class ColumnController {
 
         var columnsForDisplay: Column[];
 
-        if (this.secondaryColumnsPresent) {
-            // always use secondary columns if they are there, these can be either in grid
-            // pivoting, or the user provided alternative columns
-            columnsForDisplay = this.gridColumns.slice();
-        } else if (this.pivotMode) {
+        if (this.pivotMode && !this.secondaryColumnsPresent) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             columnsForDisplay = this.valueColumns.slice();
         } else {
-            // not in pivot mode, so we use the visibility of the column
-            // to decide what is displayable
+            // otherwise continue as normal. this can be working on the primary
+            // or secondary columns, whatever the gridColumns are set to
             columnsForDisplay = _.filter(this.gridColumns, column => column.isVisible() );
         }
 
