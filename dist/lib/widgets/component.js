@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,6 +11,7 @@ var Component = (function () {
         this.destroyFunctions = [];
         this.childComponents = [];
         this.annotatedEventListeners = [];
+        this.visible = true;
         if (template) {
             this.setTemplate(template);
         }
@@ -152,8 +153,18 @@ var Component = (function () {
             this.childComponents.push(childComponent);
         }
     };
+    Component.prototype.isVisible = function () {
+        return this.visible;
+    };
     Component.prototype.setVisible = function (visible) {
-        utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+        if (visible !== this.visible) {
+            this.visible = visible;
+            utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+            this.dispatchEvent(Component.EVENT_VISIBLE_CHANGED, { visible: this.visible });
+        }
+    };
+    Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
+        utils_1.Utils.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     };
     Component.prototype.destroy = function () {
         this.childComponents.forEach(function (childComponent) { return childComponent.destroy(); });
@@ -196,6 +207,7 @@ var Component = (function () {
             return null;
         }
     };
+    Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
     return Component;
 })();
 exports.Component = Component;

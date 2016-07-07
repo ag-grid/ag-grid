@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,7 @@ var focusedCellController_1 = require("./focusedCellController");
 var component_1 = require("./widgets/component");
 var GridCore = (function () {
     function GridCore(loggerFactory) {
+        this.destroyFunctions = [];
         this.logger = loggerFactory.create('GridCore');
     }
     GridCore.prototype.init = function () {
@@ -43,15 +44,11 @@ var GridCore = (function () {
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             toolPanelGui = this.toolPanel.getGui();
         }
-        var rowGroupGui;
-        if (this.rowGroupCompFactory) {
-            this.rowGroupComp = this.rowGroupCompFactory.create();
-            rowGroupGui = this.rowGroupComp.getGui();
-        }
+        var createTopPanelGui = this.createNorthPanel();
         this.eRootPanel = new borderLayout_1.BorderLayout({
             center: this.gridPanel.getLayout(),
             east: toolPanelGui,
-            north: rowGroupGui,
+            north: createTopPanelGui,
             south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
             name: 'eRootPanel'
@@ -73,6 +70,30 @@ var GridCore = (function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
         this.onRowGroupChanged();
         this.logger.log('ready');
+    };
+    GridCore.prototype.createNorthPanel = function () {
+        var _this = this;
+        if (!this.gridOptionsWrapper.isEnterprise()) {
+            return null;
+        }
+        var topPanelGui = document.createElement('div');
+        var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+        this.rowGroupComp = this.rowGroupCompFactory.create();
+        this.pivotComp = this.pivotCompFactory.create();
+        topPanelGui.appendChild(this.rowGroupComp.getGui());
+        topPanelGui.appendChild(this.pivotComp.getGui());
+        this.rowGroupComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        this.pivotComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        this.destroyFunctions.push(function () {
+            _this.rowGroupComp.removeEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+            _this.pivotComp.removeEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        });
+        return topPanelGui;
+    };
+    GridCore.prototype.onDropPanelVisible = function () {
+        var bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
+        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothVisible);
+        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothVisible);
     };
     GridCore.prototype.getRootGui = function () {
         return this.eRootPanel.getGui();
@@ -101,15 +122,16 @@ var GridCore = (function () {
         }
         var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
         if (rowGroupPanelShow === constants_1.Constants.ALWAYS) {
-            this.eRootPanel.setNorthVisible(true);
+            this.rowGroupComp.setVisible(true);
         }
         else if (rowGroupPanelShow === constants_1.Constants.ONLY_WHEN_GROUPING) {
             var grouping = !this.columnController.isRowGroupEmpty();
-            this.eRootPanel.setNorthVisible(grouping);
+            this.rowGroupComp.setVisible(grouping);
         }
         else {
-            this.eRootPanel.setNorthVisible(false);
+            this.rowGroupComp.setVisible(false);
         }
+        this.eRootPanel.doLayout();
     };
     GridCore.prototype.addWindowResizeListener = function () {
         var that = this;
@@ -150,7 +172,10 @@ var GridCore = (function () {
             return;
         }
         this.toolPanelShowing = show;
-        this.eRootPanel.setEastVisible(show);
+        if (this.toolPanel) {
+            this.toolPanel.setVisible(show);
+            this.eRootPanel.doLayout();
+        }
     };
     GridCore.prototype.isToolPanelShowing = function () {
         return this.toolPanelShowing;
@@ -163,6 +188,7 @@ var GridCore = (function () {
         this.finished = true;
         this.eGridDiv.removeChild(this.eRootPanel.getGui());
         this.logger.log('Grid DOM removed');
+        this.destroyFunctions.forEach(function (func) { return func(); });
     };
     GridCore.prototype.ensureNodeVisible = function (comparator) {
         if (this.doingVirtualPaging) {
@@ -267,6 +293,10 @@ var GridCore = (function () {
         context_1.Optional('rowGroupCompFactory'), 
         __metadata('design:type', Object)
     ], GridCore.prototype, "rowGroupCompFactory", void 0);
+    __decorate([
+        context_1.Optional('pivotCompFactory'), 
+        __metadata('design:type', Object)
+    ], GridCore.prototype, "pivotCompFactory", void 0);
     __decorate([
         context_1.Optional('toolPanel'), 
         __metadata('design:type', component_1.Component)

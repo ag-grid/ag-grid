@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.5
+// Type definitions for ag-grid v5.0.0-alpha.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -71,6 +71,7 @@ export declare class GridOptionsWrapper {
     getGroupColumnDef(): ColDef;
     isGroupSuppressRow(): boolean;
     getRowGroupPanelShow(): string;
+    getPivotPanelShow(): string;
     isAngularCompileRows(): boolean;
     isAngularCompileFilters(): boolean;
     isAngularCompileHeaders(): boolean;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.5
+// Type definitions for ag-grid v5.0.0-alpha.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -16,16 +16,20 @@ export interface DragSource {
 }
 export interface DropTarget {
     /** The main container that will get the drop. */
-    eContainer: HTMLElement;
+    getContainer(): HTMLElement;
     /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
      * in the header as well as the body (main rows and floating rows) of the grid. */
-    eSecondaryContainers?: HTMLElement[];
-    /** Icon to show when */
-    iconName?: string;
-    onDragEnter?: (params: DraggingEvent) => void;
-    onDragLeave?: (params: DraggingEvent) => void;
-    onDragging?: (params: DraggingEvent) => void;
-    onDragStop?: (params: DraggingEvent) => void;
+    getSecondaryContainers?(): HTMLElement[];
+    /** Icon to show when drag is over*/
+    getIconName?(): string;
+    /** Callback for when drag enters */
+    onDragEnter?(params: DraggingEvent): void;
+    /** Callback for when drag leaves */
+    onDragLeave?(params: DraggingEvent): void;
+    /** Callback for when dragging */
+    onDragging?(params: DraggingEvent): void;
+    /** Callback for when drag stops */
+    onDragStop?(params: DraggingEvent): void;
 }
 export interface DraggingEvent {
     event: MouseEvent;
@@ -76,6 +80,7 @@ export declare class DragAndDropService {
     private onDragging(mouseEvent, fromNudge);
     private enterDragTargetIfExists(dropTarget, mouseEvent, direction, fromNudge);
     private leaveLastTargetIfExists(mouseEvent, direction, fromNudge);
+    private getAllContainersFromDropTarget(dropTarget);
     private isMouseOnDropTarget(mouseEvent, dropTarget);
     addDropTarget(dropTarget: DropTarget): void;
     workOutDirection(event: MouseEvent): string;

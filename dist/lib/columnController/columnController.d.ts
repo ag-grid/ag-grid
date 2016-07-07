@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.5
+// Type definitions for ag-grid v5.0.0-alpha.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -32,7 +32,6 @@ export declare class ColumnApi {
     getDisplayedCenterColumns(): Column[];
     getDisplayedRightColumns(): Column[];
     getAllDisplayedColumns(): Column[];
-    getRowGroupColumns(): Column[];
     moveColumn(fromIndex: number, toIndex: number): void;
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
     setColumnAggFunct(column: Column, aggFunc: string): void;
@@ -50,11 +49,13 @@ export declare class ColumnApi {
     removeRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
     addRowGroupColumn(colKey: Column | ColDef | String): void;
     addRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
+    getRowGroupColumns(): Column[];
     setPivotColumns(colKeys: (Column | ColDef | String)[]): void;
     removePivotColumn(colKey: Column | ColDef | String): void;
     removePivotColumns(colKeys: (Column | ColDef | String)[]): void;
     addPivotColumn(colKey: Column | ColDef | String): void;
     addPivotColumns(colKeys: (Column | ColDef | String)[]): void;
+    getPivotColumns(): Column[];
     getLeftDisplayedColumnGroups(): ColumnGroupChild[];
     getCenterDisplayedColumnGroups(): ColumnGroupChild[];
     getRightDisplayedColumnGroups(): ColumnGroupChild[];

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.5
+// Type definitions for ag-grid v5.0.0-alpha.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,17 +19,22 @@ export declare class GridCore {
     private popupService;
     private focusedCellController;
     private rowGroupCompFactory;
+    private pivotCompFactory;
     private toolPanel;
     private statusBar;
     private rowGroupComp;
+    private pivotComp;
     private finished;
     private doingVirtualPaging;
     private eRootPanel;
     private toolPanelShowing;
     private windowResizeListener;
     private logger;
+    private destroyFunctions;
     constructor(loggerFactory: LoggerFactory);
     init(): void;
+    private createNorthPanel();
+    private onDropPanelVisible();
     getRootGui(): HTMLElement;
     private createSouthPanel();
     private onRowGroupChanged();

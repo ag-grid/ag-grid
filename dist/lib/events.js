@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,8 +43,8 @@ var Events = (function () {
     Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
     Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST = 'columnRowGroupAddRequest';
     Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST = 'columnRowGroupRemoveRequest';
-    Events.EVENT_COLUMN_PIVOT_ADD_REQUEST = 'columnRowGroupAddRequest';
-    Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST = 'columnRowGroupRemoveRequest';
+    Events.EVENT_COLUMN_PIVOT_ADD_REQUEST = 'columnPivotAddRequest';
+    Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST = 'columnPivotRemoveRequest';
     Events.EVENT_FLASH_CELLS = 'clipboardPaste';
     Events.EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
     Events.EVENT_MODEL_UPDATED = 'modelUpdated';

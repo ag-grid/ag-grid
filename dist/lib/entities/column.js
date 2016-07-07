@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,6 +81,9 @@ var Column = (function () {
             if (utils_1.Utils.exists(this.colDef.rowGroupIndex)) {
                 console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
             }
+        }
+        if (utils_1.Utils.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
+            console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {

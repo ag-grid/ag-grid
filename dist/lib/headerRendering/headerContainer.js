@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.5
+ * @version v5.0.0-alpha.6
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,19 +13,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_1 = require("../context/context");
-var column_1 = require("../entities/column");
-var context_2 = require("../context/context");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
-var moveColumnController_1 = require("./moveColumnController");
 var columnController_1 = require("../columnController/columnController");
 var gridPanel_1 = require("../gridPanel/gridPanel");
-var context_3 = require("../context/context");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var headerRowComp_1 = require("./headerRowComp");
+var bodyDropTarget_1 = require("./bodyDropTarget");
 var HeaderContainer = (function () {
     function HeaderContainer(eContainer, eViewport, eRoot, pinned) {
         this.headerRowComps = [];
@@ -58,31 +55,9 @@ var HeaderContainer = (function () {
         this.onGridColumnsChanged();
     };
     HeaderContainer.prototype.setupDragAndDrop = function () {
-        var moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned);
-        this.context.wireBean(moveColumnController);
-        var secondaryContainers;
-        switch (this.pinned) {
-            case column_1.Column.PINNED_LEFT:
-                secondaryContainers = this.gridPanel.getDropTargetLeftContainers();
-                break;
-            case column_1.Column.PINNED_RIGHT:
-                secondaryContainers = this.gridPanel.getDropTargetPinnedRightContainers();
-                break;
-            default:
-                secondaryContainers = this.gridPanel.getDropTargetBodyContainers();
-                break;
-        }
-        var icon = this.pinned ? dragAndDropService_1.DragAndDropService.ICON_PINNED : dragAndDropService_1.DragAndDropService.ICON_MOVE;
-        this.dropTarget = {
-            eContainer: this.eViewport ? this.eViewport : this.eContainer,
-            iconName: icon,
-            eSecondaryContainers: secondaryContainers,
-            onDragging: moveColumnController.onDragging.bind(moveColumnController),
-            onDragEnter: moveColumnController.onDragEnter.bind(moveColumnController),
-            onDragLeave: moveColumnController.onDragLeave.bind(moveColumnController),
-            onDragStop: moveColumnController.onDragStop.bind(moveColumnController)
-        };
-        this.dragAndDropService.addDropTarget(this.dropTarget);
+        var dropContainer = this.eViewport ? this.eViewport : this.eContainer;
+        var bodyDropTarget = new bodyDropTarget_1.BodyDropTarget(this.pinned, dropContainer);
+        this.context.wireBean(bodyDropTarget);
     };
     HeaderContainer.prototype.removeHeaderRowComps = function () {
         this.headerRowComps.forEach(function (headerRowComp) {
@@ -109,7 +84,7 @@ var HeaderContainer = (function () {
     ], HeaderContainer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('context'), 
-        __metadata('design:type', context_2.Context)
+        __metadata('design:type', context_1.Context)
     ], HeaderContainer.prototype, "context", void 0);
     __decorate([
         context_1.Autowired('$scope'), 
@@ -132,7 +107,7 @@ var HeaderContainer = (function () {
         __metadata('design:type', eventService_1.EventService)
     ], HeaderContainer.prototype, "eventService", void 0);
     __decorate([
-        context_3.PostConstruct, 
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
