@@ -48,6 +48,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     protected abstract removeColumns(columns: Column[]): void;
     protected abstract addColumns(columns: Column[]): void;
     protected abstract getExistingColumns(): Column[];
+    protected abstract getIconName(): string;
 
     constructor(horizontal: boolean, valueColumn: boolean) {
         super(`<div class="ag-column-drop ag-font-style ag-column-drop-${horizontal?'horizontal':'vertical'}"></div>`);
@@ -89,6 +90,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     private setupDropTarget(): void {
         this.dropTarget = {
             getContainer: this.getGui.bind(this),
+            getIconName: this.getIconName.bind(this),
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
@@ -110,13 +112,14 @@ export abstract class AbstractColumnDropPanel extends Component {
         var weHaveColumnsToDrag = goodDragColumns.length > 0;
         if (weHaveColumnsToDrag) {
             this.potentialDndColumns = goodDragColumns;
-            this.beans.dragAndDropService.setGhostIcon(this.params.dragAndDropIcon);
             this.refreshGui();
-        } else {
-            this.beans.dragAndDropService.setGhostIcon(null);
         }
     }
 
+    protected isPotentialDndColumns(): boolean {
+        return Utils.existsAndNotEmpty(this.potentialDndColumns);
+    }
+    
     private onDragLeave(draggingEvent: DraggingEvent): void {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'

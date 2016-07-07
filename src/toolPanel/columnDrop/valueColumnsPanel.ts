@@ -53,6 +53,10 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     }
 
+    protected getIconName(): string {
+        return this.isPotentialDndColumns() ? DragAndDropService.ICON_AGGREGATE : null;
+    }
+
     protected isColumnDroppable(column: Column): boolean {
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) { return false; }

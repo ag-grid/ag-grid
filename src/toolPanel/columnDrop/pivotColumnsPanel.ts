@@ -105,6 +105,10 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
         }
     }
 
+    protected getIconName(): string {
+        return this.isPotentialDndColumns() ? DragAndDropService.ICON_PIVOT : null;
+    }
+
     protected addColumns(columns: Column[]) {
         if (this.gridOptionsWrapper.isRowGroupPassive()) {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, {columns: columns} );
