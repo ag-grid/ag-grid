@@ -74,6 +74,9 @@ export class PivotColDefService {
         if (valueColumn) {
             var colDefToCopy = valueColumn.getColDef();
             Utils.assign(colDef, colDefToCopy);
+            // even if original column was hidden, we always show the pivot value column, otherwise it would be
+            // very confusing for people thinking the pivot is broken
+            colDef.hide = false;
         }
 
         colDef.valueGetter = null;

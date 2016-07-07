@@ -33,6 +33,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     @PostConstruct
     private passBeansUp(): void {
         super.setBeans({
+            gridOptionsWrapper: this.gridOptionsWrapper,
             eventService: this.eventService,
             context: this.context,
             loggerFactory: this.loggerFactory,
@@ -58,6 +59,8 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return false; }
+
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) { return false; }
 

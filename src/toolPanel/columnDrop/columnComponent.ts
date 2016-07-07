@@ -7,6 +7,7 @@ import {
     Context,
     DragAndDropService,
     GridPanel,
+    GridOptionsWrapper,
     DropTarget,
     PostConstruct,
     QuerySelector,
@@ -32,6 +33,7 @@ export class ColumnComponent extends Component {
     @Autowired('context') context: Context;
     @Autowired('popupService') popupService: PopupService;
     @Autowired('aggFuncService') aggFuncService: AggFuncService;
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     @QuerySelector('.ag-column-drop-cell-text') private eText: HTMLElement;
     @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
@@ -56,7 +58,7 @@ export class ColumnComponent extends Component {
     public init(): void {
         this.displayName = this.columnController.getDisplayNameForCol(this.column);
         this.setupComponents();
-        if (!this.ghost) {
+        if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
         }
     }
@@ -76,11 +78,13 @@ export class ColumnComponent extends Component {
         this.setTextValue();
         this.addDestroyableEventListener(this.btRemove, 'click', ()=> this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE));
 
+        Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+
         if (this.ghost) {
             Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
 
-        if (this.valueColumn) {
+        if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this) );
         }
     }

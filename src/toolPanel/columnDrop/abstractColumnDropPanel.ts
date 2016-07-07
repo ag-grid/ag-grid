@@ -2,6 +2,7 @@ import {
     Utils,
     Component,
     EventService,
+    GridOptionsWrapper,
     Context,
     LoggerFactory,
     DragAndDropService,
@@ -21,6 +22,7 @@ export interface AbstractColumnDropPanelParams {
 }
 
 export interface AbstractColumnDropPanelBeans {
+    gridOptionsWrapper: GridOptionsWrapper;
     eventService: EventService;
     context: Context;
     loggerFactory: LoggerFactory;
@@ -80,6 +82,9 @@ export abstract class AbstractColumnDropPanel extends Component {
 
         this.logger = this.beans.loggerFactory.create('AbstractColumnDropPanel');
         this.beans.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+
+        this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
+
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
         // if columnController first, then below will work

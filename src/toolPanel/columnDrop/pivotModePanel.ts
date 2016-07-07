@@ -22,6 +22,8 @@ export class PivotModePanel extends Component {
     private init(): void {
         this.instantiate(this.context);
 
+        this.cbPivotMode.setSelected(this.columnController.isPivotMode());
+
         this.addDestroyableEventListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));

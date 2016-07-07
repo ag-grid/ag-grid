@@ -64,8 +64,6 @@ export class RenderedColumn extends Component {
 
         this.eIndent.style.width = (this.columnDept * 10) + 'px';
 
-        // this.loadIcon();
-
         if (this.allowDragging) {
             this.addDragSource();
         }
@@ -76,6 +74,8 @@ export class RenderedColumn extends Component {
         this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this) );
         this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
 
+        this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
+
         this.instantiate(this.context);
 
         this.onColumnStateChanged();
@@ -84,30 +84,10 @@ export class RenderedColumn extends Component {
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
     }
 
-    private loadIcon(): void {
-        // if (this.column.isAllowRowGroup()) {
-        //     this.eIcon.appendChild(Utils.createIconNoSpan('columnRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon));
-        // } else if (this.column.isAllowPivot()) {
-        //     this.eIcon.appendChild(Utils.createIconNoSpan('columnPivot', this.gridOptionsWrapper, null, svgFactory.createPivotIcon));
-        // } else if (this.column.isAllowValue()) {
-        //     this.eIcon.appendChild(Utils.createIconNoSpan('columnValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon));
-        // } else {
-        //     this.eIcon.appendChild(Utils.createIconNoSpan('columns', this.gridOptionsWrapper, null, svgFactory.createColumnIcon));
-        // }
-
-        // if (this.column.isAllowRowGroup()) {
-        //     this.eIcon.innerHTML = 'G';
-        // } else if (this.column.isAllowPivot()) {
-        //     this.eIcon.innerHTML = 'P';
-        // } else if (this.column.isAllowValue()) {
-        //     this.eIcon.innerHTML = 'V';
-        // } else {
-        //     this.eIcon.innerHTML = '-';
-        // }
-    }
-
     private onClick(): void {
-        this.cbSelect.toggle();
+        if (!this.cbSelect.isReadOnly()) {
+            this.cbSelect.toggle();
+        }
     }
 
     private onChange(): void {
@@ -186,6 +166,10 @@ export class RenderedColumn extends Component {
             // if not reducing, the checkbox tells us if column is visible or not
             this.cbSelect.setSelected(this.column.isVisible());
         }
+        
+        var checkboxReadOnly = this.columnController.isPivotMode() && this.gridOptionsWrapper.isFunctionsReadOnly();
+        this.cbSelect.setReadOnly(checkboxReadOnly);
+        
         this.processingColumnStateChange = false;
     }
 
