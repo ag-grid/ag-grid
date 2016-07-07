@@ -1383,8 +1383,8 @@ export class ColumnController {
         this.copyDownGridColumns();
         this.updateDisplayedColumns();
 
-        var event = new ColumnChangeEvent(Events.EVENT_PIVOT_VALUE_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_PIVOT_VALUE_CHANGED, event);
+        var event = new ColumnChangeEvent(Events.EVENT_SECONDARY_COLUMNS_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_SECONDARY_COLUMNS_CHANGED, event);
     }
 
     // called from: setColumnState, setColumnDefs, setAlternativeColumnDefs
