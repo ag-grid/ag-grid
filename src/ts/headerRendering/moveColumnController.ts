@@ -41,6 +41,10 @@ export class MoveColumnController {
         this.logger = this.loggerFactory.create('MoveColumnController');
     }
 
+    public getIconName(): string {
+        return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;;
+    }
+
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
         var columns = draggingEvent.dragSource.dragItem;

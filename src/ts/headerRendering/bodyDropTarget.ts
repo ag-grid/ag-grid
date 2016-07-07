@@ -8,6 +8,7 @@ import {BodyDropPivotTarget} from "./bodyDropPivotTarget";
 import {ColumnController} from "../columnController/columnController";
 
 interface DropListener {
+    getIconName(): string;
     onDragEnter(params: DraggingEvent): void;
     onDragLeave(params: DraggingEvent): void;
     onDragging(params: DraggingEvent): void;
@@ -53,7 +54,7 @@ export class BodyDropTarget implements DropTarget {
         this.moveColumnController = new MoveColumnController(this.pinned);
         this.context.wireBean(this.moveColumnController);
 
-        this.bodyDropPivotTarget = new BodyDropPivotTarget();
+        this.bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
         this.context.wireBean(this.bodyDropPivotTarget);
 
         switch (this.pinned) {
@@ -66,7 +67,7 @@ export class BodyDropTarget implements DropTarget {
     }
 
     public getIconName(): string {
-        return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;;
+        return this.currentDropListener.getIconName();
     }
     
     public onDragEnter(params: DraggingEvent): void {

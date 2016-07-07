@@ -2,6 +2,7 @@ import {Utils as _} from '../utils';
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {Context} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export class Component implements IEventEmitter {
 
@@ -191,9 +192,11 @@ export class Component implements IEventEmitter {
         this.destroyFunctions.push( ()=> this.getGui().removeEventListener(event, listener));
     }
 
-    public addDestroyableEventListener(eElement: HTMLElement|IEventEmitter, event: string, listener: (event?: any)=>void): void {
+    public addDestroyableEventListener(eElement: HTMLElement|IEventEmitter|GridOptionsWrapper, event: string, listener: (event?: any)=>void): void {
         if (eElement instanceof HTMLElement) {
             (<HTMLElement>eElement).addEventListener(event, listener);
+        } else if (eElement instanceof GridOptionsWrapper) {
+            (<GridOptionsWrapper>eElement).addEventListener(event, listener);
         } else {
             (<IEventEmitter>eElement).addEventListener(event, listener);
         }
@@ -201,6 +204,8 @@ export class Component implements IEventEmitter {
         this.destroyFunctions.push( ()=> {
             if (eElement instanceof HTMLElement) {
                 (<HTMLElement>eElement).removeEventListener(event, listener);
+            } else if (eElement instanceof GridOptionsWrapper) {
+                (<GridOptionsWrapper>eElement).removeEventListener(event, listener);
             } else {
                 (<IEventEmitter>eElement).removeEventListener(event, listener);
             }

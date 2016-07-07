@@ -134,6 +134,8 @@ export class GridCore {
             this.pivotComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         } );
 
+        this.onDropPanelVisible();
+
         return topPanelGui;
     }
 

@@ -48,6 +48,8 @@ export class GridOptionsWrapper {
 
     private headerHeight: number;
 
+    private propertyEventService: EventService = new EventService();
+
     public agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.headerHeight = this.gridOptions.headerHeight;
         this.gridOptions.api = gridApi;
@@ -166,6 +168,8 @@ export class GridOptionsWrapper {
     public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
+    public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
+
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
@@ -177,6 +181,21 @@ export class GridOptionsWrapper {
     public getViewportRowModelBufferSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+
+    public setProperty(key: string, value: any): void {
+        var gridOptionsNoType = <any> this.gridOptions;
+        var previousValue = gridOptionsNoType[key];
+        gridOptionsNoType[key] = value;
+        this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+    }
+
+    public addEventListener(key: string, listener: Function): void {
+        this.propertyEventService.addEventListener(key, listener);
+    }
+
+    public removeEventListener(key: string, listener: Function): void {
+        this.propertyEventService.removeEventListener(key, listener);
+    }
 
     public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
         if (this.gridOptions.processRowPostCreate) {
@@ -192,6 +211,7 @@ export class GridOptionsWrapper {
             return 25;
         }
     }
+
     public setHeaderHeight(headerHeight: number): void {
         this.headerHeight = headerHeight;
         this.eventService.dispatchEvent(Events.EVENT_HEADER_HEIGHT_CHANGED);

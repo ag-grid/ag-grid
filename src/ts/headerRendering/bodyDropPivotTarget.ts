@@ -1,20 +1,31 @@
 
-import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
+import {DraggingEvent, DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {Column} from "../entities/column";
 import {ColumnController} from "../columnController/columnController";
 import {Autowired} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export class BodyDropPivotTarget {
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private columnsToAggregate: Column[] = [];
     private columnsToGroup: Column[] = [];
+
+    private pinned: string;
+
+    constructor(pinned: string) {
+        this.pinned = pinned;
+    }
 
     /** Callback for when drag enters */
     public onDragEnter(draggingEvent: DraggingEvent): void {
         this.columnsToAggregate = [];
         this.columnsToGroup = [];
+
+        // in pivot mode, we don't accept any drops if functions are read only
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return; }
 
         var dragColumns = draggingEvent.dragSource.dragItem;
 
@@ -32,6 +43,15 @@ export class BodyDropPivotTarget {
                 }
             }
         });
+    }
+
+    public getIconName(): string {
+        var totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length;
+        if (totalColumns > 0) {
+            return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;;
+        } else {
+            return null;
+        }
     }
 
     /** Callback for when drag leaves */

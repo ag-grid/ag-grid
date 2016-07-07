@@ -147,6 +147,10 @@ export class GridApi {
         this.rowRenderer.refreshView();
     }
 
+    public setFunctionsReadOnly(readOnly: boolean) {
+        this.gridOptionsWrapper.setProperty('functionsReadOnly', readOnly);
+    }
+
     public softRefreshView() {
         this.rowRenderer.softRefreshView();
     }

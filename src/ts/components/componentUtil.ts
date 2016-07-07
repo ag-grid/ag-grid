@@ -48,7 +48,8 @@ export class ComponentUtil {
         'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard','pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
-        'suppressFocusAfterRefresh', 'rowGroupPassive', 'pivotPassive'
+        'suppressFocusAfterRefresh', 'rowGroupPassive', 'pivotPassive',
+        'functionsReadOnly'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
@@ -120,8 +121,7 @@ export class ComponentUtil {
     }
 
     // change this method, the caller should know if it's initialised or not, plus 'initialised'
-    // is not relevant for all component types.
-    // maybe pass in the api and columnApi instead???
+    // is not relevant for all component types. maybe pass in the api and columnApi instead???
     public static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi, columnApi: ColumnApi): void {
         //if (!component._initialised || !changes) { return; }
         if (!changes) { return; }

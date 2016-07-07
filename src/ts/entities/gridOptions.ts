@@ -80,6 +80,7 @@ export interface GridOptions {
     layoutInterval?: number;
     rowGroupPassive?: boolean;
     pivotPassive?: boolean;
+    functionsReadOnly?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

@@ -28,6 +28,7 @@ export class AgCheckbox extends Component {
     @QuerySelector('.ag-checkbox-label') private eLabel: HTMLElement;
 
     private selected = false;
+    private readOnly = false;
 
     constructor() {
         super(AgCheckbox.TEMPLATE);
@@ -35,10 +36,8 @@ export class AgCheckbox extends Component {
 
     @PostConstruct
     private init(): void {
-        this.eChecked.appendChild(_.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
-        this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
-        this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
-        
+
+        this.loadIcons();
         this.updateIcons();
         
         var label = this.getAttribute('label');
@@ -46,14 +45,41 @@ export class AgCheckbox extends Component {
             this.eLabel.innerText = label;
         }
     }
-    
+
+    private loadIcons(): void {
+        _.removeAllChildren(this.eChecked);
+        _.removeAllChildren(this.eUnchecked);
+        _.removeAllChildren(this.eIndeterminate);
+        if (this.readOnly) {
+            this.eChecked.appendChild(_.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedReadOnlyIcon));
+            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedReadOnlyIcon));
+            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateReadOnlyIcon));
+        } else {
+            this.eChecked.appendChild(_.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
+            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
+            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
+        }
+    }
+
     @Listener('click')
     private onClick(): void {
+        // ignore clicks if readOnly
+        if (this.readOnly) { return; }
+
         if (this.selected === undefined) {
             this.setSelected(true);
         } else {
             this.setSelected(!this.selected);
         }
+    }
+
+    public setReadOnly(readOnly: boolean): void {
+        this.readOnly = readOnly;
+        this.loadIcons();
+    }
+
+    public isReadOnly(): boolean {
+        return this.readOnly;
     }
 
     public isSelected(): boolean {
