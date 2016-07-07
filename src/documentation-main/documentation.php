@@ -20,10 +20,10 @@ include 'documentation_header.php';
 
     <div class="news-box">
         <div class="news-header">
-            29th June 2016
+            6th July 2016
         </div>
         <img style="float: right;" src='../images/superDev.jpg'/>
-        <div>ag-Grid 5.0.0-alpha-<b style="font-size: 20px">3</b> released. Now ag-Grid uses column virtualisation, so grid performs very well for very large numbers of columns. See <a href="../archive/5.0.0-alpha/">5.0.0 Alpha Documentation</a> for full details.</div>
+        <div>ag-Grid 5.0.0-alpha-<b style="font-size: 20px">6</b> released. Minor 'cleaning up release' changes. See <a href="../archive/5.0.0-alpha/">5.0.0 Alpha Documentation</a> for details.</div>
         <div>
 
         </div>

@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     + New column API methods: setPivotColumns, removePivotColumn, removePivotColumns, addPivotColumn, addPivotColumns
 -->
 
-    <h3>Version 5.0.x - alpha.3</h3>
+    <h3>Version 5.0.x - alpha.6</h3>
     <li>Enhancement: added events dragStarted and dragStopped</li>
     <li>Enhancement: new property suppressUseColIdForGroups</li>
     <li>Enhancement: Safari now uses animation frames for scrolling (Chrome doesn't need it!!)</li>
