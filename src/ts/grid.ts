@@ -116,6 +116,10 @@ export class Grid {
             columnApi: gridOptions.columnApi
         };
         eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
+
+        if (gridOptions.debug) {
+            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
+        }
     }
 
     private getRowModelClass(gridOptions: GridOptions): any {

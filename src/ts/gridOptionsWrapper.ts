@@ -18,6 +18,7 @@ import {Events} from "./events";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
+import {Logger, LoggerFactory} from "./logger";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -104,8 +105,7 @@ export class GridOptionsWrapper {
     public isSuppressFieldDotNotation() { return isTrue(this.gridOptions.suppressFieldDotNotation); }
     public getFloatingTopRowData(): any[] { return this.gridOptions.floatingTopRowData; }
     public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
-    public isRowGroupPassive() { return isTrue(this.gridOptions.rowGroupPassive); }
-    public isPivotPassive() { return isTrue(this.gridOptions.pivotPassive); }
+    public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }

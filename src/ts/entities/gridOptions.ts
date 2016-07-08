@@ -78,9 +78,8 @@ export interface GridOptions {
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
     layoutInterval?: number;
-    rowGroupPassive?: boolean;
-    pivotPassive?: boolean;
     functionsReadOnly?: boolean;
+    functionsPassive?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
