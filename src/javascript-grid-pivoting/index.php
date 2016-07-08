@@ -40,6 +40,11 @@ include '../documentation-main/documentation_header.php';
         If pivot mode is off, then adding or removing pivot columns will have not effect.
     </p>
 
+    <p>
+        When in pivot mode, it is not possible to move columns inside the grid. This is because the order of
+        the columns is defined by the columns you are using for the pivot.
+    </p>
+
     <h2>Example - Simple Pivot</h2>
 
     <p>
