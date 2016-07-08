@@ -46,11 +46,16 @@ include '../documentation-main/documentation_header.php';
     columnSelectOpen
     columnSelectClosed
 
-    // row checkbox selection
+    // row checkbox selection and tool panel column selection
     checkboxChecked
     checkboxUnchecked
     checkboxIndeterminate
-        
+
+    // tool panel column selection, when read only (ie disabled checkboxes)
+    checkboxCheckedReadOnly
+    checkboxUncheckedReadOnly
+    checkboxIndeterminateReadOnly
+
     // when moving columns
     columnMovePin // when column is to the left, before it gets pinned
     columnMoveAdd // when adding a column
@@ -59,6 +64,8 @@ include '../documentation-main/documentation_header.php';
     columnMoveLeft // when moving and scrolling left
     columnMoveRight // when moving and scrolling right
     columnMoveGroup // when about to drop into group panel
+    columnMoveValue // when about to drop into value panel
+    columnMovePivot // when about to drop into pivot panel
 }
 </pre>
 

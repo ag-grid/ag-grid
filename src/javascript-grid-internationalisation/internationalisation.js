@@ -57,9 +57,14 @@ var gridOptions = {
         // tool panel
         columns: 'laColumns',
         rowGroupColumns: 'laPivot Cols',
-        rowGroupColumnsEmptyMessage: 'la please drag cols to here',
+        rowGroupColumnsEmptyMessage: 'la please drag cols to group',
         valueColumns: 'laValue Cols',
-        valueColumnsEmptyMessage: 'la please drag cols to here',
+        pivotMode: 'laPivot-Mode',
+        groups: 'laGroups',
+        values: 'laValues',
+        pivots: 'laPivots',
+        valueColumnsEmptyMessage: 'la drag cols to aggregate',
+        pivotColumnsEmptyMessage: 'la drag here to pivot',
         // other
         noRowsToShow: 'la no rows',
         // enterprise menu
