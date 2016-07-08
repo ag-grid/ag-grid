@@ -4,7 +4,9 @@ import {
     Component,
     Autowired,
     ColumnController,
+    Events,
     Context,
+    EventService,
     DragAndDropService,
     GridPanel,
     GridOptionsWrapper,
@@ -34,6 +36,7 @@ export class ColumnComponent extends Component {
     @Autowired('popupService') popupService: PopupService;
     @Autowired('aggFuncService') aggFuncService: AggFuncService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') eventService: EventService;
 
     @QuerySelector('.ag-column-drop-cell-text') private eText: HTMLElement;
     @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
@@ -158,7 +161,15 @@ export class ColumnComponent extends Component {
 
         var itemSelected = ()=> {
             hidePopup();
-            this.columnController.setColumnAggFunc(this.column, value);
+            if (this.gridOptionsWrapper.isFunctionsPassive()) {
+                var event = {
+                    columns: [this.column],
+                    aggFunc: value
+                };
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST, event);
+            } else {
+                this.columnController.setColumnAggFunc(this.column, value);
+            }
         };
 
         var comp = new AggItemComp(itemSelected, value.toString());
