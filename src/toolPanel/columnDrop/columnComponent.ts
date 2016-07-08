@@ -76,7 +76,10 @@ export class ColumnComponent extends Component {
     private setupComponents(): void {
 
         this.setTextValue();
-        this.addDestroyableEventListener(this.btRemove, 'click', ()=> this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE));
+        this.addDestroyableEventListener(this.btRemove, 'click', (event: MouseEvent)=> {
+            this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
+            event.stopPropagation();
+        });
 
         Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
 

@@ -24,7 +24,6 @@ export class RenderedColumn extends Component {
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
         '  <span class="ag-column-select-indent"></span>' +
-        '  <span class="ag-column-select-icon"></span>' +
         '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '  <span class="ag-column-select-label"></span>' +
         '</div>';
@@ -39,7 +38,6 @@ export class RenderedColumn extends Component {
     @QuerySelector('.ag-column-select-label') private eText: HTMLElement;
     @QuerySelector('.ag-column-select-indent') private eIndent: HTMLElement;
     @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
-    @QuerySelector('.ag-column-select-icon') private eIcon: HTMLElement;
 
     private column: Column;
     private columnDept: number;
@@ -90,7 +88,7 @@ export class RenderedColumn extends Component {
         this.cbSelect.toggle();
     }
 
-    private onChange(): void {
+    private onChange(event: any): void {
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) { return; }
@@ -98,48 +96,75 @@ export class RenderedColumn extends Component {
         // action in a timeout, as the action takes some time, we want to update the icons first
         // so the user gets nice feedback when they click. otherwise there would be a lag and the
         // user would think the checkboxes were clunky
-        if (this.cbSelect.isSelected()) {
-            this.actionChecked();
-        } else {
-            this.actionUnChecked();
-        }
-    }
-
-    private actionUnChecked(): void {
-        // what we do depends on the reduce state
         if (this.columnController.isPivotMode()) {
-            // remove pivot if column is pivoted
-            if (this.column.isPivotActive()) {
-                this.columnController.removePivotColumn(this.column);
-            }
-            // remove value if column is value
-            if (this.column.isValueActive()) {
-                this.columnController.removeValueColumn(this.column);
-            }
-            // remove group if column is grouped
-            if (this.column.isRowGroupActive()) {
-                this.columnController.removeRowGroupColumn(this.column);
-            }
-        } else {
-            // if not reducing, then it's just column visibility
-            this.columnController.setColumnVisible(this.column, false);
-        }
-    }
-
-    private actionChecked(): void {
-        // what we do depends on the reduce state
-        if (this.columnController.isPivotMode()) {
-            if (this.column.isAllowValue()) {
-                if (!this.column.isValueActive()) {
-                    this.columnController.addValueColumn(this.column);
-                }
+            if (event.selected) {
+                this.actionCheckedPivotMode();
             } else {
-                if (!this.column.isPivotActive() && !this.column.isRowGroupActive()) {
-                    this.columnController.addRowGroupColumn(this.column);
-                }
+                this.actionUnCheckedPivotMode();
             }
         } else {
-            this.columnController.setColumnVisible(this.column, true);
+            this.columnController.setColumnVisible(this.column, event.selected);
+        }
+    }
+
+    private actionUnCheckedPivotMode(): void {
+        var functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
+        var column = this.column;
+        var columnController = this.columnController;
+
+        // remove pivot if column is pivoted
+        if (column.isPivotActive()) {
+            if (functionPassive) {
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, {columns: [column]});
+            } else {
+                columnController.removePivotColumn(column);
+            }
+        }
+        // remove value if column is value
+        if (column.isValueActive()) {
+            if (functionPassive) {
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST, {columns: [column]});
+            } else {
+                columnController.removeValueColumn(column);
+            }
+        }
+        // remove group if column is grouped
+        if (column.isRowGroupActive()) {
+            if (functionPassive) {
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, {columns: [column]});
+            } else {
+                columnController.removeRowGroupColumn(column);
+            }
+        }
+    }
+
+    private actionCheckedPivotMode(): void {
+        var column = this.column;
+        var columnController = this.columnController;
+
+        // function already active, so do nothing
+        if (column.isValueActive() || column.isPivotActive() || column.isRowGroupActive()) { return; }
+
+        var functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
+
+        if (column.isAllowValue()) {
+            if (functionPassive) {
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_ADD_REQUEST, {columns: [column]});
+            } else {
+                columnController.addValueColumn(column);
+            }
+        } else if (column.isAllowRowGroup()) {
+            if (functionPassive) {
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, {columns: [column]});
+            } else {
+                columnController.addRowGroupColumn(column);
+            }
+        } else if (column.isAllowPivot()) {
+            if (functionPassive) {
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, {columns: [column]});
+            } else {
+                columnController.addPivotColumn(column);
+            }
         }
     }
 
@@ -154,20 +179,28 @@ export class RenderedColumn extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        if (this.columnController.isPivotMode()) {
+        var isPivotMode = this.columnController.isPivotMode();
+        if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
-            var isPivot = this.column.isPivotActive();
-            var isRowGroup = this.column.isRowGroupActive();
-            var isAggregation = this.column.isValueActive();
-            this.cbSelect.setSelected(isPivot || isRowGroup || isAggregation);
+            var anyFunctionActive = this.column.isAnyFunctionActive();
+            this.cbSelect.setSelected(anyFunctionActive);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
             this.cbSelect.setSelected(this.column.isVisible());
         }
-        
-        var checkboxReadOnly = this.columnController.isPivotMode() && this.gridOptionsWrapper.isFunctionsReadOnly();
+
+        // read only in pivot mode if:
+        var checkboxReadOnly = isPivotMode
+            // a) gui is not allowed make any changes or
+            && (this.gridOptionsWrapper.isFunctionsReadOnly()
+            // b) column is not allow any functions on it
+            || !this.column.isAnyFunctionAllowed());
+
         this.cbSelect.setReadOnly(checkboxReadOnly);
-        
+
+        var checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
+        this.cbSelect.setPassive(checkboxPassive);
+
         this.processingColumnStateChange = false;
     }
 

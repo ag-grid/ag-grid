@@ -70,12 +70,20 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     }
 
     protected removeColumns(columns: Column[]): void {
-        var columnsCurrentlyValueColumns = Utils.filter(columns, (column: Column) => column.isValueActive() );
-        this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST, {columns: columns} );
+        } else {
+            var columnsCurrentlyValueColumns = Utils.filter(columns, (column: Column) => column.isValueActive() );
+            this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
+        }
     }
 
     protected addColumns(columns: Column[]) {
-        this.columnController.addValueColumns(columns);
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_ADD_REQUEST, {columns: columns} );
+        } else {
+            this.columnController.addValueColumns(columns);
+        }
     }
 
     protected getExistingColumns(): Column[] {
