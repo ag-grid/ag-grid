@@ -93,6 +93,15 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="pagingServerSide"></show-example>
 
+    <h4>Configuring A Bit Differently</h4>
+
+    <p>
+        The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
+        and creates a datasource Class. The example also just creates (makes up) data on the fly.
+    </p>
+
+    <show-example example="examplePagingMadeUpData"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

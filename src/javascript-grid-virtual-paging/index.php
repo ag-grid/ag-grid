@@ -109,6 +109,15 @@ gridOptions.api.setDatasource(myDataSource);</pre>
 
     <show-example example="virtualPagingServerSide"></show-example>
 
+    <h4>Configuring A Bit Differently</h4>
+
+    <p>
+        The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
+        and creates a datasource Class. The example also just creates (makes up) data on the fly.
+    </p>
+
+    <show-example example="exampleVirtualPagingMadeUpData"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: Popups were triggering a scrollbar to flicker on and off when showing (eg show column menu, a scrollbar appeard and then dissappeared in the grid)</li>
     <li>Bugfix: rowSelectionChanged was not firing on shift select</li>
     <li>Bugfix: isCancelBeforeStart and isCancelAfterEnd were not working for popup editors</li>
-
+    <li>Bugfix: virtual pagination was not working when setting datasource as a property (it worked if setting datasource via api.setDatasource())</li>
 
     <h3>Version 4.2.x (ag-Grid 4.2.7, ag-Grid-Enterprise 4.2.11)</h3>
     <li>Bugfix: group selection was selecting groups when 'groupSelectsChildren=false' giving strange behaviours</li>
