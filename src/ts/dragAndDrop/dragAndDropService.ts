@@ -1,15 +1,10 @@
-import {Logger} from "../logger";
-import {Qualifier, PostConstruct} from "../context/context";
-import {LoggerFactory} from "../logger";
-import {Bean} from "../context/context";
+import {Logger, LoggerFactory} from "../logger";
+import {Qualifier, PostConstruct, Bean, Autowired} from "../context/context";
 import {Column} from "../entities/column";
-import {HeaderTemplateLoader} from "../headerRendering/headerTemplateLoader";
-import {Utils as _} from '../utils';
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Autowired} from "../context/context";
 import {SvgFactory} from "../svgFactory";
 import {DragService} from "./dragService";
-import {ColumnGroup} from "../entities/columnGroup";
 import {ColumnController} from "../columnController/columnController";
 
 var svgFactory = SvgFactory.getInstance();
