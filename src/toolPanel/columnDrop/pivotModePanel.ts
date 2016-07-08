@@ -1,25 +1,39 @@
-import {QuerySelector, Component, Autowired, ColumnController, PostConstruct, EventService, Events, Context, AgCheckbox} from "ag-grid/main";
+import {
+    QuerySelector,
+    Component,
+    Autowired,
+    ColumnController,
+    GridOptionsWrapper,
+    PostConstruct,
+    EventService,
+    Events,
+    Context,
+    AgCheckbox
+} from "ag-grid/main";
 
 export class PivotModePanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @QuerySelector('.ag-pivot-mode-select') private cbPivotMode: AgCheckbox;
 
     constructor() {
-        super(this.createTemplate());
+        super();
     }
 
     private createTemplate(): string {
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         return `<div class="ag-pivot-mode">
-                <ag-checkbox class="ag-pivot-mode-select" label="Pivot Mode"></ag-checkbox>
+                <ag-checkbox class="ag-pivot-mode-select" label="${localeTextFunc('pivotMode', 'Pivot Mode')}"></ag-checkbox>
             </div>`;
     }
 
     @PostConstruct
     private init(): void {
+        this.setTemplate(this.createTemplate());
         this.instantiate(this.context);
 
         this.cbPivotMode.setSelected(this.columnController.isPivotMode());
