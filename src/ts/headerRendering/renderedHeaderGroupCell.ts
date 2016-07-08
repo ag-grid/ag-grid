@@ -135,24 +135,29 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         }
     }
 
+    private isSuppressMoving(): boolean {
+        // if any child is fixed, then don't allow moving
+        var childSuppressesMoving = false;
+        this.columnGroup.getLeafColumns().forEach( (column: Column) => {
+            if (column.getColDef().suppressMovable) {
+                childSuppressesMoving = true;
+            }
+        });
+
+        var result = childSuppressesMoving
+            || this.gridOptionsWrapper.isSuppressMovableColumns()
+            || this.gridOptionsWrapper.isForPrint()
+            || this.columnController.isPivotMode();
+
+        return result;
+    }
+
     private setupMove(): void {
         var eLabel = <HTMLElement> this.eHeaderGroupCell.querySelector('.ag-header-group-cell-label');
         if (!eLabel) { return; }
-    
-        if (this.gridOptionsWrapper.isSuppressMovableColumns()) { return; }
-    
-        // if any child is fixed, then don't allow moving
-        var atLeastOneChildNotMovable = false;
-        this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-            if (column.getColDef().suppressMovable) {
-                atLeastOneChildNotMovable = true;
-            }
-        });
-        if (atLeastOneChildNotMovable) { return; }
-    
-        // don't allow moving of headers when forPrint, as the header overlay doesn't exist
-        if (this.gridOptionsWrapper.isForPrint()) { return; }
 
+        if (this.isSuppressMoving()) { return; }
+    
         if (eLabel) {
             var dragSource: DragSource = {
                 eElement: eLabel,

@@ -226,13 +226,12 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     }
 
     private setupMove(eHeaderCellLabel: HTMLElement): void {
-        if (this.gridOptionsWrapper.isSuppressMovableColumns() || this.column.getColDef().suppressMovable) {
-            return;
-        }
-        if (this.gridOptionsWrapper.isForPrint()) {
-            // don't allow moving of headers when forPrint, as the header overlay doesn't exist
-            return;
-        }
+        var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
+                            || this.column.getColDef().suppressMovable
+                            || this.gridOptionsWrapper.isForPrint()
+                            || this.columnController.isPivotMode();
+
+        if (suppressMove) { return; }
 
         if (eHeaderCellLabel) {
             var dragSource: DragSource = {
