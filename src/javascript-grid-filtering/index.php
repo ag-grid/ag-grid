@@ -26,9 +26,8 @@ include '../documentation-main/documentation_header.php';
     <h3>Enable Filtering</h3>
 
     <p>
-        Turn filtering on for the grid by enabling filtering in the grid options. When on, each column header will have
-        the filter menu icon appear when the mouse hovers over it. When clicked, a filter menu will appear. The menu
-        will either contain a default provided filter, or your own custom built filter.
+        Enable filtering by setting grid property <i>enableFilter=true</i>. To turn off filtering for particular columns,
+        set <i>suppressFilter=true</i> on the particular column definition.
     </p>
 
     <p>
@@ -104,10 +103,15 @@ columnDefinition = {
     <h3>Built In Filters Example</h3>
 
     <p>
-        The example below demonstrates: text filter, number filter and quick filter.
-        The example also demonstrates using the <i>ag-header-cell-filtered</i> class, which is applied to the header
-        cell when the header is filtered. By default, no style is applied to this class, the example shows
-        applying a different color background to this style.
+        The example below demonstrates:
+        <ul>
+        <li>Two filter types text filter and number filter.</li>
+        <li>Quick Filter</li>
+        <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+            cell when the header is filtered. By default, no style is applied to this class, the example shows
+            applying a different color background to this style.</li>
+        <li>'suppressFilter' is set on Total to prevent filtering on this column</li>
+    </ul>
     </p>
 
     <show-example example="example1"></show-example>

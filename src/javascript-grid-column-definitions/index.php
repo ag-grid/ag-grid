@@ -194,6 +194,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true if you do not want this column to be movable via dragging.</td>
         </tr>
         <tr>
+            <th>suppressFilter</th>
+            <td>Set to true to not allow filter on this column.</td>
+        </tr>
+        <tr>
             <th>suppressResize</th>
             <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
         </tr>

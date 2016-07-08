@@ -9,7 +9,7 @@ var columnDefs = [
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-    {headerName: "Total", field: "total", width: 100, filter: 'number'}
+    {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
 ];
 
 var gridOptions = {

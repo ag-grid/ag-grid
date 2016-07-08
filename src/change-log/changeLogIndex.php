@@ -30,6 +30,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: pivot panel now on top alongside group panel</li>
     <li>Enhancement: new property colDef.openByDefault - set to true on column groups to have them open be default if expandable </li>
     <li>Enhancement: new grid property functionsReadOnly - makes the gui for group, pivot and values read only</li>
+    <li>Enhancement: added suppressFilter to colDef, to allow turning filtering off for a particular column</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup, enablePivot and enableValue</li>
     <li>Bugfix: AngularJS bindings were not getting cells updated when columns added and removed</li>
     <li>Bugfix: Popups were triggering a scrollbar to flicker on and off when showing (eg show column menu, a scrollbar appeard and then dissappeared in the grid)</li>
