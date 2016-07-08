@@ -393,6 +393,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         return this.pivotActive;
     }
 
+    public isAnyFunctionActive(): boolean {
+        return this.isPivotActive() || this.isRowGroupActive() || this.isValueActive();
+    }
+
+    public isAnyFunctionAllowed(): boolean {
+        return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
+    }
+
     public setValueActive(value: boolean): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;

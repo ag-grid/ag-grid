@@ -29,6 +29,7 @@ export class AgCheckbox extends Component {
 
     private selected = false;
     private readOnly = false;
+    private passive = false;
 
     constructor() {
         super(AgCheckbox.TEMPLATE);
@@ -63,16 +64,23 @@ export class AgCheckbox extends Component {
 
     @Listener('click')
     private onClick(): void {
-        // ignore clicks if readOnly
-        if (this.readOnly) { return; }
-
-        if (this.selected === undefined) {
-            this.setSelected(true);
-        } else {
-            this.setSelected(!this.selected);
+        if (!this.readOnly) {
+            this.toggle();
         }
     }
 
+    public getNextValue(): boolean {
+        if (this.selected === undefined) {
+            return true;
+        } else {
+            return !this.selected;
+        }
+    }
+
+    public setPassive(passive: boolean): void {
+        this.passive = passive;
+    }
+    
     public setReadOnly(readOnly: boolean): void {
         this.readOnly = readOnly;
         this.loadIcons();
@@ -87,7 +95,13 @@ export class AgCheckbox extends Component {
     }
 
     public toggle(): void {
-        this.setSelected(!this.selected);
+        var nextValue = this.getNextValue();
+
+        if (this.passive) {
+            this.dispatchEvent(AgCheckbox.EVENT_CHANGED, {selected: nextValue});
+        } else {
+            this.setSelected(nextValue);
+        }
     }
     
     public setSelected(selected: boolean): void {
