@@ -144,7 +144,8 @@ export class VirtualPageRowModel implements IRowModel {
         this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
 
         this.doLoadOrQueue(0);
-        this.rowRenderer.refreshView();
+
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
     }
 
     private createNodesFromRows(pageNumber: any, rows: any) {
