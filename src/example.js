@@ -102,6 +102,7 @@ function suppressColumnMoveAnimation() {
 var gridOptions = {
 //debug: true,
 //suppressEnterprise: true,
+//     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
 //minColWidth: 50,
