@@ -1,6 +1,7 @@
 import {Component} from "../../widgets/component";
 import {ICellEditor} from "./iCellEditor";
 import {Utils as _} from '../../utils';
+import {Constants} from "../../constants";
 
 export class SelectCellEditor extends Component implements ICellEditor {
 
@@ -25,6 +26,17 @@ export class SelectCellEditor extends Component implements ICellEditor {
         });
 
         this.addDestroyableEventListener(eSelect, 'change', ()=> params.stopEditing() );
+
+        this.addDestroyableEventListener(eSelect, 'keydown', (event: KeyboardEvent)=> {
+            var isNavigationKey = event.keyCode===Constants.KEY_UP || event.keyCode===Constants.KEY_DOWN;
+            if (isNavigationKey) {
+                event.stopPropagation();
+            }
+        });
+
+        this.addDestroyableEventListener(eSelect, 'mousedown', (event: KeyboardEvent)=> {
+            event.stopPropagation();
+        });
     }
 
     public afterGuiAttached() {
