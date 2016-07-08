@@ -122,7 +122,6 @@ export class RenderedRow {
 
     private angular1Compile(): void {
         if (this.scope) {
-            console.log('angular1Compile');
             this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
         }
     }
@@ -130,15 +129,18 @@ export class RenderedRow {
     private addColumnListener(): void {
         var columnListener = this.onDisplayedColumnsChanged.bind(this);
         var virtualListener = this.onVirtualColumnsChanged.bind(this);
+        var gridColumnsChangedListener = this.onGridColumnsChanged.bind(this);
 
         this.mainEventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
         this.mainEventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
         this.mainEventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
+        this.mainEventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
 
         this.destroyFunctions.push( () => {
             this.mainEventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
             this.mainEventService.removeEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
             this.mainEventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
+            this.mainEventService.removeEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
         });
     }
 
@@ -163,6 +165,13 @@ export class RenderedRow {
         }
     }
 
+    // when grid columns change, then all cells should be cleaned out,
+    // as the new columns could have same id as the previous columns and may conflict
+    private onGridColumnsChanged(): void {
+        var allRenderedCellIds = Object.keys(this.renderedCells);
+        this.removeRenderedCells(allRenderedCellIds);
+    }
+
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
@@ -179,16 +188,20 @@ export class RenderedRow {
         });
 
         // remove old cells from gui, but we don't destroy them, we might use them again
-        renderedCellKeys.forEach( (key: string)=> {
+        this.removeRenderedCells(renderedCellKeys);
+    }
+
+    private removeRenderedCells(colIds: string[]): void {
+        colIds.forEach( (key: string)=> {
             var renderedCell = this.renderedCells[key];
             // could be old reference, ie removed cell
-            if (!renderedCell) {
-                return;
-            }
+            if (_.missing(renderedCell)) { return; }
+
             if (renderedCell.getParentRow()) {
                 renderedCell.getParentRow().removeChild(renderedCell.getGui());
                 renderedCell.setParentRow(null);
             }
+
             renderedCell.destroy();
             this.renderedCells[key] = null;
         });
