@@ -64,7 +64,6 @@ export * from './dist/lib/layout/borderLayout';
 export * from './dist/lib/layout/tabbedLayout';
 export * from './dist/lib/layout/verticalStack';
 
-export * from './dist/lib/rendering/cellEditors/dateCellEditor';
 export * from './dist/lib/rendering/cellEditors/iCellEditor';
 export * from './dist/lib/rendering/cellEditors/popupEditorWrapper';
 export * from './dist/lib/rendering/cellEditors/popupSelectCellEditor';

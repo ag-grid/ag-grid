@@ -6,7 +6,6 @@ import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
 import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
-import {DateCellEditor} from "./cellEditors/dateCellEditor";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('cellEditorFactory')
@@ -14,7 +13,6 @@ export class CellEditorFactory {
 
     private static TEXT = 'text';
     private static SELECT = 'select';
-    private static DATE = 'date';
     private static POPUP_TEXT = 'popupText';
     private static POPUP_SELECT = 'popupSelect';
 
@@ -29,7 +27,6 @@ export class CellEditorFactory {
         this.cellEditorMap[CellEditorFactory.SELECT] = SelectCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.DATE] = DateCellEditor;
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {

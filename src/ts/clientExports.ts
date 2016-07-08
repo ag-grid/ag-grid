@@ -88,7 +88,6 @@ import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
-import {DateCellEditor} from "./rendering/cellEditors/dateCellEditor";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
 import {QuerySelector, Listener} from "./widgets/componentAnnotations";
 import {AgCheckbox} from "./widgets/agCheckbox";
@@ -157,7 +156,6 @@ export function populateClientExports(exports: any): void {
     exports.VerticalStack = VerticalStack;
 
     // rendering / cellEditors
-    exports.DateCellEditor = DateCellEditor;
     exports.PopupEditorWrapper = PopupEditorWrapper;
     exports.PopupSelectCellEditor = PopupSelectCellEditor;
     exports.PopupTextCellEditor = PopupTextCellEditor;

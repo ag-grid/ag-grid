@@ -27,6 +27,7 @@ export class Events {
 
     /** One or more columns was shown / hidden */
     public static EVENT_COLUMN_VISIBLE = 'columnVisible';
+    public static EVENT_COLUMN_VISIBLE = 'columnVisible';
 
     /** One or more columns was pinned / unpinned*/
     public static EVENT_COLUMN_PINNED = 'columnPinned';
