@@ -411,7 +411,7 @@ export class RenderedCell extends Component {
         }
     }
 
-    private onSpaceKeyPressed(): void {
+    private onSpaceKeyPressed(event: KeyboardEvent): void {
         if (!this.editingCell && this.gridOptionsWrapper.isRowSelection()) {
             var selected = this.node.isSelected();
             this.node.setSelected(!selected);
@@ -430,11 +430,11 @@ export class RenderedCell extends Component {
     }
 
     private addKeyPressListener(): void {
-        var keyPressListener = (event: any)=> {
+        var keyPressListener = (event: KeyboardEvent)=> {
             if (!this.editingCell) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
-                    this.onSpaceKeyPressed();
+                    this.onSpaceKeyPressed(event);
                 } else {
                     if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
                         this.startEditingIfEnabled(null, pressedChar);
