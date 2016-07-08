@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -79,8 +79,8 @@ export interface GridOptions {
     };
     suppressColumnVirtualisation?: boolean;
     layoutInterval?: number;
-    rowGroupPassive?: boolean;
-    pivotPassive?: boolean;
+    functionsReadOnly?: boolean;
+    functionsPassive?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -154,17 +154,29 @@ export interface GridOptions {
      ****************************************************************/
     onColumnEverythingChanged?(event?: any): void;
     onNewColumnsLoaded?(event?: any): void;
+    onColumnPivotModeChanged?(event?: any): void;
     onColumnRowGroupChanged?(event?: any): void;
+    onColumnPivotChanged?(event?: any): void;
+    onGridColumnsChanged?(event?: any): void;
     onColumnValueChanged?(event?: any): void;
     onColumnMoved?(event?: any): void;
     onColumnVisible?(event?: any): void;
     onColumnPinned?(event?: any): void;
     onColumnGroupOpened?(event?: any): void;
     onColumnResized?(event?: any): void;
+    onDisplayedColumnsChanged?(event?: any): void;
+    onVirtualColumnsChanged?(event?: any): void;
     onRowGroupOpened?(event?: any): void;
     onRowDataChanged?(event?: any): void;
     onFloatingRowDataChanged?(event?: any): void;
     onRangeSelectionChanged?(event?: any): void;
+    onColumnRowGroupAddRequest?(event?: any): void;
+    onColumnRowGroupRemoveRequest?(event?: any): void;
+    onColumnPivotAddRequest?(event?: any): void;
+    onColumnPivotRemoveRequest?(event?: any): void;
+    onColumnValueAddRequest?(event?: any): void;
+    onColumnValueRemoveRequest?(event?: any): void;
+    onColumnAggFuncChangeRequest?(event?: any): void;
     onClipboardPaste?(event?: any): void;
     onHeaderHeightChanged?(event?: any): void;
     onModelUpdated?(event?: any): void;
@@ -188,6 +200,8 @@ export interface GridOptions {
     onGridReady?(event?: any): void;
     onGridSizeChanged?(event?: any): void;
     onViewportChanged?(event?: any): void;
+    onDragStarted?(event?: any): void;
+    onDragStopped?(event?: any): void;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

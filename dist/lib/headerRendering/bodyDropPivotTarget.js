@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,18 +13,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var columnController_1 = require("../columnController/columnController");
 var context_1 = require("../context/context");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var BodyDropPivotTarget = (function () {
-    function BodyDropPivotTarget() {
+    function BodyDropPivotTarget(pinned) {
         this.columnsToAggregate = [];
         this.columnsToGroup = [];
+        this.pinned = pinned;
     }
     /** Callback for when drag enters */
     BodyDropPivotTarget.prototype.onDragEnter = function (draggingEvent) {
         var _this = this;
         this.columnsToAggregate = [];
         this.columnsToGroup = [];
+        // in pivot mode, we don't accept any drops if functions are read only
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            return;
+        }
         var dragColumns = draggingEvent.dragSource.dragItem;
         dragColumns.forEach(function (column) {
             // we don't allow adding secondary columns
@@ -42,6 +49,16 @@ var BodyDropPivotTarget = (function () {
                 }
             }
         });
+    };
+    BodyDropPivotTarget.prototype.getIconName = function () {
+        var totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length;
+        if (totalColumns > 0) {
+            return this.pinned ? dragAndDropService_1.DragAndDropService.ICON_PINNED : dragAndDropService_1.DragAndDropService.ICON_MOVE;
+            ;
+        }
+        else {
+            return null;
+        }
     };
     /** Callback for when drag leaves */
     BodyDropPivotTarget.prototype.onDragLeave = function (draggingEvent) {
@@ -65,6 +82,10 @@ var BodyDropPivotTarget = (function () {
         context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], BodyDropPivotTarget.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], BodyDropPivotTarget.prototype, "gridOptionsWrapper", void 0);
     return BodyDropPivotTarget;
 })();
 exports.BodyDropPivotTarget = BodyDropPivotTarget;

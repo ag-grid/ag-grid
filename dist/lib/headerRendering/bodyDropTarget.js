@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,7 @@ var BodyDropTarget = (function () {
     BodyDropTarget.prototype.init = function () {
         this.moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned);
         this.context.wireBean(this.moveColumnController);
-        this.bodyDropPivotTarget = new bodyDropPivotTarget_1.BodyDropPivotTarget();
+        this.bodyDropPivotTarget = new bodyDropPivotTarget_1.BodyDropPivotTarget(this.pinned);
         this.context.wireBean(this.bodyDropPivotTarget);
         switch (this.pinned) {
             case column_1.Column.PINNED_LEFT:
@@ -50,8 +50,7 @@ var BodyDropTarget = (function () {
         this.dragAndDropService.addDropTarget(this);
     };
     BodyDropTarget.prototype.getIconName = function () {
-        return this.pinned ? dragAndDropService_1.DragAndDropService.ICON_PINNED : dragAndDropService_1.DragAndDropService.ICON_MOVE;
-        ;
+        return this.currentDropListener.getIconName();
     };
     BodyDropTarget.prototype.onDragEnter = function (params) {
         // we pick the drop listener depending on whether we are in pivot mode are not. if we are

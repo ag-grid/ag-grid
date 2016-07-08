@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -6,7 +6,6 @@ import { ICellEditor } from "./cellEditors/iCellEditor";
 export declare class CellEditorFactory {
     private static TEXT;
     private static SELECT;
-    private static DATE;
     private static POPUP_TEXT;
     private static POPUP_SELECT;
     private context;

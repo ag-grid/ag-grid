@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,6 @@ var selectCellEditor_1 = require("./cellEditors/selectCellEditor");
 var popupEditorWrapper_1 = require("./cellEditors/popupEditorWrapper");
 var popupTextCellEditor_1 = require("./cellEditors/popupTextCellEditor");
 var popupSelectCellEditor_1 = require("./cellEditors/popupSelectCellEditor");
-var dateCellEditor_1 = require("./cellEditors/dateCellEditor");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var CellEditorFactory = (function () {
     function CellEditorFactory() {
@@ -31,7 +30,6 @@ var CellEditorFactory = (function () {
         this.cellEditorMap[CellEditorFactory.SELECT] = selectCellEditor_1.SelectCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = popupTextCellEditor_1.PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = popupSelectCellEditor_1.PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.DATE] = dateCellEditor_1.DateCellEditor;
     };
     CellEditorFactory.prototype.addCellEditor = function (key, cellEditor) {
         this.cellEditorMap[key] = cellEditor;
@@ -66,7 +64,6 @@ var CellEditorFactory = (function () {
     };
     CellEditorFactory.TEXT = 'text';
     CellEditorFactory.SELECT = 'select';
-    CellEditorFactory.DATE = 'date';
     CellEditorFactory.POPUP_TEXT = 'popupText';
     CellEditorFactory.POPUP_SELECT = 'popupSelect';
     __decorate([

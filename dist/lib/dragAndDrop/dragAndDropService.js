@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,12 +16,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var context_1 = require("../context/context");
 var logger_1 = require("../logger");
-var context_2 = require("../context/context");
-var utils_1 = require('../utils');
+var context_1 = require("../context/context");
+var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var context_3 = require("../context/context");
 var svgFactory_1 = require("../svgFactory");
 var dragService_1 = require("./dragService");
 var columnController_1 = require("../columnController/columnController");
@@ -39,6 +37,7 @@ var DragAndDropService = (function () {
         this.eRightIcon = utils_1.Utils.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
         this.eGroupIcon = utils_1.Utils.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
         this.eAggregateIcon = utils_1.Utils.createIcon('columnMoveValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon);
+        this.ePivotIcon = utils_1.Utils.createIcon('columnMovePivot', this.gridOptionsWrapper, null, svgFactory.createPivotIcon);
     };
     DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
@@ -254,6 +253,9 @@ var DragAndDropService = (function () {
             case DragAndDropService.ICON_AGGREGATE:
                 eIcon = this.eAggregateIcon;
                 break;
+            case DragAndDropService.ICON_PIVOT:
+                eIcon = this.ePivotIcon;
+                break;
             default:
                 eIcon = this.eHiddenIcon;
                 break;
@@ -270,21 +272,22 @@ var DragAndDropService = (function () {
     DragAndDropService.ICON_RIGHT = 'right';
     DragAndDropService.ICON_GROUP = 'group';
     DragAndDropService.ICON_AGGREGATE = 'aggregate';
+    DragAndDropService.ICON_PIVOT = 'pivot';
     DragAndDropService.GHOST_TEMPLATE = '<div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
         '  <div class="ag-dnd-ghost-label">' +
         '  </div>' +
         '</div>';
     __decorate([
-        context_3.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], DragAndDropService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_3.Autowired('dragService'), 
+        context_1.Autowired('dragService'), 
         __metadata('design:type', dragService_1.DragService)
     ], DragAndDropService.prototype, "dragService", void 0);
     __decorate([
-        context_3.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], DragAndDropService.prototype, "columnController", void 0);
     __decorate([
@@ -300,7 +303,7 @@ var DragAndDropService = (function () {
         __metadata('design:returntype', void 0)
     ], DragAndDropService.prototype, "setBeans", null);
     DragAndDropService = __decorate([
-        context_2.Bean('dragAndDropService'), 
+        context_1.Bean('dragAndDropService'), 
         __metadata('design:paramtypes', [])
     ], DragAndDropService);
     return DragAndDropService;

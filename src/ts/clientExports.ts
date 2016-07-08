@@ -83,7 +83,7 @@ import {PopupSelectCellEditor} from "./rendering/cellEditors/popupSelectCellEdit
 import {PopupTextCellEditor} from "./rendering/cellEditors/popupTextCellEditor";
 import {SelectCellEditor} from "./rendering/cellEditors/selectCellEditor";
 import {TextCellEditor} from "./rendering/cellEditors/textCellEditor";
-import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
+import {LargeTextCellEditor} from "./rendering/cellEditors/largeTextCellEditor";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 import {CellRendererService} from "./rendering/cellRendererService";
@@ -91,6 +91,13 @@ import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
 import {QuerySelector, Listener} from "./widgets/componentAnnotations";
 import {AgCheckbox} from "./widgets/agCheckbox";
+import {BodyDropPivotTarget} from "./headerRendering/bodyDropPivotTarget";
+import {BodyDropTarget} from "./headerRendering/bodyDropTarget";
+import {FocusService} from "./misc/focusService";
+import {SetLeftFeature} from "./rendering/features/setLeftFeature";
+import {RenderedCell} from "./rendering/renderedCell";
+import {HeaderRowComp} from "./headerRendering/headerRowComp";
+import {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 
 export function populateClientExports(exports: any): void {
 
@@ -140,9 +147,12 @@ export function populateClientExports(exports: any): void {
     exports.MouseEventService = MouseEventService;
 
     // headerRendering
+    exports.BodyDropPivotTarget = BodyDropPivotTarget;
+    exports.BodyDropTarget = BodyDropTarget;
     exports.CssClassApplier = CssClassApplier;
     exports.HeaderContainer = HeaderContainer;
     exports.HeaderRenderer = HeaderRenderer;
+    exports.HeaderRowComp = HeaderRowComp;
     exports.HeaderTemplateLoader = HeaderTemplateLoader;
     exports.HorizontalDragService = HorizontalDragService;
     exports.MoveColumnController = MoveColumnController;
@@ -155,17 +165,24 @@ export function populateClientExports(exports: any): void {
     exports.TabbedLayout = TabbedLayout;
     exports.VerticalStack = VerticalStack;
 
+    // misc
+    exports.FocusService = FocusService;
+
     // rendering / cellEditors
+    exports.LargeTextCellEditor = LargeTextCellEditor;
     exports.PopupEditorWrapper = PopupEditorWrapper;
     exports.PopupSelectCellEditor = PopupSelectCellEditor;
     exports.PopupTextCellEditor = PopupTextCellEditor;
     exports.SelectCellEditor = SelectCellEditor;
     exports.TextCellEditor = TextCellEditor;
-    exports.LargeTextCellEditor = LargeTextCellEditor;
 
     // rendering / cellRenderers
+    exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
     exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
     exports.GroupCellRenderer = GroupCellRenderer;
+
+    // features
+    exports.SetLeftFeature = SetLeftFeature;
 
     // rendering
     exports.AutoWidthCalculator = AutoWidthCalculator;
@@ -173,6 +190,8 @@ export function populateClientExports(exports: any): void {
     exports.RenderedHeaderCell = RenderedHeaderCell;
     exports.CellRendererFactory = CellRendererFactory;
     exports.CellRendererService = CellRendererService;
+    exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
+    exports.RenderedCell = RenderedCell;
     exports.RenderedRow = RenderedRow;
     exports.RowRenderer = RowRenderer;
     exports.ValueFormatterService = ValueFormatterService;
@@ -189,11 +208,13 @@ export function populateClientExports(exports: any): void {
     exports.VirtualPageRowModel = VirtualPageRowModel;
 
     // widgets
+    exports.AgCheckbox = AgCheckbox;
+    exports.Component = Component;
     exports.PopupService = PopupService;
     exports.MenuItemComponent = MenuItemComponent;
-    exports.Component = Component;
     exports.MenuList = MenuList;
-    exports.AgCheckbox = AgCheckbox;
+    exports.Listener = Listener;
+    exports.QuerySelector = QuerySelector;
 
     // root
     exports.CellNavigationService = CellNavigationService;

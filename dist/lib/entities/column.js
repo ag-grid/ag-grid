@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -68,7 +68,7 @@ var Column = (function () {
         return this.primary;
     };
     Column.prototype.isFilterAllowed = function () {
-        return this.primary;
+        return this.primary && !this.colDef.suppressFilter;
     };
     Column.prototype.isFieldContainsDots = function () {
         return this.fieldContainsDots;
@@ -284,6 +284,12 @@ var Column = (function () {
     };
     Column.prototype.isPivotActive = function () {
         return this.pivotActive;
+    };
+    Column.prototype.isAnyFunctionActive = function () {
+        return this.isPivotActive() || this.isRowGroupActive() || this.isValueActive();
+    };
+    Column.prototype.isAnyFunctionAllowed = function () {
+        return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
     };
     Column.prototype.setValueActive = function (value) {
         if (this.aggregationActive !== value) {

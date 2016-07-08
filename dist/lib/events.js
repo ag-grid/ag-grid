@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,8 +16,6 @@ var Events = (function () {
     Events.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
     /** A pivot column was added, removed or order changed. */
     Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
-    /** A pivot column was added, removed or order changed. */
-    Events.EVENT_PIVOT_VALUE_CHANGED = 'pivotValueChanged';
     /** The list of grid columns has changed. */
     Events.EVENT_GRID_COLUMNS_CHANGED = 'gridColumnsChanged';
     /** A value column was added, removed or agg function was changed. */
@@ -45,6 +43,9 @@ var Events = (function () {
     Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST = 'columnRowGroupRemoveRequest';
     Events.EVENT_COLUMN_PIVOT_ADD_REQUEST = 'columnPivotAddRequest';
     Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST = 'columnPivotRemoveRequest';
+    Events.EVENT_COLUMN_VALUE_ADD_REQUEST = 'columnValueAddRequest';
+    Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST = 'columnValueRemoveRequest';
+    Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
     Events.EVENT_FLASH_CELLS = 'clipboardPaste';
     Events.EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
     Events.EVENT_MODEL_UPDATED = 'modelUpdated';

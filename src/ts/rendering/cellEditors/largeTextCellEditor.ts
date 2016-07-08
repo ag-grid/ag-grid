@@ -1,5 +1,5 @@
-import {ICellEditor} from "../cellEditors/iCellEditor";
-import {ICellEditorParams} from "../cellEditors/iCellEditor";
+import {ICellEditor} from "./iCellEditor";
+import {ICellEditorParams} from "./iCellEditor";
 import {Component} from "../../widgets/component";
 import {ICellRenderer} from "../cellRenderers/iCellRenderer";
 import {ICellRendererFunc} from "../cellRenderers/iCellRenderer";

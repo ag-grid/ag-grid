@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var component_1 = require("../../widgets/component");
 var utils_1 = require('../../utils');
+var constants_1 = require("../../constants");
 var SelectCellEditor = (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
@@ -32,6 +33,15 @@ var SelectCellEditor = (function (_super) {
             eSelect.appendChild(option);
         });
         this.addDestroyableEventListener(eSelect, 'change', function () { return params.stopEditing(); });
+        this.addDestroyableEventListener(eSelect, 'keydown', function (event) {
+            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_UP || event.keyCode === constants_1.Constants.KEY_DOWN;
+            if (isNavigationKey) {
+                event.stopPropagation();
+            }
+        });
+        this.addDestroyableEventListener(eSelect, 'mousedown', function (event) {
+            event.stopPropagation();
+        });
     };
     SelectCellEditor.prototype.afterGuiAttached = function () {
         var eSelect = this.getGui().querySelector('select');

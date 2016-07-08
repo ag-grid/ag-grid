@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,7 +111,7 @@ var VirtualPageRowModel = (function () {
         this.pageSize = this.datasource.pageSize; // take a copy of page size, we don't want it changing
         this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
         this.doLoadOrQueue(0);
-        this.rowRenderer.refreshView();
+        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
     };
     VirtualPageRowModel.prototype.createNodesFromRows = function (pageNumber, rows) {
         var nodes = [];

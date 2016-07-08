@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -52,6 +52,7 @@ export declare class DragAndDropService {
     static ICON_RIGHT: string;
     static ICON_GROUP: string;
     static ICON_AGGREGATE: string;
+    static ICON_PIVOT: string;
     static GHOST_TEMPLATE: string;
     private logger;
     private dragItem;
@@ -71,6 +72,7 @@ export declare class DragAndDropService {
     private eRightIcon;
     private eGroupIcon;
     private eAggregateIcon;
+    private ePivotIcon;
     private init();
     private setBeans(loggerFactory);
     addDragSource(dragSource: DragSource): void;

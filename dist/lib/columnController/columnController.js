@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1149,19 +1149,14 @@ var ColumnController = (function () {
     };
     ColumnController.prototype.calculateColumnsForDisplay = function () {
         var columnsForDisplay;
-        if (this.secondaryColumnsPresent) {
-            // always use secondary columns if they are there, these can be either in grid
-            // pivoting, or the user provided alternative columns
-            columnsForDisplay = this.gridColumns.slice();
-        }
-        else if (this.pivotMode) {
+        if (this.pivotMode && !this.secondaryColumnsPresent) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             columnsForDisplay = this.valueColumns.slice();
         }
         else {
-            // not in pivot mode, so we use the visibility of the column
-            // to decide what is displayable
+            // otherwise continue as normal. this can be working on the primary
+            // or secondary columns, whatever the gridColumns are set to
             columnsForDisplay = utils_1.Utils.filter(this.gridColumns, function (column) { return column.isVisible(); });
         }
         this.createGroupAutoColumn();
@@ -1205,8 +1200,6 @@ var ColumnController = (function () {
         }
         this.copyDownGridColumns();
         this.updateDisplayedColumns();
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_PIVOT_VALUE_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_PIVOT_VALUE_CHANGED, event);
     };
     // called from: setColumnState, setColumnDefs, setAlternativeColumnDefs
     ColumnController.prototype.copyDownGridColumns = function () {

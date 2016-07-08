@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -77,7 +77,6 @@ var RenderedRow = (function () {
     RenderedRow.prototype.angular1Compile = function () {
         var _this = this;
         if (this.scope) {
-            console.log('angular1Compile');
             this.eLeftCenterAndRightRows.forEach(function (row) { return _this.$compile(row)(_this.scope); });
         }
     };
@@ -85,13 +84,16 @@ var RenderedRow = (function () {
         var _this = this;
         var columnListener = this.onDisplayedColumnsChanged.bind(this);
         var virtualListener = this.onVirtualColumnsChanged.bind(this);
+        var gridColumnsChangedListener = this.onGridColumnsChanged.bind(this);
         this.mainEventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
         this.mainEventService.addEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
         this.mainEventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
+        this.mainEventService.addEventListener(events_1.Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
         this.destroyFunctions.push(function () {
             _this.mainEventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
             _this.mainEventService.removeEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
             _this.mainEventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
+            _this.mainEventService.removeEventListener(events_1.Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
         });
     };
     RenderedRow.prototype.onDisplayedColumnsChanged = function (event) {
@@ -114,6 +116,12 @@ var RenderedRow = (function () {
             this.angular1Compile();
         }
     };
+    // when grid columns change, then all cells should be cleaned out,
+    // as the new columns could have same id as the previous columns and may conflict
+    RenderedRow.prototype.onGridColumnsChanged = function () {
+        var allRenderedCellIds = Object.keys(this.renderedCells);
+        this.removeRenderedCells(allRenderedCellIds);
+    };
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
@@ -127,10 +135,14 @@ var RenderedRow = (function () {
             utils_1.Utils.removeFromArray(renderedCellKeys, column.getColId());
         });
         // remove old cells from gui, but we don't destroy them, we might use them again
-        renderedCellKeys.forEach(function (key) {
+        this.removeRenderedCells(renderedCellKeys);
+    };
+    RenderedRow.prototype.removeRenderedCells = function (colIds) {
+        var _this = this;
+        colIds.forEach(function (key) {
             var renderedCell = _this.renderedCells[key];
             // could be old reference, ie removed cell
-            if (!renderedCell) {
+            if (utils_1.Utils.missing(renderedCell)) {
                 return;
             }
             if (renderedCell.getParentRow()) {

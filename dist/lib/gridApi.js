@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -109,6 +109,9 @@ var GridApi = (function () {
     };
     GridApi.prototype.refreshView = function () {
         this.rowRenderer.refreshView();
+    };
+    GridApi.prototype.setFunctionsReadOnly = function (readOnly) {
+        this.gridOptionsWrapper.setProperty('functionsReadOnly', readOnly);
     };
     GridApi.prototype.softRefreshView = function () {
         this.rowRenderer.softRefreshView();

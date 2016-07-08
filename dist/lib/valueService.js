@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,9 +17,7 @@ var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var expressionService_1 = require("./expressionService");
 var columnController_1 = require("./columnController/columnController");
 var context_1 = require("./context/context");
-var context_2 = require("./context/context");
-var context_3 = require("./context/context");
-var utils_1 = require('./utils');
+var utils_1 = require("./utils");
 var events_1 = require("./events");
 var eventService_1 = require("./eventService");
 var ValueService = (function () {
@@ -178,23 +176,23 @@ var ValueService = (function () {
         }
     };
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], ValueService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_2.Autowired('expressionService'), 
+        context_1.Autowired('expressionService'), 
         __metadata('design:type', expressionService_1.ExpressionService)
     ], ValueService.prototype, "expressionService", void 0);
     __decorate([
-        context_2.Autowired('columnController'), 
+        context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], ValueService.prototype, "columnController", void 0);
     __decorate([
-        context_2.Autowired('eventService'), 
+        context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], ValueService.prototype, "eventService", void 0);
     __decorate([
-        context_3.PostConstruct, 
+        context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)

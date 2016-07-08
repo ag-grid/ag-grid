@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -144,8 +144,8 @@ var RenderedHeaderCell = (function () {
         if (!eMenu) {
             return;
         }
-        var weWantMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
-        if (!weWantMenu) {
+        var skipMenu = !this.menuFactory.isMenuEnabled(this.column) || this.column.getColDef().suppressMenu;
+        if (skipMenu) {
             utils_1.Utils.removeFromParent(eMenu);
             return;
         }
@@ -187,11 +187,11 @@ var RenderedHeaderCell = (function () {
         });
     };
     RenderedHeaderCell.prototype.setupMove = function (eHeaderCellLabel) {
-        if (this.gridOptionsWrapper.isSuppressMovableColumns() || this.column.getColDef().suppressMovable) {
-            return;
-        }
-        if (this.gridOptionsWrapper.isForPrint()) {
-            // don't allow moving of headers when forPrint, as the header overlay doesn't exist
+        var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
+            || this.column.getColDef().suppressMovable
+            || this.gridOptionsWrapper.isForPrint()
+            || this.columnController.isPivotMode();
+        if (suppressMove) {
             return;
         }
         if (eHeaderCellLabel) {

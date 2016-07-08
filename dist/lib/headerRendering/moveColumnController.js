@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,10 @@ var MoveColumnController = (function () {
     }
     MoveColumnController.prototype.init = function () {
         this.logger = this.loggerFactory.create('MoveColumnController');
+    };
+    MoveColumnController.prototype.getIconName = function () {
+        return this.pinned ? dragAndDropService_1.DragAndDropService.ICON_PINNED : dragAndDropService_1.DragAndDropService.ICON_MOVE;
+        ;
     };
     MoveColumnController.prototype.onDragEnter = function (draggingEvent) {
         // we do dummy drag, so make sure column appears in the right location when first placed

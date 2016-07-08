@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,8 +15,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var context_1 = require("../context/context");
 var filterManager_1 = require("../filter/filterManager");
-var utils_1 = require('../utils');
-var context_2 = require("../context/context");
+var utils_1 = require("../utils");
 var popupService_1 = require("../widgets/popupService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var StandardMenuFactory = (function () {
@@ -55,18 +54,18 @@ var StandardMenuFactory = (function () {
     };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
         // for standard, we show menu if filter is enabled, and he menu is not suppressed
-        return this.gridOptionsWrapper.isEnableFilter();
+        return this.gridOptionsWrapper.isEnableFilter() && column.isFilterAllowed();
     };
     __decorate([
-        context_2.Autowired('filterManager'), 
+        context_1.Autowired('filterManager'), 
         __metadata('design:type', filterManager_1.FilterManager)
     ], StandardMenuFactory.prototype, "filterManager", void 0);
     __decorate([
-        context_2.Autowired('popupService'), 
+        context_1.Autowired('popupService'), 
         __metadata('design:type', popupService_1.PopupService)
     ], StandardMenuFactory.prototype, "popupService", void 0);
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
+        context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], StandardMenuFactory.prototype, "gridOptionsWrapper", void 0);
     StandardMenuFactory = __decorate([

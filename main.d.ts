@@ -15,8 +15,6 @@ export * from './dist/lib/dragAndDrop/dragAndDropService';
 export * from './dist/lib/dragAndDrop/dragService';
 export * from './dist/lib/dragAndDrop/oldToolPanelDragAndDropService';
 
-export * from './dist/lib/rendering/largeText/largeTextCellEditor';
-
 export * from './dist/lib/entities/colDef';
 export * from './dist/lib/entities/column';
 export * from './dist/lib/entities/columnGroup';
@@ -38,9 +36,12 @@ export * from './dist/lib/filter/textFilter';
 export * from './dist/lib/gridPanel/gridPanel';
 export * from './dist/lib/gridPanel/mouseEventService';
 
+export * from './dist/lib/headerRendering/bodyDropPivotTarget';
+export * from './dist/lib/headerRendering/bodyDropTarget';
 export * from './dist/lib/headerRendering/cssClassApplier';
 export * from './dist/lib/headerRendering/headerContainer';
 export * from './dist/lib/headerRendering/headerRenderer';
+export * from './dist/lib/headerRendering/headerRowComp';
 export * from './dist/lib/headerRendering/headerTemplateLoader';
 export * from './dist/lib/headerRendering/horizontalDragService';
 export * from './dist/lib/headerRendering/iRenderedHeaderElement';
@@ -51,8 +52,9 @@ export * from './dist/lib/headerRendering/standardMenu';
 
 export * from './dist/lib/interfaces/iAggFuncService';
 export * from './dist/lib/interfaces/iClipboardService';
-export * from './dist/lib/interfaces/iContextMenuFactory';
 export * from './dist/lib/interfaces/iCompFactory';
+export * from './dist/lib/interfaces/iContextMenuFactory';
+export * from './dist/lib/interfaces/iEventEmitter';
 export * from './dist/lib/interfaces/iMenu';
 export * from './dist/lib/interfaces/iMenuFactory';
 export * from './dist/lib/interfaces/iRangeController';
@@ -64,25 +66,31 @@ export * from './dist/lib/layout/borderLayout';
 export * from './dist/lib/layout/tabbedLayout';
 export * from './dist/lib/layout/verticalStack';
 
+export * from './dist/lib/misc/focusService';
+
 export * from './dist/lib/rendering/cellEditors/iCellEditor';
+export * from './dist/lib/rendering/cellEditors/largeTextCellEditor';
 export * from './dist/lib/rendering/cellEditors/popupEditorWrapper';
 export * from './dist/lib/rendering/cellEditors/popupSelectCellEditor';
 export * from './dist/lib/rendering/cellEditors/popupTextCellEditor';
 export * from './dist/lib/rendering/cellEditors/selectCellEditor';
 export * from './dist/lib/rendering/cellEditors/textCellEditor';
 
-export * from './dist/lib/rendering/cellRenderers/iCellRenderer';
+export * from './dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer';
 export * from './dist/lib/rendering/cellRenderers/animateSlideCellRenderer';
 export * from './dist/lib/rendering/cellRenderers/groupCellRenderer';
+export * from './dist/lib/rendering/cellRenderers/iCellRenderer';
+
+export * from './dist/lib/rendering/features/setLeftFeature';
 
 export * from './dist/lib/rendering/autoWidthCalculator';
-export * from './dist/lib/rendering/renderedCell';
-export * from './dist/lib/rendering/renderedRow';
-export * from './dist/lib/rendering/rowRenderer';
+export * from './dist/lib/rendering/cellEditorFactory';
 export * from './dist/lib/rendering/cellRendererFactory';
 export * from './dist/lib/rendering/cellRendererService';
 export * from './dist/lib/rendering/checkboxSelectionComponent';
-export * from './dist/lib/rendering/cellEditorFactory';
+export * from './dist/lib/rendering/renderedCell';
+export * from './dist/lib/rendering/renderedRow';
+export * from './dist/lib/rendering/rowRenderer';
 export * from './dist/lib/rendering/valueFormatterService';
 
 export * from './dist/lib/rowControllers/inMemory/filterStage';
@@ -94,12 +102,12 @@ export * from './dist/lib/rowControllers/floatingRowModel';
 export * from './dist/lib/rowControllers/paginationController';
 export * from './dist/lib/rowControllers/virtualPageRowModel';
 
-export * from './dist/lib/widgets/menuItemComponent';
+export * from './dist/lib/widgets/agCheckbox';
 export * from './dist/lib/widgets/component';
+export * from './dist/lib/widgets/componentAnnotations';
+export * from './dist/lib/widgets/menuItemComponent';
 export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
-export * from './dist/lib/widgets/componentAnnotations';
-export * from './dist/lib/widgets/agCheckbox';
 
 export * from './dist/lib/cellNavigationService';
 export * from './dist/lib/clientExports';

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,7 @@ function positiveNumberOrZero(value, defaultValue) {
 }
 var GridOptionsWrapper = (function () {
     function GridOptionsWrapper() {
+        this.propertyEventService = new eventService_1.EventService();
     }
     GridOptionsWrapper.prototype.agWire = function (gridApi, columnApi) {
         this.headerHeight = this.gridOptions.headerHeight;
@@ -89,8 +90,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isSuppressFieldDotNotation = function () { return isTrue(this.gridOptions.suppressFieldDotNotation); };
     GridOptionsWrapper.prototype.getFloatingTopRowData = function () { return this.gridOptions.floatingTopRowData; };
     GridOptionsWrapper.prototype.getFloatingBottomRowData = function () { return this.gridOptions.floatingBottomRowData; };
-    GridOptionsWrapper.prototype.isRowGroupPassive = function () { return isTrue(this.gridOptions.rowGroupPassive); };
-    GridOptionsWrapper.prototype.isPivotPassive = function () { return isTrue(this.gridOptions.pivotPassive); };
+    GridOptionsWrapper.prototype.isFunctionsPassive = function () { return isTrue(this.gridOptions.functionsPassive); };
     GridOptionsWrapper.prototype.getQuickFilterText = function () { return this.gridOptions.quickFilterText; };
     GridOptionsWrapper.prototype.isUnSortIcon = function () { return isTrue(this.gridOptions.unSortIcon); };
     GridOptionsWrapper.prototype.isSuppressMenuHide = function () { return isTrue(this.gridOptions.suppressMenuHide); };
@@ -152,6 +152,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isSuppressAutoSize = function () { return isTrue(this.gridOptions.suppressAutoSize); };
     GridOptionsWrapper.prototype.isSuppressParentsInRowNodes = function () { return isTrue(this.gridOptions.suppressParentsInRowNodes); };
     GridOptionsWrapper.prototype.isEnableStatusBar = function () { return isTrue(this.gridOptions.enableStatusBar); };
+    GridOptionsWrapper.prototype.isFunctionsReadOnly = function () { return isTrue(this.gridOptions.functionsReadOnly); };
     GridOptionsWrapper.prototype.getHeaderCellTemplate = function () { return this.gridOptions.headerCellTemplate; };
     GridOptionsWrapper.prototype.getHeaderCellTemplateFunc = function () { return this.gridOptions.getHeaderCellTemplate; };
     GridOptionsWrapper.prototype.getNodeChildDetailsFunc = function () { return this.gridOptions.getNodeChildDetails; };
@@ -163,6 +164,18 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); };
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+    GridOptionsWrapper.prototype.setProperty = function (key, value) {
+        var gridOptionsNoType = this.gridOptions;
+        var previousValue = gridOptionsNoType[key];
+        gridOptionsNoType[key] = value;
+        this.propertyEventService.dispatchEvent(key, { currentValue: value, previousValue: previousValue });
+    };
+    GridOptionsWrapper.prototype.addEventListener = function (key, listener) {
+        this.propertyEventService.addEventListener(key, listener);
+    };
+    GridOptionsWrapper.prototype.removeEventListener = function (key, listener) {
+        this.propertyEventService.removeEventListener(key, listener);
+    };
     GridOptionsWrapper.prototype.executeProcessRowPostCreateFunc = function (params) {
         if (this.gridOptions.processRowPostCreate) {
             this.gridOptions.processRowPostCreate(params);

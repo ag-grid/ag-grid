@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,30 +30,66 @@ var AgCheckbox = (function (_super) {
     function AgCheckbox() {
         _super.call(this, AgCheckbox.TEMPLATE);
         this.selected = false;
+        this.readOnly = false;
+        this.passive = false;
     }
     AgCheckbox.prototype.init = function () {
-        this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
-        this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
-        this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
+        this.loadIcons();
         this.updateIcons();
         var label = this.getAttribute('label');
         if (label) {
             this.eLabel.innerText = label;
         }
     };
-    AgCheckbox.prototype.onClick = function () {
-        if (this.selected === undefined) {
-            this.setSelected(true);
+    AgCheckbox.prototype.loadIcons = function () {
+        utils_1.Utils.removeAllChildren(this.eChecked);
+        utils_1.Utils.removeAllChildren(this.eUnchecked);
+        utils_1.Utils.removeAllChildren(this.eIndeterminate);
+        if (this.readOnly) {
+            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedReadOnlyIcon));
+            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedReadOnlyIcon));
+            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateReadOnlyIcon));
         }
         else {
-            this.setSelected(!this.selected);
+            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
+            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
+            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
         }
+    };
+    AgCheckbox.prototype.onClick = function () {
+        if (!this.readOnly) {
+            this.toggle();
+        }
+    };
+    AgCheckbox.prototype.getNextValue = function () {
+        if (this.selected === undefined) {
+            return true;
+        }
+        else {
+            return !this.selected;
+        }
+    };
+    AgCheckbox.prototype.setPassive = function (passive) {
+        this.passive = passive;
+    };
+    AgCheckbox.prototype.setReadOnly = function (readOnly) {
+        this.readOnly = readOnly;
+        this.loadIcons();
+    };
+    AgCheckbox.prototype.isReadOnly = function () {
+        return this.readOnly;
     };
     AgCheckbox.prototype.isSelected = function () {
         return this.selected;
     };
     AgCheckbox.prototype.toggle = function () {
-        this.setSelected(!this.selected);
+        var nextValue = this.getNextValue();
+        if (this.passive) {
+            this.dispatchEvent(AgCheckbox.EVENT_CHANGED, { selected: nextValue });
+        }
+        else {
+            this.setSelected(nextValue);
+        }
     };
     AgCheckbox.prototype.setSelected = function (selected) {
         if (this.selected === selected) {

@@ -1,14 +1,18 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 export declare class BodyDropPivotTarget {
     private columnController;
+    private gridOptionsWrapper;
     private columnsToAggregate;
     private columnsToGroup;
+    private pinned;
+    constructor(pinned: string);
     /** Callback for when drag enters */
     onDragEnter(draggingEvent: DraggingEvent): void;
+    getIconName(): string;
     /** Callback for when drag leaves */
     onDragLeave(draggingEvent: DraggingEvent): void;
     /** Callback for when dragging */

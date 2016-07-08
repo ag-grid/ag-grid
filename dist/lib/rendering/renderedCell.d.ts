@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -71,7 +71,7 @@ export declare class RenderedCell extends Component {
     private onPopupEditorClosed();
     private onTabKeyDown(event);
     private onBackspaceOrDeleteKeyPressed(key);
-    private onSpaceKeyPressed();
+    private onSpaceKeyPressed(event);
     private onNavigationKeyPressed(event, key);
     private addKeyPressListener();
     private onKeyDown(event);

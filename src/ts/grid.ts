@@ -46,7 +46,7 @@ import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {AgCheckbox} from "./widgets/agCheckbox";
-import {LargeTextCellEditor} from "./rendering/largeText/largeTextCellEditor";
+import {LargeTextCellEditor} from "./rendering/cellEditors/largeTextCellEditor";
 
 export class Grid {
 

@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { Context } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export declare class Component implements IEventEmitter {
     static EVENT_VISIBLE_CHANGED: string;
     private eGui;
@@ -34,7 +35,7 @@ export declare class Component implements IEventEmitter {
     addOrRemoveCssClass(className: string, addOrRemove: boolean): void;
     destroy(): void;
     addGuiEventListener(event: string, listener: (event: any) => void): void;
-    addDestroyableEventListener(eElement: HTMLElement | IEventEmitter, event: string, listener: (event?: any) => void): void;
+    addDestroyableEventListener(eElement: HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): void;
     addDestroyFunc(func: () => void): void;
     addCssClass(className: string): void;
     getAttribute(key: string): string;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,7 +44,7 @@ var RowNode = (function () {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     RowNode.prototype.setDataValue = function (colKey, newValue) {
-        var column = this.columnController.getPrimaryColumn(colKey);
+        var column = this.columnController.getGridColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         var event = { column: column, newValue: newValue };
         this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -113,26 +113,26 @@ var RenderedHeaderGroupCell = (function () {
             });
         }
     };
+    RenderedHeaderGroupCell.prototype.isSuppressMoving = function () {
+        // if any child is fixed, then don't allow moving
+        var childSuppressesMoving = false;
+        this.columnGroup.getLeafColumns().forEach(function (column) {
+            if (column.getColDef().suppressMovable) {
+                childSuppressesMoving = true;
+            }
+        });
+        var result = childSuppressesMoving
+            || this.gridOptionsWrapper.isSuppressMovableColumns()
+            || this.gridOptionsWrapper.isForPrint()
+            || this.columnController.isPivotMode();
+        return result;
+    };
     RenderedHeaderGroupCell.prototype.setupMove = function () {
         var eLabel = this.eHeaderGroupCell.querySelector('.ag-header-group-cell-label');
         if (!eLabel) {
             return;
         }
-        if (this.gridOptionsWrapper.isSuppressMovableColumns()) {
-            return;
-        }
-        // if any child is fixed, then don't allow moving
-        var atLeastOneChildNotMovable = false;
-        this.columnGroup.getLeafColumns().forEach(function (column) {
-            if (column.getColDef().suppressMovable) {
-                atLeastOneChildNotMovable = true;
-            }
-        });
-        if (atLeastOneChildNotMovable) {
-            return;
-        }
-        // don't allow moving of headers when forPrint, as the header overlay doesn't exist
-        if (this.gridOptionsWrapper.isForPrint()) {
+        if (this.isSuppressMoving()) {
             return;
         }
         if (eLabel) {

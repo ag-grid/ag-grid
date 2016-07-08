@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -12,9 +12,16 @@ export declare class AgCheckbox extends Component {
     private eIndeterminate;
     private eLabel;
     private selected;
+    private readOnly;
+    private passive;
     constructor();
     private init();
+    private loadIcons();
     private onClick();
+    getNextValue(): boolean;
+    setPassive(passive: boolean): void;
+    setReadOnly(readOnly: boolean): void;
+    isReadOnly(): boolean;
     isSelected(): boolean;
     toggle(): void;
     setSelected(selected: boolean): void;

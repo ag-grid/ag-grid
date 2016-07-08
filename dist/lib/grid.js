@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.6
+ * @version v5.0.0-alpha.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,7 +51,7 @@ var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
 var agCheckbox_1 = require("./widgets/agCheckbox");
-var largeTextCellEditor_1 = require("./rendering/largeText/largeTextCellEditor");
+var largeTextCellEditor_1 = require("./rendering/cellEditors/largeTextCellEditor");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, globalEventListener, $scope, $compile, quickFilterOnScope) {
         if (globalEventListener === void 0) { globalEventListener = null; }
@@ -97,6 +97,9 @@ var Grid = (function () {
             columnApi: gridOptions.columnApi
         };
         eventService.dispatchEvent(events_1.Events.EVENT_GRID_READY, readyEvent);
+        if (gridOptions.debug) {
+            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
+        }
     }
     Grid.setEnterpriseBeans = function (enterpriseBeans, rowModelClasses) {
         this.enterpriseBeans = enterpriseBeans;

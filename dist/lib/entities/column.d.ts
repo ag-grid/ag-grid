@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -97,6 +97,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isRowGroupActive(): boolean;
     setPivotActive(pivot: boolean): void;
     isPivotActive(): boolean;
+    isAnyFunctionActive(): boolean;
+    isAnyFunctionAllowed(): boolean;
     setValueActive(value: boolean): void;
     isValueActive(): boolean;
     isAllowPivot(): boolean;

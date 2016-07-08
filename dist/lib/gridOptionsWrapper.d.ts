@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.6
+// Type definitions for ag-grid v5.0.0-alpha.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -16,6 +16,7 @@ export declare class GridOptionsWrapper {
     private eventService;
     private enterprise;
     private headerHeight;
+    private propertyEventService;
     agWire(gridApi: GridApi, columnApi: ColumnApi): void;
     init(): void;
     isEnterprise(): boolean;
@@ -50,8 +51,7 @@ export declare class GridOptionsWrapper {
     isSuppressFieldDotNotation(): boolean;
     getFloatingTopRowData(): any[];
     getFloatingBottomRowData(): any[];
-    isRowGroupPassive(): boolean;
-    isPivotPassive(): boolean;
+    isFunctionsPassive(): boolean;
     getQuickFilterText(): string;
     isUnSortIcon(): boolean;
     isSuppressMenuHide(): boolean;
@@ -119,6 +119,7 @@ export declare class GridOptionsWrapper {
     isSuppressAutoSize(): boolean;
     isSuppressParentsInRowNodes(): boolean;
     isEnableStatusBar(): boolean;
+    isFunctionsReadOnly(): boolean;
     getHeaderCellTemplate(): string;
     getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
     getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);
@@ -128,6 +129,9 @@ export declare class GridOptionsWrapper {
     getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams) => any;
     getViewportRowModelPageSize(): number;
     getViewportRowModelBufferSize(): number;
+    setProperty(key: string, value: any): void;
+    addEventListener(key: string, listener: Function): void;
+    removeEventListener(key: string, listener: Function): void;
     executeProcessRowPostCreateFunc(params: ProcessRowParams): void;
     getHeaderHeight(): number;
     setHeaderHeight(headerHeight: number): void;
