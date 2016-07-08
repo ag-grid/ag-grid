@@ -193,6 +193,7 @@ export interface GridOptions {
     onColumnPivotRemoveRequest?(event?: any): void;
     onColumnValueAddRequest?(event?: any): void;
     onColumnValueRemoveRequest?(event?: any): void;
+    onColumnAggFuncChangeRequest?(event?: any): void;
     onClipboardPaste?(event?: any): void;
     onHeaderHeightChanged?(event?: any): void;
     onModelUpdated?(event?: any): void;
