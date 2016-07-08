@@ -85,9 +85,9 @@ export class RenderedColumn extends Component {
     }
 
     private onClick(): void {
-        if (!this.cbSelect.isReadOnly()) {
-            this.cbSelect.toggle();
-        }
+        if (this.cbSelect.isReadOnly()) { return; }
+
+        this.cbSelect.toggle();
     }
 
     private onChange(): void {
@@ -99,10 +99,8 @@ export class RenderedColumn extends Component {
         // so the user gets nice feedback when they click. otherwise there would be a lag and the
         // user would think the checkboxes were clunky
         if (this.cbSelect.isSelected()) {
-            // setTimeout(this.actionChecked.bind(this), 0);
             this.actionChecked();
         } else {
-            // setTimeout(this.actionUnChecked.bind(this), 0);
             this.actionUnChecked();
         }
     }

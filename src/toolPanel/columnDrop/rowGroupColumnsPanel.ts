@@ -65,7 +65,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected removeColumns(columns:Column[]) {
-        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, {columns: columns});
         } else {
             // this panel only allows dragging columns (not column groups) so we are guaranteed
@@ -86,7 +86,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected addColumns(columns: Column[]) {
-        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, {columns: columns} );
         } else {
             this.columnController.addRowGroupColumns(columns);
