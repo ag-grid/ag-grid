@@ -36,6 +36,9 @@ var gridOptions = {
     },
     onColumnValueRemoveRequest: function(event) {
         console.log('onColumnValueRemoveRequest columns = ' + mapColumns(event.columns));
+    },
+    onColumnAggFuncChangeRequest: function(event) {
+        console.log('onColumnAggFuncChangeRequest columns = ' + mapColumns(event.columns) + ', aggFunc = ' + event.aggFunc);
     }
 };
 
