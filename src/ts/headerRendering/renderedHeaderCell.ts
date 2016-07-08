@@ -179,9 +179,9 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             return;
         }
 
-        var weWantMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
+        var skipMenu = !this.menuFactory.isMenuEnabled(this.column) || this.column.getColDef().suppressMenu;
 
-        if (!weWantMenu) {
+        if (skipMenu) {
             _.removeFromParent(eMenu);
             return;
         }

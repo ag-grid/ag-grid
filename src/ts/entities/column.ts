@@ -126,7 +126,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     }
 
     public isFilterAllowed(): boolean {
-        return this.primary;
+        return this.primary && !this.colDef.suppressFilter;
     }
     
     public isFieldContainsDots(): boolean {
