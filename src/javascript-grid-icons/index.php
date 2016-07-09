@@ -66,6 +66,7 @@ include '../documentation-main/documentation_header.php';
     columnMoveGroup // when about to drop into group panel
     columnMoveValue // when about to drop into value panel
     columnMovePivot // when about to drop into pivot panel
+    dropNotAllowed // when trying to drop column into group/value/pivot panel and column doesn't support it
 }
 </pre>
 
