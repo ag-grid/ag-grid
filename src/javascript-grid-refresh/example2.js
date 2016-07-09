@@ -78,6 +78,7 @@ function cellRendererHeaderCell(params) {
 }
 
 var gridOptions = {
+    suppressAggFuncInHeader: true,
     groupIncludeFooter: true,
     groupDefaultExpanded: 1,
     groupSuppressAutoColumn: true,

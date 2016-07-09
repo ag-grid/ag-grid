@@ -50,7 +50,7 @@
 
 .sidebarLink {
     padding: 2px 4px 2px 4px;
-    /*border-bottom: 1px solid #e8e8e8;*/
+    border-bottom: 1px solid #e8e8e8;
     display: block;
     color: #888;
 }
