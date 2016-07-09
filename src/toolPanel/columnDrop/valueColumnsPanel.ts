@@ -55,7 +55,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     }
 
     protected getIconName(): string {
-        return this.isPotentialDndColumns() ? DragAndDropService.ICON_AGGREGATE : null;
+        return this.isPotentialDndColumns() ? DragAndDropService.ICON_AGGREGATE : DragAndDropService.ICON_NOT_ALLOWED;
     }
 
     protected isColumnDroppable(column: Column): boolean {

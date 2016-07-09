@@ -82,7 +82,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected getIconName(): string {
-        return this.isPotentialDndColumns() ? DragAndDropService.ICON_GROUP : null;
+        return this.isPotentialDndColumns() ? DragAndDropService.ICON_GROUP : DragAndDropService.ICON_NOT_ALLOWED;
     }
 
     protected addColumns(columns: Column[]) {

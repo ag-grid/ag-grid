@@ -109,7 +109,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     }
 
     protected getIconName(): string {
-        return this.isPotentialDndColumns() ? DragAndDropService.ICON_PIVOT : null;
+        return this.isPotentialDndColumns() ? DragAndDropService.ICON_PIVOT : DragAndDropService.ICON_NOT_ALLOWED;
     }
 
     protected addColumns(columns: Column[]) {

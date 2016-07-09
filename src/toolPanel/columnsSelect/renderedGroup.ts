@@ -177,17 +177,20 @@ export class RenderedGroup extends Component {
 
         var columnsToAggregate: Column[] = [];
         var columnsToGroup: Column[] = [];
+        var columnsToPivot: Column[] = [];
 
         columns.forEach( column => {
+            // don't change any column that's already got a function active
+            if (column.isAnyFunctionActive()) { return; }
+
             if (column.isAllowValue()) {
-                if (!column.isValueActive()) {
-                    columnsToAggregate.push(column);
-                }
-            } else {
-                if (!column.isPivotActive() && !column.isRowGroupActive()) {
-                    columnsToGroup.push(column);
-                }
+                columnsToAggregate.push(column);
+            } else if (column.isAllowRowGroup()) {
+                columnsToGroup.push(column);
+            } else if (column.isAllowRowGroup()) {
+                columnsToPivot.push(column);
             }
+
         });
 
         if (columnsToAggregate.length>0) {
@@ -195,6 +198,9 @@ export class RenderedGroup extends Component {
         }
         if (columnsToGroup.length>0) {
             this.columnController.addRowGroupColumns(columnsToGroup);
+        }
+        if (columnsToPivot.length>0) {
+            this.columnController.addPivotColumns(columnsToPivot);
         }
 
     }
