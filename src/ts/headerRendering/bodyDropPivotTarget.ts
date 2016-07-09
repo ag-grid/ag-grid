@@ -12,6 +12,7 @@ export class BodyDropPivotTarget {
 
     private columnsToAggregate: Column[] = [];
     private columnsToGroup: Column[] = [];
+    private columnsToPivot: Column[] = [];
 
     private pinned: string;
 
@@ -21,8 +22,7 @@ export class BodyDropPivotTarget {
 
     /** Callback for when drag enters */
     public onDragEnter(draggingEvent: DraggingEvent): void {
-        this.columnsToAggregate = [];
-        this.columnsToGroup = [];
+        this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return; }
@@ -33,22 +33,23 @@ export class BodyDropPivotTarget {
             // we don't allow adding secondary columns
             if (!column.isPrimary()) { return; }
 
+            if (column.isAnyFunctionActive()) { return; }
+
             if (column.isAllowValue()) {
-                if (!column.isValueActive()) {
-                    this.columnsToAggregate.push(column);
-                }
-            } else {
-                if (!column.isPivotActive() && !column.isRowGroupActive()) {
-                    this.columnsToGroup.push(column);
-                }
+                this.columnsToAggregate.push(column);
+            } else if (column.isAllowRowGroup()) {
+                this.columnsToGroup.push(column);
+            } else if (column.isAllowRowGroup()) {
+                this.columnsToPivot.push(column);
             }
+
         });
     }
 
     public getIconName(): string {
-        var totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length;
+        var totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
         if (totalColumns > 0) {
-            return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;;
+            return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
         } else {
             return null;
         }
@@ -56,11 +57,14 @@ export class BodyDropPivotTarget {
 
     /** Callback for when drag leaves */
     public onDragLeave(draggingEvent: DraggingEvent): void {
-
         // if we are taking columns out of the center, then we remove them from the report
+        this.clearColumnsList();
+    }
 
-        this.columnsToAggregate = null;
-        this.columnsToGroup = null;
+    private clearColumnsList(): void {
+        this.columnsToAggregate.length = 0;
+        this.columnsToGroup.length = 0;
+        this.columnsToPivot.length = 0;
     }
 
     /** Callback for when dragging */
@@ -74,6 +78,9 @@ export class BodyDropPivotTarget {
         }
         if (this.columnsToGroup.length>0) {
             this.columnController.addRowGroupColumns(this.columnsToGroup);
+        }
+        if (this.columnsToPivot.length>0) {
+            this.columnController.addPivotColumns(this.columnsToPivot);
         }
     }
     
