@@ -43,8 +43,8 @@ include '../documentation-main/documentation_header.php';
         contains the Angular 2 component.
         <pre><code>"dependencies": {
     ...
-    "ag-grid": "4.2.x",
-    "ag-grid-ng2": "4.2.x"
+    "ag-grid": "5.0.x",
+    "ag-grid-ng2": "5.0.x"
 }</code></pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
