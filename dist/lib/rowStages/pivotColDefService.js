@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -64,6 +64,9 @@ var PivotColDefService = (function () {
         if (valueColumn) {
             var colDefToCopy = valueColumn.getColDef();
             main_1.Utils.assign(colDef, colDefToCopy);
+            // even if original column was hidden, we always show the pivot value column, otherwise it would be
+            // very confusing for people thinking the pivot is broken
+            colDef.hide = false;
         }
         colDef.valueGetter = null;
         colDef.headerName = headerName;

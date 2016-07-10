@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -29,7 +29,7 @@ var ColumnComponent = (function (_super) {
     ColumnComponent.prototype.init = function () {
         this.displayName = this.columnController.getDisplayNameForCol(this.column);
         this.setupComponents();
-        if (!this.ghost) {
+        if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
         }
     };
@@ -45,11 +45,15 @@ var ColumnComponent = (function (_super) {
     ColumnComponent.prototype.setupComponents = function () {
         var _this = this;
         this.setTextValue();
-        this.addDestroyableEventListener(this.btRemove, 'click', function () { return _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE); });
+        this.addDestroyableEventListener(this.btRemove, 'click', function (event) {
+            _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
+            event.stopPropagation();
+        });
+        main_1.Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
         if (this.ghost) {
             main_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
-        if (this.valueColumn) {
+        if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     };
@@ -102,7 +106,16 @@ var ColumnComponent = (function (_super) {
         var _this = this;
         var itemSelected = function () {
             hidePopup();
-            _this.columnController.setColumnAggFunc(_this.column, value);
+            if (_this.gridOptionsWrapper.isFunctionsPassive()) {
+                var event = {
+                    columns: [_this.column],
+                    aggFunc: value
+                };
+                _this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST, event);
+            }
+            else {
+                _this.columnController.setColumnAggFunc(_this.column, value);
+            }
         };
         var comp = new AggItemComp(itemSelected, value.toString());
         return comp;
@@ -133,6 +146,14 @@ var ColumnComponent = (function (_super) {
         main_1.Autowired('aggFuncService'), 
         __metadata('design:type', aggFuncService_1.AggFuncService)
     ], ColumnComponent.prototype, "aggFuncService", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', main_1.GridOptionsWrapper)
+    ], ColumnComponent.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('eventService'), 
+        __metadata('design:type', main_1.EventService)
+    ], ColumnComponent.prototype, "eventService", void 0);
     __decorate([
         main_1.QuerySelector('.ag-column-drop-cell-text'), 
         __metadata('design:type', HTMLElement)

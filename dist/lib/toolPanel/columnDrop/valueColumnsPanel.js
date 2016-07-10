@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -23,6 +23,7 @@ var ValuesColumnPanel = (function (_super) {
     }
     ValuesColumnPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
+            gridOptionsWrapper: this.gridOptionsWrapper,
             eventService: this.eventService,
             context: this.context,
             loggerFactory: this.loggerFactory,
@@ -39,7 +40,13 @@ var ValuesColumnPanel = (function (_super) {
         });
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     };
+    ValuesColumnPanel.prototype.getIconName = function () {
+        return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_AGGREGATE : main_1.DragAndDropService.ICON_NOT_ALLOWED;
+    };
     ValuesColumnPanel.prototype.isColumnDroppable = function (column) {
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            return false;
+        }
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) {
             return false;
@@ -49,11 +56,21 @@ var ValuesColumnPanel = (function (_super) {
         return columnValue && columnNotValue;
     };
     ValuesColumnPanel.prototype.removeColumns = function (columns) {
-        var columnsCurrentlyValueColumns = main_1.Utils.filter(columns, function (column) { return column.isValueActive(); });
-        this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST, { columns: columns });
+        }
+        else {
+            var columnsCurrentlyValueColumns = main_1.Utils.filter(columns, function (column) { return column.isValueActive(); });
+            this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
+        }
     };
     ValuesColumnPanel.prototype.addColumns = function (columns) {
-        this.columnController.addValueColumns(columns);
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_ADD_REQUEST, { columns: columns });
+        }
+        else {
+            this.columnController.addValueColumns(columns);
+        }
     };
     ValuesColumnPanel.prototype.getExistingColumns = function () {
         return this.columnController.getAggregationColumns();

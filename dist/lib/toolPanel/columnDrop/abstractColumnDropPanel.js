@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -33,6 +33,7 @@ var AbstractColumnDropPanel = (function (_super) {
         this.params = params;
         this.logger = this.beans.loggerFactory.create('AbstractColumnDropPanel');
         this.beans.eventService.addEventListener(main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
         // if columnController first, then below will work
@@ -42,6 +43,7 @@ var AbstractColumnDropPanel = (function (_super) {
     AbstractColumnDropPanel.prototype.setupDropTarget = function () {
         this.dropTarget = {
             getContainer: this.getGui.bind(this),
+            getIconName: this.getIconName.bind(this),
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
@@ -59,12 +61,11 @@ var AbstractColumnDropPanel = (function (_super) {
         var weHaveColumnsToDrag = goodDragColumns.length > 0;
         if (weHaveColumnsToDrag) {
             this.potentialDndColumns = goodDragColumns;
-            this.beans.dragAndDropService.setGhostIcon(this.params.dragAndDropIcon);
             this.refreshGui();
         }
-        else {
-            this.beans.dragAndDropService.setGhostIcon(null);
-        }
+    };
+    AbstractColumnDropPanel.prototype.isPotentialDndColumns = function () {
+        return main_1.Utils.existsAndNotEmpty(this.potentialDndColumns);
     };
     AbstractColumnDropPanel.prototype.onDragLeave = function (draggingEvent) {
         // if the dragging started from us, we remove the group, however if it started

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -23,6 +23,7 @@ var RowGroupColumnsPanel = (function (_super) {
     }
     RowGroupColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
+            gridOptionsWrapper: this.gridOptionsWrapper,
             eventService: this.eventService,
             context: this.context,
             loggerFactory: this.loggerFactory,
@@ -40,6 +41,9 @@ var RowGroupColumnsPanel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
     RowGroupColumnsPanel.prototype.isColumnDroppable = function (column) {
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            return false;
+        }
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) {
             return false;
@@ -50,7 +54,7 @@ var RowGroupColumnsPanel = (function (_super) {
     };
     RowGroupColumnsPanel.prototype.removeColumns = function (columns) {
         var _this = this;
-        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
             this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, { columns: columns });
         }
         else {
@@ -66,8 +70,11 @@ var RowGroupColumnsPanel = (function (_super) {
             });
         }
     };
+    RowGroupColumnsPanel.prototype.getIconName = function () {
+        return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_GROUP : main_1.DragAndDropService.ICON_NOT_ALLOWED;
+    };
     RowGroupColumnsPanel.prototype.addColumns = function (columns) {
-        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
             this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, { columns: columns });
         }
         else {

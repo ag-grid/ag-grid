@@ -1,5 +1,5 @@
 import {Bean, Autowired, PostConstruct} from 'ag-grid/main';
-import {Utils as _} from 'ag-grid/main';
+import {Utils} from 'ag-grid/main';
 import {MD5} from './license/md5';
 
 @Bean('licenseManager')
@@ -14,7 +14,7 @@ export class LicenseManager {
         var valid:boolean = false;
         var current:boolean = false;
 
-        if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
+        if (!Utils.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
             var hashStart = LicenseManager.licenseKey.length - 32;
             var md5 = LicenseManager.licenseKey.substring(hashStart);
             var license = LicenseManager.licenseKey.substring(0, hashStart);

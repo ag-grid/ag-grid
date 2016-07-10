@@ -25,11 +25,19 @@ import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
 import {PivotModePanel} from "./toolPanel/columnDrop/pivotModePanel";
 import {AggFuncService} from "./aggregation/aggFuncService";
+import {MD5} from "./license/md5";
+import {SetFilterListItem} from "./setFilter/setFilterListItem";
+import {ColumnComponent} from "./toolPanel/columnDrop/columnComponent";
+import {ValuesColumnPanel} from "./toolPanel/columnDrop/valueColumnsPanel";
+import {PivotCompFactory} from "./pivotCompFactory";
+import {RowGroupCompFactory} from "./rowGroupCompFactory";
 
 
 export function populateClientExports(exports: any): void {
 
     exports.AggFuncService = AggFuncService;
+
+    exports.MD5 = MD5;
 
     exports.RichSelectCellEditor = RichSelectCellEditor;
     exports.RichSelectRow = RichSelectRow;
@@ -41,16 +49,20 @@ export function populateClientExports(exports: any): void {
     exports.PivotStage = PivotStage;
 
     exports.SetFilter = SetFilter;
+    exports.SetFilter = SetFilterListItem;
     exports.SetFilterModel = SetFilterModel;
 
     exports.StatusBar = StatusBar;
     exports.StatusItem = StatusItem;
 
     exports.AbstractColumnDropPanel = AbstractColumnDropPanel;
-    exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
+    exports.ColumnComponent = ColumnComponent;
     exports.PivotColumnsPanel = PivotColumnsPanel;
-    exports.ToolPanelComp = ToolPanelComp;
     exports.PivotModePanel = PivotModePanel;
+    exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
+    exports.ValuesColumnPanel = ValuesColumnPanel;
+
+    exports.ToolPanelComp = ToolPanelComp;
 
     exports.ColumnSelectPanel = ColumnSelectPanel;
     exports.RenderedColumn = RenderedColumn;
@@ -58,11 +70,14 @@ export function populateClientExports(exports: any): void {
 
     exports.ViewportRowModel = ViewportRowModel;
 
-    exports.ContextMenuFactory = ContextMenuFactory;
     exports.ClipboardService = ClipboardService;
+    exports.ContextMenuFactory = ContextMenuFactory;
     exports.EnterpriseBoot = EnterpriseBoot;
     exports.EnterpriseMenu = EnterpriseMenu;
-    exports.RangeController = RangeController;
-
     exports.LicenseManager = LicenseManager;
+
+    exports.PivotCompFactory = PivotCompFactory;
+    exports.RangeController = RangeController;
+    exports.RowGroupCompFactory = RowGroupCompFactory;
+
 }

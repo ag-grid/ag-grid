@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 import { Column } from "ag-grid/main";
 import { AbstractColumnDropPanel } from "./abstractColumnDropPanel";
 export declare class RowGroupColumnsPanel extends AbstractColumnDropPanel {
@@ -12,6 +12,7 @@ export declare class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     private passBeansUp();
     protected isColumnDroppable(column: Column): boolean;
     protected removeColumns(columns: Column[]): void;
+    protected getIconName(): string;
     protected addColumns(columns: Column[]): void;
     protected getExistingColumns(): Column[];
 }

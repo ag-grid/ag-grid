@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -23,6 +23,7 @@ var PivotColumnsPanel = (function (_super) {
     }
     PivotColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
+            gridOptionsWrapper: this.gridOptionsWrapper,
             eventService: this.eventService,
             context: this.context,
             loggerFactory: this.loggerFactory,
@@ -71,6 +72,9 @@ var PivotColumnsPanel = (function (_super) {
         }
     };
     PivotColumnsPanel.prototype.isColumnDroppable = function (column) {
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            return false;
+        }
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) {
             return false;
@@ -80,7 +84,7 @@ var PivotColumnsPanel = (function (_super) {
         return allowPivot && columnNotAlreadyPivoted;
     };
     PivotColumnsPanel.prototype.removeColumns = function (columns) {
-        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
             this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, { columns: columns });
         }
         else {
@@ -88,8 +92,11 @@ var PivotColumnsPanel = (function (_super) {
             this.columnController.removePivotColumns(columnsPivoted);
         }
     };
+    PivotColumnsPanel.prototype.getIconName = function () {
+        return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_PIVOT : main_1.DragAndDropService.ICON_NOT_ALLOWED;
+    };
     PivotColumnsPanel.prototype.addColumns = function (columns) {
-        if (this.gridOptionsWrapper.isRowGroupPassive()) {
+        if (this.gridOptionsWrapper.isFunctionsPassive()) {
             this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, { columns: columns });
         }
         else {

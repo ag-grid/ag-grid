@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");
 var renderedGroup_1 = require("./toolPanel/columnsSelect/renderedGroup");
@@ -26,8 +26,15 @@ var pivotStage_1 = require("./rowStages/pivotStage");
 var pivotColDefService_1 = require("./rowStages/pivotColDefService");
 var pivotModePanel_1 = require("./toolPanel/columnDrop/pivotModePanel");
 var aggFuncService_1 = require("./aggregation/aggFuncService");
+var md5_1 = require("./license/md5");
+var setFilterListItem_1 = require("./setFilter/setFilterListItem");
+var columnComponent_1 = require("./toolPanel/columnDrop/columnComponent");
+var valueColumnsPanel_1 = require("./toolPanel/columnDrop/valueColumnsPanel");
+var pivotCompFactory_1 = require("./pivotCompFactory");
+var rowGroupCompFactory_1 = require("./rowGroupCompFactory");
 function populateClientExports(exports) {
     exports.AggFuncService = aggFuncService_1.AggFuncService;
+    exports.MD5 = md5_1.MD5;
     exports.RichSelectCellEditor = richSelectCellEditor_1.RichSelectCellEditor;
     exports.RichSelectRow = richSelectRow_1.RichSelectRow;
     exports.VirtualList = virtualList_1.VirtualList;
@@ -36,23 +43,28 @@ function populateClientExports(exports) {
     exports.PivotColDefService = pivotColDefService_1.PivotColDefService;
     exports.PivotStage = pivotStage_1.PivotStage;
     exports.SetFilter = setFilter_1.SetFilter;
+    exports.SetFilter = setFilterListItem_1.SetFilterListItem;
     exports.SetFilterModel = setFilterModel_1.SetFilterModel;
     exports.StatusBar = statusBar_1.StatusBar;
     exports.StatusItem = statusItem_1.StatusItem;
     exports.AbstractColumnDropPanel = abstractColumnDropPanel_1.AbstractColumnDropPanel;
-    exports.RowGroupColumnsPanel = rowGroupColumnsPanel_1.RowGroupColumnsPanel;
+    exports.ColumnComponent = columnComponent_1.ColumnComponent;
     exports.PivotColumnsPanel = pivotColumnsPanel_1.PivotColumnsPanel;
-    exports.ToolPanelComp = toolPanelComp_1.ToolPanelComp;
     exports.PivotModePanel = pivotModePanel_1.PivotModePanel;
+    exports.RowGroupColumnsPanel = rowGroupColumnsPanel_1.RowGroupColumnsPanel;
+    exports.ValuesColumnPanel = valueColumnsPanel_1.ValuesColumnPanel;
+    exports.ToolPanelComp = toolPanelComp_1.ToolPanelComp;
     exports.ColumnSelectPanel = columnSelectPanel_1.ColumnSelectPanel;
     exports.RenderedColumn = renderedColumn_1.RenderedColumn;
     exports.RenderedGroup = renderedGroup_1.RenderedGroup;
     exports.ViewportRowModel = viewportRowModel_1.ViewportRowModel;
-    exports.ContextMenuFactory = contextMenu_1.ContextMenuFactory;
     exports.ClipboardService = clipboardService_1.ClipboardService;
+    exports.ContextMenuFactory = contextMenu_1.ContextMenuFactory;
     exports.EnterpriseBoot = enterpriseBoot_1.EnterpriseBoot;
     exports.EnterpriseMenu = enterpriseMenu_1.EnterpriseMenu;
-    exports.RangeController = rangeController_1.RangeController;
     exports.LicenseManager = licenseManager_1.LicenseManager;
+    exports.PivotCompFactory = pivotCompFactory_1.PivotCompFactory;
+    exports.RangeController = rangeController_1.RangeController;
+    exports.RowGroupCompFactory = rowGroupCompFactory_1.RowGroupCompFactory;
 }
 exports.populateClientExports = populateClientExports;

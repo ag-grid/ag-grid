@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 import { Column } from "ag-grid/main";
 import { AbstractColumnDropPanel } from "./abstractColumnDropPanel";
 export declare class ValuesColumnPanel extends AbstractColumnDropPanel {
@@ -10,6 +10,7 @@ export declare class ValuesColumnPanel extends AbstractColumnDropPanel {
     private dragAndDropService;
     constructor(horizontal: boolean);
     private passBeansUp();
+    protected getIconName(): string;
     protected isColumnDroppable(column: Column): boolean;
     protected removeColumns(columns: Column[]): void;
     protected addColumns(columns: Column[]): void;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 import { Component, Column } from "ag-grid/main";
 export declare class RenderedColumn extends Component {
     private static TEMPLATE;
@@ -11,7 +11,6 @@ export declare class RenderedColumn extends Component {
     private eText;
     private eIndent;
     private cbSelect;
-    private eIcon;
     private column;
     private columnDept;
     private allowDragging;
@@ -19,11 +18,10 @@ export declare class RenderedColumn extends Component {
     private processingColumnStateChange;
     constructor(column: Column, columnDept: number, allowDragging: boolean);
     init(): void;
-    private loadIcon();
     private onClick();
-    private onChange();
-    private actionUnChecked();
-    private actionChecked();
+    private onChange(event);
+    private actionUnCheckedPivotMode();
+    private actionCheckedPivotMode();
     private addDragSource();
     private onColumnStateChanged();
 }

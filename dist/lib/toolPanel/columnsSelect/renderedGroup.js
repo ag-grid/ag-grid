@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.0-alpha.6
+// ag-grid-enterprise v5.0.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -119,16 +119,20 @@ var RenderedGroup = (function (_super) {
     RenderedGroup.prototype.actionCheckedReduce = function (columns) {
         var columnsToAggregate = [];
         var columnsToGroup = [];
+        var columnsToPivot = [];
         columns.forEach(function (column) {
-            if (column.isAllowValue()) {
-                if (!column.isValueActive()) {
-                    columnsToAggregate.push(column);
-                }
+            // don't change any column that's already got a function active
+            if (column.isAnyFunctionActive()) {
+                return;
             }
-            else {
-                if (!column.isPivotActive() && !column.isRowGroupActive()) {
-                    columnsToGroup.push(column);
-                }
+            if (column.isAllowValue()) {
+                columnsToAggregate.push(column);
+            }
+            else if (column.isAllowRowGroup()) {
+                columnsToGroup.push(column);
+            }
+            else if (column.isAllowRowGroup()) {
+                columnsToPivot.push(column);
             }
         });
         if (columnsToAggregate.length > 0) {
@@ -136,6 +140,9 @@ var RenderedGroup = (function (_super) {
         }
         if (columnsToGroup.length > 0) {
             this.columnController.addRowGroupColumns(columnsToGroup);
+        }
+        if (columnsToPivot.length > 0) {
+            this.columnController.addPivotColumns(columnsToPivot);
         }
     };
     RenderedGroup.prototype.onColumnStateChanged = function () {
