@@ -26,7 +26,14 @@ include '../documentation-main/documentation_header.php';
     <p/>
     To create a new theme, either create one from scratch (difficult), or start with one of the provided
     themes that can be found on GitHub here:
-    <a href="https://github.com/ceolter/angular-grid/tree/master/src/styles">https://github.com/ceolter/angular-grid/tree/master/src/styles</a>
+    <a href="https://github.com/ceolter/ag-grid/tree/master/src/styles">https://github.com/ceolter/ag-grid/tree/master/src/styles</a>
+
+    <note>
+        If no want something similar to a provided theme, eg you like the Dark theme but want less padding
+        in the cells, then use the Dark theme and provide your own CSS to override what you don't like
+        in the provided theme. Your browser will apply the last CSS loaded if the same style item is
+        applied twice, allowing you to tweak the provided themes.
+    </note>
 
     <p/>
     This section does not provide an example of building a theme as a number of themes

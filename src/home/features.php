@@ -3,7 +3,7 @@
         <div class="row">
             <h3 class="text-center">Extensive Feature List</h3>
             <ul class="list-unstyled text-center">
-                <li>&#10004;</span> Column Pinning Left & Right</li>
+                <li>&#10004; Column Pinning Left & Right</li>
                 <li>&#10004; Column Resizing</li>
                 <li>&#10004; Column Auto-Size to Fit Contents</li>
                 <li>&#10004; Variable Row Height</li>
@@ -42,7 +42,9 @@
                 <li>&#10004; Master / Slave</li>
                 <li>&#10004; Cell Range Selection</li>
                 <li>&#10004; Status Panel with Aggregation</li>
-                <li>&#10004; Grouping and Aggregation of Data</li>
+                <li>&#10004; Grouping of Data</li>
+                <li>&#10004; Pivoting of Data</li>
+                <li>&#10004; Aggregation of Data</li>
                 <li>&#10004; Excel-like Filtering</li>
                 <li>&#10004; Advanced Column Menu</li>
                 <li>&#10004; Context Menu</li>

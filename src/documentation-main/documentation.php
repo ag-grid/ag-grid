@@ -19,13 +19,11 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">
-            6th July 2016
-        </div>
-        <img style="float: right;" src='../images/superDev.jpg'/>
-        <div>ag-Grid 5.0.0-alpha-<b style="font-size: 20px">6</b> released. Minor 'cleaning up release' changes. See <a href="../archive/5.0.0-alpha/">5.0.0 Alpha Documentation</a> for details.</div>
+        <div class="news-header">10th July 2016</div>
+        <div class="news-header">ag-Grid v5.0 Released</div>
         <div>
-
+            Bringing data pivoting, column virtualisation and many more.
+            See <a href="../change-log/changeLogIndex.php">change log</a> for details.
         </div>
     </div>
 
@@ -150,17 +148,17 @@ include 'documentation_header.php';
     management company in Canada.
 </p>
 
-<h4>Pivoting (ag-Grid enterprise)</h4>
+<!--<h2>Work in Progress Movie - Pivoting</h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jCId-Lbg_6k" frameborder="0" allowfullscreen></iframe>
+-->
+
+<h4>General Cleanup</h4>
 
 <p>
-    Pivoting is the reason we haven't gotten much more done in the past few weeks, it's top of our
-    list and we are half way there with the implementation. When it is ready, you will be able to
-    pivot data inside ag-Grid similar to the pivot functionality in Excel. It will be controller
-    by the tool panel.
+    The next few weeks (possibly two months) is going to be about cleanup. While getting the Pivot functionality
+    in, the rest of the grid didn't keep up to date as it should of. So we are going to take a step back and wade
+    through all the open issues and fix everything that we see as high priority.
 </p>
-
-<h2>Work in Progress Movie - Pivoting</h2>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jCId-Lbg_6k" frameborder="0" allowfullscreen></iframe>
 
 <h4>Pinnable Filters in Tool Panel (ag-Grid enterprise)</h4>
 
