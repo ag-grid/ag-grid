@@ -14,9 +14,14 @@ import {Component} from "../widgets/component";
 export interface ContextParams {
     seed: any,
     beans: any[],
-    components: (new()=>Object)[],
+    components: ComponentMeta[],
     overrideBeans: any[],
     debug: boolean
+}
+
+export interface ComponentMeta {
+    theClass: new()=>Object,
+    componentName: string
 }
 
 interface BeanEntry {
@@ -59,20 +64,20 @@ export class Context {
 
     private setupComponents(): void {
         if (this.contextParams.components) {
-            this.contextParams.components.forEach( ComponentClass => this.addComponent(ComponentClass) )
+            this.contextParams.components.forEach( componentMeta => this.addComponent(componentMeta) )
         }
     }
 
-    private addComponent(ComponentClass: new()=>Object): void {
+    private addComponent(componentMeta: ComponentMeta): void {
         // get name of the class as a string
-        var className = _.getNameOfClass(ComponentClass);
+        // var className = _.getNameOfClass(ComponentClass);
         // insert a dash after every capital letter
         // var classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
-        var classEscaped = className.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+        var classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
         // put all to upper case
         var classUpperCase = classEscaped.toUpperCase();
         // finally store
-        this.componentsMappedByName[classUpperCase] = ComponentClass;
+        this.componentsMappedByName[classUpperCase] = componentMeta.theClass;
     }
 
     public createComponent(element: Element): Component {

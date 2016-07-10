@@ -104,7 +104,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
                 CellEditorFactory, CellRendererService, ValueFormatterService],
-            components: [AgCheckbox],
+            components: [{componentName: 'AgCheckbox', theClass: AgCheckbox}],
             debug: !!gridOptions.debug
         });
 
