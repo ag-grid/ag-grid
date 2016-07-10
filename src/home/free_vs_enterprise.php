@@ -1,4 +1,4 @@
-<section class="HomeSection HomeSection--alt HomeFreeVsEnterprise hidden-xs">
+<section class="HomeSection HomeFreeVsEnterprise hidden-xs">
     <div class="container">
         <div class="row">
             <div class="col-md-6">

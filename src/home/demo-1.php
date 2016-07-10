@@ -22,6 +22,15 @@
             </div>
         </div>
 
+    </div>
+    </div>
+
+</section>
+
+<section class="HomeSection HomeDemo hidden-xs">
+
+    <div class="container">
+        <div class="row">
         <h4 class="text-center">Connect to Live Data Streams and provide Visual Highlights to Changes</h4>
 
         <div class="row HomeDemo-main">

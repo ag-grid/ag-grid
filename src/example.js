@@ -406,7 +406,7 @@ var defaultCols = [
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
-        aggFunc: 'sum',
+        // aggFunc: 'sum',
         enableValue: true,
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         icons: {

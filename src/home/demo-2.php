@@ -14,6 +14,16 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+</section>
+
+<section class="HomeSection HomeDemo hidden-xs">
+
+    <div class="container">
+        <div class="row">
+
             <div class="HomeDemo-sub row">
                 <div class="col-md-8">
                     <div style="border: 1px solid darkgrey;
