@@ -35,7 +35,7 @@
     "css-loader": "0.23.1"
   },
   "peerDependencies": {
-    "ag-grid": "5.0.0"
+    "ag-grid": "5.0.x"
   },
   "dependencies": {
   }
