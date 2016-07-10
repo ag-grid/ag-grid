@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.7
+// Type definitions for ag-grid v5.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -8,6 +8,7 @@ export declare class BodyDropPivotTarget {
     private gridOptionsWrapper;
     private columnsToAggregate;
     private columnsToGroup;
+    private columnsToPivot;
     private pinned;
     constructor(pinned: string);
     /** Callback for when drag enters */
@@ -15,6 +16,7 @@ export declare class BodyDropPivotTarget {
     getIconName(): string;
     /** Callback for when drag leaves */
     onDragLeave(draggingEvent: DraggingEvent): void;
+    private clearColumnsList();
     /** Callback for when dragging */
     onDragging(draggingEvent: DraggingEvent): void;
     /** Callback for when drag stops */

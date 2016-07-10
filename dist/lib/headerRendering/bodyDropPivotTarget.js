@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.7
+ * @version v5.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,13 +21,13 @@ var BodyDropPivotTarget = (function () {
     function BodyDropPivotTarget(pinned) {
         this.columnsToAggregate = [];
         this.columnsToGroup = [];
+        this.columnsToPivot = [];
         this.pinned = pinned;
     }
     /** Callback for when drag enters */
     BodyDropPivotTarget.prototype.onDragEnter = function (draggingEvent) {
         var _this = this;
-        this.columnsToAggregate = [];
-        this.columnsToGroup = [];
+        this.clearColumnsList();
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
             return;
@@ -38,23 +38,24 @@ var BodyDropPivotTarget = (function () {
             if (!column.isPrimary()) {
                 return;
             }
-            if (column.isAllowValue()) {
-                if (!column.isValueActive()) {
-                    _this.columnsToAggregate.push(column);
-                }
+            if (column.isAnyFunctionActive()) {
+                return;
             }
-            else {
-                if (!column.isPivotActive() && !column.isRowGroupActive()) {
-                    _this.columnsToGroup.push(column);
-                }
+            if (column.isAllowValue()) {
+                _this.columnsToAggregate.push(column);
+            }
+            else if (column.isAllowRowGroup()) {
+                _this.columnsToGroup.push(column);
+            }
+            else if (column.isAllowRowGroup()) {
+                _this.columnsToPivot.push(column);
             }
         });
     };
     BodyDropPivotTarget.prototype.getIconName = function () {
-        var totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length;
+        var totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
         if (totalColumns > 0) {
             return this.pinned ? dragAndDropService_1.DragAndDropService.ICON_PINNED : dragAndDropService_1.DragAndDropService.ICON_MOVE;
-            ;
         }
         else {
             return null;
@@ -63,8 +64,12 @@ var BodyDropPivotTarget = (function () {
     /** Callback for when drag leaves */
     BodyDropPivotTarget.prototype.onDragLeave = function (draggingEvent) {
         // if we are taking columns out of the center, then we remove them from the report
-        this.columnsToAggregate = null;
-        this.columnsToGroup = null;
+        this.clearColumnsList();
+    };
+    BodyDropPivotTarget.prototype.clearColumnsList = function () {
+        this.columnsToAggregate.length = 0;
+        this.columnsToGroup.length = 0;
+        this.columnsToPivot.length = 0;
     };
     /** Callback for when dragging */
     BodyDropPivotTarget.prototype.onDragging = function (draggingEvent) {
@@ -76,6 +81,9 @@ var BodyDropPivotTarget = (function () {
         }
         if (this.columnsToGroup.length > 0) {
             this.columnController.addRowGroupColumns(this.columnsToGroup);
+        }
+        if (this.columnsToPivot.length > 0) {
+            this.columnController.addPivotColumns(this.columnsToPivot);
         }
     };
     __decorate([

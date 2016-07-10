@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0-alpha.7
+// Type definitions for ag-grid v5.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -32,6 +32,7 @@ export declare class SvgFactory {
     createGroupIcon(): HTMLImageElement;
     createPivotIcon(): HTMLImageElement;
     createAggregationIcon(): HTMLImageElement;
+    createDropNotAllowedIcon(): HTMLImageElement;
     createGroupIcon12(): HTMLImageElement;
     createCutIcon(): HTMLImageElement;
     createCopyIcon(): HTMLImageElement;

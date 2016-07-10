@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0-alpha.7
+ * @version v5.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -183,6 +183,11 @@ var SvgFactory = (function () {
     SvgFactory.prototype.createAggregationIcon = function () {
         var eImg = document.createElement('img');
         eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMZJREFUeNpi/P//PwMlgImBQjDwBrCgmMYENq8RiLVxqL8KxPX//v1DiIACEYYZGRlBmBOIe4B4PRDrQMUYoGyQGIoebAbADJkAxFuAWA9JXJdYA0CYC4inAPFOINZHlkPWgxKIcFMhQA0aFveB+DbOUERxDhQAbTEC4qNAPBfqEmRx3F6AAhOgojNAvBikGckumDiKHhY0B3ECcTVQQhRIg/B1NNeeB1IgQ7/BXYvmdE6oAnYcPv4NxF+BerAbMDTzAkCAAQChYIl8b86M1gAAAABJRU5ErkJggg==';
+        return eImg;
+    };
+    SvgFactory.prototype.createDropNotAllowedIcon = function () {
+        var eImg = document.createElement('img');
+        eImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MjUyQ0MxNDY0NjBDMTFFNkEzMUVGQUE3NkQzQzU4MjYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MjUyQ0MxNDc0NjBDMTFFNkEzMUVGQUE3NkQzQzU4MjYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoyNTJDQzE0NDQ2MEMxMUU2QTMxRUZBQTc2RDNDNTgyNiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoyNTJDQzE0NTQ2MEMxMUU2QTMxRUZBQTc2RDNDNTgyNiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PstpFisAAAGLSURBVHjalJNPKERRFMbnvRmKpAnjhURKWXjJLNQsqDE7KxI1NhYU2cjKxtbGZpSNqSFT/qxkYafmLWyU2LElCwYLo0SS8J36rk7XbJz61f33nXPuuec6ad8PWdYHJsEAaOPaDTgGeXCqD0cs8TqYCf21bjIHsmC2nIMCGOT4C3yCV44rQRXPS4BOkNIOchTL4RI4A0fggvtdYAj0g2qeFc10hKlNUXwF1sAOeALfdHCuxMZEsyoOFrjwTK8bTN3YMGvjcf7BzF3RukxHIl2DfSVuALvgQIn3wCJ44zwpDpqY/i2458YouARpzmV9BEyAExWk2RTRARUgxiuMqytsg3nWRCzMgL/PWATtoJfVr+PeHd/70OoJ6bxajotyhYCTmBJv8XVssdRljD0hFoiDDCcyfgcrjFyyxFGwBBI8K5YJ+573iEEriHOjBdSr55KoSbDM4ppekFrlHPWZCupJpcoP4IWCRt7bRA5MK7sqxRQ/irxIDegAPez7qDqbNeJyv1Huvvmf7/wjwABtLlYtICx9HQAAAABJRU5ErkJggg==';
         return eImg;
     };
     SvgFactory.prototype.createGroupIcon12 = function () {
