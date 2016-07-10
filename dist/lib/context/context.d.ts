@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.0
+// Type definitions for ag-grid v5.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -6,9 +6,13 @@ import { Component } from "../widgets/component";
 export interface ContextParams {
     seed: any;
     beans: any[];
-    components: (new () => Object)[];
+    components: ComponentMeta[];
     overrideBeans: any[];
     debug: boolean;
+}
+export interface ComponentMeta {
+    theClass: new () => Object;
+    componentName: string;
 }
 export declare class Context {
     private beans;
@@ -18,7 +22,7 @@ export declare class Context {
     private destroyed;
     constructor(params: ContextParams);
     private setupComponents();
-    private addComponent(ComponentClass);
+    private addComponent(componentMeta);
     createComponent(element: Element): Component;
     private copyAttributesFromNode(fromNode, toNode);
     wireBean(bean: any): void;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0
+ * @version v5.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -87,7 +87,7 @@ var Grid = (function () {
                 dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService],
-            components: [agCheckbox_1.AgCheckbox],
+            components: [{ componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }],
             debug: !!gridOptions.debug
         });
         this.context.getBean('cellEditorFactory').addCellEditor(Grid.LARGE_TEXT, largeTextCellEditor_1.LargeTextCellEditor);

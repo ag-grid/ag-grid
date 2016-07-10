@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.0
+ * @version v5.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,19 +26,19 @@ var Context = (function () {
     Context.prototype.setupComponents = function () {
         var _this = this;
         if (this.contextParams.components) {
-            this.contextParams.components.forEach(function (ComponentClass) { return _this.addComponent(ComponentClass); });
+            this.contextParams.components.forEach(function (componentMeta) { return _this.addComponent(componentMeta); });
         }
     };
-    Context.prototype.addComponent = function (ComponentClass) {
+    Context.prototype.addComponent = function (componentMeta) {
         // get name of the class as a string
-        var className = utils_1.Utils.getNameOfClass(ComponentClass);
+        // var className = _.getNameOfClass(ComponentClass);
         // insert a dash after every capital letter
         // var classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
-        var classEscaped = className.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+        var classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
         // put all to upper case
         var classUpperCase = classEscaped.toUpperCase();
         // finally store
-        this.componentsMappedByName[classUpperCase] = ComponentClass;
+        this.componentsMappedByName[classUpperCase] = componentMeta.theClass;
     };
     Context.prototype.createComponent = function (element) {
         var key = element.nodeName;
