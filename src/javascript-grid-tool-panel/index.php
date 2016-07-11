@@ -103,7 +103,7 @@ include '../documentation-main/documentation_header.php';
         so they can see what columns are used, but prevent them from making changes to the selection.
     </p>
 
-    <show-example example="exampleToolPanelReadonly"></show-example>
+    <show-example example="exampleToolPanelReadOnly"></show-example>
 
 </div>
 
