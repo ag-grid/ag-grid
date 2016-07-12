@@ -10,6 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Next version?</h3>
     <li>Enhancement: changed comparison (or sorting) to use localeCompare for strings</li>
+    <li>Bugfix: cellRenderer with text field was not allowing editing in text field</li>
 
     <h3>Version 5.0.x</h3>
     <li>Major Enhancement: Enterprise feature - Pivoting</li>
