@@ -52,6 +52,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: pagination datasource now gets context as a parameter</li>
     <li>Enhancement: added largeText cell editor as an 'out of the box' editor</li>
     <li>Enhancement: enhancements to Material Design look and feel</li>
+    <li>Enhancement: added api.stopEditing()</li>
     <li>Bugfix: SetFilter was failing when you loaded more data into the grid - filter didn't populate with new values correctly.</li>
     
     <h3>Version 4.2.x</h3>
