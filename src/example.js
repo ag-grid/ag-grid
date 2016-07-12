@@ -256,7 +256,7 @@ var firstColumn = {
         width: 200,
         editable: true,
         enableRowGroup: true,
-        enablePivot: true,
+        // enablePivot: true,
         filter: PersonFilter,
         checkboxSelection: function (params) {
             // we put checkbox on the name if we are not doing no grouping
