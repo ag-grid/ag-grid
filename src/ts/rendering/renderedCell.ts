@@ -956,15 +956,23 @@ export class RenderedCell extends Component {
         var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
 
         if (colDef.template) {
+            // template is really only used for angular 1 - as people using ng1 are used to providing templates with
+            // bindings in it. in ng2, people will hopefully want to provide components, not templates.
             this.eParentOfValue.innerHTML = colDef.template;
         } else if (colDef.templateUrl) {
+            // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
+            // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
+            // not do these, but would follow a pattern that was friendly towards components, not templates.
             var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
             if (template) {
                 this.eParentOfValue.innerHTML = template;
             }
+        // use cell renderer if it exists
         } else if (colDef.floatingCellRenderer && this.node.floating) {
+            // if floating, then give preference to floating cell renderer
             this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
         } else if (colDef.cellRenderer) {
+            // use normal cell renderer
             this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams, valueFormatted);
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
