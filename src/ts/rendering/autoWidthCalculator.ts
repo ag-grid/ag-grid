@@ -41,6 +41,13 @@ export class AutoWidthCalculator {
             // on the same line, standard flow layout, by putting them into divs, they are laid
             // out one per line
             var eCloneParent = document.createElement('div');
+
+            // Apply row classes to the containing div. This will ensure that cells will get any special 
+            // styling that might be happening at the row level (eg. font changes, emphasis, etc).
+            eCloneParent.className = eCell.parentNode.className;
+            // "ag-row" class applies position:absolute that needs to be removed.
+            eCloneParent.style.position = 'static';
+
             // table-row, so that each cell is on a row. i also tried display='block', but this
             // didn't work in IE
             eCloneParent.style.display = 'table-row';
