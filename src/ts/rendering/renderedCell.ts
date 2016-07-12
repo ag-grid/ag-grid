@@ -431,6 +431,11 @@ export class RenderedCell extends Component {
 
     private addKeyPressListener(): void {
         var keyPressListener = (event: KeyboardEvent)=> {
+            // check this, in case focus is on a (for example) a text field inside the cell,
+            // in which cse we should not be listening for these key pressed
+            var eventOnChildComponent = event.srcElement!==this.getGui();
+            if (eventOnChildComponent) { return; }
+
             if (!this.editingCell) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
@@ -440,7 +445,9 @@ export class RenderedCell extends Component {
                         this.startEditingIfEnabled(null, pressedChar);
                         // if we don't prevent default, then the keypress also gets applied to the text field
                         // (at least when doing the default editor), but we need to allow the editor to decide
-                        // what it wants to do.
+                        // what it wants to do. we only do this IF editing was started - otherwise it messes
+                        // up when the use is not doing editing, but using rendering with text fields in cellRenderer
+                        // (as it would block the the user from typing into text fields).
                         event.preventDefault();
                     }
                 }
