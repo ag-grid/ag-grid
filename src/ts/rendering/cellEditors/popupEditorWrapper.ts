@@ -1,5 +1,5 @@
 import {Component} from "../../widgets/component";
-import {ICellEditor} from "./iCellEditor";
+import {ICellEditor, ICellEditorParams} from "./iCellEditor";
 
 export class PopupEditorWrapper extends Component implements ICellEditor {
 
@@ -40,7 +40,7 @@ export class PopupEditorWrapper extends Component implements ICellEditor {
         return super.getGui();
     }
     
-    public init(params: any): void {
+    public init(params: ICellEditorParams): void {
         this.params = params;
         if (this.cellEditor.init) {
             this.cellEditor.init(params);

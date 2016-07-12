@@ -61,4 +61,5 @@ export interface ICellEditorParams {
     context: any;
     onKeyDown: (event: KeyboardEvent)=>void;
     stopEditing: ()=>void;
+    eGridCell: HTMLElement;
 }

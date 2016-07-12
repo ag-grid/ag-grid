@@ -18,7 +18,7 @@ import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {IRangeController} from "../interfaces/iRangeController";
 import {GridCell} from "../entities/gridCell";
 import {FocusService} from "../misc/focusService";
-import {ICellEditor} from "./cellEditors/iCellEditor";
+import {ICellEditor, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
@@ -495,7 +495,7 @@ export class RenderedCell extends Component {
         var cellEditor = this.cellEditorFactory.createCellEditor(colDef.cellEditor);
 
         if (cellEditor.init) {
-            var params = {
+            var params: ICellEditorParams = {
                 value: this.getValue(),
                 keyPress: keyPress,
                 charPress: charPress,
