@@ -21,7 +21,7 @@ export interface ICellEditor {
     init?(params: ICellEditorParams): void;
 
     /** Gets called once after GUI is attached to DOM. Useful if you want to focus or highlight a component (this is not possible when the element is not attached)*/
-    afterGuiAttached?(): void;
+    afterGuiAttached?(eGui? : HTMLElement): void;
 
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
     getGui(): HTMLElement;
@@ -61,4 +61,5 @@ export interface ICellEditorParams {
     context: any;
     onKeyDown: (event: KeyboardEvent)=>void;
     stopEditing: ()=>void;
+    eGridCell: HTMLElement;
 }
