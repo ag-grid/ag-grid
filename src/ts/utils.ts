@@ -381,6 +381,16 @@ export class Utils {
             return 1;
         }
 
+        if (typeof valueA === "string") {
+            try {
+                // using local compare also allows chinese comparisons
+                return valueA.localeCompare(valueB);
+            } catch (e) {
+                // if something wrong with localeCompare, eg not supported
+                // by browser, then just continue without using it
+            }
+        }
+
         if (valueA < valueB) {
             return -1;
         } else if (valueA > valueB) {
