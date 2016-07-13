@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Next version?</h3>
     <li>Enhancement: changed comparison (or sorting) to use localeCompare for strings</li>
     <li>Enhancement: now pivot shows 'n/a' when no value columns is enabled</li>
+    <li>Enhancement: now 'autosize cols' considers the header width, not just the row content</li>
     <li>Bugfix: cellRenderer with text field was not allowing editing in text field</li>
 
     <h3>Version 5.0.x</h3>
