@@ -55,11 +55,21 @@ export class PivotColDefService {
                     headerName: key
                 };
                 parentChildren.push(valueGroup);
-                measureColumns.forEach( measureColumn => {
-                    var colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
+                // if no value columns selected, then we insert one blank column, so the user at least sees columns
+                // rendered. otherwise the grid would render with no columns (just empty groups) which would give the
+                // impression that the grid is broken
+                if (measureColumns.length===0) {
+                    // this is the blank column, for when no value columns enabled.
+                    var colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence, `'n/a'`);
                     valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
-                });
+                } else {
+                    measureColumns.forEach( measureColumn => {
+                        var colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence, null);
+                        valueGroup.children.push(colDef);
+                        pivotColumnDefs.push(colDef);
+                    });
+                }
                 valueGroup.children.sort(this.headerNameComparator.bind(this));
 
             }
@@ -67,7 +77,7 @@ export class PivotColDefService {
         });
     }
 
-    private createColDef(valueColumn: Column, headerName: any, pivotKeys: string[], columnIdSequence: NumberSequence): ColDef {
+    private createColDef(valueColumn: Column, headerName: any, pivotKeys: string[], columnIdSequence: NumberSequence, valueGetter: string): ColDef {
 
         var colDef: ColDef = {};
 
@@ -79,7 +89,7 @@ export class PivotColDefService {
             colDef.hide = false;
         }
 
-        colDef.valueGetter = null;
+        colDef.valueGetter = valueGetter;
         colDef.headerName = headerName;
         colDef.colId = 'pivot_' + columnIdSequence.next();
 
