@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.1
+// ag-grid-enterprise v5.0.2
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -49,17 +49,28 @@ var PivotColDefService = (function () {
                     headerName: key
                 };
                 parentChildren.push(valueGroup);
-                measureColumns.forEach(function (measureColumn) {
-                    var colDef = _this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
+                // if no value columns selected, then we insert one blank column, so the user at least sees columns
+                // rendered. otherwise the grid would render with no columns (just empty groups) which would give the
+                // impression that the grid is broken
+                if (measureColumns.length === 0) {
+                    // this is the blank column, for when no value columns enabled.
+                    var colDef = _this.createColDef(null, '-', newPivotKeys, columnIdSequence, "'n/a'");
                     valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
-                });
+                }
+                else {
+                    measureColumns.forEach(function (measureColumn) {
+                        var colDef = _this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence, null);
+                        valueGroup.children.push(colDef);
+                        pivotColumnDefs.push(colDef);
+                    });
+                }
                 valueGroup.children.sort(_this.headerNameComparator.bind(_this));
             }
             parentChildren.sort(_this.headerNameComparator.bind(_this));
         });
     };
-    PivotColDefService.prototype.createColDef = function (valueColumn, headerName, pivotKeys, columnIdSequence) {
+    PivotColDefService.prototype.createColDef = function (valueColumn, headerName, pivotKeys, columnIdSequence, valueGetter) {
         var colDef = {};
         if (valueColumn) {
             var colDefToCopy = valueColumn.getColDef();
@@ -68,7 +79,7 @@ var PivotColDefService = (function () {
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
         }
-        colDef.valueGetter = null;
+        colDef.valueGetter = valueGetter;
         colDef.headerName = headerName;
         colDef.colId = 'pivot_' + columnIdSequence.next();
         colDef.pivotKeys = pivotKeys;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.1
+// ag-grid-enterprise v5.0.2
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -114,7 +114,7 @@ var LicenseManager = (function () {
     LicenseManager.setLicenseKey = function (licenseKey) {
         LicenseManager.licenseKey = licenseKey;
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTQ2NDM0OTI1NTM1MQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTQ2ODM5ODkxNjg4MA==';
     __decorate([
         main_1.Autowired('md5'), 
         __metadata('design:type', md5_1.MD5)
