@@ -19,6 +19,15 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">13th July 2016</div>
+        <div class="news-header">ag-Grid v5.0.2 Released</div>
+        <div>
+            Minor bug fixes and changes.
+            See <a href="../change-log/changeLogIndex.php">change log</a> for details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">10th July 2016</div>
         <div class="news-header">ag-Grid v5.0 Released</div>
         <div>
@@ -27,12 +36,12 @@ include 'documentation_header.php';
         </div>
     </div>
 
-<!--    <div class="news-box">
-        <div class="news-header">22th March 2016</div>
-        <div>Patch for 4.0.x released with bug fixes and minor changes.
-            Check <a href="../change-log/changeLogIndex.php">change log</a>.</div>
-    </div>
--->
+    <!--    <div class="news-box">
+            <div class="news-header">22th March 2016</div>
+            <div>Patch for 4.0.x released with bug fixes and minor changes.
+                Check <a href="../change-log/changeLogIndex.php">change log</a>.</div>
+        </div>
+    -->
 </div>
 
 <p>
