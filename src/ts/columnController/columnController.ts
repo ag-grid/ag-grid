@@ -1450,7 +1450,8 @@ export class ColumnController {
         this.updateDisplayedColumnsFromTrees();
         this.updateVirtualSets();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
-        this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
+        var event = new ColumnChangeEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, event);
     }
 
     private updateDisplayedColumnsFromTrees(): void {
