@@ -20,6 +20,32 @@ include('includes/mediaHeader.php');
 </div>
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
+        <a href="ag-grid-javascript-pivot-grid/">
+            <img src="images/agGridDaily.png"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="ag-grid-javascript-pivot-grid/">
+                Announcing ag-Grid v5 and Pivot
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            13th July 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Press release announcing version 5 of ag-Grid, introducing Pivot for the first time
+        to a general purpose JavaScript data grid.
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
         <a href="ag-grid-goes-commercial/">
@@ -241,6 +267,12 @@ include('includes/mediaHeader.php');
 
 </div>
 
-<?php
-include('./includes/mediaFooter.php');
-?>
+</div>
+
+<?php include_once("./includes/footer.php"); ?>
+
+</body>
+
+<?php include_once("./includes/analytics.php"); ?>
+
+</html>
