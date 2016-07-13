@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+
+    <h3>Version 5.0.x (ag-Grid 5.0.3, ag-Grid-Enterprise 5.0.3)</h3>
+    <li>Bugfix: pivot was not working with groupUseEntireRow=true</li>
+
     <h3>Version 5.0.x (ag-Grid 5.0.2, ag-Grid-Enterprise 5.0.2)</h3>
     <li>Enhancement: changed comparison (or sorting) to use localeCompare for strings</li>
     <li>Enhancement: now pivot shows 'n/a' when no value columns is enabled</li>
