@@ -1,7 +1,8 @@
-// Type definitions for ag-grid v5.0.1
+// Type definitions for ag-grid v5.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import { IRenderedHeaderElement } from "./iRenderedHeaderElement";
 export declare class HeaderRenderer {
     private gridOptionsWrapper;
     private columnController;
@@ -16,6 +17,7 @@ export declare class HeaderRenderer {
     private eRoot;
     private eHeaderOverlay;
     private init();
+    forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement) => void): void;
     private destroy();
     private onGridColumnsChanged();
     refreshHeader(): void;

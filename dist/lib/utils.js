@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.1
+ * @version v5.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -350,6 +350,14 @@ var Utils = (function () {
         }
         if (valueBMissing) {
             return 1;
+        }
+        if (typeof valueA === "string") {
+            try {
+                // using local compare also allows chinese comparisons
+                return valueA.localeCompare(valueB);
+            }
+            catch (e) {
+            }
         }
         if (valueA < valueB) {
             return -1;

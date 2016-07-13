@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.1
+ * @version v5.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,6 +17,8 @@ var rowRenderer_1 = require("./rowRenderer");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var context_1 = require("../context/context");
 var context_2 = require("../context/context");
+var headerRenderer_1 = require("../headerRendering/headerRenderer");
+var renderedHeaderCell_1 = require("../headerRendering/renderedHeaderCell");
 var AutoWidthCalculator = (function () {
     function AutoWidthCalculator() {
     }
@@ -34,28 +36,12 @@ var AutoWidthCalculator = (function () {
         eBodyContainer.appendChild(eDummyContainer);
         // get all the cells that are currently displayed (this only brings back
         // rendered cells, rows not rendered due to row visualisation will not be here)
-        var eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
-        eOriginalCells.forEach(function (eCell, index) {
-            // make a deep clone of the cell
-            var eCellClone = eCell.cloneNode(true);
-            // the original has a fixed width, we remove this to allow the natural width based on content
-            eCellClone.style.width = '';
-            // the original has position = absolute, we need to remove this so it's positioned normally
-            eCellClone.style.position = 'static';
-            eCellClone.style.left = '';
-            // we put the cell into a containing div, as otherwise the cells would just line up
-            // on the same line, standard flow layout, by putting them into divs, they are laid
-            // out one per line
-            var eCloneParent = document.createElement('div');
-            // table-row, so that each cell is on a row. i also tried display='block', but this
-            // didn't work in IE
-            eCloneParent.style.display = 'table-row';
-            // the twig on the branch, the branch on the tree, the tree in the hole,
-            // the hole in the bog, the bog in the clone, the clone in the parent,
-            // the parent in the dummy, and the dummy down in the vall-e-ooo, OOOOOOOOO! Oh row the rattling bog....
-            eCloneParent.appendChild(eCellClone);
-            eDummyContainer.appendChild(eCloneParent);
-        });
+        this.putRowCellsIntoDummyContainer(column, eDummyContainer);
+        // also put header cell in
+        var headerExists = this.putHeaderCellsIntoDummyContainer(column, eDummyContainer);
+        if (!headerExists) {
+            return -1;
+        }
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
         var dummyContainerWidth = eDummyContainer.offsetWidth;
@@ -64,10 +50,66 @@ var AutoWidthCalculator = (function () {
         // we add 4 as I found without it, the gui still put '...' after some of the texts
         return dummyContainerWidth + 4;
     };
+    // we only consider the lowest level cell, not the group cell. in 99% of the time, this
+    // will be enough. if we consider groups, then it gets to complicated for what it's worth,
+    // as the groups can span columns and this class only considers one column at a time.
+    AutoWidthCalculator.prototype.putHeaderCellsIntoDummyContainer = function (column, eDummyContainer) {
+        var renderedHeaderCell = this.getHeaderCellForColumn(column);
+        if (!renderedHeaderCell) {
+            return false;
+        }
+        this.cloneItemIntoDummy(renderedHeaderCell.getGui(), eDummyContainer);
+        return true;
+    };
+    AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
+        var renderedHeaderCell = null;
+        // find the rendered header cell
+        this.headerRenderer.forEachHeaderElement(function (headerElement) {
+            if (headerElement instanceof renderedHeaderCell_1.RenderedHeaderCell) {
+                var currentCell = headerElement;
+                if (currentCell.getColumn() === column) {
+                    renderedHeaderCell = currentCell;
+                }
+            }
+        });
+        return renderedHeaderCell;
+    };
+    AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
+        var _this = this;
+        var eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
+        eOriginalCells.forEach(function (eCell, index) {
+            _this.cloneItemIntoDummy(eCell, eDummyContainer);
+        });
+    };
+    AutoWidthCalculator.prototype.cloneItemIntoDummy = function (eCell, eDummyContainer) {
+        // make a deep clone of the cell
+        var eCellClone = eCell.cloneNode(true);
+        // the original has a fixed width, we remove this to allow the natural width based on content
+        eCellClone.style.width = '';
+        // the original has position = absolute, we need to remove this so it's positioned normally
+        eCellClone.style.position = 'static';
+        eCellClone.style.left = '';
+        // we put the cell into a containing div, as otherwise the cells would just line up
+        // on the same line, standard flow layout, by putting them into divs, they are laid
+        // out one per line
+        var eCloneParent = document.createElement('div');
+        // table-row, so that each cell is on a row. i also tried display='block', but this
+        // didn't work in IE
+        eCloneParent.style.display = 'table-row';
+        // the twig on the branch, the branch on the tree, the tree in the hole,
+        // the hole in the bog, the bog in the clone, the clone in the parent,
+        // the parent in the dummy, and the dummy down in the vall-e-ooo, OOOOOOOOO! Oh row the rattling bog....
+        eCloneParent.appendChild(eCellClone);
+        eDummyContainer.appendChild(eCloneParent);
+    };
     __decorate([
         context_2.Autowired('rowRenderer'), 
         __metadata('design:type', rowRenderer_1.RowRenderer)
     ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_2.Autowired('headerRenderer'), 
+        __metadata('design:type', headerRenderer_1.HeaderRenderer)
+    ], AutoWidthCalculator.prototype, "headerRenderer", void 0);
     __decorate([
         context_2.Autowired('gridPanel'), 
         __metadata('design:type', gridPanel_1.GridPanel)

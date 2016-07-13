@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.1
+ * @version v5.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -358,6 +358,12 @@ var RenderedCell = (function (_super) {
     RenderedCell.prototype.addKeyPressListener = function () {
         var _this = this;
         var keyPressListener = function (event) {
+            // check this, in case focus is on a (for example) a text field inside the cell,
+            // in which cse we should not be listening for these key pressed
+            var eventOnChildComponent = event.srcElement !== _this.getGui();
+            if (eventOnChildComponent) {
+                return;
+            }
             if (!_this.editingCell) {
                 var pressedChar = String.fromCharCode(event.charCode);
                 if (pressedChar === ' ') {
@@ -368,7 +374,9 @@ var RenderedCell = (function (_super) {
                         _this.startEditingIfEnabled(null, pressedChar);
                         // if we don't prevent default, then the keypress also gets applied to the text field
                         // (at least when doing the default editor), but we need to allow the editor to decide
-                        // what it wants to do.
+                        // what it wants to do. we only do this IF editing was started - otherwise it messes
+                        // up when the use is not doing editing, but using rendering with text fields in cellRenderer
+                        // (as it would block the the user from typing into text fields).
                         event.preventDefault();
                     }
                 }
@@ -827,18 +835,25 @@ var RenderedCell = (function (_super) {
         var colDef = this.column.getColDef();
         var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
         if (colDef.template) {
+            // template is really only used for angular 1 - as people using ng1 are used to providing templates with
+            // bindings in it. in ng2, people will hopefully want to provide components, not templates.
             this.eParentOfValue.innerHTML = colDef.template;
         }
         else if (colDef.templateUrl) {
+            // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
+            // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
+            // not do these, but would follow a pattern that was friendly towards components, not templates.
             var template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
             if (template) {
                 this.eParentOfValue.innerHTML = template;
             }
         }
         else if (colDef.floatingCellRenderer && this.node.floating) {
+            // if floating, then give preference to floating cell renderer
             this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
         }
         else if (colDef.cellRenderer) {
+            // use normal cell renderer
             this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams, valueFormatted);
         }
         else {
