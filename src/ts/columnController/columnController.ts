@@ -298,16 +298,38 @@ export class ColumnController {
     }
 
     public autoSizeColumns(keys: (Column|ColDef|String)[]): void {
-        this.actionOnGridColumns(keys, (column: Column): boolean => {
-            var requiredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column);
-            if (requiredWidth>0) {
-                var newWidth = this.normaliseColumnWidth(column, requiredWidth);
-                column.setActualWidth(newWidth);
-            }
-            return true;
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true);
-        });
+        // because of column virtualisation, we can only do this function on columns that are
+        // actually rendered, as non-rendered columns (outside the viewport and not rendered
+        // due to column virtualisation) are not present. this can result in all rendered columns
+        // getting narrowed, which in turn introduces more rendered columns on the RHS which
+        // did not get autosized in the original run, leaving the visible grid with columns on
+        // the LHS sized, but RHS no. so we keep looping through teh visible columns until
+        // no more cols are available (rendered) to be resized
+
+        // keep track of which cols we have resized in here
+        var columnsAutosized: Column[] = [];
+        // initialise with anything except 0 so that while loop executs at least once
+        var changesThisTimeAround = -1;
+
+        while (changesThisTimeAround!==0) {
+            changesThisTimeAround = 0;
+            this.actionOnGridColumns(keys, (column: Column): boolean => {
+                // if already autosized, skip it
+                if (columnsAutosized.indexOf(column) >= 0) { return; }
+                // get how wide this col should be
+                var preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column);
+                // preferredWidth = -1 if this col is not on the screen
+                if (preferredWidth>0) {
+                    var newWidth = this.normaliseColumnWidth(column, preferredWidth);
+                    column.setActualWidth(newWidth);
+                    columnsAutosized.push(column);
+                    changesThisTimeAround++;
+                }
+                return true;
+            }, ()=> {
+                return new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true);
+            });
+        }
     }
 
     public autoSizeColumn(key: Column|String|ColDef): void {

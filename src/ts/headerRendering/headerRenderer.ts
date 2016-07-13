@@ -6,6 +6,7 @@ import {Bean, Autowired, Context, PostConstruct, PreDestroy} from "../context/co
 import {HeaderContainer} from "./headerContainer";
 import {EventService} from "../eventService";
 import {Events} from "../events";
+import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 
 @Bean('headerRenderer')
 export class HeaderRenderer {
@@ -59,6 +60,10 @@ export class HeaderRenderer {
         }
     }
 
+    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+        this.childContainers.forEach( childContainer => childContainer.forEachHeaderElement(callback) );
+    }
+    
     @PreDestroy
     private destroy(): void {
         this.childContainers.forEach( container => container.destroy() );

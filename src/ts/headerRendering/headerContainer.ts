@@ -8,6 +8,7 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {HeaderRowComp} from "./headerRowComp";
 import {BodyDropTarget} from "./bodyDropTarget";
+import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 
 export class HeaderContainer {
 
@@ -38,6 +39,10 @@ export class HeaderContainer {
 
     public setWidth(width: number): void {
         this.eContainer.style.width = width + 'px';
+    }
+    
+    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+        this.headerRowComps.forEach( headerRowComp => headerRowComp.forEachHeaderElement(callback) );
     }
     
     @PostConstruct

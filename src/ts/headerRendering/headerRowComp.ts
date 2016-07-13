@@ -41,6 +41,13 @@ export class HeaderRowComp extends Component {
         this.dropTarget = dropTarget;
     }
 
+    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+        Object.keys(this.headerElements).forEach( key => {
+            var headerElement = this.headerElements[key];
+            callback(headerElement);
+        });
+    }
+
     public destroy(): void {
         var idsOfAllChildren = Object.keys(this.headerElements);
         this.removeAndDestroyChildComponents(idsOfAllChildren);

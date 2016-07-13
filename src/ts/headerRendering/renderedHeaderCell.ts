@@ -51,6 +51,10 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         this.dragSourceDropTarget = dragSourceDropTarget;
     }
 
+    public getColumn(): Column {
+        return this.column;
+    }
+    
     @PostConstruct
     public init(): void {
         this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
