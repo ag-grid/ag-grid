@@ -68,7 +68,7 @@ export class EventService implements IEventEmitter {
         if (!event) {
             event = {};
         }
-        //this.logger.log('dispatching: ' + event);
+        // console.log(`dispatching ${eventType}: ${event}`);
 
         // this allows the columnController to get events before anyone else
         var p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY);
