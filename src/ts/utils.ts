@@ -545,6 +545,13 @@ export class Utils {
         return this.isSafari;
     }
 
+    // srcElement is only available in IE. In all other browsers it is target
+    // http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
+    static getTarget(event: Event): Element {
+        var eventNoType = <any> event;
+        return eventNoType.target || eventNoType.srcElement;
+    }
+
     // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
     static getBodyWidth(): number {
         if (document.body) {

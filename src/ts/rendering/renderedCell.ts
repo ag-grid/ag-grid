@@ -433,7 +433,8 @@ export class RenderedCell extends Component {
         var keyPressListener = (event: KeyboardEvent)=> {
             // check this, in case focus is on a (for example) a text field inside the cell,
             // in which cse we should not be listening for these key pressed
-            var eventOnChildComponent = event.srcElement!==this.getGui();
+            var eventTarget = _.getTarget(event);
+            var eventOnChildComponent = eventTarget!==this.getGui();
             if (eventOnChildComponent) { return; }
 
             if (!this.editingCell) {
