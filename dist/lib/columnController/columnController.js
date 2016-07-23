@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.2
+ * @version v5.0.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1262,7 +1262,8 @@ var ColumnController = (function () {
         this.updateDisplayedColumnsFromTrees();
         this.updateVirtualSets();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
-        this.eventService.dispatchEvent(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
+        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, event);
     };
     ColumnController.prototype.updateDisplayedColumnsFromTrees = function () {
         this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
