@@ -197,6 +197,9 @@ var gridOptions = {
     onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
+    // onSortChanged: function (params) {
+    //     console.log("Callback onSortChanged");
+    // },
     onRowDoubleClicked: function (params) {
         // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
