@@ -19,6 +19,12 @@ export class AutoWidthCalculator {
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
     public getPreferredWidthForColumn(column: Column): number {
+        var renderedHeaderCell = this.getHeaderCellForColumn(column);
+        //cell isn't visible
+        if (renderedHeaderCell) { 
+            return -1; 
+        }
+
         var eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
@@ -33,12 +39,8 @@ export class AutoWidthCalculator {
         this.putRowCellsIntoDummyContainer(column, eDummyContainer);
 
         // also put header cell in
-        var headerExists = this.putHeaderCellsIntoDummyContainer(column, eDummyContainer);
+        this.putHeaderCellsIntoDummyContainer(renderedHeaderCell, eDummyContainer);
         
-        if (!headerExists) {
-            return -1;
-        }
-
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
         var dummyContainerWidth = eDummyContainer.offsetWidth;
@@ -53,15 +55,8 @@ export class AutoWidthCalculator {
     // we only consider the lowest level cell, not the group cell. in 99% of the time, this
     // will be enough. if we consider groups, then it gets to complicated for what it's worth,
     // as the groups can span columns and this class only considers one column at a time.
-    private putHeaderCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): boolean {
-
-        var renderedHeaderCell = this.getHeaderCellForColumn(column);
-
-        if (!renderedHeaderCell) { return false; }
-
+    private putHeaderCellsIntoDummyContainer(renderedHeaderCell: RenderedHeaderCell, eDummyContainer: HTMLElement): void {
         this.cloneItemIntoDummy(renderedHeaderCell.getGui(), eDummyContainer);
-        
-        return true;
     }
 
     private getHeaderCellForColumn(column: Column): RenderedHeaderCell {
