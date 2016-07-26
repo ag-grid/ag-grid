@@ -90,7 +90,7 @@ include('../includes/mediaHeader.php');
         <p>
             <b>ag-Grid-Enterprise is on Github, is it open source?</b><br/>
             Yes. ag-Grid-Enterprise is open source and still commercial. Anyone can view the code, but you are not allowed
-            to copy it as it is copyright. If you pay a licene then you are free to fork the code and make changes for
+            to copy it as it is copyright. If you pay a license then you are free to fork the code and make changes for
             your own personal use.
         </p>
 
