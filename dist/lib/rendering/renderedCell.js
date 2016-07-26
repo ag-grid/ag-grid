@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.3
+ * @version v5.0.4
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -360,7 +360,8 @@ var RenderedCell = (function (_super) {
         var keyPressListener = function (event) {
             // check this, in case focus is on a (for example) a text field inside the cell,
             // in which cse we should not be listening for these key pressed
-            var eventOnChildComponent = event.srcElement !== _this.getGui();
+            var eventTarget = utils_1.Utils.getTarget(event);
+            var eventOnChildComponent = eventTarget !== _this.getGui();
             if (eventOnChildComponent) {
                 return;
             }

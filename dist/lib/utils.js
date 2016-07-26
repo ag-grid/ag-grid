@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.3
+ * @version v5.0.4
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -508,6 +508,12 @@ var Utils = (function () {
             this.isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
         }
         return this.isSafari;
+    };
+    // srcElement is only available in IE. In all other browsers it is target
+    // http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
+    Utils.getTarget = function (event) {
+        var eventNoType = event;
+        return eventNoType.target || eventNoType.srcElement;
     };
     // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
     Utils.getBodyWidth = function () {
