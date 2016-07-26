@@ -5,7 +5,7 @@
 		            <div class="col-xs-12 col-md-4">
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Welcome to ag-Grid</h2></li>
-		                    <li><p class="Footer-intro"><img inline src="/images/niall_small.jpg" width="74" height="74" class="Footer-thumb circle pull-left img-responsive" />
+		                    <li><p class="Footer-intro"><img inline alt="Niall Crosby" src="/images/niall_small.jpg" width="74" height="74" class="Footer-thumb circle pull-left img-responsive" />
 		                    	Niall Crosby spent years building Enterprise Web Applications and found the JavaScript
 								data grid choice frustrating. That frustration led to Niall quitting his job and
 								setting up the ag-Grid project.

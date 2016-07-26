@@ -1,4 +1,4 @@
-<section class="HomeSection HomeSection--alt HomeIntro hidden-xs">
+<section class="HomeSection HomeSection--alt HomeIntro">
 
     <div class="container">
         <div class="row">

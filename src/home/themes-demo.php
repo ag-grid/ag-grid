@@ -1,4 +1,4 @@
-<section class="HomeSection HomeSection--alt HomeDemo hidden-xs">
+<section class="HomeSection HomeSection--alt HomeDemo">
 
     <div class="container">
         <h4 class="text-center">Themes provided Out of the box</h4>
