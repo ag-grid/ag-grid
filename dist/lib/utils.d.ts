@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.3
+// Type definitions for ag-grid v5.0.4
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -70,6 +70,7 @@ export declare class Utils {
     static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string): void;
     static isBrowserIE(): boolean;
     static isBrowserSafari(): boolean;
+    static getTarget(event: Event): Element;
     static getBodyWidth(): number;
     static getBodyHeight(): number;
     static setCheckboxState(eCheckbox: any, state: any): void;
