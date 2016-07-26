@@ -186,6 +186,11 @@ include '../documentation-main/documentation_header.php';
                 columns for the pivot.</td>
         </tr>
         <tr>
+            <th>getAllDisplayedVirtualColumns()</th>
+            <td>Same as getAllGridColumns(), except only returns rendered columns - ie columns not within the viewport
+                that are not rendered, due to column virtualisation, are not displayed.</td>
+        </tr>
+        <tr>
             <th>getDisplayedCenterColumns(), getDisplayedLeftColumns(), getDisplayedRightColumns(), getAllDisplayedColumns()</th>
             <td>Returns all columns currently displayed (eg are visible and if in a group, the group is showing
                 the columns) for the pinned left, center and pinned right portions of the grid.</td>

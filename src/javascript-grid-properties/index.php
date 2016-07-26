@@ -295,6 +295,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to not set focus back on the grid after a refresh. This can avoid issues where you
                 want to keep the focus on another part of the browser.</td>
         </tr>
+        <tr>
+            <th>suppressColumnVirtualisation</th>
+            <td>Set to true so that the grid doesn't virtualise the columns. So if you have 100 columns, but
+            only 10 visible due to scrolling, all 100 will always be rendered.</td>
+        </tr>
 
     </table>
 
