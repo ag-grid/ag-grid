@@ -8,7 +8,7 @@
         <meta name="keywords" content="javascript data grid react angularjs angular 2 web components"/>
         <meta property="og:image" content="https://www.ag-grid.com/images/ag-Grid2-200.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link inline rel="stylesheet" href="dist/bootstrap/css/bootstrap.css">
+        <link inline rel="stylesheet" href="dist/bootstrap/css/bootstrap-cut.css">
         <link inline rel="stylesheet" type="text/css" href="style.css">
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
         <?php include 'includes/meta.php'; ?>
