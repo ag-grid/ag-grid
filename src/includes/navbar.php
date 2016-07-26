@@ -18,7 +18,7 @@
                             frameborder="0" scrolling="0" width="120px" height="20px"
                             style="position: relative; top: 3px;" class="hide-when-medium">
                     </iframe>
-                </span>          
+                </span>
             </div>
             <div class="navbar-collapse collapse pull-right col-md-5 col-sm-6 col-xs-12">
             <ul class="nav navbar-nav navbar-right">
