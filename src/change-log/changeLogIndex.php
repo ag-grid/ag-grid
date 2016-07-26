@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 5.0.x (ag-Grid 5.0.?, ag-Grid-Enterprise 5.0.?)</h3>
+    <h3>Version 5.0.x (ag-Grid 5.0.4, ag-Grid-Enterprise 5.0.4)</h3>
     <li>Bugfix: hitting space sometimes (noticed on firefox) sent grid scrolling down when it should select the row</li>
 
     <h3>Version 5.0.x (ag-Grid 5.0.3, ag-Grid-Enterprise 5.0.3)</h3>

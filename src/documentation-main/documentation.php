@@ -19,34 +19,19 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">ag-Grid v5.0</div>
-        <a href="../ag-grid-javascript-pivot-grid/">
-            <div>
-                <img src="../images/agGridDaily.png"/>
-            </div>
-        </a>
-        <a href="../ag-grid-javascript-pivot-grid/">
-            <div>
-                Press release announcing ag-Grid v5.0 and Pivot
-            </div>
-        </a>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">13th July 2016</div>
-        <div class="news-header">ag-Grid v5.0.2 Released</div>
+        <div class="news-header">26th July 2016</div>
+        <div class="news-header">ag-Grid v5.0.4 Released</div>
         <div>
-            Minor bug fixes and changes.
+            Minor bug fixes.
             See <a href="../change-log/changeLogIndex.php">change log</a> for details.
         </div>
     </div>
 
     <div class="news-box">
-        <div class="news-header">10th July 2016</div>
-        <div class="news-header">ag-Grid v5.0 Released</div>
+        <div class="news-header">26th July 2016</div>
+        <div class="news-header">Roadmap Updated</div>
         <div>
-            Bringing data pivoting, column virtualisation and many more.
-            See <a href="../change-log/changeLogIndex.php">change log</a> for details.
+            See the roadmap below for what we are working on now.
         </div>
     </div>
 
@@ -169,12 +154,34 @@ include 'documentation_header.php';
 <iframe width="560" height="315" src="https://www.youtube.com/embed/jCId-Lbg_6k" frameborder="0" allowfullscreen></iframe>
 -->
 
-<h4>General Cleanup</h4>
+<h4>Angular 2 Bindings</h4>
 
 <p>
-    The next few weeks (possibly two months) is going to be about cleanup. While getting the Pivot functionality
-    in, the rest of the grid didn't keep up to date as it should of. So we are going to take a step back and wade
-    through all the open issues and fix everything that we see as high priority.
+    We want you to be able to put Angular 2 bindings into your cellRenderers and cellEditors. We are working
+    hard at figuring this out. This will be in both free and enterprise versions.
+</p>
+
+<h4>Aurelia Support</h4>
+
+<p>
+    Aurelia is getting bigger - we want to add it to our list of supported frameworks. Right now we know people
+    are already using ag-Grid with Aurelia, using either the Web Components or Plain JavaScript versions. We
+    want native support for  Aurelia out of the box. This will be in both free and enterprise versions.
+</p>
+
+<h4>Updatable Result Sets</h4>
+
+<p>
+    Right now you cannot add or remove rows from the grid. We want to sort this out! This will be in both free
+    and enterprise versions. This will be in both free and enterprise versions.
+</p>
+
+<h4>Grids inside Grids</h4>
+
+<p>
+    Other grids allow you to expand rows to show a different grid as a child row, with different columns
+    and rows. Grids inside grids. We want to get this in. Yet to decide if it's an enterprise only feature
+    or not - we have see how difficult it is to implement and what it feels like when it is finished.
 </p>
 
 <h4>Pinnable Filters in Tool Panel (ag-Grid enterprise)</h4>
@@ -185,13 +192,5 @@ include 'documentation_header.php';
     when clicked, will move the filter to the tool panel (the right hand panel that currently has
     column management). This will allow the tool panel to host and display multiple filters concurrently.
 </p>
-
-<h4>Smaller Items (all for ag-Grid free)</h4>
-
-<p>Plus the following smaller items:</p>
-<ul>
-    <li>Adding / removing rows without required to call setRowData()</li>
-    <li>Components inside the grid with full control of the row (ie will support grids inside grids)</li>
-</ul>
 
 <?php include 'documentation_footer.php';?>
