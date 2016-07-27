@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.4
+ * @version v5.0.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,6 +60,7 @@ var ColumnApi = (function () {
     ColumnApi.prototype.getDisplayedCenterColumns = function () { return this._columnController.getDisplayedCenterColumns(); };
     ColumnApi.prototype.getDisplayedRightColumns = function () { return this._columnController.getDisplayedRightColumns(); };
     ColumnApi.prototype.getAllDisplayedColumns = function () { return this._columnController.getAllDisplayedColumns(); };
+    ColumnApi.prototype.getAllDisplayedVirtualColumns = function () { return this._columnController.getAllDisplayedVirtualColumns(); };
     ColumnApi.prototype.moveColumn = function (fromIndex, toIndex) { this._columnController.moveColumnByIndex(fromIndex, toIndex); };
     ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this._columnController.moveRowGroupColumn(fromIndex, toIndex); };
     ColumnApi.prototype.setColumnAggFunct = function (column, aggFunc) { this._columnController.setColumnAggFunc(column, aggFunc); };
@@ -342,7 +343,7 @@ var ColumnController = (function () {
     ColumnController.prototype.getAllDisplayedColumns = function () {
         return this.allDisplayedColumns;
     };
-    // + csvCreator
+    // + rowRenderer
     ColumnController.prototype.getAllDisplayedVirtualColumns = function () {
         return this.allDisplayedVirtualColumns;
     };
