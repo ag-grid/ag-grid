@@ -8,7 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 5.0.x (ag-Grid 5.0.5, ag-Grid-Enterprise 5.0.5)</h3>
     <li>Enhancement: added columnApi.getAllDisplayedVirtualColumns(), so you can check what columns are rendered due to column virtualisation.</li>
+    <li>Bugfix: Angular 1 was compiling row multiple times, meant angular listeners were firing more than once. Now it compiles each cell exactly once when cell is created.</li>
 
     <h3>Version 5.0.x (ag-Grid 5.0.4, ag-Grid-Enterprise 5.0.4)</h3>
     <li>Bugfix: hitting space sometimes (noticed on firefox) sent grid scrolling down when it should select the row</li>
