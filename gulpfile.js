@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var liveReload = require('gulp-livereload');
 var inlinesource = require('gulp-inline-source');
 var htmlmin = require('gulp-htmlmin');
+var uncss  = require('gulp-uncss');
 
 gulp.task('default', ['watch']);
 gulp.task('release', ['inline-into-php']);

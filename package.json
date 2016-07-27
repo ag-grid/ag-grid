@@ -32,6 +32,7 @@
     "bootstrap": "3.3.6",
     "gulp-inline-source": "2.1.0",
     "gulp-livereload": "3.8.1",
-    "gulp": "3.9.0"
+    "gulp": "3.9.0",
+    "gulp-uncss": "1.0.6"
   }
 }
