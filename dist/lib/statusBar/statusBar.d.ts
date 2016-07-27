@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.5
+// ag-grid-enterprise v5.0.6
 import { Component } from 'ag-grid/main';
 export declare class StatusBar extends Component {
     private static TEMPLATE;
