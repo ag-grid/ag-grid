@@ -115,14 +115,12 @@ export class RenderedRow {
             context: this.gridOptionsWrapper.getContext()
         });
 
-        this.angular1Compile();
-
         this.initialised = true;
     }
 
-    private angular1Compile(): void {
+    private angular1Compile(element: Element): void {
         if (this.scope) {
-            this.eLeftCenterAndRightRows.forEach( row => this.$compile(row)(this.scope));
+            this.$compile(element)(this.scope);
         }
     }
 
@@ -153,7 +151,6 @@ export class RenderedRow {
             }
         } else {
             this.refreshCellsIntoRow();
-            this.angular1Compile();
         }
     }
 
@@ -161,7 +158,6 @@ export class RenderedRow {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (!this.rowIsHeaderThatSpans) {
             this.refreshCellsIntoRow();
-            this.angular1Compile();
         }
     }
 
@@ -242,6 +238,7 @@ export class RenderedRow {
                 this.rowNode, this.rowIndex, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
+            this.angular1Compile(renderedCell.getGui());
             return renderedCell;
         }
     }
@@ -449,6 +446,7 @@ export class RenderedRow {
         // create main component if not already existing from previous refresh
         if (!this.eGroupRow) {
             this.eGroupRow = this.createGroupSpanningEntireRowCell(false);
+            this.angular1Compile(this.eGroupRow);
         }
 
         var pinningLeft = this.columnController.isPinningLeft();
@@ -459,6 +457,7 @@ export class RenderedRow {
             this.ePinnedLeftRow.appendChild(this.eGroupRow);
             if (!this.eGroupRowPaddingCentre) {
                 this.eGroupRowPaddingCentre = this.createGroupSpanningEntireRowCell(true);
+                this.angular1Compile(this.eGroupRowPaddingCentre);
             }
             this.eBodyRow.appendChild(this.eGroupRowPaddingCentre);
         } else {
@@ -469,6 +468,7 @@ export class RenderedRow {
         if (pinningRight) {
             if (!this.eGroupRowPaddingRight) {
                 this.eGroupRowPaddingRight = this.createGroupSpanningEntireRowCell(true);
+                this.angular1Compile(this.eGroupRowPaddingRight);
             }
             this.ePinnedRightRow.appendChild(this.eGroupRowPaddingRight);
         }
