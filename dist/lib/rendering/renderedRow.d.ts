@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.5
+// Type definitions for ag-grid v5.0.6
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -38,7 +38,7 @@ export declare class RenderedRow {
     private initialised;
     constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedRightContainer: HTMLElement, node: RowNode, rowIndex: number);
     init(): void;
-    private angular1Compile();
+    private angular1Compile(element);
     private addColumnListener();
     private onDisplayedColumnsChanged(event);
     private onVirtualColumnsChanged(event);
