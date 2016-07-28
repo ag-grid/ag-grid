@@ -53,7 +53,6 @@ export class GridCore {
     private eRootPanel: BorderLayout;
     private toolPanelShowing: boolean;
 
-    private windowResizeListener: EventListener;
     private logger: Logger;
 
     private destroyFunctions: Function[] = [];
@@ -192,15 +191,9 @@ export class GridCore {
     }
     
     private addWindowResizeListener(): void {
-        var that = this;
-        // putting this into a function, so when we remove the function,
-        // we are sure we are removing the exact same function (i'm not
-        // sure what 'bind' does to the function reference, if it's safe
-        // the result from 'bind').
-        this.windowResizeListener = function resizeListener() {
-            that.doLayout();
-        };
-        window.addEventListener('resize', this.windowResizeListener);
+        var eventListener = this.doLayout.bind(this);
+        window.addEventListener('resize', eventListener);
+        this.destroyFunctions.push( ()=> window.removeEventListener('resize', eventListener) );
     }
 
     private periodicallyDoLayout() {
@@ -243,10 +236,6 @@ export class GridCore {
 
     @PreDestroy
     private destroy() {
-        if (this.windowResizeListener) {
-            window.removeEventListener('resize', this.windowResizeListener);
-            this.logger.log('Removing windowResizeListener');
-        }
         this.finished = true;
 
         this.eGridDiv.removeChild(this.eRootPanel.getGui());

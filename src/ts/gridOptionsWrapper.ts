@@ -12,7 +12,7 @@ import {Constants} from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
 import {ColDef, IAggFunc} from "./entities/colDef";
-import {Bean, Qualifier, Autowired, PostConstruct} from "./context/context";
+import {Bean, Qualifier, Autowired, PostConstruct, PreDestroy} from "./context/context";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {Events} from "./events";
 import {Utils as _} from "./utils";
@@ -51,11 +51,20 @@ export class GridOptionsWrapper {
 
     private propertyEventService: EventService = new EventService();
 
-    public agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
+    private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.headerHeight = this.gridOptions.headerHeight;
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.checkForDeprecated();
+    }
+
+    @PreDestroy
+    private destroy(): void {
+        // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
+        // remove the references in case the user keeps the grid options, we want the rest
+        // of the grid to be picked up by the garbage collector
+        this.gridOptions.api = null;
+        this.gridOptions.columnApi = null;
     }
 
     @PostConstruct
