@@ -16,7 +16,17 @@ gulp.task('copy-from-ag-grid-enterprise', copyFromAgGridEnterprise);
 gulp.task('copy-from-docs', copyFromDocs);
 gulp.task('copy-from-libs', ['copy-bootstrap','copy-font-awesome']);
 
-gulp.task('inline-into-php', ['copy-from-docs','copy-from-ag-grid','copy-from-ag-grid-enterprise'], inlineIntoPhp);
+gulp.task('inline-into-php', ['copy-from-docs','copy-from-ag-grid','copy-from-ag-grid-enterprise', 'uncss'], inlineIntoPhp);
+
+gulp.task('uncss', ['copy-from-docs'], uncssTask);
+
+function uncssTask() {
+    return gulp.src('./dist/dist/bootstrap/css/bootstrap.css')
+        .pipe(uncss({
+            html: ['src/**/*.php']
+        }))
+        .pipe(gulp.dest('./dist/dist/bootstrap/css'));
+}
 
 gulp.task('copy-bootstrap', function() {
     return gulp.src([

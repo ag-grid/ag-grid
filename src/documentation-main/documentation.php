@@ -20,7 +20,7 @@ include 'documentation_header.php';
 
     <div class="news-box">
         <div class="news-header">27th July 2016</div>
-        <div class="news-header">ag-Grid v5.0.5 Released</div>
+        <div class="news-header">ag-Grid v5.0.6 Released</div>
         <div>
             Minor bug fixes.
             See <a href="../change-log/changeLogIndex.php">change log</a> for details.

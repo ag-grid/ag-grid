@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 5.0.x (ag-Grid 5.0.5, ag-Grid-Enterprise 5.0.5)</h3>
+    <h3>Version 5.0.x (ag-Grid 5.0.6, ag-Grid-Enterprise 5.0.6)</h3>
     <li>Enhancement: added columnApi.getAllDisplayedVirtualColumns(), so you can check what columns are rendered due to column virtualisation.</li>
     <li>Bugfix: Angular 1 was compiling row multiple times, meant angular listeners were firing more than once. Now it compiles each cell exactly once when cell is created.</li>
 
