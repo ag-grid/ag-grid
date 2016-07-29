@@ -519,14 +519,20 @@ export class ColumnController {
     }
 
     public addValueColumns(keys: (Column|ColDef|String)[]): void {
+        var defaultHiddenAggFunc = this.gridOptionsWrapper.getDefaultHiddenAggFunc();
+
         this.actionOnPrimaryColumns(keys, (column: Column)=> {
-            if (!column.isValueActive()) {
-                if (!column.getAggFunc()) { // default to SUM if aggFunc is missing
+            var isDefaultHiddenAgg = column.getAggFunc() === defaultHiddenAggFunc;
+            if (!column.isValueActive() || isDefaultHiddenAgg) {
+                if (!column.getAggFunc() || isDefaultHiddenAgg) { // default to SUM if aggFunc is missing
                     var defaultAggFunc = this.aggFuncService.getDefaultAggFunc();
                     column.setAggFunc(defaultAggFunc);
                 }
-                this.valueColumns.push(column);
-                column.setValueActive(true);
+
+                if(!isDefaultHiddenAgg) { // Only add to valueColumns if it wasn't already in there (i.e. was using the default hidden agg)
+                    this.valueColumns.push(column);
+                    column.setValueActive(true);
+                }
                 return true;
             } else {
                 return false;
@@ -545,10 +551,18 @@ export class ColumnController {
     }
 
     public removeValueColumns(keys: (Column|ColDef|String)[]): void {
+
+        var defaultHiddenAggFunc = this.gridOptionsWrapper.getDefaultHiddenAggFunc();
+
         this.actionOnPrimaryColumns(keys, (column: Column)=> {
             if (column.isValueActive()) {
-                _.removeFromArray(this.valueColumns, column);
-                column.setValueActive(false);
+                if(defaultHiddenAggFunc) {
+                    // Change to the default-hidden aggregation.
+                    column.setAggFunc(defaultHiddenAggFunc);
+                } else {
+                    _.removeFromArray(this.valueColumns, column);
+                    column.setValueActive(false);
+                }
                 return true;
             } else {
                 return false;
@@ -719,6 +733,20 @@ export class ColumnController {
     // + rowController
     public getAggregationColumns(): Column[] {
         return this.valueColumns ? this.valueColumns : [];
+    }
+
+    public getNonDefaultAggregationColumns(): Column[] {
+        var aggColumns : Column[] = [];
+
+        var defaultHiddenAggFunc = this.gridOptionsWrapper.getDefaultHiddenAggFunc();
+
+        this.getAggregationColumns().forEach(column => {
+            if(column.getAggFunc() != defaultHiddenAggFunc) {
+                aggColumns.push(column);
+            }
+        });
+
+        return aggColumns;
     }
 
     // + rowController
@@ -1780,11 +1808,17 @@ export class ColumnController {
         this.valueColumns.forEach( column => column.setValueActive(false) );
         this.valueColumns = [];
 
+        var defaultHiddenAggFunc = this.gridOptionsWrapper.getDefaultHiddenAggFunc();
+
         // override with columns that have the aggFunc specified explicitly
         for (var i = 0; i < this.primaryColumns.length; i++) {
             var column = this.primaryColumns[i];
             if (column.getColDef().aggFunc) {
                 column.setAggFunc(column.getColDef().aggFunc);
+                this.valueColumns.push(column);
+                column.setValueActive(true);
+            } else if(defaultHiddenAggFunc) {
+                column.setAggFunc(defaultHiddenAggFunc);
                 this.valueColumns.push(column);
                 column.setValueActive(true);
             }

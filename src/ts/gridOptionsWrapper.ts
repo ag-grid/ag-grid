@@ -181,6 +181,7 @@ export class GridOptionsWrapper {
     public getViewportRowModelBufferSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+    public getDefaultHiddenAggFunc() { return this.gridOptions.defaultHiddenAggFunc; }
 
     public setProperty(key: string, value: any): void {
         var gridOptionsNoType = <any> this.gridOptions;

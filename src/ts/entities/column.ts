@@ -78,6 +78,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private pivotActive = false;
     private aggregationActive = false;
 
+    private defaultHiddenAggFunc: IAggFunc;
+
     private primary: boolean;
 
     constructor(colDef: ColDef, colId: String, primary: boolean) {
@@ -110,6 +112,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         }
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+
+        this.defaultHiddenAggFunc = this.gridOptionsWrapper.getDefaultHiddenAggFunc();
 
         var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
@@ -418,6 +422,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     public isAllowValue(): boolean {
         return this.colDef.enableValue === true;
+    }
+
+    public isDefaultHiddenAggActive(): boolean {
+        return this.getAggFunc() === this.defaultHiddenAggFunc;
     }
 
     public isAllowRowGroup(): boolean {

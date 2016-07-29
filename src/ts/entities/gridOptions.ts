@@ -80,6 +80,7 @@ export interface GridOptions {
     layoutInterval?: number;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
+    defaultHiddenAggFunc?: IAggFunc;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
