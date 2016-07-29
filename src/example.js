@@ -236,16 +236,6 @@ var gridOptions = {
     getContextMenuItems: getContextMenuItems
 };
 
-// setInterval( function() {
-//     console.log(gridOptions.api.getFilterModel());
-// }, 4000);
-
-setTimeout( function() {
-    gridOptions.api.setFilterModel({
-        country: ['Brazil']
-    });
-}, 1000);
-
 function getContextMenuItems(params) {
     var result = params.defaultItems.splice(0);
     result.push(
