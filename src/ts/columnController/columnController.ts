@@ -922,7 +922,7 @@ export class ColumnController {
     }
 
     public getPrimaryAndSecondaryAndAutoColumns(): Column[] {
-        var result = this.primaryColumns.slice(0);
+        var result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
         if (this.groupAutoColumnActive) {
             result.push(this.groupAutoColumn);
         }
