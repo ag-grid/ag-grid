@@ -394,12 +394,9 @@ export class RowRenderer {
         var newLast: number;
 
         if (!this.rowModel.isRowsToRender()) {
-            console.log(`no rowsToRender`);
-
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
         } else {
-            console.log(`rowsToRender`);
 
             var rowCount = this.rowModel.getRowCount();
 
@@ -410,8 +407,6 @@ export class RowRenderer {
 
                 var topPixel = this.eBodyViewport.scrollTop;
                 var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
-
-                console.log(`topPixel = ${topPixel}, bottomPixel = ${bottomPixel}`);
 
                 var first = this.rowModel.getRowIndexAtPixel(topPixel);
                 var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
@@ -442,8 +437,6 @@ export class RowRenderer {
 
             var event = {firstRow: newFirst, lastRow: newLast};
             this.eventService.dispatchEvent(Events.EVENT_VIEWPORT_CHANGED, event);
-
-            console.log(`first = ${this.firstRenderedRow}, last = ${this.lastRenderedRow}`);
         }
     }
 
