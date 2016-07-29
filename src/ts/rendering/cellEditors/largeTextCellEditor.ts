@@ -4,6 +4,7 @@ import {Component} from "../../widgets/component";
 import {ICellRenderer} from "../cellRenderers/iCellRenderer";
 import {ICellRendererFunc} from "../cellRenderers/iCellRenderer";
 import {Constants} from "../../constants";
+import {Utils as _} from "../../utils";
 
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
@@ -34,7 +35,10 @@ export class LargeTextCellEditor extends Component implements ICellEditor {
         this.textarea.maxLength = params.maxLength ? params.maxLength : "200";
         this.textarea.cols = params.cols ? params.cols : "60";
         this.textarea.rows = params.rows ? params.rows : "10";
-        this.textarea.value = params.value;
+
+        if (_.exists(params.value)) {
+            this.textarea.value = params.value.toString();
+        }
 
         this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);
 
