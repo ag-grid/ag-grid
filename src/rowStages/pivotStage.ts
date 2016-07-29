@@ -50,7 +50,7 @@ export class PivotStage implements IRowNodeStage {
 
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        var aggregationColumns = this.columnController.getAggregationColumns();
+        var aggregationColumns = this.columnController.getValueColumns();
         var aggregationColumnsHash = aggregationColumns.map( (column)=> column.getId() ).join('#');
 
         var aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;

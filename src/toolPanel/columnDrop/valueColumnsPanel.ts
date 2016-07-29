@@ -87,7 +87,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     }
 
     protected getExistingColumns(): Column[] {
-        return this.columnController.getAggregationColumns();
+        return this.columnController.getValueColumns();
     }
 
 }
