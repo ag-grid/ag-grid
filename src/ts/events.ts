@@ -61,7 +61,6 @@ export class Events {
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
 
     public static EVENT_FLASH_CELLS = 'clipboardPaste';
-    public static EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
     public static EVENT_CELL_CLICKED = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';

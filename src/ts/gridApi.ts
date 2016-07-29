@@ -407,7 +407,7 @@ export class GridApi {
     }
 
     public setHeaderHeight(headerHeight: number) {
-        this.gridOptionsWrapper.setHeaderHeight(headerHeight);
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
     }
 
     public showToolPanel(show:any) {

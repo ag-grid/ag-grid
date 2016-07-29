@@ -42,17 +42,16 @@ export class GridOptionsWrapper {
 
     private static MIN_COL_WIDTH = 10;
 
+    public static PROP_HEADER_HEIGHT = 'headerHeight';
+
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
 
-    private headerHeight: number;
-
     private propertyEventService: EventService = new EventService();
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
-        this.headerHeight = this.gridOptions.headerHeight;
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.checkForDeprecated();
@@ -214,16 +213,11 @@ export class GridOptionsWrapper {
 
     // properties
     public getHeaderHeight(): number {
-        if (typeof this.headerHeight === 'number') {
-            return this.headerHeight;
+        if (typeof this.gridOptions.headerHeight === 'number') {
+            return this.gridOptions.headerHeight;
         } else {
             return 25;
         }
-    }
-
-    public setHeaderHeight(headerHeight: number): void {
-        this.headerHeight = headerHeight;
-        this.eventService.dispatchEvent(Events.EVENT_HEADER_HEIGHT_CHANGED);
     }
 
     public isExternalFilterPresent() {
