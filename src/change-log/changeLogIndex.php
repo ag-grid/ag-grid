@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: cellRenderer for richSelect is no longer mandatory, now default text renderer used in richSelect if no cellRenderer specified</li>
     <li>Enhancement: renamed all 'aggregation' (eg getAggregationColumns) method to 'value' (eg getValueColumns), the documentation was right, methods were out of sync</li>
     <li>Bugfix: api.setHeaderHeight() was not working, now fixed.</li>
+    <li>Bugfix: fixed issue where hidden grid (it not visible) was not rendering all rows it should.</li>
 
     <h3>Version 5.0.x (ag-Grid 5.0.6, ag-Grid-Enterprise 5.0.6)</h3>
     <li>Enhancement: added columnApi.getAllDisplayedVirtualColumns(), so you can check what columns are rendered due to column virtualisation.</li>
