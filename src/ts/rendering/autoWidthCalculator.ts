@@ -20,7 +20,7 @@ export class AutoWidthCalculator {
     // drawback: only the cells visible on the screen are considered
     public getPreferredWidthForColumn(column: Column): number {
         var renderedHeaderCell = this.getHeaderCellForColumn(column);
-        //cell isn't visible
+        // cell isn't visible
         if (!renderedHeaderCell) { 
             return -1; 
         }
@@ -39,8 +39,11 @@ export class AutoWidthCalculator {
         this.putRowCellsIntoDummyContainer(column, eDummyContainer);
 
         // also put header cell in
-        this.putHeaderCellsIntoDummyContainer(renderedHeaderCell, eDummyContainer);
-        
+        // we only consider the lowest level cell, not the group cell. in 99% of the time, this
+        // will be enough. if we consider groups, then it gets to complicated for what it's worth,
+        // as the groups can span columns and this class only considers one column at a time.
+        this.cloneItemIntoDummy(renderedHeaderCell.getGui(), eDummyContainer);
+
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
         var dummyContainerWidth = eDummyContainer.offsetWidth;
@@ -50,13 +53,6 @@ export class AutoWidthCalculator {
 
         // we add 4 as I found without it, the gui still put '...' after some of the texts
         return dummyContainerWidth + 4;
-    }
-
-    // we only consider the lowest level cell, not the group cell. in 99% of the time, this
-    // will be enough. if we consider groups, then it gets to complicated for what it's worth,
-    // as the groups can span columns and this class only considers one column at a time.
-    private putHeaderCellsIntoDummyContainer(renderedHeaderCell: RenderedHeaderCell, eDummyContainer: HTMLElement): void {
-        this.cloneItemIntoDummy(renderedHeaderCell.getGui(), eDummyContainer);
     }
 
     private getHeaderCellForColumn(column: Column): RenderedHeaderCell {
