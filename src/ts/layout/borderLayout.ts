@@ -20,12 +20,13 @@ export class BorderLayout {
     private fullHeight: any;
     private layoutActive: any;
 
-    private eGui: any;
-    private id: any;
+    private eGui: HTMLElement;
+    private id: string;
     private childPanels: any;
-    private centerHeightLastTime: any;
-    private centerWidthLastTime: any;
-    private centerLeftMarginLastTime: any;
+    private centerHeightLastTime = -1;
+    private centerWidthLastTime = -1;
+    private centerLeftMarginLastTime = -1;
+    private visibleLastTime = false;
 
     private sizeChangeListeners = <any>[];
     private overlays: any;
@@ -144,11 +145,19 @@ export class BorderLayout {
     // returns true if any item changed size, otherwise returns false
     public doLayout() {
 
-        if (!_.isVisible(this.eGui)) {
+        var isVisible = _.isVisible(this.eGui);
+        if (!isVisible) {
+            this.visibleLastTime = false;
             return false;
         }
 
         var atLeastOneChanged = false;
+
+        if (this.visibleLastTime !== isVisible) {
+            atLeastOneChanged = true;
+        }
+
+        this.visibleLastTime = true;
 
         var childLayouts = [this.eNorthChildLayout, this.eSouthChildLayout, this.eEastChildLayout, this.eWestChildLayout];
         var that = this;
