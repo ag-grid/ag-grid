@@ -935,10 +935,11 @@ export class ColumnController {
     private createStateItemFromColumn(column: Column): any {
         var rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
         var pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
+        var aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         var resultItem = {
             colId: column.getColId(),
             hide: !column.isVisible(),
-            aggFunc: column.getAggFunc() ? column.getAggFunc() : null,
+            aggFunc: aggFunc,
             width: column.getActualWidth(),
             pivotIndex: pivotIndex,
             pinned: column.getPinned(),
