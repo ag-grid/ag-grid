@@ -60,11 +60,11 @@ export class ColumnApi {
     public isPivotMode(): boolean { return this._columnController.isPivotMode(); }
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column|ColDef|String): Column { return this._columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
-    public getAggregationColumns(): Column[] { return this._columnController.getAggregationColumns(); }
-    public removeAggregationColumn(colKey: (Column|ColDef|String)): void { this._columnController.removeValueColumn(colKey); }
-    public removeAggregationColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removeValueColumns(colKeys); }
-    public addAggregationColumn(colKey: (Column|ColDef|String)): void { this._columnController.addValueColumn(colKey); }
-    public addAggregationColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.addValueColumns(colKeys); }
+    public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
+    public removeValueColumn(colKey: (Column|ColDef|String)): void { this._columnController.removeValueColumn(colKey); }
+    public removeValueColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removeValueColumns(colKeys); }
+    public addValueColumn(colKey: (Column|ColDef|String)): void { this._columnController.addValueColumn(colKey); }
+    public addValueColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.addValueColumns(colKeys); }
 
     public setRowGroupColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.setRowGroupColumns(colKeys); }
     public removeRowGroupColumn(colKey: Column|ColDef|String): void { this._columnController.removeRowGroupColumn(colKey); }
@@ -117,18 +117,32 @@ export class ColumnApi {
         this.resetColumnState();
     }
 
-    public getValueColumns(): Column[] {
-        console.error('ag-Grid: getValueColumns is deprecated, use getAggregationColumns');
-        return this._columnController.getAggregationColumns(); 
+
+    public getAggregationColumns(): Column[] {
+        console.error('ag-Grid: getAggregationColumns is deprecated, use getValueColumns');
+        return this._columnController.getValueColumns();
     }
-    public removeValueColumn(column: Column): void {
-        console.error('ag-Grid: removeValueColumn is deprecated, use removeValueColumn');
-        this._columnController.removeValueColumn(column);
+
+    public removeAggregationColumn(colKey: (Column|ColDef|String)): void {
+        console.error('ag-Grid: removeAggregationColumn is deprecated, use removeValueColumn');
+        this._columnController.removeValueColumn(colKey);
     }
-    public addValueColumn(column: Column): void {
-        console.error('ag-Grid: addValueColumn is deprecated, use addValueColumn');
-        this._columnController.addValueColumn(column);
+
+    public removeAggregationColumns(colKeys: (Column|ColDef|String)[]): void {
+        console.error('ag-Grid: removeAggregationColumns is deprecated, use removeValueColumns');
+        this._columnController.removeValueColumns(colKeys);
     }
+
+    public addAggregationColumn(colKey: (Column|ColDef|String)): void {
+        console.error('ag-Grid: addAggregationColumn is deprecated, use addValueColumn');
+        this._columnController.addValueColumn(colKey);
+    }
+
+    public addAggregationColumns(colKeys: (Column|ColDef|String)[]): void {
+        console.error('ag-Grid: addAggregationColumns is deprecated, use addValueColumns');
+        this._columnController.addValueColumns(colKeys);
+    }
+
     public setColumnAggFunction(column: Column, aggFunc: string): void {
         console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
         this._columnController.setColumnAggFunc(column, aggFunc); 
@@ -717,7 +731,7 @@ export class ColumnController {
     }
 
     // + rowController
-    public getAggregationColumns(): Column[] {
+    public getValueColumns(): Column[] {
         return this.valueColumns ? this.valueColumns : [];
     }
 
