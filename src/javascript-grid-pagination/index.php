@@ -82,12 +82,16 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Note that the set filters are provided with the list of available values. This is because it is not
-        possible for the grid to know the entire set of values as they reside on the server.
+        <b>Note:</b> The set filters are provided with the list of available values. This is because it is not
+            possible for the grid to know the entire set of values as they reside on the server.
     </p>
 
     <p>
-        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side filtering,
+        <b>Note:</b> The filters below have <i>newRowsAction='keep'</i>. This is so the filters are kept when you move between pages.
+    </p>
+
+    <p>
+        <b>Note:</b> The example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side filtering,
         ag-Grid-Enterprise is not required for pagination)
     </p>
 

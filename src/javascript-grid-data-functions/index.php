@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Data Functions</h2>
 
     <p>
-        Data functions in ag-Grid are <b>row grouping</b>, <b>pivoting</b> and <b>aggregation</b>. All of these
+        Data functions in ag-Grid are <b>row grouping</b>, <b>pivoting</b> and <b>value (aggregation)</b>. All of these
         terms are related but each is a detailed topic by itself. Below gives a summary of the different functions
         to help frame the detailed explanations.
     </p>
@@ -22,10 +22,12 @@ include '../documentation-main/documentation_header.php';
         finds in data grids. Aggregation is optional when grouping.
     </p>
 
-    <h4>Aggregation</h4>
+    <h4>Value (Aggregation)</h4>
     <p>
         When grouping or pivoting you may use aggregation to aggregate values, eg apply a <i>sum()</i> or
-        <i>max()</i> on a column.
+        <i>max()</i> on a column. Although the mathematical term is 'Aggregation', it is referred to as 'Values'
+        to keep consistent with the GUI, where you add columns to the 'Values' section of the tool panel (which
+        in turn is consistent with Excel).
     </p>
 
     <h4>Pivoting</h4>
@@ -43,14 +45,14 @@ include '../documentation-main/documentation_header.php';
     <h4>Pivot Mode</h4>
     <p>
         Pivot mode is a mode of operation where the grid only uses columns that are included in
-        a row grouping, aggregation or pivot. The rowData detail is also not shown (you cannot open up
+        a row grouping, value or pivot. The rowData detail is also not shown (you cannot open up
         groups all the way down and view the lowest level detail). Pivot mode is similar to viewing
         a pivot table in a Excel. When in pivot mode, column visibility is ignored.
     </p>
 
     <h4>Allow Pivot, Row Group, Value</h4>
     <p>
-        Every column can be added as a row group, pivot or value (for aggregation) using the grid API or
+        Every column can be added as a row group, pivot or value using the grid API or
         configuration. However you need to mark the column definition with one or more of <i>allowRowGroup, allowPivot
         or allowValue</i> to allow the function via the GUI. If these flags are not set, the GUI will not allow
         the functions, however you API and configuration will not be impacted.

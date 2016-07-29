@@ -55,7 +55,7 @@ colDef1.aggFunc = 'sum';
 gridOptions.api.addAggFunc('abc', myCustomAggFunc);
 colDef2.aggFunc = 'abc';
 
-<b>// Option 2: column uses a function directly</b>
+<b>// Option 3: column uses a function directly</b>
 colDef3.aggFunc = myCustomAggFunc;
                 
 <b>// this is the function 2 and 3 above are using</b>
@@ -139,7 +139,7 @@ function myCustomAggFunc(values) {
         The '123' function, like 'sum', is set using a <i>gridOptions</i> property.
     </p>
 
-    <b>'123' on Silver</b>
+    <b>'xyz' on Bronze</b>
 
     <p>
         The 'xyz' function is another function with much use, however it demonstrates you can return anything
