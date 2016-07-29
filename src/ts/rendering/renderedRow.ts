@@ -529,6 +529,7 @@ export class RenderedRow {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             var newChildScope = this.parentScope.$new();
             newChildScope.data = data;
+            newChildScope.rowNode = this.rowNode;
             newChildScope.context = this.gridOptionsWrapper.getContext();
             return newChildScope;
         } else {
