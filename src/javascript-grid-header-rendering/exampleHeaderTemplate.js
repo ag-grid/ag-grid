@@ -1,3 +1,16 @@
+var ggggg =
+    '<div style="text-align: left;">' +
+    '  <div id="agResizeBar" style="width: 4px; height: 100%; float: right; cursor: col-resize;"></div>' +
+    '  <div id="agHeaderCellLabel" style="padding: 4px; overflow: hidden; text-overflow: ellipsis;">' +
+    '    <span id="agMenu"><i class="fa fa-bars"></i></span>' +
+    '    <span id="agText"></span>' +
+    '    <span id="agSortAsc"><i class="fa fa-long-arrow-down"></i></span>' +
+    '    <span id="agSortDesc"><i class="fa fa-long-arrow-up"></i></span>' +
+    '    <span id="agNoSort"></span>' +
+    '    <span id="agFilter"><i class="fa fa-filter"></i></span>' +
+    '  </div>' +
+    '</div>';
+
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150,
         headerCellTemplate: function() {
@@ -81,8 +94,8 @@ var gridOptions = {
     headerCellTemplate:
         '<div style="text-align: left;">' +
         '  <div id="agResizeBar" style="width: 4px; height: 100%; float: right; cursor: col-resize;"></div>' +
+        '  <div id="agMenu" style="float: left; padding: 2px; margin-top: 4px; margin-left: 2px;"><i class="fa fa-bars"></i></div>' +
         '  <div id="agHeaderCellLabel" style="padding: 4px; overflow: hidden; text-overflow: ellipsis;">' +
-        '    <span id="agMenu"><i class="fa fa-bars"></i></span>' +
         '    <span id="agText"></span>' +
         '    <span id="agSortAsc"><i class="fa fa-long-arrow-down"></i></span>' +
         '    <span id="agSortDesc"><i class="fa fa-long-arrow-up"></i></span>' +
