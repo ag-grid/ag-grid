@@ -2,10 +2,11 @@ import {RowRenderer} from "./rowRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {Column} from "../entities/column";
 import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
+import {Utils as _} from "../utils";
 import {Autowired} from "../context/context";
 import {HeaderRenderer} from "../headerRendering/headerRenderer";
 import {RenderedHeaderCell} from "../headerRendering/renderedHeaderCell";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator {
@@ -13,6 +14,7 @@ export class AutoWidthCalculator {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy
@@ -51,8 +53,12 @@ export class AutoWidthCalculator {
         // we are finished with the dummy container, so get rid of it
         eBodyContainer.removeChild(eDummyContainer);
 
-        // we add 4 as I found without it, the gui still put '...' after some of the texts
-        return dummyContainerWidth + 4;
+        // we add padding as I found without it, the gui still put '...' after some of the texts
+        var autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
+        if (typeof autoSizePadding !== 'number' || autoSizePadding < 0) {
+            autoSizePadding = 4;
+        }
+        return dummyContainerWidth + autoSizePadding;
     }
 
     private getHeaderCellForColumn(column: Column): RenderedHeaderCell {

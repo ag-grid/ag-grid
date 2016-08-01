@@ -29,7 +29,7 @@ export class ComponentUtil {
     public static NUMBER_PROPERTIES = [
         'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded',
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
-        'layoutInterval'
+        'layoutInterval','autoSizePadding'
     ];
 
     public static BOOLEAN_PROPERTIES = [
