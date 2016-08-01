@@ -607,13 +607,6 @@ export class RowRenderer {
                 return false;
             }
 
-            var nextRenderedCell = this.getComponentForCell(nextCell);
-
-            // if editing, but cell not editable, skip cell
-            if (startEditing && !nextRenderedCell.isCellEditable()) {
-                continue;
-            }
-
             // this scrolls the row into view
             var cellIsNotFloating = _.missing(nextCell.floating);
             if (cellIsNotFloating) {
@@ -624,6 +617,15 @@ export class RowRenderer {
             // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
             // floating cell, the scrolls get out of sync
             this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+
+            // we have to call this after ensureColumnVisible - otherwise it could be a virtual column
+            // or row that is not currently in view, hence the renderedCell would not exist
+            var nextRenderedCell = this.getComponentForCell(nextCell);
+
+            // if editing, but cell not editable, skip cell
+            if (startEditing && !nextRenderedCell.isCellEditable()) {
+                continue;
+            }
 
             if (startEditing) {
                 nextRenderedCell.startEditingIfEnabled();
