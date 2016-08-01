@@ -417,7 +417,15 @@ export class Utils {
         }
         return true;
     }
-    
+
+    static toStringOrNull(value: any): string {
+        if (this.exists(value) && value.toString) {
+            return value.toString();
+        } else {
+            return null;
+        }
+    }
+
     static formatWidth(width: number | string) {
         if (typeof width === "number") {
             return width + "px";
