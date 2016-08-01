@@ -16,6 +16,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: columnApi.getColumnState() was setting aggFunc on columns that were aggregated but then later removed.</li>
     <li>Bugfix: largeTextCellEditor - when value was undefined was displaying 'undefined', now displays blank.</li>
     <li>Bugfix: api.deselectAll() was not deselecting groups when gridOptions.groupSelectsChildren=true.</li>
+    <li>Bugfix: tab navigation was not working with virtual columns when column been tabbed onto was not visible.</li>
 
     <h3>Version 5.0.x (ag-Grid 5.0.6, ag-Grid-Enterprise 5.0.6)</h3>
     <li>Enhancement: added columnApi.getAllDisplayedVirtualColumns(), so you can check what columns are rendered due to column virtualisation.</li>
