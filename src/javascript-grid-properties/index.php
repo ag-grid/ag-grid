@@ -98,6 +98,12 @@ include '../documentation-main/documentation_header.php';
                 bar in the header will not auto-size the column.</td>
         </tr>
         <tr>
+            <th>autoSizePadding</th>
+            <td>How many pixels to add to the column width after the autosize calculation. Default is 4px. Set this
+            if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature
+            of the header.</td>
+        </tr>
+        <tr>
             <th>suppressColumnMoveAnimation</th>
             <td>If true, the <i>ag-column-moving</i> class is not added to the grid while columns are moving.
             In the default themes, this transpires to no animation for moving columns.</td>

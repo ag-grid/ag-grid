@@ -147,6 +147,7 @@ var gridOptions = {
 //suppressCellSelection: true,
 //suppressMultiSort: true,
     showToolPanel: true,//window.innerWidth > 1000,
+//  autoSizePadding: 20,
 //toolPanelSuppressGroups: true,
 //toolPanelSuppressValues: true,
 //groupSuppressAutoColumn: true,
