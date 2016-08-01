@@ -205,6 +205,11 @@ export class SelectionController {
                 rowNode.selectThisNode(false);
             }
         });
+        // the above does not clean up the parent rows if they are selected
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+            this.updateGroupsFromChildrenSelections();
+        }
+
         // we should not have to do this, as deselecting the nodes fires events
         // that we pick up, however it's good to clean it down, as we are still
         // left with entries pointing to 'undefined'
