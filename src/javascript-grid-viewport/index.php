@@ -204,7 +204,7 @@ interface IViewportDatasourceParams {
     <p>
         It is not good to have the grid ask for rows one at a time if the user is scrolling slowly. To get around this,
         the grid defines a page size, so it will ask for rows in 'pages'. For example, if the pages size is 5, then
-        the viewport will always start and end in numbers divisible by 5. For example the viewport will be 0 to 20 or
+        the viewport will always start and end in numbers divisible by 5 such as 0 to 20 or
         75 to 100. So if the user is scrolling slowly, the viewport will only be requested to get new rows after the
         grid hits 'the next five rows'. The default page size is 5. To change this, set the grid property
         <i>viewportRowModelPageSize</i>.
