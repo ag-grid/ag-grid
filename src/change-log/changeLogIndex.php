@@ -8,6 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 5.0.x</h3>
+
+    <h4>ag-Grid 5.0.7, ag-Grid-Enterprise 5.0.7</h4>
     <li>Enhancement: cellRenderer for richSelect is no longer mandatory, now default text renderer used in richSelect if no cellRenderer specified</li>
     <li>Enhancement: renamed all 'aggregation' (eg getAggregationColumns) method to 'value' (eg getValueColumns), the documentation was right, methods were out of sync</li>
     <li>Enhancement: now colId's can be numbers, not just strings</li>
@@ -19,23 +22,23 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: api.deselectAll() was not deselecting groups when gridOptions.groupSelectsChildren=true.</li>
     <li>Bugfix: tab navigation was not working with virtual columns when column been tabbed onto was not visible.</li>
 
-    <h3>Version 5.0.x (ag-Grid 5.0.6, ag-Grid-Enterprise 5.0.6)</h3>
+    <h4>ag-Grid 5.0.6, ag-Grid-Enterprise 5.0.6</h4>
     <li>Enhancement: added columnApi.getAllDisplayedVirtualColumns(), so you can check what columns are rendered due to column virtualisation.</li>
     <li>Bugfix: Angular 1 was compiling row multiple times, meant angular listeners were firing more than once. Now it compiles each cell exactly once when cell is created.</li>
 
-    <h3>Version 5.0.x (ag-Grid 5.0.4, ag-Grid-Enterprise 5.0.4)</h3>
+    <h4>ag-Grid 5.0.4, ag-Grid-Enterprise 5.0.4</h4>
     <li>Bugfix: hitting space sometimes (noticed on firefox) sent grid scrolling down when it should select the row</li>
 
-    <h3>Version 5.0.x (ag-Grid 5.0.3, ag-Grid-Enterprise 5.0.3)</h3>
+    <h4>ag-Grid 5.0.3, ag-Grid-Enterprise 5.0.3</h4>
     <li>Bugfix: pivot was not working with groupUseEntireRow=true</li>
 
-    <h3>Version 5.0.x (ag-Grid 5.0.2, ag-Grid-Enterprise 5.0.2)</h3>
+    <h4>ag-Grid 5.0.2, ag-Grid-Enterprise 5.0.2</h4>
     <li>Enhancement: changed comparison (or sorting) to use localeCompare for strings</li>
     <li>Enhancement: now pivot shows 'n/a' when no value columns is enabled</li>
     <li>Enhancement: now 'autosize cols' considers the header width, not just the row content</li>
     <li>Bugfix: cellRenderer with text field was not allowing editing in text field</li>
 
-    <h3>Version 5.0.x</h3>
+    <h4>ag-Grid 5.0.1, ag-Grid-Enterprise 5.0.1</h4>
     <li>Major Enhancement: Enterprise feature - Pivoting</li>
     <li>Major Enhancement: Free feature - Column Virtualisation</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup, enablePivot and enableValue</li>
