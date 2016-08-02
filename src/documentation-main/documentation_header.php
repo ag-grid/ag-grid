@@ -10,8 +10,8 @@
     <!-- Bootstrap -->
     <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
 
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="../documentation-main/documentation.css">
+    <link inline rel="stylesheet" href="../style.css">
+    <link inline rel="stylesheet" href="../documentation-main/documentation.css">
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
