@@ -19,28 +19,11 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">27th July 2016</div>
-        <div class="news-header">ag-Grid v5.0.6 Released</div>
+        <div class="news-header">2nd Aug 2016</div>
+        <div class="news-header">ag-Grid v5.0.7 Released</div>
         <div>
-            Minor bug fixes.
+            Minor bug fixes and improvements.
             See <a href="../change-log/changeLogIndex.php">change log</a> for details.
-        </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">26th July 2016</div>
-        <div class="news-header">ag-Grid v5.0.4 Released</div>
-        <div>
-            Minor bug fixes.
-            See <a href="../change-log/changeLogIndex.php">change log</a> for details.
-        </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">26th July 2016</div>
-        <div class="news-header">Roadmap Updated</div>
-        <div>
-            See the roadmap below for what we are working on now.
         </div>
     </div>
 
