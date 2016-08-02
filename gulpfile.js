@@ -23,7 +23,7 @@ gulp.task('uncss', ['copy-from-docs'], uncssTask);
 function uncssTask() {
     return gulp.src('./dist/dist/bootstrap/css/bootstrap.css')
         .pipe(uncss({
-            html: ['src/**/*.php']
+            html: ['src/**/*.php','src/**/*.html']
         }))
         .pipe(gulp.dest('./dist/dist/bootstrap/css'));
 }
