@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -28,7 +28,6 @@ export declare class GridCore {
     private doingVirtualPaging;
     private eRootPanel;
     private toolPanelShowing;
-    private windowResizeListener;
     private logger;
     private destroyFunctions;
     constructor(loggerFactory: LoggerFactory);

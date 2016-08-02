@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -7,8 +7,8 @@ export declare class AutoWidthCalculator {
     private rowRenderer;
     private headerRenderer;
     private gridPanel;
+    private gridOptionsWrapper;
     getPreferredWidthForColumn(column: Column): number;
-    private putHeaderCellsIntoDummyContainer(column, eDummyContainer);
     private getHeaderCellForColumn(column);
     private putRowCellsIntoDummyContainer(column, eDummyContainer);
     private cloneItemIntoDummy(eCell, eDummyContainer);

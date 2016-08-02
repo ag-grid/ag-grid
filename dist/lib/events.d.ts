@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -43,7 +43,6 @@ export declare class Events {
     static EVENT_COLUMN_VALUE_REMOVE_REQUEST: string;
     static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: string;
     static EVENT_FLASH_CELLS: string;
-    static EVENT_HEADER_HEIGHT_CHANGED: string;
     static EVENT_MODEL_UPDATED: string;
     static EVENT_CELL_CLICKED: string;
     static EVENT_CELL_DOUBLE_CLICKED: string;

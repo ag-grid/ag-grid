@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -56,6 +56,7 @@ export declare class Utils {
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
     static defaultComparator(valueA: any, valueB: any): number;
     static compareArrays(array1: any[], array2: any[]): boolean;
+    static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
     /**

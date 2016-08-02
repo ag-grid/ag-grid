@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.6
+ * @version v5.0.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,6 @@ var componentUtil_1 = require("./components/componentUtil");
 var gridApi_1 = require("./gridApi");
 var context_1 = require("./context/context");
 var columnController_1 = require("./columnController/columnController");
-var events_1 = require("./events");
 var utils_1 = require("./utils");
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -44,10 +43,16 @@ var GridOptionsWrapper = (function () {
         this.propertyEventService = new eventService_1.EventService();
     }
     GridOptionsWrapper.prototype.agWire = function (gridApi, columnApi) {
-        this.headerHeight = this.gridOptions.headerHeight;
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.checkForDeprecated();
+    };
+    GridOptionsWrapper.prototype.destroy = function () {
+        // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
+        // remove the references in case the user keeps the grid options, we want the rest
+        // of the grid to be picked up by the garbage collector
+        this.gridOptions.api = null;
+        this.gridOptions.columnApi = null;
     };
     GridOptionsWrapper.prototype.init = function () {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
@@ -105,6 +110,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isEnableColResize = function () { return isTrue(this.gridOptions.enableColResize); };
     GridOptionsWrapper.prototype.isSingleClickEdit = function () { return isTrue(this.gridOptions.singleClickEdit); };
     GridOptionsWrapper.prototype.getGroupDefaultExpanded = function () { return this.gridOptions.groupDefaultExpanded; };
+    GridOptionsWrapper.prototype.getAutoSizePadding = function () { return this.gridOptions.autoSizePadding; };
     GridOptionsWrapper.prototype.getRowData = function () { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function () { return isTrue(this.gridOptions.groupUseEntireRow); };
     GridOptionsWrapper.prototype.getGroupColumnDef = function () { return this.gridOptions.groupColumnDef; };
@@ -183,16 +189,12 @@ var GridOptionsWrapper = (function () {
     };
     // properties
     GridOptionsWrapper.prototype.getHeaderHeight = function () {
-        if (typeof this.headerHeight === 'number') {
-            return this.headerHeight;
+        if (typeof this.gridOptions.headerHeight === 'number') {
+            return this.gridOptions.headerHeight;
         }
         else {
             return 25;
         }
-    };
-    GridOptionsWrapper.prototype.setHeaderHeight = function (headerHeight) {
-        this.headerHeight = headerHeight;
-        this.eventService.dispatchEvent(events_1.Events.EVENT_HEADER_HEIGHT_CHANGED);
     };
     GridOptionsWrapper.prototype.isExternalFilterPresent = function () {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
@@ -342,6 +344,7 @@ var GridOptionsWrapper = (function () {
         }
     };
     GridOptionsWrapper.MIN_COL_WIDTH = 10;
+    GridOptionsWrapper.PROP_HEADER_HEIGHT = 'headerHeight';
     __decorate([
         context_1.Autowired('gridOptions'), 
         __metadata('design:type', Object)
@@ -365,6 +368,12 @@ var GridOptionsWrapper = (function () {
         __metadata('design:paramtypes', [gridApi_1.GridApi, columnController_1.ColumnApi]), 
         __metadata('design:returntype', void 0)
     ], GridOptionsWrapper.prototype, "agWire", null);
+    __decorate([
+        context_1.PreDestroy, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], GridOptionsWrapper.prototype, "destroy", null);
     __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 

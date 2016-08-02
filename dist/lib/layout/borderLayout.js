@@ -1,12 +1,16 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.6
+ * @version v5.0.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var utils_1 = require('../utils');
 var BorderLayout = (function () {
     function BorderLayout(params) {
+        this.centerHeightLastTime = -1;
+        this.centerWidthLastTime = -1;
+        this.centerLeftMarginLastTime = -1;
+        this.visibleLastTime = false;
         this.sizeChangeListeners = [];
         this.isLayoutPanel = true;
         this.fullHeight = !params.north && !params.south;
@@ -110,10 +114,16 @@ var BorderLayout = (function () {
     };
     // returns true if any item changed size, otherwise returns false
     BorderLayout.prototype.doLayout = function () {
-        if (!utils_1.Utils.isVisible(this.eGui)) {
+        var isVisible = utils_1.Utils.isVisible(this.eGui);
+        if (!isVisible) {
+            this.visibleLastTime = false;
             return false;
         }
         var atLeastOneChanged = false;
+        if (this.visibleLastTime !== isVisible) {
+            atLeastOneChanged = true;
+        }
+        this.visibleLastTime = true;
         var childLayouts = [this.eNorthChildLayout, this.eSouthChildLayout, this.eEastChildLayout, this.eWestChildLayout];
         var that = this;
         utils_1.Utils.forEach(childLayouts, function (childLayout) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.6
+ * @version v5.0.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,7 +47,6 @@ var Events = (function () {
     Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST = 'columnValueRemoveRequest';
     Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
     Events.EVENT_FLASH_CELLS = 'clipboardPaste';
-    Events.EVENT_HEADER_HEIGHT_CHANGED = 'headerHeightChanged';
     Events.EVENT_MODEL_UPDATED = 'modelUpdated';
     Events.EVENT_CELL_CLICKED = 'cellClicked';
     Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';

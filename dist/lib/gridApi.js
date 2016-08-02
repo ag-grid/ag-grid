@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.6
+ * @version v5.0.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -340,7 +340,7 @@ var GridApi = (function () {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     };
     GridApi.prototype.setHeaderHeight = function (headerHeight) {
-        this.gridOptionsWrapper.setHeaderHeight(headerHeight);
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
     };
     GridApi.prototype.showToolPanel = function (show) {
         this.gridCore.showToolPanel(show);

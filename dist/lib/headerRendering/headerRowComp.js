@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.6
+ * @version v5.0.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,20 +60,17 @@ var HeaderRowComp = (function (_super) {
             delete _this.headerElements[id];
         });
     };
-    HeaderRowComp.prototype.init = function () {
-        var _this = this;
+    HeaderRowComp.prototype.onRowHeightChanged = function () {
         var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
         this.getGui().style.top = (this.dept * rowHeight) + 'px';
         this.getGui().style.height = rowHeight + 'px';
-        var virtualColumnsChangedListener = this.onVirtualColumnsChanged.bind(this);
-        var displayedColumnsChangedListener = this.onDisplayedColumnsChanged.bind(this);
-        this.eventService.addEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualColumnsChangedListener);
-        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
-        this.addDestroyFunc(function () {
-            _this.eventService.removeEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualColumnsChangedListener);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
-        });
+    };
+    HeaderRowComp.prototype.init = function () {
+        this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     };
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
         // because column groups are created and destroyed on the fly as groups are opened / closed and columns are moved,

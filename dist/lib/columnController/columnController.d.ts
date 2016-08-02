@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -40,11 +40,11 @@ export declare class ColumnApi {
     setPivotMode(pivotMode: boolean): void;
     isPivotMode(): boolean;
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | ColDef | String): Column;
-    getAggregationColumns(): Column[];
-    removeAggregationColumn(colKey: (Column | ColDef | String)): void;
-    removeAggregationColumns(colKeys: (Column | ColDef | String)[]): void;
-    addAggregationColumn(colKey: (Column | ColDef | String)): void;
-    addAggregationColumns(colKeys: (Column | ColDef | String)[]): void;
+    getValueColumns(): Column[];
+    removeValueColumn(colKey: (Column | ColDef | String)): void;
+    removeValueColumns(colKeys: (Column | ColDef | String)[]): void;
+    addValueColumn(colKey: (Column | ColDef | String)): void;
+    addValueColumns(colKeys: (Column | ColDef | String)[]): void;
     setRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
     removeRowGroupColumn(colKey: Column | ColDef | String): void;
     removeRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
@@ -70,9 +70,11 @@ export declare class ColumnApi {
     setState(columnState: any): boolean;
     getState(): any[];
     resetState(): void;
-    getValueColumns(): Column[];
-    removeValueColumn(column: Column): void;
-    addValueColumn(column: Column): void;
+    getAggregationColumns(): Column[];
+    removeAggregationColumn(colKey: (Column | ColDef | String)): void;
+    removeAggregationColumns(colKeys: (Column | ColDef | String)[]): void;
+    addAggregationColumn(colKey: (Column | ColDef | String)): void;
+    addAggregationColumns(colKeys: (Column | ColDef | String)[]): void;
     setColumnAggFunction(column: Column, aggFunc: string): void;
 }
 export declare class ColumnController {
@@ -168,7 +170,7 @@ export declare class ColumnController {
     moveColumn(key: string | Column | ColDef, toIndex: number): void;
     moveColumnByIndex(fromIndex: number, toIndex: number): void;
     getBodyContainerWidth(): number;
-    getAggregationColumns(): Column[];
+    getValueColumns(): Column[];
     getPivotColumns(): Column[];
     isPivotActive(): boolean;
     getRowGroupColumns(): Column[];

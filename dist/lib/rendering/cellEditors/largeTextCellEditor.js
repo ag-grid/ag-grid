@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.6
+ * @version v5.0.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var component_1 = require("../../widgets/component");
 var constants_1 = require("../../constants");
+var utils_1 = require("../../utils");
 var LargeTextCellEditor = (function (_super) {
     __extends(LargeTextCellEditor, _super);
     function LargeTextCellEditor() {
@@ -22,7 +23,9 @@ var LargeTextCellEditor = (function (_super) {
         this.textarea.maxLength = params.maxLength ? params.maxLength : "200";
         this.textarea.cols = params.cols ? params.cols : "60";
         this.textarea.rows = params.rows ? params.rows : "10";
-        this.textarea.value = params.value;
+        if (utils_1.Utils.exists(params.value)) {
+            this.textarea.value = params.value.toString();
+        }
         this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     };

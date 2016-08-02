@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.6
+ * @version v5.0.7
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -71,11 +71,11 @@ var ColumnApi = (function () {
     ColumnApi.prototype.setPivotMode = function (pivotMode) { this._columnController.setPivotMode(pivotMode); };
     ColumnApi.prototype.isPivotMode = function () { return this._columnController.isPivotMode(); };
     ColumnApi.prototype.getSecondaryPivotColumn = function (pivotKeys, valueColKey) { return this._columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); };
-    ColumnApi.prototype.getAggregationColumns = function () { return this._columnController.getAggregationColumns(); };
-    ColumnApi.prototype.removeAggregationColumn = function (colKey) { this._columnController.removeValueColumn(colKey); };
-    ColumnApi.prototype.removeAggregationColumns = function (colKeys) { this._columnController.removeValueColumns(colKeys); };
-    ColumnApi.prototype.addAggregationColumn = function (colKey) { this._columnController.addValueColumn(colKey); };
-    ColumnApi.prototype.addAggregationColumns = function (colKeys) { this._columnController.addValueColumns(colKeys); };
+    ColumnApi.prototype.getValueColumns = function () { return this._columnController.getValueColumns(); };
+    ColumnApi.prototype.removeValueColumn = function (colKey) { this._columnController.removeValueColumn(colKey); };
+    ColumnApi.prototype.removeValueColumns = function (colKeys) { this._columnController.removeValueColumns(colKeys); };
+    ColumnApi.prototype.addValueColumn = function (colKey) { this._columnController.addValueColumn(colKey); };
+    ColumnApi.prototype.addValueColumns = function (colKeys) { this._columnController.addValueColumns(colKeys); };
     ColumnApi.prototype.setRowGroupColumns = function (colKeys) { this._columnController.setRowGroupColumns(colKeys); };
     ColumnApi.prototype.removeRowGroupColumn = function (colKey) { this._columnController.removeRowGroupColumn(colKey); };
     ColumnApi.prototype.removeRowGroupColumns = function (colKeys) { this._columnController.removeRowGroupColumns(colKeys); };
@@ -120,17 +120,25 @@ var ColumnApi = (function () {
         console.error('ag-Grid: resetState is deprecated, use resetColumnState');
         this.resetColumnState();
     };
-    ColumnApi.prototype.getValueColumns = function () {
-        console.error('ag-Grid: getValueColumns is deprecated, use getAggregationColumns');
-        return this._columnController.getAggregationColumns();
+    ColumnApi.prototype.getAggregationColumns = function () {
+        console.error('ag-Grid: getAggregationColumns is deprecated, use getValueColumns');
+        return this._columnController.getValueColumns();
     };
-    ColumnApi.prototype.removeValueColumn = function (column) {
-        console.error('ag-Grid: removeValueColumn is deprecated, use removeValueColumn');
-        this._columnController.removeValueColumn(column);
+    ColumnApi.prototype.removeAggregationColumn = function (colKey) {
+        console.error('ag-Grid: removeAggregationColumn is deprecated, use removeValueColumn');
+        this._columnController.removeValueColumn(colKey);
     };
-    ColumnApi.prototype.addValueColumn = function (column) {
-        console.error('ag-Grid: addValueColumn is deprecated, use addValueColumn');
-        this._columnController.addValueColumn(column);
+    ColumnApi.prototype.removeAggregationColumns = function (colKeys) {
+        console.error('ag-Grid: removeAggregationColumns is deprecated, use removeValueColumns');
+        this._columnController.removeValueColumns(colKeys);
+    };
+    ColumnApi.prototype.addAggregationColumn = function (colKey) {
+        console.error('ag-Grid: addAggregationColumn is deprecated, use addValueColumn');
+        this._columnController.addValueColumn(colKey);
+    };
+    ColumnApi.prototype.addAggregationColumns = function (colKeys) {
+        console.error('ag-Grid: addAggregationColumns is deprecated, use addValueColumns');
+        this._columnController.addValueColumns(colKeys);
     };
     ColumnApi.prototype.setColumnAggFunction = function (column, aggFunc) {
         console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
@@ -618,7 +626,7 @@ var ColumnController = (function () {
         return result;
     };
     // + rowController
-    ColumnController.prototype.getAggregationColumns = function () {
+    ColumnController.prototype.getValueColumns = function () {
         return this.valueColumns ? this.valueColumns : [];
     };
     // + rowController
@@ -781,7 +789,7 @@ var ColumnController = (function () {
         return this.displayedRightColumns.length > 0;
     };
     ColumnController.prototype.getPrimaryAndSecondaryAndAutoColumns = function () {
-        var result = this.primaryColumns.slice(0);
+        var result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
         if (this.groupAutoColumnActive) {
             result.push(this.groupAutoColumn);
         }
@@ -793,10 +801,11 @@ var ColumnController = (function () {
     ColumnController.prototype.createStateItemFromColumn = function (column) {
         var rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
         var pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
+        var aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         var resultItem = {
             colId: column.getColId(),
             hide: !column.isVisible(),
-            aggFunc: column.getAggFunc() ? column.getAggFunc() : null,
+            aggFunc: aggFunc,
             width: column.getActualWidth(),
             pivotIndex: pivotIndex,
             pinned: column.getPinned(),

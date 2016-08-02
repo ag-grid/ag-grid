@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -24,6 +24,7 @@ export declare class BorderLayout {
     private centerHeightLastTime;
     private centerWidthLastTime;
     private centerLeftMarginLastTime;
+    private visibleLastTime;
     private sizeChangeListeners;
     private overlays;
     constructor(params: any);
@@ -31,7 +32,7 @@ export declare class BorderLayout {
     fireSizeChanged(): void;
     private setupPanels(params);
     private setupPanel(content, ePanel);
-    getGui(): any;
+    getGui(): HTMLElement;
     doLayout(): boolean;
     private layoutChild(childPanel);
     private layoutHeight();

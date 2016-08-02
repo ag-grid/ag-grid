@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -11,13 +11,14 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
+    static PROP_HEADER_HEIGHT: string;
     private gridOptions;
     private columnController;
     private eventService;
     private enterprise;
-    private headerHeight;
     private propertyEventService;
-    agWire(gridApi: GridApi, columnApi: ColumnApi): void;
+    private agWire(gridApi, columnApi);
+    private destroy();
     init(): void;
     isEnterprise(): boolean;
     isRowSelection(): boolean;
@@ -66,6 +67,7 @@ export declare class GridOptionsWrapper {
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
     getGroupDefaultExpanded(): number;
+    getAutoSizePadding(): number;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
     getGroupColumnDef(): ColDef;
@@ -134,7 +136,6 @@ export declare class GridOptionsWrapper {
     removeEventListener(key: string, listener: Function): void;
     executeProcessRowPostCreateFunc(params: ProcessRowParams): void;
     getHeaderHeight(): number;
-    setHeaderHeight(headerHeight: number): void;
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
     getLayoutInterval(): number;

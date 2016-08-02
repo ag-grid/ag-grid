@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.6
+// Type definitions for ag-grid v5.0.7
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -20,6 +20,7 @@ export declare class HeaderRowComp extends Component {
     forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement) => void): void;
     destroy(): void;
     private removeAndDestroyChildComponents(idsToDestroy);
+    private onRowHeightChanged();
     private init();
     private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged();
