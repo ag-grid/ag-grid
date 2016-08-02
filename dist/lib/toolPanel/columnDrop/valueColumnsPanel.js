@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.6
+// ag-grid-enterprise v5.0.7
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -73,7 +73,7 @@ var ValuesColumnPanel = (function (_super) {
         }
     };
     ValuesColumnPanel.prototype.getExistingColumns = function () {
-        return this.columnController.getAggregationColumns();
+        return this.columnController.getValueColumns();
     };
     __decorate([
         main_1.Autowired('columnController'), 

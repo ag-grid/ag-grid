@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.6
+// ag-grid-enterprise v5.0.7
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -30,7 +30,7 @@ var PivotStage = (function () {
     PivotStage.prototype.executePivotOn = function (rootNode) {
         var uniqueValues = this.bucketUpRowNodes(rootNode);
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
-        var aggregationColumns = this.columnController.getAggregationColumns();
+        var aggregationColumns = this.columnController.getValueColumns();
         var aggregationColumnsHash = aggregationColumns.map(function (column) { return column.getId(); }).join('#');
         var aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;

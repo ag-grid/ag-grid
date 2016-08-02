@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.6
+// ag-grid-enterprise v5.0.7
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -21,11 +21,26 @@ var RichSelectRow = (function (_super) {
         this.cellRenderer = cellRenderer;
     }
     RichSelectRow.prototype.setState = function (value, selected) {
+        if (main_1.Utils.exists(this.cellRenderer)) {
+            this.populateWithRenderer(value);
+        }
+        else {
+            this.populateWithoutRenderer(value);
+        }
+        main_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
+    };
+    RichSelectRow.prototype.populateWithoutRenderer = function (value) {
+        if (main_1.Utils.exists(value) && value !== '') {
+            // not using innerHTML to prevent injection of HTML
+            // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
+            this.getGui().textContent = value.toString();
+        }
+    };
+    RichSelectRow.prototype.populateWithRenderer = function (value) {
         var childComponent = this.cellRendererService.useCellRenderer(this.cellRenderer, this.getGui(), { value: value });
         if (childComponent && childComponent.destroy) {
             this.addDestroyFunc(childComponent.destroy.bind(childComponent));
         }
-        main_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
     };
     __decorate([
         main_1.Autowired('cellRendererService'), 

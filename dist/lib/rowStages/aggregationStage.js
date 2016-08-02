@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.6
+// ag-grid-enterprise v5.0.7
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -23,7 +23,7 @@ var AggregationStage = (function () {
             return;
         }
         var pivotActive = this.columnController.isPivotActive();
-        var measureColumns = this.columnController.getAggregationColumns();
+        var measureColumns = this.columnController.getValueColumns();
         var pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
         this.recursivelyCreateAggData(rootNode, measureColumns, pivotColumns);
     };
