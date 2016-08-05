@@ -30,12 +30,12 @@ export class ViewportRowModel implements IRowModel {
     // datasource tells us this
     private rowCount = -1;
 
-    private rowNodesByIndex: {[key: number]: RowNode} = {};
+    private rowNodesByIndex: {[index: number]: RowNode} = {};
 
     private rowHeight: number;
 
     private viewportDatasource: IViewportDatasource;
-    
+
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
@@ -99,7 +99,7 @@ export class ViewportRowModel implements IRowModel {
     }
 
     public purgeRowsNotInViewport(): void {
-        Object.keys(this.rowNodesByIndex).forEach( indexStr => {
+        Object.keys(this.rowNodesByIndex).forEach(indexStr => {
             var index = parseInt(indexStr);
             if (index < this.firstRow || index > this.lastRow) {
                 delete this.rowNodesByIndex[index];
@@ -109,7 +109,7 @@ export class ViewportRowModel implements IRowModel {
 
     public setViewportDatasource(viewportDatasource: IViewportDatasource): void {
         this.destroyCurrentDatasource();
-        
+
         this.viewportDatasource = viewportDatasource;
         this.rowCount = 0;
 
@@ -141,7 +141,7 @@ export class ViewportRowModel implements IRowModel {
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (this.rowHeight!==0) { // avoid divide by zero error
+        if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
         } else {
             return 0;
@@ -160,7 +160,14 @@ export class ViewportRowModel implements IRowModel {
         return this.rowCount > 0;
     }
 
-    public forEachNode(callback:(rowNode: RowNode)=>void): void {
+    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
+        var callbackCount = 0;
+        Object.keys(this.rowNodesByIndex).forEach(indexStr => {
+            var index = parseInt(indexStr);
+            var rowNode: RowNode = this.rowNodesByIndex[index];
+            callback(rowNode, callbackCount);
+            callbackCount++;
+        });
     }
 
     private setRowData(rowData: {[key: number]: any}): void {
@@ -202,10 +209,21 @@ export class ViewportRowModel implements IRowModel {
     }
 
     public setRowCount(rowCount: number): void {
-        if (rowCount!==this.rowCount) {
+        if (rowCount !== this.rowCount) {
             this.rowCount = rowCount;
             this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
         }
     }
-    
+
+    public insertItemsAtIndex(index: number, items: any[]): void {
+        console.log('not yet supported');
+    }
+
+    public removeItems(rowNodes: RowNode[]): void {
+        console.log('not yet supported');
+    }
+
+    public addItems(item: any[]): void {
+        console.log('not yet supported');
+    }
 }
