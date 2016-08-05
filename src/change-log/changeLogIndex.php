@@ -8,6 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Enhancement: node id's are not strings, not numbers. This is to allow you to give nodes the same id's as your data store.</li>
+
+
     <h3>Version 5.0.x</h3>
 
     <h4>ag-Grid 5.0.7, ag-Grid-Enterprise 5.0.7</h4>
