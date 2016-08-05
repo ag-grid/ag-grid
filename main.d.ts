@@ -96,6 +96,7 @@ export * from './dist/lib/rendering/valueFormatterService';
 export * from './dist/lib/rowControllers/inMemory/filterStage';
 export * from './dist/lib/rowControllers/inMemory/flattenStage';
 export * from './dist/lib/rowControllers/inMemory/inMemoryRowModel';
+export * from './dist/lib/rowControllers/inMemory/inMemoryNodeManager';
 export * from './dist/lib/rowControllers/inMemory/sortStage';
 
 export * from './dist/lib/rowControllers/floatingRowModel';

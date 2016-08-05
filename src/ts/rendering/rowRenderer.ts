@@ -314,11 +314,11 @@ export class RowRenderer {
         // called to whats rendered. if the row isn't rendered, we don't care
         var indexesToRemove: any = [];
         var renderedRows = this.renderedRows;
-        Object.keys(renderedRows).forEach(function (key: any) {
-            var renderedRow = renderedRows[key];
+        Object.keys(renderedRows).forEach(function (index: any) {
+            var renderedRow = renderedRows[index];
             // see if the rendered row is in the list of rows we have to update
             if (renderedRow.isDataInList(rows)) {
-                indexesToRemove.push(key);
+                indexesToRemove.push(index);
             }
         });
         // remove the rows
@@ -348,11 +348,10 @@ export class RowRenderer {
     public refreshGroupRows() {
         // find all the group rows
         var rowsToRemove: any = [];
-        var that = this;
-        Object.keys(this.renderedRows).forEach(function (key: any) {
-            var renderedRow = that.renderedRows[key];
+        Object.keys(this.renderedRows).forEach( (index: any) => {
+            var renderedRow = this.renderedRows[index];
             if (renderedRow.isGroup()) {
-                rowsToRemove.push(key);
+                rowsToRemove.push(index);
             }
         });
         // remove the rows

@@ -98,6 +98,7 @@ import {SetLeftFeature} from "./rendering/features/setLeftFeature";
 import {RenderedCell} from "./rendering/renderedCell";
 import {HeaderRowComp} from "./headerRendering/headerRowComp";
 import {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateShowChangeCellRenderer";
+import {InMemoryNodeManager} from "./rowControllers/inMemory/InMemoryNodeManager";
 
 export function populateClientExports(exports: any): void {
 
@@ -201,6 +202,7 @@ export function populateClientExports(exports: any): void {
     exports.FlattenStage = FlattenStage;
     exports.InMemoryRowModel = InMemoryRowModel;
     exports.SortStage = SortStage;
+    exports.InMemoryNodeManager = InMemoryNodeManager;
 
     // rowControllers
     exports.FloatingRowModel = FloatingRowModel;

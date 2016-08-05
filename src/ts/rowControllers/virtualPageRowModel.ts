@@ -360,7 +360,7 @@ export class VirtualPageRowModel implements IRowModel {
         }
 
         // put in timeout, to force result to be async
-        setTimeout( ()=> {
+        setTimeout(()=> {
             this.datasource.getRows(params);
         }, 0);
 
@@ -427,7 +427,7 @@ export class VirtualPageRowModel implements IRowModel {
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (this.rowHeight!==0) { // avoid divide by zero error
+        if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
         } else {
             return 0;
@@ -459,4 +459,15 @@ export class VirtualPageRowModel implements IRowModel {
         return null;
     }
 
+    public insertItemsAtIndex(index: number, items: any[]): void {
+        console.log('not yet supported');
+    }
+
+    public removeItems(rowNodes: RowNode[]): void {
+        console.log('not yet supported');
+    }
+
+    public addItems(items: any[]): void {
+        console.log('not yet supported');
+    }
 }

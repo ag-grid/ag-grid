@@ -521,6 +521,18 @@ export class GridApi {
         }
     }
 
+    public insertItemsAtIndex(index: number, items: any[]): void {
+        this.rowModel.insertItemsAtIndex(index, items);
+    }
+
+    public removeItems(rowNodes: RowNode[]): void {
+        this.rowModel.removeItems(rowNodes);
+    }
+
+    public addItems(rowNodes: RowNode[]): void {
+        this.rowModel.addItems(rowNodes);
+    }
+
     /*
     Taking these out, as we want to reconsider how we register components
     

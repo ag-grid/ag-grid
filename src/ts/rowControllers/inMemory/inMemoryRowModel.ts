@@ -10,6 +10,7 @@ import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/c
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
+import {InMemoryNodeManager} from "./InMemoryNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
@@ -39,6 +40,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
+    private nodeManager: InMemoryNodeManager;
+
     @PostConstruct
     public init(): void {
 
@@ -52,12 +55,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants.STEP_PIVOT));
 
         this.rootNode = new RowNode();
-        this.rootNode.group = true;
-        this.rootNode.level = -1;
-        this.rootNode.allLeafChildren = [];
-        this.rootNode.childrenAfterGroup = [];
-        this.rootNode.childrenAfterSort = [];
-        this.rootNode.childrenAfterFilter = [];
+        this.nodeManager = new InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService);
 
         this.context.wireBean(this.rootNode);
 
@@ -348,6 +346,15 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
+    private getGroupState(): any {
+        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
+            return null;
+        }
+        var result: any = {};
+        _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string)=> result[key] = node.expanded );
+        return result;
+    }
+
     // rows: the rows to put into the model
     // firstId: the first id to use, used for paging, where we are not on the first page
     public setRowData(rowData: any[], refresh: boolean, firstId?: number) {
@@ -355,8 +362,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         // remember group state, so we can expand groups that should be expanded
         var groupState = this.getGroupState();
 
-        // place each row into a wrapper
-        this.createRowNodesFromData(rowData, firstId);
+        this.nodeManager.setRowData(rowData, firstId);
 
         // this event kicks off:
         // - clears selection
@@ -369,94 +375,30 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    private getGroupState(): any {
-        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
-            return null;
-        }
-        var result: any = {};
-        _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string)=> result[key] = node.expanded );
-        return result;
-    }
-
-    private createRowNodesFromData(rowData: any[], firstId?: number): RowNode[] {
-
-        this.rootNode.childrenAfterFilter = null;
-        this.rootNode.childrenAfterGroup = null;
-        this.rootNode.childrenAfterSort = null;
-        this.rootNode.childrenMapped = null;
-
-        var context = this.context;
-
-        if (!rowData) {
-            this.rootNode.allLeafChildren = [];
-            this.rootNode.childrenAfterGroup = [];
-            return;
-        }
-
-        var rowNodeId = _.exists(firstId) ? firstId : 0;
-
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        var nodeChildDetailsFunc = this.gridOptionsWrapper.getNodeChildDetailsFunc();
-        var suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        var rowsAlreadyGrouped = _.exists(nodeChildDetailsFunc);
-
-        // kick off recursion
-        var result = recursiveFunction(rowData, null, 0);
-
-        if (rowsAlreadyGrouped) {
-            this.rootNode.childrenAfterGroup = result;
-            setLeafChildren(this.rootNode);
-        } else {
-            this.rootNode.allLeafChildren = result;
-        }
-
-        function setLeafChildren(node: RowNode): void {
-            node.allLeafChildren = [];
-            if (node.childrenAfterGroup) {
-                node.childrenAfterGroup.forEach( childAfterGroup => {
-                    if (childAfterGroup.group) {
-                        if (childAfterGroup.allLeafChildren) {
-                            childAfterGroup.allLeafChildren.forEach( leafChild => node.allLeafChildren.push(leafChild) );
-                        }
-                    } else {
-                        node.allLeafChildren.push(childAfterGroup)
-                    }
-                });
-            }
-        }
-
-        function recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {
-            var rowNodes: RowNode[] = [];
-            rowData.forEach( (dataItem)=> {
-                var node = new RowNode();
-                context.wireBean(node);
-                var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
-                if (nodeChildDetails && nodeChildDetails.group) {
-                    node.group = true;
-                    node.childrenAfterGroup = recursiveFunction(nodeChildDetails.children, node, level + 1);
-                    node.expanded = nodeChildDetails.expanded === true;
-                    node.field = nodeChildDetails.field;
-                    node.key = nodeChildDetails.key;
-                    // pull out all the leaf children and add to our node
-                    setLeafChildren(node);
-                }
-
-                if (parent && !suppressParentsInRowNodes) {
-                    node.parent = parent;
-                }
-                node.level = level;
-                node.id = rowNodeId++;
-                node.data = dataItem;
-
-                rowNodes.push(node);
-            });
-            return rowNodes;
-        }
-
-    }
-
     private doRowsToDisplay() {
-        // this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterSort);
         this.rowsToDisplay = <RowNode[]> this.flattenStage.execute(this.rootNode);
     }
+
+    public insertItemsAtIndex(index: number, items: any[]): void {
+        var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
+        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes);
+    }
+
+    public removeItems(rowNodes: RowNode[]): void {
+        var removedNodes = this.nodeManager.removeItems(rowNodes);
+        this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes);
+    }
+
+    public addItems(items: any[]): void {
+        var newNodes = this.nodeManager.addItems(items);
+        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes);
+    }
+
+    private refreshAndFireEvent(eventName: string, rowNodes: RowNode[]): void {
+        if (rowNodes) {
+            this.refreshModel(Constants.STEP_EVERYTHING);
+            this.eventService.dispatchEvent(eventName, {rowNodes: rowNodes})
+        }
+    }
+
 }

@@ -84,4 +84,8 @@ export class Events {
     public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
     public static EVENT_DRAG_STARTED = 'dragStarted';
     public static EVENT_DRAG_STOPPED = 'dragStopped';
+
+    public static EVENT_ITEMS_ADDED = 'itemsAdded';
+    public static EVENT_ITEMS_REMOVED = 'itemsRemoved';
+
 }

@@ -333,7 +333,7 @@ export class RowNode {
                 this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
             }
 
-            var event:any = {node: this};
+            var event: any = {node: this};
             this.mainEventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event)
         }
     }
