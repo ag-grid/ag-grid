@@ -99,12 +99,14 @@ export class GroupStage implements IRowNodeStage {
 
         nextGroup.group = true;
         nextGroup.field = groupColumn.getColDef().field;
-        nextGroup.id = groupId.value--;
+        nextGroup.id = groupId.value.toString();
         nextGroup.key = groupKey;
         nextGroup.expanded = this.isExpanded(expandByDefault, level);
         nextGroup.allLeafChildren = [];
         nextGroup.allChildrenCount = 0;
         nextGroup.level = level;
+
+        groupId.value--;
 
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         nextGroup.parent = includeParents ? parent : null;

@@ -200,7 +200,7 @@ export class ViewportRowModel implements IRowModel {
         // written with the rowNode.rowUpdated in mind
         var rowNode = new RowNode();
         this.context.wireBean(rowNode);
-        rowNode.id = rowIndex;
+        rowNode.id = rowIndex.toString();
         rowNode.data = data;
         rowNode.rowTop = top;
         rowNode.rowHeight = rowHeight;
