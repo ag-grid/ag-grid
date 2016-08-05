@@ -250,6 +250,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context/index.php">Context</a>
                 <?php } ?>
 
+                <?php if ($key == "InsertRemove") { ?>
+                    <span class="sidebarLinkSelected">Insert & Remove</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-insert-remove/index.php">Insert & Remove</a>
+                <?php } ?>
+
                 <?php if ($key == "Refresh") { ?>
                     <span class="sidebarLinkSelected">Refresh</span>
                 <?php } else { ?>
