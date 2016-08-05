@@ -162,6 +162,7 @@ export interface GridOptions {
     getNodeChildDetails?: GetNodeChildDetails;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
+    getRowNodeId?: GetRowNodeIdFunc;
     processRowPostCreate?(params: ProcessRowParams): void;
     processCellForClipboard?(params: ProcessCellForExportParams): any;
 
@@ -268,6 +269,10 @@ export interface GetMainMenuItemsParams {
 
 export interface GetMainMenuItems {
     (params: GetMainMenuItemsParams): (string|MenuItem)[]
+}
+
+export interface GetRowNodeIdFunc {
+    (data: any): string
 }
 
 export interface ProcessRowParams {

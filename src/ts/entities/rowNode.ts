@@ -26,8 +26,9 @@ export class RowNode {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    /** Unique ID for the node. Can be thought of as the index of the row in the original list. */
-    public id: number;
+    /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
+     * key in the database (or whatever data source is used). */
+    public id: string;
     /** The user provided data */
     public data: any;
     /** The parent node to this node, or empty if top level */
@@ -89,6 +90,23 @@ export class RowNode {
         this.data = data;
         var event = {oldData: oldData, newData: data};
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    }
+
+    public setId(id: string): void {
+        // can only set id once
+        if (this.id!==undefined) { return; }
+
+        // see if user is providing the id's
+        var getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
+        if (getRowNodeId) {
+            // if user is providing the id's, then we set the id only after the data has been set.
+            // this is important for virtual pagination and viewport, where empty rows exist.
+            if (this.data) {
+                this.id = getRowNodeId(this.data);
+            }
+        } else {
+            this.id = id;
+        }
     }
 
     private dispatchLocalEvent(eventName: string, event?: any): void {
@@ -175,7 +193,6 @@ export class RowNode {
         this.selected = selected;
     }
 
-    /** Returns true if this row is selected */
     public setSelected(newValue: boolean, clearSelection: boolean = false, tailingNodeInSequence: boolean = false) {
         this.setSelectedParams({
             newValue: newValue,
@@ -192,6 +209,11 @@ export class RowNode {
         var clearSelection = params.clearSelection === true;
         var tailingNodeInSequence = params.tailingNodeInSequence === true;
         var rangeSelect = params.rangeSelect === true;
+
+        if (this.id===undefined) {
+            console.warn('ag-Grid: cannot select node until id for node is known');
+            return;
+        }
 
         if (this.floating) {
             console.log('ag-Grid: cannot select floating rows');

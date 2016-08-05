@@ -169,7 +169,7 @@ export class VirtualPageRowModel implements IRowModel {
             // if a real node, then always create a new one
             rowNode = new RowNode();
             this.context.wireBean(rowNode);
-            rowNode.id = virtualRowIndex;
+            rowNode.id = virtualRowIndex.toString();
             rowNode.data = data;
             // and see if the previous one was selected, and if yes, swap it out
             this.selectionController.syncInRowNode(rowNode);
@@ -179,7 +179,7 @@ export class VirtualPageRowModel implements IRowModel {
             if (!rowNode) {
                 rowNode = new RowNode();
                 this.context.wireBean(rowNode);
-                rowNode.id = virtualRowIndex;
+                rowNode.id = virtualRowIndex.toString();
                 rowNode.data = data;
             }
         }
