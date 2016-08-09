@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleInsertRemove"></show-example>
 
+    <show-example example="exampleInsertRemoveVirtualPaging"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
