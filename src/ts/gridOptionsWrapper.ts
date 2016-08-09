@@ -131,6 +131,11 @@ export class GridOptionsWrapper {
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
     public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 
+    public getMaxConcurrentDatasourceRequests(): number { return this.gridOptions.maxConcurrentDatasourceRequests; }
+    public getMaxPagesInPaginationCache(): number { return this.gridOptions.maxPagesInPaginationCache; }
+    public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
+    public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
+
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }

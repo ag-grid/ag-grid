@@ -81,6 +81,10 @@ export interface GridOptions {
     layoutInterval?: number;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
+    maxConcurrentDatasourceRequests?: number;
+    maxPagesInPaginationCache?: number;
+    paginationOverflowSize?: number;
+    paginationPageSize?: number;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
