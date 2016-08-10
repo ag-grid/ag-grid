@@ -88,6 +88,19 @@ export class RowNode {
     public setData(data: any): void {
         var oldData = this.data;
         this.data = data;
+
+        var event = {oldData: oldData, newData: data};
+        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    }
+
+    public setDataAndId(data: any, id: string): void {
+        var oldData = this.data;
+        this.data = data;
+
+        this.setId(id);
+
+        this.selectionController.syncInRowNode(this);
+
         var event = {oldData: oldData, newData: data};
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     }

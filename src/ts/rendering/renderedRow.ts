@@ -243,11 +243,13 @@ export class RenderedRow {
         }
     }
 
+    private onRowSelected(): void {
+        var selected = this.rowNode.isSelected();
+        this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
+    }
+
     private addRowSelectedListener(): void {
-        var rowSelectedListener = () => {
-            var selected = this.rowNode.isSelected();
-            this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
-        };
+        var rowSelectedListener = this.onRowSelected.bind(this);
         this.rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
         this.destroyFunctions.push(()=> {
             this.rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
@@ -315,6 +317,10 @@ export class RenderedRow {
             var animate = false;
             var newData = true;
             this.forEachRenderedCell( renderedCell => renderedCell.refreshCell(animate, newData) );
+            // check for selected also, as this could be after lazy loading of the row data, in which csae
+            // the id might of just gotten set inside the row and the row selected state may of changed
+            // as a result. this is what happens when selected rows are loaded in virtual pagination.
+            this.onRowSelected();
         };
         this.rowNode.addEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
         this.destroyFunctions.push(()=> {

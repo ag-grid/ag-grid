@@ -74,7 +74,7 @@ import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
 import {GridRow} from "./entities/gridRow";
 import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
-import {VirtualPageRowModel} from "./rowControllers/virtualPageRowModel";
+import {VirtualPageRowModel} from "./rowControllers/virtualPagination/virtualPageRowModel";
 import {MenuItemComponent} from "./widgets/menuItemComponent";
 import {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCellRenderer";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
@@ -99,6 +99,8 @@ import {RenderedCell} from "./rendering/renderedCell";
 import {HeaderRowComp} from "./headerRendering/headerRowComp";
 import {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 import {InMemoryNodeManager} from "./rowControllers/inMemory/InMemoryNodeManager";
+import {VirtualPageCache} from "./rowControllers/virtualPagination/virtualPageCache";
+import {VirtualPage} from "./rowControllers/virtualPagination/virtualPage";
 
 export function populateClientExports(exports: any): void {
 
@@ -208,6 +210,8 @@ export function populateClientExports(exports: any): void {
     exports.FloatingRowModel = FloatingRowModel;
     exports.PaginationController = PaginationController;
     exports.VirtualPageRowModel = VirtualPageRowModel;
+    exports.VirtualPageCache = VirtualPageCache;
+    exports.VirtualPage = VirtualPage;
 
     // widgets
     exports.AgCheckbox = AgCheckbox;

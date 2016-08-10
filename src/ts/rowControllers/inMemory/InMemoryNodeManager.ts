@@ -114,7 +114,6 @@ export class InMemoryNodeManager {
         }
         node.level = level;
         node.data = dataItem;
-
         node.setId(this.nextId.toString());
 
         this.nextId++;
