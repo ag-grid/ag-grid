@@ -11,11 +11,10 @@ var gridOptions = {
     debug: true,
     columnDefs: columnDefs,
     rowModelType: 'virtual',
-    datasource: new MyDatasource(100,1200)
+    datasource: new MyDatasource(100)
 };
 
-function MyDatasource(pageSize, rowCount) {
-    this.pageSize = pageSize;
+function MyDatasource(rowCount) {
     this.rowCount = rowCount;
 }
 
