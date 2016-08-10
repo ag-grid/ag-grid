@@ -27,7 +27,6 @@ interface CacheSettings {
     paginationInitialRowCount: number;
     sortModel: any;
     filterModel: any;
-    context: Context;
     datasource: IDataSource;
     lastAccessedSequence: NumberSequence;
 }
@@ -37,11 +36,12 @@ class CachePage implements IEventEmitter {
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
     public static STATE_NEW = 'new';
-    public static STATE_LOADING= 'loading';
+    public static STATE_LOADING = 'loading';
     public static STATE_LOADED = 'loaded';
     public static STATE_FAILED = 'failed';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('context') private context: Context;
 
     private state = CachePage.STATE_NEW;
 
@@ -64,8 +64,6 @@ class CachePage implements IEventEmitter {
         // however it makes the code easier to read if we work them out up front
         this.startRow = pageNumber * cacheSettings.pageSize;
         this.endRow = this.startRow + cacheSettings.pageSize;
-
-        this.createRowNodes();
     }
 
     public getStartRow(): number {
@@ -96,13 +94,18 @@ class CachePage implements IEventEmitter {
         return this.state;
     }
 
+    @PostConstruct
+    private init(): void {
+        this.createRowNodes();
+    }
+
     // creates empty row nodes, data is missing as not loaded yet
     private createRowNodes(): void {
         this.rowNodes = [];
         for (var i = 0; i < this.cacheSettings.pageSize; i++) {
             var rowIndex = this.startRow + i;
             let rowNode = new RowNode();
-            this.cacheSettings.context.wireBean(rowNode);
+            this.context.wireBean(rowNode);
             rowNode.rowTop = this.cacheSettings.rowHeight * rowIndex;
             rowNode.rowHeight = this.cacheSettings.rowHeight;
             this.rowNodes.push(rowNode);
@@ -307,9 +310,12 @@ class RowNodeCache {
         // if the purged page is in loading state
     }
 
-    private checkPageToLoad() {
-
+    private printCacheStatus(): void {
         this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activePageLoadsCount}, pages = ${this.getPageStateAsString()}`);
+    }
+
+    private checkPageToLoad() {
+        this.printCacheStatus();
 
         if (this.activePageLoadsCount >= this.cacheSettings.maxConcurrentDatasourceRequests) {
             this.logger.log(`checkPageToLoad: max loads exceeded`);
@@ -327,6 +333,7 @@ class RowNodeCache {
             pageToLoad.load();
             this.activePageLoadsCount++;
             this.logger.log(`checkPageToLoad: loading page ${pageToLoad.getPageNumber()}`);
+            this.printCacheStatus();
         } else {
             this.logger.log(`checkPageToLoad: no pages to load`);
         }
@@ -372,7 +379,7 @@ class RowNodeCache {
     public getPageStateAsString(): string {
         var strings: string[] = [];
         _.iterateObject(this.pages, (pageNumber: string, page: CachePage)=> {
-            strings.push(`{${pageNumber}, ${page.getState()}}`);
+            strings.push(`{pageNumber: ${pageNumber}, pageStatus: ${page.getState()}}`);
         });
         return strings.join(',');
     }
@@ -502,24 +509,34 @@ export class VirtualPageRowModel implements IRowModel {
 
     private resetCache(): void {
         let cacheSettings = <CacheSettings> {
-            context: this.context,
+            // the user provided datasource
             datasource: this.datasource,
+
+            // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            gridOptionsWrapper: this.gridOptionsWrapper,
+            sortModel: this.sortController.getSortModel(),
+
+            // properties - this way we take a snapshot of them, so if user changes any, they will be
+            // used next time we create a new cache, which is generally after a filter or sort change,
+            // or a new datasource is set
             maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
             paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
             paginationInitialRowCount: this.gridOptionsWrapper.getPaginationInitialRowCount(),
             maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInPaginationCache(),
             pageSize: this.gridOptionsWrapper.getPaginationPageSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
-            sortModel: this.sortController.getSortModel(),
-            lastAccessedSequence: new NumberSequence
+
+            // the cache could create this, however it is also used by the pages, so handy to create it
+            // here as the settings are also passed to the pages
+            lastAccessedSequence: new NumberSequence()
         };
 
         // set defaults
         if ( !(cacheSettings.maxConcurrentDatasourceRequests>=1) ) {
             cacheSettings.maxConcurrentDatasourceRequests = 2;
         }
+        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
+        // server for one page at a time. so the default if not specified is 100.
         if ( !(cacheSettings.pageSize>=1) ) {
             cacheSettings.pageSize = 100;
         }
@@ -533,6 +550,7 @@ export class VirtualPageRowModel implements IRowModel {
             cacheSettings.paginationOverflowSize = 1;
         }
 
+        // if not first time creating a cache, need to destroy the old one
         if (this.rowNodeCache) {
             this.rowNodeCache.destroy();
         }
