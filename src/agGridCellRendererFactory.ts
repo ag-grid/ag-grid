@@ -8,59 +8,84 @@ export class AgGridCellRendererFactory {
 
     public createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
                                                              initializer?:(instance:T, params?:any) => void):Type {
-        return AgGridCellRendererFactory.createCellRendererFromComponent<T>(componentType, this._viewContainerRef, this._componentResolver, initializer);
+        return createCellRendererFromComponent<T>(componentType, this._viewContainerRef, this._componentResolver, initializer);
     }
 
-    private static createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
-                                                                     viewContainerRef:ViewContainerRef,
-                                                                     componentResolver:ComponentResolver,
-                                                                     initializer?:(instance:T, params?:any) => void):Type {
-        class CellRenderer implements ICellRenderer {
-            private _params:any;
-            private _componentRef:ComponentRef<T>;
+    public createCellRendererFromTemplate(template:string):Type {
+        return createCellRendererFromTemplate(this._viewContainerRef, this._componentResolver, template);
+    }
 
-            init(params:any):void {
-                this._params = params;
-            }
+}
 
-            getGui():HTMLElement {
-                let div = document.createElement('div');
-                AgGridCellRendererFactory.createComponent(componentType, viewContainerRef, componentResolver).then(cr => {
-                    this._componentRef = cr;
-                    if (initializer) {
-                        initializer(cr.instance, this._params);
-                    }
+function createComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
+                                         viewContainerRef:ViewContainerRef,
+                                         componentResolver:ComponentResolver):Promise<ComponentRef<T>> {
+    return new Promise<ComponentRef<T>>((resolve) => {
+        componentResolver.resolveComponent(componentType).then(
+            (factory:ComponentFactory<any>) => {
+                //let injector = ReflectiveInjector.fromResolvedProviders([], viewContainerRef.parentInjector); // original by neal
+                //let injector = ReflectiveInjector.fromResolvedProviders([], viewContainerRef.injector);
+                //let injector = viewContainerRef.injector;
+                let injector = viewContainerRef.parentInjector;
+                let componentRef:ComponentRef<T> = viewContainerRef.createComponent(factory, undefined, injector, []);
+                resolve(componentRef);
+            });
+    });
+}
 
-                    div.appendChild(cr.location.nativeElement);
-                });
-                return div;
-            }
+function createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
+                                                                 viewContainerRef:ViewContainerRef,
+                                                                 componentResolver:ComponentResolver,
+                                                                 initializer?:(instance:T, params?:any) => void):Type {
+    class CellRenderer implements ICellRenderer {
+        private _params:any;
+        private _componentRef:ComponentRef<T>;
 
-            destroy():void {
-                if (this._componentRef) {
-                    this._componentRef.destroy();
+        init(params:any):void {
+            this._params = params;
+        }
+
+        getGui():HTMLElement {
+            let div = document.createElement('div');
+            createComponent(componentType, viewContainerRef, componentResolver).then(cr => {
+                this._componentRef = cr;
+                if (initializer) {
+                    initializer(cr.instance, this._params);
                 }
-            }
 
-            refresh(params:any):void {
+                div.appendChild(cr.location.nativeElement);
+            });
+            return div;
+        }
+
+        destroy():void {
+            if (this._componentRef) {
+                this._componentRef.destroy();
             }
         }
 
-        return CellRenderer;
+        refresh(params:any):void {
+        }
     }
 
-    static createComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
-                                             viewContainerRef:ViewContainerRef,
-                                             componentResolver:ComponentResolver):Promise<ComponentRef<T>> {
-        return new Promise<ComponentRef<T>>((resolve) => {
-            componentResolver.resolveComponent(componentType).then(
-                (factory:ComponentFactory<any>) => {
-                    //let injector = ReflectiveInjector.fromResolvedProviders([], viewContainerRef.parentInjector); // original by neal
-                    //let injector = ReflectiveInjector.fromResolvedProviders([], viewContainerRef.injector);
-                    let injector = viewContainerRef.injector;
-                    let componentRef:ComponentRef<T> = viewContainerRef.createComponent(factory, undefined, injector, []);
-                    resolve(componentRef);
-                });
-        });
+    return CellRenderer;
+}
+
+/**
+ From Template
+ */
+class DynamicComponent {
+    public params:any = null;
+}
+
+function createDynamicComponentType(selector:string, template:string):any {
+    @Component({selector: selector, template: template})
+    class Fake extends DynamicComponent {
     }
+    return Fake;
+}
+
+function createCellRendererFromTemplate<T>(viewContainerRef:ViewContainerRef, componentResolver:ComponentResolver, template:string):Type {
+    let componentType:{ new(...args:any[]): any; } = createDynamicComponentType('dynamic-component', template);
+    return createCellRendererFromComponent(componentType, viewContainerRef, componentResolver, (i:DynamicComponent, p:any) => i.params = p);
 }
