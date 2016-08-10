@@ -44,7 +44,7 @@ export class AgGridNg2 {
 
     public ngOnChanges(changes: any): void {
         if (this._initialised) {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this.api);
+            ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
         }
     }
 
