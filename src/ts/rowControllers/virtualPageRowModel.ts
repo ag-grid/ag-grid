@@ -1,7 +1,7 @@
-import {Utils as _} from "../utils";
+import {Utils as _, NumberSequence} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
-import {Bean, Context, Autowired, PostConstruct, PreDestroy} from "../context/context";
+import {Bean, Context, Autowired, PostConstruct, PreDestroy, Qualifier} from "../context/context";
 import {EventService} from "../eventService";
 import {SelectionController} from "../selectionController";
 import {IRowModel} from "./../interfaces/iRowModel";
@@ -10,13 +10,373 @@ import {SortController} from "../sortController";
 import {FilterManager} from "../filter/filterManager";
 import {Constants} from "../constants";
 import {IDataSource, IGetRowsParams} from "./iDataSource";
+import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {LoggerFactory, Logger} from "../logger";
 
 /*
 * This row controller is used for infinite scrolling only. For normal 'in memory' table,
 * or standard pagination, the inMemoryRowController is used.
 */
 
-var logging = false;
+interface CacheSettings {
+    pageSize: number;
+    rowHeight: number;
+    maxPagesInCache: number;
+    maxConcurrentDatasourceRequests: number;
+    paginationOverflowSize: number;
+    paginationInitialRowCount: number;
+    sortModel: any;
+    filterModel: any;
+    context: Context;
+    datasource: IDataSource;
+    lastAccessedSequence: NumberSequence;
+}
+
+class CachePage implements IEventEmitter {
+
+    public static EVENT_LOAD_COMPLETE = 'loadComplete';
+
+    public static STATE_NEW = 'new';
+    public static STATE_LOADING= 'loading';
+    public static STATE_LOADED = 'loaded';
+    public static STATE_FAILED = 'failed';
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private state = CachePage.STATE_NEW;
+
+    private lastAccessed: number;
+
+    private pageNumber: number;
+    private startRow: number;
+    private endRow: number;
+    private rowNodes: RowNode[];
+
+    private cacheSettings: CacheSettings;
+
+    private localEventService = new EventService();
+
+    constructor(pageNumber: number, cacheSettings: CacheSettings) {
+        this.pageNumber = pageNumber;
+        this.cacheSettings = cacheSettings;
+
+        // we don't need to calculate these now, as the inputs don't change,
+        // however it makes the code easier to read if we work them out up front
+        this.startRow = pageNumber * cacheSettings.pageSize;
+        this.endRow = this.startRow + cacheSettings.pageSize;
+
+        this.createRowNodes();
+    }
+
+    public getStartRow(): number {
+        return this.startRow;
+    }
+
+    public getEndRow(): number {
+        return this.endRow;
+    }
+
+    public getPageNumber(): number {
+        return this.pageNumber;
+    }
+
+    public addEventListener(eventType: string, listener: Function): void {
+        this.localEventService.addEventListener(eventType, listener);
+    }
+
+    public removeEventListener(eventType: string, listener: Function): void {
+        this.localEventService.removeEventListener(eventType, listener);
+    }
+
+    public getLastAccessed(): number {
+        return this.lastAccessed;
+    }
+
+    public getState(): string {
+        return this.state;
+    }
+
+    // creates empty row nodes, data is missing as not loaded yet
+    private createRowNodes(): void {
+        this.rowNodes = [];
+        for (var i = 0; i < this.cacheSettings.pageSize; i++) {
+            var rowIndex = this.startRow + i;
+            let rowNode = new RowNode();
+            this.cacheSettings.context.wireBean(rowNode);
+            rowNode.rowTop = this.cacheSettings.rowHeight * rowIndex;
+            rowNode.rowHeight = this.cacheSettings.rowHeight;
+            this.rowNodes.push(rowNode);
+        }
+    }
+
+    public getRow(rowIndex: number): RowNode {
+        this.lastAccessed = this.cacheSettings.lastAccessedSequence.next();
+        var localIndex = rowIndex - this.startRow;
+        return this.rowNodes[localIndex];
+    }
+
+    public load(): void {
+
+        this.state = CachePage.STATE_LOADING;
+
+        var params: IGetRowsParams = {
+            startRow: this.startRow,
+            endRow: this.endRow,
+            successCallback: this.pageLoaded.bind(this),
+            failCallback: this.pageLoadFailed.bind(this),
+            sortModel: this.cacheSettings.sortModel,
+            filterModel: this.cacheSettings.filterModel,
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        if (_.missing(this.cacheSettings.datasource.getRows)) {
+            console.warn(`ag-Grid: datasource is missing getRows method`);
+            return;
+        }
+
+        // check if old version of datasource used
+        var getRowsParams = _.getFunctionParameters(this.cacheSettings.datasource.getRows);
+        if (getRowsParams.length > 1) {
+            console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
+            console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
+        }
+
+        // put in timeout, to force result to be async
+        setTimeout(()=> {
+            this.cacheSettings.datasource.getRows(params);
+        }, 0);
+    }
+
+    private pageLoadFailed() {
+        this.state = CachePage.STATE_FAILED;
+        var event = {success: true, page: this};
+        this.localEventService.dispatchEvent(CachePage.EVENT_LOAD_COMPLETE, event);
+    }
+
+    private pageLoaded(rows: any[], lastRow: number) {
+        this.state = CachePage.STATE_LOADED;
+
+        this.rowNodes.forEach( (rowNode: RowNode, index: number)=> {
+            var data = rows[index];
+            if (_.exists(data)) {
+                rowNode.setData(data);
+            }
+
+            // rowNode.setId(virtualRowIndex.toString());
+
+        });
+
+        // check here if lastrow should be set
+        var event = {success: true, page: this, lastRow: lastRow};
+
+        this.localEventService.dispatchEvent(CachePage.EVENT_LOAD_COMPLETE, event);
+    }
+
+}
+
+class RowNodeCache {
+
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('context') private context: Context;
+
+    private pages: {[pageNumber: string]: CachePage} = {};
+
+    private activePageLoadsCount = 0;
+    private pagesInCacheCount = 0;
+
+    private cacheSettings: CacheSettings;
+
+    private virtualRowCount: number;
+    private foundMaxRow = false;
+
+    private logger: Logger;
+
+    private active = true;
+
+    constructor(cacheSettings: CacheSettings) {
+        this.cacheSettings = cacheSettings;
+        this.virtualRowCount = cacheSettings.paginationInitialRowCount;
+    }
+
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('CachePage');
+    }
+
+    @PostConstruct
+    private init(): void {
+        // start load of data, as the virtualRowCount will remain at 0 otherwise,
+        // so we need this to kick things off, otherwise grid would never call getRow()
+        this.getRow(0);
+    }
+
+    public getRowCombinedHeight(): number {
+        return this.virtualRowCount * this.cacheSettings.rowHeight;
+    }
+
+    public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
+        var index = 0;
+        _.iterateObject(this.pages, (key: string, cachePage: CachePage)=> {
+
+            var start = cachePage.getStartRow();
+            var end = cachePage.getEndRow();
+
+            for (let rowIndex = start; rowIndex < end; rowIndex++) {
+                // we check against virtualRowCount as this page may be the last one, and if it is, then
+                // it's probable that the last rows are not part of the set
+                if (rowIndex < this.virtualRowCount) {
+                    var rowNode = cachePage.getRow(rowIndex);
+                    callback(rowNode, index);
+                    index++;
+                }
+            }
+        });
+    }
+
+    public getRowIndexAtPixel(pixel: number): number {
+        if (this.cacheSettings.rowHeight !== 0) { // avoid divide by zero error
+            return Math.floor(pixel / this.cacheSettings.rowHeight);
+        } else {
+            return 0;
+        }
+    }
+
+    public getRowCount(): number {
+        return this.virtualRowCount;
+    }
+
+    private onPageLoaded(event: any): void {
+        // if we are not active, then we ignore all events, otherwise we could end up getting the
+        // grid to refresh even though we are no longer the active cache
+        if (!this.active) { return; }
+
+        this.logger.log(`onPageLoaded: page = ${event.page.getPageNumber()}, lastRow = ${event.lastRow}`);
+        this.activePageLoadsCount--;
+        this.checkPageToLoad();
+
+        if (event.success) {
+            this.checkVirtualRowCount(event.page, event.lastRow);
+        }
+    }
+
+    // as we are not a context managed bean, we cannot use @PreDestroy
+    public destroy(): void {
+        this.active = false;
+    }
+
+    public getRow(rowIndex: number): RowNode {
+        var pageNumber = Math.floor(rowIndex / this.cacheSettings.pageSize);
+        var page = this.pages[pageNumber];
+
+        if (!page) {
+            page = this.createPage(pageNumber);
+        }
+
+        return page.getRow(rowIndex);
+    }
+
+    private createPage(pageNumber: number): CachePage {
+
+        let newPage = new CachePage(pageNumber, this.cacheSettings);
+        this.context.wireBean(newPage);
+
+        newPage.addEventListener(CachePage.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+
+        this.pages[pageNumber] = newPage;
+        this.pagesInCacheCount++;
+
+        let needToPurge = _.exists(this.cacheSettings.maxPagesInCache)
+            && this.pagesInCacheCount > this.cacheSettings.maxPagesInCache;
+        if (needToPurge) {
+            var lruPage = this.findLeastRecentlyUsedPage(newPage);
+            this.removePageFromCache(lruPage);
+        }
+
+        this.checkPageToLoad();
+
+        return newPage;
+    }
+
+    private removePageFromCache(pageToRemove: CachePage): void {
+        if (!pageToRemove) { return; }
+
+        delete this.pages[pageToRemove.getPageNumber()];
+        this.pagesInCacheCount--;
+
+        // we do not want to remove the 'loaded' event listener, as the
+        // concurrent loads count needs to be updated when the load is complete
+        // if the purged page is in loading state
+    }
+
+    private checkPageToLoad() {
+
+        this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activePageLoadsCount}, pages = ${this.getPageStateAsString()}`);
+
+        if (this.activePageLoadsCount >= this.cacheSettings.maxConcurrentDatasourceRequests) {
+            this.logger.log(`checkPageToLoad: max loads exceeded`);
+            return;
+        }
+
+        var pageToLoad: CachePage = null;
+        _.iterateObject(this.pages, (key: string, cachePage: CachePage)=> {
+            if (cachePage.getState()===CachePage.STATE_NEW) {
+                pageToLoad = cachePage;
+            }
+        });
+
+        if (pageToLoad) {
+            pageToLoad.load();
+            this.activePageLoadsCount++;
+            this.logger.log(`checkPageToLoad: loading page ${pageToLoad.getPageNumber()}`);
+        } else {
+            this.logger.log(`checkPageToLoad: no pages to load`);
+        }
+    }
+
+    private findLeastRecentlyUsedPage(pageToExclude: CachePage): CachePage {
+
+        var lruPage: CachePage = null;
+
+        _.iterateObject(this.pages, (key: string, page: CachePage)=> {
+            // we exclude checking for the page just created, as this has yet to be accessed and hence
+            // the lastAccessed stamp will not be updated for the first time yet
+            if (page === pageToExclude) { return; }
+
+            if (_.missing(lruPage) || page.getLastAccessed() < lruPage.getLastAccessed()) {
+                lruPage = page;
+            }
+        });
+
+        return lruPage;
+    }
+
+    private checkVirtualRowCount(page: CachePage, lastRow: any): void {
+        // if we know the last row, use if
+        if (this.foundMaxRow) { return; }
+
+        if (typeof lastRow === 'number' && lastRow >= 0) {
+            this.virtualRowCount = lastRow;
+            this.foundMaxRow = true;
+            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        } else {
+            // otherwise, see if we need to add some virtual rows
+            var lastRowIndex = (page.getPageNumber() + 1) * this.cacheSettings.pageSize;
+            var lastRowIndexPlusOverflow = lastRowIndex + this.cacheSettings.paginationOverflowSize;
+
+            if (this.virtualRowCount < lastRowIndexPlusOverflow) {
+                this.virtualRowCount = lastRowIndexPlusOverflow;
+                this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+            }
+        }
+    }
+
+    public getPageStateAsString(): string {
+        var strings: string[] = [];
+        _.iterateObject(this.pages, (pageNumber: string, page: CachePage)=> {
+            strings.push(`{${pageNumber}, ${page.getState()}}`);
+        });
+        return strings.join(',');
+    }
+}
 
 @Bean('rowModel')
 export class VirtualPageRowModel implements IRowModel {
@@ -29,27 +389,12 @@ export class VirtualPageRowModel implements IRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
+    private logger: Logger;
+
     private destroyFunctions: (()=>void)[] = [];
 
-    private cacheVersion = 0;
+    private rowNodeCache: RowNodeCache;
     private datasource: IDataSource;
-    private virtualRowCount: number;
-    private foundMaxRow: boolean;
-
-    private pageCache: {[key: string]: RowNode[]};
-    private pageCacheSize: number;
-
-    private pageLoadsInProgress: any[];
-    private pageLoadsQueued: any[];
-    private pageAccessTimes: any;
-    private accessTime: number;
-
-    private maxConcurrentDatasourceRequests: number;
-    private maxPagesInCache: number;
-    private pageSize: number;
-    private overflowSize: number;
-
-    private rowHeight: number;
 
     @PostConstruct
     public init(): void {
@@ -57,6 +402,10 @@ export class VirtualPageRowModel implements IRowModel {
 
         this.addEventListeners();
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
+    }
+
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('VirtualPageRowModel');
     }
 
     private addEventListeners(): void {
@@ -124,11 +473,11 @@ export class VirtualPageRowModel implements IRowModel {
     }
 
     public isEmpty(): boolean {
-        return !this.datasource;
+        return _.missing(this.rowNodeCache);
     }
 
     public isRowsToRender(): boolean {
-        return _.exists(this.datasource);
+        return _.exists(this.rowNodeCache);
     }
 
     private reset() {
@@ -148,315 +497,68 @@ export class VirtualPageRowModel implements IRowModel {
 
         this.resetCache();
 
-        this.doLoadOrQueue(0);
-
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
     }
 
     private resetCache(): void {
-        // in case any daemon requests coming from datasource, we know it ignore them
-        this.cacheVersion++;
-
-        // see if datasource knows how many rows there are
-        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
-            this.virtualRowCount = this.datasource.rowCount;
-            this.foundMaxRow = true;
-        } else {
-            this.virtualRowCount = 0;
-            this.foundMaxRow = false;
-        }
-
-        // map of page numbers to rows in that page
-        this.pageCache = {};
-        this.pageCacheSize = 0;
-
-        // if a number is in this array, it means we are pending a load from it
-        this.pageLoadsInProgress = [];
-        this.pageLoadsQueued = [];
-        this.pageAccessTimes = {}; // keeps a record of when each page was last viewed, used for LRU cache
-        this.accessTime = 0; // rather than using the clock, we use this counter
-
-        // rest all the properties, one here in case any of these change since last time datasource was set
-        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.overflowSize = this.gridOptionsWrapper.getMaxPagesInPaginationCache();
-        this.maxConcurrentDatasourceRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        this.maxPagesInCache = this.gridOptionsWrapper.getMaxPagesInPaginationCache();
-
-        if (_.missing(this.maxConcurrentDatasourceRequests)) {
-            this.maxConcurrentDatasourceRequests = 2;
-        }
-    }
-
-    private createNodesFromRows(pageNumber: any, rows: any): RowNode[] {
-        var nodes: RowNode[] = [];
-        if (rows) {
-            rows.forEach( (item: any, index: number) => {
-                var virtualRowIndex = (pageNumber * this.pageSize) + index;
-                var node = this.createNode(item, virtualRowIndex, true);
-                nodes.push(node);
-            });
-        }
-        return nodes;
-    }
-
-    private createNode(data: any, virtualRowIndex: number, realNode: boolean): RowNode {
-        var rowHeight = this.rowHeight;
-        var top = rowHeight * virtualRowIndex;
-
-        var rowNode: RowNode;
-        if (realNode) {
-            // if a real node, then always create a new one
-            rowNode = new RowNode();
-            this.context.wireBean(rowNode);
-            rowNode.data = data;
-            rowNode.setId(virtualRowIndex.toString());
-            // and see if the previous one was selected, and if yes, swap it out
-            this.selectionController.syncInRowNode(rowNode);
-        } else {
-            // if creating a proxy node, see if there is a copy in selected memory that we can use
-            var rowNode = new RowNode();
-            this.context.wireBean(rowNode);
-            rowNode.data = data;
-            // we leave the id unset when there is no data with the node
-            // rowNode.setId(undefined); // no need for this code, but is shows the intent
-        }
-        rowNode.rowTop = top;
-        rowNode.rowHeight = rowHeight;
-
-        return rowNode;
-    }
-
-    private removeFromLoading(pageNumber: any) {
-        var index = this.pageLoadsInProgress.indexOf(pageNumber);
-        this.pageLoadsInProgress.splice(index, 1);
-    }
-
-    private pageLoadFailed(cacheVersionCopy: number, pageNumber: any) {
-        if (this.requestIsDaemon(cacheVersionCopy)) { return; }
-
-        this.removeFromLoading(pageNumber);
-        this.checkQueueForNextLoad();
-    }
-
-    private pageLoaded(cacheVersionCopy: number, pageNumber: any, rows: any, lastRow: any) {
-        if (this.requestIsDaemon(cacheVersionCopy)) { return; }
-
-        this.putPageIntoCacheAndPurge(pageNumber, rows);
-        this.checkMaxRowAndInformRowRenderer(pageNumber, lastRow);
-        this.removeFromLoading(pageNumber);
-        this.checkQueueForNextLoad();
-    }
-
-    private putPageIntoCacheAndPurge(pageNumber: any, rows: any) {
-        this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
-        this.pageCacheSize++;
-        if (logging) {
-            console.log('adding page ' + pageNumber);
-        }
-
-        var needToPurge = _.exists(this.maxPagesInCache) && this.maxPagesInCache < this.pageCacheSize;
-        if (needToPurge) {
-            // find the LRU page
-            var youngestPageIndex = this.findLeastRecentlyAccessedPage(Object.keys(this.pageCache));
-
-            if (logging) {
-                console.log('purging page ' + youngestPageIndex + ' from cache ' + Object.keys(this.pageCache));
-            }
-            delete this.pageCache[youngestPageIndex];
-            this.pageCacheSize--;
-        }
-
-    }
-
-    private checkMaxRowAndInformRowRenderer(pageNumber: any, lastRow: any) {
-        if (!this.foundMaxRow) {
-            // if we know the last row, use if
-            if (typeof lastRow === 'number' && lastRow >= 0) {
-                this.virtualRowCount = lastRow;
-                this.foundMaxRow = true;
-            } else {
-                // otherwise, see if we need to add some virtual rows
-                var thisPagePlusBuffer = ((pageNumber + 1) * this.pageSize) + this.overflowSize;
-                if (this.virtualRowCount < thisPagePlusBuffer) {
-                    this.virtualRowCount = thisPagePlusBuffer;
-                }
-            }
-            // if rowCount changes, refreshView, otherwise just refreshAllVirtualRows
-            this.rowRenderer.refreshView();
-        } else {
-            this.rowRenderer.refreshAllVirtualRows();
-        }
-    }
-
-    private isPageAlreadyLoading(pageNumber: any) {
-        var result = this.pageLoadsInProgress.indexOf(pageNumber) >= 0 || this.pageLoadsQueued.indexOf(pageNumber) >= 0;
-        return result;
-    }
-
-    private doLoadOrQueue(pageNumber: any) {
-        // if we already tried to load this page, then ignore the request,
-        // otherwise server would be hit 50 times just to display one page, the
-        // first row to find the page missing is enough.
-        if (this.isPageAlreadyLoading(pageNumber)) {
-            return;
-        }
-
-        // try the page load - if not already doing a load, then we can go ahead
-        if (this.pageLoadsInProgress.length < this.maxConcurrentDatasourceRequests) {
-            // go ahead, load the page
-            this.loadPage(pageNumber);
-        } else {
-            // otherwise, queue the request
-            this.addToQueueAndPurgeQueue(pageNumber);
-        }
-    }
-
-    private addToQueueAndPurgeQueue(pageNumber: any) {
-        if (logging) {
-            console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
-        }
-        this.pageLoadsQueued.push(pageNumber);
-
-        // see if there are more pages queued that are actually in our cache, if so there is
-        // no point in loading them all as some will be purged as soon as loaded
-        var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageLoadsQueued.length;
-        if (needToPurge) {
-            // find the LRU page
-            var youngestPageIndex = this.findLeastRecentlyAccessedPage(this.pageLoadsQueued);
-
-            if (logging) {
-                console.log('de-queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
-            }
-
-            var indexToRemove = this.pageLoadsQueued.indexOf(youngestPageIndex);
-            this.pageLoadsQueued.splice(indexToRemove, 1);
-        }
-    }
-
-    private findLeastRecentlyAccessedPage(pageIndexes: any) {
-        var youngestPageIndex = -1;
-        var youngestPageAccessTime = Number.MAX_VALUE;
-        var that = this;
-
-        pageIndexes.forEach(function (pageIndex: any) {
-            var accessTimeThisPage = that.pageAccessTimes[pageIndex];
-            if (accessTimeThisPage < youngestPageAccessTime) {
-                youngestPageAccessTime = accessTimeThisPage;
-                youngestPageIndex = pageIndex;
-            }
-        });
-
-        return youngestPageIndex;
-    }
-
-    private checkQueueForNextLoad() {
-        if (this.pageLoadsQueued.length > 0) {
-            // take from the front of the queue
-            var pageToLoad = this.pageLoadsQueued[0];
-            this.pageLoadsQueued.splice(0, 1);
-
-            if (logging) {
-                console.log('dequeueing ' + pageToLoad + ' - ' + this.pageLoadsQueued);
-            }
-
-            this.loadPage(pageToLoad);
-        }
-    }
-
-    private loadPage(pageNumber: any) {
-
-        this.pageLoadsInProgress.push(pageNumber);
-
-        var startRow = pageNumber * this.pageSize;
-        var endRow = (pageNumber + 1) * this.pageSize;
-
-        var sortModel: any;
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortModel = this.sortController.getSortModel();
-        }
-
-        var filterModel: any;
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            filterModel = this.filterManager.getFilterModel();
-        }
-
-        var params: IGetRowsParams = {
-            startRow: startRow,
-            endRow: endRow,
-            successCallback: this.pageLoaded.bind(this, this.cacheVersion, pageNumber),
-            failCallback: this.pageLoadFailed.bind(this, this.cacheVersion, pageNumber),
-            sortModel: sortModel,
-            filterModel: filterModel,
-            context: this.gridOptionsWrapper.getContext()
+        let cacheSettings = <CacheSettings> {
+            context: this.context,
+            datasource: this.datasource,
+            filterModel: this.filterManager.getFilterModel(),
+            gridOptionsWrapper: this.gridOptionsWrapper,
+            maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
+            paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
+            paginationInitialRowCount: this.gridOptionsWrapper.getPaginationInitialRowCount(),
+            maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInPaginationCache(),
+            pageSize: this.gridOptionsWrapper.getPaginationPageSize(),
+            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+            sortModel: this.sortController.getSortModel(),
+            lastAccessedSequence: new NumberSequence
         };
 
-        // check if old version of datasource used
-        var getRowsParams = _.getFunctionParameters(this.datasource.getRows);
-        if (getRowsParams.length > 1) {
-            console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
-            console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
+        // set defaults
+        if ( !(cacheSettings.maxConcurrentDatasourceRequests>=1) ) {
+            cacheSettings.maxConcurrentDatasourceRequests = 2;
+        }
+        if ( !(cacheSettings.pageSize>=1) ) {
+            cacheSettings.pageSize = 100;
+        }
+        // if user doesn't give initial rows to display, we assume zero
+        if ( !(cacheSettings.paginationInitialRowCount>=1) ) {
+            cacheSettings.paginationInitialRowCount = 0;
+        }
+        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
+        // the current page and request first row of next page
+        if ( !(cacheSettings.paginationOverflowSize>=1) ) {
+            cacheSettings.paginationOverflowSize = 1;
         }
 
-        // put in timeout, to force result to be async
-        setTimeout(()=> {
-            this.datasource.getRows(params);
-        }, 0);
-    }
+        if (this.rowNodeCache) {
+            this.rowNodeCache.destroy();
+        }
 
-    // check that the datasource has not changed since the lats time we did a request
-    private requestIsDaemon(cacheVersionCopy: any) {
-        return this.cacheVersion !== cacheVersionCopy;
+        this.rowNodeCache = new RowNodeCache(cacheSettings);
+        this.context.wireBean(this.rowNodeCache);
     }
 
     public getRow(rowIndex: number): RowNode {
-        if (rowIndex > this.virtualRowCount) {
-            return null;
-        }
-
-        var pageNumber = Math.floor(rowIndex / this.pageSize);
-        var page = this.pageCache[pageNumber];
-
-        // for LRU cache, track when this page was last hit
-        this.pageAccessTimes[pageNumber] = this.accessTime++;
-
-        if (!page) {
-            this.doLoadOrQueue(pageNumber);
-            // return back an empty row, so table can at least render empty cells
-            var dummyNode = this.createNode(null, rowIndex, false);
-            return dummyNode;
-        } else {
-            var indexInThisPage = rowIndex % this.pageSize;
-            return page[indexInThisPage];
-        }
+        return this.rowNodeCache.getRow(rowIndex);
     }
 
-    public forEachNode(callback: (rowNode: RowNode)=> void): void {
-        var pageKeys = Object.keys(this.pageCache);
-        for (var i = 0; i < pageKeys.length; i++) {
-            var pageKey = pageKeys[i];
-            var page = this.pageCache[pageKey];
-            for (var j = 0; j < page.length; j++) {
-                var node = page[j];
-                callback(node);
-            }
-        }
+    public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
+        return this.rowNodeCache.forEachNode(callback);
     }
 
     public getRowCombinedHeight(): number {
-        return this.virtualRowCount * this.rowHeight;
+        return this.rowNodeCache.getRowCombinedHeight();
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (this.rowHeight !== 0) { // avoid divide by zero error
-            return Math.floor(pixel / this.rowHeight);
-        } else {
-            return 0;
-        }
+        return this.rowNodeCache.getRowIndexAtPixel(pixel);
     }
 
     public getRowCount(): number {
-        return this.virtualRowCount;
+        return this.rowNodeCache.getRowCount();
     }
 
     public insertItemsAtIndex(index: number, items: any[]): void {
