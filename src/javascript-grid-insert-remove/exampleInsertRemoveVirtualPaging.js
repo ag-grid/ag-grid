@@ -34,10 +34,6 @@ for (var i = 0; i<1000; i++) {
 
 var dataSource = {
     rowCount: null, // behave as infinite scroll
-    pageSize: 100,
-    overflowSize: 100,
-    maxConcurrentRequests: 2,
-    maxPagesInCache: 2,
     getRows: function (params) {
         console.log('asking for ' + params.startRow + ' to ' + params.endRow);
         // At this point in your code, you would call the server, using $http if in AngularJS.
@@ -64,6 +60,11 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'virtual',
     datasource: dataSource,
+
+    maxPagesInPaginationCache: 2,
+    paginationInitialRowCount: 1200,
+    maxConcurrentDatasourceRequests: 2,
+
     getRowNodeId: function(item) {
         return 'T' + item.id;
     }
