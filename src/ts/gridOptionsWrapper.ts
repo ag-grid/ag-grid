@@ -132,7 +132,7 @@ export class GridOptionsWrapper {
     public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 
     public getMaxConcurrentDatasourceRequests(): number { return this.gridOptions.maxConcurrentDatasourceRequests; }
-    public getMaxPagesInPaginationCache(): number { return this.gridOptions.maxPagesInPaginationCache; }
+    public getMaxPagesInCache(): number { return this.gridOptions.maxPagesInCache; }
     public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
     public getPaginationInitialRowCount(): number { return this.gridOptions.paginationInitialRowCount; }

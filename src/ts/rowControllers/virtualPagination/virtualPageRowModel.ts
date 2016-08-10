@@ -24,7 +24,7 @@ export class VirtualPageRowModel implements IRowModel {
 
     private destroyFunctions: (()=>void)[] = [];
 
-    private rowNodeCache: VirtualPageCache;
+    private virtualPageCache: VirtualPageCache;
     private datasource: IDataSource;
 
     @PostConstruct
@@ -95,16 +95,16 @@ export class VirtualPageRowModel implements IRowModel {
         }
 
         if (_.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, overflowSize is replaced with grid property paginationPageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
         }
     }
 
     public isEmpty(): boolean {
-        return _.missing(this.rowNodeCache);
+        return _.missing(this.virtualPageCache);
     }
 
     public isRowsToRender(): boolean {
-        return _.exists(this.rowNodeCache);
+        return _.exists(this.virtualPageCache);
     }
 
     private reset() {
@@ -142,7 +142,7 @@ export class VirtualPageRowModel implements IRowModel {
             maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
             paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
             paginationInitialRowCount: this.gridOptionsWrapper.getPaginationInitialRowCount(),
-            maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInPaginationCache(),
+            maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
             pageSize: this.gridOptionsWrapper.getPaginationPageSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
 
@@ -171,32 +171,34 @@ export class VirtualPageRowModel implements IRowModel {
         }
 
         // if not first time creating a cache, need to destroy the old one
-        if (this.rowNodeCache) {
-            this.rowNodeCache.destroy();
+        if (this.virtualPageCache) {
+            this.virtualPageCache.destroy();
         }
 
-        this.rowNodeCache = new VirtualPageCache(cacheSettings);
-        this.context.wireBean(this.rowNodeCache);
+        this.virtualPageCache = new VirtualPageCache(cacheSettings);
+        this.context.wireBean(this.virtualPageCache);
     }
 
     public getRow(rowIndex: number): RowNode {
-        return this.rowNodeCache.getRow(rowIndex);
+        return this.virtualPageCache ? this.virtualPageCache.getRow(rowIndex) : null;
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
-        return this.rowNodeCache.forEachNode(callback);
+        if (this.virtualPageCache) {
+            this.virtualPageCache.forEachNode(callback);
+        }
     }
 
     public getRowCombinedHeight(): number {
-        return this.rowNodeCache.getRowCombinedHeight();
+        return this.virtualPageCache ? this.virtualPageCache.getRowCombinedHeight() : 0;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        return this.rowNodeCache.getRowIndexAtPixel(pixel);
+        return this.virtualPageCache ? this.virtualPageCache.getRowIndexAtPixel(pixel) : -1;
     }
 
     public getRowCount(): number {
-        return this.rowNodeCache.getRowCount();
+        return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
     }
 
     public insertItemsAtIndex(index: number, items: any[]): void {

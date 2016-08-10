@@ -140,10 +140,12 @@ export class VirtualPage implements IEventEmitter {
         this.rowNodes.forEach( (rowNode: RowNode, index: number)=> {
             var data = rows[index];
             if (_.exists(data)) {
-                // this means if the user is not providing id's for the rows, then
-                // we set the id to null, which disables selection on that row if
-                // selection is enabled
-                rowNode.setDataAndId(data, null);
+                // this means if the user is not providing id's we just use the
+                // index for the row. this will allow selection to work (that is based
+                // on index) as long user is not inserting or deleting rows,
+                // or wanting to keep selection between server side sorting or filtering
+                var indexOfRow = this.startRow + index;
+                rowNode.setDataAndId(data, indexOfRow.toString());
             }
         });
 
