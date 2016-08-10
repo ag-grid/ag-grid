@@ -61,7 +61,7 @@ var gridOptions = {
     rowModelType: 'virtual',
     datasource: dataSource,
 
-    maxPagesInPaginationCache: 2,
+    maxPagesInCache: 2,
     paginationInitialRowCount: 500,
     maxConcurrentDatasourceRequests: 2,
 

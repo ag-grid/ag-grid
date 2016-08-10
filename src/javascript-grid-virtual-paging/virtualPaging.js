@@ -1,7 +1,7 @@
 var columnDefs = [
     // this row shows the row index, doesn't use any data from the row
-    {headerName: "#", width: 50, cellRenderer: function(params) {
-        return params.node.id + 1;
+    {headerName: "ID", width: 50, cellRenderer: function(params) {
+        return params.node.id;
     } },
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
@@ -21,16 +21,26 @@ var gridOptions = {
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,
-    rowModelType: 'virtual'
+    // tell grid we want virtual row model type
+    rowModelType: 'virtual',
+    // how big each page in our page cache will be, default is 100
+    paginationPageSize: 100,
+    // how many extra blank rows to display to the user at the end of the dataset,
+    // which sets the vertical scroll and then allows the grid to request viewing more rows of data.
+    // default is 1, ie show 1 row.
+    paginationOverflowSize: 2,
+    // how many server side requests to send at a time. if user is scrolling lots, then the requests
+    // are throttled down
+    maxConcurrentDatasourceRequests: 2,
+    // how many pages to store in cache. default is undefined, which allows an infinite sized cache,
+    // pages are never purged. this should be set for large data to stop your browser from getting
+    // full of data
+    maxPagesInCache: 2
 };
 
 function setRowData(allOfTheData) {
     var dataSource = {
         rowCount: null, // behave as infinite scroll
-        pageSize: 100,
-        overflowSize: 100,
-        maxConcurrentRequests: 2,
-        maxPagesInCache: 2,
         getRows: function (params) {
             console.log('asking for ' + params.startRow + ' to ' + params.endRow);
             // At this point in your code, you would call the server, using $http if in AngularJS.
