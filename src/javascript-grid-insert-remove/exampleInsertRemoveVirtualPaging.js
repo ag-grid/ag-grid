@@ -62,7 +62,7 @@ var gridOptions = {
     datasource: dataSource,
 
     maxPagesInPaginationCache: 2,
-    paginationInitialRowCount: 1200,
+    paginationInitialRowCount: 500,
     maxConcurrentDatasourceRequests: 2,
 
     getRowNodeId: function(item) {
