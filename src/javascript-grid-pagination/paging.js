@@ -15,8 +15,6 @@ var columnDefs = [
     {headerName: "Total", field: "total", width: 100}
 ];
 
-var pageSize = 500;
-
 var gridOptions = {
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     enableSorting: true,
@@ -24,12 +22,13 @@ var gridOptions = {
     debug: true,
     rowSelection: 'multiple',
     enableColResize: true,
+    paginationPageSize: 500,
     columnDefs: columnDefs,
     rowModelType: 'pagination'
 };
 
 function onPageSizeChanged(newPageSize) {
-    pageSize = new Number(newPageSize);
+    this.gridOptions.paginationPageSize = new Number(newPageSize);
     createNewDatasource();
 }
 
@@ -45,7 +44,6 @@ function createNewDatasource() {
 
     var dataSource = {
         //rowCount: ???, - not setting the row count, infinite paging will be used
-        pageSize: pageSize, // changing to number, as scope keeps it as a string
         getRows: function (params) {
             // this code should contact the server for rows. however for the purposes of the demo,
             // the data is generated locally, a timer is used to give the experience of

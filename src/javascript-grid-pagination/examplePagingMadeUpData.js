@@ -12,11 +12,11 @@ var gridOptions = {
     enableColResize: true,
     columnDefs: columnDefs,
     rowModelType: 'pagination',
-    datasource: new MyDatasource(100,1200)
+    paginationPageSize: 100,
+    datasource: new MyDatasource(1200)
 };
 
-function MyDatasource(pageSize, rowCount) {
-    this.pageSize = pageSize;
+function MyDatasource(rowCount) {
     this.rowCount = rowCount;
 }
 

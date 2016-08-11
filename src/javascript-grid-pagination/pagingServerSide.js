@@ -31,20 +31,14 @@ var columnDefs = [
     {headerName: "Total", field: "total", width: 100, suppressMenu: true}
 ];
 
-var pageSize = 20;
-
 var gridOptions = {
     enableServerSideSorting: true,
     enableServerSideFilter: true,
     enableColResize: true,
+    paginationPageSize: 500,
     columnDefs: columnDefs,
     rowModelType: 'pagination'
 };
-
-function onPageSizeChanged(pageSize) {
-    this.pageSize = new Number(pageSize);
-    createNewDatasource();
-}
 
 // when json gets loaded, it's put here, and  the datasource reads in from here.
 // in a real application, the page will be got from the server.
@@ -62,7 +56,6 @@ function createNewDatasource() {
     }
     var dataSource = {
         //rowCount: ???, - not setting the row count, infinite paging will be used
-        pageSize: pageSize, // changing to number, as scope keeps it as a string
         getRows: function (params) {
             // this code should contact the server for rows. however for the purposes of the demo,
             // the data is generated locally, a timer is used to give the experience of
