@@ -1,20 +1,16 @@
-import {Utils as _} from '../utils';
-import {Grid} from "../grid";
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
+import {Bean, Autowired, PostConstruct} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {SelectionController} from "../selectionController";
-import {Autowired} from "../context/context";
 import {IRowModel} from "./../interfaces/iRowModel";
 import {SortController} from "../sortController";
-import {PostConstruct} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {FilterManager} from "../filter/filterManager";
 import {IInMemoryRowModel} from "../interfaces/iInMemoryRowModel";
 import {Constants} from "../constants";
+import {IDataSource} from "./iDataSource";
 
 var template =
         '<div class="ag-paging-panel ag-font-style">'+
@@ -65,7 +61,7 @@ export class PaginationController {
     private ePageRowSummaryPanel: any;
 
     private callVersion: number;
-    private datasource: any;
+    private datasource: IDataSource;
     private pageSize: number;
     private rowCount: number;
     private foundMaxRow: boolean;
@@ -114,6 +110,13 @@ export class PaginationController {
         this.reset();
     }
 
+    private checkForDeprecated(): void {
+        var ds = <any> this.datasource;
+        if (_.exists(ds.pageSize)) {
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+        }
+    }
+
     private reset() {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
@@ -121,13 +124,16 @@ export class PaginationController {
             return;
         }
 
+        this.checkForDeprecated();
+
         this.selectionController.reset();
 
         // copy pageSize, to guard against it changing the the datasource between calls
-        if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
-            console.warn('datasource.pageSize should be a number');
+        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
+        if ( !(this.pageSize>=1) ) {
+            this.pageSize = 100;
         }
-        this.pageSize = this.datasource.pageSize;
+
         // see if we know the total number of pages, or if it's 'to be decided'
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.rowCount = this.datasource.rowCount;
@@ -215,8 +221,8 @@ export class PaginationController {
 
     private loadPage() {
         this.enableOrDisableButtons();
-        var startRow = this.currentPage * this.datasource.pageSize;
-        var endRow = (this.currentPage + 1) * this.datasource.pageSize;
+        var startRow = this.currentPage * this.pageSize;
+        var endRow = (this.currentPage + 1) * this.pageSize;
 
         this.lbCurrent.innerHTML = this.myToLocaleString(this.currentPage + 1);
 
