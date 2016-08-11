@@ -13,10 +13,10 @@ var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
     {headerName: "ID", width: 50,
         cellRenderer: function(params) {
-            if (params.node.data !== undefined) {
+            if (params.data !== undefined) {
                 return params.node.id;
             } else {
-                return '==>'
+                return '<img src="../images/loading.gif">'
             }
         },
         // we don't want to sort by the row index, this doesn't make sense as the point
@@ -47,6 +47,7 @@ var gridOptions = {
     paginationPageSize: 100,
     paginationOverflowSize: 2,
     maxConcurrentDatasourceRequests: 2,
+    paginationInitialRowCount: 1,
     maxPagesInCache: 2,
     getRowNodeId: function(item) {
         return item.id;

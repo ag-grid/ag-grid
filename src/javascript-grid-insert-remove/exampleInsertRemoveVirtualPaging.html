@@ -8,15 +8,25 @@
 
 <body style="position: relative;">
 
-    <div style="height: 100%; padding-top: 20px; box-sizing: border-box;">
+    <div style="height: 100%; padding-top: 50px; box-sizing: border-box;">
         <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
     </div>
 
     <div style="position: absolute; top: 0px; left: 0px;">
-        <button onclick="onAddRow()">Add Row</button>
-        <button onclick="insertItemsAt2(1)">Insert 1 Row @ 2</button>
-        <button onclick="insertItemsAt2(5)">Insert 5 Rows @ 2</button>
-        <button onclick="onRemoveSelected()">Remove Selected</button>
+        <div>
+            <button onclick="insertItemsAt2(1)">Insert 1 Row @ 2</button>
+            <button onclick="insertItemsAt2(5)">Insert 5 Rows @ 2</button>
+            <button onclick="setRowCountTo200()">Set Row Count to 200</button>
+            <button onclick="rowsAndMaxFound()">Print Rows and Max Found</button>
+            <button onclick="jumpTo500()">Jump to 500</button>
+            <button onclick="printCacheState()">Print Cache State</button>
+        </div>
+        <div style="margin-top: 5px">
+            <button onclick="setPricesHigh()">Set Prices High</button>
+            <button onclick="setPricesLow()">Set Prices Low</button>
+            <button onclick="refreshCache()">Refresh Cache</button>
+            <button onclick="purgeCache()">Purge Cache</button>
+        </div>
     </div>
 
 </body>

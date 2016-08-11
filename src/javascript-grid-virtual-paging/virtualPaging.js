@@ -1,8 +1,14 @@
 var columnDefs = [
     // this row shows the row index, doesn't use any data from the row
-    {headerName: "ID", width: 50, cellRenderer: function(params) {
-        return params.node.id;
-    } },
+    {headerName: "ID", width: 50,
+        cellRenderer: function(params) {
+            if (params.data !== undefined) {
+                return params.node.id;
+            } else {
+                return '<img src="../images/loading.gif">'
+            }
+        }
+    },
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
     {headerName: "Country", field: "country", width: 120},
@@ -32,6 +38,9 @@ var gridOptions = {
     // how many server side requests to send at a time. if user is scrolling lots, then the requests
     // are throttled down
     maxConcurrentDatasourceRequests: 2,
+    // how many rows to initially show in the grid. having 1 shows a blank row, so it looks like
+    // the grid is loading from the users perspective (as we have a spinner in the first col)
+    paginationInitialRowCount: 1,
     // how many pages to store in cache. default is undefined, which allows an infinite sized cache,
     // pages are never purged. this should be set for large data to stop your browser from getting
     // full of data
