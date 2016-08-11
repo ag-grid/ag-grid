@@ -72,6 +72,24 @@ export class VirtualPage implements IEventEmitter {
         return this.state;
     }
 
+    public setRowNode(rowIndex: number, rowNode: RowNode): void {
+        var localIndex = rowIndex - this.startRow;
+        this.rowNodes[localIndex] = rowNode;
+        this.setTopOnRowNode(rowNode, rowIndex);
+    }
+
+    public setBlankRowNode(rowIndex: number): RowNode {
+        var localIndex = rowIndex - this.startRow;
+        var newRowNode = this.createBlankRowNode(rowIndex);
+        this.rowNodes[localIndex] = newRowNode;
+        return newRowNode;
+    }
+
+    public setNewData(rowIndex: number, dataItem: any): void {
+        var newRowNode = this.setBlankRowNode(rowIndex);
+        newRowNode.setDataAndId(dataItem, rowIndex.toString());
+    }
+
     @PostConstruct
     private init(): void {
         this.createRowNodes();
@@ -82,12 +100,21 @@ export class VirtualPage implements IEventEmitter {
         this.rowNodes = [];
         for (var i = 0; i < this.cacheParams.pageSize; i++) {
             var rowIndex = this.startRow + i;
-            let rowNode = new RowNode();
-            this.context.wireBean(rowNode);
-            rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
-            rowNode.rowHeight = this.cacheParams.rowHeight;
+            var rowNode = this.createBlankRowNode(rowIndex);
             this.rowNodes.push(rowNode);
         }
+    }
+
+    private setTopOnRowNode(rowNode: RowNode, rowIndex: number): void {
+        rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
+    }
+
+    private createBlankRowNode(rowIndex: number): RowNode {
+        let rowNode = new RowNode();
+        this.context.wireBean(rowNode);
+        rowNode.rowHeight = this.cacheParams.rowHeight;
+        this.setTopOnRowNode(rowNode, rowIndex);
+        return rowNode;
     }
 
     public getRow(rowIndex: number): RowNode {

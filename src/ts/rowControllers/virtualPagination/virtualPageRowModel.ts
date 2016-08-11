@@ -202,7 +202,9 @@ export class VirtualPageRowModel implements IRowModel {
     }
 
     public insertItemsAtIndex(index: number, items: any[]): void {
-        console.log('not yet supported');
+        if (this.virtualPageCache) {
+            this.virtualPageCache.insertItemsAtIndex(index, items);
+        }
     }
 
     public removeItems(rowNodes: RowNode[]): void {

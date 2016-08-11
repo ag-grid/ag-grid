@@ -86,6 +86,63 @@ export class VirtualPageCache {
         }
     }
 
+    private moveItemsDown(page: VirtualPage, moveFromIndex: number, moveCount: number): void {
+        let startRow = page.getStartRow();
+        let endRow = page.getEndRow();
+        var indexOfLastRowToMove = moveFromIndex + moveCount;
+
+        // all rows need to be moved down below the insertion index
+        for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
+            // don't move rows at or before the insertion index
+            if (currentRowIndex < indexOfLastRowToMove) { continue; }
+
+            let indexOfNodeWeWant = currentRowIndex - moveCount;
+            let nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
+
+            if (nodeForThisIndex) {
+                page.setRowNode(currentRowIndex, nodeForThisIndex);
+            } else {
+                page.setBlankRowNode(currentRowIndex);
+            }
+        }
+
+    }
+
+    private insertItems(page: VirtualPage, indexToInsert: number, items: any[]): void {
+        let pageStartRow = page.getStartRow();
+        let pageEndRow = page.getEndRow();
+
+        // next stage is insert the rows into this page, if applicable
+        for (let index = 0; index < items.length; index++) {
+            var rowIndex = indexToInsert + index;
+
+            let currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
+
+            if (currentRowInThisPage) {
+                var dataItem = items[index];
+                page.setNewData(rowIndex, dataItem);
+            }
+        }
+    }
+
+    public insertItemsAtIndex(indexToInsert: number, items: any[]): void {
+        // get all page id's as NUMBERS (not strings, as we need to sort as numbers)
+        let pageIds = Object.keys(this.pages).map( str => parseInt(str) ).sort().reverse();
+
+        pageIds.forEach( pageId => {
+            let page = this.pages[pageId];
+            let pageEndRow = page.getEndRow();
+
+            // if the insertion is after this page, then this page is not impacted
+            if (pageEndRow <= indexToInsert) { return; }
+
+            this.moveItemsDown(page, indexToInsert, items.length);
+            this.insertItems(page, indexToInsert, items);
+        });
+
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, {fromIndex: indexToInsert});
+    }
+
     public getRowCount(): number {
         return this.virtualRowCount;
     }
@@ -109,12 +166,19 @@ export class VirtualPageCache {
         this.active = false;
     }
 
-    public getRow(rowIndex: number): RowNode {
+    // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
+    // it will want new pages in teh cache as it asks for rows. only when we are inserting /
+    // removing rows via the api is dontCreatePage set, where we move rows between the pages.
+    public getRow(rowIndex: number, dontCreatePage = false): RowNode {
         var pageNumber = Math.floor(rowIndex / this.cacheParams.pageSize);
         var page = this.pages[pageNumber];
 
         if (!page) {
-            page = this.createPage(pageNumber);
+            if (dontCreatePage) {
+                return null;
+            } else {
+                page = this.createPage(pageNumber);
+            }
         }
 
         return page.getRow(rowIndex);
