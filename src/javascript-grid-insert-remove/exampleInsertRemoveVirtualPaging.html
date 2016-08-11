@@ -1,10 +1,23 @@
 <html>
+
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused24"></script>
     <script src="exampleInsertRemoveVirtualPaging.js"></script>
 </head>
-<body>
-    <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+
+<body style="position: relative;">
+
+    <div style="height: 100%; padding-top: 20px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+
+    <div style="position: absolute; top: 0px; left: 0px;">
+        <button onclick="onAddRow()">Add Row</button>
+        <button onclick="insertItemsAt2(1)">Insert 1 Row @ 2</button>
+        <button onclick="insertItemsAt2(5)">Insert 5 Rows @ 2</button>
+        <button onclick="onRemoveSelected()">Remove Selected</button>
+    </div>
+
 </body>
 </html>

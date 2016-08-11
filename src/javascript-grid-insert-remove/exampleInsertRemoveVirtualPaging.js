@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Row",
+    {headerName: "Index",
         // little trick for cellRenderer, we return the grid index
         // of the row
         cellRenderer: function(params) {
@@ -7,7 +7,6 @@ var columnDefs = [
         }
     },
     {headerName: "Item ID", field: "id"},
-    {headerName: "Node ID", valueGetter: "node.id"},
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
     {headerName: "Price", field: "price"}
@@ -16,7 +15,14 @@ var columnDefs = [
 var makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
 var models = ['Cruze', 'Celica', 'Mondeo', 'Boxter', 'Genesis', 'Accord', 'Taurus'];
 
+// this counter is used to give id's to the rows
 var sequenceId = 1;
+
+// create a bunch of dummy data
+var allOfTheData = [];
+for (var i = 0; i<1000; i++) {
+    allOfTheData.push(createRowData(sequenceId++));
+}
 
 function createRowData(id) {
     return {
@@ -27,9 +33,15 @@ function createRowData(id) {
     };
 }
 
-var allOfTheData = [];
-for (var i = 0; i<1000; i++) {
-    allOfTheData.push(createRowData(sequenceId++));
+function insertItemsAt2(count) {
+    var newDataItems = [];
+    for (var i = 0; i<count; i++) {
+        var newItem = createRowData(sequenceId++);
+        allOfTheData.splice(2, 0, newItem);
+        newDataItems.push(newItem);
+    }
+
+    gridOptions.api.insertItemsAtIndex(2, newDataItems);
 }
 
 var dataSource = {
@@ -66,7 +78,7 @@ var gridOptions = {
     maxConcurrentDatasourceRequests: 2,
 
     getRowNodeId: function(item) {
-        return 'T' + item.id;
+        return item.id.toString();
     }
 };
 
