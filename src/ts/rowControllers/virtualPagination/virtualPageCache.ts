@@ -33,7 +33,7 @@ export class VirtualPageCache {
     private cacheParams: CacheParams;
 
     private virtualRowCount: number;
-    private foundMaxRow = false;
+    private maxRowFound = false;
 
     private logger: Logger;
 
@@ -94,7 +94,9 @@ export class VirtualPageCache {
         // all rows need to be moved down below the insertion index
         for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
             // don't move rows at or before the insertion index
-            if (currentRowIndex < indexOfLastRowToMove) { continue; }
+            if (currentRowIndex < indexOfLastRowToMove) {
+                continue;
+            }
 
             let indexOfNodeWeWant = currentRowIndex - moveCount;
             let nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
@@ -103,14 +105,16 @@ export class VirtualPageCache {
                 page.setRowNode(currentRowIndex, nodeForThisIndex);
             } else {
                 page.setBlankRowNode(currentRowIndex);
+                page.setDirty();
             }
         }
 
     }
 
-    private insertItems(page: VirtualPage, indexToInsert: number, items: any[]): void {
+    private insertItems(page: VirtualPage, indexToInsert: number, items: any[]): RowNode[] {
         let pageStartRow = page.getStartRow();
         let pageEndRow = page.getEndRow();
+        let newRowNodes: RowNode[] = [];
 
         // next stage is insert the rows into this page, if applicable
         for (let index = 0; index < items.length; index++) {
@@ -120,28 +124,67 @@ export class VirtualPageCache {
 
             if (currentRowInThisPage) {
                 var dataItem = items[index];
-                page.setNewData(rowIndex, dataItem);
+                var newRowNode = page.setNewData(rowIndex, dataItem);
+                newRowNodes.push(newRowNode);
             }
         }
+
+        return newRowNodes;
     }
 
     public insertItemsAtIndex(indexToInsert: number, items: any[]): void {
-        // get all page id's as NUMBERS (not strings, as we need to sort as numbers)
-        let pageIds = Object.keys(this.pages).map( str => parseInt(str) ).sort().reverse();
+        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
+        let pageIds = Object.keys(this.pages).map(str => parseInt(str)).sort().reverse();
 
-        pageIds.forEach( pageId => {
+        let newNodes: RowNode[] = [];
+        pageIds.forEach(pageId => {
             let page = this.pages[pageId];
             let pageEndRow = page.getEndRow();
 
             // if the insertion is after this page, then this page is not impacted
-            if (pageEndRow <= indexToInsert) { return; }
+            if (pageEndRow <= indexToInsert) {
+                return;
+            }
 
             this.moveItemsDown(page, indexToInsert, items.length);
-            this.insertItems(page, indexToInsert, items);
+            let newNodesThisPage = this.insertItems(page, indexToInsert, items);
+            newNodesThisPage.forEach(rowNode => newNodes.push(rowNode));
         });
 
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, {fromIndex: indexToInsert});
+        if (this.maxRowFound) {
+            this.virtualRowCount += items.length;
+        }
+
+        this.dispatchModelUpdated();
+        this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, newNodes);
     }
+
+    /*
+     public removeItems(rowNodes: RowNode[]): void {
+
+     // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in ascending order
+     let pageIds = Object.keys(this.pages).map( str => parseInt(str) ).sort().reverse();
+
+     // put rowNodes into a map of ids for lookup
+     let rowNodesById: {(id:string):RowNode} = {};
+     rowNodes.forEach( (rowNode)=> rowNodesById[rowNode.id] = rowNode);
+
+     // this is the index to move rows down
+     let rowsDeletedSoFar = 0;
+
+     let newNodes: RowNode[] = [];
+     pageIds.forEach( pageId => {
+     let page = this.pages[pageId];
+     let pageEndRow = page.getEndRow();
+
+     // if the insertion is after this page, then this page is not impacted
+     if (pageEndRow <= indexToInsert) { return; }
+
+     this.moveItemsDown(page, indexToInsert, items.length);
+     let newNodesThisPage = this.insertItems(page, indexToInsert, items);
+     newNodesThisPage.forEach( rowNode => newNodes.push(rowNode) );
+     });
+     }*/
 
     public getRowCount(): number {
         return this.virtualRowCount;
@@ -150,7 +193,9 @@ export class VirtualPageCache {
     private onPageLoaded(event: any): void {
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
-        if (!this.active) { return; }
+        if (!this.active) {
+            return;
+        }
 
         this.logger.log(`onPageLoaded: page = ${event.page.getPageNumber()}, lastRow = ${event.lastRow}`);
         this.activePageLoadsCount--;
@@ -207,7 +252,9 @@ export class VirtualPageCache {
     }
 
     private removePageFromCache(pageToRemove: VirtualPage): void {
-        if (!pageToRemove) { return; }
+        if (!pageToRemove) {
+            return;
+        }
 
         delete this.pages[pageToRemove.getPageNumber()];
         this.pagesInCacheCount--;
@@ -218,7 +265,7 @@ export class VirtualPageCache {
     }
 
     private printCacheStatus(): void {
-        this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activePageLoadsCount}, pages = ${this.getPageStateAsString()}`);
+        this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activePageLoadsCount}, pages = ${JSON.stringify(this.getPageState())}`);
     }
 
     private checkPageToLoad() {
@@ -231,7 +278,7 @@ export class VirtualPageCache {
 
         var pageToLoad: VirtualPage = null;
         _.iterateObject(this.pages, (key: string, cachePage: VirtualPage)=> {
-            if (cachePage.getState()===VirtualPage.STATE_NEW) {
+            if (cachePage.getState() === VirtualPage.STATE_DIRTY) {
                 pageToLoad = cachePage;
             }
         });
@@ -253,7 +300,9 @@ export class VirtualPageCache {
         _.iterateObject(this.pages, (key: string, page: VirtualPage)=> {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
-            if (page === pageToExclude) { return; }
+            if (page === pageToExclude) {
+                return;
+            }
 
             if (_.missing(lruPage) || page.getLastAccessed() < lruPage.getLastAccessed()) {
                 lruPage = page;
@@ -265,12 +314,14 @@ export class VirtualPageCache {
 
     private checkVirtualRowCount(page: VirtualPage, lastRow: any): void {
         // if we know the last row, use if
-        if (this.foundMaxRow) { return; }
+        if (this.maxRowFound) {
+            return;
+        }
 
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.virtualRowCount = lastRow;
-            this.foundMaxRow = true;
-            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+            this.maxRowFound = true;
+            this.dispatchModelUpdated();
         } else {
             // otherwise, see if we need to add some virtual rows
             var lastRowIndex = (page.getPageNumber() + 1) * this.cacheParams.pageSize;
@@ -278,16 +329,63 @@ export class VirtualPageCache {
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
-                this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+                this.dispatchModelUpdated();
             }
         }
     }
 
-    public getPageStateAsString(): string {
-        var strings: string[] = [];
+    private dispatchModelUpdated(): void {
+        if (this.active) {
+            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        }
+    }
+
+    public getPageState(): any {
+        var result: any[] = [];
         _.iterateObject(this.pages, (pageNumber: string, page: VirtualPage)=> {
-            strings.push(`{pageNumber: ${pageNumber}, pageStatus: ${page.getState()}}`);
+            result.push({pageNumber: pageNumber, startRow: page.getStartRow(), endRow: page.getEndRow(), pageStatus: page.getState()});
         });
-        return strings.join(',');
+        return result;
+    }
+
+    public refreshVirtualPageCache(): void {
+        _.iterateObject(this.pages, (pageId: string, page: VirtualPage)=> {
+            page.setDirty();
+        });
+        this.checkPageToLoad();
+    }
+
+    public purgeVirtualPageCache(): void {
+        var pagesList = _.values(this.pages);
+        pagesList.forEach( virtualPage => this.removePageFromCache(virtualPage) );
+        this.dispatchModelUpdated();
+    }
+
+    public getVirtualRowCount(): number {
+        return this.virtualRowCount;
+    }
+
+    public isMaxRowFound(): boolean {
+        return this.maxRowFound;
+    }
+
+    public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
+        this.virtualRowCount = rowCount;
+        // if undefined is passed, we do not set this value, if one of {true,false}
+        // is passed, we do set the value.
+        if (_.exists(maxRowFound)) {
+            this.maxRowFound = maxRowFound;
+        }
+
+        // if we are still searching, then the row count must not end at the end
+        // of a particular page, otherwise the searching will not pop into the
+        // next page
+        if (!this.maxRowFound) {
+            if (this.virtualRowCount % this.cacheParams.pageSize === 0) {
+                this.virtualRowCount++;
+            }
+        }
+
+        this.dispatchModelUpdated();
     }
 }

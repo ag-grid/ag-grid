@@ -61,11 +61,15 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
+    private virtualPageRowModel: VirtualPageRowModel;
 
     @PostConstruct
     private init(): void {
         if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL) {
             this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+        }
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_VIRTUAL) {
+            this.virtualPageRowModel = <VirtualPageRowModel> this.rowModel;
         }
     }
 
@@ -531,6 +535,54 @@ export class GridApi {
 
     public addItems(rowNodes: RowNode[]): void {
         this.rowModel.addItems(rowNodes);
+    }
+
+    public refreshVirtualPageCache(): void {
+        if (this.virtualPageRowModel) {
+            this.virtualPageRowModel.refreshVirtualPageCache();
+        } else {
+            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
+        }
+    }
+
+    public purgeVirtualPageCache(): void {
+        if (this.virtualPageRowModel) {
+            this.virtualPageRowModel.purgeVirtualPageCache();
+        } else {
+            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
+        }
+    }
+
+    public getVirtualRowCount(): number {
+        if (this.virtualPageRowModel) {
+            return this.virtualPageRowModel.getVirtualRowCount();
+        } else {
+            console.warn(`ag-Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.`);
+        }
+    }
+
+    public isMaxRowFound(): boolean {
+        if (this.virtualPageRowModel) {
+            return this.virtualPageRowModel.isMaxRowFound();
+        } else {
+            console.warn(`ag-Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
+        }
+    }
+
+    public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
+        if (this.virtualPageRowModel) {
+            this.virtualPageRowModel.setVirtualRowCount(rowCount, maxRowFound);
+        } else {
+            console.warn(`ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.`);
+        }
+    }
+
+    public getVirtualPageState(): any {
+        if (this.virtualPageRowModel) {
+            return this.virtualPageRowModel.getVirtualPageState();
+        } else {
+            console.warn(`ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.`);
+        }
     }
 
     /*

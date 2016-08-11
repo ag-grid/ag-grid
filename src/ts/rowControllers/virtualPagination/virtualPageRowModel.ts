@@ -208,10 +208,52 @@ export class VirtualPageRowModel implements IRowModel {
     }
 
     public removeItems(rowNodes: RowNode[]): void {
-        console.log('not yet supported');
+        console.log('ag-Grid: it is not possible to removeItems when using virtual pagination. Instead use the ' +
+            'API to refresh the cache');
     }
 
     public addItems(items: any[]): void {
-        console.log('not yet supported');
+        console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
+            'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
+    }
+
+    public refreshVirtualPageCache(): void {
+        if (this.virtualPageCache) {
+            this.virtualPageCache.refreshVirtualPageCache();
+        }
+    }
+
+    public purgeVirtualPageCache(): void {
+        if (this.virtualPageCache) {
+            this.virtualPageCache.purgeVirtualPageCache();
+        }
+    }
+
+    public getVirtualRowCount(): number {
+        if (this.virtualPageCache) {
+            return this.virtualPageCache.getVirtualRowCount();
+        } else {
+            return null;
+        }
+    }
+
+    public isMaxRowFound(): boolean {
+        if (this.virtualPageCache) {
+            return this.virtualPageCache.isMaxRowFound();
+        }
+    }
+
+    public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
+        if (this.virtualPageCache) {
+            this.virtualPageCache.setVirtualRowCount(rowCount, maxRowFound);
+        }
+    }
+
+    public getVirtualPageState(): any {
+        if (this.virtualPageCache) {
+            this.virtualPageCache.getPageState();
+        } else {
+            return null;
+        }
     }
 }

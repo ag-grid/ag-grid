@@ -12,7 +12,7 @@ export class VirtualPage implements IEventEmitter {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
-    public static STATE_NEW = 'new';
+    public static STATE_DIRTY = 'dirty';
     public static STATE_LOADING = 'loading';
     public static STATE_LOADED = 'loaded';
     public static STATE_FAILED = 'failed';
@@ -21,7 +21,9 @@ export class VirtualPage implements IEventEmitter {
     @Autowired('context') private context: Context;
     @Autowired('selectionController') private selectionController: SelectionController;
 
-    private state = VirtualPage.STATE_NEW;
+    private state = VirtualPage.STATE_DIRTY;
+
+    private version = 0;
 
     private lastAccessed: number;
 
@@ -42,6 +44,19 @@ export class VirtualPage implements IEventEmitter {
         // however it makes the code easier to read if we work them out up front
         this.startRow = pageNumber * cacheSettings.pageSize;
         this.endRow = this.startRow + cacheSettings.pageSize;
+    }
+
+    public setDirty(): void {
+        // in case any current loads in progress, this will have their results ignored
+        this.version++;
+        this.state = VirtualPage.STATE_DIRTY;
+    }
+
+    public setDirtyAndPurge(): void {
+        this.setDirty();
+        this.rowNodes.forEach( rowNode => {
+            rowNode.setData(null);
+        });
     }
 
     public getStartRow(): number {
@@ -85,9 +100,10 @@ export class VirtualPage implements IEventEmitter {
         return newRowNode;
     }
 
-    public setNewData(rowIndex: number, dataItem: any): void {
+    public setNewData(rowIndex: number, dataItem: any): RowNode {
         var newRowNode = this.setBlankRowNode(rowIndex);
         newRowNode.setDataAndId(dataItem, rowIndex.toString());
+        return newRowNode;
     }
 
     @PostConstruct
@@ -130,7 +146,7 @@ export class VirtualPage implements IEventEmitter {
         var params: IGetRowsParams = {
             startRow: this.startRow,
             endRow: this.endRow,
-            successCallback: this.pageLoaded.bind(this),
+            successCallback: this.pageLoaded.bind(this, this.version),
             failCallback: this.pageLoadFailed.bind(this),
             sortModel: this.cacheParams.sortModel,
             filterModel: this.cacheParams.filterModel,
@@ -161,9 +177,7 @@ export class VirtualPage implements IEventEmitter {
         this.localEventService.dispatchEvent(VirtualPage.EVENT_LOAD_COMPLETE, event);
     }
 
-    private pageLoaded(rows: any[], lastRow: number) {
-        this.state = VirtualPage.STATE_LOADED;
-
+    private populateWithRowData(rows: any[]): void {
         this.rowNodes.forEach( (rowNode: RowNode, index: number)=> {
             var data = rows[index];
             if (_.exists(data)) {
@@ -175,6 +189,16 @@ export class VirtualPage implements IEventEmitter {
                 rowNode.setDataAndId(data, indexOfRow.toString());
             }
         });
+    }
+
+    private pageLoaded(version: number, rows: any[], lastRow: number) {
+        // we need to check the version, in case there was an old request
+        // from the server that was sent before we refreshed the cache,
+        // if the load was done as a result of a cache refresh
+        if (version===this.version) {
+            this.state = VirtualPage.STATE_LOADED;
+            this.populateWithRowData(rows);
+        }
 
         // check here if lastrow should be set
         var event = {success: true, page: this, lastRow: lastRow};

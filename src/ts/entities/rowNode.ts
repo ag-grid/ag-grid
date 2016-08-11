@@ -106,9 +106,6 @@ export class RowNode {
     }
 
     public setId(id: string): void {
-        // can only set id once
-        if (this.id!==undefined) { return; }
-
         // see if user is providing the id's
         var getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
         if (getRowNodeId) {

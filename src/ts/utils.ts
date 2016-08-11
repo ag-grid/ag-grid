@@ -33,6 +33,14 @@ export class Utils {
         return (results && results.length > 1) ? results[1] : "";
     }
 
+    static values<T>(object: {[key: string]: T}): T[] {
+        var result: T[] = [];
+        this.iterateObject(object, (key: string, value: T)=> {
+            result.push(value);
+        });
+        return result;
+    }
+
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
         if (this.missing(object)) { return; }
         var keys = Object.keys(object);
