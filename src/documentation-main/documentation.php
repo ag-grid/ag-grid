@@ -172,13 +172,6 @@ include 'documentation_header.php';
     want native support for  Aurelia out of the box. This will be in both free and enterprise versions.
 </p>
 
-<h4>Inserting / Removing Rows</h4>
-
-<p>
-    Right now you cannot add or remove rows from the grid. We want to sort this out! This will be in both free
-    and enterprise versions.
-</p>
-
 <h4>Grids inside Grids</h4>
 
 <p>
