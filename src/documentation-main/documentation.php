@@ -23,9 +23,18 @@ include 'documentation_header.php';
         <div class="news-header">ag-Grid v5.1.x Released</div>
         <div>
             Added <a href="../javascript-grid-insert-remove/">updatable row sets</a>
-            and also rewrote the engine behind <a href="../javascript-grid-virtual-paging">
+            and also rewrote the engine behind <a href="../javascript-grid-virtual-paging/">
             Virtual Pagination</a> to allow updating rows and refresh of page cache.
             See <a href="../change-log/changeLogIndex.php">change log</a> for full release details.
+        </div>
+        <div style="text-align: right;">
+            <span>
+                <img src="../images/goldStar.png"/>
+                <img src="../images/goldStar.png"/>
+                <img src="../images/goldStar.png"/>
+                <img src="../images/goldStar.png"/>
+                <img src="../images/goldStar.png"/>
+            </span>
         </div>
     </div>
 

@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: Adding and removing of rows now allowed in normal row model. See new documentation page on 'Insert & Remove'.</li>
     <li>Enhancement: Virtual Pagination engine is rewritten. New and improved allowing inserting of rows and refreshing
         of the cache and other smaller pieces. See the documentation page on virtual pagination for details.</li>
-    <li>Enhancement: Removed datasource properties maxConcurrentDatasourceRequests, maxPagesInCache, overflowSize and pageSize.
+    <li>Breaking Change: Removed datasource properties maxConcurrentDatasourceRequests, maxPagesInCache, overflowSize and pageSize.
         Replaced with grid properties maxConcurrentDatasourceRequests, maxPagesInCache, paginationOverflowSize,
         paginationInitialRowCount, paginationPageSize.
     </li>
