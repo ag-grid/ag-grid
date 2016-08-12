@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Version 5.1.x</h3>
 
-    <h4>ag-Grid 5.1.1, ag-Grid-Enterprise 5.1.1</h4>
+    <h4>ag-Grid 5.1.2, ag-Grid-Enterprise 5.1.2</h4>
 
     <li>Enhancement: Adding and removing of rows now allowed in normal row model. See new documentation page on 'Insert & Remove'.</li>
     <li>Enhancement: Virtual Pagination engine is rewritten. New and improved allowing inserting of rows and refreshing
