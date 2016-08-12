@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.7
+ * @version v5.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -228,11 +228,11 @@ var RowRenderer = (function () {
         // called to whats rendered. if the row isn't rendered, we don't care
         var indexesToRemove = [];
         var renderedRows = this.renderedRows;
-        Object.keys(renderedRows).forEach(function (key) {
-            var renderedRow = renderedRows[key];
+        Object.keys(renderedRows).forEach(function (index) {
+            var renderedRow = renderedRows[index];
             // see if the rendered row is in the list of rows we have to update
             if (renderedRow.isDataInList(rows)) {
-                indexesToRemove.push(key);
+                indexesToRemove.push(index);
             }
         });
         // remove the rows
@@ -254,13 +254,13 @@ var RowRenderer = (function () {
     };
     // public - removes the group rows and then redraws them again
     RowRenderer.prototype.refreshGroupRows = function () {
+        var _this = this;
         // find all the group rows
         var rowsToRemove = [];
-        var that = this;
-        Object.keys(this.renderedRows).forEach(function (key) {
-            var renderedRow = that.renderedRows[key];
+        Object.keys(this.renderedRows).forEach(function (index) {
+            var renderedRow = _this.renderedRows[index];
             if (renderedRow.isGroup()) {
-                rowsToRemove.push(key);
+                rowsToRemove.push(index);
             }
         });
         // remove the rows

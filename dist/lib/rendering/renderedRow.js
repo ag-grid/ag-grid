@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.7
+ * @version v5.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -189,12 +189,13 @@ var RenderedRow = (function () {
             return renderedCell;
         }
     };
+    RenderedRow.prototype.onRowSelected = function () {
+        var selected = this.rowNode.isSelected();
+        this.eLeftCenterAndRightRows.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-selected', selected); });
+    };
     RenderedRow.prototype.addRowSelectedListener = function () {
         var _this = this;
-        var rowSelectedListener = function () {
-            var selected = _this.rowNode.isSelected();
-            _this.eLeftCenterAndRightRows.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-selected', selected); });
-        };
+        var rowSelectedListener = this.onRowSelected.bind(this);
         this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
         this.destroyFunctions.push(function () {
             _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
@@ -254,6 +255,10 @@ var RenderedRow = (function () {
             var animate = false;
             var newData = true;
             _this.forEachRenderedCell(function (renderedCell) { return renderedCell.refreshCell(animate, newData); });
+            // check for selected also, as this could be after lazy loading of the row data, in which csae
+            // the id might of just gotten set inside the row and the row selected state may of changed
+            // as a result. this is what happens when selected rows are loaded in virtual pagination.
+            _this.onRowSelected();
         };
         this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
         this.destroyFunctions.push(function () {

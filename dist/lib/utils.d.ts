@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -13,6 +13,9 @@ export declare class Utils {
     private static isSafari;
     private static isIE;
     static getNameOfClass(TheClass: any): string;
+    static values<T>(object: {
+        [key: string]: T;
+    }): T[];
     static iterateObject(object: any, callback: (key: string, value: any) => void): void;
     static cloneObject(object: any): any;
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult): TResult[];

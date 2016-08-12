@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./entities/rowNode";
-import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams } from "./entities/gridOptions";
+import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams, GetRowNodeIdFunc } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
@@ -68,6 +68,11 @@ export declare class GridOptionsWrapper {
     isSingleClickEdit(): boolean;
     getGroupDefaultExpanded(): number;
     getAutoSizePadding(): number;
+    getMaxConcurrentDatasourceRequests(): number;
+    getMaxPagesInCache(): number;
+    getPaginationOverflowSize(): number;
+    getPaginationPageSize(): number;
+    getPaginationInitialRowCount(): number;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
     getGroupColumnDef(): ColDef;
@@ -128,6 +133,7 @@ export declare class GridOptionsWrapper {
     getGroupRowAggNodesFunc(): (nodes: RowNode[]) => any;
     getContextMenuItemsFunc(): GetContextMenuItems;
     getMainMenuItemsFunc(): GetMainMenuItems;
+    getRowNodeIdFunc(): GetRowNodeIdFunc;
     getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams) => any;
     getViewportRowModelPageSize(): number;
     getViewportRowModelBufferSize(): number;

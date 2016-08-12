@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.7
+ * @version v5.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,13 @@ var Utils = (function () {
         var funcAsString = TheClass.toString();
         var results = (funcNameRegex).exec(funcAsString);
         return (results && results.length > 1) ? results[1] : "";
+    };
+    Utils.values = function (object) {
+        var result = [];
+        this.iterateObject(object, function (key, value) {
+            result.push(value);
+        });
+        return result;
     };
     Utils.iterateObject = function (object, callback) {
         if (this.missing(object)) {

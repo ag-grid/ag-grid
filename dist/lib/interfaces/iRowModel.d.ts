@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -12,6 +12,12 @@ export interface IRowModel {
     getRowIndexAtPixel(pixel: number): number;
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
     getRowCombinedHeight(): number;
+    /** Add an item at the specified location */
+    insertItemsAtIndex(index: number, items: any[]): void;
+    /** Remove an item from the specified location */
+    removeItems(rowNodes: RowNode[]): void;
+    /** Add an item at the end */
+    addItems(items: any[]): void;
     /** Returns true if this model has any rows, regardless of model filter. EG if rows present, but filtered
      * out, this still returns false. If it returns true, then the grid shows the 'not rows' overlay - but we
      * don't show that overlay if the rows are just filtered out. */

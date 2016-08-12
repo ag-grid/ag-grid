@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.7
+ * @version v5.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -70,6 +70,8 @@ var Events = (function () {
     Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
     Events.EVENT_DRAG_STARTED = 'dragStarted';
     Events.EVENT_DRAG_STOPPED = 'dragStopped';
+    Events.EVENT_ITEMS_ADDED = 'itemsAdded';
+    Events.EVENT_ITEMS_REMOVED = 'itemsRemoved';
     return Events;
 })();
 exports.Events = Events;

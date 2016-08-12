@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.7
+ * @version v5.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,28 @@ var RowNode = (function () {
         this.data = data;
         var event = { oldData: oldData, newData: data };
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    };
+    RowNode.prototype.setDataAndId = function (data, id) {
+        var oldData = this.data;
+        this.data = data;
+        this.setId(id);
+        this.selectionController.syncInRowNode(this);
+        var event = { oldData: oldData, newData: data };
+        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    };
+    RowNode.prototype.setId = function (id) {
+        // see if user is providing the id's
+        var getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
+        if (getRowNodeId) {
+            // if user is providing the id's, then we set the id only after the data has been set.
+            // this is important for virtual pagination and viewport, where empty rows exist.
+            if (this.data) {
+                this.id = getRowNodeId(this.data);
+            }
+        }
+        else {
+            this.id = id;
+        }
     };
     RowNode.prototype.dispatchLocalEvent = function (eventName, event) {
         if (this.eventService) {
@@ -110,7 +132,6 @@ var RowNode = (function () {
     RowNode.prototype.setSelectedInitialValue = function (selected) {
         this.selected = selected;
     };
-    /** Returns true if this row is selected */
     RowNode.prototype.setSelected = function (newValue, clearSelection, tailingNodeInSequence) {
         if (clearSelection === void 0) { clearSelection = false; }
         if (tailingNodeInSequence === void 0) { tailingNodeInSequence = false; }
@@ -127,6 +148,10 @@ var RowNode = (function () {
         var clearSelection = params.clearSelection === true;
         var tailingNodeInSequence = params.tailingNodeInSequence === true;
         var rangeSelect = params.rangeSelect === true;
+        if (this.id === undefined) {
+            console.warn('ag-Grid: cannot select node until id for node is known');
+            return;
+        }
         if (this.floating) {
             console.log('ag-Grid: cannot select floating rows');
             return;

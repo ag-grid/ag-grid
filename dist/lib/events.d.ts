@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -66,4 +66,6 @@ export declare class Events {
     static EVENT_VIEWPORT_CHANGED: string;
     static EVENT_DRAG_STARTED: string;
     static EVENT_DRAG_STOPPED: string;
+    static EVENT_ITEMS_ADDED: string;
+    static EVENT_ITEMS_REMOVED: string;
 }

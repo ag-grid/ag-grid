@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -47,6 +47,7 @@ export declare class RenderedRow {
     private removeRenderedCells(colIds);
     private ensureCellInCorrectRow(renderedCell);
     private getOrCreateCell(column);
+    private onRowSelected();
     private addRowSelectedListener();
     private addHoverFunctionality();
     private addHoverClass(hover);

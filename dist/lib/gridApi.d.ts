@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -37,6 +37,7 @@ export declare class GridApi {
     private cellRendererFactory;
     private cellEditorFactory;
     private inMemoryRowModel;
+    private virtualPageRowModel;
     private init();
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getMasterSlaveService(): MasterSlaveService;
@@ -136,4 +137,13 @@ export declare class GridApi {
         [key: string]: IAggFunc;
     }): void;
     clearAggFuncs(): void;
+    insertItemsAtIndex(index: number, items: any[]): void;
+    removeItems(rowNodes: RowNode[]): void;
+    addItems(items: any[]): void;
+    refreshVirtualPageCache(): void;
+    purgeVirtualPageCache(): void;
+    getVirtualRowCount(): number;
+    isMaxRowFound(): boolean;
+    setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
+    getVirtualPageState(): any;
 }

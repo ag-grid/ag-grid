@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.0.7
+ * @version v5.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,7 +45,7 @@ var flattenStage_1 = require("./rowControllers/inMemory/flattenStage");
 var focusService_1 = require("./misc/focusService");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var events_1 = require("./events");
-var virtualPageRowModel_1 = require("./rowControllers/virtualPageRowModel");
+var virtualPageRowModel_1 = require("./rowControllers/virtualPagination/virtualPageRowModel");
 var inMemoryRowModel_1 = require("./rowControllers/inMemory/inMemoryRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellRendererService_1 = require("./rendering/cellRendererService");

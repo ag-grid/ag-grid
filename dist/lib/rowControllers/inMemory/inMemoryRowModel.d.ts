@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -20,6 +20,7 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private pivotStage;
     private rootNode;
     private rowsToDisplay;
+    private nodeManager;
     init(): void;
     getType(): string;
     private onValueChanged();
@@ -47,8 +48,11 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private restoreGroupState(groupState);
     private doFilter();
     private doPivot();
-    setRowData(rowData: any[], refresh: boolean, firstId?: number): void;
     private getGroupState();
-    private createRowNodesFromData(rowData, firstId?);
+    setRowData(rowData: any[], refresh: boolean, firstId?: number): void;
     private doRowsToDisplay();
+    insertItemsAtIndex(index: number, items: any[]): void;
+    removeItems(rowNodes: RowNode[]): void;
+    addItems(items: any[]): void;
+    private refreshAndFireEvent(eventName, rowNodes);
 }

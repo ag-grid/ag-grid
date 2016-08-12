@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.0.7
+// Type definitions for ag-grid v5.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -16,8 +16,9 @@ export declare class RowNode {
     private columnController;
     private valueService;
     private rowModel;
-    /** Unique ID for the node. Can be thought of as the index of the row in the original list. */
-    id: number;
+    /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
+     * key in the database (or whatever data source is used). */
+    id: string;
     /** The user provided data */
     data: any;
     /** The parent node to this node, or empty if top level */
@@ -71,6 +72,8 @@ export declare class RowNode {
     private selected;
     private eventService;
     setData(data: any): void;
+    setDataAndId(data: any, id: string): void;
+    setId(id: string): void;
     private dispatchLocalEvent(eventName, event?);
     setDataValue(colKey: string | ColDef | Column, newValue: any): void;
     resetQuickFilterAggregateText(): void;
@@ -79,7 +82,6 @@ export declare class RowNode {
     calculateSelectedFromChildren(): void;
     private calculateSelectedFromChildrenBubbleUp();
     setSelectedInitialValue(selected: boolean): void;
-    /** Returns true if this row is selected */
     setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean): void;
     setSelectedParams(params: {
         newValue: boolean;
