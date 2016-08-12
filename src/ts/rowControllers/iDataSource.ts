@@ -1,10 +1,12 @@
-/** Used by both PaginationController and VirtualPageRowModel */
-
+/** Datasource used by both PaginationController and VirtualPageRowModel */
 export interface IDataSource {
+    /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/
     rowCount?: number;
+    /** Callback the grid calls that you implement to fetech rows from the server. See below for params.*/
     getRows(params: IGetRowsParams): void;
 }
 
+/** Params for the above IDatasource.getRows() */
 export interface IGetRowsParams {
     startRow: number;
     endRow: number;
