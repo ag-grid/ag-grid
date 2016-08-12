@@ -533,8 +533,8 @@ export class GridApi {
         this.rowModel.removeItems(rowNodes);
     }
 
-    public addItems(rowNodes: RowNode[]): void {
-        this.rowModel.addItems(rowNodes);
+    public addItems(items: any[]): void {
+        this.rowModel.addItems(items);
     }
 
     public refreshVirtualPageCache(): void {

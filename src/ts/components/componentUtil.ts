@@ -56,7 +56,7 @@ export class ComponentUtil {
         'groupRowRenderer', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
         'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
         'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'getNodeChildDetails', 'groupRowAggNodes'];
+        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId'];
 
     public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)
