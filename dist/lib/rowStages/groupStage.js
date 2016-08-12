@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.7
+// ag-grid-enterprise v5.1.2
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -76,12 +76,13 @@ var GroupStage = (function () {
         this.context.wireBean(nextGroup);
         nextGroup.group = true;
         nextGroup.field = groupColumn.getColDef().field;
-        nextGroup.id = groupId.value--;
+        nextGroup.id = groupId.value.toString();
         nextGroup.key = groupKey;
         nextGroup.expanded = this.isExpanded(expandByDefault, level);
         nextGroup.allLeafChildren = [];
         nextGroup.allChildrenCount = 0;
         nextGroup.level = level;
+        groupId.value--;
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         nextGroup.parent = includeParents ? parent : null;
         return nextGroup;

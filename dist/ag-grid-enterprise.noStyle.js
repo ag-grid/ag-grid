@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.7
+// ag-grid-enterprise v5.1.2
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -58,7 +58,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	__webpack_require__(1);
 
 	// add in exports for ag-Grid-Enterprise
-	var populateClientExports = __webpack_require__(130).populateClientExports;
+	var populateClientExports = __webpack_require__(133).populateClientExports;
 	populateClientExports(exports);
 
 	// also add in in exports for ag-Grid-Standard, as it's webpack, we want both packed up
@@ -70,26 +70,26 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var main_1 = __webpack_require__(2);
-	var enterpriseMenu_1 = __webpack_require__(97);
-	var rangeController_1 = __webpack_require__(102);
-	var clipboardService_1 = __webpack_require__(103);
-	var groupStage_1 = __webpack_require__(104);
-	var aggregationStage_1 = __webpack_require__(105);
-	var enterpriseBoot_1 = __webpack_require__(108);
-	var statusBar_1 = __webpack_require__(117);
-	var contextMenu_1 = __webpack_require__(119);
-	var viewportRowModel_1 = __webpack_require__(120);
-	var pivotColumnsPanel_1 = __webpack_require__(121);
-	var toolPanelComp_1 = __webpack_require__(124);
-	var rowGroupCompFactory_1 = __webpack_require__(128);
-	var licenseManager_1 = __webpack_require__(115);
-	var md5_1 = __webpack_require__(116);
-	var pivotStage_1 = __webpack_require__(106);
-	var pivotColDefService_1 = __webpack_require__(107);
-	var aggFuncService_1 = __webpack_require__(101);
-	var pivotCompFactory_1 = __webpack_require__(129);
+	var enterpriseMenu_1 = __webpack_require__(100);
+	var rangeController_1 = __webpack_require__(105);
+	var clipboardService_1 = __webpack_require__(106);
+	var groupStage_1 = __webpack_require__(107);
+	var aggregationStage_1 = __webpack_require__(108);
+	var enterpriseBoot_1 = __webpack_require__(111);
+	var statusBar_1 = __webpack_require__(120);
+	var contextMenu_1 = __webpack_require__(122);
+	var viewportRowModel_1 = __webpack_require__(123);
+	var pivotColumnsPanel_1 = __webpack_require__(124);
+	var toolPanelComp_1 = __webpack_require__(127);
+	var rowGroupCompFactory_1 = __webpack_require__(131);
+	var licenseManager_1 = __webpack_require__(118);
+	var md5_1 = __webpack_require__(119);
+	var pivotStage_1 = __webpack_require__(109);
+	var pivotColDefService_1 = __webpack_require__(110);
+	var aggFuncService_1 = __webpack_require__(104);
+	var pivotCompFactory_1 = __webpack_require__(132);
 	var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel };
 	main_1.Grid.setEnterpriseBeans([toolPanelComp_1.ToolPanelComp, enterpriseMenu_1.EnterpriseMenuFactory, rowGroupCompFactory_1.RowGroupCompFactory, pivotCompFactory_1.PivotCompFactory,
 	    pivotColumnsPanel_1.PivotColumnsPanel, rangeController_1.RangeController, clipboardService_1.ClipboardService, pivotStage_1.PivotStage, pivotColDefService_1.PivotColDefService,
@@ -114,7 +114,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -123,8 +123,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var events_1 = __webpack_require__(12);
 	var componentUtil_1 = __webpack_require__(11);
 	var columnController_1 = __webpack_require__(15);
-	var agGridNg1_1 = __webpack_require__(91);
-	var agGridWebComponent_1 = __webpack_require__(92);
+	var agGridNg1_1 = __webpack_require__(94);
+	var agGridWebComponent_1 = __webpack_require__(95);
 	var gridCell_1 = __webpack_require__(35);
 	var rowNode_1 = __webpack_require__(29);
 	var originalColumnGroup_1 = __webpack_require__(19);
@@ -156,8 +156,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var renderedHeaderGroupCell_1 = __webpack_require__(70);
 	var standardMenu_1 = __webpack_require__(82);
 	var borderLayout_1 = __webpack_require__(32);
-	var tabbedLayout_1 = __webpack_require__(93);
-	var verticalStack_1 = __webpack_require__(94);
+	var tabbedLayout_1 = __webpack_require__(96);
+	var verticalStack_1 = __webpack_require__(97);
 	var autoWidthCalculator_1 = __webpack_require__(24);
 	var renderedRow_1 = __webpack_require__(39);
 	var rowRenderer_1 = __webpack_require__(25);
@@ -167,7 +167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var floatingRowModel_1 = __webpack_require__(28);
 	var paginationController_1 = __webpack_require__(43);
 	var component_1 = __webpack_require__(49);
-	var menuList_1 = __webpack_require__(95);
+	var menuList_1 = __webpack_require__(98);
 	var cellNavigationService_1 = __webpack_require__(65);
 	var columnChangeEvent_1 = __webpack_require__(78);
 	var constants_1 = __webpack_require__(10);
@@ -185,9 +185,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var valueService_1 = __webpack_require__(31);
 	var popupService_1 = __webpack_require__(46);
 	var gridRow_1 = __webpack_require__(36);
-	var inMemoryRowModel_1 = __webpack_require__(87);
+	var inMemoryRowModel_1 = __webpack_require__(89);
 	var virtualPageRowModel_1 = __webpack_require__(86);
-	var menuItemComponent_1 = __webpack_require__(96);
+	var menuItemComponent_1 = __webpack_require__(99);
 	var animateSlideCellRenderer_1 = __webpack_require__(57);
 	var cellEditorFactory_1 = __webpack_require__(50);
 	var popupEditorWrapper_1 = __webpack_require__(53);
@@ -195,14 +195,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	var popupTextCellEditor_1 = __webpack_require__(54);
 	var selectCellEditor_1 = __webpack_require__(52);
 	var textCellEditor_1 = __webpack_require__(51);
-	var largeTextCellEditor_1 = __webpack_require__(90);
+	var largeTextCellEditor_1 = __webpack_require__(93);
 	var cellRendererFactory_1 = __webpack_require__(56);
 	var groupCellRenderer_1 = __webpack_require__(59);
 	var cellRendererService_1 = __webpack_require__(61);
 	var valueFormatterService_1 = __webpack_require__(62);
 	var checkboxSelectionComponent_1 = __webpack_require__(63);
-	var componentAnnotations_1 = __webpack_require__(89);
-	var agCheckbox_1 = __webpack_require__(88);
+	var componentAnnotations_1 = __webpack_require__(92);
+	var agCheckbox_1 = __webpack_require__(91);
 	var bodyDropPivotTarget_1 = __webpack_require__(77);
 	var bodyDropTarget_1 = __webpack_require__(75);
 	var focusService_1 = __webpack_require__(41);
@@ -210,6 +210,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var renderedCell_1 = __webpack_require__(40);
 	var headerRowComp_1 = __webpack_require__(69);
 	var animateShowChangeCellRenderer_1 = __webpack_require__(58);
+	var InMemoryNodeManager_1 = __webpack_require__(90);
+	var virtualPageCache_1 = __webpack_require__(87);
+	var virtualPage_1 = __webpack_require__(88);
 	function populateClientExports(exports) {
 	    // columnController
 	    exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -297,10 +300,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    exports.FlattenStage = flattenStage_1.FlattenStage;
 	    exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
 	    exports.SortStage = sortStage_1.SortStage;
+	    exports.InMemoryNodeManager = InMemoryNodeManager_1.InMemoryNodeManager;
 	    // rowControllers
 	    exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
 	    exports.PaginationController = paginationController_1.PaginationController;
 	    exports.VirtualPageRowModel = virtualPageRowModel_1.VirtualPageRowModel;
+	    exports.VirtualPageCache = virtualPageCache_1.VirtualPageCache;
+	    exports.VirtualPage = virtualPage_1.VirtualPage;
 	    // widgets
 	    exports.AgCheckbox = agCheckbox_1.AgCheckbox;
 	    exports.Component = component_1.Component;
@@ -343,7 +349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -389,12 +395,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var cellEditorFactory_1 = __webpack_require__(50);
 	var events_1 = __webpack_require__(12);
 	var virtualPageRowModel_1 = __webpack_require__(86);
-	var inMemoryRowModel_1 = __webpack_require__(87);
+	var inMemoryRowModel_1 = __webpack_require__(89);
 	var cellRendererFactory_1 = __webpack_require__(56);
 	var cellRendererService_1 = __webpack_require__(61);
 	var valueFormatterService_1 = __webpack_require__(62);
-	var agCheckbox_1 = __webpack_require__(88);
-	var largeTextCellEditor_1 = __webpack_require__(90);
+	var agCheckbox_1 = __webpack_require__(91);
+	var largeTextCellEditor_1 = __webpack_require__(93);
 	var Grid = (function () {
 	    function Grid(eGridDiv, gridOptions, globalEventListener, $scope, $compile, quickFilterOnScope) {
 	        if (globalEventListener === void 0) { globalEventListener = null; }
@@ -487,7 +493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -598,6 +604,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.isSingleClickEdit = function () { return isTrue(this.gridOptions.singleClickEdit); };
 	    GridOptionsWrapper.prototype.getGroupDefaultExpanded = function () { return this.gridOptions.groupDefaultExpanded; };
 	    GridOptionsWrapper.prototype.getAutoSizePadding = function () { return this.gridOptions.autoSizePadding; };
+	    GridOptionsWrapper.prototype.getMaxConcurrentDatasourceRequests = function () { return this.gridOptions.maxConcurrentDatasourceRequests; };
+	    GridOptionsWrapper.prototype.getMaxPagesInCache = function () { return this.gridOptions.maxPagesInCache; };
+	    GridOptionsWrapper.prototype.getPaginationOverflowSize = function () { return this.gridOptions.paginationOverflowSize; };
+	    GridOptionsWrapper.prototype.getPaginationPageSize = function () { return this.gridOptions.paginationPageSize; };
+	    GridOptionsWrapper.prototype.getPaginationInitialRowCount = function () { return this.gridOptions.paginationInitialRowCount; };
 	    GridOptionsWrapper.prototype.getRowData = function () { return this.gridOptions.rowData; };
 	    GridOptionsWrapper.prototype.isGroupUseEntireRow = function () { return isTrue(this.gridOptions.groupUseEntireRow); };
 	    GridOptionsWrapper.prototype.getGroupColumnDef = function () { return this.gridOptions.groupColumnDef; };
@@ -652,6 +663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.getGroupRowAggNodesFunc = function () { return this.gridOptions.groupRowAggNodes; };
 	    GridOptionsWrapper.prototype.getContextMenuItemsFunc = function () { return this.gridOptions.getContextMenuItems; };
 	    GridOptionsWrapper.prototype.getMainMenuItemsFunc = function () { return this.gridOptions.getMainMenuItems; };
+	    GridOptionsWrapper.prototype.getRowNodeIdFunc = function () { return this.gridOptions.getRowNodeId; };
 	    GridOptionsWrapper.prototype.getProcessCellForClipboardFunc = function () { return this.gridOptions.processCellForClipboard; };
 	    GridOptionsWrapper.prototype.getViewportRowModelPageSize = function () { return positiveNumberOrZero(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); };
 	    GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); };
@@ -882,7 +894,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -987,7 +999,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1049,7 +1061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1365,7 +1377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1392,6 +1404,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var funcAsString = TheClass.toString();
 	        var results = (funcNameRegex).exec(funcAsString);
 	        return (results && results.length > 1) ? results[1] : "";
+	    };
+	    Utils.values = function (object) {
+	        var result = [];
+	        this.iterateObject(object, function (key, value) {
+	            result.push(value);
+	        });
+	        return result;
 	    };
 	    Utils.iterateObject = function (object, callback) {
 	        if (this.missing(object)) {
@@ -2122,7 +2141,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2172,7 +2191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2334,7 +2353,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ComponentUtil.NUMBER_PROPERTIES = [
 	        'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupDefaultExpanded',
 	        'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
-	        'layoutInterval', 'autoSizePadding'
+	        'layoutInterval', 'autoSizePadding', 'maxPagesInCache', 'maxConcurrentDatasourceRequests',
+	        'paginationOverflowSize', 'paginationPageSize', 'paginationInitialRowCount'
 	    ];
 	    ComponentUtil.BOOLEAN_PROPERTIES = [
 	        'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
@@ -2358,7 +2378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'groupRowRenderer', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
 	        'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
 	        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-	        'getNodeChildDetails', 'groupRowAggNodes'];
+	        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId'];
 	    ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
 	        .concat(ComponentUtil.OBJECT_PROPERTIES)
 	        .concat(ComponentUtil.STRING_PROPERTIES)
@@ -2387,7 +2407,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2457,6 +2477,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
 	    Events.EVENT_DRAG_STARTED = 'dragStarted';
 	    Events.EVENT_DRAG_STOPPED = 'dragStopped';
+	    Events.EVENT_ITEMS_ADDED = 'itemsAdded';
+	    Events.EVENT_ITEMS_REMOVED = 'itemsRemoved';
 	    return Events;
 	})();
 	exports.Events = Events;
@@ -2468,7 +2490,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2508,6 +2530,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridApi.prototype.init = function () {
 	        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
 	            this.inMemoryRowModel = this.rowModel;
+	        }
+	        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_VIRTUAL) {
+	            this.virtualPageRowModel = this.rowModel;
 	        }
 	    };
 	    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -2910,6 +2935,63 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.aggFuncService.clear();
 	        }
 	    };
+	    GridApi.prototype.insertItemsAtIndex = function (index, items) {
+	        this.rowModel.insertItemsAtIndex(index, items);
+	    };
+	    GridApi.prototype.removeItems = function (rowNodes) {
+	        this.rowModel.removeItems(rowNodes);
+	    };
+	    GridApi.prototype.addItems = function (items) {
+	        this.rowModel.addItems(items);
+	    };
+	    GridApi.prototype.refreshVirtualPageCache = function () {
+	        if (this.virtualPageRowModel) {
+	            this.virtualPageRowModel.refreshVirtualPageCache();
+	        }
+	        else {
+	            console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
+	        }
+	    };
+	    GridApi.prototype.purgeVirtualPageCache = function () {
+	        if (this.virtualPageRowModel) {
+	            this.virtualPageRowModel.purgeVirtualPageCache();
+	        }
+	        else {
+	            console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
+	        }
+	    };
+	    GridApi.prototype.getVirtualRowCount = function () {
+	        if (this.virtualPageRowModel) {
+	            return this.virtualPageRowModel.getVirtualRowCount();
+	        }
+	        else {
+	            console.warn("ag-Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.");
+	        }
+	    };
+	    GridApi.prototype.isMaxRowFound = function () {
+	        if (this.virtualPageRowModel) {
+	            return this.virtualPageRowModel.isMaxRowFound();
+	        }
+	        else {
+	            console.warn("ag-Grid: api.isMaxRowFound is only available when rowModelType='virtual'.");
+	        }
+	    };
+	    GridApi.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
+	        if (this.virtualPageRowModel) {
+	            this.virtualPageRowModel.setVirtualRowCount(rowCount, maxRowFound);
+	        }
+	        else {
+	            console.warn("ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.");
+	        }
+	    };
+	    GridApi.prototype.getVirtualPageState = function () {
+	        if (this.virtualPageRowModel) {
+	            return this.virtualPageRowModel.getVirtualPageState();
+	        }
+	        else {
+	            console.warn("ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.");
+	        }
+	    };
 	    __decorate([
 	        context_1.Autowired('csvCreator'), 
 	        __metadata('design:type', csvCreator_1.CsvCreator)
@@ -3027,7 +3109,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -3257,7 +3339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4902,7 +4984,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5116,7 +5198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5475,7 +5557,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5632,7 +5714,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5735,7 +5817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5819,7 +5901,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6001,7 +6083,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6053,7 +6135,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6187,7 +6269,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6319,7 +6401,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6547,11 +6629,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // called to whats rendered. if the row isn't rendered, we don't care
 	        var indexesToRemove = [];
 	        var renderedRows = this.renderedRows;
-	        Object.keys(renderedRows).forEach(function (key) {
-	            var renderedRow = renderedRows[key];
+	        Object.keys(renderedRows).forEach(function (index) {
+	            var renderedRow = renderedRows[index];
 	            // see if the rendered row is in the list of rows we have to update
 	            if (renderedRow.isDataInList(rows)) {
-	                indexesToRemove.push(key);
+	                indexesToRemove.push(index);
 	            }
 	        });
 	        // remove the rows
@@ -6573,13 +6655,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    // public - removes the group rows and then redraws them again
 	    RowRenderer.prototype.refreshGroupRows = function () {
+	        var _this = this;
 	        // find all the group rows
 	        var rowsToRemove = [];
-	        var that = this;
-	        Object.keys(this.renderedRows).forEach(function (key) {
-	            var renderedRow = that.renderedRows[key];
+	        Object.keys(this.renderedRows).forEach(function (index) {
+	            var renderedRow = _this.renderedRows[index];
 	            if (renderedRow.isGroup()) {
-	                rowsToRemove.push(key);
+	                rowsToRemove.push(index);
 	            }
 	        });
 	        // remove the rows
@@ -6921,7 +7003,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7952,7 +8034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8165,7 +8247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8297,7 +8379,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8329,6 +8411,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.data = data;
 	        var event = { oldData: oldData, newData: data };
 	        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+	    };
+	    RowNode.prototype.setDataAndId = function (data, id) {
+	        var oldData = this.data;
+	        this.data = data;
+	        this.setId(id);
+	        this.selectionController.syncInRowNode(this);
+	        var event = { oldData: oldData, newData: data };
+	        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+	    };
+	    RowNode.prototype.setId = function (id) {
+	        // see if user is providing the id's
+	        var getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
+	        if (getRowNodeId) {
+	            // if user is providing the id's, then we set the id only after the data has been set.
+	            // this is important for virtual pagination and viewport, where empty rows exist.
+	            if (this.data) {
+	                this.id = getRowNodeId(this.data);
+	            }
+	        }
+	        else {
+	            this.id = id;
+	        }
 	    };
 	    RowNode.prototype.dispatchLocalEvent = function (eventName, event) {
 	        if (this.eventService) {
@@ -8407,7 +8511,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RowNode.prototype.setSelectedInitialValue = function (selected) {
 	        this.selected = selected;
 	    };
-	    /** Returns true if this row is selected */
 	    RowNode.prototype.setSelected = function (newValue, clearSelection, tailingNodeInSequence) {
 	        if (clearSelection === void 0) { clearSelection = false; }
 	        if (tailingNodeInSequence === void 0) { tailingNodeInSequence = false; }
@@ -8424,6 +8527,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var clearSelection = params.clearSelection === true;
 	        var tailingNodeInSequence = params.tailingNodeInSequence === true;
 	        var rangeSelect = params.rangeSelect === true;
+	        if (this.id === undefined) {
+	            console.warn('ag-Grid: cannot select node until id for node is known');
+	            return;
+	        }
 	        if (this.floating) {
 	            console.log('ag-Grid: cannot select floating rows');
 	            return;
@@ -8608,7 +8715,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8868,7 +8975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9080,7 +9187,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9343,7 +9450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9482,7 +9589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9658,7 +9765,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9690,7 +9797,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9764,7 +9871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9949,7 +10056,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10040,7 +10147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10229,12 +10336,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return renderedCell;
 	        }
 	    };
+	    RenderedRow.prototype.onRowSelected = function () {
+	        var selected = this.rowNode.isSelected();
+	        this.eLeftCenterAndRightRows.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-selected', selected); });
+	    };
 	    RenderedRow.prototype.addRowSelectedListener = function () {
 	        var _this = this;
-	        var rowSelectedListener = function () {
-	            var selected = _this.rowNode.isSelected();
-	            _this.eLeftCenterAndRightRows.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-selected', selected); });
-	        };
+	        var rowSelectedListener = this.onRowSelected.bind(this);
 	        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
 	        this.destroyFunctions.push(function () {
 	            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
@@ -10294,6 +10402,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var animate = false;
 	            var newData = true;
 	            _this.forEachRenderedCell(function (renderedCell) { return renderedCell.refreshCell(animate, newData); });
+	            // check for selected also, as this could be after lazy loading of the row data, in which csae
+	            // the id might of just gotten set inside the row and the row selected state may of changed
+	            // as a result. this is what happens when selected rows are loaded in virtual pagination.
+	            _this.onRowSelected();
 	        };
 	        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
 	        this.destroyFunctions.push(function () {
@@ -10715,7 +10827,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11729,7 +11841,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11863,7 +11975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12187,7 +12299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12205,9 +12317,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var context_1 = __webpack_require__(8);
 	var gridPanel_1 = __webpack_require__(26);
 	var selectionController_1 = __webpack_require__(30);
-	var context_2 = __webpack_require__(8);
 	var sortController_1 = __webpack_require__(44);
-	var context_3 = __webpack_require__(8);
 	var eventService_1 = __webpack_require__(6);
 	var events_1 = __webpack_require__(12);
 	var filterManager_1 = __webpack_require__(45);
@@ -12267,18 +12377,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        this.reset();
 	    };
+	    PaginationController.prototype.checkForDeprecated = function () {
+	        var ds = this.datasource;
+	        if (utils_1.Utils.exists(ds.pageSize)) {
+	            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+	        }
+	    };
 	    PaginationController.prototype.reset = function () {
 	        // important to return here, as the user could be setting filter or sort before
 	        // data-source is set
 	        if (utils_1.Utils.missing(this.datasource)) {
 	            return;
 	        }
+	        this.checkForDeprecated();
 	        this.selectionController.reset();
 	        // copy pageSize, to guard against it changing the the datasource between calls
-	        if (this.datasource.pageSize && typeof this.datasource.pageSize !== 'number') {
-	            console.warn('datasource.pageSize should be a number');
+	        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
+	        if (!(this.pageSize >= 1)) {
+	            this.pageSize = 100;
 	        }
-	        this.pageSize = this.datasource.pageSize;
 	        // see if we know the total number of pages, or if it's 'to be decided'
 	        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
 	            this.rowCount = this.datasource.rowCount;
@@ -12360,8 +12477,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    PaginationController.prototype.loadPage = function () {
 	        var _this = this;
 	        this.enableOrDisableButtons();
-	        var startRow = this.currentPage * this.datasource.pageSize;
-	        var endRow = (this.currentPage + 1) * this.datasource.pageSize;
+	        var startRow = this.currentPage * this.pageSize;
+	        var endRow = (this.currentPage + 1) * this.pageSize;
 	        this.lbCurrent.innerHTML = this.myToLocaleString(this.currentPage + 1);
 	        this.callVersion++;
 	        var callVersionCopy = this.callVersion;
@@ -12485,35 +12602,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    __decorate([
-	        context_2.Autowired('filterManager'), 
+	        context_1.Autowired('filterManager'), 
 	        __metadata('design:type', filterManager_1.FilterManager)
 	    ], PaginationController.prototype, "filterManager", void 0);
 	    __decorate([
-	        context_2.Autowired('gridPanel'), 
+	        context_1.Autowired('gridPanel'), 
 	        __metadata('design:type', gridPanel_1.GridPanel)
 	    ], PaginationController.prototype, "gridPanel", void 0);
 	    __decorate([
-	        context_2.Autowired('gridOptionsWrapper'), 
+	        context_1.Autowired('gridOptionsWrapper'), 
 	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
 	    ], PaginationController.prototype, "gridOptionsWrapper", void 0);
 	    __decorate([
-	        context_2.Autowired('selectionController'), 
+	        context_1.Autowired('selectionController'), 
 	        __metadata('design:type', selectionController_1.SelectionController)
 	    ], PaginationController.prototype, "selectionController", void 0);
 	    __decorate([
-	        context_2.Autowired('sortController'), 
+	        context_1.Autowired('sortController'), 
 	        __metadata('design:type', sortController_1.SortController)
 	    ], PaginationController.prototype, "sortController", void 0);
 	    __decorate([
-	        context_2.Autowired('eventService'), 
+	        context_1.Autowired('eventService'), 
 	        __metadata('design:type', eventService_1.EventService)
 	    ], PaginationController.prototype, "eventService", void 0);
 	    __decorate([
-	        context_2.Autowired('rowModel'), 
+	        context_1.Autowired('rowModel'), 
 	        __metadata('design:type', Object)
 	    ], PaginationController.prototype, "rowModel", void 0);
 	    __decorate([
-	        context_3.PostConstruct, 
+	        context_1.PostConstruct, 
 	        __metadata('design:type', Function), 
 	        __metadata('design:paramtypes', []), 
 	        __metadata('design:returntype', void 0)
@@ -12533,7 +12650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12709,7 +12826,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13159,7 +13276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13380,7 +13497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13587,7 +13704,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13802,7 +13919,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14028,7 +14145,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14123,7 +14240,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14203,7 +14320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14265,7 +14382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14338,7 +14455,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14367,7 +14484,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14396,7 +14513,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14480,7 +14597,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14567,7 +14684,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14667,7 +14784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14950,7 +15067,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15297,7 +15414,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15405,7 +15522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15467,7 +15584,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15550,7 +15667,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15597,7 +15714,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15820,7 +15937,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15954,7 +16071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16080,7 +16197,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16402,7 +16519,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16552,7 +16669,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16824,7 +16941,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16930,7 +17047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16977,7 +17094,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17364,7 +17481,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17467,7 +17584,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17573,7 +17690,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17855,7 +17972,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17960,7 +18077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18054,7 +18171,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18097,7 +18214,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18129,7 +18246,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18256,7 +18373,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18339,7 +18456,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18439,7 +18556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18544,7 +18661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18660,7 +18777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18675,7 +18792,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	var utils_1 = __webpack_require__(9);
 	var gridOptionsWrapper_1 = __webpack_require__(5);
-	var rowNode_1 = __webpack_require__(29);
 	var context_1 = __webpack_require__(8);
 	var eventService_1 = __webpack_require__(6);
 	var selectionController_1 = __webpack_require__(30);
@@ -18683,49 +18799,74 @@ return /******/ (function(modules) { // webpackBootstrap
 	var sortController_1 = __webpack_require__(44);
 	var filterManager_1 = __webpack_require__(45);
 	var constants_1 = __webpack_require__(10);
-	/*
-	* This row controller is used for infinite scrolling only. For normal 'in memory' table,
-	* or standard pagination, the inMemoryRowController is used.
-	*/
-	var logging = false;
+	var virtualPageCache_1 = __webpack_require__(87);
 	var VirtualPageRowModel = (function () {
 	    function VirtualPageRowModel() {
-	        this.datasourceVersion = 0;
+	        this.destroyFunctions = [];
 	    }
 	    VirtualPageRowModel.prototype.init = function () {
-	        var _this = this;
-	        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-	        var virtualEnabled = this.gridOptionsWrapper.isRowModelVirtual();
-	        this.eventService.addEventListener(events_1.Events.EVENT_FILTER_CHANGED, function () {
-	            if (virtualEnabled && _this.gridOptionsWrapper.isEnableServerSideFilter()) {
-	                _this.reset();
-	            }
-	        });
-	        this.eventService.addEventListener(events_1.Events.EVENT_SORT_CHANGED, function () {
-	            if (virtualEnabled && _this.gridOptionsWrapper.isEnableServerSideSorting()) {
-	                _this.reset();
-	            }
-	        });
-	        if (virtualEnabled && this.gridOptionsWrapper.getDatasource()) {
-	            this.setDatasource(this.gridOptionsWrapper.getDatasource());
+	        if (!this.gridOptionsWrapper.isRowModelVirtual()) {
+	            return;
 	        }
+	        this.addEventListeners();
+	        this.setDatasource(this.gridOptionsWrapper.getDatasource());
+	    };
+	    VirtualPageRowModel.prototype.addEventListeners = function () {
+	        var _this = this;
+	        var onSortChangedListener = this.onSortChanged.bind(this);
+	        var onFilterChangedListener = this.onFilterChanged.bind(this);
+	        this.eventService.addEventListener(events_1.Events.EVENT_FILTER_CHANGED, onFilterChangedListener);
+	        this.eventService.addEventListener(events_1.Events.EVENT_SORT_CHANGED, onSortChangedListener);
+	        this.destroyFunctions.push(function () {
+	            _this.eventService.removeEventListener(events_1.Events.EVENT_FILTER_CHANGED, onFilterChangedListener);
+	            _this.eventService.removeEventListener(events_1.Events.EVENT_SORT_CHANGED, onSortChangedListener);
+	        });
+	    };
+	    VirtualPageRowModel.prototype.onFilterChanged = function () {
+	        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+	            this.reset();
+	        }
+	    };
+	    VirtualPageRowModel.prototype.onSortChanged = function () {
+	        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+	            this.reset();
+	        }
+	    };
+	    VirtualPageRowModel.prototype.destroy = function () {
+	        this.destroyFunctions.forEach(function (func) { return func(); });
 	    };
 	    VirtualPageRowModel.prototype.getType = function () {
 	        return constants_1.Constants.ROW_MODEL_TYPE_VIRTUAL;
 	    };
 	    VirtualPageRowModel.prototype.setDatasource = function (datasource) {
 	        this.datasource = datasource;
-	        if (!datasource) {
-	            // only continue if we have a valid datasource to working with
-	            return;
+	        // only reset if we have a valid datasource to working with
+	        if (datasource) {
+	            this.checkForDeprecated();
+	            this.reset();
 	        }
-	        this.reset();
+	    };
+	    VirtualPageRowModel.prototype.checkForDeprecated = function () {
+	        var ds = this.datasource;
+	        // the number of concurrent loads we are allowed to the server
+	        if (utils_1.Utils.exists(ds.maxConcurrentRequests)) {
+	            console.error('ag-Grid: since version 5.1.x, maxConcurrentRequests is replaced with grid property maxConcurrentDatasourceRequests');
+	        }
+	        if (utils_1.Utils.exists(ds.maxPagesInCache)) {
+	            console.error('ag-Grid: since version 5.1.x, maxPagesInCache is replaced with grid property maxPagesInPaginationCache');
+	        }
+	        if (utils_1.Utils.exists(ds.overflowSize)) {
+	            console.error('ag-Grid: since version 5.1.x, overflowSize is replaced with grid property paginationOverflowSize');
+	        }
+	        if (utils_1.Utils.exists(ds.pageSize)) {
+	            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+	        }
 	    };
 	    VirtualPageRowModel.prototype.isEmpty = function () {
-	        return !this.datasource;
+	        return utils_1.Utils.missing(this.virtualPageCache);
 	    };
 	    VirtualPageRowModel.prototype.isRowsToRender = function () {
-	        return utils_1.Utils.exists(this.datasource);
+	        return utils_1.Utils.exists(this.virtualPageCache);
 	    };
 	    VirtualPageRowModel.prototype.reset = function () {
 	        // important to return here, as the user could be setting filter or sort before
@@ -18733,317 +18874,127 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (utils_1.Utils.missing(this.datasource)) {
 	            return;
 	        }
-	        this.selectionController.reset();
-	        // see if datasource knows how many rows there are
-	        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
-	            this.virtualRowCount = this.datasource.rowCount;
-	            this.foundMaxRow = true;
+	        // if user is providing id's, then this means we can keep the selection between datsource hits,
+	        // as the rows will keep their unique id's even if, for example, server side sorting or filtering
+	        // is done.
+	        var userGeneratingRows = utils_1.Utils.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
+	        if (!userGeneratingRows) {
+	            this.selectionController.reset();
 	        }
-	        else {
-	            this.virtualRowCount = 0;
-	            this.foundMaxRow = false;
-	        }
-	        // in case any daemon requests coming from datasource, we know it ignore them
-	        this.datasourceVersion++;
-	        // map of page numbers to rows in that page
-	        this.pageCache = {};
-	        this.pageCacheSize = 0;
-	        // if a number is in this array, it means we are pending a load from it
-	        this.pageLoadsInProgress = [];
-	        this.pageLoadsQueued = [];
-	        this.pageAccessTimes = {}; // keeps a record of when each page was last viewed, used for LRU cache
-	        this.accessTime = 0; // rather than using the clock, we use this counter
-	        // the number of concurrent loads we are allowed to the server
-	        if (typeof this.datasource.maxConcurrentRequests === 'number' && this.datasource.maxConcurrentRequests > 0) {
-	            this.maxConcurrentDatasourceRequests = this.datasource.maxConcurrentRequests;
-	        }
-	        else {
-	            this.maxConcurrentDatasourceRequests = 2;
-	        }
-	        // the number of pages to keep in browser cache
-	        if (typeof this.datasource.maxPagesInCache === 'number' && this.datasource.maxPagesInCache > 0) {
-	            this.maxPagesInCache = this.datasource.maxPagesInCache;
-	        }
-	        else {
-	            // null is default, means don't  have any max size on the cache
-	            this.maxPagesInCache = null;
-	        }
-	        this.pageSize = this.datasource.pageSize; // take a copy of page size, we don't want it changing
-	        this.overflowSize = this.datasource.overflowSize; // take a copy of page size, we don't want it changing
-	        this.doLoadOrQueue(0);
+	        this.resetCache();
 	        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
 	    };
-	    VirtualPageRowModel.prototype.createNodesFromRows = function (pageNumber, rows) {
-	        var nodes = [];
-	        if (rows) {
-	            for (var i = 0, j = rows.length; i < j; i++) {
-	                var virtualRowIndex = (pageNumber * this.pageSize) + i;
-	                var node = this.createNode(rows[i], virtualRowIndex, true);
-	                nodes.push(node);
-	            }
-	        }
-	        return nodes;
-	    };
-	    VirtualPageRowModel.prototype.createNode = function (data, virtualRowIndex, realNode) {
-	        var rowHeight = this.rowHeight;
-	        var top = rowHeight * virtualRowIndex;
-	        var rowNode;
-	        if (realNode) {
-	            // if a real node, then always create a new one
-	            rowNode = new rowNode_1.RowNode();
-	            this.context.wireBean(rowNode);
-	            rowNode.id = virtualRowIndex;
-	            rowNode.data = data;
-	            // and see if the previous one was selected, and if yes, swap it out
-	            this.selectionController.syncInRowNode(rowNode);
-	        }
-	        else {
-	            // if creating a proxy node, see if there is a copy in selected memory that we can use
-	            var rowNode = this.selectionController.getNodeForIdIfSelected(virtualRowIndex);
-	            if (!rowNode) {
-	                rowNode = new rowNode_1.RowNode();
-	                this.context.wireBean(rowNode);
-	                rowNode.id = virtualRowIndex;
-	                rowNode.data = data;
-	            }
-	        }
-	        rowNode.rowTop = top;
-	        rowNode.rowHeight = rowHeight;
-	        return rowNode;
-	    };
-	    VirtualPageRowModel.prototype.removeFromLoading = function (pageNumber) {
-	        var index = this.pageLoadsInProgress.indexOf(pageNumber);
-	        this.pageLoadsInProgress.splice(index, 1);
-	    };
-	    VirtualPageRowModel.prototype.pageLoadFailed = function (pageNumber) {
-	        this.removeFromLoading(pageNumber);
-	        this.checkQueueForNextLoad();
-	    };
-	    VirtualPageRowModel.prototype.pageLoaded = function (pageNumber, rows, lastRow) {
-	        this.putPageIntoCacheAndPurge(pageNumber, rows);
-	        this.checkMaxRowAndInformRowRenderer(pageNumber, lastRow);
-	        this.removeFromLoading(pageNumber);
-	        this.checkQueueForNextLoad();
-	    };
-	    VirtualPageRowModel.prototype.putPageIntoCacheAndPurge = function (pageNumber, rows) {
-	        this.pageCache[pageNumber] = this.createNodesFromRows(pageNumber, rows);
-	        this.pageCacheSize++;
-	        if (logging) {
-	            console.log('adding page ' + pageNumber);
-	        }
-	        var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageCacheSize;
-	        if (needToPurge) {
-	            // find the LRU page
-	            var youngestPageIndex = this.findLeastRecentlyAccessedPage(Object.keys(this.pageCache));
-	            if (logging) {
-	                console.log('purging page ' + youngestPageIndex + ' from cache ' + Object.keys(this.pageCache));
-	            }
-	            delete this.pageCache[youngestPageIndex];
-	            this.pageCacheSize--;
-	        }
-	    };
-	    VirtualPageRowModel.prototype.checkMaxRowAndInformRowRenderer = function (pageNumber, lastRow) {
-	        if (!this.foundMaxRow) {
-	            // if we know the last row, use if
-	            if (typeof lastRow === 'number' && lastRow >= 0) {
-	                this.virtualRowCount = lastRow;
-	                this.foundMaxRow = true;
-	            }
-	            else {
-	                // otherwise, see if we need to add some virtual rows
-	                var thisPagePlusBuffer = ((pageNumber + 1) * this.pageSize) + this.overflowSize;
-	                if (this.virtualRowCount < thisPagePlusBuffer) {
-	                    this.virtualRowCount = thisPagePlusBuffer;
-	                }
-	            }
-	            // if rowCount changes, refreshView, otherwise just refreshAllVirtualRows
-	            this.rowRenderer.refreshView();
-	        }
-	        else {
-	            this.rowRenderer.refreshAllVirtualRows();
-	        }
-	    };
-	    VirtualPageRowModel.prototype.isPageAlreadyLoading = function (pageNumber) {
-	        var result = this.pageLoadsInProgress.indexOf(pageNumber) >= 0 || this.pageLoadsQueued.indexOf(pageNumber) >= 0;
-	        return result;
-	    };
-	    VirtualPageRowModel.prototype.doLoadOrQueue = function (pageNumber) {
-	        // if we already tried to load this page, then ignore the request,
-	        // otherwise server would be hit 50 times just to display one page, the
-	        // first row to find the page missing is enough.
-	        if (this.isPageAlreadyLoading(pageNumber)) {
-	            return;
-	        }
-	        // try the page load - if not already doing a load, then we can go ahead
-	        if (this.pageLoadsInProgress.length < this.maxConcurrentDatasourceRequests) {
-	            // go ahead, load the page
-	            this.loadPage(pageNumber);
-	        }
-	        else {
-	            // otherwise, queue the request
-	            this.addToQueueAndPurgeQueue(pageNumber);
-	        }
-	    };
-	    VirtualPageRowModel.prototype.addToQueueAndPurgeQueue = function (pageNumber) {
-	        if (logging) {
-	            console.log('queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
-	        }
-	        this.pageLoadsQueued.push(pageNumber);
-	        // see if there are more pages queued that are actually in our cache, if so there is
-	        // no point in loading them all as some will be purged as soon as loaded
-	        var needToPurge = this.maxPagesInCache && this.maxPagesInCache < this.pageLoadsQueued.length;
-	        if (needToPurge) {
-	            // find the LRU page
-	            var youngestPageIndex = this.findLeastRecentlyAccessedPage(this.pageLoadsQueued);
-	            if (logging) {
-	                console.log('de-queueing ' + pageNumber + ' - ' + this.pageLoadsQueued);
-	            }
-	            var indexToRemove = this.pageLoadsQueued.indexOf(youngestPageIndex);
-	            this.pageLoadsQueued.splice(indexToRemove, 1);
-	        }
-	    };
-	    VirtualPageRowModel.prototype.findLeastRecentlyAccessedPage = function (pageIndexes) {
-	        var youngestPageIndex = -1;
-	        var youngestPageAccessTime = Number.MAX_VALUE;
-	        var that = this;
-	        pageIndexes.forEach(function (pageIndex) {
-	            var accessTimeThisPage = that.pageAccessTimes[pageIndex];
-	            if (accessTimeThisPage < youngestPageAccessTime) {
-	                youngestPageAccessTime = accessTimeThisPage;
-	                youngestPageIndex = pageIndex;
-	            }
-	        });
-	        return youngestPageIndex;
-	    };
-	    VirtualPageRowModel.prototype.checkQueueForNextLoad = function () {
-	        if (this.pageLoadsQueued.length > 0) {
-	            // take from the front of the queue
-	            var pageToLoad = this.pageLoadsQueued[0];
-	            this.pageLoadsQueued.splice(0, 1);
-	            if (logging) {
-	                console.log('dequeueing ' + pageToLoad + ' - ' + this.pageLoadsQueued);
-	            }
-	            this.loadPage(pageToLoad);
-	        }
-	    };
-	    VirtualPageRowModel.prototype.loadPage = function (pageNumber) {
-	        var _this = this;
-	        this.pageLoadsInProgress.push(pageNumber);
-	        var startRow = pageNumber * this.pageSize;
-	        var endRow = (pageNumber + 1) * this.pageSize;
-	        var that = this;
-	        var datasourceVersionCopy = this.datasourceVersion;
-	        var sortModel;
-	        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-	            sortModel = this.sortController.getSortModel();
-	        }
-	        var filterModel;
-	        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-	            filterModel = this.filterManager.getFilterModel();
-	        }
-	        var params = {
-	            startRow: startRow,
-	            endRow: endRow,
-	            successCallback: successCallback,
-	            failCallback: failCallback,
-	            sortModel: sortModel,
-	            filterModel: filterModel,
-	            context: this.gridOptionsWrapper.getContext()
+	    VirtualPageRowModel.prototype.resetCache = function () {
+	        var cacheSettings = {
+	            // the user provided datasource
+	            datasource: this.datasource,
+	            // sort and filter model
+	            filterModel: this.filterManager.getFilterModel(),
+	            sortModel: this.sortController.getSortModel(),
+	            // properties - this way we take a snapshot of them, so if user changes any, they will be
+	            // used next time we create a new cache, which is generally after a filter or sort change,
+	            // or a new datasource is set
+	            maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
+	            paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
+	            paginationInitialRowCount: this.gridOptionsWrapper.getPaginationInitialRowCount(),
+	            maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
+	            pageSize: this.gridOptionsWrapper.getPaginationPageSize(),
+	            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+	            // the cache could create this, however it is also used by the pages, so handy to create it
+	            // here as the settings are also passed to the pages
+	            lastAccessedSequence: new utils_1.NumberSequence()
 	        };
-	        // check if old version of datasource used
-	        var getRowsParams = utils_1.Utils.getFunctionParameters(this.datasource.getRows);
-	        if (getRowsParams.length > 1) {
-	            console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
-	            console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
+	        // set defaults
+	        if (!(cacheSettings.maxConcurrentDatasourceRequests >= 1)) {
+	            cacheSettings.maxConcurrentDatasourceRequests = 2;
 	        }
-	        // put in timeout, to force result to be async
-	        setTimeout(function () {
-	            _this.datasource.getRows(params);
-	        }, 0);
-	        function successCallback(rows, lastRowIndex) {
-	            if (that.requestIsDaemon(datasourceVersionCopy)) {
-	                return;
-	            }
-	            that.pageLoaded(pageNumber, rows, lastRowIndex);
+	        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
+	        // server for one page at a time. so the default if not specified is 100.
+	        if (!(cacheSettings.pageSize >= 1)) {
+	            cacheSettings.pageSize = 100;
 	        }
-	        function failCallback() {
-	            if (that.requestIsDaemon(datasourceVersionCopy)) {
-	                return;
-	            }
-	            that.pageLoadFailed(pageNumber);
+	        // if user doesn't give initial rows to display, we assume zero
+	        if (!(cacheSettings.paginationInitialRowCount >= 1)) {
+	            cacheSettings.paginationInitialRowCount = 0;
 	        }
-	    };
-	    VirtualPageRowModel.prototype.expandOrCollapseAll = function (expand) {
-	        console.warn('ag-Grid: can not expand or collapse all when doing virtual pagination');
-	    };
-	    // check that the datasource has not changed since the lats time we did a request
-	    VirtualPageRowModel.prototype.requestIsDaemon = function (datasourceVersionCopy) {
-	        return this.datasourceVersion !== datasourceVersionCopy;
+	        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
+	        // the current page and request first row of next page
+	        if (!(cacheSettings.paginationOverflowSize >= 1)) {
+	            cacheSettings.paginationOverflowSize = 1;
+	        }
+	        // if not first time creating a cache, need to destroy the old one
+	        if (this.virtualPageCache) {
+	            this.virtualPageCache.destroy();
+	        }
+	        this.virtualPageCache = new virtualPageCache_1.VirtualPageCache(cacheSettings);
+	        this.context.wireBean(this.virtualPageCache);
 	    };
 	    VirtualPageRowModel.prototype.getRow = function (rowIndex) {
-	        if (rowIndex > this.virtualRowCount) {
-	            return null;
-	        }
-	        var pageNumber = Math.floor(rowIndex / this.pageSize);
-	        var page = this.pageCache[pageNumber];
-	        // for LRU cache, track when this page was last hit
-	        this.pageAccessTimes[pageNumber] = this.accessTime++;
-	        if (!page) {
-	            this.doLoadOrQueue(pageNumber);
-	            // return back an empty row, so table can at least render empty cells
-	            var dummyNode = this.createNode(null, rowIndex, false);
-	            return dummyNode;
-	        }
-	        else {
-	            var indexInThisPage = rowIndex % this.pageSize;
-	            return page[indexInThisPage];
-	        }
+	        return this.virtualPageCache ? this.virtualPageCache.getRow(rowIndex) : null;
 	    };
 	    VirtualPageRowModel.prototype.forEachNode = function (callback) {
-	        var pageKeys = Object.keys(this.pageCache);
-	        for (var i = 0; i < pageKeys.length; i++) {
-	            var pageKey = pageKeys[i];
-	            var page = this.pageCache[pageKey];
-	            for (var j = 0; j < page.length; j++) {
-	                var node = page[j];
-	                callback(node);
-	            }
+	        if (this.virtualPageCache) {
+	            this.virtualPageCache.forEachNode(callback);
 	        }
 	    };
 	    VirtualPageRowModel.prototype.getRowCombinedHeight = function () {
-	        return this.virtualRowCount * this.rowHeight;
+	        return this.virtualPageCache ? this.virtualPageCache.getRowCombinedHeight() : 0;
 	    };
 	    VirtualPageRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-	        if (this.rowHeight !== 0) {
-	            return Math.floor(pixel / this.rowHeight);
-	        }
-	        else {
-	            return 0;
-	        }
+	        return this.virtualPageCache ? this.virtualPageCache.getRowIndexAtPixel(pixel) : -1;
 	    };
 	    VirtualPageRowModel.prototype.getRowCount = function () {
-	        return this.virtualRowCount;
+	        return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
 	    };
-	    VirtualPageRowModel.prototype.setRowData = function (rows, refresh, firstId) {
-	        console.warn('setRowData - does not work with virtual pagination');
+	    VirtualPageRowModel.prototype.insertItemsAtIndex = function (index, items) {
+	        if (this.virtualPageCache) {
+	            this.virtualPageCache.insertItemsAtIndex(index, items);
+	        }
 	    };
-	    VirtualPageRowModel.prototype.forEachNodeAfterFilter = function (callback) {
-	        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+	    VirtualPageRowModel.prototype.removeItems = function (rowNodes) {
+	        console.log('ag-Grid: it is not possible to removeItems when using virtual pagination. Instead use the ' +
+	            'API to refresh the cache');
 	    };
-	    VirtualPageRowModel.prototype.forEachNodeAfterFilterAndSort = function (callback) {
-	        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+	    VirtualPageRowModel.prototype.addItems = function (items) {
+	        console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
+	            'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
 	    };
-	    VirtualPageRowModel.prototype.refreshModel = function () {
-	        console.warn('forEachNodeAfterFilter - does not work with virtual pagination');
+	    VirtualPageRowModel.prototype.refreshVirtualPageCache = function () {
+	        if (this.virtualPageCache) {
+	            this.virtualPageCache.refreshVirtualPageCache();
+	        }
 	    };
-	    VirtualPageRowModel.prototype.getTopLevelNodes = function () {
-	        console.warn('getTopLevelNodes - does not work with virtual pagination');
-	        return null;
+	    VirtualPageRowModel.prototype.purgeVirtualPageCache = function () {
+	        if (this.virtualPageCache) {
+	            this.virtualPageCache.purgeVirtualPageCache();
+	        }
 	    };
-	    __decorate([
-	        context_1.Autowired('rowRenderer'), 
-	        __metadata('design:type', Object)
-	    ], VirtualPageRowModel.prototype, "rowRenderer", void 0);
+	    VirtualPageRowModel.prototype.getVirtualRowCount = function () {
+	        if (this.virtualPageCache) {
+	            return this.virtualPageCache.getVirtualRowCount();
+	        }
+	        else {
+	            return null;
+	        }
+	    };
+	    VirtualPageRowModel.prototype.isMaxRowFound = function () {
+	        if (this.virtualPageCache) {
+	            return this.virtualPageCache.isMaxRowFound();
+	        }
+	    };
+	    VirtualPageRowModel.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
+	        if (this.virtualPageCache) {
+	            this.virtualPageCache.setVirtualRowCount(rowCount, maxRowFound);
+	        }
+	    };
+	    VirtualPageRowModel.prototype.getVirtualPageState = function () {
+	        if (this.virtualPageCache) {
+	            this.virtualPageCache.getPageState();
+	        }
+	        else {
+	            return null;
+	        }
+	    };
 	    __decorate([
 	        context_1.Autowired('gridOptionsWrapper'), 
 	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
@@ -19074,6 +19025,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', []), 
 	        __metadata('design:returntype', void 0)
 	    ], VirtualPageRowModel.prototype, "init", null);
+	    __decorate([
+	        context_1.PreDestroy, 
+	        __metadata('design:type', Function), 
+	        __metadata('design:paramtypes', []), 
+	        __metadata('design:returntype', void 0)
+	    ], VirtualPageRowModel.prototype, "destroy", null);
 	    VirtualPageRowModel = __decorate([
 	        context_1.Bean('rowModel'), 
 	        __metadata('design:paramtypes', [])
@@ -19089,7 +19046,557 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var __param = (this && this.__param) || function (paramIndex, decorator) {
+	    return function (target, key) { decorator(target, key, paramIndex); }
+	};
+	var utils_1 = __webpack_require__(9);
+	var context_1 = __webpack_require__(8);
+	var eventService_1 = __webpack_require__(6);
+	var events_1 = __webpack_require__(12);
+	var logger_1 = __webpack_require__(7);
+	var virtualPage_1 = __webpack_require__(88);
+	var VirtualPageCache = (function () {
+	    function VirtualPageCache(cacheSettings) {
+	        this.pages = {};
+	        this.activePageLoadsCount = 0;
+	        this.pagesInCacheCount = 0;
+	        this.maxRowFound = false;
+	        this.active = true;
+	        this.cacheParams = cacheSettings;
+	        this.virtualRowCount = cacheSettings.paginationInitialRowCount;
+	    }
+	    VirtualPageCache.prototype.setBeans = function (loggerFactory) {
+	        this.logger = loggerFactory.create('VirtualPageCache');
+	    };
+	    VirtualPageCache.prototype.init = function () {
+	        // start load of data, as the virtualRowCount will remain at 0 otherwise,
+	        // so we need this to kick things off, otherwise grid would never call getRow()
+	        this.getRow(0);
+	    };
+	    VirtualPageCache.prototype.getRowCombinedHeight = function () {
+	        return this.virtualRowCount * this.cacheParams.rowHeight;
+	    };
+	    VirtualPageCache.prototype.forEachNode = function (callback) {
+	        var _this = this;
+	        var index = 0;
+	        utils_1.Utils.iterateObject(this.pages, function (key, cachePage) {
+	            var start = cachePage.getStartRow();
+	            var end = cachePage.getEndRow();
+	            for (var rowIndex = start; rowIndex < end; rowIndex++) {
+	                // we check against virtualRowCount as this page may be the last one, and if it is, then
+	                // it's probable that the last rows are not part of the set
+	                if (rowIndex < _this.virtualRowCount) {
+	                    var rowNode = cachePage.getRow(rowIndex);
+	                    callback(rowNode, index);
+	                    index++;
+	                }
+	            }
+	        });
+	    };
+	    VirtualPageCache.prototype.getRowIndexAtPixel = function (pixel) {
+	        if (this.cacheParams.rowHeight !== 0) {
+	            return Math.floor(pixel / this.cacheParams.rowHeight);
+	        }
+	        else {
+	            return 0;
+	        }
+	    };
+	    VirtualPageCache.prototype.moveItemsDown = function (page, moveFromIndex, moveCount) {
+	        var startRow = page.getStartRow();
+	        var endRow = page.getEndRow();
+	        var indexOfLastRowToMove = moveFromIndex + moveCount;
+	        // all rows need to be moved down below the insertion index
+	        for (var currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
+	            // don't move rows at or before the insertion index
+	            if (currentRowIndex < indexOfLastRowToMove) {
+	                continue;
+	            }
+	            var indexOfNodeWeWant = currentRowIndex - moveCount;
+	            var nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
+	            if (nodeForThisIndex) {
+	                page.setRowNode(currentRowIndex, nodeForThisIndex);
+	            }
+	            else {
+	                page.setBlankRowNode(currentRowIndex);
+	                page.setDirty();
+	            }
+	        }
+	    };
+	    VirtualPageCache.prototype.insertItems = function (page, indexToInsert, items) {
+	        var pageStartRow = page.getStartRow();
+	        var pageEndRow = page.getEndRow();
+	        var newRowNodes = [];
+	        // next stage is insert the rows into this page, if applicable
+	        for (var index = 0; index < items.length; index++) {
+	            var rowIndex = indexToInsert + index;
+	            var currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
+	            if (currentRowInThisPage) {
+	                var dataItem = items[index];
+	                var newRowNode = page.setNewData(rowIndex, dataItem);
+	                newRowNodes.push(newRowNode);
+	            }
+	        }
+	        return newRowNodes;
+	    };
+	    VirtualPageCache.prototype.insertItemsAtIndex = function (indexToInsert, items) {
+	        var _this = this;
+	        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
+	        var pageIds = Object.keys(this.pages).map(function (str) { return parseInt(str); }).sort().reverse();
+	        var newNodes = [];
+	        pageIds.forEach(function (pageId) {
+	            var page = _this.pages[pageId];
+	            var pageEndRow = page.getEndRow();
+	            // if the insertion is after this page, then this page is not impacted
+	            if (pageEndRow <= indexToInsert) {
+	                return;
+	            }
+	            _this.moveItemsDown(page, indexToInsert, items.length);
+	            var newNodesThisPage = _this.insertItems(page, indexToInsert, items);
+	            newNodesThisPage.forEach(function (rowNode) { return newNodes.push(rowNode); });
+	        });
+	        if (this.maxRowFound) {
+	            this.virtualRowCount += items.length;
+	        }
+	        this.dispatchModelUpdated();
+	        this.eventService.dispatchEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes);
+	    };
+	    /*
+	     public removeItems(rowNodes: RowNode[]): void {
+
+	     // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in ascending order
+	     let pageIds = Object.keys(this.pages).map( str => parseInt(str) ).sort().reverse();
+
+	     // put rowNodes into a map of ids for lookup
+	     let rowNodesById: {(id:string):RowNode} = {};
+	     rowNodes.forEach( (rowNode)=> rowNodesById[rowNode.id] = rowNode);
+
+	     // this is the index to move rows down
+	     let rowsDeletedSoFar = 0;
+
+	     let newNodes: RowNode[] = [];
+	     pageIds.forEach( pageId => {
+	     let page = this.pages[pageId];
+	     let pageEndRow = page.getEndRow();
+
+	     // if the insertion is after this page, then this page is not impacted
+	     if (pageEndRow <= indexToInsert) { return; }
+
+	     this.moveItemsDown(page, indexToInsert, items.length);
+	     let newNodesThisPage = this.insertItems(page, indexToInsert, items);
+	     newNodesThisPage.forEach( rowNode => newNodes.push(rowNode) );
+	     });
+	     }*/
+	    VirtualPageCache.prototype.getRowCount = function () {
+	        return this.virtualRowCount;
+	    };
+	    VirtualPageCache.prototype.onPageLoaded = function (event) {
+	        // if we are not active, then we ignore all events, otherwise we could end up getting the
+	        // grid to refresh even though we are no longer the active cache
+	        if (!this.active) {
+	            return;
+	        }
+	        this.logger.log("onPageLoaded: page = " + event.page.getPageNumber() + ", lastRow = " + event.lastRow);
+	        this.activePageLoadsCount--;
+	        this.checkPageToLoad();
+	        if (event.success) {
+	            this.checkVirtualRowCount(event.page, event.lastRow);
+	        }
+	    };
+	    // as we are not a context managed bean, we cannot use @PreDestroy
+	    VirtualPageCache.prototype.destroy = function () {
+	        this.active = false;
+	    };
+	    // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
+	    // it will want new pages in teh cache as it asks for rows. only when we are inserting /
+	    // removing rows via the api is dontCreatePage set, where we move rows between the pages.
+	    VirtualPageCache.prototype.getRow = function (rowIndex, dontCreatePage) {
+	        if (dontCreatePage === void 0) { dontCreatePage = false; }
+	        var pageNumber = Math.floor(rowIndex / this.cacheParams.pageSize);
+	        var page = this.pages[pageNumber];
+	        if (!page) {
+	            if (dontCreatePage) {
+	                return null;
+	            }
+	            else {
+	                page = this.createPage(pageNumber);
+	            }
+	        }
+	        return page.getRow(rowIndex);
+	    };
+	    VirtualPageCache.prototype.createPage = function (pageNumber) {
+	        var newPage = new virtualPage_1.VirtualPage(pageNumber, this.cacheParams);
+	        this.context.wireBean(newPage);
+	        newPage.addEventListener(virtualPage_1.VirtualPage.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+	        this.pages[pageNumber] = newPage;
+	        this.pagesInCacheCount++;
+	        var needToPurge = utils_1.Utils.exists(this.cacheParams.maxPagesInCache)
+	            && this.pagesInCacheCount > this.cacheParams.maxPagesInCache;
+	        if (needToPurge) {
+	            var lruPage = this.findLeastRecentlyUsedPage(newPage);
+	            this.removePageFromCache(lruPage);
+	        }
+	        this.checkPageToLoad();
+	        return newPage;
+	    };
+	    VirtualPageCache.prototype.removePageFromCache = function (pageToRemove) {
+	        if (!pageToRemove) {
+	            return;
+	        }
+	        delete this.pages[pageToRemove.getPageNumber()];
+	        this.pagesInCacheCount--;
+	        // we do not want to remove the 'loaded' event listener, as the
+	        // concurrent loads count needs to be updated when the load is complete
+	        // if the purged page is in loading state
+	    };
+	    VirtualPageCache.prototype.printCacheStatus = function () {
+	        this.logger.log("checkPageToLoad: activePageLoadsCount = " + this.activePageLoadsCount + ", pages = " + JSON.stringify(this.getPageState()));
+	    };
+	    VirtualPageCache.prototype.checkPageToLoad = function () {
+	        this.printCacheStatus();
+	        if (this.activePageLoadsCount >= this.cacheParams.maxConcurrentDatasourceRequests) {
+	            this.logger.log("checkPageToLoad: max loads exceeded");
+	            return;
+	        }
+	        var pageToLoad = null;
+	        utils_1.Utils.iterateObject(this.pages, function (key, cachePage) {
+	            if (cachePage.getState() === virtualPage_1.VirtualPage.STATE_DIRTY) {
+	                pageToLoad = cachePage;
+	            }
+	        });
+	        if (pageToLoad) {
+	            pageToLoad.load();
+	            this.activePageLoadsCount++;
+	            this.logger.log("checkPageToLoad: loading page " + pageToLoad.getPageNumber());
+	            this.printCacheStatus();
+	        }
+	        else {
+	            this.logger.log("checkPageToLoad: no pages to load");
+	        }
+	    };
+	    VirtualPageCache.prototype.findLeastRecentlyUsedPage = function (pageToExclude) {
+	        var lruPage = null;
+	        utils_1.Utils.iterateObject(this.pages, function (key, page) {
+	            // we exclude checking for the page just created, as this has yet to be accessed and hence
+	            // the lastAccessed stamp will not be updated for the first time yet
+	            if (page === pageToExclude) {
+	                return;
+	            }
+	            if (utils_1.Utils.missing(lruPage) || page.getLastAccessed() < lruPage.getLastAccessed()) {
+	                lruPage = page;
+	            }
+	        });
+	        return lruPage;
+	    };
+	    VirtualPageCache.prototype.checkVirtualRowCount = function (page, lastRow) {
+	        // if we know the last row, use if
+	        if (this.maxRowFound) {
+	            return;
+	        }
+	        if (typeof lastRow === 'number' && lastRow >= 0) {
+	            this.virtualRowCount = lastRow;
+	            this.maxRowFound = true;
+	            this.dispatchModelUpdated();
+	        }
+	        else {
+	            // otherwise, see if we need to add some virtual rows
+	            var lastRowIndex = (page.getPageNumber() + 1) * this.cacheParams.pageSize;
+	            var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.paginationOverflowSize;
+	            if (this.virtualRowCount < lastRowIndexPlusOverflow) {
+	                this.virtualRowCount = lastRowIndexPlusOverflow;
+	                this.dispatchModelUpdated();
+	            }
+	        }
+	    };
+	    VirtualPageCache.prototype.dispatchModelUpdated = function () {
+	        if (this.active) {
+	            this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
+	        }
+	    };
+	    VirtualPageCache.prototype.getPageState = function () {
+	        var result = [];
+	        utils_1.Utils.iterateObject(this.pages, function (pageNumber, page) {
+	            result.push({ pageNumber: pageNumber, startRow: page.getStartRow(), endRow: page.getEndRow(), pageStatus: page.getState() });
+	        });
+	        return result;
+	    };
+	    VirtualPageCache.prototype.refreshVirtualPageCache = function () {
+	        utils_1.Utils.iterateObject(this.pages, function (pageId, page) {
+	            page.setDirty();
+	        });
+	        this.checkPageToLoad();
+	    };
+	    VirtualPageCache.prototype.purgeVirtualPageCache = function () {
+	        var _this = this;
+	        var pagesList = utils_1.Utils.values(this.pages);
+	        pagesList.forEach(function (virtualPage) { return _this.removePageFromCache(virtualPage); });
+	        this.dispatchModelUpdated();
+	    };
+	    VirtualPageCache.prototype.getVirtualRowCount = function () {
+	        return this.virtualRowCount;
+	    };
+	    VirtualPageCache.prototype.isMaxRowFound = function () {
+	        return this.maxRowFound;
+	    };
+	    VirtualPageCache.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
+	        this.virtualRowCount = rowCount;
+	        // if undefined is passed, we do not set this value, if one of {true,false}
+	        // is passed, we do set the value.
+	        if (utils_1.Utils.exists(maxRowFound)) {
+	            this.maxRowFound = maxRowFound;
+	        }
+	        // if we are still searching, then the row count must not end at the end
+	        // of a particular page, otherwise the searching will not pop into the
+	        // next page
+	        if (!this.maxRowFound) {
+	            if (this.virtualRowCount % this.cacheParams.pageSize === 0) {
+	                this.virtualRowCount++;
+	            }
+	        }
+	        this.dispatchModelUpdated();
+	    };
+	    __decorate([
+	        context_1.Autowired('eventService'), 
+	        __metadata('design:type', eventService_1.EventService)
+	    ], VirtualPageCache.prototype, "eventService", void 0);
+	    __decorate([
+	        context_1.Autowired('context'), 
+	        __metadata('design:type', context_1.Context)
+	    ], VirtualPageCache.prototype, "context", void 0);
+	    __decorate([
+	        __param(0, context_1.Qualifier('loggerFactory')), 
+	        __metadata('design:type', Function), 
+	        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
+	        __metadata('design:returntype', void 0)
+	    ], VirtualPageCache.prototype, "setBeans", null);
+	    __decorate([
+	        context_1.PostConstruct, 
+	        __metadata('design:type', Function), 
+	        __metadata('design:paramtypes', []), 
+	        __metadata('design:returntype', void 0)
+	    ], VirtualPageCache.prototype, "init", null);
+	    return VirtualPageCache;
+	})();
+	exports.VirtualPageCache = VirtualPageCache;
+
+
+/***/ },
+/* 88 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v5.1.2
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var utils_1 = __webpack_require__(9);
+	var gridOptionsWrapper_1 = __webpack_require__(5);
+	var rowNode_1 = __webpack_require__(29);
+	var context_1 = __webpack_require__(8);
+	var eventService_1 = __webpack_require__(6);
+	var selectionController_1 = __webpack_require__(30);
+	var VirtualPage = (function () {
+	    function VirtualPage(pageNumber, cacheSettings) {
+	        this.state = VirtualPage.STATE_DIRTY;
+	        this.version = 0;
+	        this.localEventService = new eventService_1.EventService();
+	        this.pageNumber = pageNumber;
+	        this.cacheParams = cacheSettings;
+	        // we don't need to calculate these now, as the inputs don't change,
+	        // however it makes the code easier to read if we work them out up front
+	        this.startRow = pageNumber * cacheSettings.pageSize;
+	        this.endRow = this.startRow + cacheSettings.pageSize;
+	    }
+	    VirtualPage.prototype.setDirty = function () {
+	        // in case any current loads in progress, this will have their results ignored
+	        this.version++;
+	        this.state = VirtualPage.STATE_DIRTY;
+	    };
+	    VirtualPage.prototype.setDirtyAndPurge = function () {
+	        this.setDirty();
+	        this.rowNodes.forEach(function (rowNode) {
+	            rowNode.setData(null);
+	        });
+	    };
+	    VirtualPage.prototype.getStartRow = function () {
+	        return this.startRow;
+	    };
+	    VirtualPage.prototype.getEndRow = function () {
+	        return this.endRow;
+	    };
+	    VirtualPage.prototype.getPageNumber = function () {
+	        return this.pageNumber;
+	    };
+	    VirtualPage.prototype.addEventListener = function (eventType, listener) {
+	        this.localEventService.addEventListener(eventType, listener);
+	    };
+	    VirtualPage.prototype.removeEventListener = function (eventType, listener) {
+	        this.localEventService.removeEventListener(eventType, listener);
+	    };
+	    VirtualPage.prototype.getLastAccessed = function () {
+	        return this.lastAccessed;
+	    };
+	    VirtualPage.prototype.getState = function () {
+	        return this.state;
+	    };
+	    VirtualPage.prototype.setRowNode = function (rowIndex, rowNode) {
+	        var localIndex = rowIndex - this.startRow;
+	        this.rowNodes[localIndex] = rowNode;
+	        this.setTopOnRowNode(rowNode, rowIndex);
+	    };
+	    VirtualPage.prototype.setBlankRowNode = function (rowIndex) {
+	        var localIndex = rowIndex - this.startRow;
+	        var newRowNode = this.createBlankRowNode(rowIndex);
+	        this.rowNodes[localIndex] = newRowNode;
+	        return newRowNode;
+	    };
+	    VirtualPage.prototype.setNewData = function (rowIndex, dataItem) {
+	        var newRowNode = this.setBlankRowNode(rowIndex);
+	        newRowNode.setDataAndId(dataItem, rowIndex.toString());
+	        return newRowNode;
+	    };
+	    VirtualPage.prototype.init = function () {
+	        this.createRowNodes();
+	    };
+	    // creates empty row nodes, data is missing as not loaded yet
+	    VirtualPage.prototype.createRowNodes = function () {
+	        this.rowNodes = [];
+	        for (var i = 0; i < this.cacheParams.pageSize; i++) {
+	            var rowIndex = this.startRow + i;
+	            var rowNode = this.createBlankRowNode(rowIndex);
+	            this.rowNodes.push(rowNode);
+	        }
+	    };
+	    VirtualPage.prototype.setTopOnRowNode = function (rowNode, rowIndex) {
+	        rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
+	    };
+	    VirtualPage.prototype.createBlankRowNode = function (rowIndex) {
+	        var rowNode = new rowNode_1.RowNode();
+	        this.context.wireBean(rowNode);
+	        rowNode.rowHeight = this.cacheParams.rowHeight;
+	        this.setTopOnRowNode(rowNode, rowIndex);
+	        return rowNode;
+	    };
+	    VirtualPage.prototype.getRow = function (rowIndex) {
+	        this.lastAccessed = this.cacheParams.lastAccessedSequence.next();
+	        var localIndex = rowIndex - this.startRow;
+	        return this.rowNodes[localIndex];
+	    };
+	    VirtualPage.prototype.load = function () {
+	        var _this = this;
+	        this.state = VirtualPage.STATE_LOADING;
+	        var params = {
+	            startRow: this.startRow,
+	            endRow: this.endRow,
+	            successCallback: this.pageLoaded.bind(this, this.version),
+	            failCallback: this.pageLoadFailed.bind(this),
+	            sortModel: this.cacheParams.sortModel,
+	            filterModel: this.cacheParams.filterModel,
+	            context: this.gridOptionsWrapper.getContext()
+	        };
+	        if (utils_1.Utils.missing(this.cacheParams.datasource.getRows)) {
+	            console.warn("ag-Grid: datasource is missing getRows method");
+	            return;
+	        }
+	        // check if old version of datasource used
+	        var getRowsParams = utils_1.Utils.getFunctionParameters(this.cacheParams.datasource.getRows);
+	        if (getRowsParams.length > 1) {
+	            console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
+	            console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
+	        }
+	        // put in timeout, to force result to be async
+	        setTimeout(function () {
+	            _this.cacheParams.datasource.getRows(params);
+	        }, 0);
+	    };
+	    VirtualPage.prototype.pageLoadFailed = function () {
+	        this.state = VirtualPage.STATE_FAILED;
+	        var event = { success: true, page: this };
+	        this.localEventService.dispatchEvent(VirtualPage.EVENT_LOAD_COMPLETE, event);
+	    };
+	    VirtualPage.prototype.populateWithRowData = function (rows) {
+	        var _this = this;
+	        this.rowNodes.forEach(function (rowNode, index) {
+	            var data = rows[index];
+	            if (utils_1.Utils.exists(data)) {
+	                // this means if the user is not providing id's we just use the
+	                // index for the row. this will allow selection to work (that is based
+	                // on index) as long user is not inserting or deleting rows,
+	                // or wanting to keep selection between server side sorting or filtering
+	                var indexOfRow = _this.startRow + index;
+	                rowNode.setDataAndId(data, indexOfRow.toString());
+	            }
+	        });
+	    };
+	    VirtualPage.prototype.pageLoaded = function (version, rows, lastRow) {
+	        // we need to check the version, in case there was an old request
+	        // from the server that was sent before we refreshed the cache,
+	        // if the load was done as a result of a cache refresh
+	        if (version === this.version) {
+	            this.state = VirtualPage.STATE_LOADED;
+	            this.populateWithRowData(rows);
+	        }
+	        // check here if lastrow should be set
+	        var event = { success: true, page: this, lastRow: lastRow };
+	        this.localEventService.dispatchEvent(VirtualPage.EVENT_LOAD_COMPLETE, event);
+	    };
+	    VirtualPage.EVENT_LOAD_COMPLETE = 'loadComplete';
+	    VirtualPage.STATE_DIRTY = 'dirty';
+	    VirtualPage.STATE_LOADING = 'loading';
+	    VirtualPage.STATE_LOADED = 'loaded';
+	    VirtualPage.STATE_FAILED = 'failed';
+	    __decorate([
+	        context_1.Autowired('gridOptionsWrapper'), 
+	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+	    ], VirtualPage.prototype, "gridOptionsWrapper", void 0);
+	    __decorate([
+	        context_1.Autowired('context'), 
+	        __metadata('design:type', context_1.Context)
+	    ], VirtualPage.prototype, "context", void 0);
+	    __decorate([
+	        context_1.Autowired('selectionController'), 
+	        __metadata('design:type', selectionController_1.SelectionController)
+	    ], VirtualPage.prototype, "selectionController", void 0);
+	    __decorate([
+	        context_1.PostConstruct, 
+	        __metadata('design:type', Function), 
+	        __metadata('design:paramtypes', []), 
+	        __metadata('design:returntype', void 0)
+	    ], VirtualPage.prototype, "init", null);
+	    return VirtualPage;
+	})();
+	exports.VirtualPage = VirtualPage;
+
+
+/***/ },
+/* 89 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19112,6 +19619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var events_1 = __webpack_require__(12);
 	var context_1 = __webpack_require__(8);
 	var selectionController_1 = __webpack_require__(30);
+	var InMemoryNodeManager_1 = __webpack_require__(90);
 	var RecursionType;
 	(function (RecursionType) {
 	    RecursionType[RecursionType["Normal"] = 0] = "Normal";
@@ -19132,12 +19640,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_SORT));
 	        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_PIVOT));
 	        this.rootNode = new rowNode_1.RowNode();
-	        this.rootNode.group = true;
-	        this.rootNode.level = -1;
-	        this.rootNode.allLeafChildren = [];
-	        this.rootNode.childrenAfterGroup = [];
-	        this.rootNode.childrenAfterSort = [];
-	        this.rootNode.childrenAfterFilter = [];
+	        this.nodeManager = new InMemoryNodeManager_1.InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService);
 	        this.context.wireBean(this.rootNode);
 	        if (this.gridOptionsWrapper.isRowModelDefault()) {
 	            this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
@@ -19395,13 +19898,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.pivotStage.execute(this.rootNode);
 	        }
 	    };
+	    InMemoryRowModel.prototype.getGroupState = function () {
+	        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
+	            return null;
+	        }
+	        var result = {};
+	        utils_1.Utils.traverseNodesWithKey(this.rootNode.childrenAfterGroup, function (node, key) { return result[key] = node.expanded; });
+	        return result;
+	    };
 	    // rows: the rows to put into the model
 	    // firstId: the first id to use, used for paging, where we are not on the first page
 	    InMemoryRowModel.prototype.setRowData = function (rowData, refresh, firstId) {
 	        // remember group state, so we can expand groups that should be expanded
 	        var groupState = this.getGroupState();
-	        // place each row into a wrapper
-	        this.createRowNodesFromData(rowData, firstId);
+	        this.nodeManager.setRowData(rowData, firstId);
 	        // this event kicks off:
 	        // - clears selection
 	        // - updates filters
@@ -19411,83 +19921,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.refreshModel(constants_1.Constants.STEP_EVERYTHING, null, groupState);
 	        }
 	    };
-	    InMemoryRowModel.prototype.getGroupState = function () {
-	        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
-	            return null;
-	        }
-	        var result = {};
-	        utils_1.Utils.traverseNodesWithKey(this.rootNode.childrenAfterGroup, function (node, key) { return result[key] = node.expanded; });
-	        return result;
-	    };
-	    InMemoryRowModel.prototype.createRowNodesFromData = function (rowData, firstId) {
-	        this.rootNode.childrenAfterFilter = null;
-	        this.rootNode.childrenAfterGroup = null;
-	        this.rootNode.childrenAfterSort = null;
-	        this.rootNode.childrenMapped = null;
-	        var context = this.context;
-	        if (!rowData) {
-	            this.rootNode.allLeafChildren = [];
-	            this.rootNode.childrenAfterGroup = [];
-	            return;
-	        }
-	        var rowNodeId = utils_1.Utils.exists(firstId) ? firstId : 0;
-	        // func below doesn't have 'this' pointer, so need to pull out these bits
-	        var nodeChildDetailsFunc = this.gridOptionsWrapper.getNodeChildDetailsFunc();
-	        var suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-	        var rowsAlreadyGrouped = utils_1.Utils.exists(nodeChildDetailsFunc);
-	        // kick off recursion
-	        var result = recursiveFunction(rowData, null, 0);
-	        if (rowsAlreadyGrouped) {
-	            this.rootNode.childrenAfterGroup = result;
-	            setLeafChildren(this.rootNode);
-	        }
-	        else {
-	            this.rootNode.allLeafChildren = result;
-	        }
-	        function setLeafChildren(node) {
-	            node.allLeafChildren = [];
-	            if (node.childrenAfterGroup) {
-	                node.childrenAfterGroup.forEach(function (childAfterGroup) {
-	                    if (childAfterGroup.group) {
-	                        if (childAfterGroup.allLeafChildren) {
-	                            childAfterGroup.allLeafChildren.forEach(function (leafChild) { return node.allLeafChildren.push(leafChild); });
-	                        }
-	                    }
-	                    else {
-	                        node.allLeafChildren.push(childAfterGroup);
-	                    }
-	                });
-	            }
-	        }
-	        function recursiveFunction(rowData, parent, level) {
-	            var rowNodes = [];
-	            rowData.forEach(function (dataItem) {
-	                var node = new rowNode_1.RowNode();
-	                context.wireBean(node);
-	                var nodeChildDetails = nodeChildDetailsFunc ? nodeChildDetailsFunc(dataItem) : null;
-	                if (nodeChildDetails && nodeChildDetails.group) {
-	                    node.group = true;
-	                    node.childrenAfterGroup = recursiveFunction(nodeChildDetails.children, node, level + 1);
-	                    node.expanded = nodeChildDetails.expanded === true;
-	                    node.field = nodeChildDetails.field;
-	                    node.key = nodeChildDetails.key;
-	                    // pull out all the leaf children and add to our node
-	                    setLeafChildren(node);
-	                }
-	                if (parent && !suppressParentsInRowNodes) {
-	                    node.parent = parent;
-	                }
-	                node.level = level;
-	                node.id = rowNodeId++;
-	                node.data = dataItem;
-	                rowNodes.push(node);
-	            });
-	            return rowNodes;
-	        }
-	    };
 	    InMemoryRowModel.prototype.doRowsToDisplay = function () {
-	        // this.rowsToDisplay = this.flattenStage.execute(this.rowsAfterSort);
 	        this.rowsToDisplay = this.flattenStage.execute(this.rootNode);
+	    };
+	    InMemoryRowModel.prototype.insertItemsAtIndex = function (index, items) {
+	        var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
+	        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes);
+	    };
+	    InMemoryRowModel.prototype.removeItems = function (rowNodes) {
+	        var removedNodes = this.nodeManager.removeItems(rowNodes);
+	        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_REMOVED, removedNodes);
+	    };
+	    InMemoryRowModel.prototype.addItems = function (items) {
+	        var newNodes = this.nodeManager.addItems(items);
+	        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes);
+	    };
+	    InMemoryRowModel.prototype.refreshAndFireEvent = function (eventName, rowNodes) {
+	        if (rowNodes) {
+	            this.refreshModel(constants_1.Constants.STEP_EVERYTHING);
+	            this.eventService.dispatchEvent(eventName, { rowNodes: rowNodes });
+	        }
 	    };
 	    __decorate([
 	        context_1.Autowired('gridOptionsWrapper'), 
@@ -19542,7 +19995,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:type', Object)
 	    ], InMemoryRowModel.prototype, "pivotStage", void 0);
 	    __decorate([
-	        // the rows mapped to rows to display
 	        context_1.PostConstruct, 
 	        __metadata('design:type', Function), 
 	        __metadata('design:paramtypes', []), 
@@ -19558,12 +20010,179 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 88 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	var rowNode_1 = __webpack_require__(29);
+	var utils_1 = __webpack_require__(9);
+	var InMemoryNodeManager = (function () {
+	    function InMemoryNodeManager(rootNode, gridOptionsWrapper, context, eventService) {
+	        this.nextId = 0;
+	        this.rootNode = rootNode;
+	        this.gridOptionsWrapper = gridOptionsWrapper;
+	        this.context = context;
+	        this.eventService = eventService;
+	        this.rootNode.group = true;
+	        this.rootNode.level = -1;
+	        this.rootNode.allLeafChildren = [];
+	        this.rootNode.childrenAfterGroup = [];
+	        this.rootNode.childrenAfterSort = [];
+	        this.rootNode.childrenAfterFilter = [];
+	    }
+	    InMemoryNodeManager.prototype.setRowData = function (rowData, firstId) {
+	        this.rootNode.childrenAfterFilter = null;
+	        this.rootNode.childrenAfterGroup = null;
+	        this.rootNode.childrenAfterSort = null;
+	        this.rootNode.childrenMapped = null;
+	        this.nextId = utils_1.Utils.exists(firstId) ? firstId : 0;
+	        if (!rowData) {
+	            this.rootNode.allLeafChildren = [];
+	            this.rootNode.childrenAfterGroup = [];
+	            return;
+	        }
+	        // func below doesn't have 'this' pointer, so need to pull out these bits
+	        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
+	        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+	        var rowsAlreadyGrouped = utils_1.Utils.exists(this.getNodeChildDetails);
+	        // kick off recursion
+	        var result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
+	        if (rowsAlreadyGrouped) {
+	            this.rootNode.childrenAfterGroup = result;
+	            this.setLeafChildren(this.rootNode);
+	        }
+	        else {
+	            this.rootNode.allLeafChildren = result;
+	        }
+	    };
+	    InMemoryNodeManager.prototype.recursiveFunction = function (rowData, parent, level) {
+	        var _this = this;
+	        // make sure the rowData is an array and not a string of json - this was a commonly reported problem on the forum
+	        if (typeof rowData === 'string') {
+	            console.warn('ag-Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
+	            return;
+	        }
+	        var rowNodes = [];
+	        rowData.forEach(function (dataItem) {
+	            var node = _this.createNode(dataItem, parent, level);
+	            var nodeChildDetails = _this.getNodeChildDetails ? _this.getNodeChildDetails(dataItem) : null;
+	            if (nodeChildDetails && nodeChildDetails.group) {
+	                node.group = true;
+	                node.childrenAfterGroup = _this.recursiveFunction(nodeChildDetails.children, node, level + 1);
+	                node.expanded = nodeChildDetails.expanded === true;
+	                node.field = nodeChildDetails.field;
+	                node.key = nodeChildDetails.key;
+	                // pull out all the leaf children and add to our node
+	                _this.setLeafChildren(node);
+	            }
+	            rowNodes.push(node);
+	        });
+	        return rowNodes;
+	    };
+	    InMemoryNodeManager.prototype.createNode = function (dataItem, parent, level) {
+	        var node = new rowNode_1.RowNode();
+	        this.context.wireBean(node);
+	        var nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+	        if (nodeChildDetails && nodeChildDetails.group) {
+	            node.group = true;
+	            node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
+	            node.expanded = nodeChildDetails.expanded === true;
+	            node.field = nodeChildDetails.field;
+	            node.key = nodeChildDetails.key;
+	            // pull out all the leaf children and add to our node
+	            this.setLeafChildren(node);
+	        }
+	        if (parent && !this.suppressParentsInRowNodes) {
+	            node.parent = parent;
+	        }
+	        node.level = level;
+	        node.data = dataItem;
+	        node.setId(this.nextId.toString());
+	        this.nextId++;
+	        return node;
+	    };
+	    InMemoryNodeManager.prototype.setLeafChildren = function (node) {
+	        node.allLeafChildren = [];
+	        if (node.childrenAfterGroup) {
+	            node.childrenAfterGroup.forEach(function (childAfterGroup) {
+	                if (childAfterGroup.group) {
+	                    if (childAfterGroup.allLeafChildren) {
+	                        childAfterGroup.allLeafChildren.forEach(function (leafChild) { return node.allLeafChildren.push(leafChild); });
+	                    }
+	                }
+	                else {
+	                    node.allLeafChildren.push(childAfterGroup);
+	                }
+	            });
+	        }
+	    };
+	    InMemoryNodeManager.prototype.insertItemsAtIndex = function (index, rowData) {
+	        var _this = this;
+	        if (this.isRowsAlreadyGrouped()) {
+	            return null;
+	        }
+	        var nodeList = this.rootNode.allLeafChildren;
+	        if (index > nodeList.length) {
+	            console.warn("ag-Grid: invalid index " + index + ", max index is " + nodeList.length);
+	            return;
+	        }
+	        var newNodes = [];
+	        rowData.forEach(function (data) {
+	            var newNode = _this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
+	            utils_1.Utils.insertIntoArray(nodeList, newNode, index);
+	            newNodes.push(newNode);
+	        });
+	        return newNodes.length > 0 ? newNodes : null;
+	    };
+	    InMemoryNodeManager.prototype.removeItems = function (rowNodes) {
+	        if (this.isRowsAlreadyGrouped()) {
+	            return;
+	        }
+	        var nodeList = this.rootNode.allLeafChildren;
+	        var removedNodes = [];
+	        rowNodes.forEach(function (rowNode) {
+	            var indexOfNode = nodeList.indexOf(rowNode);
+	            if (indexOfNode >= 0) {
+	                rowNode.setSelected(false);
+	                nodeList.splice(indexOfNode, 1);
+	            }
+	            removedNodes.push(rowNode);
+	        });
+	        return removedNodes.length > 0 ? removedNodes : null;
+	    };
+	    InMemoryNodeManager.prototype.addItems = function (items) {
+	        var nodeList = this.rootNode.allLeafChildren;
+	        return this.insertItemsAtIndex(nodeList.length, items);
+	    };
+	    InMemoryNodeManager.prototype.isRowsAlreadyGrouped = function () {
+	        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+	        if (rowsAlreadyGrouped) {
+	            console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
+	                'supported if providing groups');
+	            return true;
+	        }
+	        else {
+	            return false;
+	        }
+	    };
+	    InMemoryNodeManager.TOP_LEVEL = 0;
+	    return InMemoryNodeManager;
+	})();
+	exports.InMemoryNodeManager = InMemoryNodeManager;
+
+
+/***/ },
+/* 91 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19582,7 +20201,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var component_1 = __webpack_require__(49);
-	var componentAnnotations_1 = __webpack_require__(89);
+	var componentAnnotations_1 = __webpack_require__(92);
 	var utils_1 = __webpack_require__(9);
 	var context_1 = __webpack_require__(8);
 	var gridOptionsWrapper_1 = __webpack_require__(5);
@@ -19720,12 +20339,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 89 */
+/* 92 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19782,12 +20401,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 90 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19846,12 +20465,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 91 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19886,12 +20505,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 92 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19999,12 +20618,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 93 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20102,12 +20721,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 94 */
+/* 97 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20146,12 +20765,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 95 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20173,7 +20792,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var context_1 = __webpack_require__(8);
 	var utils_1 = __webpack_require__(9);
 	var popupService_1 = __webpack_require__(46);
-	var menuItemComponent_1 = __webpack_require__(96);
+	var menuItemComponent_1 = __webpack_require__(99);
 	var MenuList = (function (_super) {
 	    __extends(MenuList, _super);
 	    function MenuList() {
@@ -20304,12 +20923,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 96 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v5.0.7
+	 * @version v5.1.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20398,10 +21017,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 97 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20412,8 +21031,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var columnSelectPanel_1 = __webpack_require__(98);
-	var aggFuncService_1 = __webpack_require__(101);
+	var columnSelectPanel_1 = __webpack_require__(101);
+	var aggFuncService_1 = __webpack_require__(104);
 	var svgFactory = main_1.SvgFactory.getInstance();
 	var EnterpriseMenuFactory = (function () {
 	    function EnterpriseMenuFactory() {
@@ -20805,10 +21424,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 98 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -20824,8 +21443,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var renderedGroup_1 = __webpack_require__(99);
-	var renderedColumn_1 = __webpack_require__(100);
+	var renderedGroup_1 = __webpack_require__(102);
+	var renderedColumn_1 = __webpack_require__(103);
 	var ColumnSelectPanel = (function (_super) {
 	    __extends(ColumnSelectPanel, _super);
 	    // we allow dragging in the toolPanel, but not when this component appears in the column menu
@@ -20939,10 +21558,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 99 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -21189,10 +21808,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 100 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -21410,10 +22029,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 101 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21624,10 +22243,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 102 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21916,10 +22535,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 103 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21930,7 +22549,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var rangeController_1 = __webpack_require__(102);
+	var rangeController_1 = __webpack_require__(105);
 	var ClipboardService = (function () {
 	    function ClipboardService() {
 	    }
@@ -22302,10 +22921,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 104 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22383,12 +23002,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.context.wireBean(nextGroup);
 	        nextGroup.group = true;
 	        nextGroup.field = groupColumn.getColDef().field;
-	        nextGroup.id = groupId.value--;
+	        nextGroup.id = groupId.value.toString();
 	        nextGroup.key = groupKey;
 	        nextGroup.expanded = this.isExpanded(expandByDefault, level);
 	        nextGroup.allLeafChildren = [];
 	        nextGroup.allChildrenCount = 0;
 	        nextGroup.level = level;
+	        groupId.value--;
 	        var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
 	        nextGroup.parent = includeParents ? parent : null;
 	        return nextGroup;
@@ -22435,10 +23055,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 105 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22449,8 +23069,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var pivotStage_1 = __webpack_require__(106);
-	var aggFuncService_1 = __webpack_require__(101);
+	var pivotStage_1 = __webpack_require__(109);
+	var aggFuncService_1 = __webpack_require__(104);
 	var AggregationStage = (function () {
 	    function AggregationStage() {
 	    }
@@ -22621,10 +23241,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 106 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22635,7 +23255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var pivotColDefService_1 = __webpack_require__(107);
+	var pivotColDefService_1 = __webpack_require__(110);
 	var PivotStage = (function () {
 	    function PivotStage() {
 	        this.uniqueValues = {};
@@ -22771,10 +23391,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 107 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22887,10 +23507,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 108 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22901,9 +23521,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var setFilter_1 = __webpack_require__(109);
-	var richSelectCellEditor_1 = __webpack_require__(113);
-	var licenseManager_1 = __webpack_require__(115);
+	var setFilter_1 = __webpack_require__(112);
+	var richSelectCellEditor_1 = __webpack_require__(116);
+	var licenseManager_1 = __webpack_require__(118);
 	var EnterpriseBoot = (function () {
 	    function EnterpriseBoot() {
 	    }
@@ -22941,10 +23561,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 109 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -22960,9 +23580,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var setFilterModel_1 = __webpack_require__(110);
-	var setFilterListItem_1 = __webpack_require__(111);
-	var virtualList_1 = __webpack_require__(112);
+	var setFilterModel_1 = __webpack_require__(113);
+	var setFilterListItem_1 = __webpack_require__(114);
+	var virtualList_1 = __webpack_require__(115);
 	var SetFilter = (function (_super) {
 	    __extends(SetFilter, _super);
 	    function SetFilter() {
@@ -23248,10 +23868,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 110 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var main_1 = __webpack_require__(2);
 	var SetFilterModel = (function () {
 	    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {
@@ -23476,10 +24096,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 111 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -23556,10 +24176,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 112 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -23711,10 +24331,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 113 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -23730,8 +24350,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var richSelectRow_1 = __webpack_require__(114);
-	var virtualList_1 = __webpack_require__(112);
+	var richSelectRow_1 = __webpack_require__(117);
+	var virtualList_1 = __webpack_require__(115);
 	var RichSelectCellEditor = (function (_super) {
 	    __extends(RichSelectCellEditor, _super);
 	    function RichSelectCellEditor() {
@@ -23871,10 +24491,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 114 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -23928,10 +24548,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 115 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -23943,7 +24563,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	var main_1 = __webpack_require__(2);
 	var main_2 = __webpack_require__(2);
-	var md5_1 = __webpack_require__(116);
+	var md5_1 = __webpack_require__(119);
 	var LicenseManager = (function () {
 	    function LicenseManager() {
 	    }
@@ -24062,10 +24682,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 116 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -24252,10 +24872,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 117 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -24271,8 +24891,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var statusItem_1 = __webpack_require__(118);
-	var rangeController_1 = __webpack_require__(102);
+	var statusItem_1 = __webpack_require__(121);
+	var rangeController_1 = __webpack_require__(105);
 	var StatusBar = (function (_super) {
 	    __extends(StatusBar, _super);
 	    function StatusBar() {
@@ -24437,10 +25057,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 118 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -24484,10 +25104,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 119 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -24503,7 +25123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var clipboardService_1 = __webpack_require__(103);
+	var clipboardService_1 = __webpack_require__(106);
 	var svgFactory = main_1.SvgFactory.getInstance();
 	var ContextMenuFactory = (function () {
 	    function ContextMenuFactory() {
@@ -24641,10 +25261,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 120 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -24769,6 +25389,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.rowCount > 0;
 	    };
 	    ViewportRowModel.prototype.forEachNode = function (callback) {
+	        var _this = this;
+	        var callbackCount = 0;
+	        Object.keys(this.rowNodesByIndex).forEach(function (indexStr) {
+	            var index = parseInt(indexStr);
+	            var rowNode = _this.rowNodesByIndex[index];
+	            callback(rowNode, callbackCount);
+	            callbackCount++;
+	        });
 	    };
 	    ViewportRowModel.prototype.setRowData = function (rowData) {
 	        var _this = this;
@@ -24800,7 +25428,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // written with the rowNode.rowUpdated in mind
 	        var rowNode = new main_1.RowNode();
 	        this.context.wireBean(rowNode);
-	        rowNode.id = rowIndex;
+	        rowNode.id = rowIndex.toString();
 	        rowNode.data = data;
 	        rowNode.rowTop = top;
 	        rowNode.rowHeight = rowHeight;
@@ -24811,6 +25439,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.rowCount = rowCount;
 	            this.eventService.dispatchEvent(main_1.Events.EVENT_MODEL_UPDATED);
 	        }
+	    };
+	    ViewportRowModel.prototype.insertItemsAtIndex = function (index, items) {
+	        console.log('not yet supported');
+	    };
+	    ViewportRowModel.prototype.removeItems = function (rowNodes) {
+	        console.log('not yet supported');
+	    };
+	    ViewportRowModel.prototype.addItems = function (item) {
+	        console.log('not yet supported');
 	    };
 	    __decorate([
 	        main_1.Autowired('gridOptionsWrapper'), 
@@ -24850,10 +25487,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 121 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -24869,7 +25506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var abstractColumnDropPanel_1 = __webpack_require__(122);
+	var abstractColumnDropPanel_1 = __webpack_require__(125);
 	var svgFactory = main_1.SvgFactory.getInstance();
 	var PivotColumnsPanel = (function (_super) {
 	    __extends(PivotColumnsPanel, _super);
@@ -24997,17 +25634,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 122 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var main_1 = __webpack_require__(2);
-	var columnComponent_1 = __webpack_require__(123);
+	var columnComponent_1 = __webpack_require__(126);
 	var AbstractColumnDropPanel = (function (_super) {
 	    __extends(AbstractColumnDropPanel, _super);
 	    function AbstractColumnDropPanel(horizontal, valueColumn) {
@@ -25168,10 +25805,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 123 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -25187,8 +25824,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var virtualList_1 = __webpack_require__(112);
-	var aggFuncService_1 = __webpack_require__(101);
+	var virtualList_1 = __webpack_require__(115);
+	var aggFuncService_1 = __webpack_require__(104);
 	var ColumnComponent = (function (_super) {
 	    __extends(ColumnComponent, _super);
 	    function ColumnComponent(column, dragSourceDropTarget, ghost, valueColumn) {
@@ -25357,10 +25994,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 124 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -25376,11 +26013,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var columnSelectPanel_1 = __webpack_require__(98);
-	var rowGroupColumnsPanel_1 = __webpack_require__(125);
-	var pivotColumnsPanel_1 = __webpack_require__(121);
-	var pivotModePanel_1 = __webpack_require__(126);
-	var valueColumnsPanel_1 = __webpack_require__(127);
+	var columnSelectPanel_1 = __webpack_require__(101);
+	var rowGroupColumnsPanel_1 = __webpack_require__(128);
+	var pivotColumnsPanel_1 = __webpack_require__(124);
+	var pivotModePanel_1 = __webpack_require__(129);
+	var valueColumnsPanel_1 = __webpack_require__(130);
 	var ToolPanelComp = (function (_super) {
 	    __extends(ToolPanelComp, _super);
 	    function ToolPanelComp() {
@@ -25433,10 +26070,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 125 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -25452,7 +26089,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var abstractColumnDropPanel_1 = __webpack_require__(122);
+	var abstractColumnDropPanel_1 = __webpack_require__(125);
 	var svgFactory = main_1.SvgFactory.getInstance();
 	var RowGroupColumnsPanel = (function (_super) {
 	    __extends(RowGroupColumnsPanel, _super);
@@ -25558,10 +26195,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 126 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -25636,10 +26273,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 127 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -25655,7 +26292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var abstractColumnDropPanel_1 = __webpack_require__(122);
+	var abstractColumnDropPanel_1 = __webpack_require__(125);
 	var svgFactory = main_1.SvgFactory.getInstance();
 	var ValuesColumnPanel = (function (_super) {
 	    __extends(ValuesColumnPanel, _super);
@@ -25752,10 +26389,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 128 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -25766,7 +26403,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var rowGroupColumnsPanel_1 = __webpack_require__(125);
+	var rowGroupColumnsPanel_1 = __webpack_require__(128);
 	var RowGroupCompFactory = (function () {
 	    function RowGroupCompFactory() {
 	    }
@@ -25789,10 +26426,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 129 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
+	// ag-grid-enterprise v5.1.2
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -25803,7 +26440,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var main_1 = __webpack_require__(2);
-	var pivotColumnsPanel_1 = __webpack_require__(121);
+	var pivotColumnsPanel_1 = __webpack_require__(124);
 	var PivotCompFactory = (function () {
 	    function PivotCompFactory() {
 	    }
@@ -25826,43 +26463,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 130 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v5.0.7
-	var columnSelectPanel_1 = __webpack_require__(98);
-	var renderedColumn_1 = __webpack_require__(100);
-	var renderedGroup_1 = __webpack_require__(99);
-	var aggregationStage_1 = __webpack_require__(105);
-	var groupStage_1 = __webpack_require__(104);
-	var setFilter_1 = __webpack_require__(109);
-	var setFilterModel_1 = __webpack_require__(110);
-	var statusBar_1 = __webpack_require__(117);
-	var statusItem_1 = __webpack_require__(118);
-	var clipboardService_1 = __webpack_require__(103);
-	var enterpriseBoot_1 = __webpack_require__(108);
-	var enterpriseMenu_1 = __webpack_require__(97);
-	var rangeController_1 = __webpack_require__(102);
-	var rowGroupColumnsPanel_1 = __webpack_require__(125);
-	var contextMenu_1 = __webpack_require__(119);
-	var viewportRowModel_1 = __webpack_require__(120);
-	var richSelectCellEditor_1 = __webpack_require__(113);
-	var richSelectRow_1 = __webpack_require__(114);
-	var virtualList_1 = __webpack_require__(112);
-	var abstractColumnDropPanel_1 = __webpack_require__(122);
-	var pivotColumnsPanel_1 = __webpack_require__(121);
-	var toolPanelComp_1 = __webpack_require__(124);
-	var licenseManager_1 = __webpack_require__(115);
-	var pivotStage_1 = __webpack_require__(106);
-	var pivotColDefService_1 = __webpack_require__(107);
-	var pivotModePanel_1 = __webpack_require__(126);
-	var aggFuncService_1 = __webpack_require__(101);
-	var md5_1 = __webpack_require__(116);
-	var setFilterListItem_1 = __webpack_require__(111);
-	var columnComponent_1 = __webpack_require__(123);
-	var valueColumnsPanel_1 = __webpack_require__(127);
-	var pivotCompFactory_1 = __webpack_require__(129);
-	var rowGroupCompFactory_1 = __webpack_require__(128);
+	// ag-grid-enterprise v5.1.2
+	var columnSelectPanel_1 = __webpack_require__(101);
+	var renderedColumn_1 = __webpack_require__(103);
+	var renderedGroup_1 = __webpack_require__(102);
+	var aggregationStage_1 = __webpack_require__(108);
+	var groupStage_1 = __webpack_require__(107);
+	var setFilter_1 = __webpack_require__(112);
+	var setFilterModel_1 = __webpack_require__(113);
+	var statusBar_1 = __webpack_require__(120);
+	var statusItem_1 = __webpack_require__(121);
+	var clipboardService_1 = __webpack_require__(106);
+	var enterpriseBoot_1 = __webpack_require__(111);
+	var enterpriseMenu_1 = __webpack_require__(100);
+	var rangeController_1 = __webpack_require__(105);
+	var rowGroupColumnsPanel_1 = __webpack_require__(128);
+	var contextMenu_1 = __webpack_require__(122);
+	var viewportRowModel_1 = __webpack_require__(123);
+	var richSelectCellEditor_1 = __webpack_require__(116);
+	var richSelectRow_1 = __webpack_require__(117);
+	var virtualList_1 = __webpack_require__(115);
+	var abstractColumnDropPanel_1 = __webpack_require__(125);
+	var pivotColumnsPanel_1 = __webpack_require__(124);
+	var toolPanelComp_1 = __webpack_require__(127);
+	var licenseManager_1 = __webpack_require__(118);
+	var pivotStage_1 = __webpack_require__(109);
+	var pivotColDefService_1 = __webpack_require__(110);
+	var pivotModePanel_1 = __webpack_require__(129);
+	var aggFuncService_1 = __webpack_require__(104);
+	var md5_1 = __webpack_require__(119);
+	var setFilterListItem_1 = __webpack_require__(114);
+	var columnComponent_1 = __webpack_require__(126);
+	var valueColumnsPanel_1 = __webpack_require__(130);
+	var pivotCompFactory_1 = __webpack_require__(132);
+	var rowGroupCompFactory_1 = __webpack_require__(131);
 	function populateClientExports(exports) {
 	    exports.AggFuncService = aggFuncService_1.AggFuncService;
 	    exports.MD5 = md5_1.MD5;

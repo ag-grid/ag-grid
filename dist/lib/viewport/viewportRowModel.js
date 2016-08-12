@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.7
+// ag-grid-enterprise v5.1.2
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -123,6 +123,14 @@ var ViewportRowModel = (function () {
         return this.rowCount > 0;
     };
     ViewportRowModel.prototype.forEachNode = function (callback) {
+        var _this = this;
+        var callbackCount = 0;
+        Object.keys(this.rowNodesByIndex).forEach(function (indexStr) {
+            var index = parseInt(indexStr);
+            var rowNode = _this.rowNodesByIndex[index];
+            callback(rowNode, callbackCount);
+            callbackCount++;
+        });
     };
     ViewportRowModel.prototype.setRowData = function (rowData) {
         var _this = this;
@@ -154,7 +162,7 @@ var ViewportRowModel = (function () {
         // written with the rowNode.rowUpdated in mind
         var rowNode = new main_1.RowNode();
         this.context.wireBean(rowNode);
-        rowNode.id = rowIndex;
+        rowNode.id = rowIndex.toString();
         rowNode.data = data;
         rowNode.rowTop = top;
         rowNode.rowHeight = rowHeight;
@@ -165,6 +173,15 @@ var ViewportRowModel = (function () {
             this.rowCount = rowCount;
             this.eventService.dispatchEvent(main_1.Events.EVENT_MODEL_UPDATED);
         }
+    };
+    ViewportRowModel.prototype.insertItemsAtIndex = function (index, items) {
+        console.log('not yet supported');
+    };
+    ViewportRowModel.prototype.removeItems = function (rowNodes) {
+        console.log('not yet supported');
+    };
+    ViewportRowModel.prototype.addItems = function (item) {
+        console.log('not yet supported');
     };
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.0.7
+// ag-grid-enterprise v5.1.2
 import { IRowModel, RowNode, IViewportDatasource } from "ag-grid/main";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
@@ -26,8 +26,11 @@ export declare class ViewportRowModel implements IRowModel {
     getRowCombinedHeight(): number;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
-    forEachNode(callback: (rowNode: RowNode) => void): void;
+    forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     private setRowData(rowData);
     private createNode(data, rowIndex);
     setRowCount(rowCount: number): void;
+    insertItemsAtIndex(index: number, items: any[]): void;
+    removeItems(rowNodes: RowNode[]): void;
+    addItems(item: any[]): void;
 }
