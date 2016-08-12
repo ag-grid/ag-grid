@@ -52,79 +52,60 @@ gridOptions.api.setDatasource(myDatasource);</pre></code>
     <h4>The Datasource Object</h4>
 
     <p>
-        The datasource you provide should contain the following items:
+        The datasource you provide should implement the following interface:
     </p>
 
-    <code><pre>export interface IDataSource {
+    <code><pre>/** Datasource used by both PaginationController and VirtualPageRowModel */
+interface IDatasource {
+
+    /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/
     rowCount?: number;
+
+    /** Callback the grid calls that you implement to fetch rows from the server. See below for params.*/
     getRows(params: IGetRowsParams): void;
 }
+</pre></code>
 
-export interface IGetRowsParams {
-    startRow: number;
-    endRow: number;
-    successCallback(rowsThisPage: any[], lastRow?: number): void;
-    failCallback(): void;
-    sortModel: any,
-    filterModel: any,
-    context: any
-}</pre></code>
-
-    <table class="table">
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <th>getRows(params)</th>
-            <td>Function you have to implement to get rows. This is explained in detail below.</td>
-        </tr>
-        <tr>
-            <th>pageSize</th>
-            <td>How large the pages should be. Each call to your datasource will be for one page.</td>
-        </tr>
-        <tr>
-            <th>rowCount</th>
-            <td>The total number of rows, if known, in the data set on the server. If it's unknown, do not set, or set to -1. This
-                will put the grid into <i>infinite scrolling</i> mode until the last row is reached. The definition of infinite scrolling
-                depends on whether you are doing pagination or virtual paging and is explained in each of those sections.
-                <b>rowCount is only used when you set the datasource</b> - if you discover what the last row is after
-                data comes back from the server, provide this info as the second parameter of the <i>successCallback</i></td>
-        </tr>
-        <tr>
-            <th>overflowSize</th>
-            <td>Only used in virtual paging. When infinite scrolling is active, this says how many rows beyond the current last row
-                the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
-                and overflowSize is 50, the scroll will allow scrolling to row 250.</td>
-        </tr>
-        <tr>
-            <th>maxConcurrentRequests</th>
-            <td>Only used in virtual paging. How many requests to hit the server with concurrently. If the max is reached,
-                requests are queued. Default is 1, thus by default, only one request will be active at any given time.</td>
-        </tr>
-        <tr>
-            <th>maxPagesInCache</th>
-            <td>Only used in virtual paging. How many pages to cache in the client. Default is no limit, so every requested
-                page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
-                sure you have enough pages in cache to display one whole view of the table (ie what's within the scrollable area),
-                otherwise it won't work and an infinite
-                loop of requesting pages will happen.</td>
-        </tr>
-    </table>
+    <h4>Row Count</h4>
+    <p>
+        The total number of rows, if known, is set using the attribute rowCount. If it's unknown, do not set, or set to -1. This
+        will put the grid into <i>infinite scrolling</i> mode until the last row is reached. The definition of infinite scrolling
+        depends on whether you are doing pagination or virtual paging and is explained in each of those sections.
+        <b>rowCount is only used when you set the datasource</b> - if you discover what the last row is after
+        data comes back from the server, provide this info as the second parameter of the <i>successCallback</i>
+    </p>
 
     <h4>Function getRows()</h4>
 
     <p>
         getRows is called by the grid to load pages into the browser side cache of pages. It takes parameter, called
-        params, which has the following attributes:<br/>
-    <ul>
-        <li><b>startRow:</b> The first row index to get.</li>
-        <li><b>endRow:</b> The first row index to NOT get.</li>
-        <li><b>successCallback:</b> Callback to call for the result when successful.</li>
-        <li><b>failCallback:</b> Callback to call for the result when failed.</li>
-        <li><b>context:</b> The grid context object.</li>
-    </ul>
+        params, which has the following interface:
     </p>
+
+    <code><pre>/** Params for the above IDatasource.getRows() */
+interface IGetRowsParams {
+
+    /** The first row index to get. */
+    startRow: number;
+
+    /** The first row index to NOT get. */
+    endRow: number;
+
+    /** Callback to call for the result when successful. */
+    successCallback(rowsThisPage: any[], lastRow?: number): void;
+
+    /** Callback to call for the result when successful. */
+    failCallback(): void;
+
+    /** If doing server side sorting, contains the sort model */
+    sortModel: any,
+
+    /** If doing server side filtering, contains the filter model */
+    filterModel: any,
+
+    /** The grid context object */
+    context: any
+}</pre></code>
 
     <p>
         <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if page
@@ -136,7 +117,8 @@ export interface IGetRowsParams {
         <b>successCallback</b> and <b>failCallback</b> are provided to either give the grid
         data, or to let it know the call failed. This is designed to work with the promise pattern
         that Javascript HTTP calls use. The datasource must call one, and exactly one, of these
-        methods, to ensure correct operation of the grid.
+        methods, to ensure correct operation of the grid. Even if your server request fails, you must
+        call 'failCallback'.
     </p>
 
     <p>
@@ -166,11 +148,20 @@ export interface IGetRowsParams {
         that the datasource then has access to.
     </p>
 
+    <h4>Page Size</h4>
+
+    <p>
+        The page size is set using the grid property <i>paginationPageSize</i>. This is how large the 'pages' should be.
+        Each call to your datasource will be for one page. For simple pagination, one page is display
+        to the user at a time. For virtual pagination, the page size is the size of the page in the
+        grids page cache.
+    </p>
+
     <h4>Next Steps</h4>
 
     <p>
         Now that you can create a datasource, go onto the next sections to set up a datasource
-        for pagination and virtual paging.
+        for pagination or virtual paging.
     </p>
 
 </div>

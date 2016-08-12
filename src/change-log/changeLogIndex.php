@@ -8,8 +8,20 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <li>Enhancement: node id's are not strings, not numbers. This is to allow you to give nodes the same id's as your data store.</li>
+    <h3>Version 5.1.x</h3>
 
+    <h4>ag-Grid 5.1.1, ag-Grid-Enterprise 5.1.1</h4>
+
+    <li>Enhancement: Adding and removing of rows now allowed in normal row model. See new documentation page on 'Insert & Remove'.</li>
+    <li>Enhancement: Virtual Pagination engine is rewritten. New and improved allowing inserting of rows and refreshing
+        of the cache and other smaller pieces. See the documentation page on virtual pagination for details.</li>
+    <li>Enhancement: Removed datasource properties maxConcurrentDatasourceRequests, maxPagesInCache, overflowSize and pageSize.
+        Replaced with grid properties maxConcurrentDatasourceRequests, maxPagesInCache, paginationOverflowSize,
+        paginationInitialRowCount, paginationPageSize.
+    </li>
+    <li>Enhancement: node id's are now strings, not numbers. This is to allow you to give nodes the same id's as your data store.</li>
+    <li>Enhancement: new callback getRowNodeId(), for setting node ids to what you want. Useful for pagination and virtual pagination
+    to allow for selection of rows when doing server side sorting and filtering.</li>
 
     <h3>Version 5.0.x</h3>
 

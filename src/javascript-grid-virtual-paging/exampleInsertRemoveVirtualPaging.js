@@ -1,11 +1,4 @@
 var columnDefs = [
-    {headerName: "Index",
-        // little trick for cellRenderer, we return the grid index
-        // of the row
-        cellRenderer: function(params) {
-            return params.rowIndex;
-        }
-    },
     {headerName: "Item ID", field: "id",
         cellRenderer: function(params) {
             if (params.value !== undefined) {
@@ -144,6 +137,10 @@ var gridOptions = {
 
     getRowNodeId: function(item) {
         return item.id.toString();
+    },
+
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 

@@ -116,6 +116,11 @@ include '../documentation-main/documentation_header.php';
             <th>processRowPostCreate(params)</th>
             <td>Allows you to process rows after they are created. So do final adding of custom attributes etc.</td>
         </tr>
+        <tr>
+            <th>getRowNodeId(data)</th>
+            <td>Allows you to set the id for a particular row node based on the data. Useful for selection and
+            server side sorting and filtering for paging and virtual pagination.</td>
+        </tr>
     </table>
 
     <p>

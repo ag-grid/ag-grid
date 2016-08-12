@@ -306,7 +306,28 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true so that the grid doesn't virtualise the columns. So if you have 100 columns, but
             only 10 visible due to scrolling, all 100 will always be rendered.</td>
         </tr>
-
+        <tr>
+            <th>maxConcurrentDatasourceRequests</th>
+            <td>For virtual pagination only. How many concurrent data requests are allowed.</td>
+        </tr>
+        <tr>
+            <th>maxPagesInCache</th>
+            <td>For virtual pagination only. How many pages to hold in the cache.</td>
+        </tr>
+        <tr>
+            <th>paginationOverflowSize</th>
+            <td>For virtual pagination only. How many rows to seek ahead when unknown data size.</td>
+        </tr>
+        <tr>
+            <th>paginationInitialRowCount</th>
+            <td>For virtual pagination only. How many rows to initially allow scrolling to in the grid.</td>
+        </tr>
+        <tr>
+            <th>paginationPageSize</th>
+            <td>For normal paging, how many rows to show to a user at one time (ie page size).
+                In virtual pagination dictates the size of teh pages in the data cache. For both paging
+                and virtual pagination, defines the block size the datasource is asked for data.</td>
+        </tr>
     </table>
 
     <p>

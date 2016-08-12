@@ -1,13 +1,16 @@
 var columnDefs = [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price"}
+    {headerName: "Price", field: "price"},
+    {headerName: "Zombies", field: "zombies"},
+    {headerName: "Style", field: "style"},
+    {headerName: "Clothes", field: "clothes"}
 ];
 
 var rowData = [
-    {make: "Toyota", model: "Celica", price: 35000},
-    {make: "Ford", model: "Mondeo", price: 32000},
-    {make: "Porsche", model: "Boxter", price: 72000}
+    {make: "Toyota", model: "Celica", price: 35000, zombies: 'Elly', style: 'Smooth', clothes: 'Jeans'},
+    {make: "Ford", model: "Mondeo", price: 32000, zombies: 'Shane', style: 'Filthy', clothes: 'Shorts'},
+    {make: "Porsche", model: "Boxter", price: 72000, zombies: 'Jack', style: 'Dirty', clothes: 'Padded'}
 ];
 
 var gridOptions = {
@@ -22,10 +25,22 @@ function createNewRowData() {
     var newData = {
         make: "Toyota " + newCount,
         model: "Celica " + newCount,
-        price: 35000 + (newCount * 17)
+        price: 35000 + (newCount * 17),
+        zombies: 'Headless',
+        style: 'Little',
+        clothes: 'Airbag'
     };
     newCount++;
     return newData;
+}
+
+function getRowData() {
+    var rowData = [];
+    gridOptions.api.forEachNode( function(node) {
+        rowData.push(node.data);
+    });
+    console.log('Row Data:');
+    console.log(rowData);
 }
 
 function onAddRow() {
