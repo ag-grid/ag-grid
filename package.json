@@ -38,7 +38,7 @@
   },
   "peerDependencies": {
     "@angular/core":  "~2.0.0-rc.2",
-    "ag-grid": "~5.0.0"
+    "ag-grid": "~5.1.0"
   },
   "dependencies": {
   }
