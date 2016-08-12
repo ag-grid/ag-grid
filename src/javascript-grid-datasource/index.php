@@ -11,21 +11,21 @@ include '../documentation-main/documentation_header.php';
     <h2>Datasource</h2>
 
     <p>
-        A datasource is used when you wish to <b>not</b> load all the rows from the server into the client
-        in one go. There are two ways to do this, pagination and virtual paging. Each of these methods
-        uses a datasource. This section explains creating of a datasource to be used by each of
-        these methods.
+        A datasource is used when using row models a) pagination and b) virtual paging. This section explains the
+        datasource used in each fo these row models.
     </p>
 
     <h4>Setting up a Datasource</h4>
 
     <p>
-        The datasource is set in the grid options, either before the table is initialised, or by calling setDatasource
-        API method.
+        The datasource is set either as a grid property or by calling setDatasource API method.
     </p>
 
-        <pre>// before grid initialised
-gridOptions.datasource = myDataSource;</pre>
+    <code><pre>// before grid initialised
+gridOptions.datasource = myDatasource;
+
+// using the api
+gridOptions.api.setDatasource(myDatasource);</pre></code>
 
     <note>
         If you are getting the error: "TypeError: Cannot read property 'setDatasource' of undefined" - it's because
@@ -40,14 +40,12 @@ gridOptions.datasource = myDataSource;</pre>
         data changes, ie if you want to look at a different set of data.
     </p>
 
-            <pre>// set the the datasource using the API
-gridOptions.api.setDatasource(myDataSource);</pre>
-
     <p>
         <b>Note:</b> If you call <i>setDatasource</i> the grid will act assuming
         it's a new datasource, resetting the paging. However you can pass in the same datasource instance.
         So your application, for example, might have one instance of a datasource that is aware of some
-        external filters, and when the filters change, you want to reset, but still keep the same datasource
+        external context (eg the business date selected for a report, or the 'bank ATM instance' data you are
+        connecting to), and when the context changes, you want to reset, but still keep the same datasource
         instance. In this case, just call setDatasource() and pass the same datasource in again.
     </p>
 
@@ -56,6 +54,21 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <p>
         The datasource you provide should contain the following items:
     </p>
+
+    <code><pre>export interface IDataSource {
+    rowCount?: number;
+    getRows(params: IGetRowsParams): void;
+}
+
+export interface IGetRowsParams {
+    startRow: number;
+    endRow: number;
+    successCallback(rowsThisPage: any[], lastRow?: number): void;
+    failCallback(): void;
+    sortModel: any,
+    filterModel: any,
+    context: any
+}</pre></code>
 
     <table class="table">
         <tr>
