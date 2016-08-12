@@ -4,7 +4,7 @@ import {Context, Autowired, PostConstruct, Qualifier} from "../../context/contex
 import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {LoggerFactory, Logger} from "../../logger";
-import {IDataSource} from "../iDataSource";
+import {IDatasource} from "../iDatasource";
 import {VirtualPage} from "./virtualPage";
 
 export interface CacheParams {
@@ -16,7 +16,7 @@ export interface CacheParams {
     paginationInitialRowCount: number;
     sortModel: any;
     filterModel: any;
-    datasource: IDataSource;
+    datasource: IDatasource;
     lastAccessedSequence: NumberSequence;
 }
 

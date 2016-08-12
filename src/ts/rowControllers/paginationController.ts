@@ -10,7 +10,7 @@ import {Events} from "../events";
 import {FilterManager} from "../filter/filterManager";
 import {IInMemoryRowModel} from "../interfaces/iInMemoryRowModel";
 import {Constants} from "../constants";
-import {IDataSource} from "./iDataSource";
+import {IDatasource} from "./iDataSource";
 
 var template =
         '<div class="ag-paging-panel ag-font-style">'+
@@ -61,7 +61,7 @@ export class PaginationController {
     private ePageRowSummaryPanel: any;
 
     private callVersion: number;
-    private datasource: IDataSource;
+    private datasource: IDatasource;
     private pageSize: number;
     private rowCount: number;
     private foundMaxRow: boolean;

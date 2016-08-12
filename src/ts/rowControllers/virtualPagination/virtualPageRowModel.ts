@@ -9,7 +9,7 @@ import {Events} from "../../events";
 import {SortController} from "../../sortController";
 import {FilterManager} from "../../filter/filterManager";
 import {Constants} from "../../constants";
-import {IDataSource} from "../iDataSource";
+import {IDatasource} from "../iDatasource";
 import {VirtualPageCache, CacheParams} from "./virtualPageCache";
 
 @Bean('rowModel')
@@ -25,7 +25,7 @@ export class VirtualPageRowModel implements IRowModel {
     private destroyFunctions: (()=>void)[] = [];
 
     private virtualPageCache: VirtualPageCache;
-    private datasource: IDataSource;
+    private datasource: IDatasource;
 
     @PostConstruct
     public init(): void {
@@ -69,7 +69,7 @@ export class VirtualPageRowModel implements IRowModel {
         return Constants.ROW_MODEL_TYPE_VIRTUAL;
     }
 
-    public setDatasource(datasource: IDataSource): void {
+    public setDatasource(datasource: IDatasource): void {
         this.datasource = datasource;
 
         // only reset if we have a valid datasource to working with
