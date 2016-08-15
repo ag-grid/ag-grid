@@ -3,7 +3,6 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {RowNode} from "../../entities/rowNode";
 import {Context, Autowired, PostConstruct} from "../../context/context";
 import {EventService} from "../../eventService";
-import {SelectionController} from "../../selectionController";
 import {IGetRowsParams} from "../iDataSource";
 import {IEventEmitter} from "../../interfaces/iEventEmitter";
 import {CacheParams} from "./virtualPageCache";
@@ -19,7 +18,6 @@ export class VirtualPage implements IEventEmitter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
-    @Autowired('selectionController') private selectionController: SelectionController;
 
     private state = VirtualPage.STATE_DIRTY;
 

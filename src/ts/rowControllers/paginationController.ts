@@ -84,13 +84,13 @@ export class PaginationController {
 
         this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, ()=> {
             if (paginationEnabled && this.gridOptionsWrapper.isEnableServerSideFilter()) {
-                this.reset();
+                this.reset(false);
             }
         });
 
         this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, ()=> {
             if (paginationEnabled && this.gridOptionsWrapper.isEnableServerSideSorting()) {
-                this.reset();
+                this.reset(false);
             }
         });
 
@@ -107,7 +107,7 @@ export class PaginationController {
             return;
         }
 
-        this.reset();
+        this.reset(true);
     }
 
     private checkForDeprecated(): void {
@@ -117,7 +117,7 @@ export class PaginationController {
         }
     }
 
-    private reset() {
+    private reset(freshDatasource: boolean) {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
         if (_.missing(this.datasource)) {
@@ -126,7 +126,14 @@ export class PaginationController {
 
         this.checkForDeprecated();
 
-        this.selectionController.reset();
+        // if user is providing id's, then this means we can keep the selection between datsource hits,
+        // as the rows will keep their unique id's even if, for example, server side sorting or filtering
+        // is done. if it's a new datasource, then always clear the selection.
+        var userGeneratingRows = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
+        var resetSelectionController = freshDatasource || !userGeneratingRows;
+        if (resetSelectionController) {
+            this.selectionController.reset();
+        }
 
         // copy pageSize, to guard against it changing the the datasource between calls
         this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();

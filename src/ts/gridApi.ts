@@ -117,6 +117,7 @@ export class GridApi {
     
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
+            this.selectionController.reset();
             this.inMemoryRowModel.setRowData(rowData, true);
         } else {
             console.log('cannot call setRowData unless using normal row model');
