@@ -1149,7 +1149,7 @@ export class ColumnController {
         function colMatches(column: Column): boolean {
             var columnMatches = column === key;
             var colDefMatches = column.getColDef() === key;
-            var idMatches = column.getColId() === key;
+            var idMatches = column.getColId() == key;
             return columnMatches || colDefMatches || idMatches;
         }
 
