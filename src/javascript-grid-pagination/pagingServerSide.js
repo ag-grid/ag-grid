@@ -37,7 +37,11 @@ var gridOptions = {
     enableColResize: true,
     paginationPageSize: 500,
     columnDefs: columnDefs,
-    rowModelType: 'pagination'
+    rowModelType: 'pagination',
+    rowSelection: 'multiple',
+    getRowNodeId: function(item) {
+        return item.id;
+    }
 };
 
 // when json gets loaded, it's put here, and  the datasource reads in from here.
@@ -46,6 +50,10 @@ var allOfTheData;
 
 function setRowData(rowData) {
     allOfTheData = rowData;
+    // give each row an id
+    allOfTheData.forEach( function(data, index) {
+        data.id = 'R' + (index + 1);
+    });
     createNewDatasource();
 }
 
