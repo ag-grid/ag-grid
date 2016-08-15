@@ -86,6 +86,7 @@ export class ColumnApi {
     public getAllDisplayedColumnGroups(): ColumnGroupChild[] { return this._columnController.getAllDisplayedColumnGroups(); }
     public autoSizeColumn(key: Column|ColDef|String): void {return this._columnController.autoSizeColumn(key); }
     public autoSizeColumns(keys: (Column|ColDef|String)[]): void {return this._columnController.autoSizeColumns(keys); }
+    public autoSizeAllColumns(): void { this._columnController.autoSizeAllColumns(); }
 
     public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[]): void { this._columnController.setSecondaryColumns(colDefs); }
 
