@@ -13,6 +13,7 @@ import {
     MenuList,
     GridOptionsWrapper,
     RowNode,
+    Utils,
     Column,
     MenuItem,
     GridApi
@@ -33,7 +34,14 @@ export class ContextMenuFactory implements IContextMenuFactory {
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItem|string)[] {
-        var defaultMenuOptions: [string] = ['copy','paste','separator','toolPanel'];
+        var defaultMenuOptions: string[];
+        if (Utils.exists(node)) {
+            // if user clicks a cell
+            defaultMenuOptions = ['copy','paste','separator','toolPanel'];
+        } else {
+            // if user clicks outside of a cell (eg below the rows, or not rows present)
+            defaultMenuOptions = ['toolPanel'];
+        }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             var userFunc: GetContextMenuItems = this.gridOptionsWrapper.getContextMenuItemsFunc();
             var params: GetContextMenuItemsParams = {
