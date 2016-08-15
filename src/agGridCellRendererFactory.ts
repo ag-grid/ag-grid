@@ -6,9 +6,12 @@ export class AgGridCellRendererFactory {
     constructor(private _viewContainerRef:ViewContainerRef, private _componentResolver:ComponentResolver) {
     }
 
-    public createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
-                                                             initializer?:(instance:T, params?:any) => void):Type {
-        return createCellRendererFromComponent<T>(componentType, this._viewContainerRef, this._componentResolver, initializer);
+    public createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; }):Type {
+        return createCellRendererFromComponent<T>(componentType, this._viewContainerRef, this._componentResolver, (instance:any, params?:any) => {
+            if (instance.setGridParameters) {
+                instance.setGridParameters(params);
+            }
+        });
     }
 
     public createCellRendererFromTemplate(template:string):Type {
@@ -18,14 +21,11 @@ export class AgGridCellRendererFactory {
 }
 
 function createComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
-                                         viewContainerRef:ViewContainerRef,
-                                         componentResolver:ComponentResolver):Promise<ComponentRef<T>> {
+                                           viewContainerRef:ViewContainerRef,
+                                           componentResolver:ComponentResolver):Promise<ComponentRef<T>> {
     return new Promise<ComponentRef<T>>((resolve) => {
         componentResolver.resolveComponent(componentType).then(
             (factory:ComponentFactory<any>) => {
-                //let injector = ReflectiveInjector.fromResolvedProviders([], viewContainerRef.parentInjector); // original by neal
-                //let injector = ReflectiveInjector.fromResolvedProviders([], viewContainerRef.injector);
-                //let injector = viewContainerRef.injector;
                 let injector = viewContainerRef.parentInjector;
                 let componentRef:ComponentRef<T> = viewContainerRef.createComponent(factory, undefined, injector, []);
                 resolve(componentRef);
@@ -34,9 +34,9 @@ function createComponent<T extends Object>(componentType:{ new(...args:any[]): T
 }
 
 function createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
-                                                                 viewContainerRef:ViewContainerRef,
-                                                                 componentResolver:ComponentResolver,
-                                                                 initializer?:(instance:T, params?:any) => void):Type {
+                                                           viewContainerRef:ViewContainerRef,
+                                                           componentResolver:ComponentResolver,
+                                                           initializer?:(instance:T, params?:any) => void):Type {
     class CellRenderer implements ICellRenderer {
         private _params:any;
         private _componentRef:ComponentRef<T>;
