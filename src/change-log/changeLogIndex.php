@@ -9,6 +9,9 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <h3>Version 5.1.x</h3>
+    <li>Enhancement: Now context menu appears when you click outside of the rows, including when no rows present.</li>
+
+    <h3>Version 5.1.x</h3>
 
     <h4>ag-Grid 5.1.2, ag-Grid-Enterprise 5.1.2</h4>
 
