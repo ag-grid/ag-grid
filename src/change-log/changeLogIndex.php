@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Version 5.1.x</h3>
     <li>Enhancement: Now context menu appears when you click outside of the rows, including when no rows present.</li>
     <li>Enhancement: Added columnApi.autoSizeAllColumns().</li>
+    <li>Enhancement: Allowed following methods to work with pagination: forEachLeafNode, forEachNodeAfterFilter, forEachNodeAfterFilterAndSort.</li>
 
     <h3>Version 5.1.x</h3>
 
