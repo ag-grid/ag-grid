@@ -350,10 +350,10 @@ export class RenderedRow {
         }
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
         var renderedCell = this.renderedCells[cell.column.getId()];
         if (renderedCell) {
-            renderedCell.onMouseEvent(eventName, mouseEvent, eventSource);
+            renderedCell.onMouseEvent(eventName, mouseEvent);
         }
     }
 

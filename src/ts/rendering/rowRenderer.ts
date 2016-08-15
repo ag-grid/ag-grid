@@ -481,7 +481,7 @@ export class RowRenderer {
         //console.log(end-start);
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
         var renderedRow: RenderedRow;
         switch (cell.floating) {
             case Constants.FLOATING_TOP:
@@ -495,7 +495,7 @@ export class RowRenderer {
                 break;
         }
         if (renderedRow) {
-            renderedRow.onMouseEvent(eventName, mouseEvent, eventSource, cell);
+            renderedRow.onMouseEvent(eventName, mouseEvent, cell);
         }
     }
 

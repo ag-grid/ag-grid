@@ -9,7 +9,6 @@ import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {ColumnChangeEvent} from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
 import {DragService} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
@@ -19,6 +18,7 @@ import {CsvCreator} from "../csvCreator";
 import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
+import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -105,6 +105,7 @@ export class GridPanel {
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('$scope') private $scope: any;
+    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -216,6 +217,7 @@ export class GridPanel {
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
         this.addCellListeners();
+        this.addBodyViewportListener();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
@@ -292,25 +294,57 @@ export class GridPanel {
 
     private addCellListeners(): void {
         var eventNames = ['click','mousedown','dblclick','contextmenu'];
-        var that = this;
         eventNames.forEach( eventName => {
-            this.eAllCellContainers.forEach( container =>
-                container.addEventListener(eventName, function(mouseEvent: MouseEvent) {
-                    var eventSource: HTMLElement = this;
-                    that.processMouseEvent(eventName, mouseEvent, eventSource);
-                })
-            )
+            var listener = this.processMouseEvent.bind(this, eventName);
+            this.eAllCellContainers.forEach( container => {
+                container.addEventListener(eventName, listener);
+                this.destroyFunctions.push( ()=> container.removeEventListener(eventName, listener) );
+            });
         });
     }
 
-    private processMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
+    private addBodyViewportListener(): void {
+        // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
+        // the context menu if no rows are displayed, or user simply clicks outside of a cell
+        var listener = (mouseEvent: MouseEvent) => {
+            var target = _.getTarget(mouseEvent);
+            if (target===this.eBodyViewport) {
+                // show it
+                this.onContextMenu(mouseEvent);
+                this.preventDefultOnContextMenu(mouseEvent);
+            }
+        };
+
+        this.eBodyViewport.addEventListener('contextmenu', listener);
+        this.destroyFunctions.push( ()=> this.eBodyViewport.removeEventListener('contextmenu', listener) );
+    }
+
+    private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
 
         if (_.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
-            this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
+            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
         }
 
+        this.preventDefultOnContextMenu(mouseEvent);
+    }
+
+    private onContextMenu(mouseEvent: MouseEvent): void {
+
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
+        // thus the normal menu is displayed
+        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            return;
+        }
+
+        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
+            this.contextMenuFactory.showMenu(null, null, null, mouseEvent);
+            mouseEvent.preventDefault();
+        }
+    }
+
+    private preventDefultOnContextMenu(mouseEvent: MouseEvent): void {
         // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
@@ -318,7 +352,6 @@ export class GridPanel {
         if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
             mouseEvent.preventDefault();
         }
-
     }
 
     private addShortcutKeyListeners(): void {

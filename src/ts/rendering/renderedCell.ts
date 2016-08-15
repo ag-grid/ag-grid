@@ -678,10 +678,9 @@ export class RenderedCell extends Component {
         return params;
     }
 
-    private createEvent(event: any, eventSource?: any): any {
+    private createEvent(event: any): any {
         var agEvent = this.createParams();
         agEvent.event = event;
-        //agEvent.eventSource = eventSource;
         return agEvent;
     }
 
@@ -698,11 +697,11 @@ export class RenderedCell extends Component {
         return this.column.isCellEditable(this.node);
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement): void {
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         switch (eventName) {
             case 'click': this.onCellClicked(mouseEvent); break;
             case 'mousedown': this.onMouseDown(); break;
-            case 'dblclick': this.onCellDoubleClicked(mouseEvent, eventSource); break;
+            case 'dblclick': this.onCellDoubleClicked(mouseEvent); break;
             case 'contextmenu': this.onContextMenu(mouseEvent); break;
         }
     }
@@ -729,10 +728,10 @@ export class RenderedCell extends Component {
         }
     }
 
-    private onCellDoubleClicked(mouseEvent: MouseEvent, eventSource: HTMLElement) {
+    private onCellDoubleClicked(mouseEvent: MouseEvent) {
         var colDef = this.column.getColDef();
         // always dispatch event to eventService
-        var agEvent: any = this.createEvent(mouseEvent, eventSource);
+        var agEvent: any = this.createEvent(mouseEvent);
         this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
 
         // check if colDef also wants to handle event
@@ -767,7 +766,7 @@ export class RenderedCell extends Component {
     }
 
     private onCellClicked(mouseEvent: MouseEvent): void {
-        var agEvent = this.createEvent(mouseEvent, this);
+        var agEvent = this.createEvent(mouseEvent);
         this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
 
         var colDef = this.column.getColDef();
