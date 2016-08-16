@@ -89,8 +89,13 @@ export class RenderedRow {
             this.refreshCellsIntoRow();
         }
 
-        this.addDynamicStyles();
-        this.addDynamicClasses();
+        this.addGridClasses();
+
+        this.addStyleFromRowStyle();
+        this.addStyleFromRowStyleFunc();
+
+        this.addClassesFromRowClass();
+        this.addClassesFromRowClassFunc();
 
         this.addRowIds();
         this.setTopAndHeightCss();
@@ -115,7 +120,21 @@ export class RenderedRow {
             context: this.gridOptionsWrapper.getContext()
         });
 
+        this.addDataChangedListener();
+
         this.initialised = true;
+    }
+
+    // because data can change, especially in virtual pagination and viewport row models, need to allow setting
+    // styles and classes after the data has changed
+    private addDataChangedListener(): void {
+        var dataChangedListener = ()=> {
+            this.addStyleFromRowStyleFunc();
+            this.addClassesFromRowClass();
+        };
+
+        this.rowNode.addEventListener(RowNode.EVENT_DATA_CHANGED, dataChangedListener);
+        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_DATA_CHANGED, dataChangedListener) );
     }
 
     private angular1Compile(element: Element): void {
@@ -543,7 +562,7 @@ export class RenderedRow {
         }
     }
 
-    private addDynamicStyles() {
+    private addStyleFromRowStyle(): void {
         var rowStyle = this.gridOptionsWrapper.getRowStyle();
         if (rowStyle) {
             if (typeof rowStyle === 'function') {
@@ -552,6 +571,9 @@ export class RenderedRow {
                 this.eLeftCenterAndRightRows.forEach( row => _.addStylesToElement(row, rowStyle));
             }
         }
+    }
+
+    private addStyleFromRowStyleFunc(): void {
         var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
         if (rowStyleFunc) {
             var params = {
@@ -648,10 +670,6 @@ export class RenderedRow {
         return this.rowNode;
     }
 
-    public getRowIndex(): any {
-        return this.rowIndex;
-    }
-
     public refreshCells(colIds: string[], animate: boolean): void {
         if (!colIds) {
             return;
@@ -666,7 +684,37 @@ export class RenderedRow {
         });
     }
 
-    private addDynamicClasses() {
+    private addClassesFromRowClassFunc(): void {
+
+        var classes: string[] = [];
+
+        var gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
+        if (gridOptionsRowClassFunc) {
+            var params = {
+                node: this.rowNode,
+                data: this.rowNode.data,
+                rowIndex: this.rowIndex,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi()
+            };
+            var classToUseFromFunc = gridOptionsRowClassFunc(params);
+            if (classToUseFromFunc) {
+                if (typeof classToUseFromFunc === 'string') {
+                    classes.push(classToUseFromFunc);
+                } else if (Array.isArray(classToUseFromFunc)) {
+                    classToUseFromFunc.forEach(function (classItem: any) {
+                        classes.push(classItem);
+                    });
+                }
+            }
+        }
+
+        classes.forEach( (classStr: string) => {
+            this.eLeftCenterAndRightRows.forEach( row => _.addCssClass(row, classStr));
+        });
+    }
+
+    private addGridClasses() {
         var classes: string[] = [];
 
         classes.push('ag-row');
@@ -702,6 +750,14 @@ export class RenderedRow {
             }
         }
 
+        classes.forEach( (classStr: string) => {
+            this.eLeftCenterAndRightRows.forEach( row => _.addCssClass(row, classStr));
+        });
+    }
+
+    private addClassesFromRowClass() {
+        var classes: string[] = [];
+
         // add in extra classes provided by the config
         var gridOptionsRowClass = this.gridOptionsWrapper.getRowClass();
         if (gridOptionsRowClass) {
@@ -712,27 +768,6 @@ export class RenderedRow {
                     classes.push(gridOptionsRowClass);
                 } else if (Array.isArray(gridOptionsRowClass)) {
                     gridOptionsRowClass.forEach(function (classItem: any) {
-                        classes.push(classItem);
-                    });
-                }
-            }
-        }
-
-        var gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
-        if (gridOptionsRowClassFunc) {
-            var params = {
-                node: this.rowNode,
-                data: this.rowNode.data,
-                rowIndex: this.rowIndex,
-                context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi()
-            };
-            var classToUseFromFunc = gridOptionsRowClassFunc(params);
-            if (classToUseFromFunc) {
-                if (typeof classToUseFromFunc === 'string') {
-                    classes.push(classToUseFromFunc);
-                } else if (Array.isArray(classToUseFromFunc)) {
-                    classToUseFromFunc.forEach(function (classItem: any) {
                         classes.push(classItem);
                     });
                 }
