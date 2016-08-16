@@ -53,8 +53,8 @@ include '../documentation-main/documentation_header.php';
     <h4>Allow Pivot, Row Group, Value</h4>
     <p>
         Every column can be added as a row group, pivot or value using the grid API or
-        configuration. However you need to mark the column definition with one or more of <i>allowRowGroup, allowPivot
-        or allowValue</i> to allow the function via the GUI. If these flags are not set, the GUI will not allow
+        configuration. However you need to mark the column definition with one or more of <i>enableRowGroup, enablePivot
+        or enableValue</i> to allow the function via the GUI. If these flags are not set, the GUI will not allow
         the functions, however you API and configuration will not be impacted.
     </p>
 
