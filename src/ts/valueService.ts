@@ -109,6 +109,7 @@ export class ValueService {
 
         // need either a field or a newValueHandler for this to work
         if (_.missing(field) && _.missing(newValueHandler)) {
+            console.warn(`ag-Grid: you need either field or newValueHandler set on colDef for editing to work`);
             return;
         }
 
