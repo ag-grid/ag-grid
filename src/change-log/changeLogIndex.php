@@ -14,6 +14,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: Allowed following methods to work with pagination: forEachLeafNode, forEachNodeAfterFilter, forEachNodeAfterFilterAndSort.</li>
     <li>Enhancement: Callbacks getRowStyle and getRowClass get called after the data is set as well as when the row is created.
     Helps viewport and infinite pagination, to add styles and classes after the rows are loaded.</li>
+    <li>Enhancement: external filter present can not be true when grid initialises</li>
 
     <h3>Version 5.1.x</h3>
 
