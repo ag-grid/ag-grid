@@ -16,6 +16,7 @@ include '../documentation-main/documentation_header.php';
     Helps viewport and infinite pagination, to add styles and classes after the rows are loaded.</li>
     <li>Enhancement: external filter present can not be true when grid initialises</li>
     <li>Bugfix: setFilter was not removing entries correctly when other filters were set if filterParams was missing.</li>
+    <li>Bugfix: when browser was vertically scrolled, the ghost icon while dragging was not positioned correctly.</li>
 
     <h3>Version 5.1.x</h3>
 
