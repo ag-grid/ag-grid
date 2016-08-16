@@ -125,7 +125,6 @@ var gridOptions = {
 //suppressMovingCss: true,
 //suppressMovableColumns: true,
 //groupIncludeFooter: true,
-    groupHideGroupColumns: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
