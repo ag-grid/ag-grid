@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: Now context menu appears when you click outside of the rows, including when no rows present.</li>
     <li>Enhancement: Added columnApi.autoSizeAllColumns().</li>
     <li>Enhancement: Allowed following methods to work with pagination: forEachLeafNode, forEachNodeAfterFilter, forEachNodeAfterFilterAndSort.</li>
+    <li>Enhancement: Callbacks getRowStyle and getRowClass get called after the data is set as well as when the row is created.
+    Helps viewport and infinite pagination, to add styles and classes after the rows are loaded.</li>
 
     <h3>Version 5.1.x</h3>
 
