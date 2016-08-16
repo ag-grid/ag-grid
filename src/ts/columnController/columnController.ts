@@ -624,7 +624,7 @@ export class ColumnController {
 
     public setColumnAggFunc(column: Column, aggFunc: string): void {
         column.setAggFunc(aggFunc);
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
+        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED).withColumn(column);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGED, event);
     }
 
