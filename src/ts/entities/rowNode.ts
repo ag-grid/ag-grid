@@ -195,7 +195,7 @@ export class RowNode {
     private calculateSelectedFromChildrenBubbleUp(): void {
         this.calculateSelectedFromChildren();
         if (this.parent) {
-            this.parent.calculateSelectedFromChildren();
+            this.parent.calculateSelectedFromChildrenBubbleUp();
         }
     }
 
