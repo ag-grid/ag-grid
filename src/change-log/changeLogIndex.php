@@ -17,6 +17,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: external filter present can not be true when grid initialises</li>
     <li>Bugfix: setFilter was not removing entries correctly when other filters were set if filterParams was missing.</li>
     <li>Bugfix: when browser was vertically scrolled, the ghost icon while dragging was not positioned correctly.</li>
+    <li>Bugfix: when groupSelectsChildren=true, was failing to update top parent rows when 3 or more columns grouped.</li>
 
     <h3>Version 5.1.x</h3>
 
