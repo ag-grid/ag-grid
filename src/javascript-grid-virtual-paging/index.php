@@ -312,6 +312,9 @@ gridOptions.api.setDatasource(myDataSource);</pre>
             <b>Purge Cache</b>: Calls for the cache to be purged.
         </li>
     </ul>
+
+    The example also makes each Honda row bold - demonstrating that the callbacks getRowStyle and getRowClass
+    get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>
 
     <show-example example="exampleInsertRemoveVirtualPaging"></show-example>

@@ -141,6 +141,16 @@ var gridOptions = {
 
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
+    },
+
+    getRowStyle: function(params) {
+        if (params.data && params.data.make==='Honda') {
+            return {
+                fontWeight: 'bold'
+            }
+        } else {
+            return null;
+        }
     }
 };
 
