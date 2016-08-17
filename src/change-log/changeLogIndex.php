@@ -15,9 +15,11 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: Callbacks getRowStyle and getRowClass get called after the data is set as well as when the row is created.
     Helps viewport and infinite pagination, to add styles and classes after the rows are loaded.</li>
     <li>Enhancement: external filter present can not be true when grid initialises</li>
+    <li>Enhancement: updated virtual pagination example, to show graceful deletion</li>
     <li>Bugfix: setFilter was not removing entries correctly when other filters were set if filterParams was missing.</li>
     <li>Bugfix: when browser was vertically scrolled, the ghost icon while dragging was not positioned correctly.</li>
     <li>Bugfix: when groupSelectsChildren=true, was failing to update top parent rows when 3 or more columns grouped.</li>
+    <li>Bugfix: api.getVirtualPageState() was returning undefined, now works.</li>
 
     <h3>Version 5.1.x</h3>
 

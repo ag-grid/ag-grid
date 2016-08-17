@@ -284,7 +284,13 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         to the console because the grid property <i>debug=true</i> is set. The buttons are as follows:
         <ul>
         <li>
-            <b>Insert 1 Row @ 2 / Insert 5 Row @ 2</b>: Inserts either one or five rows at location index 2.
+            <b>Inject 1 Row @ 2 / Inject 5 Row @ 2</b>: Inserts either one or five rows at location index 2.
+        </li>
+        <li>
+            <b>Insert 1 Row @ 2 and Refresh</b>: Inserts five rows at location index 2 and then gets grid to refresh.
+        </li>
+        <li>
+            <b>Delete 10 Rows @ 3</b>: Deletes rows from the server, then gets the grid to refresh.
         </li>
         <li>
             <b>Set Row Count to 200</b>: Sets the virtual row count to 200. This adjusts the vertical scroll to

@@ -27,7 +27,7 @@ var sequenceId = 1;
 
 // create a bunch of dummy data
 var allOfTheData = [];
-for (var i = 0; i<1000; i++) {
+for (var i = 0; i<20; i++) {
     allOfTheData.push(createRowData(sequenceId++));
 }
 
@@ -40,19 +40,42 @@ function createRowData(id) {
     };
 }
 
-function insertItemsAt2(count) {
+function liveInsertItemsAt2(count) {
+    var newDataItems = createNewData(count);
+    // here we stick the data directly into the grid
+    gridOptions.api.insertItemsAtIndex(2, newDataItems);
+}
+
+function insertItemsAt2AndRefresh(count) {
+    createNewData(count);
+    // here we tell the grid the data has changed, and let it resync with the server side
+    gridOptions.api.refreshVirtualPageCache();
+}
+
+function createNewData(count) {
     var newDataItems = [];
     for (var i = 0; i<count; i++) {
         var newItem = createRowData(sequenceId++);
         allOfTheData.splice(2, 0, newItem);
         newDataItems.push(newItem);
     }
-
-    gridOptions.api.insertItemsAtIndex(2, newDataItems);
+    return newDataItems;
 }
 
 function removeItem(start, limit) {
     allOfTheData.splice(start, limit);
+
+    // see if we know when the last row is
+    if (gridOptions.api.isMaxRowFound()) {
+        // the grid is aware of the last row, so we need to tell it to reduce the row count
+        gridOptions.api.setVirtualRowCount(allOfTheData.length);
+    } else {
+        // otherwise we don't have to do anything, as the grid is still looking for the
+        // last row. and blank rows at the bottom of the grid will be replace with rows
+        // from further down the list, or if the grid does hit the last row, the last row
+        // will be adjusted by the grid.
+    }
+
     gridOptions.api.refreshVirtualPageCache();
 }
 
