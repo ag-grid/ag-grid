@@ -122,6 +122,11 @@ export class GridOptionsWrapper {
     public getRowClass() { return this.gridOptions.rowClass; }
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
+
+    public getIsFullWidthRowFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthRow; }
+    public getFullWidthRowRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.gridOptions.fullWidthRowRenderer; }
+    public getFullWidthRowRendererParams() { return this.gridOptions.fullWidthRowRendererParams; }
+
     public getBusinessKeyForNodeFunc() { return this.gridOptions.getBusinessKeyForNode; }
     public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }
     public getApi(): GridApi { return this.gridOptions.api; }
