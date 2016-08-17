@@ -20,11 +20,10 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Angular 2 Still in Release Candidate</h3>
 
-    <p>
-        ag-Grid's integration is been developed against beta versions of Angular 2.
-        Until the final version is released, ag-Grid's integration with Angular 2
-        is also liable to change. The examples below work with Angular version 2.0.0-rc.1 - at the time of writing, that is the latest version.
-    </p>
+        <p>
+            Angular 2 is currently on Release Candidate 4 - until Angular 2 is actually released there is of course an element of instability in using it.
+            Please keep this in mind if you plan on using it for a Production release.
+        <p>
 
     <h3>Angular 2 Full Example</h3>
 
@@ -187,26 +186,20 @@ include '../documentation-main/documentation_header.php';
             Neal's assistance was a big help in being able to get something out much faster than we would have otherwise - thanks Neal!
         </p>
     </note>
-
     <note>
-        <p>
-            Angular 2 is currently on Release Candidate 4 - until Angular 2 is actually released there is of course an element of instability in using it.
-            Please keep this in mind if you plan on using it for a Production release.
-        <p>
         <p>
             Your components need to inject ViewContainerRef into them - this should not be necessary as the child component inject them too, but if you don't
             inject them in parent components an error will be thrown. The reason for this is unclear - it could be due to an error in RC4
 <pre>
 constructor(private _viewContainerRef:ViewContainerRef,
-            private agGridCellRendererFactory:AgGridCellRendererFactory) {
-</pre>
+            private agGridCellRendererFactory:AgGridCellRendererFactory) {</pre>
         </p>
     </note>
 
-
     <h3>AgGridCellRendererFactory</h3>
 
-    <p>We offer two methods to add components to ag-Grid, and both are exposed by the use of AgGridCellRendererFactory</p>
+    <p><code>AgGridCellRendererFactory</code> offers two methods to add components to ag-Grid, either via a Template String, or via a Component.</p>
+    <p>To reference <code>AgGridCellRendererFactory</code> you'll need to pull in the dependency:</p>
 
     <pre>import {AgGridCellRendererFactory} from 'ag-grid-ng2/main';</pre>
 
@@ -215,13 +208,12 @@ constructor(private _viewContainerRef:ViewContainerRef,
     You can add a cellRenderer component supplying a string as a template - the <code>params</code> argument passed to cellRenders is available in the template:
 
     <pre ng-non-bindable>
-        {
-            headerName: "Square Template",
-            field: "index",
-            cellRenderer: this.agGridCellRendererFactory.createCellRendererFromTemplate('{{params.value * params.value}}')
-            width: 200
-        },
-    </pre>
+{
+    headerName: "Square Template",
+    field: "index",
+    cellRenderer: this.agGridCellRendererFactory.createCellRendererFromTemplate('{{params.value * params.value}}')
+    width: 200
+},</pre>
 
     <h4>Adding components via Components</h4>
 
@@ -231,30 +223,28 @@ constructor(private _viewContainerRef:ViewContainerRef,
         passed to cellRenders will be set via this method
 
     <pre ng-non-bindable>
-        @Component({
-            selector: 'square-cell',
-            template: `{{valueSquared()}}`
-        })
-        class SquareComponent implements AgGridAware {
-            private params:any;
+@Component({
+    selector: 'square-cell',
+    template: `{{valueSquared()}}`
+})
+class SquareComponent implements AgGridAware {
+    private params:any;
 
-            setGridParameters(params:any):void {
-                this.params = params;
-            }
+    setGridParameters(params:any):void {
+        this.params = params;
+    }
 
-            private valueSquared():number {
-                return this.params.value * this.params.value;
-            }
-        }
-    </pre>
+    private valueSquared():number {
+        return this.params.value * this.params.value;
+    }
+}</pre>
     <pre>
-        {
-            headerName: "Square Component",
-            field: "index",
-            cellRenderer: this.agGridCellRendererFactory.createCellRendererFromComponent(SquareComponent),
-            width: 200
-        },
-    </pre>
+{
+    headerName: "Square Component",
+    field: "index",
+    cellRenderer: this.agGridCellRendererFactory.createCellRendererFromComponent(SquareComponent),
+    width: 200
+},</pre>
 
     <h2>Destroy</h2>
 
@@ -265,10 +255,9 @@ constructor(private _viewContainerRef:ViewContainerRef,
     <p>
         If you have any resources you wish to release in a given component then you need to implement <code>OnDestroy</code>
         <pre ng-non-bindable>
-        ngOnDestroy() {
-            console.log(`Destroying SquareComponent`);
-        }
-        </pre>
+ngOnDestroy() {
+    console.log(`Destroying SquareComponent`);
+}</pre>
     </p>
 
     <h2>Known Issues</h2>
