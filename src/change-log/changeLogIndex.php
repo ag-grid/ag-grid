@@ -20,6 +20,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: when browser was vertically scrolled, the ghost icon while dragging was not positioned correctly.</li>
     <li>Bugfix: when groupSelectsChildren=true, was failing to update top parent rows when 3 or more columns grouped.</li>
     <li>Bugfix: api.getVirtualPageState() was returning undefined, now works.</li>
+    <li>Bugfix: case issue with iDatasource, it was getting imported as iDataSource in places.</li>
 
     <h3>Version 5.1.x</h3>
 
