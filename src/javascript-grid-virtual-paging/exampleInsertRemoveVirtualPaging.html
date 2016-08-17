@@ -1,6 +1,7 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused25"></script>
     <script src="exampleInsertRemoveVirtualPaging.js"></script>
@@ -16,6 +17,7 @@
         <div>
             <button onclick="insertItemsAt2(1)">Insert 1 Row @ 2</button>
             <button onclick="insertItemsAt2(5)">Insert 5 Rows @ 2</button>
+            <button onclick="removeItem(3, 10)">Delete 10 Rows @ 3</button>
             <button onclick="setRowCountTo200()">Set Row Count to 200</button>
             <button onclick="rowsAndMaxFound()">Print Rows and Max Found</button>
             <button onclick="jumpTo500()">Jump to 500</button>
