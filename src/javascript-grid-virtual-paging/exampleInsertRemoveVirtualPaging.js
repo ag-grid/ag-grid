@@ -27,7 +27,7 @@ var sequenceId = 1;
 
 // create a bunch of dummy data
 var allOfTheData = [];
-for (var i = 0; i<100; i++) {
+for (var i = 0; i<10; i++) {
     allOfTheData.push(createRowData(sequenceId++));
 }
 
@@ -120,10 +120,10 @@ var dataSource = {
             var lastRow = -1;
             if (allOfTheData.length <= params.endRow) {
                 lastRow = allOfTheData.length;
+                // TODO setVirtualRowCount and maxRowFound in ag-Grid's success callback.
+                gridOptions.api.setVirtualRowCount(lastRow);
             }
             // call the success callback
-            // TODO setVirtualRowCount and maxRowFound in ag-Grid's success callback.
-            gridOptions.api.setVirtualRowCount(allOfTheData.length);
             params.successCallback(rowsThisPage, lastRow);
         }, 500);
     }
