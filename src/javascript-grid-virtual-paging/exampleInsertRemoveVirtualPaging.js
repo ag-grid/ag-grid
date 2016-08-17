@@ -27,7 +27,7 @@ var sequenceId = 1;
 
 // create a bunch of dummy data
 var allOfTheData = [];
-for (var i = 0; i<10; i++) {
+for (var i = 0; i<1000; i++) {
     allOfTheData.push(createRowData(sequenceId++));
 }
 
@@ -48,7 +48,7 @@ function insertItemsAt2(count) {
         newDataItems.push(newItem);
     }
 
-    gridOptions.api.refreshVirtualPageCache();
+    gridOptions.api.insertItemsAtIndex(2, newDataItems);
 }
 
 function removeItem(start, limit) {
@@ -120,8 +120,6 @@ var dataSource = {
             var lastRow = -1;
             if (allOfTheData.length <= params.endRow) {
                 lastRow = allOfTheData.length;
-                // TODO setVirtualRowCount and maxRowFound in ag-Grid's success callback.
-                gridOptions.api.setVirtualRowCount(lastRow);
             }
             // call the success callback
             params.successCallback(rowsThisPage, lastRow);
