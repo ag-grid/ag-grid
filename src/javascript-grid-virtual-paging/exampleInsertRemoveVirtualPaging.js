@@ -27,7 +27,7 @@ var sequenceId = 1;
 
 // create a bunch of dummy data
 var allOfTheData = [];
-for (var i = 0; i<20; i++) {
+for (var i = 0; i<1000; i++) {
     allOfTheData.push(createRowData(sequenceId++));
 }
 
