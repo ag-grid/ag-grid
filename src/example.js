@@ -236,6 +236,30 @@ var gridOptions = {
     getContextMenuItems: getContextMenuItems
 };
 
+/*gridOptions.isFullWidthRow = function(rowNode) {
+    return rowNode.level === 1;
+};
+gridOptions.fullWidthRowRenderer = FullWidthRowRenderer;
+gridOptions.getRowHeight = function(params) {
+    if (params.node.level === 1) {
+        return 100;
+    } else {
+        return 25;
+    }
+};
+
+function FullWidthRowRenderer() {
+    var latin = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
+    var eTemp = document.createElement('div');
+    eTemp.innerHTML = '<div style="background-color: #2aabd2; height: 100%; width: 100%;">'+latin+'</div>';
+    this.eGui = eTemp.firstChild;
+}
+FullWidthRowRenderer.prototype.getGui = function() {
+    return this.eGui;
+};
+FullWidthRowRenderer.prototype.init = function(params) {
+};*/
+
 function getContextMenuItems(params) {
     var result = params.defaultItems.splice(0);
     result.push(
