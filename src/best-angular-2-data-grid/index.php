@@ -181,8 +181,6 @@ include '../documentation-main/documentation_header.php';
     <note>
         <p>
             We here at ag-Grid owe a debt of thanks to Neal Borelli @ Thermo Fisher Scientific who provided a fully working implementation for us to use as a basis for our Angular 2 "dynamic cell" offering.
-        <p>
-        </p>
             Neal's assistance was a big help in being able to get something out much faster than we would have otherwise - thanks Neal!
         </p>
     </note>
@@ -191,17 +189,17 @@ include '../documentation-main/documentation_header.php';
             Your components need to inject ViewContainerRef into them - this should not be necessary as the child component inject them too, but if you don't
             inject them in parent components an error will be thrown. The reason for this is unclear - it could be due to an error in RC4
 <pre>
-constructor(private _viewContainerRef:ViewContainerRef,
-            private agGridCellRendererFactory:AgGridCellRendererFactory) {</pre>
+constructor(private _viewContainerRef: ViewContainerRef,
+            private agComponentFactory: AgComponentFactory) {</pre>
         </p>
     </note>
 
-    <h3>AgGridCellRendererFactory</h3>
+    <h3>AgComponentFactory</h3>
 
-    <p><code>AgGridCellRendererFactory</code> offers two methods to add components to ag-Grid, either via a Template String, or via a Component.</p>
-    <p>To reference <code>AgGridCellRendererFactory</code> you'll need to pull in the dependency:</p>
+    <p><code>AgComponentFactory</code> offers two methods to add cellRenderers to ag-Grid, either via a Template String, or via a Component.</p>
+    <p>To reference <code>AgComponentFactory</code> you'll need to pull in the dependency:</p>
 
-    <pre>import {AgGridCellRendererFactory} from 'ag-grid-ng2/main';</pre>
+    <pre>import {AgComponentFactory} from 'ag-grid-ng2/main';</pre>
 
     <h4>Adding components via Template Strings</h4>
 
@@ -211,7 +209,7 @@ constructor(private _viewContainerRef:ViewContainerRef,
 {
     headerName: "Square Template",
     field: "index",
-    cellRenderer: this.agGridCellRendererFactory.createCellRendererFromTemplate('{{params.value * params.value}}')
+    cellRenderer: agComponentFactory.createCellRendererFromTemplate('{{params.value * params.value}}')
     width: 200
 },</pre>
 
@@ -219,7 +217,7 @@ constructor(private _viewContainerRef:ViewContainerRef,
 
     <p>You can add a cellRenderer component supplying a regular Angular 2 Component.</p>
 
-    <p>If your component implements the <code>AgGridAware</code> (or just implements <code>setGridParameters(params)</code>), then the <code>params</code> argument
+    <p>If your component implements the <code>AgAware</code> (or just implements <code>agInit(params)</code>), then the <code>params</code> argument
         passed to cellRenders will be set via this method
 
     <pre ng-non-bindable>
@@ -227,10 +225,10 @@ constructor(private _viewContainerRef:ViewContainerRef,
     selector: 'square-cell',
     template: `{{valueSquared()}}`
 })
-class SquareComponent implements AgGridAware {
+class SquareComponent implements AgAware {
     private params:any;
 
-    setGridParameters(params:any):void {
+    agInit(params:any):void {
         this.params = params;
     }
 
@@ -242,7 +240,7 @@ class SquareComponent implements AgGridAware {
 {
     headerName: "Square Component",
     field: "index",
-    cellRenderer: this.agGridCellRendererFactory.createCellRendererFromComponent(SquareComponent),
+    cellRenderer: agComponentFactory.createCellRendererFromComponent(SquareComponent),
     width: 200
 },</pre>
 
@@ -253,7 +251,7 @@ class SquareComponent implements AgGridAware {
         by taking the element out of the DOM via *ngIf (which, unlike *ng-show, destroys the directives).
     </p>
     <p>
-        If you have any resources you wish to release in a given component then you need to implement <code>OnDestroy</code>
+        If you have any resources you wish to release in a given component then you need to implement <code>ngOnDestroy</code>
         <pre ng-non-bindable>
 ngOnDestroy() {
     console.log(`Destroying SquareComponent`);
