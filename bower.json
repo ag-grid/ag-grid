@@ -1,11 +1,11 @@
 {
-  "name": "ag-grid-enterprise",
-  "version": "4.2.0",
+  "name": "ag-grid-ng2",
+  "version": "5.1.1",
   "homepage": "http://www.ag-grid.com/",
   "authors": [
-    "Niall Crosby <niall.crosby@gmail.com>"
+    "Niall Crosby <niall.crosby@ag-grid.com>"
   ],
-  "description": "Enterprise features for ag-Grid",
+  "description": "ag-Grid Angular 2 Component",
   "main": [
     "./main.js"
   ],
