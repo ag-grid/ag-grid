@@ -3,7 +3,7 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {RowNode} from "../../entities/rowNode";
 import {Context, Autowired, PostConstruct} from "../../context/context";
 import {EventService} from "../../eventService";
-import {IGetRowsParams} from "../iDataSource";
+import {IGetRowsParams} from "../iDatasource";
 import {IEventEmitter} from "../../interfaces/iEventEmitter";
 import {CacheParams} from "./virtualPageCache";
 

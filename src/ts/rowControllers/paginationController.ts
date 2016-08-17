@@ -10,7 +10,7 @@ import {Events} from "../events";
 import {FilterManager} from "../filter/filterManager";
 import {IInMemoryRowModel} from "../interfaces/iInMemoryRowModel";
 import {Constants} from "../constants";
-import {IDatasource} from "./iDataSource";
+import {IDatasource} from "./iDatasource";
 
 var template =
         '<div class="ag-paging-panel ag-font-style">'+

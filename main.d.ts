@@ -105,7 +105,7 @@ export * from './dist/lib/rowControllers/virtualPagination/virtualPage';
 
 export * from './dist/lib/rowControllers/floatingRowModel';
 export * from './dist/lib/rowControllers/paginationController';
-export * from './dist/lib/rowControllers/iDataSource';
+export * from './dist/lib/rowControllers/iDatasource';
 
 export * from './dist/lib/widgets/agCheckbox';
 export * from './dist/lib/widgets/component';
