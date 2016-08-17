@@ -185,6 +185,8 @@ export class VirtualPage implements IEventEmitter {
                 // or wanting to keep selection between server side sorting or filtering
                 var indexOfRow = this.startRow + index;
                 rowNode.setDataAndId(data, indexOfRow.toString());
+            } else {
+                rowNode.setDataAndId(undefined, undefined);
             }
         });
     }

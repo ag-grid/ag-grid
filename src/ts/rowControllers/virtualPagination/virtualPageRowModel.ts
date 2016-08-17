@@ -251,7 +251,7 @@ export class VirtualPageRowModel implements IRowModel {
 
     public getVirtualPageState(): any {
         if (this.virtualPageCache) {
-            this.virtualPageCache.getPageState();
+            return this.virtualPageCache.getPageState();
         } else {
             return null;
         }
