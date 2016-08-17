@@ -76,15 +76,18 @@ export class RenderedRow {
         this.rowNode = node;
     }
 
-    private checkRowType(): void {
+    private checkForFullWidthRow(): void {
 
+        let isFullWidthRowFunc = this.gridOptionsWrapper.getIsFullWidthRowFunc();
+        let rowIsComponentRow = isFullWidthRowFunc ? isFullWidthRowFunc(this.rowNode) : false;
         let rowIsGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
-        this.fullWidthRow = rowIsGroupSpanningRow; // || rowIsComponentRow;
 
-        // let userFunc = this.gridOptionsWrapper.getIsRowComponentFunc();
-        // let rowIsComponentRow = userFunc ? userFunc(this.rowNode) : false;
-
-        if (this.fullWidthRow) {
+        if (rowIsComponentRow) {
+            this.fullWidthRow = true;
+            this.fullWidthRowRenderer = this.gridOptionsWrapper.getFullWidthRowRenderer();
+            this.fullWidthRowRendererParams = this.gridOptionsWrapper.getFullWidthRowRendererParams();
+        } else if (rowIsGroupSpanningRow) {
+            this.fullWidthRow = true;
             this.fullWidthRowRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
             this.fullWidthRowRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
 
@@ -94,6 +97,8 @@ export class RenderedRow {
                     innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
                 }
             }
+        } else {
+            this.fullWidthRow = false;
         }
     }
 
@@ -101,7 +106,7 @@ export class RenderedRow {
     public init(): void {
 
         this.createContainers();
-        this.checkRowType();
+        this.checkForFullWidthRow();
 
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
