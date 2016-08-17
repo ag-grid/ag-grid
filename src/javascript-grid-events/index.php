@@ -26,6 +26,10 @@ include '../documentation-main/documentation_header.php';
         via api.addEventListener(eventName, handler).
     </p>
 
+    <note>For Angular 1 - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on purpose
+    for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest cycle
+    for each one would kill performance. So you may want to $scope.$apply() after you handle the event.</note>
+
     <h4>
         <img src="/images/react.png" height="20px"/>
         React
