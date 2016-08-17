@@ -1,20 +1,21 @@
-import { Component, Input, ComponentFactory, ViewContainerRef, ComponentResolver, ComponentRef, Type, ReflectiveInjector, Injectable } from '@angular/core';
+import { Component, ComponentFactory, ViewContainerRef, ComponentResolver, ComponentRef, Type, Injectable } from '@angular/core';
 import { ICellRenderer } from 'ag-grid/main';
 
 @Injectable()
-export class AgGridCellRendererFactory {
+export class AgComponentFactory {
+
     constructor(private _viewContainerRef:ViewContainerRef, private _componentResolver:ComponentResolver) {
     }
 
-    public createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; }):Type {
+    public createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; }): {new(): ICellRenderer} {
         return createCellRendererFromComponent<T>(componentType, this._viewContainerRef, this._componentResolver, (instance:any, params?:any) => {
-            if (instance.setGridParameters) {
-                instance.setGridParameters(params);
+            if (instance.agInit) {
+                instance.agInit(params);
             }
         });
     }
 
-    public createCellRendererFromTemplate(template:string):Type {
+    public createCellRendererFromTemplate(template:string): {new(): ICellRenderer} {
         return createCellRendererFromTemplate(this._viewContainerRef, this._componentResolver, template);
     }
 
@@ -36,7 +37,7 @@ function createComponent<T extends Object>(componentType:{ new(...args:any[]): T
 function createCellRendererFromComponent<T extends Object>(componentType:{ new(...args:any[]): T; },
                                                            viewContainerRef:ViewContainerRef,
                                                            componentResolver:ComponentResolver,
-                                                           initializer?:(instance:T, params?:any) => void):Type {
+                                                           initializer?:(instance:T, params?:any) => void): {new(): ICellRenderer} {
     class CellRenderer implements ICellRenderer {
         private _params:any;
         private _componentRef:ComponentRef<T>;
@@ -85,7 +86,7 @@ function createDynamicComponentType(selector:string, template:string):any {
     return Fake;
 }
 
-function createCellRendererFromTemplate<T>(viewContainerRef:ViewContainerRef, componentResolver:ComponentResolver, template:string):Type {
+function createCellRendererFromTemplate<T>(viewContainerRef:ViewContainerRef, componentResolver:ComponentResolver, template:string): {new(): ICellRenderer} {
     let componentType:{ new(...args:any[]): any; } = createDynamicComponentType('dynamic-component', template);
     return createCellRendererFromComponent(componentType, viewContainerRef, componentResolver, (i:DynamicComponent, p:any) => i.params = p);
 }
