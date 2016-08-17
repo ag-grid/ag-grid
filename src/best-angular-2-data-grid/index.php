@@ -184,7 +184,22 @@ include '../documentation-main/documentation_header.php';
             We here at ag-Grid owe a debt of thanks to Neal Borelli @ Thermo Fisher Scientific who provided a fully working implementation for us to use as a basis for our Angular 2 "dynamic cell" offering.
         <p>
         </p>
-            Neal's assistance was a big help in being able to get something out faster than we would have otherwise - thanks Neal!
+            Neal's assistance was a big help in being able to get something out much faster than we would have otherwise - thanks Neal!
+        </p>
+    </note>
+
+    <note>
+        <p>
+            Angular 2 is currently on Release Candidate 4 - until Angular 2 is actually released there is of course an element of instability in using it.
+            Please keep this in mind if you plan on using it for a Production release.
+        <p>
+        <p>
+            Your components need to inject ViewContainerRef into them - this should not be necessary as the child component inject them too, but if you don't
+            inject them in parent components an error will be thrown. The reason for this is unclear - it could be due to an error in RC4
+<pre>
+constructor(private _viewContainerRef:ViewContainerRef,
+            private agGridCellRendererFactory:AgGridCellRendererFactory) {
+</pre>
         </p>
     </note>
 
