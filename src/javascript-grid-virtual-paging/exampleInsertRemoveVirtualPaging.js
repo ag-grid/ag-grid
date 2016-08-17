@@ -48,7 +48,12 @@ function insertItemsAt2(count) {
         newDataItems.push(newItem);
     }
 
-    gridOptions.api.insertItemsAtIndex(2, newDataItems);
+    gridOptions.api.refreshVirtualPageCache();
+}
+
+function removeItem(start, limit) {
+    allOfTheData.splice(start, limit);
+    gridOptions.api.refreshVirtualPageCache();
 }
 
 function refreshCache() {
@@ -117,6 +122,8 @@ var dataSource = {
                 lastRow = allOfTheData.length;
             }
             // call the success callback
+            // TODO setVirtualRowCount and maxRowFound in ag-Grid's success callback.
+            gridOptions.api.setVirtualRowCount(allOfTheData.length);
             params.successCallback(rowsThisPage, lastRow);
         }, 500);
     }
