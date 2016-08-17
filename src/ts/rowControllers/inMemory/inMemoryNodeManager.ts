@@ -5,7 +5,6 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Context} from "../../context/context";
 import {GetNodeChildDetails} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
-import {Events} from "../../events";
 
 export class InMemoryNodeManager {
 
