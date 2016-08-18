@@ -1,4 +1,4 @@
-// ag-grid-ng2 v5.2.0
+// ag-grid-ng2 v5.2.2
 import { ViewContainerRef, ComponentResolver } from '@angular/core';
 import { ICellRenderer } from 'ag-grid/main';
 export declare class AgComponentFactory {
