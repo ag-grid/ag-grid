@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,12 +58,12 @@ var PaginationController = (function () {
         var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
         this.eventService.addEventListener(events_1.Events.EVENT_FILTER_CHANGED, function () {
             if (paginationEnabled && _this.gridOptionsWrapper.isEnableServerSideFilter()) {
-                _this.reset();
+                _this.reset(false);
             }
         });
         this.eventService.addEventListener(events_1.Events.EVENT_SORT_CHANGED, function () {
             if (paginationEnabled && _this.gridOptionsWrapper.isEnableServerSideSorting()) {
-                _this.reset();
+                _this.reset(false);
             }
         });
         if (paginationEnabled && this.gridOptionsWrapper.getDatasource()) {
@@ -76,7 +76,7 @@ var PaginationController = (function () {
             // only continue if we have a valid datasource to work with
             return;
         }
-        this.reset();
+        this.reset(true);
     };
     PaginationController.prototype.checkForDeprecated = function () {
         var ds = this.datasource;
@@ -84,14 +84,21 @@ var PaginationController = (function () {
             console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
         }
     };
-    PaginationController.prototype.reset = function () {
+    PaginationController.prototype.reset = function (freshDatasource) {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
         if (utils_1.Utils.missing(this.datasource)) {
             return;
         }
         this.checkForDeprecated();
-        this.selectionController.reset();
+        // if user is providing id's, then this means we can keep the selection between datsource hits,
+        // as the rows will keep their unique id's even if, for example, server side sorting or filtering
+        // is done. if it's a new datasource, then always clear the selection.
+        var userGeneratingRows = utils_1.Utils.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
+        var resetSelectionController = freshDatasource || !userGeneratingRows;
+        if (resetSelectionController) {
+            this.selectionController.reset();
+        }
         // copy pageSize, to guard against it changing the the datasource between calls
         this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
         if (!(this.pageSize >= 1)) {

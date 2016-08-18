@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,6 +36,8 @@ var FilterManager = (function () {
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
+        // check this here, in case there is a filter from the start
+        this.checkExternalFilter();
     };
     FilterManager.prototype.registerFilter = function (key, Filter) {
         this.availableFilters[key] = Filter;
@@ -171,10 +173,13 @@ var FilterManager = (function () {
             this.onFilterChanged();
         }
     };
+    FilterManager.prototype.checkExternalFilter = function () {
+        this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
+    };
     FilterManager.prototype.onFilterChanged = function () {
         this.eventService.dispatchEvent(events_1.Events.EVENT_BEFORE_FILTER_CHANGED);
         this.advancedFilterPresent = this.isAdvancedFilterPresent();
-        this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
+        this.checkExternalFilter();
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
             if (filterWrapper.filter.onAnyFilterChanged) {
                 filterWrapper.filter.onAnyFilterChanged();

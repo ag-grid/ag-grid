@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,6 +94,7 @@ var ColumnApi = (function () {
     ColumnApi.prototype.getAllDisplayedColumnGroups = function () { return this._columnController.getAllDisplayedColumnGroups(); };
     ColumnApi.prototype.autoSizeColumn = function (key) { return this._columnController.autoSizeColumn(key); };
     ColumnApi.prototype.autoSizeColumns = function (keys) { return this._columnController.autoSizeColumns(keys); };
+    ColumnApi.prototype.autoSizeAllColumns = function () { this._columnController.autoSizeAllColumns(); };
     ColumnApi.prototype.setSecondaryColumns = function (colDefs) { this._columnController.setSecondaryColumns(colDefs); };
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
     ColumnApi.prototype.columnGroupOpened = function (group, newValue) {
@@ -538,7 +539,7 @@ var ColumnController = (function () {
     };
     ColumnController.prototype.setColumnAggFunc = function (column, aggFunc) {
         column.setAggFunc(aggFunc);
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_VALUE_CHANGED);
+        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_VALUE_CHANGED).withColumn(column);
         this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, event);
     };
     ColumnController.prototype.moveRowGroupColumn = function (fromIndex, toIndex) {
@@ -985,7 +986,7 @@ var ColumnController = (function () {
         function colMatches(column) {
             var columnMatches = column === key;
             var colDefMatches = column.getColDef() === key;
-            var idMatches = column.getColId() === key;
+            var idMatches = column.getColId() == key;
             return columnMatches || colDefMatches || idMatches;
         }
         return null;

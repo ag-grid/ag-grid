@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.1.2
+// Type definitions for ag-grid v5.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -146,6 +146,11 @@ export interface GridOptions {
     getRowStyle?: Function;
     getRowClass?: Function;
     getRowHeight?: Function;
+    fullWidthRowRenderer?: {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    fullWidthRowRendererParams?: any;
+    isFullWidthRow?(rowNode: RowNode): boolean;
     headerCellRenderer?: any;
     groupRowAggNodes?(nodes: RowNode[]): any;
     getBusinessKeyForNode?(node: RowNode): string;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.1.2
+// Type definitions for ag-grid v5.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -20,6 +20,7 @@ export declare class GridPanel {
     private mouseEventService;
     private focusedCellController;
     private $scope;
+    private contextMenuFactory;
     private layout;
     private logger;
     private forPrint;
@@ -68,7 +69,10 @@ export declare class GridPanel {
     private addEventListeners();
     private addDragListeners();
     private addCellListeners();
-    private processMouseEvent(eventName, mouseEvent, eventSource);
+    private addBodyViewportListener();
+    private processMouseEvent(eventName, mouseEvent);
+    private onContextMenu(mouseEvent);
+    private preventDefultOnContextMenu(mouseEvent);
     private addShortcutKeyListeners();
     private onCtrlAndA(event);
     private onCtrlAndC(event);
