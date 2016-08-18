@@ -8,7 +8,13 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h3>Version 5.1.x</h3>
+    <h3>Version 5.2.x</h3>
+
+    <h4>ag-Grid 5.2.0, ag-Grid-Enterprise 5.2.0, ag-Grid-ng2 5.2.0</h4>
+
+    <h4>Bug Fixes and Angular 2 Cell Rendering</h4>
+
+    <li>Enhancement: Now you can create cellRenderers using Angular 2. See <a href="../best-angular-2-data-grid/">Getting Started Angular 2</a> </li>
     <li>Enhancement: Now context menu appears when you click outside of the rows, including when no rows present.</li>
     <li>Enhancement: Added columnApi.autoSizeAllColumns().</li>
     <li>Enhancement: Allowed following methods to work with pagination: forEachLeafNode, forEachNodeAfterFilter, forEachNodeAfterFilterAndSort.</li>

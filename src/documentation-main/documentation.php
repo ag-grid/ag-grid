@@ -19,21 +19,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">12th Aug 2016</div>
-        <div class="news-header">ag-Grid v5.1.x Released</div>
+        <div class="news-header">18th Aug 2016</div>
+        <div class="news-header">ag-Grid v5.2.x Released</div>
         <div>
-            Added <a href="../javascript-grid-insert-remove/">updatable row sets</a>
-            and also rewrote the engine behind <a href="../javascript-grid-virtual-paging/">
-            Virtual Pagination</a> to allow updating rows and refresh of page cache.
+            Added Angular 2 components for cellRenderers.
+            Plus other minor bug fixes and enhancements.
             See <a href="../change-log/changeLogIndex.php">change log</a> for full release details.
         </div>
         <div style="text-align: right;">
             <span>
-                <img src="../images/goldStar.png"/>
-                <img src="../images/goldStar.png"/>
-                <img src="../images/goldStar.png"/>
-                <img src="../images/goldStar.png"/>
-                <img src="../images/goldStar.png"/>
+                <img src="../images/angular2_large.png"/>
+                <img src="../images/happyFaceLarge.png"/>
             </span>
         </div>
     </div>
@@ -160,8 +156,16 @@ include 'documentation_header.php';
 <h4>Angular 2 Bindings</h4>
 
 <p>
-    We want you to be able to put Angular 2 bindings into your cellRenderers and cellEditors. We are working
-    hard at figuring this out. This will be in both free and enterprise versions.
+    You can now provide Angular 2 cellRenderers. We are enhancing this to cellEditors and custom filters.
+    This should all be delivered during September 2016.
+</p>
+
+<h4>Grids inside Grids</h4>
+
+<p>
+    Other grids allow you to expand rows to show a different grid as a child row, with different columns
+    and rows. Grids inside grids. We want to get this in. This will be available in ag-Grid Free. We
+    have started work on this and it should be ready by September 2016.
 </p>
 
 <h4>Aurelia Support</h4>
@@ -170,14 +174,6 @@ include 'documentation_header.php';
     Aurelia is getting bigger - we want to add it to our list of supported frameworks. Right now we know people
     are already using ag-Grid with Aurelia, using either the Web Components or Plain JavaScript versions. We
     want native support for  Aurelia out of the box. This will be in both free and enterprise versions.
-</p>
-
-<h4>Grids inside Grids</h4>
-
-<p>
-    Other grids allow you to expand rows to show a different grid as a child row, with different columns
-    and rows. Grids inside grids. We want to get this in. Yet to decide if it's an enterprise only feature
-    or not - we have see how difficult it is to implement and what it feels like when it is finished.
 </p>
 
 <h4>Pinnable Filters in Tool Panel (ag-Grid enterprise)</h4>
