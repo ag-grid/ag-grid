@@ -286,16 +286,13 @@ export class VirtualPageCache {
     }
 
     private checkVirtualRowCount(page: VirtualPage, lastRow: any): void {
-        // if we know the last row, use if
-        if (this.maxRowFound) {
-            return;
-        }
-
+        // if client provided a last row, we always use it, as it could change between server calls
+        // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.virtualRowCount = lastRow;
             this.maxRowFound = true;
             this.dispatchModelUpdated();
-        } else {
+        } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
             var lastRowIndex = (page.getPageNumber() + 1) * this.cacheParams.pageSize;
             var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.paginationOverflowSize;
