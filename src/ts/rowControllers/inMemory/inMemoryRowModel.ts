@@ -10,7 +10,7 @@ import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/c
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
-import {InMemoryNodeManager} from "./InMemoryNodeManager";
+import {InMemoryNodeManager} from "./inMemoryNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 

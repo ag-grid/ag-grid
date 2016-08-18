@@ -98,7 +98,7 @@ import {SetLeftFeature} from "./rendering/features/setLeftFeature";
 import {RenderedCell} from "./rendering/renderedCell";
 import {HeaderRowComp} from "./headerRendering/headerRowComp";
 import {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateShowChangeCellRenderer";
-import {InMemoryNodeManager} from "./rowControllers/inMemory/InMemoryNodeManager";
+import {InMemoryNodeManager} from "./rowControllers/inMemory/inMemoryNodeManager";
 import {VirtualPageCache} from "./rowControllers/virtualPagination/virtualPageCache";
 import {VirtualPage} from "./rowControllers/virtualPagination/virtualPage";
 
