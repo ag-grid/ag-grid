@@ -24,6 +24,7 @@ var gridOptions = {
     enableSorting: true,
     enableColResize: true,
     groupSuppressAutoColumn: true,
+    suppressAggFuncInHeader: true,
     aggFuncs: {
         // this overrides the grids built in sum function
         'sum': sumFunction,
