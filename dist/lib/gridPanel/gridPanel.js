@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -152,6 +152,7 @@ var GridPanel = (function () {
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
         this.addCellListeners();
+        this.addBodyViewportListener();
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
@@ -219,22 +220,49 @@ var GridPanel = (function () {
     GridPanel.prototype.addCellListeners = function () {
         var _this = this;
         var eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu'];
-        var that = this;
         eventNames.forEach(function (eventName) {
+            var listener = _this.processMouseEvent.bind(_this, eventName);
             _this.eAllCellContainers.forEach(function (container) {
-                return container.addEventListener(eventName, function (mouseEvent) {
-                    var eventSource = this;
-                    that.processMouseEvent(eventName, mouseEvent, eventSource);
-                });
+                container.addEventListener(eventName, listener);
+                _this.destroyFunctions.push(function () { return container.removeEventListener(eventName, listener); });
             });
         });
     };
-    GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent, eventSource) {
+    GridPanel.prototype.addBodyViewportListener = function () {
+        var _this = this;
+        // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
+        // the context menu if no rows are displayed, or user simply clicks outside of a cell
+        var listener = function (mouseEvent) {
+            var target = utils_1.Utils.getTarget(mouseEvent);
+            if (target === _this.eBodyViewport) {
+                // show it
+                _this.onContextMenu(mouseEvent);
+                _this.preventDefultOnContextMenu(mouseEvent);
+            }
+        };
+        this.eBodyViewport.addEventListener('contextmenu', listener);
+        this.destroyFunctions.push(function () { return _this.eBodyViewport.removeEventListener('contextmenu', listener); });
+    };
+    GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent) {
         var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
         if (utils_1.Utils.exists(cell)) {
             //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
-            this.rowRenderer.onMouseEvent(eventName, mouseEvent, eventSource, cell);
+            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
         }
+        this.preventDefultOnContextMenu(mouseEvent);
+    };
+    GridPanel.prototype.onContextMenu = function (mouseEvent) {
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
+        // thus the normal menu is displayed
+        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            return;
+        }
+        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
+            this.contextMenuFactory.showMenu(null, null, null, mouseEvent);
+            mouseEvent.preventDefault();
+        }
+    };
+    GridPanel.prototype.preventDefultOnContextMenu = function (mouseEvent) {
         // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
@@ -998,6 +1026,10 @@ var GridPanel = (function () {
         context_1.Autowired('$scope'), 
         __metadata('design:type', Object)
     ], GridPanel.prototype, "$scope", void 0);
+    __decorate([
+        context_1.Optional('contextMenuFactory'), 
+        __metadata('design:type', Object)
+    ], GridPanel.prototype, "contextMenuFactory", void 0);
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory')), 
         __metadata('design:type', Function), 

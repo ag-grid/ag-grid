@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,6 +49,12 @@ var RowNode = (function () {
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
                 this.id = getRowNodeId(this.data);
+            }
+            else {
+                // this can happen if user has set blank into the rowNode after the row previously
+                // having data. this happens in virtual page row model, when data is delete and
+                // the page is refreshed.
+                this.id = undefined;
             }
         }
         else {
@@ -126,7 +132,7 @@ var RowNode = (function () {
     RowNode.prototype.calculateSelectedFromChildrenBubbleUp = function () {
         this.calculateSelectedFromChildren();
         if (this.parent) {
-            this.parent.calculateSelectedFromChildren();
+            this.parent.calculateSelectedFromChildrenBubbleUp();
         }
     };
     RowNode.prototype.setSelectedInitialValue = function (selected) {

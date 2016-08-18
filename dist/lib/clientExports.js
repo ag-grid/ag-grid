@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -96,7 +96,7 @@ var setLeftFeature_1 = require("./rendering/features/setLeftFeature");
 var renderedCell_1 = require("./rendering/renderedCell");
 var headerRowComp_1 = require("./headerRendering/headerRowComp");
 var animateShowChangeCellRenderer_1 = require("./rendering/cellRenderers/animateShowChangeCellRenderer");
-var InMemoryNodeManager_1 = require("./rowControllers/inMemory/InMemoryNodeManager");
+var inMemoryNodeManager_1 = require("./rowControllers/inMemory/inMemoryNodeManager");
 var virtualPageCache_1 = require("./rowControllers/virtualPagination/virtualPageCache");
 var virtualPage_1 = require("./rowControllers/virtualPagination/virtualPage");
 function populateClientExports(exports) {
@@ -186,7 +186,7 @@ function populateClientExports(exports) {
     exports.FlattenStage = flattenStage_1.FlattenStage;
     exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
     exports.SortStage = sortStage_1.SortStage;
-    exports.InMemoryNodeManager = InMemoryNodeManager_1.InMemoryNodeManager;
+    exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
     // rowControllers
     exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
     exports.PaginationController = paginationController_1.PaginationController;

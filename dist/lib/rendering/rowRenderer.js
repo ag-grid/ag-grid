@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -366,7 +366,7 @@ var RowRenderer = (function () {
         //var end = new Date().getTime();
         //console.log(end-start);
     };
-    RowRenderer.prototype.onMouseEvent = function (eventName, mouseEvent, eventSource, cell) {
+    RowRenderer.prototype.onMouseEvent = function (eventName, mouseEvent, cell) {
         var renderedRow;
         switch (cell.floating) {
             case constants_1.Constants.FLOATING_TOP:
@@ -380,7 +380,7 @@ var RowRenderer = (function () {
                 break;
         }
         if (renderedRow) {
-            renderedRow.onMouseEvent(eventName, mouseEvent, eventSource, cell);
+            renderedRow.onMouseEvent(eventName, mouseEvent, cell);
         }
     };
     RowRenderer.prototype.insertRow = function (node, rowIndex) {

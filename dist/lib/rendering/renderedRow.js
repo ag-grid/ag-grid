@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,19 +39,45 @@ var RenderedRow = (function () {
         this.rowIndex = rowIndex;
         this.rowNode = node;
     }
+    RenderedRow.prototype.checkForFullWidthRow = function () {
+        var isFullWidthRowFunc = this.gridOptionsWrapper.getIsFullWidthRowFunc();
+        var rowIsComponentRow = isFullWidthRowFunc ? isFullWidthRowFunc(this.rowNode) : false;
+        var rowIsGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
+        if (rowIsComponentRow) {
+            this.fullWidthRow = true;
+            this.fullWidthRowRenderer = this.gridOptionsWrapper.getFullWidthRowRenderer();
+            this.fullWidthRowRendererParams = this.gridOptionsWrapper.getFullWidthRowRendererParams();
+        }
+        else if (rowIsGroupSpanningRow) {
+            this.fullWidthRow = true;
+            this.fullWidthRowRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
+            this.fullWidthRowRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
+            if (!this.fullWidthRowRenderer) {
+                this.fullWidthRowRenderer = cellRendererFactory_1.CellRendererFactory.GROUP;
+                this.fullWidthRowRendererParams = {
+                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
+                };
+            }
+        }
+        else {
+            this.fullWidthRow = false;
+        }
+    };
     RenderedRow.prototype.init = function () {
         this.createContainers();
-        var groupHeaderTakesEntireRow = this.gridOptionsWrapper.isGroupUseEntireRow();
-        this.rowIsHeaderThatSpans = this.rowNode.group && groupHeaderTakesEntireRow;
+        this.checkForFullWidthRow();
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
-        if (this.rowIsHeaderThatSpans) {
-            this.refreshGroupRow();
+        if (this.fullWidthRow) {
+            this.refreshSingleComponent();
         }
         else {
             this.refreshCellsIntoRow();
         }
-        this.addDynamicStyles();
-        this.addDynamicClasses();
+        this.addGridClasses();
+        this.addStyleFromRowStyle();
+        this.addStyleFromRowStyleFunc();
+        this.addClassesFromRowClass();
+        this.addClassesFromRowClassFunc();
         this.addRowIds();
         this.setTopAndHeightCss();
         this.addRowSelectedListener();
@@ -71,7 +97,19 @@ var RenderedRow = (function () {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         });
+        this.addDataChangedListener();
         this.initialised = true;
+    };
+    // because data can change, especially in virtual pagination and viewport row models, need to allow setting
+    // styles and classes after the data has changed
+    RenderedRow.prototype.addDataChangedListener = function () {
+        var _this = this;
+        var dataChangedListener = function () {
+            _this.addStyleFromRowStyleFunc();
+            _this.addClassesFromRowClass();
+        };
+        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, dataChangedListener);
+        this.destroyFunctions.push(function () { return _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, dataChangedListener); });
     };
     RenderedRow.prototype.angular1Compile = function (element) {
         if (this.scope) {
@@ -96,10 +134,10 @@ var RenderedRow = (function () {
     };
     RenderedRow.prototype.onDisplayedColumnsChanged = function (event) {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
-        if (this.rowIsHeaderThatSpans) {
+        if (this.fullWidthRow) {
             var columnPinned = event.getType() === events_1.Events.EVENT_COLUMN_PINNED;
             if (columnPinned) {
-                this.refreshGroupRow();
+                this.refreshSingleComponent();
             }
         }
         else {
@@ -108,7 +146,7 @@ var RenderedRow = (function () {
     };
     RenderedRow.prototype.onVirtualColumnsChanged = function (event) {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
-        if (!this.rowIsHeaderThatSpans) {
+        if (!this.fullWidthRow) {
             this.refreshCellsIntoRow();
         }
     };
@@ -282,10 +320,10 @@ var RenderedRow = (function () {
             this.ePinnedRightContainer.appendChild(this.ePinnedRightRow);
         }
     };
-    RenderedRow.prototype.onMouseEvent = function (eventName, mouseEvent, eventSource, cell) {
+    RenderedRow.prototype.onMouseEvent = function (eventName, mouseEvent, cell) {
         var renderedCell = this.renderedCells[cell.column.getId()];
         if (renderedCell) {
-            renderedCell.onMouseEvent(eventName, mouseEvent, eventSource);
+            renderedCell.onMouseEvent(eventName, mouseEvent);
         }
     };
     RenderedRow.prototype.setTopAndHeightCss = function () {
@@ -360,7 +398,7 @@ var RenderedRow = (function () {
     RenderedRow.prototype.isGroup = function () {
         return this.rowNode.group === true;
     };
-    RenderedRow.prototype.refreshGroupRow = function () {
+    RenderedRow.prototype.refreshSingleComponent = function () {
         // where the components go changes with pinning, it's easiest ot just remove from all containers
         // and start again if the pinning changes
         utils_1.Utils.removeAllChildren(this.ePinnedLeftRow);
@@ -394,19 +432,13 @@ var RenderedRow = (function () {
             this.ePinnedRightRow.appendChild(this.eGroupRowPaddingRight);
         }
     };
+    RenderedRow.prototype.createSingleComponentParams = function () {
+    };
     RenderedRow.prototype.createGroupSpanningEntireRowCell = function (padding) {
         var eRow = document.createElement('span');
         // padding means we are on the right hand side of a pinned table, ie
         // in the main body.
         if (!padding) {
-            var cellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
-            var cellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
-            if (!cellRenderer) {
-                cellRenderer = cellRendererFactory_1.CellRendererFactory.GROUP;
-                cellRendererParams = {
-                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
-                };
-            }
             var params = {
                 data: this.rowNode.data,
                 node: this.rowNode,
@@ -419,14 +451,14 @@ var RenderedRow = (function () {
                 eParentOfValue: eRow,
                 addRenderedRowListener: this.addEventListener.bind(this),
                 colDef: {
-                    cellRenderer: cellRenderer,
-                    cellRendererParams: cellRendererParams
+                    cellRenderer: this.fullWidthRowRenderer,
+                    cellRendererParams: this.fullWidthRowRendererParams
                 }
             };
-            if (cellRendererParams) {
-                utils_1.Utils.assign(params, cellRendererParams);
+            if (this.fullWidthRowRendererParams) {
+                utils_1.Utils.assign(params, this.fullWidthRowRendererParams);
             }
-            var cellComponent = this.cellRendererService.useCellRenderer(cellRenderer, eRow, params);
+            var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthRowRenderer, eRow, params);
             if (cellComponent && cellComponent.destroy) {
                 this.destroyFunctions.push(function () { return cellComponent.destroy(); });
             }
@@ -451,7 +483,7 @@ var RenderedRow = (function () {
             return null;
         }
     };
-    RenderedRow.prototype.addDynamicStyles = function () {
+    RenderedRow.prototype.addStyleFromRowStyle = function () {
         var rowStyle = this.gridOptionsWrapper.getRowStyle();
         if (rowStyle) {
             if (typeof rowStyle === 'function') {
@@ -461,6 +493,8 @@ var RenderedRow = (function () {
                 this.eLeftCenterAndRightRows.forEach(function (row) { return utils_1.Utils.addStylesToElement(row, rowStyle); });
             }
         }
+    };
+    RenderedRow.prototype.addStyleFromRowStyleFunc = function () {
         var rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
         if (rowStyleFunc) {
             var params = {
@@ -544,9 +578,6 @@ var RenderedRow = (function () {
     RenderedRow.prototype.getRowNode = function () {
         return this.rowNode;
     };
-    RenderedRow.prototype.getRowIndex = function () {
-        return this.rowIndex;
-    };
     RenderedRow.prototype.refreshCells = function (colIds, animate) {
         if (!colIds) {
             return;
@@ -559,7 +590,35 @@ var RenderedRow = (function () {
             }
         });
     };
-    RenderedRow.prototype.addDynamicClasses = function () {
+    RenderedRow.prototype.addClassesFromRowClassFunc = function () {
+        var _this = this;
+        var classes = [];
+        var gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
+        if (gridOptionsRowClassFunc) {
+            var params = {
+                node: this.rowNode,
+                data: this.rowNode.data,
+                rowIndex: this.rowIndex,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi()
+            };
+            var classToUseFromFunc = gridOptionsRowClassFunc(params);
+            if (classToUseFromFunc) {
+                if (typeof classToUseFromFunc === 'string') {
+                    classes.push(classToUseFromFunc);
+                }
+                else if (Array.isArray(classToUseFromFunc)) {
+                    classToUseFromFunc.forEach(function (classItem) {
+                        classes.push(classItem);
+                    });
+                }
+            }
+        }
+        classes.forEach(function (classStr) {
+            _this.eLeftCenterAndRightRows.forEach(function (row) { return utils_1.Utils.addCssClass(row, classStr); });
+        });
+    };
+    RenderedRow.prototype.addGridClasses = function () {
         var _this = this;
         var classes = [];
         classes.push('ag-row');
@@ -592,6 +651,13 @@ var RenderedRow = (function () {
                 classes.push("ag-row-level-0");
             }
         }
+        classes.forEach(function (classStr) {
+            _this.eLeftCenterAndRightRows.forEach(function (row) { return utils_1.Utils.addCssClass(row, classStr); });
+        });
+    };
+    RenderedRow.prototype.addClassesFromRowClass = function () {
+        var _this = this;
+        var classes = [];
         // add in extra classes provided by the config
         var gridOptionsRowClass = this.gridOptionsWrapper.getRowClass();
         if (gridOptionsRowClass) {
@@ -604,27 +670,6 @@ var RenderedRow = (function () {
                 }
                 else if (Array.isArray(gridOptionsRowClass)) {
                     gridOptionsRowClass.forEach(function (classItem) {
-                        classes.push(classItem);
-                    });
-                }
-            }
-        }
-        var gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
-        if (gridOptionsRowClassFunc) {
-            var params = {
-                node: this.rowNode,
-                data: this.rowNode.data,
-                rowIndex: this.rowIndex,
-                context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi()
-            };
-            var classToUseFromFunc = gridOptionsRowClassFunc(params);
-            if (classToUseFromFunc) {
-                if (typeof classToUseFromFunc === 'string') {
-                    classes.push(classToUseFromFunc);
-                }
-                else if (Array.isArray(classToUseFromFunc)) {
-                    classToUseFromFunc.forEach(function (classItem) {
                         classes.push(classItem);
                     });
                 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,6 +101,7 @@ var ValueService = (function () {
         var newValueHandler = column.getColDef().newValueHandler;
         // need either a field or a newValueHandler for this to work
         if (utils_1.Utils.missing(field) && utils_1.Utils.missing(newValueHandler)) {
+            console.warn("ag-Grid: you need either field or newValueHandler set on colDef for editing to work");
             return;
         }
         var paramsForCallbacks = {

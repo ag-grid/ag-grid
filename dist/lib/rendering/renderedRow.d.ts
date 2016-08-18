@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.1.2
+// Type definitions for ag-grid v5.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -24,7 +24,9 @@ export declare class RenderedRow {
     private scope;
     private rowNode;
     private rowIndex;
-    private rowIsHeaderThatSpans;
+    private fullWidthRow;
+    private fullWidthRowRenderer;
+    private fullWidthRowRendererParams;
     private parentScope;
     private rowRenderer;
     private eBodyContainer;
@@ -37,7 +39,9 @@ export declare class RenderedRow {
     private renderedRowEventService;
     private initialised;
     constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedRightContainer: HTMLElement, node: RowNode, rowIndex: number);
+    private checkForFullWidthRow();
     init(): void;
+    private addDataChangedListener();
     private angular1Compile(element);
     private addColumnListener();
     private onDisplayedColumnsChanged(event);
@@ -56,7 +60,7 @@ export declare class RenderedRow {
     private addNodeDataChangedListener();
     private createContainers();
     private attachContainers();
-    onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void;
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void;
     private setTopAndHeightCss();
     private addRowIds();
     addEventListener(eventType: string, listener: Function): void;
@@ -67,16 +71,19 @@ export declare class RenderedRow {
     private destroyScope();
     isDataInList(rows: any[]): boolean;
     isGroup(): boolean;
-    private refreshGroupRow();
+    private refreshSingleComponent();
+    private createSingleComponentParams();
     private createGroupSpanningEntireRowCell(padding);
     private createChildScopeOrNull(data);
-    private addDynamicStyles();
+    private addStyleFromRowStyle();
+    private addStyleFromRowStyleFunc();
     private createParams();
     private createEvent(event, eventSource);
     private createRowContainer();
     onRowClicked(event: MouseEvent): void;
     getRowNode(): any;
-    getRowIndex(): any;
     refreshCells(colIds: string[], animate: boolean): void;
-    private addDynamicClasses();
+    private addClassesFromRowClassFunc();
+    private addGridClasses();
+    private addClassesFromRowClass();
 }

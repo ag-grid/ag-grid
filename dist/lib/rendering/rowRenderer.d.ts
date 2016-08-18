@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.1.2
+// Type definitions for ag-grid v5.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -75,7 +75,7 @@ export declare class RowRenderer {
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
     private ensureRowsRendered();
-    onMouseEvent(eventName: string, mouseEvent: MouseEvent, eventSource: HTMLElement, cell: GridCell): void;
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void;
     private insertRow(node, rowIndex);
     getRenderedNodes(): any[];
     navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;

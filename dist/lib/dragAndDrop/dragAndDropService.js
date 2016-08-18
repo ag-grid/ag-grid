@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.1.2
+ * @version v5.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -189,18 +189,20 @@ var DragAndDropService = (function () {
         var top = event.pageY - (ghostHeight / 2);
         // horizontally, place cursor just right of icon
         var left = event.pageX - 30;
+        var windowScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        var windowScrollX = window.pageXOffset || document.documentElement.scrollLeft;
         // check ghost is not positioned outside of the browser
         if (browserWidth > 0) {
-            if ((left + this.eGhost.clientWidth) > browserWidth) {
-                left = browserWidth - this.eGhost.clientWidth;
+            if ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX)) {
+                left = browserWidth + windowScrollX - this.eGhost.clientWidth;
             }
         }
         if (left < 0) {
             left = 0;
         }
         if (browserHeight > 0) {
-            if ((top + this.eGhost.clientHeight) > browserHeight) {
-                top = browserHeight - this.eGhost.clientHeight;
+            if ((top + this.eGhost.clientHeight) > (browserHeight + windowScrollY)) {
+                top = browserHeight + windowScrollY - this.eGhost.clientHeight;
             }
         }
         if (top < 0) {
