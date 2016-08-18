@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.1.2
+// ag-grid-enterprise v5.2.0
 import { Component } from "ag-grid/main";
 import { Filter } from "ag-grid/main";
 export declare class SetFilter extends Component implements Filter {

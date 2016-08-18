@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.1.2
+// ag-grid-enterprise v5.2.0
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {
@@ -8,8 +8,14 @@ var SetFilterModel = (function () {
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
         this.filterParams = this.colDef.filterParams;
-        this.usingProvidedSet = this.filterParams && this.filterParams.values;
-        this.showingAvailableOnly = this.filterParams && !this.filterParams.suppressRemoveEntries;
+        if (main_1.Utils.exists(this.filterParams)) {
+            this.usingProvidedSet = main_1.Utils.exists(this.filterParams.values);
+            this.showingAvailableOnly = this.filterParams.suppressRemoveEntries !== true;
+        }
+        else {
+            this.usingProvidedSet = false;
+            this.showingAvailableOnly = true;
+        }
         this.createAllUniqueValues();
         this.createAvailableUniqueValues();
         // by default, no filter, so we display everything

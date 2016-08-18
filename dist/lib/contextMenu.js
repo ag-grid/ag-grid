@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.1.2
+// ag-grid-enterprise v5.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -22,7 +22,15 @@ var ContextMenuFactory = (function () {
     ContextMenuFactory.prototype.init = function () {
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
-        var defaultMenuOptions = ['copy', 'paste', 'separator', 'toolPanel'];
+        var defaultMenuOptions;
+        if (main_1.Utils.exists(node)) {
+            // if user clicks a cell
+            defaultMenuOptions = ['copy', 'paste', 'separator', 'toolPanel'];
+        }
+        else {
+            // if user clicks outside of a cell (eg below the rows, or not rows present)
+            defaultMenuOptions = ['toolPanel'];
+        }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             var userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
             var params = {
