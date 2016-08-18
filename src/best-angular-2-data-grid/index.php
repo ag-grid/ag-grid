@@ -21,17 +21,27 @@ include '../documentation-main/documentation_header.php';
     <h3>Angular 2 Still in Release Candidate</h3>
 
         <p>
-            Angular 2 is currently on Release Candidate 4 - until Angular 2 is actually released there is of course an element of instability in using it.
+            Angular 2 is currently on Release Candidate 5 - until Angular 2 is actually released there is of course an element of instability in using it.
             Please keep this in mind if you plan on using it for a Production release.
         <p>
+    <p>Please use the github project (<a href="https://github.com/ceolter/ag-grid-ng2">https://github.com/ceolter/ag-grid-ng2</a>) for feedback or issue reporting around this functionality.</p>
 
     <h3>Angular 2 Full Example</h3>
 
     <p>
-        This page goes through <a href="https://github.com/helix46/ag-grid-angular2-beta-ts"> the
+        This page goes through the
         <a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a>
         example on Github. Because the example depends on SystemX and JSPM, it is not included in the
         online documentation.
+    </p>
+
+    <p>The example project is 4 seperate grids on a page, with each section demonstrating a different feature set:
+        <ul>
+        <li>A Feature Rich Grid Example, demonstrating many of ag-Grid's features using Angular 2 as a wrapper</li>
+        <li>A Simple Example, using CellRenders created from Angular 2 Components</li>
+        <li>A Simple Example, using CellRenders created from Template Strings</li>
+        <li>A Richer Example, using CellRenderers created from Angular 2 Components, with child components, and two-way binding (parent to child components events)</li>
+        </ul>
     </p>
 
     <h3>Dependencies</h3>
