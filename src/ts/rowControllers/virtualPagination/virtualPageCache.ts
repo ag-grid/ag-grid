@@ -159,33 +159,6 @@ export class VirtualPageCache {
         this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, newNodes);
     }
 
-    /*
-     public removeItems(rowNodes: RowNode[]): void {
-
-     // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in ascending order
-     let pageIds = Object.keys(this.pages).map( str => parseInt(str) ).sort().reverse();
-
-     // put rowNodes into a map of ids for lookup
-     let rowNodesById: {(id:string):RowNode} = {};
-     rowNodes.forEach( (rowNode)=> rowNodesById[rowNode.id] = rowNode);
-
-     // this is the index to move rows down
-     let rowsDeletedSoFar = 0;
-
-     let newNodes: RowNode[] = [];
-     pageIds.forEach( pageId => {
-     let page = this.pages[pageId];
-     let pageEndRow = page.getEndRow();
-
-     // if the insertion is after this page, then this page is not impacted
-     if (pageEndRow <= indexToInsert) { return; }
-
-     this.moveItemsDown(page, indexToInsert, items.length);
-     let newNodesThisPage = this.insertItems(page, indexToInsert, items);
-     newNodesThisPage.forEach( rowNode => newNodes.push(rowNode) );
-     });
-     }*/
-
     public getRowCount(): number {
         return this.virtualRowCount;
     }
