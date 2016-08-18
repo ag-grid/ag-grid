@@ -174,9 +174,10 @@ include '../documentation-main/documentation_header.php';
     (cellDoubleClicked)="onCellDoubleClicked($event)">
 &lt;/ag-grid-ng2></pre>
 
-    <h2>Dynamic Components</h2>
+    <h2>Cell Rendering using Angular 2</h2>
 
-    <p>Two way binding in ag-Grid is via Components when using Angular 2</p>
+    <p>ag-Grid supports the addition of cellRenderers via Angular 2 components - we do this by wrapping Angular 2 Components in a CellRenderer, which allows for two way binding
+    and all normal Angular 2 Component functionality (two way binding, dependency injection and so on).</p>
 
     <note>
         <p>
