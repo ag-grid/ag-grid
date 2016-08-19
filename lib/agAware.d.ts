@@ -1,4 +1,4 @@
-// ag-grid-ng2 v5.2.2
+// ag-grid-ng2 v5.2.3
 export interface AgAware {
     agInit(params: any): void;
 }
