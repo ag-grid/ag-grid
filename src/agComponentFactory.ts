@@ -66,6 +66,7 @@ function createCellRendererFromComponent<T extends Object>(componentType:{ new(.
         }
 
         refresh(params:any):void {
+            this._params = params;
         }
     }
 
