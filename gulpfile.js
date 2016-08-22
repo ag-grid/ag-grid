@@ -13,7 +13,7 @@ function tscTask() {
     var tsResult = gulp
         .src([
             // this solves the 'cannot resolve Promise' issue
-            'typings/es6-shim/es6-shim.d.ts',
+            'typings/index.d.ts',
             'src/**/*.ts'
         ])
         .pipe(gulpTypescript({

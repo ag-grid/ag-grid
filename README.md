@@ -13,8 +13,4 @@ To build:
 - `npm install @angular/core@2.0.0-rc.5`
 - `npm install ag-grid@5.x`
 
-// required typings to solve 'promise' dependency
-- `npm install tsd -g`
-- `tsd install es6-shim`
-
 - `gulp`
