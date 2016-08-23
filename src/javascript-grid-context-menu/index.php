@@ -34,29 +34,33 @@ include '../documentation-main/documentation_header.php';
     <h3>Configuring the Context Menu</h3>
 
     <p>
-        You can customise the context menu by providing a <i>getContextMenuItems()</i> callback.
+        You can customise the context menu by providing a <code>getContextMenuItems()</code> callback.
         Each time the context menu is to be shown, the callback is called to retrieve the items
         to include in the menu. This allows the client application to display a menu individually
         customised to each cell.
     </p>
 
     <p>
-        <i>getContextMenuItems()</i> takes the following object as parameters:
+        <code>getContextMenuItems()</code> takes the following object as parameters:
         <pre>GetContextMenuItemsParams {
     column: Column, // the column that was clicked
     node: RowNode, // the node that was clicked
     value: any, // the value displayed in the clicked cell
     api: GridApi, // the grid API
     columnApi: ColumnAPI, // the column API
-    context: any // the grid context
-    defaultItems: 
+    context: any, // the grid context
+    defaultItems: string[] // names of the items that would be provided by default
 }</pre>
     </p>
 
     <p>
-        The result of <i>getContextMenuItems()</i> should be a list with each item either a) a string
+        The result of <code>getContextMenuItems()</code> should be a list with each item either a) a string
         or b) a MenuItem description. Use 'string' to pick from built in menu items (currently 'copy', 'paste'
         or 'separator') and use MenuItem descriptions for your own menu items.
+    </p>
+
+    <p>
+        If you want to access your underlying data item, you access that through the rowNode as <code>var dataItem = node.data</code>.
     </p>
 
     <p>
@@ -73,11 +77,11 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Note: If you set <i>checked=true</i>, then icon will be ignored, these options are mutually exclusive.
+        Note: If you set <code>checked=true</code>, then icon will be ignored, these options are mutually exclusive.
     </p>
 
     <p>
-        If you want to turn off the context menu completely, set the grid property <i>suppressContextMenu=true</i>.
+        If you want to turn off the context menu completely, set the grid property <code>suppressContextMenu=true</code>.
     </p>
 
     <h3>Context Menu Example</h3>

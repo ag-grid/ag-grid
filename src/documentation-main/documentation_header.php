@@ -196,6 +196,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-height/index.php">Row Height</a>
                 <?php } ?>
 
+                <?php if ($key == "Nested Components") { ?>
+                    <span class="sidebarLinkSelected">Nested Components</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-nested-components/index.php">Nested Components</a>
+                <?php } ?>
+
                 <?php if ($key == "Floating") { ?>
                     <span class="sidebarLinkSelected">Floating Rows</span>
                 <?php } else { ?>
