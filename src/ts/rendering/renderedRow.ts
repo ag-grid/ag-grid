@@ -78,15 +78,15 @@ export class RenderedRow {
 
     private checkForFullWidthRow(): void {
 
-        let isFullWidthRowFunc = this.gridOptionsWrapper.getIsFullWidthRowFunc();
-        let rowIsComponentRow = isFullWidthRowFunc ? isFullWidthRowFunc(this.rowNode) : false;
-        let rowIsGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
+        let isNestedRowFunc = this.gridOptionsWrapper.getIsNestedRowFunc();
+        let isNestedRow = isNestedRowFunc ? isNestedRowFunc(this.rowNode) : false;
+        let isGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
 
-        if (rowIsComponentRow) {
+        if (isNestedRow) {
             this.fullWidthRow = true;
-            this.fullWidthRowRenderer = this.gridOptionsWrapper.getFullWidthRowRenderer();
-            this.fullWidthRowRendererParams = this.gridOptionsWrapper.getFullWidthRowRendererParams();
-        } else if (rowIsGroupSpanningRow) {
+            this.fullWidthRowRenderer = this.gridOptionsWrapper.getNestedRowRenderer();
+            this.fullWidthRowRendererParams = this.gridOptionsWrapper.getNestedRowRendererParams();
+        } else if (isGroupSpanningRow) {
             this.fullWidthRow = true;
             this.fullWidthRowRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
             this.fullWidthRowRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
@@ -524,10 +524,6 @@ export class RenderedRow {
             }
             this.ePinnedRightRow.appendChild(this.eGroupRowPaddingRight);
         }
-    }
-
-    private createSingleComponentParams(): any {
-
     }
 
     private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
