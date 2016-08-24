@@ -57,6 +57,7 @@ export class RowRenderer {
     private eAllPinnedLeftContainers: HTMLElement[];
     private eAllPinnedRightContainers: HTMLElement[];
 
+    private eNestedContainer: HTMLElement;
     private eBodyContainer: HTMLElement;
     private eBodyViewport: HTMLElement;
     private ePinnedLeftColsContainer: HTMLElement;
@@ -106,6 +107,7 @@ export class RowRenderer {
     }
 
     public getContainersFromGridPanel(): void {
+        this.eNestedContainer = this.gridPanel.getNestedContainer();
         this.eBodyContainer = this.gridPanel.getBodyContainer();
         this.ePinnedLeftColsContainer = this.gridPanel.getPinnedLeftColsContainer();
         this.ePinnedRightColsContainer = this.gridPanel.getPinnedRightColsContainer();
@@ -170,18 +172,18 @@ export class RowRenderer {
             this.floatingRowModel.getFloatingTopRowData(),
             this.eFloatingTopPinnedLeftContainer,
             this.eFloatingTopPinnedRightContainer,
-            this.eFloatingTopContainer);
+            this.eFloatingTopContainer, null);
         this.refreshFloatingRows(
             this.renderedBottomFloatingRows,
             this.floatingRowModel.getFloatingBottomRowData(),
             this.eFloatingBottomPinnedLeftContainer,
             this.eFloatingBottomPinnedRightContainer,
-            this.eFloatingBottomContainer);
+            this.eFloatingBottomContainer, null);
     }
 
     private refreshFloatingRows(renderedRows: RenderedRow[], rowNodes: RowNode[],
-                                pinnedLeftContainer: HTMLElement, pinnedRightContainer: HTMLElement,
-                                bodyContainer: HTMLElement): void {
+                                ePinnedLeftContainer: HTMLElement, ePinnedRightContainer: HTMLElement,
+                                eBodyContainer: HTMLElement, eNestedContainer: HTMLElement): void {
         renderedRows.forEach( (row: RenderedRow) => {
             row.destroy();
         });
@@ -196,9 +198,10 @@ export class RowRenderer {
             rowNodes.forEach( (node: RowNode, rowIndex: number) => {
                 var renderedRow = new RenderedRow(this.$scope,
                     this,
-                    bodyContainer,
-                    pinnedLeftContainer,
-                    pinnedRightContainer,
+                    eBodyContainer,
+                    eNestedContainer,
+                    ePinnedLeftContainer,
+                    ePinnedRightContainer,
                     node, rowIndex);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
@@ -505,7 +508,7 @@ export class RowRenderer {
         if (_.missingOrEmpty(columns)) { return; }
 
         var renderedRow = new RenderedRow(this.$scope,
-            this, this.eBodyContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
+            this, this.eBodyContainer, this.eNestedContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
             node, rowIndex);
         this.context.wireBean(renderedRow);
 

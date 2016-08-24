@@ -28,23 +28,27 @@ export class RenderedRow {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
 
-    public ePinnedLeftRow: HTMLElement;
-    public ePinnedRightRow: HTMLElement;
-    public eBodyRow: HTMLElement;
-    private eLeftCenterAndRightRows: HTMLElement[];
+    private ePinnedLeftRow: HTMLElement;
+    private ePinnedRightRow: HTMLElement;
+    private eBodyRow: HTMLElement;
+    private eNestedRow: HTMLElement;
+    private eAllRowContainers: HTMLElement[] = [];
+
+    private nestedRowComponent: ICellRenderer;
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
     private rowNode: RowNode;
     private rowIndex: number;
 
-    private fullWidthRow: boolean;
-    private fullWidthRowRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
-    private fullWidthRowRendererParams: any;
+    private nestedRow: boolean;
+    private nestedRowRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private nestedRowRendererParams: any;
 
     private parentScope: any;
     private rowRenderer: RowRenderer;
     private eBodyContainer: HTMLElement;
+    private eNestedContainer: HTMLElement;
     private ePinnedLeftContainer: HTMLElement;
     private ePinnedRightContainer: HTMLElement;
 
@@ -62,6 +66,7 @@ export class RenderedRow {
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
+                eNestedContainer: HTMLElement,
                 ePinnedLeftContainer: HTMLElement,
                 ePinnedRightContainer: HTMLElement,
                 node: RowNode,
@@ -69,6 +74,7 @@ export class RenderedRow {
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
+        this.eNestedContainer = eNestedContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
         this.ePinnedRightContainer = ePinnedRightContainer;
 
@@ -76,42 +82,67 @@ export class RenderedRow {
         this.rowNode = node;
     }
 
-    private checkForFullWidthRow(): void {
+    private setupRowContainers(): void {
 
         let isNestedRowFunc = this.gridOptionsWrapper.getIsNestedRowFunc();
         let isNestedRow = isNestedRowFunc ? isNestedRowFunc(this.rowNode) : false;
         let isGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
 
         if (isNestedRow) {
-            this.fullWidthRow = true;
-            this.fullWidthRowRenderer = this.gridOptionsWrapper.getNestedRowRenderer();
-            this.fullWidthRowRendererParams = this.gridOptionsWrapper.getNestedRowRendererParams();
+            this.setupNestedContainers();
         } else if (isGroupSpanningRow) {
-            this.fullWidthRow = true;
-            this.fullWidthRowRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
-            this.fullWidthRowRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
-
-            if (!this.fullWidthRowRenderer) {
-                this.fullWidthRowRenderer = CellRendererFactory.GROUP;
-                this.fullWidthRowRendererParams = {
-                    innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
-                }
-            }
+            this.setupNestedGroupContainers();
         } else {
-            this.fullWidthRow = false;
+            this.setupNormalContainers();
+        }
+    }
+
+    private setupNestedContainers(): void {
+        this.nestedRow = true;
+        this.nestedRowRenderer = this.gridOptionsWrapper.getNestedRowRenderer();
+        this.nestedRowRendererParams = this.gridOptionsWrapper.getNestedRowRendererParams();
+        if (_.missing(this.nestedRowRenderer)) {
+            console.warn(`ag-Grid: you need to provide a nestedRowRenderer if using isNestedRow()`);
+        }
+
+        this.eNestedRow = this.createRowContainer(this.eNestedContainer);
+    }
+
+    private setupNestedGroupContainers(): void {
+        this.nestedRow = true;
+        this.nestedRowRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
+        this.nestedRowRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
+
+        if (!this.nestedRowRenderer) {
+            this.nestedRowRenderer = CellRendererFactory.GROUP;
+            this.nestedRowRendererParams = {
+                innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
+            }
+        }
+
+        this.eNestedRow = this.createRowContainer(this.eNestedContainer);
+    }
+
+    private setupNormalContainers(): void {
+        this.nestedRow = false;
+
+        this.eBodyRow = this.createRowContainer(this.eBodyContainer);
+
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.ePinnedLeftRow = this.createRowContainer(this.ePinnedLeftContainer);
+            this.ePinnedRightRow = this.createRowContainer(this.ePinnedRightContainer);
         }
     }
 
     @PostConstruct
     public init(): void {
 
-        this.createContainers();
-        this.checkForFullWidthRow();
+        this.setupRowContainers();
 
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
-        if (this.fullWidthRow) {
-            this.refreshSingleComponent();
+        if (this.nestedRow) {
+            this.refreshNestedComponent();
         } else {
             this.refreshCellsIntoRow();
         }
@@ -132,8 +163,6 @@ export class RenderedRow {
         this.addNodeDataChangedListener();
         this.addColumnListener();
         this.addHoverFunctionality();
-
-        this.attachContainers();
 
         this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
             eRow: this.eBodyRow,
@@ -190,10 +219,10 @@ export class RenderedRow {
 
     private onDisplayedColumnsChanged(event: ColumnChangeEvent): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
-        if (this.fullWidthRow) {
+        if (this.nestedRow) {
             var columnPinned = event.getType() === Events.EVENT_COLUMN_PINNED;
             if (columnPinned) {
-                this.refreshSingleComponent();
+                this.refreshNestedComponent();
             }
         } else {
             this.refreshCellsIntoRow();
@@ -202,7 +231,7 @@ export class RenderedRow {
 
     private onVirtualColumnsChanged(event: ColumnChangeEvent): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
-        if (!this.fullWidthRow) {
+        if (!this.nestedRow) {
             this.refreshCellsIntoRow();
         }
     }
@@ -291,7 +320,7 @@ export class RenderedRow {
 
     private onRowSelected(): void {
         var selected = this.rowNode.isSelected();
-        this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
+        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
     }
 
     private addRowSelectedListener(): void {
@@ -307,7 +336,7 @@ export class RenderedRow {
         var onGuiMouseEnter = this.rowNode.onMouseEnter.bind(this.rowNode);
         var onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
         
-        this.eLeftCenterAndRightRows.forEach( eRow => {
+        this.eAllRowContainers.forEach( eRow => {
             eRow.addEventListener('mouseenter', onGuiMouseEnter);
             eRow.addEventListener('mouseleave', onGuiMouseLeave);
         });
@@ -319,7 +348,7 @@ export class RenderedRow {
         this.rowNode.addEventListener(RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
 
         this.destroyFunctions.push( ()=> {
-            this.eLeftCenterAndRightRows.forEach( eRow => {
+            this.eAllRowContainers.forEach( eRow => {
                 eRow.removeEventListener('mouseenter', onGuiMouseEnter);
                 eRow.removeEventListener('mouseleave', onGuiMouseLeave);
             });
@@ -330,7 +359,7 @@ export class RenderedRow {
     }
     
     private addHoverClass(hover: boolean): void {
-        this.eLeftCenterAndRightRows.forEach( eRow => _.addOrRemoveCssClass(eRow, 'ag-row-hover', hover) );
+        this.eAllRowContainers.forEach( eRow => _.addOrRemoveCssClass(eRow, 'ag-row-hover', hover) );
     }
 
     private addCellFocusedListener(): void {
@@ -338,8 +367,8 @@ export class RenderedRow {
         var rowFocusedListener = () => {
             var rowFocused = this.focusedCellController.isRowFocused(this.rowIndex, this.rowNode.floating);
             if (rowFocused !== rowFocusedLastTime) {
-                this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
-                this.eLeftCenterAndRightRows.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
+                this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
+                this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
                 rowFocusedLastTime = rowFocused;
             }
         };
@@ -374,28 +403,6 @@ export class RenderedRow {
         });
     }
 
-    private createContainers(): void {
-        this.eBodyRow = this.createRowContainer();
-        this.eLeftCenterAndRightRows = [this.eBodyRow];
-
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer();
-            this.ePinnedRightRow = this.createRowContainer();
-
-            this.eLeftCenterAndRightRows.push(this.ePinnedLeftRow);
-            this.eLeftCenterAndRightRows.push(this.ePinnedRightRow);
-        }
-    }
-
-    private attachContainers(): void {
-        this.eBodyContainer.appendChild(this.eBodyRow);
-
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftContainer.appendChild(this.ePinnedLeftRow);
-            this.ePinnedRightContainer.appendChild(this.ePinnedRightRow);
-        }
-    }
-
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
         var renderedCell = this.renderedCells[cell.column.getId()];
         if (renderedCell) {
@@ -407,10 +414,10 @@ export class RenderedRow {
         // if showing scrolls, position on the container
         if (!this.gridOptionsWrapper.isForPrint()) {
             var topPx = this.rowNode.rowTop + "px";
-            this.eLeftCenterAndRightRows.forEach( row => row.style.top = topPx);
+            this.eAllRowContainers.forEach( row => row.style.top = topPx);
         }
         var heightPx = this.rowNode.rowHeight + 'px';
-        this.eLeftCenterAndRightRows.forEach( row => row.style.height = heightPx);
+        this.eAllRowContainers.forEach( row => row.style.height = heightPx);
     }
 
     // adds in row and row-id attributes to the row
@@ -421,12 +428,12 @@ export class RenderedRow {
         } else if (this.rowNode.floating===Constants.FLOATING_TOP) {
             rowStr = 'ft-' + rowStr;
         }
-        this.eLeftCenterAndRightRows.forEach( row => row.setAttribute('row', rowStr) );
+        this.eAllRowContainers.forEach( row => row.setAttribute('row', rowStr) );
 
         if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
             var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
             if (typeof businessKey === 'string' || typeof businessKey === 'number') {
-                this.eLeftCenterAndRightRows.forEach( row => row.setAttribute('row-id', businessKey) );
+                this.eAllRowContainers.forEach( row => row.setAttribute('row-id', businessKey) );
             }
         }
     }
@@ -455,17 +462,11 @@ export class RenderedRow {
 
     public destroy(): void {
 
-        this.destroyFunctions.forEach( func => func() );
-
         this.destroyScope();
-
-        this.eBodyContainer.removeChild(this.eBodyRow);
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftContainer.removeChild(this.ePinnedLeftRow);
-            this.ePinnedRightContainer.removeChild(this.ePinnedRightRow);
-        }
-
+        this.destroyNestedComponent();
         this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
+
+        this.destroyFunctions.forEach( func => func() );
 
         if (this.renderedRowEventService) {
             this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
@@ -487,7 +488,26 @@ export class RenderedRow {
         return this.rowNode.group === true;
     }
 
-    private refreshSingleComponent(): void {
+    private refreshNestedComponent(): void {
+        this.destroyNestedComponent();
+        this.createNestedComponent();
+    }
+
+    private createNestedComponent(): void {
+        var params = this.createNestedParams(this.eNestedRow);
+        this.nestedRowComponent = this.cellRendererService.useCellRenderer(this.nestedRowRenderer, this.eNestedRow, params);
+        this.angular1Compile(this.eNestedRow);
+    }
+
+    private destroyNestedComponent(): void {
+        if (this.nestedRowComponent && this.nestedRowComponent.destroy) {
+            this.nestedRowComponent.destroy();
+            this.nestedRowComponent = null;
+        }
+        _.removeAllChildren(this.eNestedRow);
+    }
+
+    private refreshNestedComponent_old(): void {
 
         // where the components go changes with pinning, it's easiest ot just remove from all containers
         // and start again if the pinning changes
@@ -526,34 +546,40 @@ export class RenderedRow {
         }
     }
 
+    private createNestedParams(eRow: HTMLElement): any {
+        var params = {
+            data: this.rowNode.data,
+            node: this.rowNode,
+            $scope: this.scope,
+            rowIndex: this.rowIndex,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext(),
+            eGridCell: eRow,
+            eParentOfValue: eRow,
+            addRenderedRowListener: this.addEventListener.bind(this),
+            colDef: {
+                cellRenderer: this.nestedRowRenderer,
+                cellRendererParams: this.nestedRowRendererParams
+            }
+        };
+
+        if (this.nestedRowRendererParams) {
+            _.assign(params, this.nestedRowRendererParams);
+        }
+
+        return params;
+    }
+
     private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
         var eRow: HTMLElement = document.createElement('span');
         // padding means we are on the right hand side of a pinned table, ie
         // in the main body.
         if (!padding) {
 
-            var params = {
-                data: this.rowNode.data,
-                node: this.rowNode,
-                $scope: this.scope,
-                rowIndex: this.rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext(),
-                eGridCell: eRow,
-                eParentOfValue: eRow,
-                addRenderedRowListener: this.addEventListener.bind(this),
-                colDef: {
-                    cellRenderer: this.fullWidthRowRenderer,
-                    cellRendererParams: this.fullWidthRowRendererParams
-                }
-            };
+            var params = this.createNestedParams(eRow);
 
-            if (this.fullWidthRowRendererParams) {
-                _.assign(params, this.fullWidthRowRendererParams);
-            }
-
-            var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthRowRenderer, eRow, params);
+            var cellComponent = this.cellRendererService.useCellRenderer(this.nestedRowRenderer, eRow, params);
 
             if (cellComponent && cellComponent.destroy) {
                 this.destroyFunctions.push( () => cellComponent.destroy() );
@@ -587,7 +613,7 @@ export class RenderedRow {
             if (typeof rowStyle === 'function') {
                 console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             } else {
-                this.eLeftCenterAndRightRows.forEach( row => _.addStylesToElement(row, rowStyle));
+                this.eAllRowContainers.forEach( row => _.addStylesToElement(row, rowStyle));
             }
         }
     }
@@ -603,7 +629,7 @@ export class RenderedRow {
                 $scope: this.scope
             };
             var cssToUseFromFunc = rowStyleFunc(params);
-            this.eLeftCenterAndRightRows.forEach( row => _.addStylesToElement(row, cssToUseFromFunc));
+            this.eAllRowContainers.forEach( row => _.addStylesToElement(row, cssToUseFromFunc));
         }
     }
 
@@ -626,18 +652,34 @@ export class RenderedRow {
         return agEvent;
     }
 
-    private createRowContainer(): HTMLElement {
+    private createRowContainer(eParent: HTMLElement): HTMLElement {
         var eRow = document.createElement('div');
-        eRow.addEventListener("click", this.onRowClicked.bind(this));
-        eRow.addEventListener("dblclick", (event: any) => {
-            var agEvent = this.createEvent(event, this);
-            this.mainEventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
+
+        var rowClickListener = this.onRowClick.bind(this);
+        var rowDblClickListener = this.onRowDblClick.bind(this);
+
+        eRow.addEventListener("click", rowClickListener);
+        eRow.addEventListener("dblclick", rowDblClickListener);
+
+        eParent.appendChild(eRow);
+
+        this.eAllRowContainers.push(eRow);
+
+        this.destroyFunctions.push( ()=> {
+            eRow.removeEventListener("click", rowClickListener);
+            eRow.removeEventListener("dblclick", rowDblClickListener);
+            eParent.removeChild(eRow);
         });
 
         return eRow;
     }
 
-    public onRowClicked(event: MouseEvent) {
+    private onRowDblClick(event: MouseEvent): void {
+        var agEvent = this.createEvent(event, this);
+        this.mainEventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
+    }
+
+    public onRowClick(event: MouseEvent) {
 
         var agEvent = this.createEvent(event, this);
         this.mainEventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
@@ -729,7 +771,7 @@ export class RenderedRow {
         }
 
         classes.forEach( (classStr: string) => {
-            this.eLeftCenterAndRightRows.forEach( row => _.addCssClass(row, classStr));
+            this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
         });
     }
 
@@ -739,38 +781,42 @@ export class RenderedRow {
         classes.push('ag-row');
         classes.push('ag-row-no-focus');
 
-        classes.push(this.rowIndex % 2 == 0 ? "ag-row-even" : "ag-row-odd");
+        classes.push(this.rowIndex % 2 == 0 ? 'ag-row-even' : 'ag-row-odd');
 
         if (this.rowNode.isSelected()) {
-            classes.push("ag-row-selected");
+            classes.push('ag-row-selected');
         }
 
         if (this.rowNode.group) {
-            classes.push("ag-row-group");
+            classes.push('ag-row-group');
             // if a group, put the level of the group in
-            classes.push("ag-row-level-" + this.rowNode.level);
+            classes.push('ag-row-level-' + this.rowNode.level);
 
             if (!this.rowNode.footer && this.rowNode.expanded) {
-                classes.push("ag-row-group-expanded");
+                classes.push('ag-row-group-expanded');
             }
             if (!this.rowNode.footer && !this.rowNode.expanded) {
                 // opposite of expanded is contracted according to the internet.
-                classes.push("ag-row-group-contracted");
+                classes.push('ag-row-group-contracted');
             }
             if (this.rowNode.footer) {
-                classes.push("ag-row-footer");
+                classes.push('ag-row-footer');
             }
         } else {
             // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
             if (this.rowNode.parent) {
-                classes.push("ag-row-level-" + (this.rowNode.parent.level + 1));
+                classes.push('ag-row-level-' + (this.rowNode.parent.level + 1));
             } else {
-                classes.push("ag-row-level-0");
+                classes.push('ag-row-level-0');
             }
         }
 
+        if (this.nestedRow) {
+            classes.push('ag-nested-row');
+        }
+
         classes.forEach( (classStr: string) => {
-            this.eLeftCenterAndRightRows.forEach( row => _.addCssClass(row, classStr));
+            this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
         });
     }
 
@@ -794,7 +840,7 @@ export class RenderedRow {
         }
 
         classes.forEach( (classStr: string) => {
-            this.eLeftCenterAndRightRows.forEach( row => _.addCssClass(row, classStr));
+            this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
         });
     }
 }

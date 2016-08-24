@@ -167,7 +167,9 @@ ag-grid-ng2
 
 .ag-body
     height 100%
+    width 100%
     box-sizing border-box
+    position absolute
 
 .ag-floating-top
     position absolute
@@ -260,6 +262,28 @@ ag-grid-ng2
     overflow-y auto // if we are pinning to the right, overflow y will be hidden
     height 100%
 
+.ag-nested-viewport
+    //background-color rgba(255,0,0,0.2)
+    height 100%
+    width 100%
+    // we want this panel to be on top of the others
+    position absolute
+    top 0px
+    left 0px
+    display inline
+    // because the nested container is an overlay over the rest of the grid, we cannot
+    // have it consume mouse events, otherwise no mouse events would be allowed on the
+    // rest of the grid
+    pointer-events none
+    overflow hidden // contents need to be clipped
+
+.ag-nested-container
+    position relative
+
+.ag-nested-row
+    // turn events back on, as we removed them in the parent
+    pointer-events all
+
 .ag-scrolls .ag-body-container
     position relative
     display inline-block
@@ -272,9 +296,6 @@ ag-grid-ng2
 .ag-no-scrolls .ag-row
 //    white-space: nowrap
     position relative // need at least some position for the cell height to work
-
-.agile-gird-row:hover
-    background-color aliceblue
 
 .ag-column-drop
     width 100%

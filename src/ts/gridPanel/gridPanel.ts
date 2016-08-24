@@ -62,6 +62,9 @@ var gridHtml =
                     '<div class="ag-body-container"></div>'+
                 '</div>'+
             '</div>'+
+            '<div class="ag-nested-viewport">'+
+                '<div class="ag-nested-container"></div>'+
+            '</div>'+
         '</div>'+
     '</div>';
 
@@ -123,6 +126,8 @@ export class GridPanel {
     private eBodyContainer: HTMLElement;
     private ePinnedLeftColsContainer: HTMLElement;
     private ePinnedRightColsContainer: HTMLElement;
+    private eNestedViewport: HTMLElement;
+    private eNestedContainer: HTMLElement;
     private eHeaderContainer: HTMLElement;
     private eHeaderOverlay: HTMLElement;
     private ePinnedLeftHeader: HTMLElement;
@@ -670,6 +675,10 @@ export class GridPanel {
         return this.eBodyContainer;
     }
 
+    public getNestedContainer(): HTMLElement {
+        return this.eNestedContainer;
+    }
+
     public getDropTargetBodyContainers(): HTMLElement[] {
         if (this.forPrint) {
             return [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
@@ -756,6 +765,8 @@ export class GridPanel {
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
             this.eBodyViewport = this.queryHtmlElement('.ag-body-viewport');
             this.eBodyViewportWrapper = this.queryHtmlElement('.ag-body-viewport-wrapper');
+            this.eNestedContainer = this.queryHtmlElement('.ag-nested-container');
+            this.eNestedViewport = this.queryHtmlElement('.ag-nested-viewport');
             this.ePinnedLeftColsContainer = this.queryHtmlElement('.ag-pinned-left-cols-container');
             this.ePinnedRightColsContainer = this.queryHtmlElement('.ag-pinned-right-cols-container');
             this.ePinnedLeftColsViewport = this.queryHtmlElement('.ag-pinned-left-cols-viewport');
@@ -933,8 +944,10 @@ export class GridPanel {
 
         var heightOfCentreRows = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
 
-        this.eBody.style.paddingTop = paddingTop + 'px';
-        this.eBody.style.paddingBottom = floatingBottomHeight + 'px';
+        // this.eBody.style.paddingTop = paddingTop + 'px';
+        // this.eBody.style.paddingBottom = floatingBottomHeight + 'px';
+        this.eBody.style.top = paddingTop + 'px';
+        this.eBody.style.height = heightOfCentreRows + 'px';
 
         this.eFloatingTop.style.top = totalHeaderHeight + 'px';
         this.eFloatingTop.style.height = floatingTopHeight + 'px';
@@ -1003,6 +1016,7 @@ export class GridPanel {
                 if (newTopPosition !== that.lastTopPosition) {
                     that.lastTopPosition = newTopPosition;
                     that.verticallyScrollLeftPinned(newTopPosition);
+                    that.verticallyScrollNested(newTopPosition);
                     that.rowRenderer.drawVirtualRows();
                 }
             }
@@ -1013,6 +1027,7 @@ export class GridPanel {
             if (newTopPosition !== that.lastTopPosition) {
                 that.lastTopPosition = newTopPosition;
                 that.verticallyScrollLeftPinned(newTopPosition);
+                that.verticallyScrollNested(newTopPosition);
                 that.verticallyScrollBody(newTopPosition);
                 that.rowRenderer.drawVirtualRows();
             }
@@ -1087,6 +1102,10 @@ export class GridPanel {
 
     private verticallyScrollLeftPinned(bodyTopPosition: any): void {
         this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
+    }
+
+    private verticallyScrollNested(bodyTopPosition: any): void {
+        this.eNestedContainer.style.top = -bodyTopPosition + 'px';
     }
 
     private verticallyScrollBody(position: any): void {
