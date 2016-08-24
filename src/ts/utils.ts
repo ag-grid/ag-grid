@@ -505,6 +505,10 @@ export class Utils {
         });
     }
 
+    static isScrollShowing(element: HTMLElement): boolean {
+        return element.clientHeight < element.scrollHeight
+    }
+
     static getScrollbarWidth() {
         var outer = document.createElement("div");
         outer.style.visibility = "hidden";

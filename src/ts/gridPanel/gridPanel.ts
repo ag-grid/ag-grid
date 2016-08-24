@@ -555,16 +555,30 @@ export class GridPanel {
 
     public isVerticalScrollShowing(): boolean {
         if (this.columnController.isPinningRight()) {
-            // if pinning right, then the scroll bar can show, however for some reason
-            // it overlays the grid and doesn't take space.
+            return _.isScrollShowing(this.ePinnedRightColsViewport);
+        } else {
+            return _.isScrollShowing(this.eBodyViewport);
+        }
+    }
+
+    private isBodyVerticalScrollShowing(): boolean {
+        if (this.columnController.isPinningRight()) {
             return false;
         } else {
-            return this.eBodyViewport.clientHeight < this.eBodyViewport.scrollHeight
+            return _.isScrollShowing(this.eBodyViewport);
         }
     }
 
     // gets called every 500 ms. we use this to set padding on right pinned column
     public periodicallyCheck(): void {
+        this.setBottomPaddingOnPinnedRight();
+        this.setMarginOnNestedPanel();
+    }
+
+    // the pinned container needs extra space at the bottom, some blank space, otherwise when
+    // vertically scrolled all the way down, the last row will be hidden behind the scrolls.
+    // this extra padding allows the last row to be lifted above the bottom scrollbar.
+    private setBottomPaddingOnPinnedRight(): void {
         if (this.columnController.isPinningRight()) {
             var bodyHorizontalScrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
             if (bodyHorizontalScrollShowing) {
@@ -572,6 +586,14 @@ export class GridPanel {
             } else {
                 this.ePinnedRightColsContainer.style.marginBottom = '';
             }
+        }
+    }
+
+    private setMarginOnNestedPanel(): void {
+        if (this.isVerticalScrollShowing()) {
+            this.eNestedContainer.style.marginRight = this.scrollWidth + 'px';
+        } else {
+            this.eNestedContainer.style.marginRight = '';
         }
     }
 
@@ -642,8 +664,11 @@ export class GridPanel {
 
     private getWidthForSizeColsToFit() {
         var availableWidth = this.eBody.clientWidth;
-        var scrollShowing = this.isVerticalScrollShowing();
-        if (scrollShowing) {
+        // if pinning right, then the scroll bar can show, however for some reason
+        // it overlays the grid and doesn't take space. so we are only interested
+        // in the body scroll showing.
+        var removeScrollWidth = this.isBodyVerticalScrollShowing();
+        if (removeScrollWidth) {
             availableWidth -= this.scrollWidth;
         }
         return availableWidth;
