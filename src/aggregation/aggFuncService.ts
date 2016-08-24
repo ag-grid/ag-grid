@@ -145,10 +145,11 @@ function aggCount(input: any[]): any {
     };
     var length = input.length;
     for (var i = 0; i<length; i++) {
-        if (typeof input[i] === 'number') {
-            result.value++;
-        } else if (typeof input[i].value === 'number') {
+        let isGroupAgg = Utils.exists(input[i]) && typeof input[i].value === 'number';
+        if (isGroupAgg) {
             result += input[i].value;
+        } else {
+            result.value++;
         }
     }
     return result;
