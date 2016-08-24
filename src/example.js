@@ -318,6 +318,25 @@ var defaultCols = [
         children: [
             firstColumn,
             {
+                headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
+                cellRenderer: languageCellRenderer,
+                cellEditor: 'select',
+                enableRowGroup: true,
+                enablePivot: true,
+                // rowGroupIndex: 0,
+                // pivotIndex: 0,
+                cellEditorParams: {
+                    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
+                },
+                //pinned: 'left',
+                headerTooltip: "Example tooltip for Language",
+                filterParams: {newRowsAction: 'keep'},
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                }
+            },
+            {
                 headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: CountryCellRenderer,
                 // pivotIndex: 1,
@@ -338,25 +357,6 @@ var defaultCols = [
                     cellHeight: 20,
                     newRowsAction: 'keep'
                 },
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
-            },
-            {
-                headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                cellRenderer: languageCellRenderer,
-                cellEditor: 'select',
-                enableRowGroup: true,
-                enablePivot: true,
-                // rowGroupIndex: 0,
-                // pivotIndex: 0,
-                cellEditorParams: {
-                    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
-                },
-                //pinned: 'left',
-                headerTooltip: "Example tooltip for Language",
-                filterParams: {newRowsAction: 'keep'},
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
