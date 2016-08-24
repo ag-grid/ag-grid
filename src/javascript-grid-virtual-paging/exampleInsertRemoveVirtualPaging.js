@@ -41,18 +41,32 @@ function createRowData(id) {
 }
 
 function liveInsertItemsAt2(count) {
-    var newDataItems = createNewData(count);
+    var newDataItems = insertItemsAt2(count);
     // here we stick the data directly into the grid
     gridOptions.api.insertItemsAtIndex(2, newDataItems);
 }
 
 function insertItemsAt2AndRefresh(count) {
-    createNewData(count);
-    // here we tell the grid the data has changed, and let it resync with the server side
+    insertItemsAt2(count);
+
+    // if the data has stopped looking for the last row, then we need to adjust the
+    // row count to allow for the extra data, otherwise the grid will not allow scrolling
+    // to the last row. eg if we have 1000 rows, scroll all the way to the bottom (so
+    // maxRowFound=true), and then add 5 rows, the virtualRowCount needs to be adjusted
+    // to 1005, so grid can scroll to the end. the grid does NOT do this for you in the
+    // refreshVirtualPageCache() method, as this would be assuming you want to do it which
+    // is not true, maybe the row count is constant and you just want to refresh the details.
+    var maxRowFound = gridOptions.api.isMaxRowFound();
+    if (maxRowFound) {
+        var virtualRowCount = gridOptions.api.getVirtualRowCount();
+        gridOptions.api.setVirtualRowCount(virtualRowCount + count);
+    }
+
+    // get grid to refresh the data
     gridOptions.api.refreshVirtualPageCache();
 }
 
-function createNewData(count) {
+function insertItemsAt2(count) {
     var newDataItems = [];
     for (var i = 0; i<count; i++) {
         var newItem = createRowData(sequenceId++);
