@@ -389,6 +389,7 @@ var defaultCols = [
         // pivotIndex: 1,
         enableRowGroup: true,
         enablePivot: true,
+        enableValue: true,
         cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
         floatCell: true,
                 filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
@@ -883,6 +884,8 @@ function booleanCellRenderer(params) {
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
         return "<span title='false'>&#10006;</span>";
+    } else if (params.value !==null && params.value !== undefined) {
+        return params.value.toString();
     } else {
         return null;
     }

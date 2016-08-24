@@ -8,6 +8,8 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Bugfix: Aggregation function 'count' was only working with number values. Now works with any value type.</li>
+
     <h3>Version 5.2.x</h3>
 
     <h4>ag-Grid 5.2.0, ag-Grid-Enterprise 5.2.0, ag-Grid-ng2 5.2.0</h4>
