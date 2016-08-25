@@ -818,13 +818,27 @@ export class GridPanel {
             this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
                 this.eFloatingTop, this.eFloatingBottom];
 
-            // IE9, Chrome, Safari, Opera
-            this.ePinnedLeftColsViewport.addEventListener('mousewheel', this.pinnedLeftMouseWheelListener.bind(this));
-            this.eBodyViewport.addEventListener('mousewheel', this.centerMouseWheelListener.bind(this));
-            // Firefox
-            this.ePinnedLeftColsViewport.addEventListener('DOMMouseScroll', this.pinnedLeftMouseWheelListener.bind(this));
-            this.eBodyViewport.addEventListener('DOMMouseScroll', this.centerMouseWheelListener.bind(this));
+            this.addMouseWheelEventListeners();
         }
+    }
+
+    private addMouseWheelEventListeners(): void {
+        var genericListener = this.genericMouseWheelListener.bind(this);
+        var centerListener = this.centerMouseWheelListener.bind(this);
+
+        // IE9, Chrome, Safari, Opera
+        this.ePinnedLeftColsViewport.addEventListener('mousewheel', genericListener);
+        this.eBodyViewport.addEventListener('mousewheel', centerListener);
+        // Firefox
+        this.ePinnedLeftColsViewport.addEventListener('DOMMouseScroll', genericListener);
+        this.eBodyViewport.addEventListener('DOMMouseScroll', centerListener);
+
+        this.destroyFunctions.push( ()=> {
+            this.ePinnedLeftColsViewport.removeEventListener('mousewheel', genericListener);
+            this.eBodyViewport.removeEventListener('mousewheel', centerListener);
+            this.ePinnedLeftColsViewport.removeEventListener('DOMMouseScroll', genericListener);
+            this.eBodyViewport.removeEventListener('DOMMouseScroll', centerListener);
+        });
     }
 
     public getHeaderViewport(): HTMLElement {
@@ -840,7 +854,8 @@ export class GridPanel {
         }
     }
 
-    private pinnedLeftMouseWheelListener(event: any): boolean {
+    // used for listening to mouse wheel events on left pinned and also the nested components
+    public genericMouseWheelListener(event: any): boolean {
         var targetPanel: HTMLElement;
         if (this.columnController.isPinningRight()) {
             targetPanel = this.ePinnedRightColsViewport;
@@ -865,7 +880,7 @@ export class GridPanel {
             targetPanel.scrollTop = newTopPosition;
         }
 
-        // allow the option to pass mouse wheel events ot the browser
+        // allow the option to pass mouse wheel events to the browser
         // https://github.com/ceolter/ag-grid/issues/800
         // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
         if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {

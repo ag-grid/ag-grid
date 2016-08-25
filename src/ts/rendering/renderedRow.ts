@@ -15,6 +15,7 @@ import {GridCell} from "../entities/gridCell";
 import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {GridPanel} from "../gridPanel/gridPanel";
 
 export class RenderedRow {
 
@@ -27,6 +28,7 @@ export class RenderedRow {
     @Autowired('context') private context: Context;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
@@ -106,6 +108,17 @@ export class RenderedRow {
         }
 
         this.eNestedRow = this.createRowContainer(this.eNestedContainer);
+
+        var mouseWheelListener = this.gridPanel.genericMouseWheelListener.bind(this.gridPanel);
+        // IE9, Chrome, Safari, Opera
+        this.eNestedRow.addEventListener('mousewheel', mouseWheelListener);
+        // Firefox
+        this.eNestedRow.addEventListener('DOMMouseScroll', mouseWheelListener);
+
+        this.destroyFunctions.push( ()=> {
+            this.eNestedRow.removeEventListener('mousewheel', mouseWheelListener);
+            this.eNestedRow.removeEventListener('DOMMouseScroll', mouseWheelListener);
+        });
     }
 
     private setupNestedGroupContainers(): void {
