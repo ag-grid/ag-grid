@@ -11,10 +11,11 @@ include '../documentation-main/documentation_header.php';
     <h2>Nested Components</h2>
 
     <p>
-        hy there, you as using nested components!!
+        asdfsadsafd
     </p>
 
-    <show-example example="exampleNestedGrids"></show-example>
+    <show-example example="exampleNestedRow"></show-example>
+    <show-example example="exampleNestedGrid"></show-example>
 
 </div>
 

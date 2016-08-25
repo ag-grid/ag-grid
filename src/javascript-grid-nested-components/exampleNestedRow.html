@@ -1,0 +1,52 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise.js?ignore=notused26"></script>
+    <script src="exampleNestedRow.js"></script>
+</head>
+<style>
+    .nested-panel {
+        /* undo the white-space setting ag-Fresh puts in */
+        white-space: normal;
+        height: 100%;
+        width: 100%;
+        border: 2px solid grey;
+        border-style: ridge;
+        box-sizing: border-box;
+        padding: 5px;
+        background-color: beige;
+    }
+    .nested-flag {
+        float: left;
+        padding: 6px;
+    }
+    .nested-summary {
+        float: left;
+        /*margin-left: 10px;*/
+        margin-right: 10px;
+    }
+    .nested-panel label {
+        padding-top: 3px;
+        display: inline-block;
+        font-size: 12px;
+    }
+    .nested-center {
+        overflow-y: scroll;
+        border: 1px solid grey;
+        padding: 2px;
+        height: 100%;
+        box-sizing: border-box;
+        font-family: cursive;
+        background-color: #fafafa;
+    }
+    .nested-center p {
+        margin-top: 0px;
+    }
+    .nested-title {
+        font-size: 20px;
+    }
+</style>
+<body>
+    <div id="myGrid" class="ag-fresh"></div>
+</body>
+</html>
