@@ -51,6 +51,8 @@ NestedPanelCellRenderer.prototype.init = function(params) {
     var eTemp = document.createElement('div');
     eTemp.innerHTML = this.getTemplate(params);
     this.eGui = eTemp.firstElementChild;
+
+    this.consumeMouseWheelOnCenterText();
 };
 
 NestedPanelCellRenderer.prototype.getTemplate = function(params) {
@@ -77,6 +79,24 @@ NestedPanelCellRenderer.prototype.getTemplate = function(params) {
 };
 
 NestedPanelCellRenderer.prototype.getGui = function() {
+    return this.eGui;
+};
+
+// if we don't do this, then the mouse wheel will be picked up by the main
+// grid and scroll the main grid and not this component. this ensures that
+// the wheel move is only picked up by the text field
+NestedPanelCellRenderer.prototype.consumeMouseWheelOnCenterText = function() {
+    var eNestedCenter = this.eGui.querySelector('.nested-center');
+
+    var mouseWheelListener = function(event) {
+        event.stopPropagation();
+    };
+
+    // event is 'mousewheel' for IE9, Chrome, Safari, Opera
+    eNestedCenter.addEventListener('mousewheel', mouseWheelListener);
+    // event is 'DOMMouseScroll' Firefox
+    eNestedCenter.addEventListener('DOMMouseScroll', mouseWheelListener);
+
     return this.eGui;
 };
 
