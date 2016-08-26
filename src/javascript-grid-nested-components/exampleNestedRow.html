@@ -4,7 +4,17 @@
     <script src="../dist/ag-grid-enterprise.js?ignore=notused26"></script>
     <script src="exampleNestedRow.js"></script>
 </head>
+<body>
+    <div id="myGrid" class="ag-fresh"></div>
+</body>
+
 <style>
+
+    /* style would normally go in a .css file, however putting in here to keep example in fewer files */
+
+    /* all of these styles are particular to this example. if copying this example, you don't copy the styles,
+       you should lay out and style your own component as you want yourself. */
+
     .nested-panel {
         /* undo the white-space setting ag-Fresh puts in */
         white-space: normal;
@@ -46,7 +56,5 @@
         font-size: 20px;
     }
 </style>
-<body>
-    <div id="myGrid" class="ag-fresh"></div>
-</body>
+
 </html>
