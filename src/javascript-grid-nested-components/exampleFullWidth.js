@@ -9,11 +9,11 @@ function createData(count, prefix) {
     var rowData = [];
     for (var i = 0; i<count; i++) {
         var item = {};
-        // mark every third row as nested. how you mark the row is up to you,
+        // mark every third row as full width. how you mark the row is up to you,
         // in this example the example code (not the grid code) looks at the
-        // nested attribute in the isNestedRow() callback. how you determine
-        // if a row is nested or not is totally up to you.
-        item.nested = i % 3 === 2;
+        // fullWidth attribute in the isFullWidthCell() callback. how you determine
+        // if a row is full width or not is totally up to you.
+        item.fullWidth = i % 3 === 2;
         // put in a column for each letter of the alphabet
         LETTERS_IN_ALPHABET.forEach( function(letter) {
             item[letter] = prefix + ' (' + letter + ',' + i + ')';
@@ -45,11 +45,11 @@ var gridOptions = {
     floatingTopRowData: floatingTopRowData,
     floatingBottomRowData: floatingTopRowData,
     isFullWidthCell: function(rowNode) {
-        // in this example, we check the nested attribute that we set
+        // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you
-        // want to nest a row is up to you, as long as you return a boolean
+        // want a row full width is up to you, as long as you return a boolean
         // for this method.
-        return rowNode.data.nested;
+        return rowNode.data.fullWidth;
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
@@ -59,11 +59,11 @@ var gridOptions = {
         var message;
 
         if (params.node.floating) {
-            cssClass = 'example-nested-floating-row';
-            message = 'Floating nested row at index ' + params.rowIndex;
+            cssClass = 'example-full-width-floating-row';
+            message = 'Floating full width row at index ' + params.rowIndex;
         } else {
-            cssClass = 'example-nested-row';
-            message = 'Normal nested row at index' + params.rowIndex;
+            cssClass = 'example-full-width-row';
+            message = 'Normal full width row at index' + params.rowIndex;
         }
 
         var template = '<div class="'+cssClass+'"><button onclick="window.alert(\'Clicked!!\')">Click</button> '+message+'</div>';
@@ -71,10 +71,10 @@ var gridOptions = {
         return template;
     },
     getRowHeight: function(params) {
-        // you can have normal rows and nested rows any height that you want
+        // you can have normal rows and full width rows any height that you want
         var isBodyRow = params.node.floating===undefined;
-        var isNestedRow = params.node.data.nested;
-        if (isBodyRow && isNestedRow) {
+        var isFullWidth = params.node.data.fullWidth;
+        if (isBodyRow && isFullWidth) {
             return 55;
         } else {
             return 25;

@@ -14,11 +14,11 @@ include '../documentation-main/documentation_header.php';
         asdfsadsafd
     </p>
 
-    <show-example example="exampleNested"></show-example>
+    <show-example example="exampleFullWidth"></show-example>
 
-    <show-example example="exampleNestedRow"></show-example>
+    <show-example example="exampleFullWidthComponent"></show-example>
 
-    <show-example example="exampleNestedGrid"></show-example>
+    <show-example example="exampleMasterDetail"></show-example>
 
 </div>
 
