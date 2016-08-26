@@ -40,7 +40,7 @@ var gridHtml =
             '<div class="ag-floating-top-viewport">' +
                 '<div class="ag-floating-top-container"></div>' +
             '</div>'+
-            '<div class="ag-floating-top-nested"></div>'+
+            '<div class="ag-floating-top-full-width-cell-container"></div>'+
         '</div>'+
         // floating bottom
         '<div class="ag-floating-bottom">'+
@@ -49,7 +49,7 @@ var gridHtml =
             '<div class="ag-floating-bottom-viewport">' +
                 '<div class="ag-floating-bottom-container"></div>' +
             '</div>'+
-            '<div class="ag-floating-bottom-nested"></div>'+
+            '<div class="ag-floating-bottom-full-width-cell-container"></div>'+
         '</div>'+
         // body
         '<div class="ag-body">'+
@@ -64,8 +64,8 @@ var gridHtml =
                     '<div class="ag-body-container"></div>'+
                 '</div>'+
             '</div>'+
-            '<div class="ag-nested-viewport">'+
-                '<div class="ag-nested-container"></div>'+
+            '<div class="ag-full-width-cell-viewport">'+
+                '<div class="ag-full-width-cell-container"></div>'+
             '</div>'+
         '</div>'+
     '</div>';
@@ -128,8 +128,8 @@ export class GridPanel {
     private eBodyContainer: HTMLElement;
     private ePinnedLeftColsContainer: HTMLElement;
     private ePinnedRightColsContainer: HTMLElement;
-    private eNestedViewport: HTMLElement;
-    private eNestedContainer: HTMLElement;
+    private eFullWidthCellViewport: HTMLElement;
+    private eFullWidthCellContainer: HTMLElement;
     private eHeaderContainer: HTMLElement;
     private eHeaderOverlay: HTMLElement;
     private ePinnedLeftHeader: HTMLElement;
@@ -145,14 +145,14 @@ export class GridPanel {
     private ePinnedRightFloatingTop: HTMLElement;
     private eFloatingTopContainer: HTMLElement;
     private eFloatingTopViewport: HTMLElement;
-    private eFloatingTopNested: HTMLElement;
+    private eFloatingTopFullWidthCellContainer: HTMLElement;
 
     private eFloatingBottom: HTMLElement;
     private ePinnedLeftFloatingBottom: HTMLElement;
     private ePinnedRightFloatingBottom: HTMLElement;
     private eFloatingBottomContainer: HTMLElement;
     private eFloatingBottomViewport: HTMLElement;
-    private eFloatingBottomNested: HTMLElement;
+    private eFloatingBottomFullWidthCellContainer: HTMLElement;
 
     private eAllCellContainers: HTMLElement[];
 
@@ -576,7 +576,7 @@ export class GridPanel {
     // gets called every 500 ms. we use this to set padding on right pinned column
     public periodicallyCheck(): void {
         this.setBottomPaddingOnPinnedRight();
-        this.setMarginOnNestedPanel();
+        this.setMarginOnFullWidthCellContainer();
     }
 
     // the pinned container needs extra space at the bottom, some blank space, otherwise when
@@ -593,18 +593,20 @@ export class GridPanel {
         }
     }
 
-    private setMarginOnNestedPanel(): void {
+    private setMarginOnFullWidthCellContainer(): void {
         // if either right or bottom scrollbars are showing, we need to make sure the
-        // nested panel isn't covering the scrollbars
+        // fullWidthCell panel isn't covering the scrollbars. originally i tried to do this using
+        // margin, but the overflow was not getting clipped and going into the margin,
+        // so used border instead. dunno why it works, trial and error found the solution.
         if (this.isVerticalScrollShowing()) {
-            this.eNestedViewport.style.borderRight = this.scrollWidth + 'px solid transparent';
+            this.eFullWidthCellViewport.style.borderRight = this.scrollWidth + 'px solid transparent';
         } else {
-            this.eNestedViewport.style.borderRight = '';
+            this.eFullWidthCellViewport.style.borderRight = '';
         }
         if (this.isHorizontalScrollShowing()) {
-            this.eNestedViewport.style.borderBottom = this.scrollWidth + 'px solid transparent';
+            this.eFullWidthCellViewport.style.borderBottom = this.scrollWidth + 'px solid transparent';
         } else {
-            this.eNestedViewport.style.borderBottom = '';
+            this.eFullWidthCellViewport.style.borderBottom = '';
         }
     }
 
@@ -711,16 +713,16 @@ export class GridPanel {
         return this.eBodyContainer;
     }
 
-    public getNestedContainer(): HTMLElement {
-        return this.eNestedContainer;
+    public getFullWidthCellContainer(): HTMLElement {
+        return this.eFullWidthCellContainer;
     }
 
-    public getFloatingTopNested(): HTMLElement {
-        return this.eFloatingTopNested;
+    public getFloatingTopFullWidthCellContainer(): HTMLElement {
+        return this.eFloatingTopFullWidthCellContainer;
     }
 
-    public getFloatingBottomNested(): HTMLElement {
-        return this.eFloatingBottomNested;
+    public getFloatingBottomFullWidthCellContainer(): HTMLElement {
+        return this.eFloatingBottomFullWidthCellContainer;
     }
 
     public getDropTargetBodyContainers(): HTMLElement[] {
@@ -809,8 +811,8 @@ export class GridPanel {
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
             this.eBodyViewport = this.queryHtmlElement('.ag-body-viewport');
             this.eBodyViewportWrapper = this.queryHtmlElement('.ag-body-viewport-wrapper');
-            this.eNestedContainer = this.queryHtmlElement('.ag-nested-container');
-            this.eNestedViewport = this.queryHtmlElement('.ag-nested-viewport');
+            this.eFullWidthCellContainer = this.queryHtmlElement('.ag-full-width-cell-container');
+            this.eFullWidthCellViewport = this.queryHtmlElement('.ag-full-width-cell-viewport');
             this.ePinnedLeftColsContainer = this.queryHtmlElement('.ag-pinned-left-cols-container');
             this.ePinnedRightColsContainer = this.queryHtmlElement('.ag-pinned-right-cols-container');
             this.ePinnedLeftColsViewport = this.queryHtmlElement('.ag-pinned-left-cols-viewport');
@@ -827,14 +829,14 @@ export class GridPanel {
             this.ePinnedRightFloatingTop = this.queryHtmlElement('.ag-pinned-right-floating-top');
             this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
             this.eFloatingTopViewport = this.queryHtmlElement('.ag-floating-top-viewport');
-            this.eFloatingTopNested = this.queryHtmlElement('.ag-floating-top-nested');
+            this.eFloatingTopFullWidthCellContainer = this.queryHtmlElement('.ag-floating-top-full-width-cell-container');
 
             this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
             this.ePinnedLeftFloatingBottom = this.queryHtmlElement('.ag-pinned-left-floating-bottom');
             this.ePinnedRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
             this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
-            this.eFloatingBottomNested = this.queryHtmlElement('.ag-floating-bottom-nested');
+            this.eFloatingBottomFullWidthCellContainer = this.queryHtmlElement('.ag-floating-bottom-full-width-cell-container');
 
             this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
                 this.eFloatingTop, this.eFloatingBottom];
@@ -1166,7 +1168,7 @@ export class GridPanel {
     }
 
     private verticallyScrollNested(bodyTopPosition: any): void {
-        this.eNestedContainer.style.top = -bodyTopPosition + 'px';
+        this.eFullWidthCellContainer.style.top = -bodyTopPosition + 'px';
     }
 
     private verticallyScrollBody(position: any): void {

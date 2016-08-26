@@ -109,7 +109,7 @@ export class RowRenderer {
     }
 
     public getContainersFromGridPanel(): void {
-        this.eNestedContainer = this.gridPanel.getNestedContainer();
+        this.eNestedContainer = this.gridPanel.getFullWidthCellContainer();
         this.eBodyContainer = this.gridPanel.getBodyContainer();
         this.ePinnedLeftColsContainer = this.gridPanel.getPinnedLeftColsContainer();
         this.ePinnedRightColsContainer = this.gridPanel.getPinnedRightColsContainer();
@@ -117,12 +117,12 @@ export class RowRenderer {
         this.eFloatingTopContainer = this.gridPanel.getFloatingTopContainer();
         this.eFloatingTopPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingTop();
         this.eFloatingTopPinnedRightContainer = this.gridPanel.getPinnedRightFloatingTop();
-        this.eFloatingTopNested = this.gridPanel.getFloatingTopNested();
+        this.eFloatingTopNested = this.gridPanel.getFloatingTopFullWidthCellContainer();
 
         this.eFloatingBottomContainer = this.gridPanel.getFloatingBottomContainer();
         this.eFloatingBottomPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingBottom();
         this.eFloatingBottomPinnedRightContainer = this.gridPanel.getPinnedRightFloatingBottom();
-        this.eFloatingBottomNested = this.gridPanel.getFloatingBottomNested();
+        this.eFloatingBottomNested = this.gridPanel.getFloatingBottomFullWidthCellContainer();
 
         this.eBodyViewport = this.gridPanel.getBodyViewport();
 

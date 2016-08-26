@@ -262,7 +262,7 @@ ag-grid-ng2
     overflow-y auto // if we are pinning to the right, overflow y will be hidden
     height 100%
 
-.ag-nested-viewport
+.ag-full-width-cell-viewport
     height 100%
     width 100%
     // we want this panel to be on top of the others
@@ -277,14 +277,14 @@ ag-grid-ng2
     box-sizing border-box
     overflow hidden
 
-.ag-nested-container
+.ag-full-width-cell-container
     // if we don't put this in, the RHS will overflow into the viewports margin,
     // no idea why, trial and error
     overflow hidden
     position relative
     width 100%
 
-.ag-floating-bottom-nested
+.ag-floating-bottom-full-width-cell-container
     height 100%
     width 100%
     position absolute
@@ -294,7 +294,7 @@ ag-grid-ng2
     overflow hidden
     display inline
 
-.ag-floating-top-nested
+.ag-floating-top-full-width-cell-container
     height 100%
     width 100%
     position absolute
