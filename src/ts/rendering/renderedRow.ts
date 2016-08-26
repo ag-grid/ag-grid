@@ -81,7 +81,7 @@ export class RenderedRow {
 
     private setupRowContainers(): void {
 
-        let isNestedRowFunc = this.gridOptionsWrapper.getIsNestedRowFunc();
+        let isNestedRowFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isNestedRow = isNestedRowFunc ? isNestedRowFunc(this.rowNode) : false;
         let isGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
 
@@ -96,8 +96,8 @@ export class RenderedRow {
 
     private setupNestedContainers(): void {
         this.nestedRow = true;
-        this.nestedRowRenderer = this.gridOptionsWrapper.getNestedRowRenderer();
-        this.nestedRowRendererParams = this.gridOptionsWrapper.getNestedRowRendererParams();
+        this.nestedRowRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
+        this.nestedRowRendererParams = this.gridOptionsWrapper.getFullWidthCellRendererParams();
         if (_.missing(this.nestedRowRenderer)) {
             console.warn(`ag-Grid: you need to provide a nestedRowRenderer if using isNestedRow()`);
         }
