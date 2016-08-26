@@ -262,7 +262,7 @@ ag-grid-ng2
     overflow-y auto // if we are pinning to the right, overflow y will be hidden
     height 100%
 
-.ag-full-width-cell-viewport
+.ag-full-width-viewport
     height 100%
     width 100%
     // we want this panel to be on top of the others
@@ -270,21 +270,21 @@ ag-grid-ng2
     top 0px
     left 0px
     display inline
-    // because the nested container is an overlay over the rest of the grid, we cannot
+    // because the full width container is an overlay over the rest of the grid, we cannot
     // have it consume mouse events, otherwise no mouse events would be allowed on the
     // rest of the grid
     pointer-events none
     box-sizing border-box
     overflow hidden
 
-.ag-full-width-cell-container
+.ag-full-width-container
     // if we don't put this in, the RHS will overflow into the viewports margin,
     // no idea why, trial and error
     overflow hidden
     position relative
     width 100%
 
-.ag-floating-bottom-full-width-cell-container
+.ag-floating-bottom-full-width-container
     height 100%
     width 100%
     position absolute
@@ -294,7 +294,7 @@ ag-grid-ng2
     overflow hidden
     display inline
 
-.ag-floating-top-full-width-cell-container
+.ag-floating-top-full-width-container
     height 100%
     width 100%
     position absolute
@@ -304,7 +304,7 @@ ag-grid-ng2
     overflow hidden
     display inline
 
-.ag-nested-row
+.ag-full-width-row
     // turn events back on, as we removed them in the parent
     pointer-events all
     overflow hidden

@@ -33,24 +33,24 @@ export class RenderedRow {
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
     private eBodyRow: HTMLElement;
-    private eNestedRow: HTMLElement;
+    private eFullWidthRow: HTMLElement;
     private eAllRowContainers: HTMLElement[] = [];
 
-    private nestedRowComponent: ICellRenderer;
+    private fullWidthRowComponent: ICellRenderer;
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
     private rowNode: RowNode;
     private rowIndex: number;
 
-    private nestedRow: boolean;
-    private nestedRowRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
-    private nestedRowRendererParams: any;
+    private fullWidthRow: boolean;
+    private fullWidthCellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private fullWidthCellRendererParams: any;
 
     private parentScope: any;
     private rowRenderer: RowRenderer;
     private eBodyContainer: HTMLElement;
-    private eNestedContainer: HTMLElement;
+    private eFullWidthContainer: HTMLElement;
     private ePinnedLeftContainer: HTMLElement;
     private ePinnedRightContainer: HTMLElement;
 
@@ -63,7 +63,7 @@ export class RenderedRow {
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
-                eNestedContainer: HTMLElement,
+                eFullWidthContainer: HTMLElement,
                 ePinnedLeftContainer: HTMLElement,
                 ePinnedRightContainer: HTMLElement,
                 node: RowNode,
@@ -71,7 +71,7 @@ export class RenderedRow {
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
-        this.eNestedContainer = eNestedContainer;
+        this.eFullWidthContainer = eFullWidthContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
         this.ePinnedRightContainer = ePinnedRightContainer;
 
@@ -81,58 +81,58 @@ export class RenderedRow {
 
     private setupRowContainers(): void {
 
-        let isNestedRowFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
-        let isNestedRow = isNestedRowFunc ? isNestedRowFunc(this.rowNode) : false;
+        let isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
+        let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
         let isGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
 
-        if (isNestedRow) {
-            this.setupNestedContainers();
+        if (isFullWidthCell) {
+            this.setupFullWidthContainers();
         } else if (isGroupSpanningRow) {
-            this.setupNestedGroupContainers();
+            this.setupFullWidthGroupContainers();
         } else {
             this.setupNormalContainers();
         }
     }
 
-    private setupNestedContainers(): void {
-        this.nestedRow = true;
-        this.nestedRowRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
-        this.nestedRowRendererParams = this.gridOptionsWrapper.getFullWidthCellRendererParams();
-        if (_.missing(this.nestedRowRenderer)) {
-            console.warn(`ag-Grid: you need to provide a nestedRowRenderer if using isNestedRow()`);
+    private setupFullWidthContainers(): void {
+        this.fullWidthRow = true;
+        this.fullWidthCellRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
+        this.fullWidthCellRendererParams = this.gridOptionsWrapper.getFullWidthCellRendererParams();
+        if (_.missing(this.fullWidthCellRenderer)) {
+            console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
         }
 
-        this.eNestedRow = this.createRowContainer(this.eNestedContainer);
+        this.eFullWidthRow = this.createRowContainer(this.eFullWidthContainer);
 
         var mouseWheelListener = this.gridPanel.genericMouseWheelListener.bind(this.gridPanel);
         // IE9, Chrome, Safari, Opera
-        this.eNestedRow.addEventListener('mousewheel', mouseWheelListener);
+        this.eFullWidthRow.addEventListener('mousewheel', mouseWheelListener);
         // Firefox
-        this.eNestedRow.addEventListener('DOMMouseScroll', mouseWheelListener);
+        this.eFullWidthRow.addEventListener('DOMMouseScroll', mouseWheelListener);
 
         this.destroyFunctions.push( ()=> {
-            this.eNestedRow.removeEventListener('mousewheel', mouseWheelListener);
-            this.eNestedRow.removeEventListener('DOMMouseScroll', mouseWheelListener);
+            this.eFullWidthRow.removeEventListener('mousewheel', mouseWheelListener);
+            this.eFullWidthRow.removeEventListener('DOMMouseScroll', mouseWheelListener);
         });
     }
 
-    private setupNestedGroupContainers(): void {
-        this.nestedRow = true;
-        this.nestedRowRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
-        this.nestedRowRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
+    private setupFullWidthGroupContainers(): void {
+        this.fullWidthRow = true;
+        this.fullWidthCellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
+        this.fullWidthCellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
 
-        if (!this.nestedRowRenderer) {
-            this.nestedRowRenderer = CellRendererFactory.GROUP;
-            this.nestedRowRendererParams = {
+        if (!this.fullWidthCellRenderer) {
+            this.fullWidthCellRenderer = CellRendererFactory.GROUP;
+            this.fullWidthCellRendererParams = {
                 innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
             }
         }
 
-        this.eNestedRow = this.createRowContainer(this.eNestedContainer);
+        this.eFullWidthRow = this.createRowContainer(this.eFullWidthContainer);
     }
 
     private setupNormalContainers(): void {
-        this.nestedRow = false;
+        this.fullWidthRow = false;
 
         this.eBodyRow = this.createRowContainer(this.eBodyContainer);
 
@@ -149,8 +149,8 @@ export class RenderedRow {
 
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
-        if (this.nestedRow) {
-            this.refreshNestedComponent();
+        if (this.fullWidthRow) {
+            this.refreshFullWidthComponent();
         } else {
             this.refreshCellsIntoRow();
         }
@@ -227,10 +227,10 @@ export class RenderedRow {
 
     private onDisplayedColumnsChanged(event: ColumnChangeEvent): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
-        if (this.nestedRow) {
+        if (this.fullWidthRow) {
             var columnPinned = event.getType() === Events.EVENT_COLUMN_PINNED;
             if (columnPinned) {
-                this.refreshNestedComponent();
+                this.refreshFullWidthComponent();
             }
         } else {
             this.refreshCellsIntoRow();
@@ -239,7 +239,7 @@ export class RenderedRow {
 
     private onVirtualColumnsChanged(event: ColumnChangeEvent): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
-        if (!this.nestedRow) {
+        if (!this.fullWidthRow) {
             this.refreshCellsIntoRow();
         }
     }
@@ -471,7 +471,7 @@ export class RenderedRow {
     public destroy(): void {
 
         this.destroyScope();
-        this.destroyNestedComponent();
+        this.destroyFullWidthComponent();
         this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
 
         this.destroyFunctions.forEach( func => func() );
@@ -496,26 +496,26 @@ export class RenderedRow {
         return this.rowNode.group === true;
     }
 
-    private refreshNestedComponent(): void {
-        this.destroyNestedComponent();
-        this.createNestedComponent();
+    private refreshFullWidthComponent(): void {
+        this.destroyFullWidthComponent();
+        this.createFullWidthComponent();
     }
 
-    private createNestedComponent(): void {
-        var params = this.createNestedParams(this.eNestedRow);
-        this.nestedRowComponent = this.cellRendererService.useCellRenderer(this.nestedRowRenderer, this.eNestedRow, params);
-        this.angular1Compile(this.eNestedRow);
+    private createFullWidthComponent(): void {
+        var params = this.createFullWidthParams(this.eFullWidthRow);
+        this.fullWidthRowComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, this.eFullWidthRow, params);
+        this.angular1Compile(this.eFullWidthRow);
     }
 
-    private destroyNestedComponent(): void {
-        if (this.nestedRowComponent && this.nestedRowComponent.destroy) {
-            this.nestedRowComponent.destroy();
-            this.nestedRowComponent = null;
+    private destroyFullWidthComponent(): void {
+        if (this.fullWidthRowComponent && this.fullWidthRowComponent.destroy) {
+            this.fullWidthRowComponent.destroy();
+            this.fullWidthRowComponent = null;
         }
-        _.removeAllChildren(this.eNestedRow);
+        _.removeAllChildren(this.eFullWidthRow);
     }
 
-    private createNestedParams(eRow: HTMLElement): any {
+    private createFullWidthParams(eRow: HTMLElement): any {
         var params = {
             data: this.rowNode.data,
             node: this.rowNode,
@@ -528,13 +528,13 @@ export class RenderedRow {
             eParentOfValue: eRow,
             addRenderedRowListener: this.addEventListener.bind(this),
             colDef: {
-                cellRenderer: this.nestedRowRenderer,
-                cellRendererParams: this.nestedRowRendererParams
+                cellRenderer: this.fullWidthCellRenderer,
+                cellRendererParams: this.fullWidthCellRendererParams
             }
         };
 
-        if (this.nestedRowRendererParams) {
-            _.assign(params, this.nestedRowRendererParams);
+        if (this.fullWidthCellRendererParams) {
+            _.assign(params, this.fullWidthCellRendererParams);
         }
 
         return params;
@@ -546,9 +546,9 @@ export class RenderedRow {
         // in the main body.
         if (!padding) {
 
-            var params = this.createNestedParams(eRow);
+            var params = this.createFullWidthParams(eRow);
 
-            var cellComponent = this.cellRendererService.useCellRenderer(this.nestedRowRenderer, eRow, params);
+            var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
 
             if (cellComponent && cellComponent.destroy) {
                 this.destroyFunctions.push( () => cellComponent.destroy() );
@@ -780,8 +780,8 @@ export class RenderedRow {
             }
         }
 
-        if (this.nestedRow) {
-            classes.push('ag-nested-row');
+        if (this.fullWidthRow) {
+            classes.push('ag-full-width-row');
         }
 
         classes.forEach( (classStr: string) => {

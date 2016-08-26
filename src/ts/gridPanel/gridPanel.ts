@@ -40,7 +40,7 @@ var gridHtml =
             '<div class="ag-floating-top-viewport">' +
                 '<div class="ag-floating-top-container"></div>' +
             '</div>'+
-            '<div class="ag-floating-top-full-width-cell-container"></div>'+
+            '<div class="ag-floating-top-full-width-container"></div>'+
         '</div>'+
         // floating bottom
         '<div class="ag-floating-bottom">'+
@@ -49,7 +49,7 @@ var gridHtml =
             '<div class="ag-floating-bottom-viewport">' +
                 '<div class="ag-floating-bottom-container"></div>' +
             '</div>'+
-            '<div class="ag-floating-bottom-full-width-cell-container"></div>'+
+            '<div class="ag-floating-bottom-full-width-container"></div>'+
         '</div>'+
         // body
         '<div class="ag-body">'+
@@ -64,8 +64,8 @@ var gridHtml =
                     '<div class="ag-body-container"></div>'+
                 '</div>'+
             '</div>'+
-            '<div class="ag-full-width-cell-viewport">'+
-                '<div class="ag-full-width-cell-container"></div>'+
+            '<div class="ag-full-width-viewport">'+
+                '<div class="ag-full-width-container"></div>'+
             '</div>'+
         '</div>'+
     '</div>';
@@ -811,8 +811,8 @@ export class GridPanel {
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
             this.eBodyViewport = this.queryHtmlElement('.ag-body-viewport');
             this.eBodyViewportWrapper = this.queryHtmlElement('.ag-body-viewport-wrapper');
-            this.eFullWidthCellContainer = this.queryHtmlElement('.ag-full-width-cell-container');
-            this.eFullWidthCellViewport = this.queryHtmlElement('.ag-full-width-cell-viewport');
+            this.eFullWidthCellContainer = this.queryHtmlElement('.ag-full-width-container');
+            this.eFullWidthCellViewport = this.queryHtmlElement('.ag-full-width-viewport');
             this.ePinnedLeftColsContainer = this.queryHtmlElement('.ag-pinned-left-cols-container');
             this.ePinnedRightColsContainer = this.queryHtmlElement('.ag-pinned-right-cols-container');
             this.ePinnedLeftColsViewport = this.queryHtmlElement('.ag-pinned-left-cols-viewport');
@@ -829,14 +829,14 @@ export class GridPanel {
             this.ePinnedRightFloatingTop = this.queryHtmlElement('.ag-pinned-right-floating-top');
             this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
             this.eFloatingTopViewport = this.queryHtmlElement('.ag-floating-top-viewport');
-            this.eFloatingTopFullWidthCellContainer = this.queryHtmlElement('.ag-floating-top-full-width-cell-container');
+            this.eFloatingTopFullWidthCellContainer = this.queryHtmlElement('.ag-floating-top-full-width-container');
 
             this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
             this.ePinnedLeftFloatingBottom = this.queryHtmlElement('.ag-pinned-left-floating-bottom');
             this.ePinnedRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
             this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
-            this.eFloatingBottomFullWidthCellContainer = this.queryHtmlElement('.ag-floating-bottom-full-width-cell-container');
+            this.eFloatingBottomFullWidthCellContainer = this.queryHtmlElement('.ag-floating-bottom-full-width-container');
 
             this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
                 this.eFloatingTop, this.eFloatingBottom];
@@ -877,7 +877,7 @@ export class GridPanel {
         }
     }
 
-    // used for listening to mouse wheel events on left pinned and also the nested components
+    // used for listening to mouse wheel events on left pinned and also the fullWidthCell components
     public genericMouseWheelListener(event: any): boolean {
         var targetPanel: HTMLElement;
         if (this.columnController.isPinningRight()) {
@@ -1079,7 +1079,7 @@ export class GridPanel {
                 if (newTopPosition !== that.lastTopPosition) {
                     that.lastTopPosition = newTopPosition;
                     that.verticallyScrollLeftPinned(newTopPosition);
-                    that.verticallyScrollNested(newTopPosition);
+                    that.verticallyScrollFullWidthCellContainer(newTopPosition);
                     that.rowRenderer.drawVirtualRows();
                 }
             }
@@ -1090,7 +1090,7 @@ export class GridPanel {
             if (newTopPosition !== that.lastTopPosition) {
                 that.lastTopPosition = newTopPosition;
                 that.verticallyScrollLeftPinned(newTopPosition);
-                that.verticallyScrollNested(newTopPosition);
+                that.verticallyScrollFullWidthCellContainer(newTopPosition);
                 that.verticallyScrollBody(newTopPosition);
                 that.rowRenderer.drawVirtualRows();
             }
@@ -1167,7 +1167,7 @@ export class GridPanel {
         this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
     }
 
-    private verticallyScrollNested(bodyTopPosition: any): void {
+    private verticallyScrollFullWidthCellContainer(bodyTopPosition: any): void {
         this.eFullWidthCellContainer.style.top = -bodyTopPosition + 'px';
     }
 
