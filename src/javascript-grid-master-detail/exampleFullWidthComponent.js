@@ -44,9 +44,9 @@ function countryCellRenderer(params) {
     return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
 }
 
-function NestedPanelCellRenderer() {}
+function FullWidthCellRenderer() {}
 
-NestedPanelCellRenderer.prototype.init = function(params) {
+FullWidthCellRenderer.prototype.init = function(params) {
     // trick to convert string of html into dom object
     var eTemp = document.createElement('div');
     eTemp.innerHTML = this.getTemplate(params);
@@ -55,7 +55,7 @@ NestedPanelCellRenderer.prototype.init = function(params) {
     this.consumeMouseWheelOnCenterText();
 };
 
-NestedPanelCellRenderer.prototype.getTemplate = function(params) {
+FullWidthCellRenderer.prototype.getTemplate = function(params) {
     // this is the details, as returned by getNodeChildDetails
     var data = params.data;
     // this is teh data of the parent row
@@ -78,24 +78,24 @@ NestedPanelCellRenderer.prototype.getTemplate = function(params) {
     return template;
 };
 
-NestedPanelCellRenderer.prototype.getGui = function() {
+FullWidthCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
 // if we don't do this, then the mouse wheel will be picked up by the main
 // grid and scroll the main grid and not this component. this ensures that
 // the wheel move is only picked up by the text field
-NestedPanelCellRenderer.prototype.consumeMouseWheelOnCenterText = function() {
-    var eNestedCenter = this.eGui.querySelector('.full-width-center');
+FullWidthCellRenderer.prototype.consumeMouseWheelOnCenterText = function() {
+    var eFullWidthCenter = this.eGui.querySelector('.full-width-center');
 
     var mouseWheelListener = function(event) {
         event.stopPropagation();
     };
 
     // event is 'mousewheel' for IE9, Chrome, Safari, Opera
-    eNestedCenter.addEventListener('mousewheel', mouseWheelListener);
+    eFullWidthCenter.addEventListener('mousewheel', mouseWheelListener);
     // event is 'DOMMouseScroll' Firefox
-    eNestedCenter.addEventListener('DOMMouseScroll', mouseWheelListener);
+    eFullWidthCenter.addEventListener('DOMMouseScroll', mouseWheelListener);
 };
 
 var gridOptions = {
@@ -105,7 +105,7 @@ var gridOptions = {
         return rowNode.level === 1;
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
-    fullWidthCellRenderer: NestedPanelCellRenderer,
+    fullWidthCellRenderer: FullWidthCellRenderer,
     getRowHeight: function(params) {
         var rowIsNestedRow = params.node.level===1;
         // return 100 when nested row, otherwise return 25

@@ -1,8 +1,8 @@
 <?php
-$key = "Nested Components";
-$pageTitle = "ag-Grid Nested Grids";
-$pageDescription = "ag-Grid allows to place any component you want inside the main grid. This is done using nested grids.";
-$pageKeyboards = "ag-Grid Nested Grids Components";
+$key = "Full Widht Components";
+$pageTitle = "ag-Grid JavaScript Master Detail DataGrid";
+$pageDescription = "ag-Grid allows to use one component to span the entire width of the grid. This can be used to achieve a master detail datagrid.";
+$pageKeyboards = "ag-Grid full width master detail javascript datagrid";
 include '../documentation-main/documentation_header.php';
 ?>
 
