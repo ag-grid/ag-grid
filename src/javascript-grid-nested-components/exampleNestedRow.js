@@ -96,8 +96,6 @@ NestedPanelCellRenderer.prototype.consumeMouseWheelOnCenterText = function() {
     eNestedCenter.addEventListener('mousewheel', mouseWheelListener);
     // event is 'DOMMouseScroll' Firefox
     eNestedCenter.addEventListener('DOMMouseScroll', mouseWheelListener);
-
-    return this.eGui;
 };
 
 var gridOptions = {
@@ -118,9 +116,9 @@ var gridOptions = {
             return {
                 group: true,
                 // provide ag-Grid with the children of this group
-                children: [country.details]
-                // ,
-                // expanded: country.name === "Ireland" || country.name === "United Kingdom"
+                children: [country.details],
+                // to help with the demo, expand Ireland and UK by default
+                expanded: country.name === "Ireland" || country.name === "United Kingdom"
             };
         } else {
             return null;

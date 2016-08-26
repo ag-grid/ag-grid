@@ -1,52 +1,63 @@
 <html>
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid-enterprise.js?ignore=notused26"></script>
+    <script src="../dist/ag-grid.js?ignore=notused26"></script>
     <script src="exampleNestedGrid.js"></script>
 </head>
-<style>
-    .nested-panel {
-        /* undo the white-space setting ag-Fresh puts in */
-        white-space: normal;
-        height: 100%;
-        width: 100%;
-        border: 2px solid grey;
-        border-style: ridge;
-        box-sizing: border-box;
-        padding: 5px;
-        background-color: beige;
-    }
-    .nested-flag {
-        float: left;
-        padding: 6px;
-    }
-    .nested-summary {
-        float: left;
-        /*margin-left: 10px;*/
-        margin-right: 10px;
-    }
-    .nested-panel label {
-        padding-top: 3px;
-        display: inline-block;
-        font-size: 12px;
-    }
-    .nested-center {
-        overflow-y: scroll;
-        border: 1px solid grey;
-        padding: 2px;
-        height: 100%;
-        box-sizing: border-box;
-        font-family: cursive;
-        background-color: #fafafa;
-    }
-    .nested-center p {
-        margin-top: 0px;
-    }
-    .nested-title {
-        font-size: 20px;
-    }
-</style>
 <body>
     <div id="myGrid" class="ag-fresh"></div>
 </body>
+
+<style>
+    /* style would normally go in a .css file, however putting in here to keep example in fewer files */
+
+    /* all of these styles are particular to this example. if copying this example, you don't copy the styles,
+       you should lay out and style your own component as you want yourself. */
+
+    .nested-panel {
+        position: relative;
+        background: #fafafa;
+        height: 100%;
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        border-left: 2px solid grey;
+        border-bottom: 2px solid lightgray;
+        border-right: 2px solid lightgray;
+    }
+    .call-record-cell {
+        text-align: right;
+    }
+    .nested-detail {
+        padding-top: 4px;
+    }
+    .nested-details {
+        float: left;
+        padding: 5px;
+        margin: 5px;
+        width: 150px;
+    }
+    .nested-grid {
+        margin-left: 150px;
+        padding-top: 25px;
+        box-sizing: border-box;
+        display: block;
+        height: 100%;
+    }
+    .nested-grid-toolbar {
+        top: 4px;
+        left: 30px;
+        margin-left: 150px;
+        display: block;
+        position: absolute;
+    }
+    .nested-phone-icon {
+        padding-right: 10px;
+    }
+    .nested-search {
+        border: 1px solid #eee;
+        margin-left: 10px;
+    }
+</style>
+
 </html>

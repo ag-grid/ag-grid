@@ -307,7 +307,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
             <b>Print Cache State</b>: Debugging method, to see the state of the cache.
         </li>
         <li>
-            <b>Set Prices High & Set Prices Low</b>: Sets the prices ONE THE SERVER SIDE to either high or low prices.
+            <b>Set Prices High & Set Prices Low</b>: Sets the prices ON THE SERVER SIDE to either high or low prices.
             This will not impact the grid until after a page cache is loaded. Use these buttons then then further
             test the refresh and purge methods.
         </li>
