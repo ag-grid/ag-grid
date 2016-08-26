@@ -44,7 +44,7 @@ var gridOptions = {
     rowData: mainRowData,
     floatingTopRowData: floatingTopRowData,
     floatingBottomRowData: floatingTopRowData,
-    isNestedRow: function(rowNode) {
+    isFullWidthCell: function(rowNode) {
         // in this example, we check the nested attribute that we set
         // while creating the data. what check you do to decide if you
         // want to nest a row is up to you, as long as you return a boolean
@@ -53,7 +53,7 @@ var gridOptions = {
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
-    nestedRowRenderer: function(params) {
+    fullWidthCellRenderer: function(params) {
         // floating rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
         var cssClass;
         var message;

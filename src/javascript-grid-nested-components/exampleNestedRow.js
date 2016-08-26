@@ -101,11 +101,11 @@ NestedPanelCellRenderer.prototype.consumeMouseWheelOnCenterText = function() {
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: countries,
-    isNestedRow: function(rowNode) {
+    isFullWidthCell: function(rowNode) {
         return rowNode.level === 1;
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
-    nestedRowRenderer: NestedPanelCellRenderer,
+    fullWidthCellRenderer: NestedPanelCellRenderer,
     getRowHeight: function(params) {
         var rowIsNestedRow = params.node.level===1;
         // return 100 when nested row, otherwise return 25
