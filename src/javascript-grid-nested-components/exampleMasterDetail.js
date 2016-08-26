@@ -113,7 +113,7 @@ NestedPanelCellRenderer.prototype.setupNestedGrid = function(callRecords) {
         }
     };
 
-    var eNestedGrid = this.eGui.querySelector('.nested-grid');
+    var eNestedGrid = this.eGui.querySelector('.full-width-grid');
     new agGrid.Grid(eNestedGrid, this.gridOptions);
 };
 
@@ -122,19 +122,19 @@ NestedPanelCellRenderer.prototype.getTemplate = function(params) {
     var parentRecord = params.node.parent.data;
 
     var template =
-        '<div class="nested-panel">' +
-        '  <div class="nested-details">' +
-        '    <div class="nested-detail"><img width="120px" src="../images/'+parentRecord.image+'.png"/></div>' +
-        '    <div class="nested-detail"><b>Name: </b>'+parentRecord.name+'</div>' +
-        '    <div class="nested-detail"><b>Account: </b>'+parentRecord.account+'</div>' +
+        '<div class="full-width-panel">' +
+        '  <div class="full-width-details">' +
+        '    <div class="full-width-detail"><img width="120px" src="../images/'+parentRecord.image+'.png"/></div>' +
+        '    <div class="full-width-detail"><b>Name: </b>'+parentRecord.name+'</div>' +
+        '    <div class="full-width-detail"><b>Account: </b>'+parentRecord.account+'</div>' +
         '  </div>'+
-        '  <div class="nested-grid"></div>' +
-        '  <div class="nested-grid-toolbar">' +
-        '       <img class="nested-phone-icon" src="../images/phone.png"/>' +
+        '  <div class="full-width-grid"></div>' +
+        '  <div class="full-width-grid-toolbar">' +
+        '       <img class="full-width-phone-icon" src="../images/phone.png"/>' +
         '       <button><img src="../images/fire.png"/></button>' +
         '       <button><img src="../images/frost.png"/></button>' +
         '       <button><img src="../images/sun.png"/></button>' +
-        '       <input class="nested-search" placeholder="Search..."/>' +
+        '       <input class="full-width-search" placeholder="Search..."/>' +
         '  </div>'+
         '</div>';
 
@@ -150,7 +150,7 @@ NestedPanelCellRenderer.prototype.destroy = function() {
 };
 
 NestedPanelCellRenderer.prototype.addSeachFeature = function() {
-    var tfSearch = this.eGui.querySelector('.nested-search');
+    var tfSearch = this.eGui.querySelector('.full-width-search');
     var gridApi = this.gridOptions.api;
 
     var searchListener = function() {
@@ -162,7 +162,7 @@ NestedPanelCellRenderer.prototype.addSeachFeature = function() {
 };
 
 NestedPanelCellRenderer.prototype.addButtonListeners = function() {
-    var eButtons = this.eGui.querySelectorAll('.nested-grid-toolbar button');
+    var eButtons = this.eGui.querySelectorAll('.full-width-grid-toolbar button');
 
     for (var i = 0;  i<eButtons.length; i++) {
         eButtons[i].addEventListener('click', function() {
@@ -175,7 +175,7 @@ NestedPanelCellRenderer.prototype.addButtonListeners = function() {
 // grid and scroll the main grid and not this component. this ensures that
 // the wheel move is only picked up by the text field
 NestedPanelCellRenderer.prototype.consumeMouseWheelOnNestedGrid = function() {
-    var eNestedGrid = this.eGui.querySelector('.nested-grid');
+    var eNestedGrid = this.eGui.querySelector('.full-width-grid');
 
     var mouseWheelListener = function(event) {
         event.stopPropagation();

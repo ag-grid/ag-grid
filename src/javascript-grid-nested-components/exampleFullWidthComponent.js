@@ -62,16 +62,16 @@ NestedPanelCellRenderer.prototype.getTemplate = function(params) {
     var parentData = params.node.parent.data;
 
     var template =
-        '<div class="nested-panel">' +
-        '  <div class="nested-flag">' +
+        '<div class="full-width-panel">' +
+        '  <div class="full-width-flag">' +
         '    <img border="0" src="../images/largeFlags/' + parentData.code + '.png">'+
         '  </div>' +
-        '  <div class="nested-summary">' +
-        '    <span class="nested-title">'+parentData.name+'</span><br/>' +
+        '  <div class="full-width-summary">' +
+        '    <span class="full-width-title">'+parentData.name+'</span><br/>' +
         '    <label><b>Population:</b> '+data.population+'</label><br/>'+
         '    <label><b>Known For:</b> '+data.summary+ '</label><br/>' +
         '  </div>' +
-        '  <div class="nested-center">' + latinText +
+        '  <div class="full-width-center">' + latinText +
         '  </div>' +
         '</div>';
 
@@ -86,7 +86,7 @@ NestedPanelCellRenderer.prototype.getGui = function() {
 // grid and scroll the main grid and not this component. this ensures that
 // the wheel move is only picked up by the text field
 NestedPanelCellRenderer.prototype.consumeMouseWheelOnCenterText = function() {
-    var eNestedCenter = this.eGui.querySelector('.nested-center');
+    var eNestedCenter = this.eGui.querySelector('.full-width-center');
 
     var mouseWheelListener = function(event) {
         event.stopPropagation();
