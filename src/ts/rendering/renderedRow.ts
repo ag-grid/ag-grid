@@ -54,11 +54,6 @@ export class RenderedRow {
     private ePinnedLeftContainer: HTMLElement;
     private ePinnedRightContainer: HTMLElement;
 
-    // these are only used if this is a group row and the group spans the entire row
-    private eGroupRow: HTMLElement;
-    private eGroupRowPaddingCentre: HTMLElement;
-    private eGroupRowPaddingRight: HTMLElement;
-
     private destroyFunctions: Function[] = [];
 
     private renderedRowEventService: EventService;
@@ -518,45 +513,6 @@ export class RenderedRow {
             this.nestedRowComponent = null;
         }
         _.removeAllChildren(this.eNestedRow);
-    }
-
-    private refreshNestedComponent_old(): void {
-
-        // where the components go changes with pinning, it's easiest ot just remove from all containers
-        // and start again if the pinning changes
-        _.removeAllChildren(this.ePinnedLeftRow);
-        _.removeAllChildren(this.ePinnedRightRow);
-        _.removeAllChildren(this.eBodyRow);
-
-        // create main component if not already existing from previous refresh
-        if (!this.eGroupRow) {
-            this.eGroupRow = this.createGroupSpanningEntireRowCell(false);
-            this.angular1Compile(this.eGroupRow);
-        }
-
-        var pinningLeft = this.columnController.isPinningLeft();
-        var pinningRight = this.columnController.isPinningRight();
-
-        // if pinning left, then main component goes into left and we pad centre, otherwise it goes into centre
-        if (pinningLeft) {
-            this.ePinnedLeftRow.appendChild(this.eGroupRow);
-            if (!this.eGroupRowPaddingCentre) {
-                this.eGroupRowPaddingCentre = this.createGroupSpanningEntireRowCell(true);
-                this.angular1Compile(this.eGroupRowPaddingCentre);
-            }
-            this.eBodyRow.appendChild(this.eGroupRowPaddingCentre);
-        } else {
-            this.eBodyRow.appendChild(this.eGroupRow);
-        }
-
-        // main component is never in right, but if pinning right, we put padding into the right
-        if (pinningRight) {
-            if (!this.eGroupRowPaddingRight) {
-                this.eGroupRowPaddingRight = this.createGroupSpanningEntireRowCell(true);
-                this.angular1Compile(this.eGroupRowPaddingRight);
-            }
-            this.ePinnedRightRow.appendChild(this.eGroupRowPaddingRight);
-        }
     }
 
     private createNestedParams(eRow: HTMLElement): any {

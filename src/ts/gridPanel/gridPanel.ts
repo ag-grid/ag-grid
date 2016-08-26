@@ -40,6 +40,7 @@ var gridHtml =
             '<div class="ag-floating-top-viewport">' +
                 '<div class="ag-floating-top-container"></div>' +
             '</div>'+
+            '<div class="ag-floating-top-nested"></div>'+
         '</div>'+
         // floating bottom
         '<div class="ag-floating-bottom">'+
@@ -48,6 +49,7 @@ var gridHtml =
             '<div class="ag-floating-bottom-viewport">' +
                 '<div class="ag-floating-bottom-container"></div>' +
             '</div>'+
+            '<div class="ag-floating-bottom-nested"></div>'+
         '</div>'+
         // body
         '<div class="ag-body">'+
@@ -143,12 +145,14 @@ export class GridPanel {
     private ePinnedRightFloatingTop: HTMLElement;
     private eFloatingTopContainer: HTMLElement;
     private eFloatingTopViewport: HTMLElement;
+    private eFloatingTopNested: HTMLElement;
 
     private eFloatingBottom: HTMLElement;
     private ePinnedLeftFloatingBottom: HTMLElement;
     private ePinnedRightFloatingBottom: HTMLElement;
     private eFloatingBottomContainer: HTMLElement;
     private eFloatingBottomViewport: HTMLElement;
+    private eFloatingBottomNested: HTMLElement;
 
     private eAllCellContainers: HTMLElement[];
 
@@ -316,7 +320,7 @@ export class GridPanel {
             if (target===this.eBodyViewport) {
                 // show it
                 this.onContextMenu(mouseEvent);
-                this.preventDefultOnContextMenu(mouseEvent);
+                this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
 
@@ -332,7 +336,7 @@ export class GridPanel {
             this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
         }
 
-        this.preventDefultOnContextMenu(mouseEvent);
+        this.preventDefaultOnContextMenu(mouseEvent);
     }
 
     private onContextMenu(mouseEvent: MouseEvent): void {
@@ -349,7 +353,7 @@ export class GridPanel {
         }
     }
 
-    private preventDefultOnContextMenu(mouseEvent: MouseEvent): void {
+    private preventDefaultOnContextMenu(mouseEvent: MouseEvent): void {
         // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
@@ -590,10 +594,17 @@ export class GridPanel {
     }
 
     private setMarginOnNestedPanel(): void {
+        // if either right or bottom scrollbars are showing, we need to make sure the
+        // nested panel isn't covering the scrollbars
         if (this.isVerticalScrollShowing()) {
-            this.eNestedContainer.style.marginRight = this.scrollWidth + 'px';
+            this.eNestedViewport.style.borderRight = this.scrollWidth + 'px solid transparent';
         } else {
-            this.eNestedContainer.style.marginRight = '';
+            this.eNestedViewport.style.borderRight = '';
+        }
+        if (this.isHorizontalScrollShowing()) {
+            this.eNestedViewport.style.borderBottom = this.scrollWidth + 'px solid transparent';
+        } else {
+            this.eNestedViewport.style.borderBottom = '';
         }
     }
 
@@ -704,6 +715,14 @@ export class GridPanel {
         return this.eNestedContainer;
     }
 
+    public getFloatingTopNested(): HTMLElement {
+        return this.eFloatingTopNested;
+    }
+
+    public getFloatingBottomNested(): HTMLElement {
+        return this.eFloatingBottomNested;
+    }
+
     public getDropTargetBodyContainers(): HTMLElement[] {
         if (this.forPrint) {
             return [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
@@ -808,12 +827,14 @@ export class GridPanel {
             this.ePinnedRightFloatingTop = this.queryHtmlElement('.ag-pinned-right-floating-top');
             this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
             this.eFloatingTopViewport = this.queryHtmlElement('.ag-floating-top-viewport');
+            this.eFloatingTopNested = this.queryHtmlElement('.ag-floating-top-nested');
 
             this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
             this.ePinnedLeftFloatingBottom = this.queryHtmlElement('.ag-pinned-left-floating-bottom');
             this.ePinnedRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
             this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
+            this.eFloatingBottomNested = this.queryHtmlElement('.ag-floating-bottom-nested');
 
             this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
                 this.eFloatingTop, this.eFloatingBottom];

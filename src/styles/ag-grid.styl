@@ -263,7 +263,6 @@ ag-grid-ng2
     height 100%
 
 .ag-nested-viewport
-    //background-color rgba(255,0,0,0.2)
     height 100%
     width 100%
     // we want this panel to be on top of the others
@@ -275,14 +274,40 @@ ag-grid-ng2
     // have it consume mouse events, otherwise no mouse events would be allowed on the
     // rest of the grid
     pointer-events none
-    overflow hidden // contents need to be clipped
+    box-sizing border-box
+    overflow hidden
 
 .ag-nested-container
+    // if we don't put this in, the RHS will overflow into the viewports margin,
+    // no idea why, trial and error
+    overflow hidden
     position relative
+    width 100%
+
+.ag-floating-bottom-nested
+    height 100%
+    width 100%
+    position absolute
+    top 0px
+    left 0px
+    pointer-events none
+    overflow hidden
+    display inline
+
+.ag-floating-top-nested
+    height 100%
+    width 100%
+    position absolute
+    top 0px
+    left 0px
+    pointer-events none
+    overflow hidden
+    display inline
 
 .ag-nested-row
     // turn events back on, as we removed them in the parent
     pointer-events all
+    overflow hidden
 
 .ag-scrolls .ag-body-container
     position relative

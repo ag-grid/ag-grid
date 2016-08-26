@@ -65,9 +65,11 @@ export class RowRenderer {
     private eFloatingTopContainer: HTMLElement;
     private eFloatingTopPinnedLeftContainer: HTMLElement;
     private eFloatingTopPinnedRightContainer: HTMLElement;
+    private eFloatingTopNested: HTMLElement;
     private eFloatingBottomContainer: HTMLElement;
     private eFloatingBottomPinnedLeftContainer: HTMLElement;
     private eFloatingBottomPinnedRightContainer: HTMLElement;
+    private eFloatingBottomNested: HTMLElement;
 
     private logger: Logger;
 
@@ -115,10 +117,12 @@ export class RowRenderer {
         this.eFloatingTopContainer = this.gridPanel.getFloatingTopContainer();
         this.eFloatingTopPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingTop();
         this.eFloatingTopPinnedRightContainer = this.gridPanel.getPinnedRightFloatingTop();
+        this.eFloatingTopNested = this.gridPanel.getFloatingTopNested();
 
         this.eFloatingBottomContainer = this.gridPanel.getFloatingBottomContainer();
         this.eFloatingBottomPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingBottom();
         this.eFloatingBottomPinnedRightContainer = this.gridPanel.getPinnedRightFloatingBottom();
+        this.eFloatingBottomNested = this.gridPanel.getFloatingBottomNested();
 
         this.eBodyViewport = this.gridPanel.getBodyViewport();
 
@@ -172,13 +176,15 @@ export class RowRenderer {
             this.floatingRowModel.getFloatingTopRowData(),
             this.eFloatingTopPinnedLeftContainer,
             this.eFloatingTopPinnedRightContainer,
-            this.eFloatingTopContainer, null);
+            this.eFloatingTopContainer,
+            this.eFloatingTopNested);
         this.refreshFloatingRows(
             this.renderedBottomFloatingRows,
             this.floatingRowModel.getFloatingBottomRowData(),
             this.eFloatingBottomPinnedLeftContainer,
             this.eFloatingBottomPinnedRightContainer,
-            this.eFloatingBottomContainer, null);
+            this.eFloatingBottomContainer,
+            this.eFloatingBottomNested);
     }
 
     private refreshFloatingRows(renderedRows: RenderedRow[], rowNodes: RowNode[],
@@ -219,6 +225,7 @@ export class RowRenderer {
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
             this.eBodyContainer.style.height = containerHeight + "px";
+            this.eNestedContainer.style.height = containerHeight + "px";
             this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
             this.ePinnedRightColsContainer.style.height = containerHeight + "px";
         }
