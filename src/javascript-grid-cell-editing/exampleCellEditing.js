@@ -139,7 +139,7 @@ MoodCellRenderer.prototype.init = function (params) {
         this.eGui = '';
     } else {
         var imgForMood = params.value === 'Happy' ? '../../images/smiley.png' : '../../images/smiley-sad.png';
-        this.eGui = '<img src="' + imgForMood + '" />';
+        this.eGui = '<img width="20px" src="' + imgForMood + '" />';
     }
 };
 
@@ -148,8 +148,8 @@ MoodCellRenderer.prototype.getGui = function () {
 };
 
 function MoodEditor() {
-    this.defaultImgStyle = 'padding-left:10px;padding-right:10px;height: 25px';
-    this.selectedImgStyle = 'padding-left:10px;padding-right:10px;height: 35px;width:35px';
+    this.defaultImgStyle = 'padding-left:10px; padding-right:10px;  border: 1px solid transparent; padding: 4px;';
+    this.selectedImgStyle = 'padding-left:10px; padding-right:10px; border: 1px solid lightgreen; padding: 4px;';
 }
 
 MoodEditor.prototype.onKeyDown = function (event) {
@@ -167,7 +167,7 @@ MoodEditor.prototype.toggleMood = function () {
 
 MoodEditor.prototype.init = function (params) {
     this.container = document.createElement('div');
-    this.container.style = "border-radius: 15px; border: 1px solid grey;background: #e6e6e6;padding: 15px;width: 100px;height: 30px;text-align:center;display:inline-block;outline:none";
+    this.container.style = "border-radius: 15px; border: 1px solid grey;background: #e6e6e6;padding: 15px; text-align:center;display:inline-block;outline:none";
     this.container.tabIndex = "0";                // to allow the div to capture keypresses
 
     this.happyImg = document.createElement('img');

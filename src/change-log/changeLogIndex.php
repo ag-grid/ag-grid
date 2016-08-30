@@ -8,9 +8,13 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Enhancement: new feature - <a href="../javascript-grid-master-detail">Full Width Rows and Master / Details</a></li>
+    <li>Enhancement: setFilter - now the search box is focused when you open setFilter</li>
+    <li>Breaking Change: if using groupUseEntireRow=true, you will notice the group row is now a fullWidth row, hence
+    will span pinned sections and not scroll horizontally. This is by design. Functionality should be the same,
+    just the grid will look a big different.</li>
     <li>Bugfix: Aggregation function 'count' was only working with number values. Now works with any value type.</li>
     <li>Bugfix: forPrint was broken with last release, now fixed again.</li>
-    <li>Enhancement: setFilter - now the search box is focused when you open setFilter</li>
 
     <h3>Version 5.2.x</h3>
 

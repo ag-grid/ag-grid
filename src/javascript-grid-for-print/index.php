@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         the entire table, perfect for printing.
     </p>
 
-    <h4>Simple Example</h4>
+    <h3>Simple Example</h3>
 
     <p>
         Below is an example table using 'for print'. The table is also fitted with a border, to
@@ -46,12 +46,13 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleForPrint"></show-example>
 
-    <h4>Complex Example</h4>
+    <h3>Complex Example</h3>
 
     <p>
         The following example demonstrates for print when used in combination with floating rows,
         pinned columns and fullWidth rows. For each of these, the grid should flatten out all the
-        rows so all are printed and none hidden.
+        rows so all are printed and none hidden. This is the same as the first example is the
+        section on <a href="../javascript-grid-master-detail/">full width rows</a> with the exception of for print is turned on.
     </p>
 
     <p>

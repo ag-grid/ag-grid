@@ -25,6 +25,7 @@ var gridOptions = {
     rowModelType: 'pagination',
     rowGroupPanelShow: 'always',
     enableStatusBar: true,
+    paginationPageSize: 500,
     enableRangeSelection: true,
     localeText: {
         // for filter panel
@@ -102,8 +103,6 @@ var gridOptions = {
 function setDataSource(allOfTheData) {
     var dataSource = {
         //rowCount: ???, - not setting the row count, infinite paging will be used
-        pageSize: 500,
-        overflowSize: 500,
         getRows: function (params) {
             // this code should contact the server for rows. however for the purposes of the demo,
             // the data is generated locally, and a timer is used to give the expereince of

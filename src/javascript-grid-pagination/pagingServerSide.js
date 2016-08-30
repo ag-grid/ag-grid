@@ -161,7 +161,7 @@ function filterData(filterModel, data) {
         }
 
         if (filterModel.country) {
-            if (item.country.toLowerCase().indexOf(filterModel.country.filter) < 0) {
+            if (filterModel.country.indexOf(item.country) < 0) {
                 // country didn't match, so skip this record
                 continue;
             }
