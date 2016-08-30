@@ -9,6 +9,7 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <li>Bugfix: Aggregation function 'count' was only working with number values. Now works with any value type.</li>
+    <li>Bugfix: forPrint was broken with last release, now fixed again.</li>
     <li>Enhancement: setFilter - now the search box is focused when you open setFilter</li>
 
     <h3>Version 5.2.x</h3>
