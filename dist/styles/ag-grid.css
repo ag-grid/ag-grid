@@ -180,9 +180,11 @@ ag-grid-ng2 {
 }
 .ag-body {
   height: 100%;
+  width: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  position: absolute;
 }
 .ag-floating-top {
   position: absolute;
@@ -293,6 +295,48 @@ ag-grid-ng2 {
   overflow-y: auto;
   height: 100%;
 }
+.ag-full-width-viewport {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: inline;
+  pointer-events: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.ag-full-width-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+.ag-floating-bottom-full-width-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  overflow: hidden;
+  display: inline;
+}
+.ag-floating-top-full-width-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  overflow: hidden;
+  display: inline;
+}
+.ag-full-width-row {
+  pointer-events: all;
+  overflow: hidden;
+}
 .ag-scrolls .ag-body-container {
   position: relative;
   display: inline-block;
@@ -304,9 +348,6 @@ ag-grid-ng2 {
 }
 .ag-no-scrolls .ag-row {
   position: relative;
-}
-.agile-gird-row:hover {
-  background-color: #f0f8ff;
 }
 .ag-column-drop {
   width: 100%;

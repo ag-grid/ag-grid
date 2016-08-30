@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.2.0
+// Type definitions for ag-grid v5.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -34,6 +34,7 @@ export declare class RowRenderer {
     private eAllBodyContainers;
     private eAllPinnedLeftContainers;
     private eAllPinnedRightContainers;
+    private eFullWidthContainer;
     private eBodyContainer;
     private eBodyViewport;
     private ePinnedLeftColsContainer;
@@ -41,9 +42,11 @@ export declare class RowRenderer {
     private eFloatingTopContainer;
     private eFloatingTopPinnedLeftContainer;
     private eFloatingTopPinnedRightContainer;
+    private eFloatingTopFullWidthContainer;
     private eFloatingBottomContainer;
     private eFloatingBottomPinnedLeftContainer;
     private eFloatingBottomPinnedRightContainer;
+    private eFloatingBottomFullWithContainer;
     private logger;
     private destroyFunctions;
     agWire(loggerFactory: LoggerFactory): void;
@@ -54,7 +57,7 @@ export declare class RowRenderer {
     getAllCellsForColumn(column: Column): HTMLElement[];
     setMainRowWidths(): void;
     refreshAllFloatingRows(): void;
-    private refreshFloatingRows(renderedRows, rowNodes, pinnedLeftContainer, pinnedRightContainer, bodyContainer);
+    private refreshFloatingRows(renderedRows, rowNodes, ePinnedLeftContainer, ePinnedRightContainer, eBodyContainer, eFullWidthContainer);
     refreshView(refreshEvent?: any): void;
     private restoreFocusedCell(gridCell);
     softRefreshView(): void;
