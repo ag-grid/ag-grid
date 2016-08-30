@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h3>Version 5.3.x</h3>
+
+    <h4>ag-Grid 5.3.0, ag-Grid-Enterprise 5.3.0</h4>
+
     <li>Enhancement: new feature - <a href="../javascript-grid-master-detail">Full Width Rows and Master / Details</a></li>
     <li>Enhancement: setFilter - now the search box is focused when you open setFilter</li>
     <li>Breaking Change: if using groupUseEntireRow=true, you will notice the group row is now a fullWidth row, hence

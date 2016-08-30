@@ -42,7 +42,6 @@
                     <li>Company address</li>
                     <li>Company VAT number (EU only)</li>
                     <li>Number of licenses required (ie number of developers)</li>
-                    <li>Email address to associate with your ag-Grid account</li>
                     <li>License type: A) Application Developer or B) Site Developer</li>
                         <li style="list-style-type: none;">
                             <ul>If Application Developer, provide your Application Name</ul>
