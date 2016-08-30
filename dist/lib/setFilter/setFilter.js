@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.2.0
+// ag-grid-enterprise v5.3.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -63,6 +63,7 @@ var SetFilter = (function (_super) {
     // virtual row logic needs info about the gui state
     SetFilter.prototype.afterGuiAttached = function (params) {
         this.virtualList.refresh();
+        this.eMiniFilter.focus();
     };
     SetFilter.prototype.getApi = function () {
         return this.api;

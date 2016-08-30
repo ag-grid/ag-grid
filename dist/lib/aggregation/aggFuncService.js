@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.2.0
+// ag-grid-enterprise v5.3.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -157,11 +157,12 @@ function aggCount(input) {
     };
     var length = input.length;
     for (var i = 0; i < length; i++) {
-        if (typeof input[i] === 'number') {
-            result.value++;
-        }
-        else if (typeof input[i].value === 'number') {
+        var isGroupAgg = main_1.Utils.exists(input[i]) && typeof input[i].value === 'number';
+        if (isGroupAgg) {
             result += input[i].value;
+        }
+        else {
+            result.value++;
         }
     }
     return result;
