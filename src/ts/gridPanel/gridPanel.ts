@@ -313,6 +313,9 @@ export class GridPanel {
     }
 
     private addBodyViewportListener(): void {
+        // we never add this when doing 'forPrint'
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
+
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows are displayed, or user simply clicks outside of a cell
         var listener = (mouseEvent: MouseEvent) => {
@@ -575,6 +578,7 @@ export class GridPanel {
 
     // gets called every 500 ms. we use this to set padding on right pinned column
     public periodicallyCheck(): void {
+        if (this.forPrint) { return; }
         this.setBottomPaddingOnPinnedRight();
         this.setMarginOnFullWidthCellContainer();
     }
@@ -583,6 +587,8 @@ export class GridPanel {
     // vertically scrolled all the way down, the last row will be hidden behind the scrolls.
     // this extra padding allows the last row to be lifted above the bottom scrollbar.
     private setBottomPaddingOnPinnedRight(): void {
+        if (this.forPrint) { return; }
+
         if (this.columnController.isPinningRight()) {
             var bodyHorizontalScrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
             if (bodyHorizontalScrollShowing) {
@@ -594,6 +600,8 @@ export class GridPanel {
     }
 
     private setMarginOnFullWidthCellContainer(): void {
+        if (this.forPrint) { return; }
+
         // if either right or bottom scrollbars are showing, we need to make sure the
         // fullWidthCell panel isn't covering the scrollbars. originally i tried to do this using
         // margin, but the overflow was not getting clipped and going into the margin,
