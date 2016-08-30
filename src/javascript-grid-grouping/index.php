@@ -377,14 +377,6 @@ gridOptions.groupRowRendererParams: {
 
     <show-example example="example5"></show-example>
 
-    <note>
-        If you are pinning and grouping using the whole row, then the group row will be
-        split across the three sections (pinned left, pinned right and not pinned). This
-        is due to the layout of the grid, each section is constrained to it's borders so
-        you cannot have one row from one section span the other sections. Currently having
-        the group row span all sections is not supported by the grid.
-    </note>
-
     <h3>Suppress Group Row</h3>
 
     <p>

@@ -67,7 +67,7 @@ var secondCellFormatter = function(params) {
     return params.value.toLocaleString() + 's';
 };
 
-var columnDefs = [
+var masterColumnDefs = [
     {headerName: 'Name', field: 'name',
         // left column is going to act as group column, with the expand / contract controls
         cellRenderer: 'group',
@@ -80,44 +80,46 @@ var columnDefs = [
     {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: minuteCellFormatter}
 ];
 
-function NestedPanelCellRenderer() {}
+var detailColumnDefs = [
+    {headerName: 'Call ID', field: 'callId', cellClass: 'call-record-cell'},
+    {headerName: 'Direction', field: 'direction', cellClass: 'call-record-cell'},
+    {headerName: 'Number', field: 'number', cellClass: 'call-record-cell'},
+    {headerName: 'Duration', field: 'duration', cellClass: 'call-record-cell', cellFormatter: secondCellFormatter},
+    {headerName: 'Switch', field: 'switchCode', cellClass: 'call-record-cell'}
+];
 
-NestedPanelCellRenderer.prototype.init = function(params) {
+function DetailPanelCellRenderer() {}
+
+DetailPanelCellRenderer.prototype.init = function(params) {
     // trick to convert string of html into dom object
     var eTemp = document.createElement('div');
     eTemp.innerHTML = this.getTemplate(params);
     this.eGui = eTemp.firstElementChild;
 
-    this.setupNestedGrid(params.data);
-    this.consumeMouseWheelOnNestedGrid();
+    this.setupDetailGrid(params.data);
+    this.consumeMouseWheelOnDetailGrid();
     this.addSeachFeature();
     this.addButtonListeners();
 };
 
-NestedPanelCellRenderer.prototype.setupNestedGrid = function(callRecords) {
+DetailPanelCellRenderer.prototype.setupDetailGrid = function(callRecords) {
 
-    this.gridOptions = {
+    this.detailGridOptions = {
         enableSorting: true,
         enableFilter: true,
         enableColResize: true,
         rowData: callRecords,
-        columnDefs: [
-            {headerName: 'Call ID', field: 'callId', cellClass: 'call-record-cell'},
-            {headerName: 'Direction', field: 'direction', cellClass: 'call-record-cell'},
-            {headerName: 'Number', field: 'number', cellClass: 'call-record-cell'},
-            {headerName: 'Duration', field: 'duration', cellClass: 'call-record-cell', cellFormatter: secondCellFormatter},
-            {headerName: 'Switch', field: 'switchCode', cellClass: 'call-record-cell'}
-        ],
+        columnDefs: detailColumnDefs,
         onGridReady: function(params) {
             setTimeout( function() { params.api.sizeColumnsToFit(); }, 0);
         }
     };
 
-    var eNestedGrid = this.eGui.querySelector('.full-width-grid');
-    new agGrid.Grid(eNestedGrid, this.gridOptions);
+    var eDetailGrid = this.eGui.querySelector('.full-width-grid');
+    new agGrid.Grid(eDetailGrid, this.detailGridOptions);
 };
 
-NestedPanelCellRenderer.prototype.getTemplate = function(params) {
+DetailPanelCellRenderer.prototype.getTemplate = function(params) {
 
     var parentRecord = params.node.parent.data;
 
@@ -141,17 +143,17 @@ NestedPanelCellRenderer.prototype.getTemplate = function(params) {
     return template;
 };
 
-NestedPanelCellRenderer.prototype.getGui = function() {
+DetailPanelCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
-NestedPanelCellRenderer.prototype.destroy = function() {
-    this.gridOptions.api.destroy();
+DetailPanelCellRenderer.prototype.destroy = function() {
+    this.detailGridOptions.api.destroy();
 };
 
-NestedPanelCellRenderer.prototype.addSeachFeature = function() {
+DetailPanelCellRenderer.prototype.addSeachFeature = function() {
     var tfSearch = this.eGui.querySelector('.full-width-search');
-    var gridApi = this.gridOptions.api;
+    var gridApi = this.detailGridOptions.api;
 
     var searchListener = function() {
         var filterText = tfSearch.value;
@@ -161,7 +163,7 @@ NestedPanelCellRenderer.prototype.addSeachFeature = function() {
     tfSearch.addEventListener('input', searchListener);
 };
 
-NestedPanelCellRenderer.prototype.addButtonListeners = function() {
+DetailPanelCellRenderer.prototype.addButtonListeners = function() {
     var eButtons = this.eGui.querySelectorAll('.full-width-grid-toolbar button');
 
     for (var i = 0;  i<eButtons.length; i++) {
@@ -174,21 +176,21 @@ NestedPanelCellRenderer.prototype.addButtonListeners = function() {
 // if we don't do this, then the mouse wheel will be picked up by the main
 // grid and scroll the main grid and not this component. this ensures that
 // the wheel move is only picked up by the text field
-NestedPanelCellRenderer.prototype.consumeMouseWheelOnNestedGrid = function() {
-    var eNestedGrid = this.eGui.querySelector('.full-width-grid');
+DetailPanelCellRenderer.prototype.consumeMouseWheelOnDetailGrid = function() {
+    var eDetailGrid = this.eGui.querySelector('.full-width-grid');
 
     var mouseWheelListener = function(event) {
         event.stopPropagation();
     };
 
     // event is 'mousewheel' for IE9, Chrome, Safari, Opera
-    eNestedGrid.addEventListener('mousewheel', mouseWheelListener);
+    eDetailGrid.addEventListener('mousewheel', mouseWheelListener);
     // event is 'DOMMouseScroll' Firefox
-    eNestedGrid.addEventListener('DOMMouseScroll', mouseWheelListener);
+    eDetailGrid.addEventListener('DOMMouseScroll', mouseWheelListener);
 };
 
-var gridOptions = {
-    columnDefs: columnDefs,
+var masterGridOptions = {
+    columnDefs: masterColumnDefs,
     rowData: rowData,
     enableSorting: true,
     enableColResize: true,
@@ -200,11 +202,11 @@ var gridOptions = {
         params.api.sizeColumnsToFit();
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
-    fullWidthCellRenderer: NestedPanelCellRenderer,
+    fullWidthCellRenderer: DetailPanelCellRenderer,
     getRowHeight: function(params) {
-        var rowIsNestedRow = params.node.level===1;
-        // return 100 when nested row, otherwise return 25
-        return rowIsNestedRow ? 200 : 25;
+        var rowIsDetailRow = params.node.level===1;
+        // return 100 when detail row, otherwise return 25
+        return rowIsDetailRow ? 200 : 25;
     },
     getNodeChildDetails: function(record) {
         if (record.callRecords) {
@@ -226,5 +228,5 @@ var gridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
+    new agGrid.Grid(gridDiv, masterGridOptions);
 });

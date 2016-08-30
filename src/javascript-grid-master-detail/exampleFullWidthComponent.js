@@ -31,13 +31,10 @@ var columnDefs = [
     {headerName: "Language", field: "language", width: 150}
 ];
 
+// put in some more dummy columns, just to fill space
 for (var i = 0; i<10; i++) {
-    columnDefs.push({headerName: "Continent", field: "continent", width: 150});
-    columnDefs.push({headerName: "Language", field: "language", width: 150});
+    columnDefs.push({headerName: "More Data " + i, valueGetter: "Math.random()", width: 150});
 }
-
-columnDefs[0].pinned = 'left';
-columnDefs[1].pinned = 'right';
 
 function countryCellRenderer(params) {
     var flag = '<img border="0" width="15" height="10" src="../images/flags/' + params.data.code + '.png">';

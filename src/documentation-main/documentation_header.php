@@ -166,6 +166,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/index.php">Filtering</a>
                 <?php } ?>
 
+                <?php if ($key == "Selection") { ?>
+                    <span class="sidebarLinkSelected">Selection</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-selection/index.php">Selection</a>
+                <?php } ?>
+
                 <?php if ($key == "Resizing") { ?>
                     <span class="sidebarLinkSelected">Resizing</span>
                 <?php } else { ?>
@@ -196,22 +202,10 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-height/index.php">Row Height</a>
                 <?php } ?>
 
-                <?php if ($key == "Nested Components") { ?>
-                    <span class="sidebarLinkSelected">Nested Components</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-nested-components/index.php">Nested Components</a>
-                <?php } ?>
-
                 <?php if ($key == "Floating") { ?>
                     <span class="sidebarLinkSelected">Floating Rows</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-floating/index.php">Floating Rows</a>
-                <?php } ?>
-
-                <?php if ($key == "Selection") { ?>
-                    <span class="sidebarLinkSelected">Selection</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-selection/index.php">Selection</a>
                 <?php } ?>
 
                 <?php if ($key == "Value Getters") { ?>
@@ -269,9 +263,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Header Rendering") { ?>
-                    <span class="sidebarLinkSelected">Header Templates & Rendering</span>
+                    <span class="sidebarLinkSelected">Header Templates<br/>&nbsp;& Rendering</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/index.php">Header Templates & Rendering</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/index.php">Header Templates<br/>&nbsp;& Rendering</a>
                 <?php } ?>
 
                 <?php if ($key == "Keyboard Navigation") { ?>
@@ -284,6 +278,12 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Internationalisation</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-internationalisation/index.php">Internationalisation</a>
+                <?php } ?>
+
+                <?php if ($key == "Full Width") { ?>
+                    <span class="sidebarLinkSelected">Full Width<br/>&nbsp;& Master Detail</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-master-detail/index.php">Full Width<br/>&nbsp;& Master Detail</a>
                 <?php } ?>
 
                 <?php if ($key == "Master / Slave") { ?>
@@ -377,9 +377,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Virtual Paging / Infinite Scrolling") { ?>
-                    <span class="sidebarLinkSelected">Virtual Paging / Infinite Scrolling</span>
+                    <span class="sidebarLinkSelected">Virtual Paging<br/>&nbsp;& Infinite Scrolling</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-virtual-paging/index.php">Virtual Paging<br/>& Infinite Scrolling</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-virtual-paging/index.php">Virtual Paging<br/>&nbsp;& Infinite Scrolling</a>
                 <?php } ?>
 
                 <h4>
