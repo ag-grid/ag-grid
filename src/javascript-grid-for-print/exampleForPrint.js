@@ -5,11 +5,21 @@ var columnDefs = [
 ];
 
 var rowData = [
-    {make: "Toyota", model: "Celica", price: 35000, pinned: true},
+    {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
     {make: "Ford", model: "Focus", price: 27000},
     {make: "BMW", model: "M5", price: 38000},
     {make: "Phantom", model: "Speed Car", price: 120000},
+    {make: "Porsche", model: "Boxter", price: 72000},
+    {make: "Toyota", model: "Celica", price: 35000},
+    {make: "Ford", model: "Mondeo", price: 32000},
+    {make: "Ford", model: "Focus", price: 27000},
+    {make: "BMW", model: "M5", price: 38000},
+    {make: "Phantom", model: "Speed Car", price: 120000},
+    {make: "Porsche", model: "Boxter", price: 72000},
+    {make: "Porsche", model: "Boxter", price: 72000},
+    {make: "Porsche", model: "Boxter", price: 72000},
+    {make: "Porsche", model: "Boxter", price: 72000},
     {make: "Porsche", model: "Boxter", price: 72000}
 ];
 

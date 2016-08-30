@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Full Width & Master Details</h2>
+    <h2>Full Width Rows & Master Details</h2>
 
     <p>
         Under normal operation, ag-Grid will render each row as a horizontal list of cells. Each cell in the row

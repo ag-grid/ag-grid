@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         the entire table, perfect for printing.
     </p>
 
-    <h4>Example</h4>
+    <h4>Simple Example</h4>
 
     <p>
         Below is an example table using 'for print'. The table is also fitted with a border, to
@@ -44,7 +44,24 @@ include '../documentation-main/documentation_header.php';
         Note: If you do see scrolls below, it is the scrolls of the example iFrame, not the grid.
     </p>
 
-    <show-example example="example1"></show-example>
+    <show-example example="exampleForPrint"></show-example>
+
+    <h4>Complex Example</h4>
+
+    <p>
+        The following example demonstrates for print when used in combination with floating rows,
+        pinned columns and fullWidth rows. For each of these, the grid should flatten out all the
+        rows so all are printed and none hidden.
+    </p>
+
+    <p>
+        The example below appears to have horizontal and vertical scrolls. These are the scrolls
+        of the iFrame only, the grid itself has no scrolls. This means that everything inside the
+        scrolls will be printed if you tried to print the contents of the iFrame.
+    </p>
+
+    <show-example example="exampleForPrintComplex"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

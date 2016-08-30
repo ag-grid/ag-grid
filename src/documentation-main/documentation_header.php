@@ -281,9 +281,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Full Width") { ?>
-                    <span class="sidebarLinkSelected">Full Width<br/>&nbsp;& Master Detail</span>
+                    <span class="sidebarLinkSelected">Full Width Rows<br/>&nbsp;& Master Detail</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-master-detail/index.php">Full Width<br/>&nbsp;& Master Detail</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-master-detail/index.php">Full Width Rows<br/>&nbsp;& Master Detail</a>
                 <?php } ?>
 
                 <?php if ($key == "Master / Slave") { ?>
