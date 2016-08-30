@@ -99,6 +99,7 @@ export class SetFilter extends Component implements Filter {
     // virtual row logic needs info about the gui state
     public afterGuiAttached(params: any): void  {
         this.virtualList.refresh();
+        this.eMiniFilter.focus();
     }
 
     public getApi() {
