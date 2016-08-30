@@ -19,17 +19,16 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">18th Aug 2016</div>
-        <div class="news-header">ag-Grid v5.2.x Released</div>
+        <div class="news-header">30th Aug 2016</div>
+        <div class="news-header">ag-Grid v5.3.x Released</div>
         <div>
-            Added Angular 2 components for cellRenderers.
-            Plus other minor bug fixes and enhancements.
+            Very excited to announce the latest new feature: <a href="../javascript-grid-master-detail/">Full Width Rows and Master Detail Grids</a>.
+            Almost (not quite) as exciting as seeing a tyrannosaurus rex!
             See <a href="../change-log/changeLogIndex.php">change log</a> for full release details.
         </div>
         <div style="text-align: right;">
             <span>
-                <img src="../images/angular2_large.png"/>
-                <img src="../images/happyFaceLarge.png"/>
+                <img src="../images/dino.png"/>
             </span>
         </div>
     </div>
