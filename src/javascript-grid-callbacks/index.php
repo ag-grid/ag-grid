@@ -81,8 +81,8 @@ include '../documentation-main/documentation_header.php';
             <td>Provide a function for custom header rendering.</td>
         </tr>
         <tr>
-            <th>groupRowInnerRenderer(params)<br/> groupRowRenderer(params) <br/>groupRowAggNodes(nodes)</th>
-            <td>Callbacks for grouping. See the section on <a href="../javascript-grid-grouping/index.php#groupingCallbacks">row grouping</a> for detailed explanation.</td>
+            <th>groupRowAggNodes(nodes)</th>
+            <td>Callback for grouping. See the section on <a href="../javascript-grid-grouping/index.php#groupingCallbacks">row grouping</a> for detailed explanation.</td>
         </tr>
         <tr>
             <th>isScrollLag()</th>
@@ -119,7 +119,11 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>getRowNodeId(data)</th>
             <td>Allows you to set the id for a particular row node based on the data. Useful for selection and
-            server side sorting and filtering for paging and virtual pagination.</td>
+                server side sorting and filtering for paging and virtual pagination.</td>
+        </tr>
+        <tr>
+            <th>isFullWidthCell(rowNode)</th>
+            <td>Tells the grid if this row should be rendered using <a href="../javascript-grid-master-detail/">fullWidth</a>.</td>
         </tr>
     </table>
 
