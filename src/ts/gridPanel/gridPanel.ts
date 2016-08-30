@@ -814,6 +814,14 @@ export class GridPanel {
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
 
             this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
+
+            // when doing forPrint, we don't have any fullWidth containers, instead we add directly to the main
+            // containers. this works in forPrint only as there are no pinned columns (no need for fullWidth to
+            // span pinned columns) and the rows are already the full width of the grid (the reason for fullWidth)
+            this.eFullWidthCellContainer = this.eBodyContainer;
+            this.eFloatingBottomFullWidthCellContainer = this.eFloatingBottomContainer;
+            this.eFloatingTopFullWidthCellContainer = this.eFloatingTopContainer;
+
         } else {
             this.eBody = this.queryHtmlElement('.ag-body');
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
@@ -854,6 +862,7 @@ export class GridPanel {
     }
 
     private addMouseWheelEventListeners(): void {
+
         var genericListener = this.genericMouseWheelListener.bind(this);
         var centerListener = this.centerMouseWheelListener.bind(this);
 
@@ -885,7 +894,8 @@ export class GridPanel {
         }
     }
 
-    // used for listening to mouse wheel events on left pinned and also the fullWidthCell components
+    // used for listening to mouse wheel events on 1) left pinned and also the 2) fullWidthCell components.
+    // the fullWidthCell listener is added in renderedRow, hence public.
     public genericMouseWheelListener(event: any): boolean {
         var targetPanel: HTMLElement;
         if (this.columnController.isPinningRight()) {

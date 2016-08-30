@@ -104,6 +104,12 @@ export class RenderedRow {
 
         this.eFullWidthRow = this.createRowContainer(this.eFullWidthContainer);
 
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.addMouseWheelListenerToFullWidthRow();
+        }
+    }
+
+    private addMouseWheelListenerToFullWidthRow(): void {
         var mouseWheelListener = this.gridPanel.genericMouseWheelListener.bind(this.gridPanel);
         // IE9, Chrome, Safari, Opera
         this.eFullWidthRow.addEventListener('mousewheel', mouseWheelListener);
