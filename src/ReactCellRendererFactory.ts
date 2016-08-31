@@ -1,13 +1,18 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-export function reactCellRendererFactory(reactComponent: any): ( (params: any) => HTMLElement | string) {
+export function reactCellRendererFactory(reactComponent: any, parentComponent?: any): ( (params: any) => HTMLElement | string) {
 
     return (params: any): HTMLElement | string => {
 
         var eParentElement = params.eParentOfValue;
 
-        ReactDOM.render(React.createElement(reactComponent, { params: params }), eParentElement);
+        var ReactComponent = React.createElement(reactComponent, { params: params });
+        if (!parentComponent) {
+            ReactDOM.render(ReactComponent, eParentElement);
+        } else {
+            ReactDOM.unstable_renderSubtreeIntoContainer(parentComponent, ReactComponent, eParentElement);
+        }
 
         // if you are reading this, and want to do it using jsx, the equivalent is below.
         // however because we don't have the actual class here (just a reference to the class)
