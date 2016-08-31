@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
     <note>
         There are lots of ways to refresh, each achieving the similar effects. Each refresh will either: rip
         out and replace the entire row, rip out and replace the particular cells, or call 'refresh' on the
-        cellRenderer (see section on cell renderers). Which you you use is up to you, there is not clear
+        cellRenderer (see section on cell renderers). Which you use is up to you, there is not clear
         advantage, the different ways are provided to give you choice. Choose what fits into your application
         design the best.
     </note>
