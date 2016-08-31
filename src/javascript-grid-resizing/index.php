@@ -39,24 +39,6 @@ include '../documentation-main/documentation_header.php';
         columns to fill the width of the table.
     </p>
 
-    <note>
-        <p>
-            <i>sizeColumnsToFit</i> looks at the columns on the screen, and works out the width based on what it sees. It cannot see the columns that are not rendered due to column virtualisation so these are left out.
-            What you are left with is enough 'packed' columns to fit your current page.
-        </p>
-
-        <p>
-            Column Virtualisation is the technique the grid uses to render large amounts of columns with degrading performance by only
-            rendering columns that are visible due to the horizontal scroll positions. Eg the grid can have 1000 columns
-            with only 10 rendered if the horizontal scroll is only showing 10 columns.
-        </p>
-
-        <p>
-            To get around this, you can turn off column virtualisation by setting grid property <i>suppressColumnVirtualisation=true</i>.
-            So choice is yours - what do you want - column virtualisation working OR sizeColumnsToFit working.
-        </p>
-    </note>
-
     <h3>Auto-Size Columns</h3>
 
     <p>
@@ -71,6 +53,25 @@ include '../documentation-main/documentation_header.php';
         of rows, then only these 50 will be considered for working out the width
         to display. The rendered rows are all the rows you can see on the screen through the
         horizontal scroll plus a small buffer (default buffer size is 20).
+    </note>
+
+    <note>
+        <p>
+            <i>autoSizeColumns()</i> looks at the rendered cells on the screen, and works out the width based on what it sees.
+            It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to autosize
+            a column that is not visible on the screen.
+        </p>
+
+        <p>
+            Column Virtualisation is the technique the grid uses to render large amounts of columns with degrading performance by only
+            rendering columns that are visible due to the horizontal scroll positions. Eg the grid can have 1000 columns
+            with only 10 rendered if the horizontal scroll is only showing 10 columns.
+        </p>
+
+        <p>
+            To get around this, you can turn off column virtualisation by setting grid property <i>suppressColumnVirtualisation=true</i>.
+            So choice is yours - what do you want - column virtualisation working OR auto-size working on off screen columns.
+        </p>
     </note>
 
     <h3>Resizing Example</h3>
