@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.2.0
+// Type definitions for ag-grid v5.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -69,6 +69,7 @@ export declare class Utils {
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
     static addStylesToElement(eElement: any, styles: any): void;
+    static isScrollShowing(element: HTMLElement): boolean;
     static getScrollbarWidth(): number;
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string): void;
