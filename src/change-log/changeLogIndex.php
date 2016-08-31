@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Version 5.3.x</h3>
 
     <h4>ag-Grid 5.3.1, ag-Grid-Enterprise 5.3.1</h4>
+    <li>Enhancement: added 'Copy with Headers' option to context menu, to copy header values when copying to clipboard.</li>
     <li>Bugfix: onDragStopped was getting called on header button clicks, even if not dragging was taking place.</li>
 
     <h4>ag-Grid 5.3.0, ag-Grid-Enterprise 5.3.0</h4>
