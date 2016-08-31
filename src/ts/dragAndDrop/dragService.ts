@@ -109,16 +109,15 @@ export class DragService {
         document.removeEventListener('mouseup', this.onMouseUpListener);
         document.removeEventListener('mousemove', this.onMouseMoveListener);
 
-        if (this.dragging) {
-            this.currentDragParams.onDragStop(mouseEvent);
-        }
-
+        this.setNoSelectToBody(false);
         this.dragStartEvent = null;
         this.eventLastTime = null;
-        this.dragging = false;
 
-        this.setNoSelectToBody(false);
-        this.eventService.dispatchEvent(Events.EVENT_DRAG_STOPPED);
+        if (this.dragging) {
+            this.dragging = false;
+            this.currentDragParams.onDragStop(mouseEvent);
+            this.eventService.dispatchEvent(Events.EVENT_DRAG_STOPPED);
+        }
     }
 }
 

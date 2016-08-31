@@ -22,7 +22,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     @Autowired('$compile') private $compile: any;
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('headerTemplateLoader') private headerTemplateLoader: HeaderTemplateLoader;
-    @Autowired('horizontalDragService') private dragService: HorizontalDragService;
+    @Autowired('horizontalDragService') private horizontalDragService: HorizontalDragService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
@@ -263,7 +263,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             return;
         }
 
-        this.dragService.addDragHandling({
+        this.horizontalDragService.addDragHandling({
             eDraggableElement: eResize,
             eBody: this.eRoot,
             cursor: 'col-resize',
