@@ -336,6 +336,12 @@ include '../documentation-main/documentation_header.php';
             <th>fullWidthCellRenderer, fullWidthCellRendererParams</th>
             <td>For rendering <a href="../javascript-grid-master-detail/">fullWidth</a> rows.</td>
         </tr>
+        <tr>
+            <th>layoutInterval</th>
+            <td>The grid will check it's size 500ms and lay itself out again if the size changes - such as your browser
+                changes size, or your application changes the size of the div the grid live inside. If you want something
+                other than 500ms, set this to a number of milliseconds. To stop the periodic layout, set it to -1.</td>
+        </tr>
 
     </table>
 
