@@ -10,6 +10,9 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Version 5.3.x</h3>
 
+    <h4>ag-Grid 5.3.1, ag-Grid-Enterprise 5.3.1</h4>
+    <li>Bugfix: onDragStopped was getting called on header button clicks, even if not dragging was taking place.</li>
+
     <h4>ag-Grid 5.3.0, ag-Grid-Enterprise 5.3.0</h4>
 
     <li>Enhancement: new feature - <a href="../javascript-grid-master-detail">Full Width Rows and Master / Details</a></li>
