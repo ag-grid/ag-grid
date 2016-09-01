@@ -84,7 +84,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             var reducedLeafNode = this.columnController.isPivotMode() && this.rowNode.leafGroup;
             if (node.footer) {
                 paddingPx += 15;
-            } else if (!node.group || reducedLeafNode) {
+            } else if (!node.isExpandable() || reducedLeafNode) {
                 paddingPx += 10;
             }
             this.getGui().style.paddingLeft = paddingPx + 'px';
@@ -195,7 +195,13 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private addCheckboxIfNeeded(params: any): void {
-        var checkboxNeeded = params.checkbox && !this.rowNode.footer &&!this.rowNode.floating;
+        var checkboxNeeded = params.checkbox
+                // footers cannot be selected
+                && !this.rowNode.footer
+                // floating rows cannot be selected
+                && !this.rowNode.floating
+                // flowers cannot be selected
+                && !this.rowNode.flower;
         if (checkboxNeeded) {
             var cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
@@ -244,7 +250,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         var reducedLeafNode = this.columnController.isPivotMode() && this.rowNode.leafGroup;
 
-        var expandable = this.rowNode.group && !this.rowNode.footer && !reducedLeafNode;
+        var expandable = this.rowNode.isExpandable() && !this.rowNode.footer && !reducedLeafNode;
         if (expandable) {
             // if expandable, show one based on expand state
             _.setVisible(this.eExpanded, this.rowNode.expanded);

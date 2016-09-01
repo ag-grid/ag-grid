@@ -18,6 +18,7 @@ export class InMemoryNodeManager {
     private nextId = 0;
 
     private getNodeChildDetails: GetNodeChildDetails;
+    private doesDataFlower: (data: any) => boolean;
     private suppressParentsInRowNodes: boolean;
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService) {
@@ -52,6 +53,7 @@ export class InMemoryNodeManager {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
 
         var rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
 
@@ -104,8 +106,15 @@ export class InMemoryNodeManager {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
+            node.canFlower = false;
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
+        } else {
+            node.group = false;
+            node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
+            if (node.canFlower) {
+                node.expanded = false;
+            }
         }
 
         if (parent && !this.suppressParentsInRowNodes) {

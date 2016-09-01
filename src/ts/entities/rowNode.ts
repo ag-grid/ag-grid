@@ -37,6 +37,10 @@ export class RowNode {
     public level: number;
     /** True if this node is a group node (ie has children) */
     public group: boolean;
+    /** True if this node can flower (ie can be expanded, but has no direct children) */
+    public canFlower: boolean;
+    /** True if this node is a flower */
+    public flower: boolean;
     /** True if this node is a group and the group is the bottom level in the tree */
     public leafGroup: boolean;
     /** True if this is the first child in this group */
@@ -144,6 +148,10 @@ export class RowNode {
 
     public resetQuickFilterAggregateText(): void {
         this.quickFilterAggregateText = null;
+    }
+
+    public isExpandable(): boolean {
+        return this.group || this.canFlower;
     }
 
     public isSelected(): boolean {

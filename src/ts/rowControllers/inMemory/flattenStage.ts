@@ -60,6 +60,10 @@ export class FlattenStage implements IRowNodeStage {
                     this.addRowNodeToRowsToDisplay(footerNode, result, nextRowTop);
                 }
             }
+            if (rowNode.canFlower && rowNode.expanded) {
+                var flowerNode = this.createFlowerNode(rowNode);
+                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop);
+            }
         }
     }
 
@@ -86,6 +90,15 @@ export class FlattenStage implements IRowNodeStage {
         return footerNode;
     }
 
+    private createFlowerNode(parentNode: RowNode): RowNode {
+        var flowerNode = new RowNode();
+        this.context.wireBean(flowerNode);
+        flowerNode.flower = true;
+        flowerNode.parent = parentNode;
+        flowerNode.data = parentNode.data;
+        flowerNode.level = parentNode.level + 1;
+        return flowerNode;
+    }
 }
 
 interface NumberWrapper {
