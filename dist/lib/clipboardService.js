@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.3.0
+// ag-grid-enterprise v5.3.1
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -35,7 +35,7 @@ var ClipboardService = (function () {
         var firstRowValues = null;
         var updatedRowNodes = [];
         var updatedColumnIds = [];
-        this.forEachRangeRow(function (currentRow, rowNode, columns) {
+        this.iterateFirstActiveRange(function (currentRow, rowNode, columns) {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues) {
                 firstRowValues = [];
@@ -120,22 +120,23 @@ var ClipboardService = (function () {
         this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     };
-    ClipboardService.prototype.copyToClipboard = function () {
-        this.logger.log('copyToClipboard');
+    ClipboardService.prototype.copyToClipboard = function (includeHeaders) {
+        if (includeHeaders === void 0) { includeHeaders = false; }
+        this.logger.log("copyToClipboard: includeHeaders = " + includeHeaders);
         var selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
         // default is copy range if exists, otherwise rows
         if (this.rangeController.isMoreThanOneCell()) {
-            this.copySelectedRangeToClipboard();
+            this.copySelectedRangeToClipboard(includeHeaders);
         }
         else if (selectedRowsToCopy) {
-            this.copySelectedRowsToClipboard();
+            this.copySelectedRowsToClipboard(includeHeaders);
         }
         else if (!this.rangeController.isEmpty()) {
-            this.copySelectedRangeToClipboard();
+            this.copySelectedRangeToClipboard(includeHeaders);
         }
     };
-    ClipboardService.prototype.forEachRangeRow = function (callback) {
+    ClipboardService.prototype.iterateFirstActiveRange = function (rowCallback, columnCallback) {
         if (this.rangeController.isEmpty()) {
             return;
         }
@@ -149,23 +150,44 @@ var ClipboardService = (function () {
         var startRowIsFirst = startRow.before(endRow);
         var currentRow = startRowIsFirst ? startRow : endRow;
         var lastRow = startRowIsFirst ? endRow : startRow;
+        if (main_1.Utils.exists(columnCallback)) {
+            columnCallback(range.columns);
+        }
         while (true) {
             var rowNode = this.getRowNode(currentRow);
-            callback(currentRow, rowNode, range.columns);
+            rowCallback(currentRow, rowNode, range.columns);
             if (currentRow.equals(lastRow)) {
                 break;
             }
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
         }
     };
-    ClipboardService.prototype.copySelectedRangeToClipboard = function () {
+    ClipboardService.prototype.copySelectedRangeToClipboard = function (includeHeaders) {
         var _this = this;
+        if (includeHeaders === void 0) { includeHeaders = false; }
         if (this.rangeController.isEmpty()) {
             return;
         }
         var data = '';
         var cellsToFlash = {};
-        this.forEachRangeRow(function (currentRow, rowNode, columns) {
+        // adds columns to the data
+        var columnCallback = function (columns) {
+            if (!includeHeaders) {
+                return;
+            }
+            columns.forEach(function (column, index) {
+                var value = _this.columnController.getDisplayNameForCol(column, true);
+                if (index != 0) {
+                    data += '\t';
+                }
+                if (main_1.Utils.exists(value)) {
+                    data += value;
+                }
+            });
+            data += '\r\n';
+        };
+        // adds cell values to the data
+        var rowCallback = function (currentRow, rowNode, columns) {
             columns.forEach(function (column, index) {
                 var value = _this.valueService.getValue(column, rowNode);
                 value = _this.processRangeCell(rowNode, column, value);
@@ -179,7 +201,8 @@ var ClipboardService = (function () {
                 cellsToFlash[cellId] = true;
             });
             data += '\r\n';
-        });
+        };
+        this.iterateFirstActiveRange(rowCallback, columnCallback);
         this.copyDataToClipboard(data);
         this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
@@ -209,9 +232,11 @@ var ClipboardService = (function () {
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     };
-    ClipboardService.prototype.copySelectedRowsToClipboard = function () {
+    ClipboardService.prototype.copySelectedRowsToClipboard = function (includeHeaders) {
+        if (includeHeaders === void 0) { includeHeaders = false; }
+        var skipHeader = !includeHeaders;
         var data = this.csvCreator.getDataAsCsv({
-            skipHeader: true,
+            skipHeader: skipHeader,
             skipFooters: true,
             columnSeparator: '\t',
             onlySelected: true,

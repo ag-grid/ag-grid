@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.3.0
+// ag-grid-enterprise v5.3.1
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -25,7 +25,7 @@ var ContextMenuFactory = (function () {
         var defaultMenuOptions;
         if (main_1.Utils.exists(node)) {
             // if user clicks a cell
-            defaultMenuOptions = ['copy', 'paste', 'separator', 'toolPanel'];
+            defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel'];
         }
         else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
@@ -102,7 +102,13 @@ var ContextMenu = (function (_super) {
                 name: localeTextFunc('copy', 'Copy'),
                 shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
                 icon: svgFactory.createCopyIcon(),
-                action: function () { return _this.clipboardService.copyToClipboard(); }
+                action: function () { return _this.clipboardService.copyToClipboard(false); }
+            },
+            copyWithHeaders: {
+                name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
+                // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                icon: svgFactory.createCopyIcon(),
+                action: function () { return _this.clipboardService.copyToClipboard(true); }
             },
             paste: {
                 name: localeTextFunc('paste', 'Paste'),
