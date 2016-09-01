@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.3.0
+// Type definitions for ag-grid v5.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -14,6 +14,7 @@ export declare class InMemoryNodeManager {
     private eventService;
     private nextId;
     private getNodeChildDetails;
+    private doesDataFlower;
     private suppressParentsInRowNodes;
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService);
     setRowData(rowData: any[], firstId?: number): RowNode[];

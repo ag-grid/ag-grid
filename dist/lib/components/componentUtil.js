@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.0
+ * @version v5.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -187,7 +187,8 @@ var ComponentUtil = (function () {
         'groupRowRenderer', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
         'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
         'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer'];
+        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
+        'doesDataFlower'];
     ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)
         .concat(ComponentUtil.STRING_PROPERTIES)

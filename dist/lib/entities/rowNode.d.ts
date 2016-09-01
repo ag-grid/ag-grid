@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.3.0
+// Type definitions for ag-grid v5.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -27,6 +27,10 @@ export declare class RowNode {
     level: number;
     /** True if this node is a group node (ie has children) */
     group: boolean;
+    /** True if this node can flower (ie can be expanded, but has no direct children) */
+    canFlower: boolean;
+    /** True if this node is a flower */
+    flower: boolean;
     /** True if this node is a group and the group is the bottom level in the tree */
     leafGroup: boolean;
     /** True if this is the first child in this group */
@@ -77,6 +81,7 @@ export declare class RowNode {
     private dispatchLocalEvent(eventName, event?);
     setDataValue(colKey: string | ColDef | Column, newValue: any): void;
     resetQuickFilterAggregateText(): void;
+    isExpandable(): boolean;
     isSelected(): boolean;
     deptFirstSearch(callback: (rowNode: RowNode) => void): void;
     calculateSelectedFromChildren(): void;

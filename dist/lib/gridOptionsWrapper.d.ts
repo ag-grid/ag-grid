@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.3.0
+// Type definitions for ag-grid v5.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -60,6 +60,7 @@ export declare class GridOptionsWrapper {
     getRowClass(): any;
     getRowStyleFunc(): Function;
     getRowClassFunc(): Function;
+    getDoesDataFlowerFunc(): (data: any) => boolean;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
     getFullWidthCellRenderer(): {
         new (): ICellRenderer;

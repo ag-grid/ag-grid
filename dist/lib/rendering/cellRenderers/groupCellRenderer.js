@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.0
+ * @version v5.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -70,7 +70,7 @@ var GroupCellRenderer = (function (_super) {
             if (node.footer) {
                 paddingPx += 15;
             }
-            else if (!node.group || reducedLeafNode) {
+            else if (!node.isExpandable() || reducedLeafNode) {
                 paddingPx += 10;
             }
             this.getGui().style.paddingLeft = paddingPx + 'px';
@@ -177,7 +177,10 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.addCheckboxIfNeeded = function (params) {
-        var checkboxNeeded = params.checkbox && !this.rowNode.footer && !this.rowNode.floating;
+        var checkboxNeeded = params.checkbox
+            && !this.rowNode.footer
+            && !this.rowNode.floating
+            && !this.rowNode.flower;
         if (checkboxNeeded) {
             var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
@@ -214,7 +217,7 @@ var GroupCellRenderer = (function (_super) {
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
         var reducedLeafNode = this.columnController.isPivotMode() && this.rowNode.leafGroup;
-        var expandable = this.rowNode.group && !this.rowNode.footer && !reducedLeafNode;
+        var expandable = this.rowNode.isExpandable() && !this.rowNode.footer && !reducedLeafNode;
         if (expandable) {
             // if expandable, show one based on expand state
             utils_1.Utils.setVisible(this.eExpanded, this.rowNode.expanded);

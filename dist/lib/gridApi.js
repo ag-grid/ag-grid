@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.0
+ * @version v5.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -404,17 +404,17 @@ var GridApi = (function () {
         }
         this.rangeController.clearSelection();
     };
-    GridApi.prototype.copySelectedRowsToClipboard = function () {
+    GridApi.prototype.copySelectedRowsToClipboard = function (includeHeader) {
         if (!this.clipboardService) {
             console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise');
         }
-        this.clipboardService.copySelectedRowsToClipboard();
+        this.clipboardService.copySelectedRowsToClipboard(includeHeader);
     };
-    GridApi.prototype.copySelectedRangeToClipboard = function () {
+    GridApi.prototype.copySelectedRangeToClipboard = function (includeHeader) {
         if (!this.clipboardService) {
             console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise');
         }
-        this.clipboardService.copySelectedRangeToClipboard();
+        this.clipboardService.copySelectedRangeToClipboard(includeHeader);
     };
     GridApi.prototype.copySelectedRangeDown = function () {
         if (!this.clipboardService) {

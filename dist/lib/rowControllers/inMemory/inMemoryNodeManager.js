@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.0
+ * @version v5.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,7 @@ var InMemoryNodeManager = (function () {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
         var rowsAlreadyGrouped = utils_1.Utils.exists(this.getNodeChildDetails);
         // kick off recursion
         var result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
@@ -79,8 +80,16 @@ var InMemoryNodeManager = (function () {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
+            node.canFlower = false;
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
+        }
+        else {
+            node.group = false;
+            node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
+            if (node.canFlower) {
+                node.expanded = false;
+            }
         }
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;

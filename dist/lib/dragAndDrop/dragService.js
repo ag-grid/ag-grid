@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.0
+ * @version v5.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -95,14 +95,14 @@ var DragService = (function () {
     DragService.prototype.onMouseUp = function (mouseEvent) {
         document.removeEventListener('mouseup', this.onMouseUpListener);
         document.removeEventListener('mousemove', this.onMouseMoveListener);
-        if (this.dragging) {
-            this.currentDragParams.onDragStop(mouseEvent);
-        }
+        this.setNoSelectToBody(false);
         this.dragStartEvent = null;
         this.eventLastTime = null;
-        this.dragging = false;
-        this.setNoSelectToBody(false);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STOPPED);
+        if (this.dragging) {
+            this.dragging = false;
+            this.currentDragParams.onDragStop(mouseEvent);
+            this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STOPPED);
+        }
     };
     __decorate([
         context_1.Autowired('loggerFactory'), 

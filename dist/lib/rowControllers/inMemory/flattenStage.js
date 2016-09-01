@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.0
+ * @version v5.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,6 +58,10 @@ var FlattenStage = (function () {
                     this.addRowNodeToRowsToDisplay(footerNode, result, nextRowTop);
                 }
             }
+            if (rowNode.canFlower && rowNode.expanded) {
+                var flowerNode = this.createFlowerNode(rowNode);
+                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop);
+            }
         }
     };
     // duplicated method, it's also in floatingRowModel
@@ -80,6 +84,15 @@ var FlattenStage = (function () {
         footerNode.sibling = groupNode;
         groupNode.sibling = footerNode;
         return footerNode;
+    };
+    FlattenStage.prototype.createFlowerNode = function (parentNode) {
+        var flowerNode = new rowNode_1.RowNode();
+        this.context.wireBean(flowerNode);
+        flowerNode.flower = true;
+        flowerNode.parent = parentNode;
+        flowerNode.data = parentNode.data;
+        flowerNode.level = parentNode.level + 1;
+        return flowerNode;
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'), 

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.3.0
+// Type definitions for ag-grid v5.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -126,8 +126,8 @@ export declare class GridApi {
     getRangeSelections(): RangeSelection[];
     addRangeSelection(rangeSelection: AddRangeSelectionParams): void;
     clearRangeSelection(): void;
-    copySelectedRowsToClipboard(): void;
-    copySelectedRangeToClipboard(): void;
+    copySelectedRowsToClipboard(includeHeader: boolean): void;
+    copySelectedRangeToClipboard(includeHeader: boolean): void;
     copySelectedRangeDown(): void;
     showColumnMenuAfterButtonClick(colKey: string | Column | ColDef, buttonElement: HTMLElement): void;
     showColumnMenuAfterMouseClick(colKey: string | Column | ColDef, mouseEvent: MouseEvent): void;
