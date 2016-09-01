@@ -125,6 +125,10 @@ include '../documentation-main/documentation_header.php';
             <th>isFullWidthCell(rowNode)</th>
             <td>Tells the grid if this row should be rendered using <a href="../javascript-grid-master-detail/">fullWidth</a>.</td>
         </tr>
+        <tr>
+            <th>doesDataFlower(dataItem)</th>
+            <td>Tells the grid if this row should flower.</td>
+        </tr>
     </table>
 
     <p>

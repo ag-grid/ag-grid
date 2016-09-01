@@ -420,11 +420,11 @@ include '../documentation-main/documentation_header.php';
             <td>Clears the selected range.</td>
         </tr>
         <tr>
-            <th>copySelectedRowsToClipboard()</th>
+            <th>copySelectedRowsToClipboard(includeHeaders)</th>
             <td>Copies the selected rows to the clipboard.</td>
         </tr>
         <tr>
-            <th>copySelectedRangeToClipboard()</th>
+            <th>copySelectedRangeToClipboard(includeHeaders)</th>
             <td>Copies the selected ranges to the clipboard.</td>
         </tr>
         <tr>

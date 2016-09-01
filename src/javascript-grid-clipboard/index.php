@@ -29,8 +29,9 @@ include '../documentation-main/documentation_header.php';
         <ul>
             <li>Select 'Copy' from the context menu that appears when you right click over a cell.</li>
             <li>Press keys Ctrl+C while focus is on the grid.</li>
-            <li>Use the API methods: copySelectedRowsToClipboard() and copySelectedRangeToClipboard()</li>
+            <li>Use the API methods: copySelectedRowsToClipboard(includeHeaders) and copySelectedRangeToClipboard(includeHeaders)</li>
         </ul>
+        The API calls take a boolean value <i>includeHeaders</i> which when true, will include column headers in what is copied.
     </p>
 
     <h3>

@@ -110,7 +110,7 @@ include '../documentation-main/documentation_header.php';
         than grids that cater for master / detail directly.
     </note>
 
-    <h3>Flower Nodes</h3>
+    <h3 id="flowerNodes">Flower Nodes</h3>
 
     <p>
         You can mark a row as a 'can flower' node to tell the grid the row can be expanded even though it is not

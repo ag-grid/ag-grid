@@ -19,6 +19,20 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">1st Sept 2016</div>
+        <div class="news-header">ag-Grid v5.3.1 Released</div>
+        <div>
+            Added a) <a href="../javascript-grid-master-detail/#flowerNodes">Flower Nodes</a> for Master / Details
+            and b) option to 'copy headers' when copying to clipboard.
+        </div>
+        <div style="text-align: right;">
+            <span>
+                <img src="../images/dino.png"/>
+            </span>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">30th Aug 2016</div>
         <div class="news-header">ag-Grid v5.3.x Released</div>
         <div>
