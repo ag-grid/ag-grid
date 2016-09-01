@@ -482,14 +482,14 @@ export class GridApi {
         this.rangeController.clearSelection();
     }
 
-    public copySelectedRowsToClipboard(): void {
+    public copySelectedRowsToClipboard(includeHeader: boolean): void {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
-        this.clipboardService.copySelectedRowsToClipboard();
+        this.clipboardService.copySelectedRowsToClipboard(includeHeader);
     }
 
-    public copySelectedRangeToClipboard(): void {
+    public copySelectedRangeToClipboard(includeHeader: boolean): void {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
-        this.clipboardService.copySelectedRangeToClipboard();
+        this.clipboardService.copySelectedRangeToClipboard(includeHeader);
     }
 
     public copySelectedRangeDown(): void {
