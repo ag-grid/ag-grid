@@ -98,8 +98,9 @@ include '../documentation-main/documentation_header.php';
     <p>
         ag-Grid's fullWidth concept is not related to the grids expand / collapse feature, however it often makes
         sense to use the fullWidth with parent / child relationships. You will probably want to use fullWidth either
-        with <a href="../javascript-grid-grouping/">Row Grouping</a> or <a href="../javascript-grid-tree/">Tree Data</a>.
-        It is up to you to decide what the child data is that gets passed to your cellRenderer as the row data item.
+        with <a href="../javascript-grid-grouping/">Row Grouping</a>, <a href="../javascript-grid-tree/">Tree Data</a>
+        or Flower Nodes (explained below). It is up to you to decide what the child data is that gets passed to your
+        cellRenderer as the row data item.
     </p>
 
     <note>
@@ -108,6 +109,37 @@ include '../documentation-main/documentation_header.php';
         you like, even another vendors data grid. This control makes ag-Grid's fullWidth feature more powerful
         than grids that cater for master / detail directly.
     </note>
+
+    <h3>Flower Nodes</h3>
+
+    <p>
+        You can mark a row as a 'can flower' node to tell the grid the row can be expanded even though it is not
+        a group (ie it has no children). This is useful if you have data that either a) has no grouping
+        in it but you still want to expand rows to show a master / detail panel or b) the data is already
+        grouped by another mechanism eg by using the grids internal grouping feature.
+    </p>
+
+    <p>
+        To tell the grid that a row 'can flower' (ie should be expandable) then implement the
+        <code>doesDataFlower(dataItem)</code> callback.
+    </p>
+    <pre>gridOptions.doesDataFlower = function(dataItem) {
+    var canFlower = dataItem.checkSomeFlagThatYouSetOnTheData;
+    return canFlower;
+}</pre>
+
+    <p>
+        A row that 'can flower' is expandable. The child row is called the 'flower row'.
+        The 'flower row':
+        <ul>
+        <li>will share the same data item as it's parent.</li>
+        <li>does not participate in filtering - it will show if parent is shown.</li>
+        <li>does not participate in sorting - it will always displayed below the parent.</li>
+    </ul>
+    </p>
+
+    <note>Why call them 'flowers'? Well the groupings are a tree structure. The tree structure contains
+        leaf nodes, that is the bottom nodes of the tree. Leafs can then in turn have flowers.</note>
 
     <h3>Example - Expanding to Child Panels</h3>
 
@@ -118,8 +150,7 @@ include '../documentation-main/documentation_header.php';
             rowNode.level === 1).</li>
         <li><i>getRowHeight(params)</i> callback is configured to make each fullWidth panel 100px, ie bigger than
             the normal rows.</li>
-        <li><i>getNodeChildDetails(data)</i> is used to tell the grid about the parent / child relationships. This
-        technique is explained in <a href="../javascript-grid-tree/">Tree Data</a></li>
+        <li><i>doesDataFlower(dataItem)</i> is used to tell the grid which rows to expand.</li>
         <li><i>fullWidthCellRenderer</i> is configured with a cellRenderer component.</li>
         <li>The <i>consumeMouseWheelOnCenterText</i> method stops mouseWheel events getting processed by the grid
         when the mouse is over the embedded text area. This stops both the text area AND the grid scrolling when
@@ -149,6 +180,12 @@ include '../documentation-main/documentation_header.php';
         The example below shows using fullWidth to provide a master / detail grid setup. The fullWidth concept
         is used as before, that fact that another grid instance is used in the fullWidth cellRenderer is
         independent to the configuration of the fullWidth feature.
+    </p>
+
+    <p>
+        The example uses <i>getNodeChildDetails(dataItem)</i> callback (explained in section
+        <a href="../javascript-grid-tree/">Tree Data</a>. There is no advantage in this example to using the
+        flower technique above, however it is presented to demonstrate an alternative.
     </p>
 
     <p>

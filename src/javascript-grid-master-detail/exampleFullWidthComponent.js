@@ -3,26 +3,26 @@ var countries = [
         // these attributes appear in the top level rows of the grid
         name: "Ireland", continent: "Europe", language: "English", code: 'ie',
         // these are used in the panel
-        details: {population: 4000000, summary: 'Master Drinkers'}
+        population: 4000000, summary: 'Master Drinkers'
     },
     // and then repeat for all the other countries
-    {name: "Spain", continent: "Europe", language: "Spanish", code: 'es', details: {population: 4000000, summary: 'Bull Fighters'}},
-    {name: "United Kingdom", continent: "Europe", language: "English", code: 'gb', details: {population: 4000000, summary: 'Center of the World'}},
-    {name: "France", continent: "Europe", language: "French", code: 'fr', details: {population: 4000000, summary: 'Best Lovers'}},
-    {name: "Germany", continent: "Europe", language: "German", code: 'de', details: {population: 4000000, summary: 'Always on Time'}},
-    {name: "Sweden", continent: "Europe", language: "Swedish", code: 'se', details: {population: 4000000, summary: 'Home of Vikings'}},
-    {name: "Norway", continent: "Europe", language: "Norwegian", code: 'no', details: {population: 4000000, summary: 'Best Vikings'}},
-    {name: "Italy", continent: "Europe", language: "Italian", code: 'it', details: {population: 4000000, summary: 'Pizza Pizza'}},
-    {name: "Greece", continent: "Europe", language: "Greek", code: 'gr', details: {population: 4000000, summary: 'Many Gods'}},
-    {name: "Iceland", continent: "Europe", language: "Icelandic", code: 'is', details: {population: 4000000, summary: 'Exploding Volcano'}},
-    {name: "Portugal", continent: "Europe", language: "Portuguese", code: 'pt', details: {population: 4000000, summary: 'Ship Builders'}},
-    {name: "Malta", continent: "Europe", language: "Maltese", code: 'mt', details: {population: 4000000, summary: 'Fishermen'}},
-    {name: "Brazil", continent: "South America", language: "Portuguese", code: 'br', details: {population: 4000000, summary: 'Best Footballers'}},
-    {name: "Argentina", continent: "South America", language: "Spanish", code: 'ar', details: {population: 4000000, summary: 'Beef Steaks'}},
-    {name: "Colombia", continent: "South America", language: "Spanish", code: 'co', details: {population: 4000000, summary: 'Wonderful Hospitality'}},
-    {name: "Peru", continent: "South America", language: "Spanish", code: 'pe', details: {population: 4000000, summary: 'Paddington Bear'}},
-    {name: "Venezuela", continent: "South America", language: "Spanish", code: 've', details: {population: 4000000, summary: 'Never Been, Dunno'}},
-    {name: "Uruguay", continent: "South America", language: "Spanish", code: 'uy', details: {population: 4000000, summary: 'Excellend Food'}}
+    {name: "Spain", continent: "Europe", language: "Spanish", code: 'es', population: 4000000, summary: 'Bull Fighters'},
+    {name: "United Kingdom", continent: "Europe", language: "English", code: 'gb', population: 4000000, summary: 'Center of the World'},
+    {name: "France", continent: "Europe", language: "French", code: 'fr', population: 4000000, summary: 'Best Lovers'},
+    {name: "Germany", continent: "Europe", language: "German", code: 'de', population: 4000000, summary: 'Always on Time'},
+    {name: "Sweden", continent: "Europe", language: "Swedish", code: 'se', population: 4000000, summary: 'Home of Vikings'},
+    {name: "Norway", continent: "Europe", language: "Norwegian", code: 'no', population: 4000000, summary: 'Best Vikings'},
+    {name: "Italy", continent: "Europe", language: "Italian", code: 'it', population: 4000000, summary: 'Pizza Pizza'},
+    {name: "Greece", continent: "Europe", language: "Greek", code: 'gr', population: 4000000, summary: 'Many Gods'},
+    {name: "Iceland", continent: "Europe", language: "Icelandic", code: 'is', population: 4000000, summary: 'Exploding Volcano'},
+    {name: "Portugal", continent: "Europe", language: "Portuguese", code: 'pt', population: 4000000, summary: 'Ship Builders'},
+    {name: "Malta", continent: "Europe", language: "Maltese", code: 'mt', population: 4000000, summary: 'Fishermen'},
+    {name: "Brazil", continent: "South America", language: "Portuguese", code: 'br', population: 4000000, summary: 'Best Footballers'},
+    {name: "Argentina", continent: "South America", language: "Spanish", code: 'ar', population: 4000000, summary: 'Beef Steaks'},
+    {name: "Colombia", continent: "South America", language: "Spanish", code: 'co', population: 4000000, summary: 'Wonderful Hospitality'},
+    {name: "Peru", continent: "South America", language: "Spanish", code: 'pe', population: 4000000, summary: 'Paddington Bear'},
+    {name: "Venezuela", continent: "South America", language: "Spanish", code: 've', population: 4000000, summary: 'Never Been, Dunno'},
+    {name: "Uruguay", continent: "South America", language: "Spanish", code: 'uy', population: 4000000, summary: 'Excellent Food'}
 ];
 
 var columnDefs = [
@@ -53,18 +53,16 @@ FullWidthCellRenderer.prototype.init = function(params) {
 };
 
 FullWidthCellRenderer.prototype.getTemplate = function(params) {
-    // this is the details, as returned by getNodeChildDetails
-    var data = params.data;
-    // this is teh data of the parent row
-    var parentData = params.node.parent.data;
+    // the flower row shares the same data as the parent row
+    var data = params.node.data;
 
     var template =
         '<div class="full-width-panel">' +
         '  <div class="full-width-flag">' +
-        '    <img border="0" src="../images/largeFlags/' + parentData.code + '.png">'+
+        '    <img border="0" src="../images/largeFlags/' + data.code + '.png">'+
         '  </div>' +
         '  <div class="full-width-summary">' +
-        '    <span class="full-width-title">'+parentData.name+'</span><br/>' +
+        '    <span class="full-width-title">'+data.name+'</span><br/>' +
         '    <label><b>Population:</b> '+data.population+'</label><br/>'+
         '    <label><b>Known For:</b> '+data.summary+ '</label><br/>' +
         '  </div>' +
@@ -108,18 +106,10 @@ var gridOptions = {
         // return 100 when nested row, otherwise return 25
         return rowIsNestedRow ? 100 : 25;
     },
-    getNodeChildDetails: function(country) {
-        if (country.details) {
-            return {
-                group: true,
-                // provide ag-Grid with the children of this group
-                children: [country.details],
-                // to help with the demo, expand Ireland and UK by default
-                expanded: country.name === "Ireland" || country.name === "United Kingdom"
-            };
-        } else {
-            return null;
-        }
+    // return true, meaning all data can flower
+    doesDataFlower: function(dataItem) {
+        // allow everything to expand except Venezuela, sorry people of Venezuela :(
+        return dataItem.name !== 'Venezuela';
     }
 };
 
