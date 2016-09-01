@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Full Width Rows & Master Details</h2>
+    <h2>Full Width Rows & Master Detail Grids</h2>
 
     <p>
         Under normal operation, ag-Grid will render each row as a horizontal list of cells. Each cell in the row
@@ -150,7 +150,8 @@ include '../documentation-main/documentation_header.php';
             rowNode.level === 1).</li>
         <li><i>getRowHeight(params)</i> callback is configured to make each fullWidth panel 100px, ie bigger than
             the normal rows.</li>
-        <li><i>doesDataFlower(dataItem)</i> is used to tell the grid which rows to expand.</li>
+        <li><i>doesDataFlower(dataItem)</i> is used to tell the grid which rows to expand. All rows are maked
+        expandable except Venezuela</li>
         <li><i>fullWidthCellRenderer</i> is configured with a cellRenderer component.</li>
         <li>The <i>consumeMouseWheelOnCenterText</i> method stops mouseWheel events getting processed by the grid
         when the mouse is over the embedded text area. This stops both the text area AND the grid scrolling when

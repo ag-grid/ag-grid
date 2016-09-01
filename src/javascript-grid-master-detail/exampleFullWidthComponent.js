@@ -106,6 +106,15 @@ var gridOptions = {
         // return 100 when nested row, otherwise return 25
         return rowIsNestedRow ? 100 : 25;
     },
+    onGridReady: function(params) {
+        // when grid is ready, expand Ireland and UK automatically
+        params.api.forEachLeafNode(function(rowNode) {
+            if (rowNode.data.name==='Ireland' || rowNode.data.name==='United Kingdom') {
+                rowNode.expanded = true;
+            }
+        });
+        params.api.onGroupExpandedOrCollapsed();
+    },
     // return true, meaning all data can flower
     doesDataFlower: function(dataItem) {
         // allow everything to expand except Venezuela, sorry people of Venezuela :(
