@@ -13,11 +13,20 @@ export class ToolPanelComp extends Component {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    private initialised = false;
+
     constructor() {
         super(ToolPanelComp.TEMPLATE);
     }
 
-    @PostConstruct
+    // lazy initialise the toolPanel
+    public setVisible(visible: boolean): void {
+        super.setVisible(visible);
+        if (visible && !this.initialised) {
+            this.init();
+        }
+    }
+
     public init(): void {
 
         if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
@@ -37,6 +46,8 @@ export class ToolPanelComp extends Component {
         if (!this.gridOptionsWrapper.isToolPanelSuppressPivots()) {
             this.addComponent(new PivotColumnsPanel(false));
         }
+
+        this.initialised = true;
     }
 
     private addComponent(component: Component): void {
