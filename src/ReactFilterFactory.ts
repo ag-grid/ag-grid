@@ -2,7 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 // wraps the provided React filter component
-export function reactFilterFactory(reactComponent: any): Function {
+export function reactFilterFactory(reactComponent: any, parentComponent?: any): Function {
 
     class FilterWrapper {
 
@@ -11,7 +11,13 @@ export function reactFilterFactory(reactComponent: any): Function {
 
         public init(params: any) {
             this.eGui = document.createElement('div');
-            this.backingInstance = ReactDOM.render(React.createElement(reactComponent, { params: params }), this.eGui);
+
+            var ReactComponent = React.createElement(reactComponent, { params: params });
+            if (!parentComponent) {
+                this.backingInstance = ReactDOM.render(ReactComponent, this.eGui);
+            } else {
+                this.backingInstance = ReactDOM.unstable_renderSubtreeIntoContainer(parentComponent, ReactComponent, this.eGui);
+            }
 
             if (typeof this.backingInstance.init === 'function') {
                 this.backingInstance.init(params);
