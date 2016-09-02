@@ -8,6 +8,8 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Enhancement: toolPanel has lazy intialisation, so now if toolpanel not showing, it doesn't initialise.</li>
+
     <h3>Version 5.3.x</h3>
 
     <h4>ag-Grid 5.3.1, ag-Grid-Enterprise 5.3.1</h4>
