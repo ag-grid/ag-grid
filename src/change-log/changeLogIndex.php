@@ -8,6 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Enhancement: export to csv now allows you to specify particular columns.</li>
     <li>Enhancement: export to csv now includes floating top and floating bottom rows.</li>
     <li>Enhancement: toolPanel has lazy intialisation, so now if toolpanel not showing, it doesn't initialise.</li>
 

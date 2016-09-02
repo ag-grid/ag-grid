@@ -56,6 +56,10 @@ function onBtExport() {
         };
     }
 
+    if (getBooleanValue('#useSpecificColumns')) {
+        params.columnKeys = ['country','bronze'];
+    }
+
     if (getBooleanValue('#processHeaders')) {
         params.processHeaderCallback  = function(params) {
             return params.column.getColDef().headerName.toUpperCase();
