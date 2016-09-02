@@ -12,12 +12,20 @@ var columnDefs = [
     {headerName: "Total", field: "total", width: 100}
 ];
 
+var floatingTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,
+    date: '01-08-2020', sport: 'Floating Top Sport', gold: 22, silver: 33, bronze: 44, total: 55};
+
+var floatingBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country: 'Floating Bottom Country', year: 2030,
+    date: '01-08-2030', sport: 'Floating Bottom Sport', gold: 222, silver: 233, bronze: 244, total: 255};
+
 var gridOptions = {
     columnDefs: columnDefs,
     enableFilter: true,
     enableSorting: true,
     showToolPanel: true,
-    rowSelection: 'multiple'
+    rowSelection: 'multiple',
+    floatingTopRowData: [floatingTopRow],
+    floatingBottomRowData: [floatingBottomRow]
 };
 
 function getBooleanValue(cssSelector) {
@@ -29,6 +37,8 @@ function onBtExport() {
         skipHeader: getBooleanValue('#skipHeader'),
         skipFooters: getBooleanValue('#skipFooters'),
         skipGroups: getBooleanValue('#skipGroups'),
+        skipFloatingTop: getBooleanValue('#skipFloatingTop'),
+        skipFloatingBottom: getBooleanValue('#skipFloatingBottom'),
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
         suppressQuotes: getBooleanValue('#suppressQuotes'),
