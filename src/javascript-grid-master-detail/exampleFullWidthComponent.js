@@ -97,12 +97,13 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: countries,
     isFullWidthCell: function(rowNode) {
-        return rowNode.level === 1;
+        var rowIsNestedRow = rowNode.flower;
+        return rowIsNestedRow;
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
     fullWidthCellRenderer: FullWidthCellRenderer,
     getRowHeight: function(params) {
-        var rowIsNestedRow = params.node.level===1;
+        var rowIsNestedRow = rowNode.flower;
         // return 100 when nested row, otherwise return 25
         return rowIsNestedRow ? 100 : 25;
     },

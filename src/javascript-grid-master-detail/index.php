@@ -129,6 +129,11 @@ include '../documentation-main/documentation_header.php';
 }</pre>
 
     <p>
+        <i>doesDataFlower</i> gets called exactly once for each data item you provide to the grid. It does not
+        get called for groups when using the grids built in grouping or pivoting features.
+    </p>
+
+    <p>
         A row that 'can flower' is expandable. The child row is called the 'flower row'.
         The 'flower row':
         <ul>
@@ -136,6 +141,10 @@ include '../documentation-main/documentation_header.php';
         <li>does not participate in filtering - it will show if parent is shown.</li>
         <li>does not participate in sorting - it will always displayed below the parent.</li>
     </ul>
+    </p>
+
+    <p>
+        Flower nodes work with inMemory row model only. They do not work with virtual pagination or viewport.
     </p>
 
     <note>Why call them 'flowers'? Well the groupings are a tree structure. The tree structure contains
