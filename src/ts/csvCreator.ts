@@ -9,6 +9,8 @@ import {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./entiti
 import {Constants} from "./constants";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
+import {ColDef} from "./entities/colDef";
+import {Utils as _} from "./utils";
 
 var LINE_SEPARATOR = '\r\n';
 
@@ -19,6 +21,7 @@ export interface CsvExportParams {
     skipFloatingTop?: boolean;
     skipFloatingBottom?: boolean;
     suppressQuotes?: boolean;
+    columnKeys?: (Column|ColDef|string)[]
     fileName?: string;
     customHeader?: string;
     customFooter?: string;
@@ -83,6 +86,7 @@ export class CsvCreator {
         var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
         var suppressQuotes = params && params.suppressQuotes;
+        var columnKeys = params && params.columnKeys;
         var processCellCallback = params && params.processCellCallback;
         var processHeaderCallback = params && params.processHeaderCallback;
 
@@ -91,7 +95,9 @@ export class CsvCreator {
         var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         var columnsToExport: Column[];
-        if (allColumns && !isPivotMode) {
+        if (_.existsAndNotEmpty(columnKeys)) {
+            columnsToExport = this.columnController.getGridColumns(columnKeys);
+        } else if (allColumns && !isPivotMode) {
             columnsToExport = this.columnController.getAllPrimaryColumns();
         } else {
             columnsToExport = this.columnController.getAllDisplayedColumns();

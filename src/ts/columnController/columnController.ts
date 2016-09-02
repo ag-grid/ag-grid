@@ -1103,7 +1103,7 @@ export class ColumnController {
         return this.getColumns(keys, this.getGridColumn.bind(this));
     }
 
-    public getColumns(keys: any[], columnLookupCallback: (key: string|ColDef|Column)=>Column ): Column[] {
+    private getColumns(keys: any[], columnLookupCallback: (key: string|ColDef|Column)=>Column ): Column[] {
         var foundColumns: Column[] = [];
         if (keys) {
             keys.forEach( (key: any) => {
