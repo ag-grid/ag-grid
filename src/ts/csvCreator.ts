@@ -8,6 +8,7 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./entities/gridOptions";
 import {Constants} from "./constants";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
+import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 
 var LINE_SEPARATOR = '\r\n';
 
@@ -15,6 +16,8 @@ export interface CsvExportParams {
     skipHeader?: boolean;
     skipFooters?: boolean;
     skipGroups?: boolean;
+    skipFloatingTop?: boolean;
+    skipFloatingBottom?: boolean;
     suppressQuotes?: boolean;
     fileName?: string;
     customHeader?: string;
@@ -30,6 +33,7 @@ export interface CsvExportParams {
 export class CsvCreator {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -71,6 +75,8 @@ export class CsvCreator {
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
         var skipFooters = params && params.skipFooters;
+        var skipFloatingTop = params && params.skipFloatingTop;
+        var skipFloatingBottom = params && params.skipFloatingBottom;
         var includeCustomHeader = params && params.customHeader;
         var includeCustomFooter = params && params.customFooter;
         var allColumns = params && params.allColumns;
@@ -105,11 +111,15 @@ export class CsvCreator {
             result += LINE_SEPARATOR;
         }
 
+        this.floatingRowModel.forEachFloatingTopRow(processRow);
+
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
         } else {
             inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
         }
+
+        this.floatingRowModel.forEachFloatingBottomRow(processRow);
 
         if (includeCustomFooter) {
             result += params.customFooter;
@@ -121,6 +131,10 @@ export class CsvCreator {
             if (skipFooters && node.footer) { return; }
 
             if (onlySelected && !node.isSelected()) { return; }
+
+            if (skipFloatingTop && node.floating==='top') { return; }
+
+            if (skipFloatingBottom && node.floating==='bottom') { return; }
 
             // if we are in pivotMode, then the grid will show the root node only
             // if it's not a leaf group

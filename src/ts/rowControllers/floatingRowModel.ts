@@ -93,6 +93,16 @@ export class FloatingRowModel {
         return this.getTotalHeight(this.floatingTopRows);
     }
 
+    public forEachFloatingTopRow(callback: (rowNode: RowNode, index: number)=>void): void {
+        if (_.missingOrEmpty(this.floatingTopRows)) { return; }
+        this.floatingTopRows.forEach(callback);
+    }
+
+    public forEachFloatingBottomRow(callback: (rowNode: RowNode, index: number)=>void): void {
+        if (_.missingOrEmpty(this.floatingBottomRows)) { return; }
+        this.floatingBottomRows.forEach(callback);
+    }
+
     public getFloatingBottomTotalHeight(): number {
         return this.getTotalHeight(this.floatingBottomRows);
     }
