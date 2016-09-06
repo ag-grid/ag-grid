@@ -68,7 +68,9 @@ export class AgComponentFactory {
 
             refresh(params:any):void {
                 this._params = params;
-                this._componentRef.changeDetectorRef.detectChanges();
+                if(this._componentRef.instance.refresh) {
+                    this._componentRef.instance.refresh(params);
+                }
             }
         }
 
