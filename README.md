@@ -8,9 +8,11 @@ Building
 ==============
 
 To build:
-- `npm install`
-- `npm install gulp -g`
-- `npm install @angular/core@2.0.0-rc.5`
-- `npm install ag-grid`
+- npm install
+- npm install gulp -g
+- npm install @angular/core@2.0.0-rc.6
+- npm install @angular/compiler@2.0.0-rc.6
+- npm install ag-grid
+- (or: npm install @angular/core@2.0.0-rc.6 && npm install @angular/compiler@2.0.0-rc.6 && npm install ag-grid)
 
-- `gulp`
+- gulp
