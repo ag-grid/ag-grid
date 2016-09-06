@@ -25,8 +25,8 @@ export class AgComponentFactory {
             childDependencies);
     }
 
-    public createCellRendererFromTemplate(viewContainerRef:ViewContainerRef,
-                                          template:string):{new(): ICellRenderer} {
+    public createCellRendererFromTemplate(template:string,
+                                          viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
         return this.adaptTemplate(viewContainerRef, this.compiler, template);
     }
 
@@ -68,6 +68,7 @@ export class AgComponentFactory {
 
             refresh(params:any):void {
                 this._params = params;
+                this._componentRef.changeDetectorRef.detectChanges();
             }
         }
 
