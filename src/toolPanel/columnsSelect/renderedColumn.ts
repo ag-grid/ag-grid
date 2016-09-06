@@ -1,5 +1,6 @@
 import {
     Context,
+    DragSourceType,
     SvgFactory,
     Autowired,
     Component,
@@ -170,6 +171,7 @@ export class RenderedColumn extends Component {
 
     private addDragSource(): void {
         var dragSource: DragSource = {
+            type: DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItemName: this.displayName,
             dragItem: [this.column]

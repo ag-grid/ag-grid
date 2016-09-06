@@ -1,5 +1,6 @@
 import {
     Utils,
+    DragSourceType,
     SvgFactory,
     Autowired,
     Column,
@@ -109,6 +110,7 @@ export class RenderedGroup extends Component {
 
     private addDragSource(): void {
         var dragSource: DragSource = {
+            type: DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItemName: this.displayName,
             dragItem: this.columnGroup.getLeafColumns()

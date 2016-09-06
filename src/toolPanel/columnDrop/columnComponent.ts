@@ -1,6 +1,7 @@
 import {
     PopupService,
     Utils,
+    DragSourceType,
     Component,
     Autowired,
     ColumnController,
@@ -68,6 +69,7 @@ export class ColumnComponent extends Component {
 
     private addDragSource(): void {
         var dragSource: DragSource = {
+            type: DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItem: [this.column],
             dragItemName: this.displayName,
