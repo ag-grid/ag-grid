@@ -1,4 +1,4 @@
-// ag-grid-ng2 v5.3.1
+// ag-grid-ng2 v5.3.2
 import { ViewContainerRef, ComponentRef } from '@angular/core';
 import { RuntimeCompiler } from "@angular/compiler";
 import { ICellRenderer } from 'ag-grid/main';
@@ -11,7 +11,7 @@ export declare class AgComponentFactory {
     }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
         new (): ICellRenderer;
     };
-    createCellRendererFromTemplate(viewContainerRef: ViewContainerRef, template: string): {
+    createCellRendererFromTemplate(template: string, viewContainerRef: ViewContainerRef): {
         new (): ICellRenderer;
     };
     private adaptComponent<T>(componentType, viewContainerRef, compiler, name, initializer, moduleImports, childDependencies?);
