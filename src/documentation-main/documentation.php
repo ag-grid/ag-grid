@@ -25,7 +25,7 @@ include 'documentation_header.php';
             <img src="../images/angular2_large.png"/>
         </div>
         <div>
-            ag-grid-ng2 5.3.1 released. It works with Angualr 2 RC 6.
+            ag-grid-ng2 5.3.2 released. It works with Angular 2 RC 6. Usage had changed - please see the <a href="/best-angular-2-data-grid">Angular 2</a> page for more information.
         </div>
     </div>
 

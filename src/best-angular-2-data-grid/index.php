@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Angular 2 Still in Release Candidate</h3>
 
         <p>
-            Angular 2 is currently on Release Candidate 5 - until Angular 2 is actually released there is of course an element of instability in using it.
+            Angular 2 is currently on Release Candidate 6 - until Angular 2 is actually released there is of course an element of instability in using it.
             Please keep this in mind if you plan on using it for a Production release.
         <p>
     <p>Please use the github project (<a href="https://github.com/ceolter/ag-grid-ng2">https://github.com/ceolter/ag-grid-ng2</a>) for feedback or issue reporting around this functionality.</p>
@@ -52,8 +52,8 @@ include '../documentation-main/documentation_header.php';
         contains the Angular 2 component.
         <pre><code>"dependencies": {
     ...
-    "ag-grid": "5.0.x",
-    "ag-grid-ng2": "5.0.x"
+    "ag-grid": "5.3.x",
+    "ag-grid-ng2": "5.3.x"
 }</code></pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
@@ -62,14 +62,16 @@ include '../documentation-main/documentation_header.php';
 
     <p>You will then bbe able to access ag-Grid inside your application:</p>
 
-    <pre>import {AgGridNg2} from 'ag-grid-ng2/main';</pre>
+    <pre>import {AgGridModule} from 'ag-grid-ng2/main';</pre>
 
     <p>
-        Which you can then use as a directive inside component:
+        Which you can then use as a dependency inside your module:
     </p>
 
-    <pre>@Component({
-    directives: [AgGridNg2],
+    <pre>@NgModule({
+    imports: [
+        BrowserModule,
+        AgGridModule,
     ...
 })</pre>
 
@@ -195,19 +197,10 @@ include '../documentation-main/documentation_header.php';
             Neal's assistance was a big help in being able to get something out much faster than we would have otherwise - thanks Neal!
         </p>
     </note>
-    <note>
-        <p>
-            Your components need to inject ViewContainerRef into them - this should not be necessary as the child component inject them too, but if you don't
-            inject them in parent components an error will be thrown. The reason for this is unclear - it could be due to an error in RC4
-<pre>
-constructor(private _viewContainerRef: ViewContainerRef,
-            private agComponentFactory: AgComponentFactory) {</pre>
-        </p>
-    </note>
 
     <h3>AgComponentFactory</h3>
 
-    <p><code>AgComponentFactory</code> offers two methods to add cellRenderers to ag-Grid, either via a Template String, or via a Component.</p>
+    <p><code>AgComponentFactory</code> offers two methods to add cellRenderers to ag-Grid, either via a Template String, or via a Component. In both methods you'll need to pass in the <code>ViewContainerRef</code> for the current component into the Factory.</p>
     <p>To reference <code>AgComponentFactory</code> you'll need to pull in the dependency:</p>
 
     <pre>import {AgComponentFactory} from 'ag-grid-ng2/main';</pre>
@@ -220,7 +213,7 @@ constructor(private _viewContainerRef: ViewContainerRef,
 {
     headerName: "Square Template",
     field: "index",
-    cellRenderer: agComponentFactory.createCellRendererFromTemplate('{{params.value * params.value}}')
+    cellRenderer: agComponentFactory.createCellRendererFromTemplate('{{params.value * params.value}}', this._viewContainerRef)
     width: 200
 },</pre>
 
@@ -251,7 +244,7 @@ class SquareComponent implements AgAware {
 {
     headerName: "Square Component",
     field: "index",
-    cellRenderer: agComponentFactory.createCellRendererFromComponent(SquareComponent),
+    cellRenderer: agComponentFactory.createCellRendererFromComponent(SquareComponent, this._viewContainerRef),
     width: 200
 },</pre>
 
