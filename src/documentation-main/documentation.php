@@ -19,31 +19,50 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">6st Sept 2016</div>
+        <div class="news-header">Angular 2 RC6</div>
+        <div style="float: right;">
+            <img src="../images/angular2_large.png"/>
+        </div>
+        <div>
+            ag-grid-ng2 is currently
+            not working with Angular 2 RC6 due to breaking changes introduced in Angular 2 RC6.
+            We are currently working on this and plan a release end of today (Tuesday).
+        </div>
+    </div>
+
+    <div class="news-box">
+        <div class="news-header">2nd Sept 2016</div>
+        <div class="news-header">ag-grid-react v5.3.2 Released</div>
+        <div style="float: right;">
+            <img src="../images/react_large.png"/>
+        </div>
+        <div>
+            Added ability to pass in parent component into React cellRenderers
+            and custom filters. This a) improves performance when many React
+            cells and b) allows using React Router from inside cellRenderers.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">1st Sept 2016</div>
         <div class="news-header">ag-Grid v5.3.1 Released</div>
         <div>
             Added a) <a href="../javascript-grid-master-detail/#flowerNodes">Flower Nodes</a> for Master / Details
             and b) option to 'copy headers' when copying to clipboard.
         </div>
-        <div style="text-align: right;">
-            <span>
-                <img src="../images/dino.png"/>
-            </span>
-        </div>
     </div>
 
     <div class="news-box">
         <div class="news-header">30th Aug 2016</div>
         <div class="news-header">ag-Grid v5.3.x Released</div>
+        <div style="float: right;">
+            <img src="../images/dino.png"/>
+        </div>
         <div>
             Very excited to announce the latest new feature: <a href="../javascript-grid-master-detail/">Full Width Rows and Master Detail Grids</a>.
             Almost (not quite) as exciting as seeing a tyrannosaurus rex!
             See <a href="../change-log/changeLogIndex.php">change log</a> for full release details.
-        </div>
-        <div style="text-align: right;">
-            <span>
-                <img src="../images/dino.png"/>
-            </span>
         </div>
     </div>
 
@@ -173,14 +192,6 @@ include 'documentation_header.php';
     This should all be delivered during September 2016.
 </p>
 
-<h4>Grids inside Grids</h4>
-
-<p>
-    Other grids allow you to expand rows to show a different grid as a child row, with different columns
-    and rows. Grids inside grids. We want to get this in. This will be available in ag-Grid Free. We
-    have started work on this and it should be ready by September 2016.
-</p>
-
 <h4>Aurelia Support</h4>
 
 <p>
@@ -196,6 +207,13 @@ include 'documentation_header.php';
     concurrently. ag-Grid will allow this option by having a 'pinnable' option on the filters, which
     when clicked, will move the filter to the tool panel (the right hand panel that currently has
     column management). This will allow the tool panel to host and display multiple filters concurrently.
+</p>
+
+<h4>General Cleanup</h4>
+
+<p>
+    We are constantly refactoring and making things better. Expect the whole grid to be face lifted on
+    a continued basis.
 </p>
 
 <?php include 'documentation_footer.php';?>
