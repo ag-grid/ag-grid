@@ -27,7 +27,7 @@ import {
     Qualifier,
     PreDestroy
 } from "./context/context";
-import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
+import {DragAndDropService, DragSourceType} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {FilterManager} from "./filter/filterManager";
 import {NumberFilter} from "./filter/numberFilter";
@@ -131,6 +131,7 @@ export function populateClientExports(exports: any): void {
     // dragAndDrop
     exports.DragAndDropService = DragAndDropService;
     exports.DragService = DragService;
+    exports.DragSourceType = DragSourceType;
 
     // entities
     exports.Column = Column;

@@ -9,7 +9,7 @@ import {HorizontalDragService} from "./horizontalDragService";
 import {Autowired, PostConstruct} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {DragSource, DropTarget, DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 
 var svgFactory = SvgFactory.getInstance();
@@ -146,8 +146,8 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
         var result = childSuppressesMoving
             || this.gridOptionsWrapper.isSuppressMovableColumns()
-            || this.gridOptionsWrapper.isForPrint()
-            || this.columnController.isPivotMode();
+            || this.gridOptionsWrapper.isForPrint();
+            // || this.columnController.isPivotMode();
 
         return result;
     }
@@ -160,6 +160,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     
         if (eLabel) {
             var dragSource: DragSource = {
+                type: DragSourceType.HeaderCell,
                 eElement: eLabel,
                 dragItemName: this.displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items

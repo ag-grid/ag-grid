@@ -9,7 +9,12 @@ import {ColumnController} from "../columnController/columnController";
 
 var svgFactory = SvgFactory.getInstance();
 
+export enum DragSourceType { ToolPanel, HeaderCell }
+
 export interface DragSource {
+    /** So the drop target knows what type of event it is, useful for columns,
+     * we we re-ordering or moving dropping from toolPanel */
+    type: DragSourceType;
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */

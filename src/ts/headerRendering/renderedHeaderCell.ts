@@ -10,7 +10,7 @@ import {IMenuFactory} from "../interfaces/iMenuFactory";
 import {Autowired, Context, PostConstruct} from "../context/context";
 import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {DragAndDropService, DropTarget, DragSource} from "../dragAndDrop/dragAndDropService";
+import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {SortController} from "../sortController";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 
@@ -232,13 +232,14 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     private setupMove(eHeaderCellLabel: HTMLElement): void {
         var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
                             || this.column.getColDef().suppressMovable
-                            || this.gridOptionsWrapper.isForPrint()
-                            || this.columnController.isPivotMode();
+                            || this.gridOptionsWrapper.isForPrint();
+                            // || this.columnController.isPivotMode();
 
         if (suppressMove) { return; }
 
         if (eHeaderCellLabel) {
             var dragSource: DragSource = {
+                type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
                 dragItem: [this.column],
                 dragItemName: this.displayName,

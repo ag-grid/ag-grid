@@ -1,5 +1,5 @@
 
-import {DropTarget, DraggingEvent, DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {DropTarget, DraggingEvent, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {Autowired, PostConstruct, Context} from "../context/context";
 import {MoveColumnController} from "./moveColumnController";
 import {Column} from "../entities/column";
@@ -69,17 +69,32 @@ export class BodyDropTarget implements DropTarget {
     public getIconName(): string {
         return this.currentDropListener.getIconName();
     }
-    
-    public onDragEnter(params: DraggingEvent): void {
+
+    // we want to use the bodyPivotTarget if the user is dragging columns in from the toolPanel
+    // and we are in pivot mode, as it has to logic to set pivot/value/group on the columns when
+    // dropped into the grid's body.
+    private isUseBodyDropPivotTarget(draggingEvent: DraggingEvent): boolean {
+
+        // if not in pivot mode, then we never use the pivot drop target
+        if (!this.columnController.isPivotMode()) { return false; }
+
+        // otherwise we use the drop target if the column came from the toolPanel (ie not reordering)
+        return draggingEvent.dragSource.type === DragSourceType.ToolPanel;
+    }
+
+    public onDragEnter(draggingEvent: DraggingEvent): void {
         // we pick the drop listener depending on whether we are in pivot mode are not. if we are
         // in pivot mode, then dropping cols changes the row group, pivot, value stats. otherwise
         // we change visibility state and position.
-        if (this.columnController.isPivotMode()) {
+
+        // if (this.columnController.isPivotMode()) {
+        var useBodyDropPivotTarget = this.isUseBodyDropPivotTarget(draggingEvent);
+        if (useBodyDropPivotTarget) {
             this.currentDropListener = this.bodyDropPivotTarget;
         } else {
             this.currentDropListener = this.moveColumnController;
         }
-        this.currentDropListener.onDragEnter(params);
+        this.currentDropListener.onDragEnter(draggingEvent);
     }
 
     public onDragLeave(params: DraggingEvent): void {
