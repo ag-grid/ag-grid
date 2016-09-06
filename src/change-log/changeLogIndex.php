@@ -8,10 +8,11 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Enhancement: columns can now be reordered when in pivot mode (previously they were static).</li>
     <li>Enhancement: ag-grid-react - now you pass in parent component to React cellRenderer - makes cellRenderer work with React Router and also should give performance improvements.</li>
     <li>Enhancement: export to csv now allows you to specify particular columns.</li>
     <li>Enhancement: export to csv now includes floating top and floating bottom rows.</li>
-    <li>Enhancement: toolPanel has lazy intialisation, so now if toolpanel not showing, it doesn't initialise.</li>
+    <li>Enhancement: toolPanel has lazy intialisation, so now if toolPanel not showing, it doesn't initialise.</li>
 
     <h3>Version 5.3.x</h3>
 
