@@ -19,15 +19,13 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">6st Sept 2016</div>
+        <div class="news-header">6th Sept 2016</div>
         <div class="news-header">Angular 2 RC6</div>
         <div style="float: right;">
             <img src="../images/angular2_large.png"/>
         </div>
         <div>
-            ag-grid-ng2 is currently
-            not working with Angular 2 RC6 due to breaking changes introduced in Angular 2 RC6.
-            We are currently working on this and plan a release end of today (Tuesday).
+            ag-grid-ng2 5.3.1 released. It works with Angualr 2 RC 6.
         </div>
     </div>
 
