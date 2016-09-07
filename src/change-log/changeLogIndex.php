@@ -14,6 +14,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: export to csv now allows you to specify particular columns.</li>
     <li>Enhancement: export to csv now includes floating top and floating bottom rows.</li>
     <li>Enhancement: toolPanel has lazy intialisation, so now if toolPanel not showing, it doesn't initialise.</li>
+    <li>Bugfix: copy range to clipboard was not taking in group values when group key was using valueGetter.</li>
 
     <h3>Version 5.3.x</h3>
 
