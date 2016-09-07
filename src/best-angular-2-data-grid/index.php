@@ -207,7 +207,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre>import {AgComponentFactory} from 'ag-grid-ng2/main';</pre>
 
-    <h4>Adding components via Template Strings</h4>
+    <h4>Adding cellRenderers via Template Strings</h4>
 
     You can add a cellRenderer component supplying a string as a template - the <code>params</code> argument passed to cellRenders is available in the template:
 
@@ -219,7 +219,7 @@ include '../documentation-main/documentation_header.php';
     width: 200
 },</pre>
 
-    <h4>Adding components via Components</h4>
+    <h4>Adding cellRenderers via Components</h4>
 
     <p>You can add a cellRenderer component supplying a regular Angular 2 Component.</p>
 
@@ -249,6 +249,28 @@ class SquareComponent implements AgAware {
     cellRenderer: agComponentFactory.createCellRendererFromComponent(SquareComponent, this._viewContainerRef),
     width: 200
 },</pre>
+
+    <h4>Supplying declarations to your Components</h4>
+
+    <p>If your component in turn depends on other components (or directives), you'll need to supply them to the factory:</p>
+<pre>
+cellRenderer: this.agComponentFactory.createCellRendererFromComponent(RatioParentComponent,
+    this._viewContainerRef,
+    [RatioComponent]
+)
+</pre>
+    <p>In this case <code>RatioParentComponent</code> uses <code>RatioComponent</code>, so we supply it as the 3rd argument.</p>
+
+    <h4>Supplying imports to your Components</h4>
+
+    <p>If your component requires other modules (for example. CommonModule for ngIf), you'll need to supply them to the factory:</p>
+<pre>
+cellRenderer: this.agComponentFactory.createCellRendererFromComponent(MyComponent,
+    this._viewContainerRef,
+    [], // other declerations
+    [CommonModule] // we want to have CommonModule available to MyComponent
+)
+</pre>
 
     <h2>Destroy</h2>
 
