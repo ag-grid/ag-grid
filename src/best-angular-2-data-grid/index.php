@@ -267,7 +267,7 @@ cellRenderer: this.agComponentFactory.createCellRendererFromComponent(RatioParen
 <pre>
 cellRenderer: this.agComponentFactory.createCellRendererFromComponent(MyComponent,
     this._viewContainerRef,
-    [], // other declerations
+    [], // other declarations
     [CommonModule] // we want to have CommonModule available to MyComponent
 )
 </pre>
