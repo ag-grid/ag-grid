@@ -154,6 +154,8 @@ export class ColumnApi {
 @Bean('columnController')
 export class ColumnController {
 
+    public static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
@@ -1797,7 +1799,7 @@ export class ColumnController {
             // we never allow moving the group column
             autoColDef.suppressMovable = true;
 
-            var colId = 'ag-Grid-AutoColumn';
+            var colId = ColumnController.GROUP_AUTO_COLUMN_ID;
             this.groupAutoColumn = new Column(autoColDef, colId, true);
             this.context.wireBean(this.groupAutoColumn);
         }
