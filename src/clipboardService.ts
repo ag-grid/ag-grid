@@ -1,6 +1,8 @@
 
 import {
     Bean,
+    CsvExportParams,
+    ColDef,
     IClipboardService,
     Autowired,
     CsvCreator,
@@ -295,17 +297,20 @@ export class ClipboardService implements IClipboardService {
         }
     }
 
-    public copySelectedRowsToClipboard(includeHeaders = false): void {
+    public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string|Column|ColDef)[]): void {
 
         var skipHeader = !includeHeaders;
 
-        var data = this.csvCreator.getDataAsCsv({
+        var params: CsvExportParams = {
+            columnKeys: columnKeys,
             skipHeader: skipHeader,
             skipFooters: true,
             columnSeparator: '\t',
             onlySelected: true,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
-        });
+        };
+
+        var data = this.csvCreator.getDataAsCsv(params);
 
         this.copyDataToClipboard(data);
     }
