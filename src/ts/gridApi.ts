@@ -484,6 +484,7 @@ export class GridApi {
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string|Column|ColDef)[]): void {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
+        var column: Column = null;
         this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
     }
 
