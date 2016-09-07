@@ -60,13 +60,15 @@ include '../documentation-main/documentation_header.php';
     for patch versions, the component will not be released.
     </p>
 
-    <p>You will then bbe able to access ag-Grid inside your application:</p>
+    <p>You will then be able to access ag-Grid inside your application:</p>
 
     <pre>import {AgGridModule} from 'ag-grid-ng2/main';</pre>
 
     <p>
         Which you can then use as a dependency inside your module:
     </p>
+
+    <note><code>AgGridModule</code> needs to be at the root level. Specifically, <code>AgComponentFactory</code> needs to be an app wide provider.</note>
 
     <pre>@NgModule({
     imports: [
