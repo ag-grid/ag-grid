@@ -482,9 +482,9 @@ export class GridApi {
         this.rangeController.clearSelection();
     }
 
-    public copySelectedRowsToClipboard(includeHeader: boolean): void {
+    public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string|Column|ColDef)[]): void {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
-        this.clipboardService.copySelectedRowsToClipboard(includeHeader);
+        this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
     }
 
     public copySelectedRangeToClipboard(includeHeader: boolean): void {
