@@ -420,8 +420,9 @@ include '../documentation-main/documentation_header.php';
             <td>Clears the selected range.</td>
         </tr>
         <tr>
-            <th>copySelectedRowsToClipboard(includeHeaders)</th>
-            <td>Copies the selected rows to the clipboard.</td>
+            <th>copySelectedRowsToClipboard(includeHeaders, columnKeys)</th>
+            <td>Copies the selected rows to the clipboard. Set includeHeaders = true to include the headers (default is false)
+            set columnKeys to the list of columns if you don't want just specific columns.</td>
         </tr>
         <tr>
             <th>copySelectedRangeToClipboard(includeHeaders)</th>
