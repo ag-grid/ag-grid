@@ -236,6 +236,7 @@ colDef.cellEditorParams = {
             places this character into the edit field so that the user experience is they are typing into the cell.</li>
         <li><b>Mouse Double Click</b>: If the mouse is double clicked. There is a grid property <i>singleClickEdit</i>
             that will allow single click to start editing instead of double click.</li>
+        <li><b>api.startEditing()</b>: If you call startEditing() on the grid API</li>
     </ul>
     </p>
 
@@ -375,6 +376,27 @@ colDef.cellEditorParams = {
         newValue for onCellValueChanged will have the number.
     </p>
 
+    <h3>Editing API</h3>
+
+    <p>
+        There are two api methods for editing, <code>startEditing()</code> and <code>stopEditing(params)</code>.
+    </p>
+
+    <p>
+        <b>startEditing(params)</b><br/>
+        Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
+        <ul>
+        <li><b>rowIndex</b>: The row index of the row to start editing.</li>
+        <li><b>colKey</b>: The column key of the column to start editing.</li>
+        <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cellEditor</li>
+    </ul>
+    </p>
+
+    <p>
+        <b>stopEditing()</b><br/>
+        Takes no parameters and stops the current editing. If not editing, then does nothing.
+    </p>
+
     <h3>Cell Editing Example</h3>
 
     <p>The example below illustrates:
@@ -383,6 +405,7 @@ colDef.cellEditorParams = {
         <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
         <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.</li>
         <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
+        <li>The buttons a the top demonstrate different usages of the editing API.</li>
     </ul>
     </p>
 

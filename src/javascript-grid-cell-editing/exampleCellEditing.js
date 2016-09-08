@@ -37,6 +37,17 @@ function onBtStopEditing() {
     gridOptions.api.stopEditing();
 }
 
+function onBtStartEditing(key, char) {
+    gridOptions.api.setFocusedCell(0, 'last_name');
+
+    gridOptions.api.startEditingCell({
+        rowIndex: 0,
+        colKey: 'last_name',
+        keyPress: key,
+        charPress: char
+    });
+}
+
 function getCharCodeFromEvent(event) {
     event = event || window.event;
     return (typeof event.which == "undefined") ? event.keyCode : event.which;
