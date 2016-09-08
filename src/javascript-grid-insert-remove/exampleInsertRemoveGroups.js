@@ -35,6 +35,7 @@ var gridOptions = {
     rowData: rowData,
     rememberGroupStateWhenNewData: true,
     enableSorting: true,
+    suppressRowClickSelection: true,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
     groupColumnDef: {headerName: "Group", field: "model", rowGroupIndex: 1, cellRenderer: 'group',
