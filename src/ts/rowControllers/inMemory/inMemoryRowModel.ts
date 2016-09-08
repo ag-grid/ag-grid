@@ -380,23 +380,27 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public insertItemsAtIndex(index: number, items: any[]): void {
+        // remember group state, so we can expand groups that should be expanded
+        var groupState = this.getGroupState();
         var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
-        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes);
+        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
     }
 
     public removeItems(rowNodes: RowNode[]): void {
+        var groupState = this.getGroupState();
         var removedNodes = this.nodeManager.removeItems(rowNodes);
-        this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes);
+        this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
     }
 
     public addItems(items: any[]): void {
+        var groupState = this.getGroupState();
         var newNodes = this.nodeManager.addItems(items);
-        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes);
+        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
     }
 
-    private refreshAndFireEvent(eventName: string, rowNodes: RowNode[]): void {
+    private refreshAndFireEvent(eventName: string, rowNodes: RowNode[], groupState: any): void {
         if (rowNodes) {
-            this.refreshModel(Constants.STEP_EVERYTHING);
+            this.refreshModel(Constants.STEP_EVERYTHING, null, groupState);
             this.eventService.dispatchEvent(eventName, {rowNodes: rowNodes})
         }
     }
