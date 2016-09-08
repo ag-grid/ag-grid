@@ -19,8 +19,8 @@ include '../documentation-main/documentation_header.php';
     <h3>Supported Row Models</h3>
 
     <p>
-        This section covers adding and removing rows for the <i>normal</i> RowModel. For <i>pagination</i> and
-        <i>virtual</i>, see the documentation page for each of them. For <i>viewport</i>, the concept of adding
+        This section covers adding and removing rows for the <code>normal</code> RowModel. For <code>pagination</code> and
+        <code>virtual</code>, see the documentation page for each of them. For <code>viewport</code>, the concept of adding
         and removing rows is no relevant as the viewport datasource has complete control on what rows get
         displayed, so it can add and removes rows into the viewport at will.
     </p>
@@ -68,19 +68,19 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         It's all good getting rows added and removed, but in the end, you will want to get the data out.
-        To do this, use the <i>api.forEachNode()</i> to iterate through all the data, and then pull the
+        To do this, use the <code>api.forEachNode()</code> to iterate through all the data, and then pull the
         data out of each node. The grid does not do this for you on purpose as a) it's trivial and b) it
         allows you to take control and do additional things such as change or filter the data as you go.
-        To just get the selected rows, use <i>api.getSelectedNodes()</i>. To get the filtered rows,
-        or the rows in the order they are in the grid, use <i>api.forEachNodeAfterFilter()</i> or
-        <i>api.forEachNodeAfterFilterAndSort()</i>.
+        To just get the selected rows, use <code>api.getSelectedNodes()</code>. To get the filtered rows,
+        or the rows in the order they are in the grid, use <code>api.forEachNodeAfterFilter()</code> or
+        <code>api.forEachNodeAfterFilterAndSort()</code>.
     </p>
 
     <h3>Example - Adding & Removing Rows</h3>
 
     <p>
         Below demonstrates the different api methods via the buttons. The example outputs a lot of debugging items
-        to the console because the grid property <i>debug=true</i> is set. The buttons are as follows:
+        to the console because the grid property <code>debug=true</code> is set. The buttons are as follows:
     <ul>
         <li>
             <b>Add Row</b>: Adds a row to the end of the list.
@@ -96,6 +96,21 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <show-example example="exampleInsertRemove"></show-example>
+
+    <h3>Example - Adding & Removing Rows with Groups</h3>
+
+    <p>
+        If you are displaying groups (either you provided your own groups, or you are using the ag-Grid Enterprise
+        row grouping feature), then it is possible to get the grid to remember the open / closed state of the
+        groups when inserting / removing by setting <code>rememberGroupStateWhenNewData=true</code>.
+    </p>
+
+    <p>
+        The example below shows adding items to the start and the end of groups (the start and the end
+        only makes sense if you are not sorting, as otherwise the sort is applied after the update).
+    </p>
+
+    <show-example example="exampleInsertRemoveGroups"></show-example>
 
 </div>
 

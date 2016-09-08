@@ -8,6 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Enhancement: now rememberGroupStateWhenNewData works when inserting/removing rows, ie group open/closed state is now kept when updating rows.</li>
     <li>Enhancement: added columnKeys to api.copySelectedRowsToClipboard(), so you can choose which columns get used.</li>
     <li>Enhancement: columns can now be reordered when in pivot mode (previously they were static).</li>
     <li>Enhancement: ag-grid-react - now you pass in parent component to React cellRenderer - makes cellRenderer work with React Router and also should give performance improvements.</li>
