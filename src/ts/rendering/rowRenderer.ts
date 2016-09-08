@@ -578,6 +578,11 @@ export class RowRenderer {
         }
     }
 
+    public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
+        var cell = this.getComponentForCell(gridCell);
+        cell.startEditingIfEnabled(keyPress, charPress);
+    }
+
     private getComponentForCell(gridCell: GridCell): RenderedCell {
         var rowComponent: RenderedRow;
         switch (gridCell.floating) {

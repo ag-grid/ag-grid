@@ -32,6 +32,13 @@ import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
 
+export interface StartEditingCellParams {
+    rowIndex: number;
+    colKey: string|Column|ColDef;
+    keyPress?: number;
+    charPress?: string;
+}
+
 @Bean('gridApi')
 export class GridApi {
 
@@ -510,6 +517,12 @@ export class GridApi {
 
     public stopEditing(cancel: boolean = false): void {
         this.rowRenderer.stopEditing(cancel);
+    }
+
+    public startEditingCell(params: StartEditingCellParams): void {
+        var column = this.columnController.getGridColumn(params.colKey);
+        var gridCell = new GridCell(params.rowIndex, null, column);
+        this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
     }
 
     public addAggFunc(key: string, aggFunc: IAggFunc): void {
