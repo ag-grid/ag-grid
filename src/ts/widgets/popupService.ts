@@ -35,7 +35,7 @@ export class PopupService {
         var maxX = widthOfParent - minWidth;
         if (x > maxX) {
             // try putting menu to the left
-            x = sourceRect.left - minWidth;
+            x = sourceRect.left - parentRect.left - minWidth;
         }
         if (x < 0) { // in case the popup has a negative value
             x = 0;
