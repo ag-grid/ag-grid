@@ -1,6 +1,5 @@
 import {Grid, GridOptions, GridApi, ColumnApi, ComponentUtil} from 'ag-grid/main';
-import {Component, EventEmitter, ViewEncapsulation, ViewContainerRef, ElementRef} from '@angular/core';
-import {AgComponentFactory} from "./agComponentFactory";
+import {Component, EventEmitter, ViewEncapsulation, ElementRef} from '@angular/core';
 
 @Component({
     selector: 'ag-grid-ng2',
@@ -17,35 +16,23 @@ export class AgGridNg2 {
     private _initialised = false;
     private _destroyed = false;
 
-    private gridOptions:GridOptions;
+    private gridOptions: GridOptions;
 
     // making these public, so they are accessible to people using the ng2 component references
-    public api:GridApi;
-    public columnApi:ColumnApi;
+    public api: GridApi;
+    public columnApi: ColumnApi;
 
-    constructor(private elementDef:ElementRef,
-                private viewContainerRef:ViewContainerRef,
-                private agComponentFactory:AgComponentFactory) {
-
+    constructor(private elementDef: ElementRef) {
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
-        ComponentUtil.EVENTS.forEach((eventName) => {
+        ComponentUtil.EVENTS.forEach( (eventName) => {
             (<any>this)[eventName] = new EventEmitter();
         });
     }
 
     // this gets called after the directive is initialised
-    public ngOnInit():void {
+    public ngOnInit(): void {
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
-        //this.gridOptions.columnDefs.forEach((columnDef) => {
-        //    if (columnDef.hasOwnProperty("cellRendererComponent")) {
-        //        columnDef.cellRenderer = this.agComponentFactory.createCellRendererFromComponent(columnDef.cellRendererComponent.component,
-        //            this.viewContainerRef,
-        //            columnDef.cellRendererComponent.hasOwnProperty("dependencies") ? columnDef.cellRendererComponent.dependencies : []
-        //        );
-        //    }
-        //});
-
         var nativeElement = this.elementDef.nativeElement;
         var globalEventLister = this.globalEventListener.bind(this);
         new Grid(nativeElement, this.gridOptions, globalEventLister);
@@ -55,13 +42,13 @@ export class AgGridNg2 {
         this._initialised = true;
     }
 
-    public ngOnChanges(changes:any):void {
+    public ngOnChanges(changes: any): void {
         if (this._initialised) {
             ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
         }
     }
 
-    public ngOnDestroy():void {
+    public ngOnDestroy(): void {
         if (this._initialised) {
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
@@ -70,12 +57,10 @@ export class AgGridNg2 {
         }
     }
 
-    private globalEventListener(eventType:string, event:any):void {
+    private globalEventListener(eventType: string, event: any): void {
         // if we are tearing down, don't emit angular 2 events, as this causes
         // problems with the angular 2 router
-        if (this._destroyed) {
-            return;
-        }
+        if (this._destroyed) { return; }
         // generically look up the eventType
         var emitter = <EventEmitter<any>> (<any>this)[eventType];
         if (emitter) {
