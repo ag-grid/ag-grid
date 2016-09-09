@@ -68,8 +68,8 @@ export class AgComponentFactory {
 
             refresh(params:any):void {
                 this._params = params;
-                if(this._componentRef.instance.refresh) {
-                    this._componentRef.instance.refresh(params);
+                if((<any>this._componentRef.instance).refresh) {
+                    (<any>this._componentRef.instance).refresh(params);
                 }
             }
         }
