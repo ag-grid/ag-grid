@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.3.1
+// ag-grid-enterprise v5.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -136,6 +136,7 @@ var RenderedColumn = (function (_super) {
     };
     RenderedColumn.prototype.addDragSource = function () {
         var dragSource = {
+            type: main_1.DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItemName: this.displayName,
             dragItem: [this.column]

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.3.1
+// ag-grid-enterprise v5.4.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -232,16 +232,18 @@ var ClipboardService = (function () {
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     };
-    ClipboardService.prototype.copySelectedRowsToClipboard = function (includeHeaders) {
+    ClipboardService.prototype.copySelectedRowsToClipboard = function (includeHeaders, columnKeys) {
         if (includeHeaders === void 0) { includeHeaders = false; }
         var skipHeader = !includeHeaders;
-        var data = this.csvCreator.getDataAsCsv({
+        var params = {
+            columnKeys: columnKeys,
             skipHeader: skipHeader,
             skipFooters: true,
             columnSeparator: '\t',
             onlySelected: true,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
-        });
+        };
+        var data = this.csvCreator.getDataAsCsv(params);
         this.copyDataToClipboard(data);
     };
     ClipboardService.prototype.copyDataToClipboard = function (data) {

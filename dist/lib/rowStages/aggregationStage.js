@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.3.1
+// ag-grid-enterprise v5.4.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -79,6 +79,7 @@ var AggregationStage = (function () {
             }
             result[pivotColumnDef.colId] = _this.aggregateValues(values, valueColumn.getAggFunc());
         });
+        this.putInValueForGroupNode(result, rowNode);
         return result;
     };
     AggregationStage.prototype.aggregateRowNodeUsingValuesOnly = function (rowNode, valueColumns) {
@@ -88,7 +89,15 @@ var AggregationStage = (function () {
         valueColumns.forEach(function (valueColumn, index) {
             result[valueColumn.getId()] = _this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
+        this.putInValueForGroupNode(result, rowNode);
         return result;
+    };
+    // when doing copy to clipboard, the valueService is used to get the value for the cell.
+    // the problem is that the valueService is wired to get the values directly from the data
+    // using column ID's (rather than, eg, valueGetters), so we need to have the value of the
+    // group key in the data, so when copy to clipboard is executed, the value is picked up correctly.
+    AggregationStage.prototype.putInValueForGroupNode = function (result, rowNode) {
+        result[main_1.ColumnController.GROUP_AUTO_COLUMN_ID] = rowNode.key;
     };
     AggregationStage.prototype.getValuesPivotNonLeaf = function (rowNode, colId) {
         var values = [];

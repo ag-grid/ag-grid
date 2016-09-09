@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.3.1
+// ag-grid-enterprise v5.4.0
 import { IRowNodeStage, RowNode } from "ag-grid/main";
 export declare class AggregationStage implements IRowNodeStage {
     private gridOptionsWrapper;
@@ -11,6 +11,7 @@ export declare class AggregationStage implements IRowNodeStage {
     private aggregateRowNode(rowNode, measureColumns, pivotColumns);
     private aggregateRowNodeUsingValuesAndPivot(rowNode);
     private aggregateRowNodeUsingValuesOnly(rowNode, valueColumns);
+    private putInValueForGroupNode(result, rowNode);
     private getValuesPivotNonLeaf(rowNode, colId);
     private getValuesFromMappedSet(mappedSet, keys, valueColumn);
     private getValuesNormal(rowNode, valueColumns);

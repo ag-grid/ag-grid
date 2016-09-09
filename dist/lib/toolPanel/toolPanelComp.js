@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.3.1
+// ag-grid-enterprise v5.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -23,7 +23,15 @@ var ToolPanelComp = (function (_super) {
     __extends(ToolPanelComp, _super);
     function ToolPanelComp() {
         _super.call(this, ToolPanelComp.TEMPLATE);
+        this.initialised = false;
     }
+    // lazy initialise the toolPanel
+    ToolPanelComp.prototype.setVisible = function (visible) {
+        _super.prototype.setVisible.call(this, visible);
+        if (visible && !this.initialised) {
+            this.init();
+        }
+    };
     ToolPanelComp.prototype.init = function () {
         if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
             this.addComponent(new pivotModePanel_1.PivotModePanel());
@@ -38,6 +46,7 @@ var ToolPanelComp = (function (_super) {
         if (!this.gridOptionsWrapper.isToolPanelSuppressPivots()) {
             this.addComponent(new pivotColumnsPanel_1.PivotColumnsPanel(false));
         }
+        this.initialised = true;
     };
     ToolPanelComp.prototype.addComponent = function (component) {
         this.context.wireBean(component);
@@ -55,12 +64,6 @@ var ToolPanelComp = (function (_super) {
         main_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', main_1.GridOptionsWrapper)
     ], ToolPanelComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ToolPanelComp.prototype, "init", null);
     ToolPanelComp = __decorate([
         main_1.Bean('toolPanel'), 
         __metadata('design:paramtypes', [])
