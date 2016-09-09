@@ -2,9 +2,7 @@ import { Component, ComponentFactory, ViewContainerRef, ComponentFactoryResolver
 import { NgModule }        from '@angular/core';
 import { RuntimeCompiler } from "@angular/compiler";
 
-import { ICellRenderer, ICellEditor }   from 'ag-grid/main';
-import {AgAware} from "./agAware";
-import {AgEditorAware} from "./agEditorAware";
+import { ICellRenderer }   from 'ag-grid/main';
 
 @Injectable()
 export class AgComponentFactory {
@@ -18,21 +16,7 @@ export class AgComponentFactory {
                                                              childDependencies?:any[],
                                                              moduleImports?:any[]):{new(): ICellRenderer} {
         let componentAsFunction:any = componentType;
-        return this.adaptComponentToRenderer(componentType, viewContainerRef, this.compiler, componentAsFunction.name, (instance:any, params?:any) => {
-                if (instance.agInit) {
-                    instance.agInit(params);
-                }
-            },
-            moduleImports ? moduleImports : [],
-            childDependencies);
-    }
-
-    public createCellEditorFromComponent(componentType:{ new(...args:any[]): AgEditorAware; },
-                                         viewContainerRef:ViewContainerRef,
-                                         childDependencies?:any[],
-                                         moduleImports?:any[]):{new(): ICellRenderer} {
-        let componentAsFunction:any = componentType;
-        return this.adaptComponentToEditor(componentType, viewContainerRef, this.compiler, componentAsFunction.name, (instance:any, params?:any) => {
+        return this.adaptComponent<T>(componentType, viewContainerRef, this.compiler, componentAsFunction.name, (instance:any, params?:any) => {
                 if (instance.agInit) {
                     instance.agInit(params);
                 }
@@ -46,13 +30,13 @@ export class AgComponentFactory {
         return this.adaptTemplate(viewContainerRef, this.compiler, template);
     }
 
-    private adaptComponentToRenderer<T>(componentType:{ new(...args:any[]): T; },
-                                        viewContainerRef:ViewContainerRef,
-                                        compiler:RuntimeCompiler,
-                                        name:string,
-                                        initializer:(instance:T, params?:any) => void,
-                                        moduleImports:any[],
-                                        childDependencies?:any[]):{new(): ICellRenderer} {
+    private adaptComponent<T>(componentType:{ new(...args:any[]): T; },
+                              viewContainerRef:ViewContainerRef,
+                              compiler:RuntimeCompiler,
+                              name:string,
+                              initializer:(instance:T, params?:any) => void,
+                              moduleImports:any[],
+                              childDependencies?:any[]):{new(): ICellRenderer} {
 
         let that = this;
         class CellRenderer implements ICellRenderer {
@@ -84,77 +68,13 @@ export class AgComponentFactory {
 
             refresh(params:any):void {
                 this._params = params;
-
-                let instance:any = this._componentRef.instance;
-                if (instance.refresh) {
-                    instance.refresh(params);
+                if(this._componentRef.instance.refresh) {
+                    this._componentRef.instance.refresh(params);
                 }
             }
         }
 
         return CellRenderer;
-    }
-
-    private adaptComponentToEditor(componentType:{ new(...args:any[]): AgEditorAware; },
-                                   viewContainerRef:ViewContainerRef,
-                                   compiler:RuntimeCompiler,
-                                   name:string,
-                                   initializer:(instance:AgEditorAware, params?:any) => void,
-                                   moduleImports:any[],
-                                   childDependencies?:any[]):{new(): ICellEditor} {
-
-        let that = this;
-        class CellEditor implements ICellEditor {
-            private _params:any;
-            private eGui:HTMLElement;
-            private _componentRef:ComponentRef<AgEditorAware>;
-            private _editorAwareComponent:AgEditorAware;
-
-            constructor() {
-                this.eGui = document.createElement('div');
-                this._componentRef = that.createComponentSync(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
-                this._editorAwareComponent = this._componentRef.instance;
-                this.eGui.appendChild(this._componentRef.location.nativeElement);
-            }
-
-            init(params:any):void {
-                this._params = params;
-
-                if (initializer) {
-                    initializer(this._editorAwareComponent, this._params);
-                }
-            }
-
-            getGui():HTMLElement {
-                return this.eGui;
-            }
-
-            getValue():any {
-                return this._editorAwareComponent.getValue();
-            }
-
-            isPopup():boolean {
-                return this._editorAwareComponent.isPopup ?
-                    this._editorAwareComponent.isPopup() : false;
-            }
-
-            destroy():void {
-                if (this._componentRef) {
-                    this._componentRef.destroy();
-                }
-            }
-
-            refresh(params:any):void {
-                this._params = params;
-
-                let instance:any = this._componentRef.instance;
-                if (instance.refresh) {
-                    instance.refresh(params);
-                }
-            }
-        }
-
-        return CellEditor;
     }
 
     public createComponent<T>(componentType:{ new(...args:any[]): T; },
@@ -185,30 +105,6 @@ export class AgComponentFactory {
         });
     }
 
-    public createComponentSync<T>(componentType:{ new(...args:any[]): T; },
-                                  viewContainerRef:ViewContainerRef,
-                                  compiler:RuntimeCompiler,
-                                  name:string,
-                                  moduleImports:any[],
-                                  childDependencies?:any[]):ComponentRef<T> {
-        let module:any = this._cacheOfModules[name];
-        if (!module) {
-            module = this.createComponentModule(componentType, moduleImports, childDependencies);
-            this._cacheOfModules[name] = module;
-        }
-
-        var moduleWithFactories = compiler.compileModuleAndAllComponentsSync(module);
-        let factory:ComponentFactory<T> = null;
-        for (let i = 0; i < moduleWithFactories.componentFactories.length && factory === null; i++) {
-            if (moduleWithFactories.componentFactories[i].componentType === componentType) {
-                factory = moduleWithFactories.componentFactories[i];
-            }
-        }
-
-        return viewContainerRef.createComponent(factory);
-    }
-
-
     private  createComponentModule(componentType:any, moduleImports:any[], childDependencies?:any[]) {
         let moduleDeclarations = [componentType];
         if (childDependencies) {
@@ -230,7 +126,7 @@ export class AgComponentFactory {
                              compiler:RuntimeCompiler,
                              template:string):{new(): ICellRenderer} {
         let componentType:{ new(...args:any[]): any; } = createDynamicComponentType('dynamic-component', template);
-        return this.adaptComponentToRenderer(componentType, viewContainerRef, compiler, template, (i:DynamicComponent, p:any) => i.params = p, []);
+        return this.adaptComponent(componentType, viewContainerRef, compiler, template, (i:DynamicComponent, p:any) => i.params = p, []);
     }
 }
 
