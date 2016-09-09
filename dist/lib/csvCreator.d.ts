@@ -1,13 +1,18 @@
-// Type definitions for ag-grid v5.3.1
+// Type definitions for ag-grid v5.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
+import { Column } from "./entities/column";
 import { ProcessCellForExportParams, ProcessHeaderForExportParams } from "./entities/gridOptions";
+import { ColDef } from "./entities/colDef";
 export interface CsvExportParams {
     skipHeader?: boolean;
     skipFooters?: boolean;
     skipGroups?: boolean;
+    skipFloatingTop?: boolean;
+    skipFloatingBottom?: boolean;
     suppressQuotes?: boolean;
+    columnKeys?: (Column | ColDef | string)[];
     fileName?: string;
     customHeader?: string;
     customFooter?: string;
@@ -19,6 +24,7 @@ export interface CsvExportParams {
 }
 export declare class CsvCreator {
     private rowModel;
+    private floatingRowModel;
     private columnController;
     private valueService;
     private gridOptionsWrapper;

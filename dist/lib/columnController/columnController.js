@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.1
+ * @version v5.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1185,7 +1185,7 @@ var ColumnController = (function () {
         if (this.pivotMode && !this.secondaryColumnsPresent) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
-            columnsForDisplay = this.valueColumns.slice();
+            columnsForDisplay = this.createColumnsToDisplayFromValueColumns();
         }
         else {
             // otherwise continue as normal. this can be working on the primary
@@ -1197,6 +1197,17 @@ var ColumnController = (function () {
             columnsForDisplay.unshift(this.groupAutoColumn);
         }
         return columnsForDisplay;
+    };
+    ColumnController.prototype.createColumnsToDisplayFromValueColumns = function () {
+        var _this = this;
+        // make a copy of the value columns, so we have to side effects
+        var result = this.valueColumns.slice();
+        // order the columns as per the grid columns. having the order is
+        // important as without it, reordering of columns would have no impact
+        result.sort(function (colA, colB) {
+            return _this.gridColumns.indexOf(colA) - _this.gridColumns.indexOf(colB);
+        });
+        return result;
     };
     ColumnController.prototype.updateDisplayedColumns = function () {
         // save opened / closed state
@@ -1554,7 +1565,7 @@ var ColumnController = (function () {
             }
             // we never allow moving the group column
             autoColDef.suppressMovable = true;
-            var colId = 'ag-Grid-AutoColumn';
+            var colId = ColumnController.GROUP_AUTO_COLUMN_ID;
             this.groupAutoColumn = new column_1.Column(autoColDef, colId, true);
             this.context.wireBean(this.groupAutoColumn);
         }
@@ -1579,6 +1590,7 @@ var ColumnController = (function () {
         }
         return result;
     };
+    ColumnController.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
     __decorate([
         context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)

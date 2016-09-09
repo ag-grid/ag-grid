@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.3.1
+// Type definitions for ag-grid v5.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,7 +19,8 @@ export declare class BodyDropTarget implements DropTarget {
     getContainer(): HTMLElement;
     private init();
     getIconName(): string;
-    onDragEnter(params: DraggingEvent): void;
+    private isUseBodyDropPivotTarget(draggingEvent);
+    onDragEnter(draggingEvent: DraggingEvent): void;
     onDragLeave(params: DraggingEvent): void;
     onDragging(params: DraggingEvent): void;
     onDragStop(params: DraggingEvent): void;

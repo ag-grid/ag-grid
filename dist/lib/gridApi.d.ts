@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.3.1
+// Type definitions for ag-grid v5.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -11,6 +11,12 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 import { GridCell } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
+export interface StartEditingCellParams {
+    rowIndex: number;
+    colKey: string | Column | ColDef;
+    keyPress?: number;
+    charPress?: string;
+}
 export declare class GridApi {
     private csvCreator;
     private gridCore;
@@ -126,12 +132,13 @@ export declare class GridApi {
     getRangeSelections(): RangeSelection[];
     addRangeSelection(rangeSelection: AddRangeSelectionParams): void;
     clearRangeSelection(): void;
-    copySelectedRowsToClipboard(includeHeader: boolean): void;
+    copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column | ColDef)[]): void;
     copySelectedRangeToClipboard(includeHeader: boolean): void;
     copySelectedRangeDown(): void;
     showColumnMenuAfterButtonClick(colKey: string | Column | ColDef, buttonElement: HTMLElement): void;
     showColumnMenuAfterMouseClick(colKey: string | Column | ColDef, mouseEvent: MouseEvent): void;
     stopEditing(cancel?: boolean): void;
+    startEditingCell(params: StartEditingCellParams): void;
     addAggFunc(key: string, aggFunc: IAggFunc): void;
     addAggFuncs(aggFuncs: {
         [key: string]: IAggFunc;

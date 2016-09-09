@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.3.1
+// Type definitions for ag-grid v5.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -79,6 +79,7 @@ export declare class ColumnApi {
     setColumnAggFunction(column: Column, aggFunc: string): void;
 }
 export declare class ColumnController {
+    static GROUP_AUTO_COLUMN_ID: string;
     private gridOptionsWrapper;
     private expressionService;
     private balancedColumnTreeBuilder;
@@ -204,7 +205,7 @@ export declare class ColumnController {
     private syncColumnWithNoState(column);
     private syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes);
     getGridColumns(keys: any[]): Column[];
-    getColumns(keys: any[], columnLookupCallback: (key: string | ColDef | Column) => Column): Column[];
+    private getColumns(keys, columnLookupCallback);
     getColumnWithValidation(key: string | ColDef | Column): Column;
     getPrimaryColumn(key: string | ColDef | Column): Column;
     getGridColumn(key: string | ColDef | Column): Column;
@@ -221,6 +222,7 @@ export declare class ColumnController {
     private getColumnGroupState();
     private setColumnGroupState(groupState);
     private calculateColumnsForDisplay();
+    private createColumnsToDisplayFromValueColumns();
     private updateDisplayedColumns();
     isSecondaryColumnsPresent(): boolean;
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;

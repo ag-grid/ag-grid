@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.1
+ * @version v5.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -329,20 +329,24 @@ var InMemoryRowModel = (function () {
         this.rowsToDisplay = this.flattenStage.execute(this.rootNode);
     };
     InMemoryRowModel.prototype.insertItemsAtIndex = function (index, items) {
+        // remember group state, so we can expand groups that should be expanded
+        var groupState = this.getGroupState();
         var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
-        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes);
+        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes, groupState);
     };
     InMemoryRowModel.prototype.removeItems = function (rowNodes) {
+        var groupState = this.getGroupState();
         var removedNodes = this.nodeManager.removeItems(rowNodes);
-        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_REMOVED, removedNodes);
+        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
     };
     InMemoryRowModel.prototype.addItems = function (items) {
+        var groupState = this.getGroupState();
         var newNodes = this.nodeManager.addItems(items);
-        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes);
+        this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes, groupState);
     };
-    InMemoryRowModel.prototype.refreshAndFireEvent = function (eventName, rowNodes) {
+    InMemoryRowModel.prototype.refreshAndFireEvent = function (eventName, rowNodes, groupState) {
         if (rowNodes) {
-            this.refreshModel(constants_1.Constants.STEP_EVERYTHING);
+            this.refreshModel(constants_1.Constants.STEP_EVERYTHING, null, groupState);
             this.eventService.dispatchEvent(eventName, { rowNodes: rowNodes });
         }
     };
