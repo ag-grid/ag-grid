@@ -19,48 +19,13 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">6th Sept 2016</div>
-        <div class="news-header">Angular 2 RC6</div>
+        <div class="news-header">9th Sept 2016</div>
+        <div class="news-header">ag-grid v5.4.x Released</div>
         <div style="float: right;">
-            <img src="../images/angular2_large.png"/>
+            <img src="../images/superDev.jpg"/>
         </div>
         <div>
-            ag-grid-ng2 5.3.2 released. It works with Angular 2 RC 6. Usage had changed - please see the <a href="/best-angular-2-data-grid">Angular 2</a> page for more information.
-        </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">2nd Sept 2016</div>
-        <div class="news-header">ag-grid-react v5.3.2 Released</div>
-        <div style="float: right;">
-            <img src="../images/react_large.png"/>
-        </div>
-        <div>
-            Added ability to pass in parent component into React cellRenderers
-            and custom filters. This a) improves performance when many React
-            cells and b) allows using React Router from inside cellRenderers.
-        </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">1st Sept 2016</div>
-        <div class="news-header">ag-Grid v5.3.1 Released</div>
-        <div>
-            Added a) <a href="../javascript-grid-master-detail/#flowerNodes">Flower Nodes</a> for Master / Details
-            and b) option to 'copy headers' when copying to clipboard.
-        </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">30th Aug 2016</div>
-        <div class="news-header">ag-Grid v5.3.x Released</div>
-        <div style="float: right;">
-            <img src="../images/dino.png"/>
-        </div>
-        <div>
-            Very excited to announce the latest new feature: <a href="../javascript-grid-master-detail/">Full Width Rows and Master Detail Grids</a>.
-            Almost (not quite) as exciting as seeing a tyrannosaurus rex!
-            See <a href="../change-log/changeLogIndex.php">change log</a> for full release details.
+            A mixture of medium sized enhancements and some bug fixes, check the <a href="../change-log/changeLogIndex.php">Change Log</a> for details.
         </div>
     </div>
 
