@@ -178,6 +178,52 @@ ag-grid-ng2 {
   vertical-align: middle;
   text-align: center;
 }
+.ag-bl-overlay {
+  pointer-events: none;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+}
+.ag-bl-full-height {
+  height: 100%;
+  overflow: auto;
+  position: relative;
+}
+.ag-bl-full-height-west {
+  height: 100%;
+  float: left;
+}
+.ag-bl-full-height-east {
+  height: 100%;
+  float: right;
+}
+.ag-bl-full-height-center {
+  height: 100%;
+}
+.ag-bl-normal {
+  height: 100%;
+  position: relative;
+}
+.ag-bl-normal-center-row {
+  height: 100%;
+  overflow: hidden;
+}
+.ag-bl-normal-west {
+  height: 100%;
+  float: left;
+}
+.ag-bl-normal-east {
+  height: 100%;
+  float: right;
+}
+.ag-bl-normal-center {
+  height: 100%;
+}
+.ag-bl-dont-fill {
+  position: relative;
+}
 .ag-body {
   height: 100%;
   width: 100%;

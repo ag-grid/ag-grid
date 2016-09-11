@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.1
+ * @version v5.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,41 +17,15 @@ var BorderLayout = (function () {
         var template;
         if (!params.dontFill) {
             if (this.fullHeight) {
-                template =
-                    '<div style="height: 100%; overflow: auto; position: relative;">' +
-                        '<div id="west" style="height: 100%; float: left;"></div>' +
-                        '<div id="east" style="height: 100%; float: right;"></div>' +
-                        '<div id="center" style="height: 100%;"></div>' +
-                        '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
-                        '</div>';
+                template = BorderLayout.TEMPLATE_FULL_HEIGHT;
             }
             else {
-                template =
-                    '<div style="height: 100%; position: relative;">' +
-                        '<div id="north"></div>' +
-                        '<div id="centerRow" style="height: 100%; overflow: hidden;">' +
-                        '<div id="west" style="height: 100%; float: left;"></div>' +
-                        '<div id="east" style="height: 100%; float: right;"></div>' +
-                        '<div id="center" style="height: 100%;"></div>' +
-                        '</div>' +
-                        '<div id="south"></div>' +
-                        '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
-                        '</div>';
+                template = BorderLayout.TEMPLATE_NORMAL;
             }
             this.layoutActive = true;
         }
         else {
-            template =
-                '<div style="position: relative;">' +
-                    '<div id="north"></div>' +
-                    '<div id="centerRow">' +
-                    '<div id="west"></div>' +
-                    '<div id="east"></div>' +
-                    '<div id="center"></div>' +
-                    '</div>' +
-                    '<div id="south"></div>' +
-                    '<div id="overlay" style="pointer-events: none; position: absolute; height: 100%; width: 100%; top: 0px; left: 0px;"></div>' +
-                    '</div>';
+            template = BorderLayout.TEMPLATE_DONT_FILL;
             this.layoutActive = false;
         }
         this.eGui = utils_1.Utils.loadTemplate(template);
@@ -114,6 +88,7 @@ var BorderLayout = (function () {
     };
     // returns true if any item changed size, otherwise returns false
     BorderLayout.prototype.doLayout = function () {
+        var _this = this;
         var isVisible = utils_1.Utils.isVisible(this.eGui);
         if (!isVisible) {
             this.visibleLastTime = false;
@@ -125,9 +100,8 @@ var BorderLayout = (function () {
         }
         this.visibleLastTime = true;
         var childLayouts = [this.eNorthChildLayout, this.eSouthChildLayout, this.eEastChildLayout, this.eWestChildLayout];
-        var that = this;
-        utils_1.Utils.forEach(childLayouts, function (childLayout) {
-            var childChangedSize = that.layoutChild(childLayout);
+        childLayouts.forEach(function (childLayout) {
+            var childChangedSize = _this.layoutChild(childLayout);
             if (childChangedSize) {
                 atLeastOneChanged = true;
             }
@@ -233,8 +207,6 @@ var BorderLayout = (function () {
             return;
         }
         this.hideOverlay();
-        //
-        //this.setOverlayVisible(false);
     };
     BorderLayout.prototype.hideOverlay = function () {
         utils_1.Utils.removeAllChildren(this.eOverlayWrapper);
@@ -252,6 +224,32 @@ var BorderLayout = (function () {
             this.hideOverlay();
         }
     };
+    BorderLayout.TEMPLATE_FULL_HEIGHT = '<div class="ag-bl ag-bl-full-height">' +
+        '  <div class="ag-bl-west ag-bl-full-height-west" id="west"></div>' +
+        '  <div class="ag-bl-east ag-bl-full-height-east" id="east"></div>' +
+        '  <div class="ag-bl-center ag-bl-full-height-center" id="center"></div>' +
+        '  <div class="ag-bl-overlay" id="overlay"></div>' +
+        '</div>';
+    BorderLayout.TEMPLATE_NORMAL = '<div class="ag-bl ag-bl-normal">' +
+        '  <div id="north"></div>' +
+        '  <div class="ag-bl-center-row ag-bl-normal-center-row" id="centerRow">' +
+        '    <div class="ag-bl-west ag-bl-normal-west" id="west"></div>' +
+        '    <div class="ag-bl-east ag-bl-normal-east" id="east"></div>' +
+        '    <div class="ag-bl-center ag-bl-normal-center" id="center"></div>' +
+        '  </div>' +
+        '  <div id="south"></div>' +
+        '  <div class="ag-bl-overlay" id="overlay"></div>' +
+        '</div>';
+    BorderLayout.TEMPLATE_DONT_FILL = '<div class="ag-bl ag-bl-dont-fill">' +
+        '  <div id="north"></div>' +
+        '  <div id="centerRow">' +
+        '    <div id="west"></div>' +
+        '    <div id="east"></div>' +
+        '    <div id="center"></div>' +
+        '  </div>' +
+        '  <div id="south"></div>' +
+        '  <div class="ag-bl-overlay" id="overlay"></div>' +
+        '</div>';
     return BorderLayout;
 })();
 exports.BorderLayout = BorderLayout;

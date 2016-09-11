@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.1
+ * @version v5.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,17 +52,30 @@ var BodyDropTarget = (function () {
     BodyDropTarget.prototype.getIconName = function () {
         return this.currentDropListener.getIconName();
     };
-    BodyDropTarget.prototype.onDragEnter = function (params) {
+    // we want to use the bodyPivotTarget if the user is dragging columns in from the toolPanel
+    // and we are in pivot mode, as it has to logic to set pivot/value/group on the columns when
+    // dropped into the grid's body.
+    BodyDropTarget.prototype.isUseBodyDropPivotTarget = function (draggingEvent) {
+        // if not in pivot mode, then we never use the pivot drop target
+        if (!this.columnController.isPivotMode()) {
+            return false;
+        }
+        // otherwise we use the drop target if the column came from the toolPanel (ie not reordering)
+        return draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel;
+    };
+    BodyDropTarget.prototype.onDragEnter = function (draggingEvent) {
         // we pick the drop listener depending on whether we are in pivot mode are not. if we are
         // in pivot mode, then dropping cols changes the row group, pivot, value stats. otherwise
         // we change visibility state and position.
-        if (this.columnController.isPivotMode()) {
+        // if (this.columnController.isPivotMode()) {
+        var useBodyDropPivotTarget = this.isUseBodyDropPivotTarget(draggingEvent);
+        if (useBodyDropPivotTarget) {
             this.currentDropListener = this.bodyDropPivotTarget;
         }
         else {
             this.currentDropListener = this.moveColumnController;
         }
-        this.currentDropListener.onDragEnter(params);
+        this.currentDropListener.onDragEnter(draggingEvent);
     };
     BodyDropTarget.prototype.onDragLeave = function (params) {
         this.currentDropListener.onDragLeave(params);

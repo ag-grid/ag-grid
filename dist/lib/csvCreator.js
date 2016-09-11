@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.1
+ * @version v5.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,8 @@ var valueService_1 = require("./valueService");
 var context_1 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var constants_1 = require("./constants");
+var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
+var utils_1 = require("./utils");
 var LINE_SEPARATOR = '\r\n';
 var CsvCreator = (function () {
     function CsvCreator() {
@@ -56,19 +58,25 @@ var CsvCreator = (function () {
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
         var skipFooters = params && params.skipFooters;
+        var skipFloatingTop = params && params.skipFloatingTop;
+        var skipFloatingBottom = params && params.skipFloatingBottom;
         var includeCustomHeader = params && params.customHeader;
         var includeCustomFooter = params && params.customFooter;
         var allColumns = params && params.allColumns;
         var onlySelected = params && params.onlySelected;
         var columnSeparator = (params && params.columnSeparator) || ',';
         var suppressQuotes = params && params.suppressQuotes;
+        var columnKeys = params && params.columnKeys;
         var processCellCallback = params && params.processCellCallback;
         var processHeaderCallback = params && params.processHeaderCallback;
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
         var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
         var columnsToExport;
-        if (allColumns && !isPivotMode) {
+        if (utils_1.Utils.existsAndNotEmpty(columnKeys)) {
+            columnsToExport = this.columnController.getGridColumns(columnKeys);
+        }
+        else if (allColumns && !isPivotMode) {
             columnsToExport = this.columnController.getAllPrimaryColumns();
         }
         else {
@@ -85,12 +93,14 @@ var CsvCreator = (function () {
             columnsToExport.forEach(processHeaderColumn);
             result += LINE_SEPARATOR;
         }
+        this.floatingRowModel.forEachFloatingTopRow(processRow);
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
         }
         else {
             inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
         }
+        this.floatingRowModel.forEachFloatingBottomRow(processRow);
         if (includeCustomFooter) {
             result += params.customFooter;
         }
@@ -102,6 +112,12 @@ var CsvCreator = (function () {
                 return;
             }
             if (onlySelected && !node.isSelected()) {
+                return;
+            }
+            if (skipFloatingTop && node.floating === 'top') {
+                return;
+            }
+            if (skipFloatingBottom && node.floating === 'bottom') {
                 return;
             }
             // if we are in pivotMode, then the grid will show the root node only
@@ -203,6 +219,10 @@ var CsvCreator = (function () {
         context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], CsvCreator.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('floatingRowModel'), 
+        __metadata('design:type', floatingRowModel_1.FloatingRowModel)
+    ], CsvCreator.prototype, "floatingRowModel", void 0);
     __decorate([
         context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)

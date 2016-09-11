@@ -1,9 +1,16 @@
-// Type definitions for ag-grid v5.3.1
+// Type definitions for ag-grid v5.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Column } from "../entities/column";
+export declare enum DragSourceType {
+    ToolPanel = 0,
+    HeaderCell = 1,
+}
 export interface DragSource {
+    /** So the drop target knows what type of event it is, useful for columns,
+     * we we re-ordering or moving dropping from toolPanel */
+    type: DragSourceType;
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */

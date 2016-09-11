@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.1
+ * @version v5.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -123,8 +123,8 @@ var RenderedHeaderGroupCell = (function () {
         });
         var result = childSuppressesMoving
             || this.gridOptionsWrapper.isSuppressMovableColumns()
-            || this.gridOptionsWrapper.isForPrint()
-            || this.columnController.isPivotMode();
+            || this.gridOptionsWrapper.isForPrint();
+        // || this.columnController.isPivotMode();
         return result;
     };
     RenderedHeaderGroupCell.prototype.setupMove = function () {
@@ -137,6 +137,7 @@ var RenderedHeaderGroupCell = (function () {
         }
         if (eLabel) {
             var dragSource = {
+                type: dragAndDropService_1.DragSourceType.HeaderCell,
                 eElement: eLabel,
                 dragItemName: this.displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.3.1
+ * @version v5.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,6 +24,11 @@ var svgFactory_1 = require("../svgFactory");
 var dragService_1 = require("./dragService");
 var columnController_1 = require("../columnController/columnController");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
+(function (DragSourceType) {
+    DragSourceType[DragSourceType["ToolPanel"] = 0] = "ToolPanel";
+    DragSourceType[DragSourceType["HeaderCell"] = 1] = "HeaderCell";
+})(exports.DragSourceType || (exports.DragSourceType = {}));
+var DragSourceType = exports.DragSourceType;
 var DragAndDropService = (function () {
     function DragAndDropService() {
         this.dropTargets = [];
