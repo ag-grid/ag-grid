@@ -7,7 +7,8 @@ import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
-import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {BaseFrameworkFactory} from "../baseFrameworkFactory";
+import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -48,6 +49,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('baseFrameworkFactory') private baseFrameworkFactory: BaseFrameworkFactory;
 
     private colDef: ColDef;
     private colId: any;
@@ -80,6 +82,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     private primary: boolean;
 
+    private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private floatingCellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+
     constructor(colDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
         this.visible = !colDef.hide;
@@ -87,6 +92,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+
+        this.floatingCellRenderer = this.baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
+        this.cellRenderer = this.baseFrameworkFactory.colDefCellRenderer(colDef);
     }
 
     // this is done after constructor as it uses gridOptionsWrapper
@@ -115,6 +123,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
 
         this.validate();
+    }
+
+    public getCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string {
+        return this.cellRenderer;
+    }
+
+    public getFloatingCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string {
+        return this.floatingCellRenderer;
     }
 
     public getUniqueId(): string {

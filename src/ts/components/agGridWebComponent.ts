@@ -1,5 +1,5 @@
 import {ComponentUtil} from "./componentUtil";
-import {Grid} from "../grid";
+import {Grid, GridParams} from "../grid";
 
 var registered = false;
 
@@ -59,7 +59,10 @@ export function initialiseAgGridWithWebComponents() {
 
         var globalEventListener = this.globalEventListener.bind(this);
         this._gridOptions = ComponentUtil.copyAttributesToGridOptions(options, this);
-        this._agGrid = new Grid(this, this._gridOptions, globalEventListener);
+        var gridParams: GridParams = {
+            globalEventListener: globalEventListener
+        };
+        this._agGrid = new Grid(this, this._gridOptions, gridParams);
 
         this.api = options.api;
         this.columnApi = options.columnApi;

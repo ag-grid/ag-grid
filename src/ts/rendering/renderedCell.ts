@@ -28,6 +28,7 @@ import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
+import {BaseFrameworkFactory} from "../baseFrameworkFactory";
 
 export class RenderedCell extends Component {
 
@@ -960,6 +961,10 @@ export class RenderedCell extends Component {
     private putDataIntoCell() {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
+
+        var cellRenderer = this.column.getCellRenderer();
+        var floatingCellRenderer = this.column.getFloatingCellRenderer();
+
         var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
 
         if (colDef.template) {
@@ -975,12 +980,12 @@ export class RenderedCell extends Component {
                 this.eParentOfValue.innerHTML = template;
             }
         // use cell renderer if it exists
-        } else if (colDef.floatingCellRenderer && this.node.floating) {
+        } else if (floatingCellRenderer && this.node.floating) {
             // if floating, then give preference to floating cell renderer
-            this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
-        } else if (colDef.cellRenderer) {
+            this.useCellRenderer(floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
+        } else if (cellRenderer) {
             // use normal cell renderer
-            this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams, valueFormatted);
+            this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueFormatted);
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;

@@ -114,6 +114,7 @@ export * from './dist/lib/widgets/menuItemComponent';
 export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
 
+export * from './dist/lib/baseFrameworkFactory';
 export * from './dist/lib/cellNavigationService';
 export * from './dist/lib/clientExports';
 export * from './dist/lib/columnChangeEvent';

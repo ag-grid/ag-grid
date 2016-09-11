@@ -7,6 +7,7 @@ import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
 import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {LargeTextCellEditor} from "./cellEditors/largeTextCellEditor";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
@@ -15,6 +16,7 @@ export class CellEditorFactory {
     private static SELECT = 'select';
     private static POPUP_TEXT = 'popupText';
     private static POPUP_SELECT = 'popupSelect';
+    private static LARGE_TEXT = 'largeText';
 
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -27,6 +29,7 @@ export class CellEditorFactory {
         this.cellEditorMap[CellEditorFactory.SELECT] = SelectCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
+        this.cellEditorMap[CellEditorFactory.LARGE_TEXT] = LargeTextCellEditor;
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {

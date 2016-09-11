@@ -46,15 +46,26 @@ import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {AgCheckbox} from "./widgets/agCheckbox";
-import {LargeTextCellEditor} from "./rendering/cellEditors/largeTextCellEditor";
+import {BaseFrameworkFactory} from "./baseFrameworkFactory";
+
+export interface GridParams {
+    // used by Web Components
+    globalEventListener?: Function;
+
+    // these are used by ng1 only
+    $scope?: any;
+    $compile?: any;
+    quickFilterOnScope?: any;
+
+    // this allows the base frameworks (React, NG2, etc) to provide alternative cellRenderers and cellEditors
+    baseFrameworkFactory?: BaseFrameworkFactory;
+}
 
 export class Grid {
 
     private context: Context;
 
     private static enterpriseBeans: any[];
-
-    private static LARGE_TEXT = 'largeText';
 
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -70,7 +81,7 @@ export class Grid {
         _.iterateObject(rowModelClasses, (key: string, value: any)=> Grid.RowModelClasses[key] = value );
     }
 
-    constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, globalEventListener: Function = null, $scope: any = null, $compile: any = null, quickFilterOnScope: any = null) {
+    constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
 
         if (!eGridDiv) {
             console.error('ag-Grid: no div element provided to the grid');
@@ -83,16 +94,22 @@ export class Grid {
 
         var enterprise = _.exists(Grid.enterpriseBeans);
 
+        var baseFrameworkFactory = params ? params.baseFrameworkFactory : null;
+        if (_.missing(baseFrameworkFactory)) {
+            baseFrameworkFactory = new BaseFrameworkFactory();
+        }
+
         this.context = new Context({
             overrideBeans: Grid.enterpriseBeans,
             seed: {
                 enterprise: enterprise,
                 gridOptions: gridOptions,
                 eGridDiv: eGridDiv,
-                $scope: $scope,
-                $compile: $compile,
-                quickFilterOnScope: quickFilterOnScope,
-                globalEventListener: globalEventListener
+                $scope: params ? params.$scope : null,
+                $compile: params ? params.$compile : null,
+                quickFilterOnScope: params ? params.quickFilterOnScope : null,
+                globalEventListener: params ? params.globalEventListener : null,
+                baseFrameworkFactory: baseFrameworkFactory
             },
             beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
@@ -107,8 +124,6 @@ export class Grid {
             components: [{componentName: 'AgCheckbox', theClass: AgCheckbox}],
             debug: !!gridOptions.debug
         });
-
-        this.context.getBean('cellEditorFactory').addCellEditor(Grid.LARGE_TEXT, LargeTextCellEditor);
 
         var eventService = this.context.getBean('eventService');
         var readyEvent = {

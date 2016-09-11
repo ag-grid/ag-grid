@@ -1,4 +1,4 @@
-import {Grid} from "../grid";
+import {Grid, GridParams} from "../grid";
 
 export function initialiseAgGridWithAngular1(angular: any) {
     var angularModule = angular.module("agGrid", []);
@@ -24,7 +24,12 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
     }
 
     var eGridDiv = $element[0];
-    var grid = new Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
+    var gridParams: GridParams = {
+        $scope: $scope,
+        $compile: $compile,
+        quickFilterOnScope: quickFilterOnScope
+    };
+    var grid = new Grid(eGridDiv, gridOptions, gridParams);
 
     $scope.$on("$destroy", function() {
         grid.destroy();
