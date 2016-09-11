@@ -52,9 +52,10 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Create your own cellEditor by providing a cellEditor component.
+    </p>
 
     <note>
-        Like cellRenderers, cellEditor components have nothing to do with Angular or Reach or any other
+        Like cellRenderers, cellEditor components have nothing to do with Angular or React or any other
         framework components. The are called components because they follow similar concepts. All you
         need to do to create an ag-Grid cellRenderer component is implement the required methods in
         your class.
