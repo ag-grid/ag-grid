@@ -1,2 +1,5 @@
-// ag-grid-react v5.4.0
-export declare function reactCellRendererFactory(reactComponent: any, parentComponent?: any): ((params: any) => HTMLElement | string);
+// ag-grid-react v5.5.0
+import { ICellRenderer } from 'ag-grid';
+export declare function reactCellRendererFactory(reactComponent: any, parentComponent?: any): {
+    new (): ICellRenderer;
+};

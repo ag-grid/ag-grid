@@ -1,2 +1,2 @@
-// ag-grid-react v5.4.0
+// ag-grid-react v5.5.0
 export declare var AgGridReact: any;

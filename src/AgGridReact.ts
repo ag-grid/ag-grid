@@ -34,24 +34,6 @@ export var AgGridReact = React.createClass({
         this.columnApi = this.gridOptions.columnApi;
     },
 
-    getCallbackForEvent: function(eventName: string) {
-        if (!eventName || eventName.length < 2) {
-            return eventName;
-        } else {
-            return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
-        }
-    },
-
-    // duplicated, taken from gridOptionsWrapper
-    globalEventListener: function(eventName: string, event: any) {
-        var callbackMethodName = this.getCallbackForEvent(eventName);
-        var callbackFromProps = this.props[callbackMethodName];
-        if (callbackFromProps) {
-            callbackFromProps(event);
-        }
-
-    },
-
     shouldComponentUpdate: function() {
         // we want full control of the dom, as ag-Grid doesn't use React internally,
         // so for performance reasons we tell React we don't need render called after
