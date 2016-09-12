@@ -67,6 +67,7 @@ export * from './dist/lib/layout/tabbedLayout';
 export * from './dist/lib/layout/verticalStack';
 
 export * from './dist/lib/misc/focusService';
+export * from './dist/lib/misc/methodNotImplementedException';
 
 export * from './dist/lib/rendering/cellEditors/iCellEditor';
 export * from './dist/lib/rendering/cellEditors/largeTextCellEditor';

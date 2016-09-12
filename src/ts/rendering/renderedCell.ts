@@ -29,6 +29,7 @@ import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
 import {BaseFrameworkFactory} from "../baseFrameworkFactory";
+import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
 
 export class RenderedCell extends Component {
 
@@ -923,19 +924,49 @@ export class RenderedCell extends Component {
 
         this.value = this.getValue();
 
+        var refreshFailed = false;
+
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
         // then we are not showing a movement in the stock price, rather we are showing different stock.
-        if (!newData && this.cellRenderer && this.cellRenderer.refresh) {
+        var attemptRefresh = !newData && this.cellRenderer && this.cellRenderer.refresh;
+
+        if (attemptRefresh) {
+            try {
+                doRefresh();
+            } catch (e) {
+                if (e instanceof MethodNotImplementedException) {
+                    refreshFailed = true;
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        // we do the replace if not doing refresh, or if refresh was unsuccessful.
+        // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
+        // wrapper has the refresh method, but the underlying component doesn't
+        if (!attemptRefresh || refreshFailed) {
+            doReplace();
+        }
+
+        if (animate) {
+            this.animateCellWithDataChanged();
+        }
+
+        function doRefresh(): void {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
             var valueFormatted = this.formatValue(this.value);
             var cellRendererParams = this.column.getColDef().cellRendererParams;
             var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
             this.cellRenderer.refresh(params);
+
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
             this.addClassesFromRules();
-        } else {
+        }
+
+        function doReplace(): void {
             // otherwise we rip out the cell and replace it
             _.removeAllChildren(this.eParentOfValue);
 
@@ -951,10 +982,6 @@ export class RenderedCell extends Component {
             if (this.gridOptionsWrapper.isAngularCompileRows()) {
                 this.$compile(this.eGridCell)(this.scope);
             }
-        }
-
-        if (animate) {
-            this.animateCellWithDataChanged();
         }
     }
 

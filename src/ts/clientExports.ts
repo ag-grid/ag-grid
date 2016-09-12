@@ -102,6 +102,7 @@ import {InMemoryNodeManager} from "./rowControllers/inMemory/inMemoryNodeManager
 import {VirtualPageCache} from "./rowControllers/virtualPagination/virtualPageCache";
 import {VirtualPage} from "./rowControllers/virtualPagination/virtualPage";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
+import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
 
 export function populateClientExports(exports: any): void {
 
@@ -172,6 +173,7 @@ export function populateClientExports(exports: any): void {
 
     // misc
     exports.FocusService = FocusService;
+    exports.MethodNotImplementedException = MethodNotImplementedException;
 
     // rendering / cellEditors
     exports.LargeTextCellEditor = LargeTextCellEditor;
