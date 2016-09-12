@@ -1,4 +1,4 @@
-import {ICellEditor, MethodNotImplementedException} from 'ag-grid';
+import {ICellEditor} from 'ag-grid';
 import {AgReactComponent} from "./agReactComponent";
 
 export function reactCellEditorFactory(reactComponent: any, parentComponent?: any): {new(): ICellEditor} {
