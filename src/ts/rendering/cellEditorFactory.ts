@@ -1,6 +1,6 @@
 import {Bean, PostConstruct, Autowired, Context} from "../context/context";
 import {Utils as _} from '../utils';
-import {ICellEditor} from "./cellEditors/iCellEditor";
+import {ICellEditor, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {TextCellEditor} from "./cellEditors/textCellEditor";
 import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
@@ -43,7 +43,7 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor(key: string|{new(): ICellEditor}): ICellEditor {
+    public createCellEditor(key: string|{new(): ICellEditor}, params: ICellEditorParams): ICellEditor {
 
         var CellEditorClass: {new(): ICellEditor};
 
@@ -61,7 +61,13 @@ export class CellEditorFactory {
 
         var cellEditor = new CellEditorClass();
         this.context.wireBean(cellEditor);
-        
+
+        // we have to call init first, otherwise when using the frameworks, the wrapper
+        // classes won't be set up
+        if (cellEditor.init) {
+            cellEditor.init(params);
+        }
+
         if (cellEditor.isPopup && cellEditor.isPopup()) {
             cellEditor = new PopupEditorWrapper(cellEditor);
         }

@@ -499,34 +499,34 @@ export class RenderedCell extends Component {
         });
     }
 
-    private createCellEditor(keyPress?: number, charPress?: string): ICellEditor {
+    private createCellEditorParams(keyPress?: number, charPress?: string): ICellEditorParams {
+        var params: ICellEditorParams = {
+            value: this.getValue(),
+            keyPress: keyPress,
+            charPress: charPress,
+            column: this.column,
+            node: this.node,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext(),
+            onKeyDown: this.onKeyDown.bind(this),
+            stopEditing: this.stopEditingAndFocus.bind(this),
+            eGridCell: this.eGridCell
+        };
+
         var colDef = this.column.getColDef();
-
-        var cellEditor = this.cellEditorFactory.createCellEditor(this.column.getCellEditor());
-
-        if (cellEditor.init) {
-            var params: ICellEditorParams = {
-                value: this.getValue(),
-                keyPress: keyPress,
-                charPress: charPress,
-                column: this.column,
-                node: this.node,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext(),
-                onKeyDown: this.onKeyDown.bind(this),
-                stopEditing: this.stopEditingAndFocus.bind(this),
-                eGridCell: this.eGridCell
-            };
-
-            if (colDef.cellEditorParams) {
-                _.assign(params, colDef.cellEditorParams);
-            }
-
-            if (cellEditor.init) {
-                cellEditor.init(params);
-            }
+        if (colDef.cellEditorParams) {
+            _.assign(params, colDef.cellEditorParams);
         }
+
+        return params;
+    }
+
+    private createCellEditor(keyPress?: number, charPress?: string): ICellEditor {
+
+        var params = this.createCellEditorParams(keyPress, charPress);
+
+        var cellEditor = this.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
 
         return cellEditor;
     }
@@ -555,6 +555,12 @@ export class RenderedCell extends Component {
 
         if (!cellEditor.getGui) {
             console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
+
+            // no getGui, for React guys, see if they attached a react component directly
+            if ((<any>cellEditor).render) {
+                console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
+            }
+
             return;
         }
 
