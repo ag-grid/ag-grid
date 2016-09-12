@@ -502,7 +502,7 @@ export class RenderedCell extends Component {
     private createCellEditor(keyPress?: number, charPress?: string): ICellEditor {
         var colDef = this.column.getColDef();
 
-        var cellEditor = this.cellEditorFactory.createCellEditor(colDef.cellEditor);
+        var cellEditor = this.cellEditorFactory.createCellEditor(this.column.getCellEditor());
 
         if (cellEditor.init) {
             var params: ICellEditorParams = {
@@ -925,6 +925,7 @@ export class RenderedCell extends Component {
         this.value = this.getValue();
 
         var refreshFailed = false;
+        var that = this;
 
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
@@ -957,30 +958,30 @@ export class RenderedCell extends Component {
         function doRefresh(): void {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
-            var valueFormatted = this.formatValue(this.value);
-            var cellRendererParams = this.column.getColDef().cellRendererParams;
-            var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-            this.cellRenderer.refresh(params);
+            var valueFormatted = that.formatValue(this.value);
+            var cellRendererParams = that.column.getColDef().cellRendererParams;
+            var params = that.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+            that.cellRenderer.refresh(params);
 
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
-            this.addClassesFromRules();
+            that.addClassesFromRules();
         }
 
         function doReplace(): void {
             // otherwise we rip out the cell and replace it
-            _.removeAllChildren(this.eParentOfValue);
+            _.removeAllChildren(that.eParentOfValue);
 
             // remove old renderer component if it exists
-            if (this.cellRenderer && this.cellRenderer.destroy) {
-                this.cellRenderer.destroy();
+            if (that.cellRenderer && that.cellRenderer.destroy) {
+                that.cellRenderer.destroy();
             }
-            this.cellRenderer = null;
+            that.cellRenderer = null;
 
-            this.populateCell();
+            that.populateCell();
 
             // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-            if (this.gridOptionsWrapper.isAngularCompileRows()) {
-                this.$compile(this.eGridCell)(this.scope);
+            if (that.gridOptionsWrapper.isAngularCompileRows()) {
+                that.$compile(that.eGridCell)(that.scope);
             }
         }
     }

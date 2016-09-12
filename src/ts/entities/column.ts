@@ -9,6 +9,7 @@ import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
 import {BaseFrameworkFactory} from "../baseFrameworkFactory";
 import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -84,6 +85,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
     private floatingCellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private cellEditor: {new(): ICellEditor} | string;
 
     constructor(colDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
@@ -99,6 +101,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     public initialise(): void {
         this.floatingCellRenderer = this.baseFrameworkFactory.colDefFloatingCellRenderer(this.colDef);
         this.cellRenderer = this.baseFrameworkFactory.colDefCellRenderer(this.colDef);
+        this.cellEditor = this.baseFrameworkFactory.colDefCellEditor(this.colDef);
 
         this.setPinned(this.colDef.pinned);
 
@@ -127,6 +130,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     public getCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string {
         return this.cellRenderer;
+    }
+
+    public getCellEditor(): {new(): ICellEditor} | string {
+        return this.cellEditor;
     }
 
     public getFloatingCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string {

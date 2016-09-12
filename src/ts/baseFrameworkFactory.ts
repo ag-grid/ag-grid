@@ -3,6 +3,7 @@ import {Bean} from "./context/context";
 import {ICellRenderer, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
 import {ColDef} from "./entities/colDef";
 import {GridOptions} from "./entities/gridOptions";
+import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
 
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
 @Bean('baseFrameworkFactory')
@@ -14,6 +15,10 @@ export class BaseFrameworkFactory {
 
     public colDefCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
         return colDef.cellRenderer;
+    }
+
+    public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
+        return colDef.cellEditor;
     }
 
     public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
