@@ -92,14 +92,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
-
-        this.floatingCellRenderer = this.baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
-        this.cellRenderer = this.baseFrameworkFactory.colDefCellRenderer(colDef);
     }
 
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     public initialise(): void {
+        this.floatingCellRenderer = this.baseFrameworkFactory.colDefFloatingCellRenderer(this.colDef);
+        this.cellRenderer = this.baseFrameworkFactory.colDefCellRenderer(this.colDef);
+
         this.setPinned(this.colDef.pinned);
 
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
