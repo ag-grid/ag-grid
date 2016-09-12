@@ -40,7 +40,7 @@ export class AgComponentFactory {
     public createCellEditorFromComponent(componentType:{ new(...args:any[]): AgEditorAware; },
                                          viewContainerRef:ViewContainerRef,
                                          childDependencies?:any[],
-                                         moduleImports?:any[]):{new(): ICellRenderer} {
+                                         moduleImports?:any[]):{new(): ICellEditor} {
         let componentAsFunction:any = componentType;
         return this.adaptComponentToEditor(componentType,
             viewContainerRef,
