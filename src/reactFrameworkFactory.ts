@@ -1,4 +1,4 @@
-import {BaseFrameworkFactory, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions} from 'ag-grid';
+import {BaseFrameworkFactory, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions, ICellEditor} from 'ag-grid';
 import {reactCellRendererFactory} from "../lib/reactCellRendererFactory";
 
 export class ReactFrameworkFactory extends BaseFrameworkFactory {
@@ -26,6 +26,15 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         }
     }
 
+    public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
+        if (Utils.exists(colDef.cellEditorFmk)) {
+            return null;
+            // return reactCellRendererFactory(colDef.cellRendererFmk, this.agGridReact);
+        } else {
+            return super.colDefCellEditor(colDef);
+        }
+    }
+
     public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
         if (Utils.exists(gridOptions.fullWidthCellRendererFmk)) {
             return reactCellRendererFactory(gridOptions.fullWidthCellRendererFmk, this.agGridReact);
@@ -49,4 +58,5 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
             return super.gridOptionsGroupRowInnerRenderer(gridOptions);
         }
     }
+
 }
