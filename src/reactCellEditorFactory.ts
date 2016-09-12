@@ -1,11 +1,11 @@
-import {ICellRenderer, MethodNotImplementedException} from 'ag-grid';
+import {ICellEditor, MethodNotImplementedException} from 'ag-grid';
 
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-export function reactCellRendererFactory(reactComponent: any, parentComponent?: any): {new(): ICellRenderer} {
+export function reactCellRendererFactory(reactComponent: any, parentComponent?: any): {new(): ICellEditor} {
 
-    class ReactCellRenderer implements ICellRenderer {
+    class ReactCellRenderer implements ICellEditor {
 
         private eParentElement: HTMLElement;
         private componentRef: any;
@@ -26,6 +26,10 @@ export function reactCellRendererFactory(reactComponent: any, parentComponent?: 
             return null;
         }
 
+        public getValue(): any {
+            return this.componentRef.getValue();
+        }
+
         public destroy(): void {
             ReactDOM.unmountComponentAtNode(this.eParentElement);
         }
@@ -35,6 +39,36 @@ export function reactCellRendererFactory(reactComponent: any, parentComponent?: 
                 this.componentRef.refresh(params);
             } else {
                 throw new MethodNotImplementedException();
+            }
+        }
+
+        public afterGuiAttached(): void {
+            if (this.componentRef.afterGuiAttached) {
+                this.componentRef.afterGuiAttached();
+            }
+        }
+
+        public isPopup(): boolean {
+            if (this.componentRef.isPopup) {
+                this.componentRef.isPopup();
+            } else {
+                return false;
+            }
+        }
+
+        public isCancelBeforeStart(): boolean {
+            if (this.componentRef.isCancelBeforeStart) {
+                this.componentRef.isCancelBeforeStart();
+            } else {
+                return false;
+            }
+        }
+
+        public isCancelAfterEnd(): boolean {
+            if (this.componentRef.isCancelAfterEnd) {
+                this.componentRef.isCancelAfterEnd();
+            } else {
+                return false;
             }
         }
 

@@ -1,5 +1,7 @@
 /// <reference path="../typings/tsd"/>
 
+import {ReactFrameworkFactory} from './reactFrameworkFactory';
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 var AgGrid = require('ag-grid');
@@ -26,9 +28,13 @@ export var AgGridReact = React.createClass({
     },
 
     componentDidMount: function() {
+        var reactFrameworkFactory = new ReactFrameworkFactory(this);
+        var gridParams = {baseFrameworkFactory: reactFrameworkFactory};
+
         var domNode = ReactDOM.findDOMNode(this);
+
         this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
-        new AgGrid.Grid(domNode, this.gridOptions);
+        new AgGrid.Grid(domNode, this.gridOptions, gridParams);
 
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
