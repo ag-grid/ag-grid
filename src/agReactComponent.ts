@@ -19,7 +19,7 @@ export class AgReactComponent {
     }
 
     public init(params: any): void {
-        this.eParentElement = params.eParentOfValue;
+        this.eParentElement = document.createElement('div');
 
         var ReactComponent = React.createElement(this.reactComponent, { params: params });
         if (!this.parentComponent) {
@@ -30,8 +30,7 @@ export class AgReactComponent {
     }
 
     public getGui(): HTMLElement {
-        // return null to the grid, as we don't want it responsible for rendering
-        return null;
+        return this.eParentElement;
     }
 
     public destroy(): void {

@@ -9,18 +9,14 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
             super(reactComponent, parentComponent);
         }
 
-        public refresh(params: any): void {
-            var componentRef = this.getComponentRef();
-            if (componentRef.refresh) {
-                componentRef.refresh(params);
-            } else {
-                throw new MethodNotImplementedException();
-            }
-        }
-
         public getValue(): any {
             var componentRef = this.getComponentRef();
-            return componentRef.getValue();
+            if (componentRef.getValue) {
+                return componentRef.getValue();
+            } else {
+                console.log(`ag-Grid: React cellEditor is missing the mandatory method getValue() method`);
+                return null;
+            }
         }
 
         public afterGuiAttached(): void {
@@ -33,7 +29,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
         public isPopup(): boolean {
             var componentRef = this.getComponentRef();
             if (componentRef.isPopup) {
-                componentRef.isPopup();
+                return componentRef.isPopup();
             } else {
                 return false;
             }
@@ -42,7 +38,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
         public isCancelBeforeStart(): boolean {
             var componentRef = this.getComponentRef();
             if (componentRef.isCancelBeforeStart) {
-                componentRef.isCancelBeforeStart();
+                return componentRef.isCancelBeforeStart();
             } else {
                 return false;
             }
@@ -51,7 +47,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
         public isCancelAfterEnd(): boolean {
             var componentRef = this.getComponentRef();
             if (componentRef.isCancelAfterEnd) {
-                componentRef.isCancelAfterEnd();
+                return componentRef.isCancelAfterEnd();
             } else {
                 return false;
             }

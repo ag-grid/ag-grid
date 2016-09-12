@@ -1,5 +1,6 @@
 import {BaseFrameworkFactory, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions, ICellEditor} from 'ag-grid';
 import {reactCellRendererFactory} from "../lib/reactCellRendererFactory";
+import {reactCellEditorFactory} from "./reactCellEditorFactory";
 
 export class ReactFrameworkFactory extends BaseFrameworkFactory {
 
@@ -28,8 +29,7 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
 
     public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
         if (Utils.exists(colDef.cellEditorFmk)) {
-            return null;
-            // return reactCellRendererFactory(colDef.cellRendererFmk, this.agGridReact);
+            return reactCellEditorFactory(colDef.cellEditorFmk, this.agGridReact);
         } else {
             return super.colDefCellEditor(colDef);
         }
