@@ -19,6 +19,7 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
 import {Logger, LoggerFactory} from "./logger";
+import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -48,8 +49,13 @@ export class GridOptionsWrapper {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
+    @Autowired('baseFrameworkFactory') private baseFrameworkFactory: BaseFrameworkFactory;
 
     private propertyEventService: EventService = new EventService();
+
+    private fullWidthCellRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
+    private groupRowRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
+    private groupRowInnerRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
@@ -70,6 +76,8 @@ export class GridOptionsWrapper {
     public init(): void {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
 
+        this.setupCellRenderers();
+
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
             console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
         }
@@ -78,6 +86,18 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: rowSelectionMulti must be true for groupSelectsChildren to make sense');
         }
     }
+
+    private setupCellRenderers(): void {
+        this.fullWidthCellRenderer = this.baseFrameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
+        this.groupRowRenderer = this.baseFrameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
+        this.groupRowInnerRenderer = this.baseFrameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
+    }
+
+    // the cellRenderers come from the instances for this class, not from gridOptions, which allows
+    // the baseFrameworkFactory to replace with framework specific ones
+    public getFullWidthCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.fullWidthCellRenderer; }
+    public getGroupRowRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.groupRowRenderer; }
+    public getGroupRowInnerRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.groupRowInnerRenderer; }
 
     public isEnterprise() { return this.enterprise;}
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
@@ -125,7 +145,6 @@ export class GridOptionsWrapper {
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
-    public getFullWidthCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.gridOptions.fullWidthCellRenderer; }
     public getFullWidthCellRendererParams() { return this.gridOptions.fullWidthCellRendererParams; }
 
     public getBusinessKeyForNodeFunc() { return this.gridOptions.getBusinessKeyForNode; }
@@ -181,9 +200,7 @@ export class GridOptionsWrapper {
     public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
-    public getGroupRowRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.gridOptions.groupRowRenderer; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
-    public getGroupRowInnerRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.gridOptions.groupRowInnerRenderer; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
     public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
