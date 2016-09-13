@@ -95,17 +95,17 @@ export interface ColDef extends AbstractColDef {
 
     /** A function for rendering a cell. */
     cellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
-    cellRendererFmk?: any;
+    cellRendererFramework?: any;
     cellRendererParams?: {};
 
     /** Cell editor */
     cellEditor?: {new(): ICellEditor} | string;
-    cellEditorFmk?: any;
+    cellEditorFramework?: any;
     cellEditorParams?: {};
 
     /** A function for rendering a floating cell. */
     floatingCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
-    floatingCellRendererFmk?: any;
+    floatingCellRendererFramework?: any;
     floatingCellRendererParams?: {};
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
