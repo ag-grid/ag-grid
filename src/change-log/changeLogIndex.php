@@ -8,6 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <li>Breaking Change: Filters now work in similar pattern to editors and renderers.</li>
+    <li>Enhancement: Reworked how all the editors, renderers and filters worked with the framework.</li>
+
     <h3>Version 5.4.x</h3>
 
     <h4>ag-Grid 5.4.0, ag-Grid-Enterprise 5.4.0, ag-Grid-React 5.4.0, , ag-Grid-NG2 5.4.0</h4>
