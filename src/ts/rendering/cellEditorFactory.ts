@@ -1,5 +1,5 @@
 import {Bean, PostConstruct, Autowired, Context} from "../context/context";
-import {Utils as _} from '../utils';
+import {Utils} from '../utils';
 import {ICellEditor, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {TextCellEditor} from "./cellEditors/textCellEditor";
 import {SelectCellEditor} from "./cellEditors/selectCellEditor";
@@ -47,11 +47,11 @@ export class CellEditorFactory {
 
         var CellEditorClass: {new(): ICellEditor};
 
-        if (_.missing(key)) {
+        if (Utils.missing(key)) {
             CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
         } else if (typeof key === 'string') {
             CellEditorClass = this.cellEditorMap[key];
-            if (_.missing(CellEditorClass)) {
+            if (Utils.missing(CellEditorClass)) {
                 console.warn('ag-Grid: unable to find cellEditor for key ' + key);
                 CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
             }
@@ -70,6 +70,7 @@ export class CellEditorFactory {
 
         if (cellEditor.isPopup && cellEditor.isPopup()) {
             cellEditor = new PopupEditorWrapper(cellEditor);
+            cellEditor.init(params);
         }
         
         return cellEditor;

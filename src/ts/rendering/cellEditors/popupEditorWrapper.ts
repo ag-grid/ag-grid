@@ -42,9 +42,6 @@ export class PopupEditorWrapper extends Component implements ICellEditor {
     
     public init(params: ICellEditorParams): void {
         this.params = params;
-        if (this.cellEditor.init) {
-            this.cellEditor.init(params);
-        }
     }
 
     public afterGuiAttached(): void {
