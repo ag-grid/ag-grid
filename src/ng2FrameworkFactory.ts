@@ -5,6 +5,7 @@ import { Component,
     ComponentRef,
     Type,
     Injectable } from '@angular/core';
+
 import { ICellRenderer, ICellEditor, MethodNotImplementedException, BaseFrameworkFactory }   from 'ag-grid/main';
 import {ICellRendererFunc, ColDef, GridOptions} from 'ag-grid/main';
 
@@ -25,6 +26,11 @@ export class Ng2FrameworkFactory extends BaseFrameworkFactory {
 
     public colDefFloatingCellRenderer(colDef:ColDef):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (colDef.floatingCellRendererFramework) {
+            return this._agComponentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework.component,
+                this.viewContainerRef,
+                colDef.floatingCellRendererFramework.dependencies,
+                colDef.floatingCellRendererFramework.moduleImports
+            )
         } else {
             return super.colDefFloatingCellRenderer(colDef);
         }
