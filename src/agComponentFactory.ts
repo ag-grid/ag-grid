@@ -26,7 +26,7 @@ export class AgComponentFactory {
                                            viewContainerRef:ViewContainerRef,
                                            childDependencies?:any[],
                                            moduleImports?:any[]):{new(): ICellRenderer} {
-        console.log("Deprecated - please declare ng2 components in ColDef");
+        console.log("createCellRendererFromComponent Deprecated - please declare ng2 components in ColDefs");
         return this.createRendererFromComponent(componentType, viewContainerRef, childDependencies, moduleImports)
     }
 
@@ -35,7 +35,7 @@ export class AgComponentFactory {
      */
     public createCellRendererFromTemplate(template:string,
                                           viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
-        console.log("Deprecated - please declare ng2 components in ColDef");
+        console.log("createCellRendererFromTemplate Deprecated - please declare ng2 components in ColDefs");
         return this.createRendererFromTemplate(template, viewContainerRef);
     }
 
