@@ -66,6 +66,10 @@ export class Ng2FrameworkFactory extends BaseFrameworkFactory {
 
     public gridOptionsFullWidthCellRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.fullWidthCellRendererFramework) {
+            return this._agComponentFactory.createRendererFromComponent(gridOptions.fullWidthCellRendererFramework.component,
+                this.viewContainerRef,
+                gridOptions.fullWidthCellRendererFramework.dependencies,
+                gridOptions.fullWidthCellRendererFramework.moduleImports)
         } else {
             return super.gridOptionsFullWidthCellRenderer(gridOptions);
         }
@@ -73,6 +77,10 @@ export class Ng2FrameworkFactory extends BaseFrameworkFactory {
 
     public gridOptionsGroupRowRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.groupRowRendererFramework) {
+            return this._agComponentFactory.createRendererFromComponent(gridOptions.groupRowRendererFramework.component,
+                this.viewContainerRef,
+                gridOptions.groupRowRendererFramework.dependencies,
+                gridOptions.groupRowRendererFramework.moduleImports)
         } else {
             return super.gridOptionsGroupRowRenderer(gridOptions);
         }
@@ -80,6 +88,10 @@ export class Ng2FrameworkFactory extends BaseFrameworkFactory {
 
     public gridOptionsGroupRowInnerRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.groupRowInnerRendererFramework) {
+            return this._agComponentFactory.createRendererFromComponent(gridOptions.groupRowInnerRendererFramework.component,
+                this.viewContainerRef,
+                gridOptions.groupRowInnerRendererFramework.dependencies,
+                gridOptions.groupRowInnerRendererFramework.moduleImports)
         } else {
             return super.gridOptionsGroupRowInnerRenderer(gridOptions);
         }
