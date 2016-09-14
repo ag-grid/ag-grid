@@ -8,7 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h4>Changes to Fiters</h4>
+    <h2>Version 6.0.x</h2>
+
+    <h4>Changes to Filters</h4>
 
     <p>
         How filters were working were out of line with how cellRenderers and cellEditors were working. This is
@@ -20,7 +22,33 @@ include '../documentation-main/documentation_header.php';
         <li><b>If you were providing a Filter API</b> then you need to care about the API is no longer a separate part of the component. Instead it is now possible to get a reference
         to the filter component directly via api.getFilterInstance(colKey). From here you can access all
         methods on the filter component. So if you want to add extra items to (what used to be) the API, now
-        you just add them directly to your filter component.</li>
+        you just add them directly to your filter component.
+        <pre>
+<span class="codeComment">// eg if your filter was like this:</span>
+function MyFilter() {}
+
+MyFilter.prototype.getApi = function() {
+    return {
+        getModel: function() {
+            ...
+        },
+        setModel: function(model) {
+            ...
+        },
+    }
+}
+
+<span class="codeComment">// it should now be like this:</span>
+function MyFilter() {}
+
+MyFilter.prototype.getModel = function() {
+    ...
+}
+
+MyFilter.prototype.setModel = function(model) {
+    ...
+}</pre>
+        </li>
         <li><b>If you were providing custom params to your custom filters</b> then these used to be passed to the filter embedded into the filter params.
         Now the custom params are added to the main params.
         <pre>

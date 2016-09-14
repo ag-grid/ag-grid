@@ -11,19 +11,23 @@ include '../documentation-main/documentation_header.php';
     <h2>Best React Data Grid</h2>
 
     <p>
-        Webpack and Babel are popular within the React community. The remainder of this page goes
-        through an example for React using Webpack and Babel. The full example is
-        <a href="https://github.com/ceolter/ag-grid-react-example">
-        available on Github</a>. It is assumed you are
-        already familiar with Webpack, Babel and React.
+        If you are building a React application then you have the choice between A) using the plain JavaScript version
+        of ag-Grid or B) using the ag-Grid React Component from the <a href="https://github.com/ceolter/ag-grid-react">
+        ag-grid-react</a> project. If you use the ag-Grid React Component, then the grid's properties, events and API
+        will all tie in with the React ecosystem. This will make your React coding easier.
+    </p>
 
-        The example demonstrates:
+    <p>
+        You will also have the option (but not forced) of using React Components internally in the grid for rendering,
+        editing and filtering. The example has to applications as follows:
         <ul>
-            <li>ag-Grid as a React component.</li>
-            <li>Using React Components as ag-Grid cellRenderers for rendering Skills and Proficiency columns.</li>
-            <li>Using React Components as ag-Grid filters for filtering Skills and Proficiency columns.</li>
-        </ul>
-
+        <li>Standard - the standard is shown below and demonstrates using React Components for renderers, editors
+            and filters.</li>
+        <li>Large - the large uses only one simple React Component for rendering the entire grid and the grid has many
+            rows and columns and fills the entire web page. This project is proof of concept that ag-Grid can manage
+            large data when using React to render. If you are having performance issues in your React application,
+            it's not because of ag-Grid.</li>
+    </ul>
     </p>
 
     <table>
@@ -44,6 +48,14 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
     </table>
+
+    <h2>ag-Grid React Features</h2>
+
+    <p>
+        Every feature of ag-Grid is available when using the ag-Grid React Component. The React Component wraps the
+        functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
+        React ag-Grid when it comes to features.
+    </p>
 
     <h2>Dependencies</h2>
     <p>
