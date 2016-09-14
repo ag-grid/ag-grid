@@ -1,22 +1,22 @@
-import {BaseFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions, ICellEditor} from 'ag-grid';
+import {BaseFrameworkFactory, IFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions, ICellEditor} from 'ag-grid';
 import {reactCellRendererFactory} from "../lib/reactCellRendererFactory";
 import {reactCellEditorFactory} from "./reactCellEditorFactory";
 import {reactFilterFactory} from "./reactFilterFactory";
 
-export class ReactFrameworkFactory extends BaseFrameworkFactory {
+export class ReactFrameworkFactory implements IFrameworkFactory {
 
     private agGridReact: any;
+    private baseFrameworkFactory = new BaseFrameworkFactory();
 
     constructor(agGridReact: any) {
-        super();
         this.agGridReact = agGridReact;
     }
 
     public colDefFilter(colDef: ColDef): {new(): IFilter} | string {
-        if (Utils.exists(colDef.floatingCellRendererFramework)) {
+        if (Utils.exists(colDef.filterFramework)) {
             return reactFilterFactory(colDef.filterFramework, this.agGridReact);
         } else {
-            return super.colDefFilter(colDef);
+            return this.baseFrameworkFactory.colDefFilter(colDef);
         }
     }
 
@@ -24,7 +24,7 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         if (Utils.exists(colDef.floatingCellRendererFramework)) {
             return reactCellRendererFactory(colDef.floatingCellRendererFramework, this.agGridReact);
         } else {
-            return super.colDefFloatingCellRenderer(colDef);
+            return this.baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
         }
     }
 
@@ -32,7 +32,7 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         if (Utils.exists(colDef.cellRendererFramework)) {
             return reactCellRendererFactory(colDef.cellRendererFramework, this.agGridReact);
         } else {
-            return super.colDefCellRenderer(colDef);
+            return this.baseFrameworkFactory.colDefCellRenderer(colDef);
         }
     }
 
@@ -40,7 +40,7 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         if (Utils.exists(colDef.cellEditorFramework)) {
             return reactCellEditorFactory(colDef.cellEditorFramework, this.agGridReact);
         } else {
-            return super.colDefCellEditor(colDef);
+            return this.baseFrameworkFactory.colDefCellEditor(colDef);
         }
     }
 
@@ -48,7 +48,7 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         if (Utils.exists(gridOptions.fullWidthCellRendererFramework)) {
             return reactCellRendererFactory(gridOptions.fullWidthCellRendererFramework, this.agGridReact);
         } else {
-            return super.gridOptionsFullWidthCellRenderer(gridOptions);
+            return this.baseFrameworkFactory.gridOptionsFullWidthCellRenderer(gridOptions);
         }
     }
 
@@ -56,7 +56,7 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         if (Utils.exists(gridOptions.groupRowRendererFramework)) {
             return reactCellRendererFactory(gridOptions.groupRowRendererFramework, this.agGridReact);
         } else {
-            return super.gridOptionsGroupRowRenderer(gridOptions);
+            return this.baseFrameworkFactory.gridOptionsGroupRowRenderer(gridOptions);
         }
     }
 
@@ -64,7 +64,7 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         if (Utils.exists(gridOptions.groupRowInnerRendererFramework)) {
             return reactCellRendererFactory(gridOptions.groupRowInnerRendererFramework, this.agGridReact);
         } else {
-            return super.gridOptionsGroupRowInnerRenderer(gridOptions);
+            return this.baseFrameworkFactory.gridOptionsGroupRowInnerRenderer(gridOptions);
         }
     }
 

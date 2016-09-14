@@ -14,14 +14,14 @@ export class AgReactComponent {
         this.parentComponent = parentComponent;
     }
 
-    protected getComponentRef(): any {
+    public getComponentRef(): any {
         return this.componentRef;
     }
 
     public init(params: any): void {
         this.eParentElement = document.createElement('div');
 
-        var ReactComponent = React.createElement(this.reactComponent, { params: params });
+        var ReactComponent = React.createElement(this.reactComponent, params);
         if (!this.parentComponent) {
             this.componentRef = ReactDOM.render(ReactComponent, this.eParentElement);
         } else {

@@ -29,7 +29,7 @@ export var AgGridReact = React.createClass({
 
     componentDidMount: function() {
         var reactFrameworkFactory = new ReactFrameworkFactory(this);
-        var gridParams = {baseFrameworkFactory: reactFrameworkFactory};
+        var gridParams = {frameworkFactory: reactFrameworkFactory};
 
         var domNode = ReactDOM.findDOMNode(this);
 
