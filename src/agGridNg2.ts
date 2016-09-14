@@ -48,7 +48,7 @@ export class AgGridNg2 {
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            baseFrameworkFactory: this.ng2FrameworkFactory
+            frameworkFactory: this.ng2FrameworkFactory
         };
 
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);

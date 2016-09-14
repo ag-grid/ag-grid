@@ -26,7 +26,7 @@ export class AgComponentFactory {
                                            viewContainerRef:ViewContainerRef,
                                            childDependencies?:any[],
                                            moduleImports?:any[]):{new(): ICellRenderer} {
-        console.log("createCellRendererFromComponent Deprecated - please declare ng2 components in ColDefs");
+        console.log("createCellRendererFromComponent Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.component");
         return this.createRendererFromComponent(componentType, viewContainerRef, childDependencies, moduleImports)
     }
 
@@ -35,19 +35,20 @@ export class AgComponentFactory {
      */
     public createCellRendererFromTemplate(template:string,
                                           viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
-        console.log("createCellRendererFromTemplate Deprecated - please declare ng2 components in ColDefs");
+        console.log("createCellRendererFromTemplate Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.template");
         return this.createRendererFromTemplate(template, viewContainerRef);
     }
 
     public createRendererFromTemplate(template:string,
-                                      viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
-        return this.adaptTemplate(viewContainerRef, this.compiler, template);
+                                      viewContainerRef:ViewContainerRef,
+                                      moduleImports:any[] = []):{new(): ICellRenderer} {
+        return this.adaptTemplate(viewContainerRef, this.compiler, template, moduleImports);
     }
 
     public createEditor(componentType:{ new(...args:any[]): AgEditorComponent; },
                         viewContainerRef:ViewContainerRef,
-                        childDependencies?:any[],
-                        moduleImports?:any[]):{new(): ICellEditor} {
+                        childDependencies:any[] = [],
+                        moduleImports:any[] = []):{new(): ICellEditor} {
         let componentAsFunction:any = componentType;
         return this.adaptComponentToEditor(componentType,
             viewContainerRef,
@@ -58,14 +59,14 @@ export class AgComponentFactory {
                     instance.agInit(params);
                 }
             },
-            moduleImports ? moduleImports : [],
+            moduleImports,
             childDependencies);
     }
 
     public createRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
                                        viewContainerRef:ViewContainerRef,
-                                       childDependencies?:any[],
-                                       moduleImports?:any[]):{new(): ICellRenderer} {
+                                       childDependencies:any[] = [],
+                                       moduleImports:any[] = []):{new(): ICellRenderer} {
         let componentAsFunction:any = componentType;
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef,
@@ -76,7 +77,7 @@ export class AgComponentFactory {
                     instance.agInit(params);
                 }
             },
-            moduleImports ? moduleImports : [],
+            moduleImports,
             childDependencies);
     }
 
@@ -86,7 +87,7 @@ export class AgComponentFactory {
                                      name:string,
                                      initializer:(instance:AgRendererComponent, params?:any) => void,
                                      moduleImports:any[],
-                                     childDependencies?:any[]):{new(): ICellRenderer} {
+                                     childDependencies:any[]):{new(): ICellRenderer} {
 
         let that = this;
         class CellRenderer implements ICellRenderer {
@@ -139,7 +140,7 @@ export class AgComponentFactory {
                                    name:string,
                                    initializer:(instance:AgEditorComponent, params?:any) => void,
                                    moduleImports:any[],
-                                   childDependencies?:any[]):{new(): ICellEditor} {
+                                   childDependencies:any[]):{new(): ICellEditor} {
 
         let that = this;
         class CellEditor implements ICellEditor {
@@ -242,7 +243,7 @@ export class AgComponentFactory {
                                   compiler:RuntimeCompiler,
                                   name:string,
                                   moduleImports:any[],
-                                  childDependencies?:any[]):ComponentRef<T> {
+                                  childDependencies:any[]):ComponentRef<T> {
         let module:any = this._cacheOfModules[name];
         if (!module) {
             module = this.createComponentModule(componentType, moduleImports, childDependencies);
@@ -261,15 +262,10 @@ export class AgComponentFactory {
     }
 
 
-    private  createComponentModule(componentType:any, moduleImports:any[], childDependencies?:any[]) {
-        let moduleDeclarations = [componentType];
-        if (childDependencies) {
-            moduleDeclarations.push(childDependencies)
-        }
-
+    private  createComponentModule(componentType:any, moduleImports:any[], childDependencies:any[]) {
         @NgModule({
             imports: moduleImports,
-            declarations: moduleDeclarations,
+            declarations: [componentType, ...childDependencies],
             exports: []
         })
         class RuntimeComponentModule {
@@ -280,13 +276,15 @@ export class AgComponentFactory {
 
     private adaptTemplate(viewContainerRef:ViewContainerRef,
                           compiler:RuntimeCompiler,
-                          template:string):{new(): ICellRenderer} {
+                          template:string,
+                          moduleImports:any[]):{new(): ICellRenderer} {
         let componentType:{ new(...args:any[]): AgRendererComponent; } = createDynamicComponentType('dynamic-component', template);
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef,
             compiler,
             template,
             (i:AgRendererComponent, p:any) => i.agInit(p),
+            moduleImports,
             []);
     }
 }

@@ -6,33 +6,35 @@ import { Component,
     Type,
     Injectable } from '@angular/core';
 
-import { ICellRenderer, ICellEditor, MethodNotImplementedException, BaseFrameworkFactory }   from 'ag-grid/main';
-import {ICellRendererFunc, ColDef, GridOptions} from 'ag-grid/main';
+import {ICellRenderer,
+    ICellEditor,
+    MethodNotImplementedException,
+    BaseFrameworkFactory,
+    IFrameworkFactory,
+    IFilter,
+    ICellRendererFunc,
+    ColDef,
+    GridOptions}   from 'ag-grid/main';
 
 import {AgComponentFactory} from "./agComponentFactory";
 
 @Injectable()
-export class Ng2FrameworkFactory extends BaseFrameworkFactory {
-    private viewContainerRef:ViewContainerRef;
+export class Ng2FrameworkFactory implements IFrameworkFactory {
+    private _viewContainerRef:ViewContainerRef;
+    private _baseFrameworkFactory:IFrameworkFactory = new BaseFrameworkFactory();    // todo - inject this
 
     constructor(private _agComponentFactory:AgComponentFactory) {
-        super();
     }
-
-    public setViewContainerRef(viewContainerRef:ViewContainerRef):void {
-        this.viewContainerRef = viewContainerRef;
-    }
-
 
     public colDefFloatingCellRenderer(colDef:ColDef):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (colDef.floatingCellRendererFramework) {
             return this._agComponentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework.component,
-                this.viewContainerRef,
+                this._viewContainerRef,
                 colDef.floatingCellRendererFramework.dependencies,
                 colDef.floatingCellRendererFramework.moduleImports
             )
         } else {
-            return super.colDefFloatingCellRenderer(colDef);
+            return this._baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
         }
     }
 
@@ -40,61 +42,70 @@ export class Ng2FrameworkFactory extends BaseFrameworkFactory {
         if (colDef.cellRendererFramework) {
             if (colDef.cellRendererFramework.template) {
                 return this._agComponentFactory.createRendererFromTemplate(colDef.cellRendererFramework.template,
-                    this.viewContainerRef);
+                    this._viewContainerRef,
+                    colDef.cellRendererFramework.moduleImports);
             } else {
                 return this._agComponentFactory.createRendererFromComponent(colDef.cellRendererFramework.component,
-                    this.viewContainerRef,
+                    this._viewContainerRef,
                     colDef.cellRendererFramework.dependencies,
                     colDef.cellRendererFramework.moduleImports
                 )
             }
         } else {
-            return super.colDefCellRenderer(colDef);
+            return this._baseFrameworkFactory.colDefCellRenderer(colDef);
         }
     }
 
     public colDefCellEditor(colDef:ColDef):{new(): ICellEditor} | string {
         if (colDef.cellEditorFramework) {
             return this._agComponentFactory.createEditor(colDef.cellEditorFramework.component,
-                this.viewContainerRef,
+                this._viewContainerRef,
                 colDef.cellEditorFramework.dependencies,
                 colDef.cellEditorFramework.moduleImports)
         } else {
-            return super.colDefCellEditor(colDef);
+            return this._baseFrameworkFactory.colDefCellEditor(colDef);
         }
     }
 
     public gridOptionsFullWidthCellRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.fullWidthCellRendererFramework) {
             return this._agComponentFactory.createRendererFromComponent(gridOptions.fullWidthCellRendererFramework.component,
-                this.viewContainerRef,
+                this._viewContainerRef,
                 gridOptions.fullWidthCellRendererFramework.dependencies,
                 gridOptions.fullWidthCellRendererFramework.moduleImports)
         } else {
-            return super.gridOptionsFullWidthCellRenderer(gridOptions);
+            return this._baseFrameworkFactory.gridOptionsFullWidthCellRenderer(gridOptions);
         }
     }
 
     public gridOptionsGroupRowRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.groupRowRendererFramework) {
             return this._agComponentFactory.createRendererFromComponent(gridOptions.groupRowRendererFramework.component,
-                this.viewContainerRef,
+                this._viewContainerRef,
                 gridOptions.groupRowRendererFramework.dependencies,
                 gridOptions.groupRowRendererFramework.moduleImports)
         } else {
-            return super.gridOptionsGroupRowRenderer(gridOptions);
+            return this._baseFrameworkFactory.gridOptionsGroupRowRenderer(gridOptions);
         }
     }
 
     public gridOptionsGroupRowInnerRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.groupRowInnerRendererFramework) {
             return this._agComponentFactory.createRendererFromComponent(gridOptions.groupRowInnerRendererFramework.component,
-                this.viewContainerRef,
+                this._viewContainerRef,
                 gridOptions.groupRowInnerRendererFramework.dependencies,
                 gridOptions.groupRowInnerRendererFramework.moduleImports)
         } else {
-            return super.gridOptionsGroupRowInnerRenderer(gridOptions);
+            return this._baseFrameworkFactory.gridOptionsGroupRowInnerRenderer(gridOptions);
         }
     }
 
+    public colDefFilter(colDef:ColDef):{new (): IFilter;} | string {
+        return this._baseFrameworkFactory.colDefFilter(colDef);
+    }
+
+
+    public setViewContainerRef(viewContainerRef:ViewContainerRef):void {
+        this._viewContainerRef = viewContainerRef;
+    }
 }
