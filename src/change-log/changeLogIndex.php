@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         Angular 2 components, the same way the renderers and editors do. The main core changes are as follows:
         <ol>
         <li><b>If you were providing a Filter API</b> then you need to care about the API is no longer a separate part of the component. Instead it is now possible to get a reference
-        to the filter component directly via api.getFilterComponent(colKey). From here you can access all
+        to the filter component directly via api.getFilterInstance(colKey). From here you can access all
         methods on the filter component. So if you want to add extra items to (what used to be) the API, now
         you just add them directly to your filter component.</li>
         <li><b>If you were providing custom params to your custom filters</b> then these used to be passed to the filter embedded into the filter params.
@@ -61,7 +61,7 @@ filterParams = {
     <li>Breaking Change: Filter interface now called IFilter.</li>
     <li>Breaking Change: Filter constants are now strings, eg 'lessThan' rather than '1'.</li>
     <li>Breaking Change: Filter params are now consistent with other components, they are appended to normal params.</li>
-    <li>Breaking Change: api.getFilterApi() is now api.getFilterComponent().</li>
+    <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
     <li>Enhancement: Reworked how all the editors, renderers and filters worked with the framework.</li>
 
     <h3>Version 5.4.x</h3>

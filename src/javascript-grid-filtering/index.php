@@ -316,10 +316,10 @@ columnDefinition = {
         It is possible to access the filter components directly if you want to interact with the specific
         filter. This also works for your own custom filters, where you can
         get a reference to the underlying filtering instance (ie what was created after ag-Grid called 'new'
-        on your filter). You get a reference to the filter instance by calling <code>api.getFilterComponent(colKey)</code>.
+        on your filter). You get a reference to the filter instance by calling <code>api.getFilterInstance(colKey)</code>.
     </p>
     <pre><span class="codeComment">// Get a reference to the name filter instance</span>
-var nameFilterInstance = api.getFilterComponent('name');</pre>
+var nameFilterInstance = api.getFilterInstance('name');</pre>
     <p>
         All of the methods in the IFilter interface (described above) are present, assuming the underlying
         filter implements the method. Your custom filters can add their own methods here that ag-Grid will
@@ -343,7 +343,7 @@ var nameFilterInstance = api.getFilterComponent('name');</pre>
     </p>
     <p>
         So for example, you can set the text of the 'name' filter to start with 'bob' as follows:
-    <pre>var nameFilter = api.getFilterComponent('name');
+    <pre>var nameFilter = api.getFilterInstance('name');
 nameFilter.setType('startsWith');
 nameFilter.setFilter('bob');</pre>
     </p>
@@ -351,7 +351,7 @@ nameFilter.setFilter('bob');</pre>
     <p>
         Or alternatively, you could just use the <i>setModel()</i> method as part of the main <i>IFilter</i>
         interface as follows:
-    <pre>var nameFilter = api.getFilterComponent('name');
+    <pre>var nameFilter = api.getFilterInstance('name');
 var model = {type: 'startsWith', filter: 'bob'};
 nameFilter.setModel(model);</pre>
     </p>
@@ -420,25 +420,138 @@ nameFilter.setModel(model);</pre>
         React Filtering
     </h2>
 
-
-    <p>As with cellRendering, this section on <a href="../javascript-grid-filtering/index.php">custom filtering</a>
-        also assumes you are familiar with custom filtering inside the grid. If you are not, then please learn
-        this first.</p>
-
     <p>
-        Just like cellRendering, customFiltering provides the magic via a factory and
-        is called <i>reactFilterFactory</i>.
+        It is possible to provide a React filter for ag-Grid to use. All of the information above is
+        relevant to React filters. This section explains how to apply this logic to your React component.
     </p>
 
-    <pre><code>columnDef = {headerName: "Skills",
-    filter: reactFilterFactory(SkillsFilter),
-    ...
-}</code></pre>
+    <p>
+        For examples on React filtering, see the
+        <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+        In the example, both 'Skills' and 'Proficiency' columns use React filters.</p>
+    </p>
 
-    <p>Again it's some magic to get them working. After this, all you need to do is follow the standard
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Filter</h3>
+
+    <p>
+        If you are using the ag-grid-react component to create the ag-Grid instance,
+        then you will have the option of additionally specifying the filters
+        as React components.
+    </p>
+
+    <pre><span class="codeComment">// create your filter as a React component</span>
+class NameFilter extends React.Component {
+
+    <span class="codeComment">// put in render logic, build a nice gui in React</span>
+    render() {
+        return &lt;span>My Nice Little Filter Gui&lt;/span>;
+    }
+
+    <span class="codeComment">// implement the other Filter callbacks</span>
+    isFilterActive(params) {
+        <span class="codeComment">// do some filter logic</span>
+        return filterPass ? true : false;
+    }
+
+    <span class="codeComment">// etc etc, more logic, but leaving out for now</span>
+}
+
+<span class="codeComment">// then reference the Component in your colDef like this</span>
+colDef = {
+
+    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    filterFramework: NameFilter
+
+    <span class="codeComment">// specify all the other fields as normal</span>
+    headerName: 'Name',
+    field: 'firstName',
+    ...
+}</pre>
+
+    <p>
+        By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
+        will know it's a React component, based on the fact that you are using the React version of
+        ag-Grid.
+    </p>
+
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
+
+    <p>
+        The React component will get the 'filter Params' as described above as it's React Props.
+        Therefore you can access all the parameters as React Props.
+
+    <pre><span class="codeComment">// React filter Component</span>
+class NameFilter extends React.Component {
+
+    <span class="codeComment">// did you know that React passes props to your component constructor??</span>
+    constructor(props) {
+        super(props);
+        <span class="codeComment">// from here you can access any of the props!</span>
+        console.log('The field for this filter is ' + props.colDef.field);
+    }
+
+    <span class="codeComment">// maybe your filter has a button in it, and when it gets clicked...</span>
+    onButtonWasPressed() {
+        <span class="codeComment">// all the methods in the props can be called</span>
+        this.props.filterChangedCallback();
+    }
+}</pre>
+    </p>
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
+
+    <p>
+        All of the methods in the IFilter interface described above are applicable
+        to the React Component with the following exceptions:
+    <ul>
+        <li><i>init()</i> is not used. Instead use the React props passed to your Component.</li>
+        <li><i>destroy()</i> is not used. Instead use the React <i>componentWillUnmount()</i> method for
+            any cleanup you need to do.</li>
+        <li><i>getGui()</i> is not used. Instead do normal React magic in your <i>render()</i> method..</li>
+    </ul>
+
+    <p>
+        After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
+        same so put them directly onto your React Component.
+    </p>
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> Accessing the React Component Instance</h3>
+
+    <p>
+        ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
+        method. If your component is a React component, then this will give you a reference to the ag-Grid's
+        Component which wraps your React Component. Just like Russian Dolls. To get to the wrapped React instance
+        of your component, use the <i>getComponentRef()</i> method as follows:
+        <pre><span class="codeComment">// lets assume a React component as follows</span>
+class NameFilter extends React.Component {
+
+    ... <span class="codeComment">// standard filter methods hidden</span>
+
+    <span class="codeComment">// put a custom method on the filter</span>
+    myMethod() {
+        <span class="codeComment">// does something</span>
+    }
+}
+
+<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
+laterOnInYourApplicationSomewhere() {
+
+    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
+    var agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
+
+    <span class="codeComment">// get React instance from the ag-Grid instance</span>
+    var reactFilterInstance = agGridFilter.getComponentRef();
+
+    <span class="codeComment">// now were sucking diesel!!!</span>
+    reactFilterInstance.myMethod();
+}</pre>
+    </p>
+
+<!--    <p>Again it's some magic to get them working. After this, all you need to do is follow the standard
         ag-Grid custom filter interface in your React component. In other words, the methods in the ag-Grid
         custom filter should appear on your components backing object. The example shows all of this in action.</p>
-
+-->
     <h2 id="ng2Filtering">
         <img src="../images/angular2.png" height="20px"/>
         Angular 2 Filtering
