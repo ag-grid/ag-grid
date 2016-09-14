@@ -41,6 +41,7 @@ include '../documentation-main/documentation_header.php';
             Otherwise only the columns currently showing the in grid, and in that order, are exported.</li>
         <li><b>onlySelected</b>: Only export selected rows.</li>
         <li><b>columnSeparator</b>: The column separator. Defaults to comma.</li>
+        <li><b>columnKeys</b>: Provide a list (an array) of column keys if you want to export specific columns.</li>
         <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the CSV.</li>
         <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
     </ul>
