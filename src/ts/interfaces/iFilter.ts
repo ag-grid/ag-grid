@@ -32,7 +32,7 @@ export interface IFilter {
      element. The params has one callback method 'hidePopup', which you can call at any later
      point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
      after it is pressed. */
-    afterGuiAttached?(params?: {hidePopup?: Function}): void;
+    afterGuiAttached?(params: IAfterFilterGuiAttachedParams): void;
     /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
      after rows are loaded, it can do it here. */
     onNewRowsLoaded?(): void;
@@ -58,4 +58,8 @@ export interface IFilterParams {
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
     $scope: any;
+}
+
+export interface IAfterFilterGuiAttachedParams {
+    hidePopup?: (event?: any)=> void
 }

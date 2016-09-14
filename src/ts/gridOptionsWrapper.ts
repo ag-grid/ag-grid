@@ -19,7 +19,7 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
 import {Logger, LoggerFactory} from "./logger";
-import {BaseFrameworkFactory} from "./baseFrameworkFactory";
+import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -49,7 +49,7 @@ export class GridOptionsWrapper {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
-    @Autowired('baseFrameworkFactory') private baseFrameworkFactory: BaseFrameworkFactory;
+    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
 
     private propertyEventService: EventService = new EventService();
 
@@ -88,9 +88,9 @@ export class GridOptionsWrapper {
     }
 
     private setupCellRenderers(): void {
-        this.fullWidthCellRenderer = this.baseFrameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
-        this.groupRowRenderer = this.baseFrameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
-        this.groupRowInnerRenderer = this.baseFrameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
+        this.fullWidthCellRenderer = this.frameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
+        this.groupRowRenderer = this.frameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
+        this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
     }
 
     // the cellRenderers come from the instances for this class, not from gridOptions, which allows

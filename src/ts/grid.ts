@@ -94,9 +94,9 @@ export class Grid {
 
         var enterprise = _.exists(Grid.enterpriseBeans);
 
-        var baseFrameworkFactory = params ? params.baseFrameworkFactory : null;
-        if (_.missing(baseFrameworkFactory)) {
-            baseFrameworkFactory = new BaseFrameworkFactory();
+        var frameworkFactory = params ? params.baseFrameworkFactory : null;
+        if (_.missing(frameworkFactory)) {
+            frameworkFactory = new BaseFrameworkFactory();
         }
 
         this.context = new Context({
@@ -109,7 +109,7 @@ export class Grid {
                 $compile: params ? params.$compile : null,
                 quickFilterOnScope: params ? params.quickFilterOnScope : null,
                 globalEventListener: params ? params.globalEventListener : null,
-                baseFrameworkFactory: baseFrameworkFactory
+                frameworkFactory: frameworkFactory
             },
             beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,

@@ -11,6 +11,7 @@ import {BaseFrameworkFactory} from "../baseFrameworkFactory";
 import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 import {IFilter} from "../interfaces/iFilter";
+import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -51,7 +52,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('baseFrameworkFactory') private baseFrameworkFactory: BaseFrameworkFactory;
+    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
 
     private colDef: ColDef;
     private colId: any;
@@ -102,10 +103,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     public initialise(): void {
-        this.floatingCellRenderer = this.baseFrameworkFactory.colDefFloatingCellRenderer(this.colDef);
-        this.cellRenderer = this.baseFrameworkFactory.colDefCellRenderer(this.colDef);
-        this.cellEditor = this.baseFrameworkFactory.colDefCellEditor(this.colDef);
-        this.filter = this.baseFrameworkFactory.colDefFilter(this.colDef);
+        this.floatingCellRenderer = this.frameworkFactory.colDefFloatingCellRenderer(this.colDef);
+        this.cellRenderer = this.frameworkFactory.colDefCellRenderer(this.colDef);
+        this.cellEditor = this.frameworkFactory.colDefCellEditor(this.colDef);
+        this.filter = this.frameworkFactory.colDefFilter(this.colDef);
 
         this.setPinned(this.colDef.pinned);
 

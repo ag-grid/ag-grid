@@ -1,14 +1,12 @@
-
-import {Bean} from "./context/context";
 import {ICellRenderer, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
 import {ColDef} from "./entities/colDef";
 import {GridOptions} from "./entities/gridOptions";
 import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
 import {IFilter} from "./interfaces/iFilter";
+import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
-@Bean('baseFrameworkFactory')
-export class BaseFrameworkFactory {
+export class BaseFrameworkFactory implements IFrameworkFactory {
 
     public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
         return colDef.floatingCellRenderer;
