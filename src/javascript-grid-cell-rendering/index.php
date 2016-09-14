@@ -445,7 +445,7 @@ class NameCellRenderer extends React.Component {
     }
 }
 
-<span class="codeComment">// then reference the Component in you colDef like this</span>
+<span class="codeComment">// then reference the Component in your colDef like this</span>
 colDef = {
 
     <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>

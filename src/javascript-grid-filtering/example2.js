@@ -129,17 +129,13 @@ YearFilter.prototype.isFilterActive = function () {
     return this.filterActive;
 };
 
-YearFilter.prototype.getApi = function() {
-    var that = this;
-    return {
-        getModel: function() {
-            var model = {value: that.rbSince2010.checked};
-            return model;
-        },
-        setModel: function(model) {
-            that.rbSince2010.checked = model.value;
-        }
-    }
+YearFilter.prototype.getModel = function() {
+    var model = {value: this.rbSince2010.checked};
+    return model;
+};
+
+YearFilter.prototype.setModel = function(model) {
+    this.rbSince2010.checked = model.value;
 };
 
 // this example isn't using getModel() and setModel(),

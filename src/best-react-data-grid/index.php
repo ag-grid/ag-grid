@@ -197,7 +197,7 @@ somePointLater() {
         If you do use React, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
         internal framework is already highly tuned to work incredibly fast and does not require React or anything
         else to make it faster. If you are looking for a lightning fast grid, even if you are using React and
-        the ag-grid-react component, consider using plain ag-Grid Components (as explain on the pages for
+        the ag-grid-react component, consider using plain ag-Grid Components (as explained on the pages for
         rendering etc) inside ag-Grid instead of creating React counterparts.
     </p>
 
