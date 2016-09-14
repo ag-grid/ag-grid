@@ -368,10 +368,10 @@ export class GridApi {
 
     public getFilterApiForColDef(colDef: any): any {
         console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
-        return this.getFilterComponent(colDef);
+        return this.getFilterInstance(colDef);
     }
 
-    public getFilterComponent(key: string|Column|ColDef): IFilter {
+    public getFilterInstance(key: string|Column|ColDef): IFilter {
         var column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.getFilterComponent(column);
@@ -380,7 +380,7 @@ export class GridApi {
 
     public getFilterApi(key: string|Column|ColDef) {
         console.warn('ag-Grid: getFilterApi is deprecated, use getFilterComponent instead');
-        return this.getFilterComponent(key);
+        return this.getFilterInstance(key);
     }
 
     public destroyFilter(key: string|Column|ColDef) {
