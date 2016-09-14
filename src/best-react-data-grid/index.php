@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Best ReactJS Data Grid</h2>
+    <h2>Best React Data Grid</h2>
 
     <p>
         Webpack and Babel are popular within the React community. The remainder of this page goes
@@ -20,8 +20,8 @@ include '../documentation-main/documentation_header.php';
         The example demonstrates:
         <ul>
             <li>ag-Grid as a React component.</li>
-            <li>React used for rendering Skills and Proficiency columns.</li>
-            <li>React used for Skills and Proficiency custom filters.</li>
+            <li>Using React Components as ag-Grid cellRenderers for rendering Skills and Proficiency columns.</li>
+            <li>Using React Components as ag-Grid filters for filtering Skills and Proficiency columns.</li>
         </ul>
 
     </p>
@@ -58,10 +58,13 @@ include '../documentation-main/documentation_header.php';
     The ag-grid package contains the core ag-grid engine and the ag-grid-react
         contains the React component and
     some utils for React rendering.
-        <pre><code>  "dependencies": {
-    ...
+        <pre><code>"dependencies": {
+    <span class="codeComment">// ag-Grid and ag-Grid React projects</span>
     "ag-grid": "5.0.x",
-    "ag-grid-react": "5.0.x"
+    "ag-grid-react": "5.0.x",
+
+    <span class="codeComment">// include this if using ag-Grid Enterprise</span>
+    "ag-grid-enterprise": "5.0.x"
 }</code></pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
@@ -77,21 +80,22 @@ include '../documentation-main/documentation_header.php';
         See the <i>render()</i> function in MyApp.jsx, it has AgGridReact defined as
         follows:
     <pre><code>&lt;AgGridReact
-    // listen for events with React callbacks
+
+    <span class="codeComment">// listen for events with React callbacks</span>
     onRowSelected={this.onRowSelected.bind(this)}
     onCellClicked={this.onCellClicked.bind(this)}
 
-    // binding to properties within React State or Props
+    <span class="codeComment">// binding to properties within React State or Props</span>
     showToolPanel={this.state.showToolPanel}
     quickFilterText={this.state.quickFilterText}
     icons={this.state.icons}
 
-    // column definitions and row data are immutable, the grid
-    // will update when these lists change
+    <span class="codeComment">// column definitions and row data are immutable, the grid</span>
+    <span class="codeComment">// will update when these lists change</span>
     columnDefs={this.state.columnDefs}
     rowData={this.state.rowData}
 
-    // or provide props the old way with no binding
+    <span class="codeComment">// or provide props the old way with no binding</span>
     rowSelection="multiple"
     enableSorting="true"
     enableFilter="true"
@@ -105,7 +109,7 @@ include '../documentation-main/documentation_header.php';
     in the core ag-Grid. To access them, first up we need to define an alias to use inside
     webpack.config.js:
 <pre><code>alias: {
-            "ag-grid-root" : __dirname + "/node_modules/ag-grid"
+    "ag-grid-root" : __dirname + "/node_modules/ag-grid"
 }</code></pre>
     Once this is done, we can then access the two css files that we need as follows:
     <pre><code>import 'ag-grid-root/dist/styles/ag-grid.css';
@@ -121,18 +125,18 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
         for this to work.
     </p>
 
-    <pre>// a parent container of the grid, you could put this on your body tag
-// if you only every wanted to use one style of grid
+    <pre><span class="codeComment">// a parent container of the grid, you could put this on your body tag</span>
+<span class="codeComment">// if you only every wanted to use one style of grid</span>
 
-// HTML
+<span class="codeComment">// HTML</span>
 &lt;div class="ag-fresh">
     ...
 
-// OR JSX
+<span class="codeComment">// OR JSX</span>
 &lt;div className="ag-fresh">
     ...
 
-    // then later, use the grid
+    <span class="codeComment">// then later, use the grid</span>
     &lt;AgGridReact
         ...
 </pre>
@@ -145,18 +149,18 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
         the grid and grab the api from the params. You can then call this api at a later
         stage to interact with the grid (on top of the interaction that can be done by
         setting and changing the props).
-        <pre><code>// provide gridReady callback to the grid
+        <pre><code><span class="codeComment">// provide gridReady callback to the grid</span>
 &lt;AgGridReact
     onGridReady={this.onGridReady.bind(this)}
     .../>
 
-// in onGridReady, store the api for later use
+<span class="codeComment">// in onGridReady, store the api for later use</span>
 onGridReady(params) {
     this.api = params.api;
     this.columnApi = params.columnApi;
 }
 
-// use the api some point later!
+<span class="codeComment">// use the api some point later!</span>
 somePointLater() {
     this.api.selectAll();
     this.columnApi.setColumnVisible('country', visible);
@@ -178,61 +182,15 @@ somePointLater() {
         and custom filtering.
     </p>
 
-    <h2>Cell Rendering</h2>
+    <h2>Cell Rendering, Cell Editing and Filtering using React</h2>
 
     <p>
-        It is possible to have <a href="../javascript-grid-cell-rendering/index.php">cellRenderers</a>
-        use React. Before reading this, it would be good to understand how to build a
-        <a href="../javascript-grid-cell-rendering/index.php">cellRenderer</a> without using React as
-        it is assumed here that you already know this.
+        It is possible to build <a href="../javascript-grid-cell-rendering/#reactCellRendering">cellRenders</a>,
+        <a href="../javascript-grid-cell-editing/#reactCellEditing">cellEditors</a> and
+        <a href="../javascript-grid-filtering/#reactFiltering">filters</a> using React. Doing each of these
+        is explained in the section on each.
     </p>
 
-    <p>
-        In the example, both 'Skills' and 'Proficiency' use React cellRenderers.</p>
-    <p>
-        To create a React cellRenderer, you use the factory <i>reactCellRendererFactory</i>
-        and provide it with the React component you want to render. You then put the result
-        onto the columnDef just like a normal cellRenderer.
-        <pre><code>columnDef = {headerName: "Skills",
-    cellRenderer: reactCellRendererFactory(SkillsCellRenderer),
-    ...
-}</code></pre>
-    The above does some 'magic' to make the React renderer work even though it's not living
-    inside a React component. The ag-Grid <i>params</i> (for normal cellRenderers) are
-    passed to the React component under the property of <i>params</i>. So to access the cells
-    value, for example, you would use <i>props.params.value</i>.
-    </p>
-    <p>The magic to get this all working is very few lines of 'nifty' code. If your interested,
-    just look at the source code of the <a href="https://github.com/ceolter/ag-grid-react-component">ag-grid-react-component project on Github</a>.
-    </p>
-
-    <h2>Custom Filtering</h2>
-
-    <p>As with cellRendering, this section on <a href="../javascript-grid-filtering/index.php">custom filtering</a>
-        also assumes you are familiar with custom filtering inside the grid. If you are not, then please learn
-        this first.</p>
-
-    <p>
-        Just like cellRendering, customFiltering provides the magic via a factory and
-        is called <i>reactFilterFactory</i>.
-    </p>
-
-        <pre><code>columnDef = {headerName: "Skills",
-    filter: reactFilterFactory(SkillsFilter),
-    ...
-}</code></pre>
-
-    <p>Again it's some magic to get them working. After this, all you need to do is follow the standard
-    ag-Grid custom filter interface in your React component. In other words, the methods in the ag-Grid
-    custom filter should appear on your components backing object. The example shows all of this in action.</p>
-
-
-    <h2>Notes on React Routing</h2>
-    <p>
-        If using the React Router, and want to have a link inside a cell, then you get (at time of writing)
-        <i>"this.context.router is undefined in link"</i>. This is because the cells React Context in ag-Grid
-        are not connect to the main React Context. The router uses the context, thus it doesn't work.
-    </p>
 </div>
 
 <script type="text/javascript" src="bundle.js" charset="utf-8"></script>

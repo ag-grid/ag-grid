@@ -415,6 +415,34 @@ nameFilter.setModel(model);</pre>
 
     <show-example example="exampleFilterModel"></show-example>
 
+    <h2 id="reactFiltering">
+        <img src="../images/react.png" height="20px"/>
+        React Filtering
+    </h2>
+
+
+    <p>As with cellRendering, this section on <a href="../javascript-grid-filtering/index.php">custom filtering</a>
+        also assumes you are familiar with custom filtering inside the grid. If you are not, then please learn
+        this first.</p>
+
+    <p>
+        Just like cellRendering, customFiltering provides the magic via a factory and
+        is called <i>reactFilterFactory</i>.
+    </p>
+
+    <pre><code>columnDef = {headerName: "Skills",
+    filter: reactFilterFactory(SkillsFilter),
+    ...
+}</code></pre>
+
+    <p>Again it's some magic to get them working. After this, all you need to do is follow the standard
+        ag-Grid custom filter interface in your React component. In other words, the methods in the ag-Grid
+        custom filter should appear on your components backing object. The example shows all of this in action.</p>
+
+    <h2 id="ng2Filtering">
+        <img src="../images/angular2.png" height="20px"/>
+        Angular 2 Filtering
+    </h2>
 
 </div>
 

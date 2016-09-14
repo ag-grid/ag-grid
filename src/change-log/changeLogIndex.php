@@ -55,6 +55,8 @@ filterParams = {
         All the examples are up to date with the new way of doing things.
     </p>
 
+    <li>Breaking Change: React now uses props directly for the init params in filters, cellRenderers and cellEditors.</li>
+
     <li>Breaking Change: Filters now work in similar pattern to editors and renderers.</li>
     <li>Breaking Change: Filter interface now called IFilter.</li>
     <li>Breaking Change: Filter constants are now strings, eg 'lessThan' rather than '1'.</li>

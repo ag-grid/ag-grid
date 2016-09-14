@@ -412,6 +412,41 @@ TAKING OUT as want to reconsider how to register components
 
     <show-example example="example2"></show-example>
 
+    <h2 id="reactCellRendering">
+        <img src="../images/react_large.png" style="width: 60px;"/>
+        React Cell Rendering
+    </h2>
+
+    <p>
+        It is possible to have <a href="../javascript-grid-cell-rendering/index.php">cellRenderers</a>
+        use React. Before reading this, it would be good to understand how to build a
+        <a href="../javascript-grid-cell-rendering/index.php">cellRenderer</a> without using React as
+        it is assumed here that you already know this.
+    </p>
+
+    <p>
+        In the example, both 'Skills' and 'Proficiency' use React cellRenderers.</p>
+    <p>
+        To create a React cellRenderer, you use the factory <i>reactCellRendererFactory</i>
+        and provide it with the React component you want to render. You then put the result
+        onto the columnDef just like a normal cellRenderer.
+    <pre><code>columnDef = {headerName: "Skills",
+    cellRenderer: reactCellRendererFactory(SkillsCellRenderer),
+    ...
+}</code></pre>
+    The above does some 'magic' to make the React renderer work even though it's not living
+    inside a React component. The ag-Grid <i>params</i> (for normal cellRenderers) are
+    passed to the React component under the property of <i>params</i>. So to access the cells
+    value, for example, you would use <i>props.params.value</i>.
+    </p>
+    <p>The magic to get this all working is very few lines of 'nifty' code. If your interested,
+        just look at the source code of the <a href="https://github.com/ceolter/ag-grid-react-component">ag-grid-react-component project on Github</a>.
+    </p>
+
+    <h2 id="ng2CellEditing">
+        <img src="../images/angular2_large.png" style="width: 60px;"/>
+        Angular 2 Cell Rendering
+    </h2>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -411,6 +411,17 @@ colDef.cellEditorParams = {
     </p>
 
     <show-example example="exampleCellEditing"></show-example>
+
+    <h2 id="reactCellEditing">
+        <img src="../images/react_large.png" style="width: 60px;"/>
+        React Cell Editing
+    </h2>
+
+    <h2 id="ng2CellEditing">
+        <img src="../images/angular2_large.png" style="width: 60px;"/>
+        Angular 2 Cell Editing
+    </h2>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
