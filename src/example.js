@@ -743,6 +743,10 @@ PersonFilter.prototype.getApi = function () {
     }
 };
 
+// lazy, the example doesn't use getModel() and setModel()
+PersonFilter.prototype.getModel = function () {};
+PersonFilter.prototype.setModel = function () {};
+
 function WinningsFilter() {
 }
 
@@ -798,6 +802,10 @@ WinningsFilter.prototype.doesFilterPass = function (node) {
 WinningsFilter.prototype.isFilterActive = function () {
     return !this.cbNoFilter.checked;
 };
+
+// lazy, the example doesn't use getModel() and setModel()
+WinningsFilter.prototype.getModel = function () {};
+WinningsFilter.prototype.setModel = function () {};
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
