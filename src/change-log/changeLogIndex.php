@@ -8,6 +8,53 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h4>Changes to Fiters</h4>
+
+    <p>
+        How filters were working were out of line with how cellRenderers and cellEditors were working. This is
+        because filters were done as one of the first items in ag-Grid and the interface has not changed. The
+        changes in this release bring them in line with the newer 'Component Model' that is in ag-Grid, so they
+        now behave in the same way as cellRenderers and cellEditors, including fitting in with React and
+        Angular 2 components, the same way the renderers and editors do. The main core changes are as follows:
+        <ol>
+        <li><b>If you were providing a Filter API</b> then you need to care about the API is no longer a separate part of the component. Instead it is now possible to get a reference
+        to the filter component directly via api.getFilterComponent(colKey). From here you can access all
+        methods on the filter component. So if you want to add extra items to (what used to be) the API, now
+        you just add them directly to your filter component.</li>
+        <li><b>If you were providing custom params to your custom filters</b> then these used to be passed to the filter embedded into the filter params.
+        Now the custom params are added to the main params.
+        <pre>
+<span class="codeComment">// eg when you define this:</span>
+colDef = {
+    ...
+    filter: MyFilter,
+    filterParams: {a: 'A', b: 'B'}
+}
+
+<span class="codeComment">// the old way resulted in:</span>
+filterParams = {
+    column: Column,
+    ...
+    filterParams: {
+        a: 'A',
+        b: 'B'
+    }
+}
+
+<span class="codeComment">// but now it results in:</span>
+filterParams = {
+    column: Column,
+    ...
+    a: 'A',
+    b: 'B'
+}</pre>
+        </li>
+    </ol>
+    </p>
+    <p>
+        All the examples are up to date with the new way of doing things.
+    </p>
+
     <li>Breaking Change: Filters now work in similar pattern to editors and renderers.</li>
     <li>Breaking Change: Filter interface now called IFilter.</li>
     <li>Breaking Change: Filter constants are now strings, eg 'lessThan' rather than '1'.</li>
