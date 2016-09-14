@@ -47,6 +47,7 @@ import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {AgCheckbox} from "./widgets/agCheckbox";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
+import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 
 export interface GridParams {
     // used by Web Components
@@ -58,7 +59,7 @@ export interface GridParams {
     quickFilterOnScope?: any;
 
     // this allows the base frameworks (React, NG2, etc) to provide alternative cellRenderers and cellEditors
-    baseFrameworkFactory?: BaseFrameworkFactory;
+    frameworkFactory?: IFrameworkFactory;
 }
 
 export class Grid {
@@ -94,7 +95,7 @@ export class Grid {
 
         var enterprise = _.exists(Grid.enterpriseBeans);
 
-        var frameworkFactory = params ? params.baseFrameworkFactory : null;
+        var frameworkFactory = params ? params.frameworkFactory : null;
         if (_.missing(frameworkFactory)) {
             frameworkFactory = new BaseFrameworkFactory();
         }
