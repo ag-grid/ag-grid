@@ -98,22 +98,18 @@ export class AgComponentFactory {
             }
 
             getGui():HTMLElement {
-                let div = document.createElement('div');
-                that.createComponent(componentType,
+                this._componentRef = that.createComponentSync(componentType,
                     viewContainerRef,
                     compiler,
                     name,
                     moduleImports,
-                    childDependencies)
-                    .then(cr => {
-                        this._componentRef = cr;
-                        if (initializer) {
-                            initializer(cr.instance, this._params);
-                        }
+                    childDependencies);
+                if (initializer) {
+                    initializer(this._componentRef.instance, this._params);
+                    this._componentRef.changeDetectorRef.detectChanges();
+                }
 
-                        div.appendChild(cr.location.nativeElement);
-                    });
-                return div;
+                return this._componentRef.location.nativeElement;
             }
 
             destroy():void {
@@ -213,33 +209,33 @@ export class AgComponentFactory {
         return CellEditor;
     }
 
-    public createComponent<T>(componentType:{ new(...args:any[]): T; },
-                              viewContainerRef:ViewContainerRef,
-                              compiler:RuntimeCompiler,
-                              name:string,
-                              moduleImports:any[],
-                              childDependencies?:any[]):Promise<ComponentRef<T>> {
-        return new Promise<ComponentRef<T>>((resolve) => {
-            let module:any = this._cacheOfModules[name];
-            if (!module) {
-                module = this.createComponentModule(componentType, moduleImports, childDependencies);
-                this._cacheOfModules[name] = module;
-            }
-            compiler
-                .compileModuleAndAllComponentsAsync(module)
-                .then((moduleWithFactories:ModuleWithComponentFactories<T>) => {
-                    let factory:ComponentFactory<T> = null;
-                    for (let i = 0; i < moduleWithFactories.componentFactories.length && factory === null; i++) {
-                        if (moduleWithFactories.componentFactories[i].componentType === componentType) {
-                            factory = moduleWithFactories.componentFactories[i];
-                        }
-                    }
-
-                    let componentRef = viewContainerRef.createComponent(factory);
-                    resolve(componentRef);
-                });
-        });
-    }
+    //public createComponent<T>(componentType:{ new(...args:any[]): T; },
+    //                          viewContainerRef:ViewContainerRef,
+    //                          compiler:RuntimeCompiler,
+    //                          name:string,
+    //                          moduleImports:any[],
+    //                          childDependencies?:any[]):Promise<ComponentRef<T>> {
+    //    return new Promise<ComponentRef<T>>((resolve) => {
+    //        let module:any = this._cacheOfModules[name];
+    //        if (!module) {
+    //            module = this.createComponentModule(componentType, moduleImports, childDependencies);
+    //            this._cacheOfModules[name] = module;
+    //        }
+    //        compiler
+    //            .compileModuleAndAllComponentsAsync(module)
+    //            .then((moduleWithFactories:ModuleWithComponentFactories<T>) => {
+    //                let factory:ComponentFactory<T> = null;
+    //                for (let i = 0; i < moduleWithFactories.componentFactories.length && factory === null; i++) {
+    //                    if (moduleWithFactories.componentFactories[i].componentType === componentType) {
+    //                        factory = moduleWithFactories.componentFactories[i];
+    //                    }
+    //                }
+    //
+    //                let componentRef = viewContainerRef.createComponent(factory);
+    //                resolve(componentRef);
+    //            });
+    //    });
+    //}
 
     public createComponentSync<T>(componentType:{ new(...args:any[]): T; },
                                   viewContainerRef:ViewContainerRef,
