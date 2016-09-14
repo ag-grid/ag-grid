@@ -1,85 +1,75 @@
+import {AgReactComponent} from "./agReactComponent";
+import {IFilter, IFilterParams} from "ag-grid";
 var React = require('react');
-var ReactDOM = require('react-dom');
 
 // wraps the provided React filter component
-export function reactFilterFactory(reactComponent: any, parentComponent?: any): Function {
+export function reactFilterFactory(reactComponent: any, parentComponent?: any): {new(): IFilter} {
 
-    class FilterWrapper {
+    class ReactFilter extends AgReactComponent implements IFilter {
 
-        private backingInstance: any;
-        private eGui: Element;
-
-        public init(params: any) {
-            this.eGui = document.createElement('div');
-
-            var ReactComponent = React.createElement(reactComponent, { params: params });
-            if (!parentComponent) {
-                this.backingInstance = ReactDOM.render(ReactComponent, this.eGui);
-            } else {
-                this.backingInstance = ReactDOM.unstable_renderSubtreeIntoContainer(parentComponent, ReactComponent, this.eGui);
-            }
-
-            if (typeof this.backingInstance.init === 'function') {
-                this.backingInstance.init(params);
-            }
+        constructor() {
+            super(reactComponent, parentComponent);
         }
 
-        public getGui() {
-            return this.eGui;
+        public init(params: IFilterParams) {
+            super.init(params);
         }
 
-        public isFilterActive() {
-            if (typeof this.backingInstance.isFilterActive === 'function') {
-                return this.backingInstance.isFilterActive();
+        public isFilterActive(): boolean {
+            var componentRef = this.getComponentRef();
+            if (componentRef.isFilterActive) {
+                return componentRef.isFilterActive();
             } else {
+                console.error(`ag-Grid: React filter is missing the mandatory method isFilterActive()`);
                 return false;
             }
         }
 
-        public doesFilterPass(params: any) {
-            if (typeof this.backingInstance.doesFilterPass === 'function') {
-                return this.backingInstance.doesFilterPass(params);
+        public doesFilterPass(params: any): boolean {
+            var componentRef = this.getComponentRef();
+            if (componentRef.doesFilterPass) {
+                return componentRef.doesFilterPass(params);
             } else {
-                return true;
+                console.error(`ag-Grid: React filter is missing the mandatory method doesFilterPass()`);
+                return false;
             }
         }
 
-        public getApi() {
-            if (typeof this.backingInstance.getApi === 'function') {
-                return this.backingInstance.getApi();
+        public getModel(): any {
+            var componentRef = this.getComponentRef();
+            if (componentRef.getModel) {
+                return componentRef.getModel();
             } else {
-                return undefined;
+                console.error(`ag-Grid: React filter is missing the mandatory method getModel()`);
+                return null;
             }
         }
 
-        // optional methods
-        public afterGuiAttached(params: any) {
-            if (typeof this.backingInstance.afterGuiAttached === 'function') {
-                return this.backingInstance.afterGuiAttached(params);
+        /** Restores the filter state. */
+        public setModel(model: any): void {
+            var componentRef = this.getComponentRef();
+            if (componentRef.setModel) {
+                componentRef.setModel(model);
+            } else {
+                console.error(`ag-Grid: React filter is missing the mandatory method setModel()`);
             }
         }
 
-        public onNewRowsLoaded() {
-            if (typeof this.backingInstance.onNewRowsLoaded === 'function') {
-                return this.backingInstance.onNewRowsLoaded();
+        public afterGuiAttached(params: {hidePopup?: ()=>void}): void {
+            var componentRef = this.getComponentRef();
+            if (componentRef.afterGuiAttached) {
+                componentRef.afterGuiAttached(params);
             }
         }
 
-        public onAnyFilterChanged() {
-            if (typeof this.backingInstance.onAnyFilterChanged === 'function') {
-                return this.backingInstance.onAnyFilterChanged();
+        public onNewRowsLoaded(): void {
+            var componentRef = this.getComponentRef();
+            if (componentRef.onNewRowsLoaded) {
+                componentRef.onNewRowsLoaded();
             }
-        }
-
-        public destroy() {
-            if (typeof this.backingInstance.destroy === 'function') {
-                this.backingInstance.destroy();
-            }
-            ReactDOM.unmountComponentAtNode(this.eGui);
         }
 
     }
 
-    return FilterWrapper;
-
+    return ReactFilter;
 }

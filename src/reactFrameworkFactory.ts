@@ -1,6 +1,7 @@
-import {BaseFrameworkFactory, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions, ICellEditor} from 'ag-grid';
+import {BaseFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions, ICellEditor} from 'ag-grid';
 import {reactCellRendererFactory} from "../lib/reactCellRendererFactory";
 import {reactCellEditorFactory} from "./reactCellEditorFactory";
+import {reactFilterFactory} from "./reactFilterFactory";
 
 export class ReactFrameworkFactory extends BaseFrameworkFactory {
 
@@ -11,49 +12,57 @@ export class ReactFrameworkFactory extends BaseFrameworkFactory {
         this.agGridReact = agGridReact;
     }
 
+    public colDefFilter(colDef: ColDef): {new(): IFilter} | string {
+        if (Utils.exists(colDef.floatingCellRendererFramework)) {
+            return reactFilterFactory(colDef.filterFramework, this.agGridReact);
+        } else {
+            return super.colDefFilter(colDef);
+        }
+    }
+
     public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
-        if (Utils.exists(colDef.floatingCellRendererFmk)) {
-            return reactCellRendererFactory(colDef.floatingCellRendererFmk, this.agGridReact);
+        if (Utils.exists(colDef.floatingCellRendererFramework)) {
+            return reactCellRendererFactory(colDef.floatingCellRendererFramework, this.agGridReact);
         } else {
             return super.colDefFloatingCellRenderer(colDef);
         }
     }
 
     public colDefCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
-        if (Utils.exists(colDef.cellRendererFmk)) {
-            return reactCellRendererFactory(colDef.cellRendererFmk, this.agGridReact);
+        if (Utils.exists(colDef.cellRendererFramework)) {
+            return reactCellRendererFactory(colDef.cellRendererFramework, this.agGridReact);
         } else {
             return super.colDefCellRenderer(colDef);
         }
     }
 
     public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
-        if (Utils.exists(colDef.cellEditorFmk)) {
-            return reactCellEditorFactory(colDef.cellEditorFmk, this.agGridReact);
+        if (Utils.exists(colDef.cellEditorFramework)) {
+            return reactCellEditorFactory(colDef.cellEditorFramework, this.agGridReact);
         } else {
             return super.colDefCellEditor(colDef);
         }
     }
 
     public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
-        if (Utils.exists(gridOptions.fullWidthCellRendererFmk)) {
-            return reactCellRendererFactory(gridOptions.fullWidthCellRendererFmk, this.agGridReact);
+        if (Utils.exists(gridOptions.fullWidthCellRendererFramework)) {
+            return reactCellRendererFactory(gridOptions.fullWidthCellRendererFramework, this.agGridReact);
         } else {
             return super.gridOptionsFullWidthCellRenderer(gridOptions);
         }
     }
 
     public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
-        if (Utils.exists(gridOptions.groupRowRendererFmk)) {
-            return reactCellRendererFactory(gridOptions.groupRowRendererFmk, this.agGridReact);
+        if (Utils.exists(gridOptions.groupRowRendererFramework)) {
+            return reactCellRendererFactory(gridOptions.groupRowRendererFramework, this.agGridReact);
         } else {
             return super.gridOptionsGroupRowRenderer(gridOptions);
         }
     }
 
     public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
-        if (Utils.exists(gridOptions.groupRowInnerRendererFmk)) {
-            return reactCellRendererFactory(gridOptions.groupRowInnerRendererFmk, this.agGridReact);
+        if (Utils.exists(gridOptions.groupRowInnerRendererFramework)) {
+            return reactCellRendererFactory(gridOptions.groupRowInnerRendererFramework, this.agGridReact);
         } else {
             return super.gridOptionsGroupRowInnerRenderer(gridOptions);
         }

@@ -1,8 +1,11 @@
 // ag-grid-react v5.5.0
-import { BaseFrameworkFactory, ColDef, ICellRenderer, ICellRendererFunc, GridOptions, ICellEditor } from 'ag-grid';
+import { BaseFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, GridOptions, ICellEditor } from 'ag-grid';
 export declare class ReactFrameworkFactory extends BaseFrameworkFactory {
     private agGridReact;
     constructor(agGridReact: any);
+    colDefFilter(colDef: ColDef): {
+        new (): IFilter;
+    } | string;
     colDefFloatingCellRenderer(colDef: ColDef): {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
