@@ -180,6 +180,8 @@ export interface ColDef extends AbstractColDef {
     /** one of the built in filter names: [set, number, text], or a filter function*/
     filter?: string | {new(): IFilter};
 
+    filterFramework?: any;
+
     /** The filter params are specific to each filter! */
     filterParams?: SetFilterParameters | TextAndNumberFilterParameters;
 
