@@ -93,18 +93,18 @@ colDef.cellRenderer = function(params) {
     </p>
 
     <pre>interface ICellRenderer {
-    // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
+    <span class="codeComment">// Optional - Params for rendering. The same params that are passed to the cellRenderer function.</span>
     init?(params: any): void;
 
-    // Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM
+    <span class="codeComment">// Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM</span>
     getGui(): HTMLElement;
 
-    // Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup,
-    // do it here
+    <span class="codeComment">// Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup,</span>
+    <span class="codeComment">// do it here</span>
     destroy?(): void;
 
-    // Optional - Get the cell to refresh. If this method is not provided, then when refresh is needed, the grid
-    // will remove the component from the DOM and create a new component in it's place with the new values.
+    <span class="codeComment">// Optional - Get the cell to refresh. If this method is not provided, then when refresh is needed, the grid</span>
+    <span class="codeComment">// will remove the component from the DOM and create a new component in it's place with the new values.</span>
     refresh?(params: any): void;
 }</pre>
 
@@ -114,12 +114,12 @@ colDef.cellRenderer = function(params) {
 
 <pre>
 <code>
-<b>// function to act as a class</b>
+<span class="codeComment">// function to act as a class</span>
 function MyCellRenderer () {}
 
-<b>// gets called once before the renderer is used</b>
+<span class="codeComment">// gets called once before the renderer is used</span>
 MyCellRenderer.prototype.init = function(params) {
-    // create the cell
+    <span class="codeComment">// create the cell</span>
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
         '&lt;span class="my-css-class">
@@ -127,34 +127,34 @@ MyCellRenderer.prototype.init = function(params) {
             &lt;span class="my-value">&lt;/span>
         &lt;/span>';
 
-    // get references to the elements we want
+    <span class="codeComment">// get references to the elements we want</span>
     this.eButton = this.eGui.querySelectorAll('.btn-simple')[0];
     this.eValue = this.eGui.querySelectorAll('.my-value')[0];
 
-    // set value into cell
+    <span class="codeComment">// set value into cell</span>
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
 
-    // add event listener to button
+    <span class="codeComment">// add event listener to button</span>
     this.eventListener = function() {
         console.log('button was clicked!!');
     };
     this.eButton.addEventListener('click', this.eventListener);
 };
 
-<b>// gets called once when grid ready to insert the element</b>
+<span class="codeComment">// gets called once when grid ready to insert the element</span>
 MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
-<b>// gets called whenever the user gets the cell to refresh</b>
+<span class="codeComment">// gets called whenever the user gets the cell to refresh</span>
 MyCellRenderer.prototype.refresh = function(params) {
-    // set value into cell again
+    <span class="codeComment">// set value into cell again</span>
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
 };
 
-<b>// gets called when the cell is removed from the grid</b>
+<span class="codeComment">// gets called when the cell is removed from the grid</span>
 MyCellRenderer.prototype.destroy = function() {
-    // do cleanup, remove event listener from button
+    <span class="codeComment">// do cleanup, remove event listener from button</span>
     this.eButton.removeEventListener('click', this.eventListener);
 };</code></pre>
 
@@ -329,18 +329,18 @@ MyCellRenderer.prototype.destroy = function() {
         Provide params to a cellRenderer using the colDef option cellRendererParams.
     </p>
 
-<pre><code><b>// define cellRenderer to be reused</b>
+<pre><code><span class="codeComment">// define cellRenderer to be reused</span>
 var myCellRenderer = function(params) {
     return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
 }
 
-<b>// use with a color</b>
+<span class="codeComment">// use with a color</span>
 colDef.cellRenderer = myCellRenderer;
 colDef.cellRendererParams = {
     color: 'guinnessBlack'
 }
 
-<b>// use with another color</b>
+<span class="codeComment">// use with another color</span>
 colDef.cellRenderer = myCellRenderer;
 colDef.cellRendererParams = {
     color: 'irishGreen'
@@ -418,29 +418,109 @@ TAKING OUT as want to reconsider how to register components
     </h2>
 
     <p>
-        It is possible to have <a href="../javascript-grid-cell-rendering/index.php">cellRenderers</a>
-        use React. Before reading this, it would be good to understand how to build a
-        <a href="../javascript-grid-cell-rendering/index.php">cellRenderer</a> without using React as
-        it is assumed here that you already know this.
+        It is possible to provide a React cellRenderer for ag-Grid to use. All of the information above is
+        relevant to React cellRenderes. This section explains how to apply this logic to your React component.
     </p>
 
     <p>
-        In the example, both 'Skills' and 'Proficiency' use React cellRenderers.</p>
-    <p>
-        To create a React cellRenderer, you use the factory <i>reactCellRendererFactory</i>
-        and provide it with the React component you want to render. You then put the result
-        onto the columnDef just like a normal cellRenderer.
-    <pre><code>columnDef = {headerName: "Skills",
-    cellRenderer: reactCellRendererFactory(SkillsCellRenderer),
-    ...
-}</code></pre>
-    The above does some 'magic' to make the React renderer work even though it's not living
-    inside a React component. The ag-Grid <i>params</i> (for normal cellRenderers) are
-    passed to the React component under the property of <i>params</i>. So to access the cells
-    value, for example, you would use <i>props.params.value</i>.
+        For examples on React cellRendering, see the
+        <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+        In the example, both 'Skills' and 'Proficiency' columns use React cellRenderers. The Country column
+        uses a standard ag-Grid cellRenderer, to demonstrate both working side by side.</p>
     </p>
-    <p>The magic to get this all working is very few lines of 'nifty' code. If your interested,
-        just look at the source code of the <a href="https://github.com/ceolter/ag-grid-react-component">ag-grid-react-component project on Github</a>.
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React cellRenderer</h3>
+
+    <p>
+        If you are using the ag-grid-react component to create the ag-Grid instance,
+        then you will have the option of additionally specifying the cellRenderers
+        as React components.
+    </p>
+
+    <pre><span class="codeComment">// create your cellRenderer as a React component</span>
+class NameCellRenderer extends React.Component {
+    render() {
+    <span class="codeComment">// put in render logic</span>
+        return &lt;span>{this.props.value}&lt;/span>;
+    }
+}
+
+<span class="codeComment">// then reference the Component in you colDef like this</span>
+colDef = {
+
+    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    cellRendererFramework: NameCellRenderer
+
+    <span class="codeComment">// specify all the other fields as normal</span>
+    headerName: 'Name',
+    field: 'firstName',
+    ...
+}</pre>
+
+    <p>
+        By using <i>colDef.cellRendererFramework</i> (instead of <i>colDef.cellRenderer</i>) the grid
+        will know it's a React component, based on the fact that you are using the React version of
+        ag-Grid.
+    </p>
+
+    <p>
+        This same mechanism can be to use a React Component in the following locations:
+        <ul>
+        <li>colDef.cellRenderer<b>Framework</b></li>
+        <li>colDef.floatingCellRenderer<b>Framework</b></li>
+        <li>gridOptions.fullWidthCellRenderer<b>Framework</b></li>
+        <li>gridOptions.groupRowRenderer<b>Framework</b></li>
+        <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
+    </ul>
+        In other words, wherever you specify a normal cellRenderer, you can now specify a React cellRenderer
+    in the property of the same name excepting ending 'Framework'. As long as you are using the React ag-Grid component,
+    the grid will know the framework to use is React.
+    </p>
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
+
+    <p>
+        The React component will get the 'cellRenderer Params' as described above as it's React Props.
+        Therefore you can access all the parameters as React Props.
+
+    <pre><span class="codeComment">// React cellRenderer Component</span>
+class NameCellRenderer extends React.Component {
+
+    <span class="codeComment">// did you know that React passes props to your component constructor??</span>
+    constructor(props) {
+        super(props);
+        <span class="codeComment">// from here you can access any of the props!</span>
+        console.log('The value is ' + props.value);
+        <span class="codeComment">// we can even call grid API functions, if that was useful</span>
+        props.api.selectAll();
+    }
+
+    render() {
+        <span class="codeComment">// or access props using 'this'</span>
+        return &lt;span>{this.props.value}&lt;/span>;
+    }
+}</pre>
+    </p>
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
+
+    <p>
+        All of the methods in the ICellRenderer interface described above are applicable
+        to the React Component with the following exceptions:
+        <ul>
+        <li><i>init()</i> is not used. Instead use the React props passed to your Component.</li>
+        <li><i>destroy()</i> is not used. Instead use the React <i>componentWillUnmount()</i> method for
+            any cleanup you need to do.</li>
+        <li><i>getGui()</i> is not used. Instead do normal React magic in your <i>render()</i> method..</li>
+    </ul>
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> Handling Refresh</h3>
+
+    <p>
+        You have the option of handling refresh or not by either providing a <i>refresh()</i> method on
+        your React component or not. If not present, then the grid will destroy your component and create
+        a new one if it tries to refresh the cell. If you do implement it, then it's up to your React
+        components <i>refresh()</i> method to update the state of your component.
     </p>
 
     <h2 id="ng2CellEditing">
