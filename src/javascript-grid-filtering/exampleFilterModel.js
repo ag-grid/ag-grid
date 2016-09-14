@@ -16,8 +16,8 @@ var savedModel = null;
 
 var hardcodedFilter = {
     country: ['Ireland', 'United States'],
-    age: {type: 2, filter: '30'},
-    athlete: {type: 3, filter: 'Mich'}
+    age: {type: 'lessThan', filter: '30'},
+    athlete: {type: 'startsWith', filter: 'Mich'}
 };
 
 var savedFilters = '[]';

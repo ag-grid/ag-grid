@@ -26,16 +26,16 @@ var gridOptions = {
 };
 
 function irelandAndUk() {
-    var filterApi = gridOptions.api.getFilterApi('country');
-    filterApi.selectNothing();
-    filterApi.selectValue('Ireland');
-    filterApi.selectValue('Great Britain');
+    var countryFilterComponent = gridOptions.api.getFilterComponent('country');
+    countryFilterComponent.selectNothing();
+    countryFilterComponent.selectValue('Ireland');
+    countryFilterComponent.selectValue('Great Britain');
     gridOptions.api.onFilterChanged();
 }
 
 function clearCountryFilter() {
-    var filterApi = gridOptions.api.getFilterApi('country');
-    filterApi.selectEverything();
+    var countryFilterComponent = gridOptions.api.getFilterComponent('country');
+    countryFilterComponent.selectEverything();
     gridOptions.api.onFilterChanged();
 }
 
@@ -44,28 +44,28 @@ function destroyCountryFilter() {
 }
 
 function endingStan() {
-    var filterApi = gridOptions.api.getFilterApi('country');
-    filterApi.selectNothing();
-    for (var i = 0; i<filterApi.getUniqueValueCount(); i++) {
-        var value = filterApi.getUniqueValue(i);
+    var countryFilterComponent = gridOptions.api.getFilterComponent('country');
+    countryFilterComponent.selectNothing();
+    for (var i = 0; i<countryFilterComponent.getUniqueValueCount(); i++) {
+        var value = countryFilterComponent.getUniqueValue(i);
         var valueEndsWithStan = value.indexOf('stan') === value.length - 4;
         if (valueEndsWithStan) {
-            filterApi.selectValue(value);
+            countryFilterComponent.selectValue(value);
         }
     }
     gridOptions.api.onFilterChanged();
 }
 
 function setCountryModel() {
-    var filterApi = gridOptions.api.getFilterApi('country');
+    var countryFilterComponent = gridOptions.api.getFilterComponent('country');
     var model = ['Algeria','Argentina'];
-    filterApi.setModel(model);
+    countryFilterComponent.setModel(model);
     gridOptions.api.onFilterChanged();
 }
 
 function printCountryModel() {
-    var filterApi = gridOptions.api.getFilterApi('country');
-    var model = filterApi.getModel();
+    var countryFilterComponent = gridOptions.api.getFilterComponent('country');
+    var model = countryFilterComponent.getModel();
     if (model) {
         console.log('Country model is: [' + model.join(',') + ']');
     } else {
@@ -74,22 +74,22 @@ function printCountryModel() {
 }
 
 function ageBelow25() {
-    var filterApi = gridOptions.api.getFilterApi('age');
-    filterApi.setType(filterApi.LESS_THAN);
-    filterApi.setFilter(25);
+    var ageFilterComponent = gridOptions.api.getFilterComponent('age');
+    ageFilterComponent.setType('lessThan');
+    ageFilterComponent.setFilter(25);
     gridOptions.api.onFilterChanged();
 }
 
 function ageAbove30() {
-    var filterApi = gridOptions.api.getFilterApi('age');
-    filterApi.setType(filterApi.GREATER_THAN);
-    filterApi.setFilter(30);
+    var ageFilterComponent = gridOptions.api.getFilterComponent('age');
+    ageFilterComponent.setType('greaterThan');
+    ageFilterComponent.setFilter(30);
     gridOptions.api.onFilterChanged();
 }
 
 function clearAgeFilter() {
-    var filterApi = gridOptions.api.getFilterApi('age');
-    filterApi.setFilter('');
+    var ageFilterComponent = gridOptions.api.getFilterComponent('age');
+    ageFilterComponent.setFilter(null);
     gridOptions.api.onFilterChanged();
 }
 

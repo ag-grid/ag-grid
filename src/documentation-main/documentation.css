@@ -68,6 +68,10 @@
     color: #333;
 }
 
+.codeComment {
+    color: darkgreen;
+}
+
 h4 {
     margin-top: 30px;
 }

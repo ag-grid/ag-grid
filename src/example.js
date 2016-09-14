@@ -345,7 +345,7 @@ var defaultCols = [
         headerName: 'Game of Choice',
         children: [
             {headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
-                tooltipField: 'gameName',
+                tooltipField: 'game.name',
         cellClass: function () {
             return 'alphabet';
         },
@@ -563,7 +563,6 @@ function createRowItem(row, colCount) {
         name: games[Math.floor(row*13/17*19) % games.length],
         bought: booleanValues[row % booleanValues.length]
     };
-    rowItem.gameName = 'toolTip: ' + rowItem.game.name.toUpperCase();
 
     rowItem.bankBalance = ((Math.round(pseudoRandom() * 10000000)) / 100) - 3000;
     rowItem.rating = (Math.round(pseudoRandom() * 5));

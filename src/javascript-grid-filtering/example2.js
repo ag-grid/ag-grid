@@ -77,17 +77,13 @@ PersonFilter.prototype.isFilterActive = function () {
     return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
 };
 
-PersonFilter.prototype.getApi = function() {
-    var that = this;
-    return {
-        getModel: function() {
-            var model = {value: that.filterText.value};
-            return model;
-        },
-        setModel: function(model) {
-            that.eFilterText.value = model.value;
-        }
-    }
+PersonFilter.prototype.getModel = function() {
+    var model = {value: this.filterText.value};
+    return model;
+};
+
+PersonFilter.prototype.setModel = function(model) {
+    this.eFilterText.value = model.value;
 };
 
 function YearFilter() {
@@ -146,6 +142,10 @@ YearFilter.prototype.getApi = function() {
     }
 };
 
+// this example isn't using getModel() and setModel(),
+// so safe to just leave these empty. don't do this in your code!!!
+YearFilter.prototype.getModel = function() {};
+YearFilter.prototype.setModel = function() {};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

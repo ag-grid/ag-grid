@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Filtering</h2>
 
     <p>
-        You have two options for filtering, one is use on of the default built-in filters (easy but restricted to
+        You have two options for filtering, one is use one of the default built-in filters (easy but restricted to
         what's provided), or bake your own custom filters (no restrictions, build what you want, but takes more time).
     </p>
 
@@ -26,8 +26,8 @@ include '../documentation-main/documentation_header.php';
     <h3>Enable Filtering</h3>
 
     <p>
-        Enable filtering by setting grid property <i>enableFilter=true</i>. To turn off filtering for particular columns,
-        set <i>suppressFilter=true</i> on the particular column definition.
+        Enable filtering by setting grid property <i>enableFilter=true</i>. This turns on filtering on all columns.
+        To turn off filtering for particular columns, set <i>suppressFilter=true</i> on the individual column definition.
     </p>
 
     <p>
@@ -46,17 +46,17 @@ include '../documentation-main/documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <th>set</th>
-            <td>A set filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise
-            feature and explained further <a href="../javascript-grid-set-filtering/">here</a></td>
-        </tr>
-        <tr>
             <th>number</th>
             <td>A number comparison filter. Functionality for matching on {equals, less than, greater than}.</td>
         </tr>
         <tr>
             <th>text</th>
             <td>A string comparison filter. Functionality for mating on {contains, starts with, ends with, equals}.</td>
+        </tr>
+        <tr>
+            <th>set</th>
+            <td>A set filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise
+                feature and explained further <a href="../javascript-grid-set-filtering/">here</a></td>
         </tr>
     </table>
 
@@ -68,8 +68,9 @@ include '../documentation-main/documentation_header.php';
     <h3>Filter Parameters</h3>
 
     <p>
-        An additional attribute on the column definition, filterParams, can be used to provide extra information to
-        the filter. Set the filterParams on the columnDefinition as follows:
+        As well as specifying the filter type, you can also provide setup parameters for the filters by setting
+        <code>colDef.filterParams</code>. The available parameters are specific to the filter type. What follows
+        is an example of setting 'apply=true' and 'newRowsAction=keep' on a text filter:
     </p>
 
     <pre>
@@ -82,7 +83,7 @@ columnDefinition = {
 
     <h4>Text and Number Filter Parameters</h4>
     <p>
-        The filter parameters for set filter have the following meaning:
+        The filter parameters for text and number filter have the following meaning:
         <ul>
             <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,
                 to keep it in line with 'set' filters. If you want to keep the selection, then set this value
@@ -177,210 +178,207 @@ columnDefinition = {
     </p>
 
     <p>
-        To provide a custom filter, instead of providing a string (eg set, text or number) for the filter in
-        the column definition, provide a function. ag-Grid will call 'new' on this function and use
-        the generated class as a filter. ag-Grid expects the filter class to have the following interface:
+        To provide a custom filter, instead of providing a string for the filter in
+        the column definition, provide a Filter Component in the form of a function. ag-Grid will call 'new'
+        on this function and treat the generated class instance as a filter component. A filter component class
+        can be any function / class that implements the following interface:
     </p>
 
-    <pre>
+    <pre>interface IFilter {
 
-    // Class function.
-    function MyCustomFilter() {}
+    <span class="codeComment">// mandatory methods</span>
 
-    // mandatory methods
-    MyCustomFilter.prototype.init = function (params) {}
-    MyCustomFilter.prototype.getGui = function () {}
-    MyCustomFilter.prototype.isFilterActive = function() {}
-    MyCustomFilter.prototype.doesFilterPass = function (params) {}
-    MyCustomFilter.prototype.getApi = function () {}
+    <span class="codeComment">// The init(params) method is called on the filter once. See below for details on the parameters.</span>
+    init(params: IFilterParams): void;
 
-    // optional methods
-    MyCustomFilter.prototype.afterGuiAttached = function(params) {}
-    MyCustomFilter.prototype.onNewRowsLoaded = function () {}
-    MyCustomFilter.prototype.onAnyFilterChanged = function () {}
-    MyCustomFilter.prototype.destroy = function () {}
+    <span class="codeComment">// Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.</span>
+    getGui(): any;
 
-    </pre>
+    <span class="codeComment">// This is used to show the filter icon in the header. If true, the filter icon will be shown.</span>
+    isFilterActive(): boolean;
 
-    <table class="table">
-        <tr>
-            <th>Method</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <th>init(params)</th>
-            <td>Init method called on the filter once after 'new' is called on the function. Takes one parameter
-                with the following attributes:
-                <ul>
-                    <li>column: The column this filter is for.</li>
-                    <li>colDef: The col def this filter is for.</li>
-                    <li>rowModel: The internal row model inside ag-Grid. This should be treated as
-                        read only. If the filter needs to know which rows are a) in the table b) currently
-                        visible (ie not already filtered), c) what groups d) what order - all of this
-                        can be read from the rowModel.
-                    </li>
-                    <li>filterChangedCallback(): A function callback, to be called, when the filter changes,
-                        to inform the grid to filter the data. The grid will respond by filtering the data.
-                    </li>
-                    <li>filterModifiedCallback(): A function callback, to be <i>optionally</i> called, when the filter changes,
-                        but before 'Apply' is pressed. The grid does nothing except call
-                        gridOptions.filterModified().
-                    </li>
-                    <li>valueGetter(node): A function callback, call with a node to be given the value for that
-                        filters column for that node. The callback takes care of selecting the right colDef
-                        and deciding whether to use valueGetter or field etc.
-                    </li>
-                    <li>doesRowPassOtherFilter(node): A function callback, call with a node to be told whether
-                        the node passes all filters except the current filter. This is useful if you want
-                        to only present to the user values that this filter can filter given the status
-                        of the other filters. The set filter uses this to remove from the list, items that
-                        are no longer available due to the state of other filters (like Excel type filtering).
-                    </li>
-                    <li>
-                        filterParams: The filter parameters, as provided in the column definition.
-                    </li>
-                    <li>
-                        context: The context for this grid. See section on <a href="../javascript-grid-context/">Context</a>
-                    </li>
-                    <li>
-                        $scope: If the grid options angularCompileFilters is set to true, then a new child
-                        scope is created for each column filter and provided here.
-                    </li>
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <th>getGui</th>
-            <td>Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.
-            </td>
-        </tr>
-        <tr>
-            <th>isFilterActive</th>
-            <td>This is used to show the filter icon in the header. If true, the filter icon will be shown.</td>
-        </tr>
-        <tr>
-            <th>doesFilterPass</th>
-            <td>The grid will ask each active filter, in turn, whether each row in the grid passes. If any
-                filter fails, then the row will be excluded from the final set. The method is provided a
-                params object with attributes node (the rodNode the grid creates that wraps the data) and data
-                (the data object that you provided to the grid for that row).
-            </td>
-        </tr>
-        <tr>
-            <th>afterGuiAttached(params)</th>
-            <td>Gets called every time the popup is shown, after the gui returned in getGui is attached to the DOM.
-                If the filter popup is closed and reopened, this method is called each time the filter is shown.
-                This is useful for any
-                logic that requires attachment before executing, such as putting focus on a particular DOM
-                element. The params has one callback method 'hidePopup', which you can call at any later
-                point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
-                after it is pressed.</td>
-        </tr>
-        <tr>
-            <th>onNewRowsLoaded</th>
-            <td>Gets called when new rows are inserted into the grid. If the filter needs to change it's state
-                after rows are loaded, it can do it here.
-            </td>
-        </tr>
-        <tr>
-            <th>getApi</th>
-            <td>Returns the API for the filter. Useful if you want your filter manipulated via an API.
-            <pre>MyCustomFilter.prototype.getApi = function () {
-    return {
-        // called by api.getFilterModel() - if not implemented, then api.getFilterModel() will fail
-        getModel: function() {
-            // return how you want your model to look when someone
-            // either calls getModel() directly on this filter,
-            // or someone calls 'getFilterModel' on the main api
-            var model = {value: theFilter.value};
-            return model;
-        },
-        // called by api.setFilterModel(model) - if not implemented, then api.getFilterModel() will fail
-        setModel: function(model) {
-            // this will be passed the model that was returned in
-            // get model.
-            theFilter.value = model.value;
-        },
-        // then add as many of your own methods that you want,
-        // only you will be calling these.
-        clearMyValues: function() {
-        }
-    }
+    <span class="codeComment">// The grid will ask each active filter, in turn, whether each row in the grid passes. If any
+    // filter fails, then the row will be excluded from the final set. The method is provided a
+    // params object with attributes node (the rodNode the grid creates that wraps the data) and data
+    // (the data object that you provided to the grid for that row).</span>
+    doesFilterPass(params: IDoesFilterPassParams): boolean;
+
+    <span class="codeComment">// Gets the filter state for storing</span>
+    getModel(): any;
+
+    <span class="codeComment">// Restores the filter state.</span>
+    setModel(model: any): void;
+
+    <span class="codeComment">// optional methods</span>
+
+    <span class="codeComment">// Gets called every time the popup is shown, after the gui returned in getGui is attached to the DOM.
+    // If the filter popup is closed and reopened, this method is called each time the filter is shown.
+    // This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM
+    // element. The params has one callback method 'hidePopup', which you can call at any later
+    // point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
+    // after it is pressed.</span>
+    afterGuiAttached?(params?: {hidePopup?: Function}): void;
+
+    <span class="codeComment">// Gets called when new rows are inserted into the grid. If the filter needs to change it's state
+    // after rows are loaded, it can do it here.</span>
+    onNewRowsLoaded?(): void;
+
+    <span class="codeComment">// Gets called when the grid is destroyed. If your custom filter needs to do
+    // any resource cleaning up, do it here. A filter is NOT destroyed when it is
+    // made 'not visible', as the gui is kept to be shown again if the user selects
+    // that filter again. The filter is destroyed when the grid is destroyed.</span>
+    destroy?(): void;
 }</pre>
-            </td>
-            <tr>
-                <th>destroy</th>
-                <td>Gets called when the grid is destroyed. If your custom filter needs to do
-                    any resource cleaning up, do it here. A filter is NOT destroyed when it is
-                    made 'not visible', as the gui is kept to be shown again if the user selects
-                    that filter again. The filter is destroyed when the grid is destroyed.
-                </td>
-            </tr>
-        </tr>
-    </table>
+
+    <h4>IFilterParams</h4>
+
+    <p>
+        The method init(params) takes a params object with the items listed below. If the user provides
+        params via the <i>colDef.filterParams</i> attribute, these will be additionally added to the
+        params object, overriding items of the same name if a name clash exists.
+    </p>
+
+    <pre>interface IFilterParams {
+
+    <span class="codeComment">// The column this filter is for</span>
+    column: Column;
+
+    <span class="codeComment">// The column definition for the column</span>
+    colDef: ColDef;
+
+    <span class="codeComment">// The row model, helpful for looking up data values if needed.
+    // If the filter needs to know which rows are a) in the table b) currently
+    // visible (ie not already filtered), c) what groups d) what order - all of this
+    // can be read from the rowModel.</span>
+    rowModel: IRowModel;
+
+    <span class="codeComment">// A function callback, to be called, when the filter changes,
+    // to inform the grid to filter the data. The grid will respond by filtering the data.</span>
+    filterChangedCallback: ()=> void;
+
+    <span class="codeComment">// A function callback, to be optionally called, when the filter changes,
+    // but before 'Apply' is pressed. The grid does nothing except call
+    // gridOptions.filterModified(). This is useful if you are making use of
+    // an 'Apply' button and want to inform the user the filters are not
+    // longer in sync with the data (until you press 'Apply').</span>
+    filterModifiedCallback: ()=> void;
+
+    <span class="codeComment">// A function callback, call with a node to be given the value for that
+    // filters column for that node. The callback takes care of selecting the right colDef
+    // and deciding whether to use valueGetter or field etc. This is useful in, for example,
+    // creating an Excel style filer, where the filter needs to lookup available values to
+    // allow the user to select from.</span>
+    valueGetter: (rowNode: RowNode) => any;
+
+    <span class="codeComment">// A function callback, call with a node to be told whether
+    // the node passes all filters except the current filter. This is useful if you want
+    // to only present to the user values that this filter can filter given the status
+    // of the other filters. The set filter uses this to remove from the list, items that
+    // are no longer available due to the state of other filters (like Excel type filtering). </span>
+    doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
+
+    <span class="codeComment">// The context for this grid. See section on <a href="../javascript-grid-context/">Context</a></span>
+    context: any;
+
+    <span class="codeComment">// If the grid options angularCompileFilters is set to true, then a new child
+    // scope is created for each column filter and provided here. Just ignore this if
+    // you are not using Angular 1</span>
+    $scope: any;
+}</pre>
+
+    <h4>IDoesFilterPassParams</h4>
+
+    <p>
+        The method doesFilterPass(params) takes the following as a parameter:
+    </p>
+
+    <pre>interface IDoesFilterPassParams {
+
+    <span class="codeComment">// The row node in question</span>
+    node: RowNode;
+
+    <span class="codeComment">// The data part of the row node in question</span>
+    data: any
+}</pre>
 
     <h3>Custom Filter Example</h3>
 
     <p>
-        The example below shows two custom filters. The first is on the Athlete column and is implemented
-        using AngularJS. The second is on the Year column and is implemented using native Javascript.
+        The example below shows two custom filters. The first is on the Athlete column and the
+        second is on the Year column.
     </p>
 
     <show-example example="example2"></show-example>
 
-    <h2>Filter API</h2>
+    <h2>Accessing Filter Component Instances</h2>
 
     <p>
-        It is possible to set filters via the API. You do this by first getting an API to the filter
-        in question (ie for a particular column) and then making calls on the filter API. Getting
-        the API is done via the gridOptions api method getFilterApi(colDef).
+        It is possible to access the filter components directly if you want to interact with the specific
+        filter. This also works for your own custom filters, where you can
+        get a reference to the underlying filtering instance (ie what was created after ag-Grid called 'new'
+        on your filter). You get a reference to the filter instance by calling <code>api.getFilterComponent(colKey)</code>.
     </p>
+    <pre><span class="codeComment">// Get a reference to the name filter instance</span>
+var nameFilterInstance = api.getFilterComponent('name');</pre>
     <p>
-        Each column has it's own private filter and associated API. So if you want to change filters
-        on more than one column, you have to call getFilterApi(colDef) for each column.
-    </p>
-    <p>
-        Each filter type has it's own API. So what's available depends on the filter type.
-        If it's a custom filter, it's up to you to provide the API. The below
-        details the filter API for each of the built in filter types.
+        All of the methods in the IFilter interface (described above) are present, assuming the underlying
+        filter implements the method. Your custom filters can add their own methods here that ag-Grid will
+        not use but your application can use. What these extra methods do is up to you and between your
+        customer filter and your application.
     </p>
 
-    <h4>Number Filter API</h4>
+    <h3>Text Filter Component Methods</h3>
     <p>
-        The number filter API is as follows:
+        In addition to implementing the IFilter interface, the text filter also provides the following
+        API methods:
+        <ul>
+        <li>getType(): Gets the type.</li>
+        <li>setType(string): Sets the type.</li>
+        <li>getFilter(): Gets the filter text.</li>
+        <li>setFilter(string): Sets the filter text.</li>
+        </ul>
+    </p>
+    <p>
+        The available types for the text filter are the strings: 'contains', 'equals', 'notEquals', 'startsWith' and 'endsWith'.
+    </p>
+    <p>
+        So for example, you can set the text of the 'name' filter to start with 'bob' as follows:
+    <pre>var nameFilter = api.getFilterComponent('name');
+nameFilter.setType('startsWith');
+nameFilter.setFilter('bob');</pre>
+    </p>
+
+    <p>
+        Or alternatively, you could just use the <i>setModel()</i> method as part of the main <i>IFilter</i>
+        interface as follows:
+    <pre>var nameFilter = api.getFilterComponent('name');
+var model = {type: 'startsWith', filter: 'bob'};
+nameFilter.setModel(model);</pre>
+    </p>
+
+    <h3>Number Filter Component Methods</h3>
+    <p>
+        Similar to the text filter, the number filter also provides the following API methods:
     <ul>
-        <li><b>getType() / setType(type)</b>: Gets / Sets the type. Select from the provided constants on the API of EQUALS, LESS_THAN and GREATER_THAN</li>
-        <li><b>getFilter() / setFilter(filter)</b>: Gets / Sets the filter text (which should be a number).</li>
-        <li><b>getModel() / setModel()</b>: Gets / Sets the filter as a model, good for saving and restoring.</li>
+        <li>getType(): Gets the type.</li>
+        <li>setType(string): Sets the type.</li>
+        <li>getFilter(): Gets the filter text.</li>
+        <li>setFilter(number): Sets the filter text.</li>
     </ul>
     </p>
 
-    <h4>Text Filter API</h4>
     <p>
-        The text filter API is as follows:
-    <ul>
-        <li><b>getType() / setType(type)</b>: Gets / Sets the type. Select from the provided constants on the API of EQUALS, CONTAINS, STARTS_WITH and ENDS_WITH</li>
-        <li><b>getFilter() / setFilter(filter)</b>: Gets / Sets the filter text (a string).</li>
-        <li><b>getModel() / setModel()</b>: Gets / Sets the filter as a model, good for saving and restoring.</li>
-    </ul>
+        The available types for the text filter are the strings: 'equals', 'notEqual', 'lessThan', 'lessThanOrEqual', 'greaterThan' and 'greaterThanOrEqual'.
+    </p>
 
-    <h4>Custom Filter API</h4>
-    <p>
-        You can provide any API methods you wish on your custom filters. There is only one restriction, you must
-        implement the following if you want your filter to work with the gridOptions.api.setModel and gridOptions.api.getModel
-        methods:
-    <ul>
-        <li><b>getModel() / setModel()</b>: Gets / Sets the filter as a model, good for saving and restoring.</li>
-    </ul>
-
-    <h4>Example Filter API</h4>
+    <h3>Example Filter API</h3>
 
     <p>
         The example below shows controlling the country and age filters via the API.
     </p>
 
     <p>
-        The example also shows 'gridApi.destroyFilter(col)' which completly destroys a filter. Use this is if you want
+        The example also shows 'gridApi.destroyFilter(col)' which completely destroys a filter. Use this is if you want
         a filter to be created again with new initialisation values.
     </p>
     
