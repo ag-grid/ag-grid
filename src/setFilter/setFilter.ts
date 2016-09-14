@@ -1,44 +1,30 @@
-import {Utils, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
+import {IFilter, IFilterParams, IDoesFilterPassParams, Utils, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
-import {Filter} from "ag-grid/main";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
-export class SetFilter extends Component implements Filter {
+interface ISetFilterParams extends IFilterParams {
+    cellHeight: number;
+    apply: boolean;
+    suppressSorting: boolean;
+    cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    newRowsAction: string;
+}
 
-    private static TEMPLATE =
-        '<div>'+
-            '<div class="ag-filter-header-container">'+
-                '<input class="ag-filter-filter" type="text" placeholder="[SEARCH...]"/>'+
-            '</div>'+
-            '<div class="ag-filter-header-container">'+
-                '<label>'+
-                    '<input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>'+
-                    '<span class="ag-filter-value">([SELECT ALL])</span>'+
-                '</label>'+
-            '</div>'+
-            '<div id="richList" class="ag-set-filter-list"></div>'+
-            '<div class="ag-filter-apply-panel" id="applyPanel">'+
-                '<button type="button" id="applyButton">[APPLY FILTER]</button>' +
-            '</div>'+
-        '</div>';
+export class SetFilter extends Component implements IFilter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private filterParams: any;
+    private params: ISetFilterParams;
     private model: SetFilterModel;
-    private filterChangedCallback: any;
-    private filterModifiedCallback: any;
-    private valueGetter: any;
-    private colDef: any;
     private suppressSorting: boolean;
+    private applyActive: boolean;
+    private newRowsActionKeep: boolean;
 
-    private eSelectAll: any;
-    private eMiniFilter: any;
-    private api: any;
-    private applyActive: any;
-    private eApplyButton: any;
+    private eSelectAll: HTMLInputElement;
+    private eMiniFilter: HTMLInputElement;
+    private eApplyButton: HTMLButtonElement;
 
     private virtualList: VirtualList;
     
@@ -57,17 +43,15 @@ export class SetFilter extends Component implements Filter {
         this.getGui().querySelector('#richList').appendChild(this.virtualList.getGui());
     }
 
-    public init(params: any): void {
-        this.filterParams = params.filterParams;
-        if (this.filterParams && this.filterParams.cellHeight) {
-            this.virtualList.setRowHeight(this.filterParams.cellHeight);
+    public init(params: IFilterParams): void {
+        this.params = <ISetFilterParams> params;
+        this.applyActive = this.params.apply === true;
+        this.suppressSorting = this.params.suppressSorting;
+        this.newRowsActionKeep = this.params.newRowsAction === 'keep';
+
+        if (Utils.exists(this.params.cellHeight)) {
+            this.virtualList.setRowHeight(this.params.cellHeight);
         }
-        this.applyActive = this.filterParams && this.filterParams.apply === true;
-        this.filterChangedCallback = params.filterChangedCallback;
-        this.filterModifiedCallback = params.filterModifiedCallback;
-        this.valueGetter = params.valueGetter;
-        this.colDef = params.colDef;
-        this.suppressSorting = this.filterParams && this.filterParams.suppressSorting;
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 
@@ -75,14 +59,10 @@ export class SetFilter extends Component implements Filter {
         this.virtualList.setModel(new ModelWrapper(this.model));
 
         this.createGui();
-        this.createApi();
     }
 
     private createSetListItem(value: any): Component {
-        var cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
-        if (this.filterParams) {
-            cellRenderer = this.filterParams.cellRenderer;
-        }
+        var cellRenderer = this.params.cellRenderer;
 
         var listItem = new SetFilterListItem(value, cellRenderer);
         this.context.wireBean(listItem);
@@ -102,15 +82,11 @@ export class SetFilter extends Component implements Filter {
         this.eMiniFilter.focus();
     }
 
-    public getApi() {
-        return this.api;
-    }
-
     public isFilterActive(): boolean {
         return this.model.isFilterActive();
     }
 
-    public doesFilterPass(node: any): boolean {
+    public doesFilterPass(params: IDoesFilterPassParams): boolean {
 
         // if no filter, always pass
         if (this.model.isEverythingSelected()) {
@@ -121,9 +97,9 @@ export class SetFilter extends Component implements Filter {
             return false;
         }
 
-        var value = this.valueGetter(node);
-        if (this.colDef.keyCreator) {
-            value = this.colDef.keyCreator( {value: value} );
+        var value = this.params.valueGetter(params.node);
+        if (this.params.colDef.keyCreator) {
+            value = this.params.colDef.keyCreator( {value: value} );
         }
         value = Utils.makeNull(value);
 
@@ -140,7 +116,7 @@ export class SetFilter extends Component implements Filter {
     }
 
     public onNewRowsLoaded(): void {
-        var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+        var keepSelection = this.params && this.params.newRowsAction === 'keep';
         var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
@@ -153,17 +129,29 @@ export class SetFilter extends Component implements Filter {
     }
 
     private createTemplate() {
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        return SetFilter.TEMPLATE
-            .replace('[SELECT ALL]', localeTextFunc('selectAll', 'Select All'))
-            .replace('[SEARCH...]', localeTextFunc('searchOoo', 'Search...'))
-            .replace('[APPLY FILTER]', localeTextFunc('applyFilter', 'Apply Filter'));
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return `<div>
+                    <div class="ag-filter-header-container">
+                        <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
+                    </div>
+                    <div class="ag-filter-header-container">
+                        <label>
+                            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>
+                            <span class="ag-filter-value">(${translate('selectAll', 'Select All')})</span>
+                        </label>
+                    </div>
+                    <div id="richList" class="ag-set-filter-list"></div>
+                    <div class="ag-filter-apply-panel" id="applyPanel">
+                        <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
+                    </div>
+                </div>`;
     }
 
     private createGui() {
 
-        this.eSelectAll = this.queryForHtmlElement("#selectAll");
-        this.eMiniFilter = this.queryForHtmlElement(".ag-filter-filter");
+        this.eSelectAll = <HTMLInputElement> this.queryForHtmlElement("#selectAll");
+        this.eMiniFilter = <HTMLInputElement> this.queryForHtmlElement(".ag-filter-filter");
 
         this.eMiniFilter.value = this.model.getMiniFilter();
         this.addDestroyableEventListener(this.eMiniFilter, 'input', () => {
@@ -188,9 +176,9 @@ export class SetFilter extends Component implements Filter {
 
     private setupApply() {
         if (this.applyActive) {
-            this.eApplyButton = this.queryForHtmlElement('#applyButton');
+            this.eApplyButton = <HTMLButtonElement> this.queryForHtmlElement('#applyButton');
             this.eApplyButton.addEventListener('click', () => {
-                this.filterChangedCallback();
+                this.params.filterChangedCallback();
             });
         } else {
             Utils.removeElement(this.getGui(), '#applyPanel');
@@ -198,9 +186,9 @@ export class SetFilter extends Component implements Filter {
     }
 
     private filterChanged() {
-        this.filterModifiedCallback();
+        this.params.filterModifiedCallback();
         if (!this.applyActive) {
-            this.filterChangedCallback();
+            this.params.filterChangedCallback();
         }
     }
 
@@ -245,65 +233,69 @@ export class SetFilter extends Component implements Filter {
         this.filterChanged();
     }
 
-    private createApi() {
-        var model = this.model;
-        var that = this;
-        this.api = {
-            setMiniFilter: function (newMiniFilter: any) {
-                model.setMiniFilter(newMiniFilter);
-            },
-            getMiniFilter: function () {
-                return model.getMiniFilter();
-            },
-            selectEverything: function () {
-                that.eSelectAll.indeterminate = false;
-                that.eSelectAll.checked = true;
-                // not sure if we need to call this, as checking the checkout above might
-                // fire events.
-                model.selectEverything();
-            },
-            isFilterActive: function () {
-                return model.isFilterActive();
-            },
-            selectNothing: function () {
-                that.eSelectAll.indeterminate = false;
-                that.eSelectAll.checked = false;
-                // not sure if we need to call this, as checking the checkout above might
-                // fire events.
-                model.selectNothing();
-            },
-            unselectValue: function (value: any) {
-                model.unselectValue(value);
-                that.virtualList.refresh();
-            },
-            selectValue: function (value: any) {
-                model.selectValue(value);
-                that.virtualList.refresh();
-            },
-            isValueSelected: function (value: any) {
-                return model.isValueSelected(value);
-            },
-            isEverythingSelected: function () {
-                return model.isEverythingSelected();
-            },
-            isNothingSelected: function () {
-                return model.isNothingSelected();
-            },
-            getUniqueValueCount: function () {
-                return model.getUniqueValueCount();
-            },
-            getUniqueValue: function (index: any) {
-                return model.getUniqueValue(index);
-            },
-            getModel: function () {
-                return model.getModel();
-            },
-            setModel: function (dataModel: any) {
-                model.setModel(dataModel);
-                that.virtualList.refresh();
-            }
-        };
+    public setMiniFilter(newMiniFilter: any): void {
+        this.model.setMiniFilter(newMiniFilter);
     }
+
+    public getMiniFilter() {
+        return this.model.getMiniFilter();
+    }
+
+    public selectEverything() {
+        this.eSelectAll.indeterminate = false;
+        this.eSelectAll.checked = true;
+        // not sure if we need to call this, as checking the checkout above might
+        // fire events.
+        this.model.selectEverything();
+    }
+
+    public selectNothing() {
+        this.eSelectAll.indeterminate = false;
+        this.eSelectAll.checked = false;
+        // not sure if we need to call this, as checking the checkout above might
+        // fire events.
+        this.model.selectNothing();
+    }
+
+    public unselectValue(value: any) {
+        this.model.unselectValue(value);
+        this.virtualList.refresh();
+    }
+
+    public selectValue(value: any) {
+        this.model.selectValue(value);
+        this.virtualList.refresh();
+    }
+
+    public isValueSelected(value: any) {
+        return this.model.isValueSelected(value);
+    }
+
+    public isEverythingSelected() {
+        return this.model.isEverythingSelected();
+    }
+
+    public isNothingSelected() {
+        return this.model.isNothingSelected();
+    }
+
+    public getUniqueValueCount() {
+        return this.model.getUniqueValueCount();
+    }
+
+    public getUniqueValue(index: any) {
+        return this.model.getUniqueValue(index);
+    }
+
+    public getModel() {
+        return this.model.getModel();
+    }
+
+    public setModel(dataModel: any) {
+        this.model.setModel(dataModel);
+        this.virtualList.refresh();
+    }
+
 }
 
 class ModelWrapper implements VirtualListModel {
