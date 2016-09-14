@@ -31,6 +31,7 @@ import {VirtualPageRowModel} from "./rowControllers/virtualPagination/virtualPag
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
+import {IFilter} from "./interfaces/iFilter";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -365,16 +366,21 @@ export class GridApi {
         this.inMemoryRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
-    public getFilterApiForColDef(colDef:any) {
+    public getFilterApiForColDef(colDef: any): any {
         console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
-        return this.getFilterApi(colDef);
+        return this.getFilterComponent(colDef);
+    }
+
+    public getFilterComponent(key: string|Column|ColDef): IFilter {
+        var column = this.columnController.getPrimaryColumn(key);
+        if (column) {
+            return this.filterManager.getFilterComponent(column);
+        }
     }
 
     public getFilterApi(key: string|Column|ColDef) {
-        var column = this.columnController.getPrimaryColumn(key);
-        if (column) {
-            return this.filterManager.getFilterApi(column);
-        }
+        console.warn('ag-Grid: getFilterApi is deprecated, use getFilterComponent instead');
+        return this.getFilterComponent(key);
     }
 
     public destroyFilter(key: string|Column|ColDef) {

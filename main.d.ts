@@ -55,6 +55,7 @@ export * from './dist/lib/interfaces/iClipboardService';
 export * from './dist/lib/interfaces/iCompFactory';
 export * from './dist/lib/interfaces/iContextMenuFactory';
 export * from './dist/lib/interfaces/iEventEmitter';
+export * from './dist/lib/interfaces/iFilter';
 export * from './dist/lib/interfaces/iMenu';
 export * from './dist/lib/interfaces/iMenuFactory';
 export * from './dist/lib/interfaces/iRangeController';

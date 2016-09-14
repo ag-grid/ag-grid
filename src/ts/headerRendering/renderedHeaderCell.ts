@@ -127,9 +127,9 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             _.addOrRemoveCssClass(eFilterIcon, 'ag-hidden', !filterPresent);
         };
 
-        this.column.addEventListener(Column.EVENT_FILTER_ACTIVE_CHANGED, filterChangedListener);
+        this.column.addEventListener(Column.EVENT_FILTER_CHANGED, filterChangedListener);
         this.destroyFunctions.push( () => {
-            this.column.removeEventListener(Column.EVENT_FILTER_ACTIVE_CHANGED, filterChangedListener);
+            this.column.removeEventListener(Column.EVENT_FILTER_CHANGED, filterChangedListener);
         });
 
         filterChangedListener();

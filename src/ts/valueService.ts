@@ -17,7 +17,6 @@ export class ValueService {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
 
-    private suppressDotNotation: boolean;
     private cellExpressions: boolean;
     private userProvidedTheGroups: boolean;
     private suppressUseColIdForGroups: boolean;
@@ -26,7 +25,6 @@ export class ValueService {
 
     @PostConstruct
     public init(): void {
-        this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
@@ -56,7 +54,7 @@ export class ValueService {
         } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         } else if (field && data) {
-            result = this.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = _.getValueUsingField(data, field, column.isFieldContainsDots());
         } else {
             result = undefined;
         }
@@ -68,27 +66,6 @@ export class ValueService {
         }
 
         return result;
-    }
-
-    private getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
-        if (!field || !data) {
-            return;
-        }
-        // if no '.', then it's not a deep value
-        if (!fieldContainsDots) {
-            return data[field];
-        } else {
-            // otherwise it is a deep value, so need to dig for it
-            var fields = field.split('.');
-            var currentObject = data;
-            for (var i = 0; i<fields.length; i++) {
-                currentObject = currentObject[fields[i]];
-                if (_.missing(currentObject)) {
-                    return null;
-                }
-            }
-            return currentObject;
-        }
     }
 
     public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {

@@ -1,68 +1,46 @@
 import {Utils as _} from '../utils';
-import {Filter} from "./filter";
+import {IFilter, IFilterParams, IDoesFilterPassParams} from "../interfaces/iFilter";
+import {Autowired} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
-var template =
-        '<div>'+
-            '<div>'+
-                '<select class="ag-filter-select" id="filterType">'+
-                    '<option value="1">[EQUALS]</option>'+
-                    '<option value="2">[NOT EQUAL]</option>'+
-                    '<option value="3">[LESS THAN]</option>'+
-                    '<option value="4">[LESS THAN OR EQUAL]</option>'+
-                    '<option value="5">[GREATER THAN]</option>'+
-                    '<option value="6">[GREATER THAN OR EQUAL]</option>'+
-                '</select>'+
-            '</div>'+
-            '<div>'+
-                '<input class="ag-filter-filter" id="filterText" type="text" placeholder="[FILTER...]"/>'+
-            '</div>'+
-            '<div class="ag-filter-apply-panel" id="applyPanel">'+
-                '<button type="button" id="applyButton">[APPLY FILTER]</button>' +
-            '</div>'+
-        '</div>';
+export class NumberFilter implements IFilter {
 
-var EQUALS = 1;
-var NOT_EQUAL = 2;
-var LESS_THAN = 3;
-var LESS_THAN_OR_EQUAL = 4;
-var GREATER_THAN = 5;
-var GREATER_THAN_OR_EQUAL = 6;
+    public static EQUALS = 'equals';// 1;
+    public static NOT_EQUAL = 'notEqual';//2;
+    public static LESS_THAN = 'lessThan';//3;
+    public static LESS_THAN_OR_EQUAL = 'lessThanOrEqual';//4;
+    public static GREATER_THAN = 'greaterThan';//5;
+    public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';//6;
 
-export class NumberFilter implements Filter {
+    private filterParams: IFilterParams;
 
-    private filterParams: any;
-    private filterChangedCallback: any;
-    private filterModifiedCallback: any;
-    private localeTextFunc: any;
-    private valueGetter: any;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     private filterNumber: any;
-    private filterType: any;
-    private api: any;
+    private filterType: string;
 
-    private eGui: any;
-    private eFilterTextField: any;
-    private eTypeSelect: any;
-    private applyActive: any;
-    private eApplyButton: any;
+    private applyActive: boolean;
+    private newRowsActionKeep: boolean;
 
-    public init(params: any): void {
-        this.filterParams = params.filterParams;
-        this.applyActive = this.filterParams && this.filterParams.apply === true;
-        this.filterChangedCallback = params.filterChangedCallback;
-        this.filterModifiedCallback = params.filterModifiedCallback;
-        this.localeTextFunc = params.localeTextFunc;
-        this.valueGetter = params.valueGetter;
-        this.createGui();
+    private eGui: HTMLElement;
+    private eFilterTextField: HTMLInputElement;
+    private eTypeSelect: HTMLSelectElement;
+    private eApplyButton: HTMLButtonElement;
+
+    public init(params: IFilterParams): void {
+        this.filterParams = params;
+        this.applyActive = (<any>params).apply === true;
+        this.newRowsActionKeep = (<any>params).newRowsAction === 'keep';
+
         this.filterNumber = null;
-        this.filterType = EQUALS;
-        this.createApi();
+        this.filterType = NumberFilter.EQUALS;
+        this.createGui();
     }
 
     public onNewRowsLoaded() {
-        var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        if (!keepSelection) {
-            this.api.setType(EQUALS);
-            this.api.setFilter(null);
+        if (!this.newRowsActionKeep) {
+            this.setType(NumberFilter.EQUALS);
+            this.setFilter(null);
         }
     }
 
@@ -70,11 +48,11 @@ export class NumberFilter implements Filter {
         this.eFilterTextField.focus();
     }
 
-    public doesFilterPass(node: any) {
+    public doesFilterPass(params: IDoesFilterPassParams) {
         if (this.filterNumber === null) {
             return true;
         }
-        var value = this.valueGetter(node);
+        var value = this.filterParams.valueGetter(params.node);
 
         if (!value && value !== 0) {
             return false;
@@ -88,17 +66,17 @@ export class NumberFilter implements Filter {
         }
 
         switch (this.filterType) {
-            case EQUALS:
+            case NumberFilter.EQUALS:
                 return valueAsNumber === this.filterNumber;
-            case LESS_THAN:
+            case NumberFilter.LESS_THAN:
                 return valueAsNumber < this.filterNumber;
-            case GREATER_THAN:
+            case NumberFilter.GREATER_THAN:
                 return valueAsNumber > this.filterNumber;
-            case LESS_THAN_OR_EQUAL:
+            case NumberFilter.LESS_THAN_OR_EQUAL:
                 return valueAsNumber <= this.filterNumber;
-            case GREATER_THAN_OR_EQUAL:
+            case NumberFilter.GREATER_THAN_OR_EQUAL:
                 return valueAsNumber >= this.filterNumber;
-            case NOT_EQUAL:
+            case NumberFilter.NOT_EQUAL:
                 return valueAsNumber != this.filterNumber;  
             default:
                 // should never happen
@@ -116,21 +94,32 @@ export class NumberFilter implements Filter {
     }
 
     private createTemplate() {
-        return template
-            .replace('[FILTER...]', this.localeTextFunc('filterOoo', 'Filter...'))
-            .replace('[EQUALS]', this.localeTextFunc('equals', 'Equals'))
-            .replace('[LESS THAN]', this.localeTextFunc('lessThan', 'Less than'))
-            .replace('[GREATER THAN]', this.localeTextFunc('greaterThan', 'Greater than'))
-            .replace('[LESS THAN OR EQUAL]', this.localeTextFunc('lessThanOrEqual', 'Less than or equal'))
-            .replace('[GREATER THAN OR EQUAL]', this.localeTextFunc('greaterThanOrEqual', 'Greater than or equal'))
-            .replace('[NOT EQUAL]', this.localeTextFunc('notEqual', 'Not equal'))
-            .replace('[APPLY FILTER]', this.localeTextFunc('applyFilter', 'Apply Filter'));
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return `<div>
+                    <div>
+                        <select class="ag-filter-select" id="filterType">
+                            <option value="${NumberFilter.EQUALS}">${translate('equals', 'Equals')}</option>
+                            <option value="${NumberFilter.NOT_EQUAL}">${translate('notEqual', 'Not equal')}</option>
+                            <option value="${NumberFilter.LESS_THAN}">${translate('lessThan', 'Less than')}</option>
+                            <option value="${NumberFilter.LESS_THAN_OR_EQUAL}">${translate('lessThanOrEqual', 'Less than or equal')}</option>
+                            <option value="${NumberFilter.GREATER_THAN}">${translate('greaterThan', 'Greater than')}</option>
+                            <option value="${NumberFilter.GREATER_THAN_OR_EQUAL}">${translate('greaterThanOrEqual', 'Greater than or equal')}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input class="ag-filter-filter" id="filterText" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+                    </div>
+                    <div class="ag-filter-apply-panel" id="applyPanel">
+                        <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
+                    </div>
+                </div>`;
     }
 
     private createGui() {
         this.eGui = _.loadTemplate(this.createTemplate());
-        this.eFilterTextField = this.eGui.querySelector("#filterText");
-        this.eTypeSelect = this.eGui.querySelector("#filterType");
+        this.eFilterTextField = <HTMLInputElement> this.eGui.querySelector("#filterText");
+        this.eTypeSelect = <HTMLSelectElement> this.eGui.querySelector("#filterType");
 
         _.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
         this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
@@ -140,9 +129,9 @@ export class NumberFilter implements Filter {
 
     private setupApply() {
         if (this.applyActive) {
-            this.eApplyButton = this.eGui.querySelector('#applyButton');
+            this.eApplyButton = <HTMLButtonElement> this.eGui.querySelector('#applyButton');
             this.eApplyButton.addEventListener('click', () => {
-                this.filterChangedCallback();
+                this.filterParams.filterChangedCallback();
             });
         } else {
             _.removeElement(this.eGui, '#applyPanel');
@@ -150,14 +139,14 @@ export class NumberFilter implements Filter {
     }
 
     private onTypeChanged() {
-        this.filterType = parseInt(this.eTypeSelect.value);
+        this.filterType = this.eTypeSelect.value;
         this.filterChanged();
     }
 
     private filterChanged() {
-        this.filterModifiedCallback();
+        this.filterParams.filterModifiedCallback();
         if (!this.applyActive) {
-            this.filterChangedCallback();
+            this.filterParams.filterChangedCallback();
         }
     }
 
@@ -178,56 +167,42 @@ export class NumberFilter implements Filter {
         }
     }
 
-    private createApi() {
-        var that = this;
-        this.api = {
-            EQUALS: EQUALS,
-            NOT_EQUAL: NOT_EQUAL,            
-            LESS_THAN: LESS_THAN,
-            GREATER_THAN: GREATER_THAN,
-            LESS_THAN_OR_EQUAL: LESS_THAN_OR_EQUAL,
-            GREATER_THAN_OR_EQUAL: GREATER_THAN_OR_EQUAL,
-            setType: function (type: any) {
-                that.filterType = type;
-                that.eTypeSelect.value = type;
-            },
-            setFilter: function (filter: any) {
-                filter = _.makeNull(filter);
-
-                if (filter !== null && !(typeof filter === 'number')) {
-                    filter = parseFloat(filter);
-                }
-                that.filterNumber = filter;
-                that.eFilterTextField.value = filter;
-            },
-            getType: function () {
-                return that.filterType;
-            },
-            getFilter: function () {
-                return that.filterNumber;
-            },
-            getModel: function () {
-                if (that.isFilterActive()) {
-                    return {
-                        type: that.filterType,
-                        filter: that.filterNumber
-                    };
-                } else {
-                    return null;
-                }
-            },
-            setModel: function (dataModel: any) {
-                if (dataModel) {
-                    this.setType(dataModel.type);
-                    this.setFilter(dataModel.filter);
-                } else {
-                    this.setFilter(null);
-                }
-            }
-        };
+    public setType(type: string): void {
+        this.filterType = type;
+        this.eTypeSelect.value = type;
     }
 
-    public getApi() {
-        return this.api;
+    public setFilter(filter: any) {
+        filter = _.makeNull(filter);
+
+        if (filter !== null && !(typeof filter === 'number')) {
+            filter = parseFloat(filter);
+        }
+        this.filterNumber = filter;
+        this.eFilterTextField.value = filter;
+    }
+
+    public getFilter() {
+        return this.filterNumber;
+    }
+
+    public getModel(): any {
+        if (this.isFilterActive()) {
+            return {
+                type: this.filterType,
+                filter: this.filterNumber
+            };
+        } else {
+            return null;
+        }
+    }
+
+    public setModel(model: any): void {
+        if (model) {
+            this.setType(model.type);
+            this.setFilter(model.filter);
+        } else {
+            this.setFilter(null);
+        }
     }
 }

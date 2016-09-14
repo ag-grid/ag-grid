@@ -10,6 +10,7 @@ import {RowNode} from "./rowNode";
 import {BaseFrameworkFactory} from "../baseFrameworkFactory";
 import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
+import {IFilter} from "../interfaces/iFilter";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -31,9 +32,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     // + renderedColumn - for changing visibility icon
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
     // + renderedHeaderCell - marks the header with filter icon
-    public static EVENT_FILTER_ACTIVE_CHANGED = 'filterChanged';
+    public static EVENT_FILTER_CHANGED = 'filterChanged';
     // + renderedHeaderCell - marks the header with sort icon
-    public static EVENT_SORT_CHANGED = 'filterChanged';
+    public static EVENT_SORT_CHANGED = 'sortChanged';
 
     // + toolpanel, for gui updates
     public static EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
@@ -76,6 +77,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private eventService: EventService = new EventService();
 
     private fieldContainsDots: boolean;
+    private tooltipFieldContainsDots: boolean;
 
     private rowGroupActive = false;
     private pivotActive = false;
@@ -86,6 +88,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
     private floatingCellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
     private cellEditor: {new(): ICellEditor} | string;
+    private filter: {new(): IFilter} | string;
 
     constructor(colDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
@@ -102,6 +105,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.floatingCellRenderer = this.baseFrameworkFactory.colDefFloatingCellRenderer(this.colDef);
         this.cellRenderer = this.baseFrameworkFactory.colDefCellRenderer(this.colDef);
         this.cellEditor = this.baseFrameworkFactory.colDefCellEditor(this.colDef);
+        this.filter = this.baseFrameworkFactory.colDefFilter(this.colDef);
 
         this.setPinned(this.colDef.pinned);
 
@@ -124,6 +128,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
         var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.')>=0 && !suppressDotNotation;
 
         this.validate();
     }
@@ -140,6 +145,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         return this.floatingCellRenderer;
     }
 
+    public getFilter(): {new(): IFilter} | string {
+        return this.filter;
+    }
+
     public getUniqueId(): string {
         return this.getId();
     }
@@ -154,6 +163,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     
     public isFieldContainsDots(): boolean {
         return this.fieldContainsDots;
+    }
+
+    public isTooltipFieldContainsDots(): boolean {
+        return this.tooltipFieldContainsDots;
     }
 
     private validate(): void {
@@ -271,7 +284,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     public setFilterActive(active: boolean): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
+            this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
         }
     }
 

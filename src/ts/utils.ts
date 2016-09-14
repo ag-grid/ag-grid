@@ -41,6 +41,27 @@ export class Utils {
         return result;
     }
 
+    static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
+        if (!field || !data) {
+            return;
+        }
+        // if no '.', then it's not a deep value
+        if (!fieldContainsDots) {
+            return data[field];
+        } else {
+            // otherwise it is a deep value, so need to dig for it
+            var fields = field.split('.');
+            var currentObject = data;
+            for (var i = 0; i<fields.length; i++) {
+                currentObject = currentObject[fields[i]];
+                if (this.missing(currentObject)) {
+                    return null;
+                }
+            }
+            return currentObject;
+        }
+    }
+
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
         if (this.missing(object)) { return; }
         var keys = Object.keys(object);
