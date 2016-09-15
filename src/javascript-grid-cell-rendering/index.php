@@ -44,17 +44,17 @@ include '../documentation-main/documentation_header.php';
         Below are some simple examples of cellRenderer function:
     </p>
 
-<pre><code><b>// put the value in bold</b>
+<pre><code><span class="codeComment">// put the value in bold</span>
 colDef.cellRenderer = function(params) {
     return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
 }
 
-<b>// put a tooltip on the value</b>
+<span class="codeComment">// put a tooltip on the value</span>
 colDef.cellRenderer = function(params) {
     return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
 }
 
-<b>// create a DOM object </b>
+<span class="codeComment">// create a DOM object </span>
 colDef.cellRenderer = function(params) {
     var eDiv = document.createElement('div');
     eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
