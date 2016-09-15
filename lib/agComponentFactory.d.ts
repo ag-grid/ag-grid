@@ -1,23 +1,45 @@
-// ag-grid-ng2 v5.4.0
+// ag-grid-ng2 v6.0.1
 import { ViewContainerRef, ComponentRef } from '@angular/core';
 import { RuntimeCompiler } from "@angular/compiler";
-import { ICellRenderer } from 'ag-grid/main';
+import { ICellRenderer, ICellEditor } from 'ag-grid/main';
+import { AgRendererComponent } from "./agRendererComponent";
+import { AgEditorComponent } from "./agEditorComponent";
 export declare class AgComponentFactory {
-    private compiler;
+    private _runtimeCompiler;
     private _cacheOfModules;
-    constructor(compiler: RuntimeCompiler);
-    createCellRendererFromComponent<T extends Object>(componentType: {
-        new (...args: any[]): T;
+    constructor(_runtimeCompiler: RuntimeCompiler);
+    /**
+     * Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.component
+     */
+    createCellRendererFromComponent(componentType: {
+        new (...args: any[]): AgRendererComponent;
     }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
         new (): ICellRenderer;
     };
+    /**
+     * Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.template
+     */
     createCellRendererFromTemplate(template: string, viewContainerRef: ViewContainerRef): {
         new (): ICellRenderer;
     };
-    private adaptComponent<T>(componentType, viewContainerRef, compiler, name, initializer, moduleImports, childDependencies?);
+    createRendererFromComponent(componentType: {
+        new (...args: any[]): AgRendererComponent;
+    }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
+        new (): ICellRenderer;
+    };
+    createRendererFromTemplate(template: string, viewContainerRef: ViewContainerRef, moduleImports?: any[]): {
+        new (): ICellRenderer;
+    };
+    createEditorFromComponent(componentType: {
+        new (...args: any[]): AgEditorComponent;
+    }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
+        new (): ICellEditor;
+    };
+    private adaptComponentToRenderer(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
+    private adaptComponentToEditor(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
     createComponent<T>(componentType: {
         new (...args: any[]): T;
-    }, viewContainerRef: ViewContainerRef, compiler: RuntimeCompiler, name: string, moduleImports: any[], childDependencies?: any[]): Promise<ComponentRef<T>>;
-    private createComponentModule(componentType, moduleImports, childDependencies?);
-    private adaptTemplate<T>(viewContainerRef, compiler, template);
+    }, viewContainerRef: ViewContainerRef, compiler: RuntimeCompiler, name: string, moduleImports: any[], childDependencies: any[]): ComponentRef<T>;
+    private createComponentModule(componentType, moduleImports, childDependencies);
+    private createDynamicComponentType(selector, template);
 }
