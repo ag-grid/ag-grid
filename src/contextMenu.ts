@@ -64,6 +64,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         var menuItems = this.getMenuItems(node, column, value);
 
+        if (Utils.missingOrEmpty(menuItems)) { return; }
+
         var menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
 
