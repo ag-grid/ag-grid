@@ -964,7 +964,7 @@ export class RenderedCell extends Component {
         function doRefresh(): void {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
-            var valueFormatted = that.formatValue(this.value);
+            var valueFormatted = that.formatValue(that.value);
             var cellRendererParams = that.column.getColDef().cellRendererParams;
             var params = that.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
             that.cellRenderer.refresh(params);
