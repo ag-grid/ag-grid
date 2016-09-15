@@ -621,10 +621,10 @@ colDef = {
 cellEditorFramework: {
     component: YourComponent,
 
-    // optional - these go into module.declarations
+    <span class="codeComment">// optional - these go into module.declarations</span>
     dependencies: [YourChildComponent1, YourChildComponent2],
 
-    // optional - these go into module.imports
+    <span class="codeComment">// optional - these go into module.imports</span>
     moduleImports: [CommonModule, FormsModule]
 }
 </pre>
@@ -655,7 +655,7 @@ cellEditorFramework: {
     </ul>
 
     <p>
-        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelBeforeEnd()()</i> etc)
+        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelBeforeEnd()</i> etc)
         should be put onto your Angular 2 component and will work as normal.
     </p>
 </div>
