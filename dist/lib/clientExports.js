@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.4.0
+// ag-grid-enterprise v6.0.1
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");
 var renderedGroup_1 = require("./toolPanel/columnsSelect/renderedGroup");

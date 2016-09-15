@@ -1,4 +1,4 @@
-// ag-grid-enterprise v5.4.0
+// ag-grid-enterprise v6.0.1
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -51,6 +51,9 @@ var ContextMenuFactory = (function () {
     };
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
         var menuItems = this.getMenuItems(node, column, value);
+        if (main_1.Utils.missingOrEmpty(menuItems)) {
+            return;
+        }
         var menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
         var eMenuGui = menu.getGui();

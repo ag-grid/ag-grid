@@ -1,31 +1,24 @@
-// ag-grid-enterprise v5.4.0
-import { Component } from "ag-grid/main";
-import { Filter } from "ag-grid/main";
-export declare class SetFilter extends Component implements Filter {
-    private static TEMPLATE;
+// ag-grid-enterprise v6.0.1
+import { IFilter, IFilterParams, IDoesFilterPassParams, Component } from "ag-grid/main";
+export declare class SetFilter extends Component implements IFilter {
     private gridOptionsWrapper;
     private context;
-    private filterParams;
+    private params;
     private model;
-    private filterChangedCallback;
-    private filterModifiedCallback;
-    private valueGetter;
-    private colDef;
     private suppressSorting;
+    private applyActive;
+    private newRowsActionKeep;
     private eSelectAll;
     private eMiniFilter;
-    private api;
-    private applyActive;
     private eApplyButton;
     private virtualList;
     constructor();
     private postConstruct();
-    init(params: any): void;
+    init(params: IFilterParams): void;
     private createSetListItem(value);
     afterGuiAttached(params: any): void;
-    getApi(): any;
     isFilterActive(): boolean;
-    doesFilterPass(node: any): boolean;
+    doesFilterPass(params: IDoesFilterPassParams): boolean;
     onNewRowsLoaded(): void;
     onAnyFilterChanged(): void;
     private createTemplate();
@@ -35,5 +28,17 @@ export declare class SetFilter extends Component implements Filter {
     private onMiniFilterChanged();
     private onSelectAll();
     private onItemSelected(value, selected);
-    private createApi();
+    setMiniFilter(newMiniFilter: any): void;
+    getMiniFilter(): any;
+    selectEverything(): void;
+    selectNothing(): void;
+    unselectValue(value: any): void;
+    selectValue(value: any): void;
+    isValueSelected(value: any): boolean;
+    isEverythingSelected(): boolean;
+    isNothingSelected(): boolean;
+    getUniqueValueCount(): number;
+    getUniqueValue(index: any): any;
+    getModel(): any;
+    setModel(dataModel: any): void;
 }
