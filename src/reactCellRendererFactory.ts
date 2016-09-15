@@ -10,7 +10,7 @@ export function reactCellRendererFactory(reactComponent: any, parentComponent?: 
         }
 
         public refresh(params: any): void {
-            var componentRef = this.getComponentRef();
+            var componentRef = this.getFrameworkComponent();
             if (componentRef.refresh) {
                 componentRef.refresh(params);
             } else {
