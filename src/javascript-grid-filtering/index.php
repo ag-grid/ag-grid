@@ -557,6 +557,10 @@ laterOnInYourApplicationSomewhere() {
         Angular 2 Filtering
     </h2>
 
+    <p>
+        We are currently working on allowing Angular 2 filters. Should have it ready in the next week.
+    </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
