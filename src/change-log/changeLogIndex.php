@@ -77,6 +77,33 @@ filterParams = {
     b: 'B'
 }</pre>
         </li>
+        <li>
+            <p>
+                The constants for Number and Text filters are now strings and not numbers. If you were storing
+                user preferences for these filters, you need to map the old numbers to the new string values.
+            </p>
+            <p>
+                For Number filter, the mapping is as follows:
+                <ul>
+                    <li>1 => 'equals'</li>
+                    <li>2 => 'notEqual'</li>
+                    <li>3 => 'lessThan'</li>
+                    <li>4 => 'lessThanOrEqual'</li>
+                    <li>5 => 'greaterThan'</li>
+                    <li>6 => 'greaterThanOrEqual'</li>
+                </ul>
+            </p>
+            <p>
+                For Number filter, the mapping is as follows:
+            <ul>
+                <li>1 => 'contains'</li>
+                <li>2 => 'equals'</li>
+                <li>3 => 'notEquals'</li>
+                <li>4 => 'startsWith'</li>
+                <li>5 => 'endsWith'</li>
+            </ul>
+            </p>
+        </li>
     </ol>
     </p>
     <p>
@@ -90,6 +117,7 @@ filterParams = {
     <li>Breaking Change: Filter constants are now strings, eg 'lessThan' rather than '1'.</li>
     <li>Breaking Change: Filter params are now consistent with other components, they are appended to normal params.</li>
     <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
+    <li>Enhancement: Tooltips now don't show if null or undefined.</li>
     <li>Enhancement: Reworked how all the editors, renderers and filters worked with the framework.</li>
     <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
         api.getFloatingBottomRow(index) for accessing floating rows</li>
