@@ -15,14 +15,14 @@ include '../documentation-main/documentation_header.php';
     <p>
         Version 6.0.x brings the following changes:
         <ol>
-            <li>Minor Bug Fixes and Improvements</li>
+            <li>Bug Fixes and Improvements</li>
             <li>Improved React and Angular 2 Support</li>
             <li>Refactored Filters</li>
         </ol>
         Below goes through each of these in turn.
     </p>
 
-    <h3>1 - Minor Bug Fixes and Improvements</h3>
+    <h3>1 - Bug Fixes and Improvements</h3>
 
     <li>Breaking Change: React now uses props directly for the init params in filters, cellRenderers and cellEditors.</li>
     <li>Breaking Change: Filter interface now called IFilter.</li>
@@ -57,7 +57,7 @@ colDef.cellRendererFramework = MyAngular2CellRenderer; <span class="codeComment"
         now behave in the same way as cellRenderers and cellEditors, including fitting in with React and
         Angular 2 components, the same way the renderers and editors do. The main core changes are as follows:
         <ol>
-        <li><b>If you were providing a Filter API</b> then you need to care about the API is no longer a separate part of the component. Instead it is now possible to get a reference
+        <li><b>If you were providing a Filter API</b> then be aware the API is no longer a separate part of the component. Instead it is now possible to get a reference
         to the filter component directly via api.getFilterInstance(colKey). From here you can access all
         methods on the filter component. So if you want to add extra items to (what used to be) the API, now
         you just add them directly to your filter component.
@@ -98,7 +98,7 @@ colDef = {
 }
 
 <span class="codeComment">// the old way resulted in:</span>
-filterParams = {
+params = {
     column: Column,
     ...
     filterParams: {
@@ -108,7 +108,7 @@ filterParams = {
 }
 
 <span class="codeComment">// but now it results in:</span>
-filterParams = {
+params = {
     column: Column,
     ...
     a: 'A',
