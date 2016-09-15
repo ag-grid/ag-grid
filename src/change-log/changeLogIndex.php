@@ -10,7 +10,43 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 6.0.x</h2>
 
-    <h4>Changes to Filters</h4>
+    <p>
+        Version 6.0.x brings the following changes:
+        <ol>
+            <li>Minor Bug Fixes and Improvements</li>
+            <li>Improved React and Angular 2 Support</li>
+            <li>Refactored Filters</li>
+        </ol>
+        Below goes through each of these in turn.
+    </p>
+
+    <h3>1 - Minor Bug Fixes and Improvements</h3>
+
+    <li>Breaking Change: React now uses props directly for the init params in filters, cellRenderers and cellEditors.</li>
+    <li>Breaking Change: Filter interface now called IFilter.</li>
+    <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
+    <li>Enhancement: Tooltips now don't show if null or undefined.</li>
+    <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
+        api.getFloatingBottomRow(index) for accessing floating rows</li>
+
+    <h3>2 - Improved React and Angular 2 Support</h3>
+
+    <p>
+        Lots of work has been done to support natively React and Angular 2, to allow you to plug in React
+        and Angular 2 cellEditors and cellRenders simply. Now, instead of using cellRenderer, you use
+        cellRendererFramework as follows:
+        <pre><span class="codeComment">// when not using React or Angular 2</span>
+colDef.cellRenderer = MyCellRenderer;
+
+<span class="codeComment">// in v6, you can use React or Angular 2 components directly</span>
+colDef.cellRendererFramework = MyReactCellRenderer; <span class="codeComment">// for React</span>
+colDef.cellRendererFramework = MyAngular2CellRenderer; <span class="codeComment">// for Angular</span></pre>
+        Full details on how get this all working are in the updated React and Angular 2 sections of the docs.
+        If you are using Angular 2 or React, it's best you read these sections to see how to do things
+        in the new improved way.
+    </p>
+
+    <h3>3 - Changes to Filters</h3>
 
     <p>
         How filters were working were out of line with how cellRenderers and cellEditors were working. This is
@@ -109,18 +145,6 @@ filterParams = {
     <p>
         All the examples are up to date with the new way of doing things.
     </p>
-
-    <li>Breaking Change: React now uses props directly for the init params in filters, cellRenderers and cellEditors.</li>
-
-    <li>Breaking Change: Filters now work in similar pattern to editors and renderers.</li>
-    <li>Breaking Change: Filter interface now called IFilter.</li>
-    <li>Breaking Change: Filter constants are now strings, eg 'lessThan' rather than '1'.</li>
-    <li>Breaking Change: Filter params are now consistent with other components, they are appended to normal params.</li>
-    <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
-    <li>Enhancement: Tooltips now don't show if null or undefined.</li>
-    <li>Enhancement: Reworked how all the editors, renderers and filters worked with the framework.</li>
-    <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
-        api.getFloatingBottomRow(index) for accessing floating rows</li>
 
     <h3>Version 5.4.x</h3>
 
