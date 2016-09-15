@@ -31,13 +31,6 @@ include '../documentation-main/documentation_header.php';
         better renderer definition and cell editor support.
     </note>
 
-    <h3>Angular 2 Still in Release Candidate</h3>
-
-    <p>
-        Angular 2 is currently on Release Candidate 7 - until Angular 2 is actually released there is of course an
-        element of instability in using it.
-        Please keep this in mind if you plan on using it for a Production release.
-    <p>
     <p>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
         for feedback or issue reporting around this functionality.</p>
 
