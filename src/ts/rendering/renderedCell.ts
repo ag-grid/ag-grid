@@ -1034,7 +1034,7 @@ export class RenderedCell extends Component {
             if (_.exists(data)) {
                 var tooltip = _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
                 if (_.exists(tooltip)) {
-                    this.eParentOfValue.setAttribute('title', tooltip);
+                        this.eParentOfValue.setAttribute('title', tooltip);
                 }
             }
         }
