@@ -412,14 +412,35 @@ TAKING OUT as want to reconsider how to register components
 
     <show-example example="example2"></show-example>
 
+    <!-- React from here on -->
     <h2 id="reactCellRendering">
         <img src="../images/react_large.png" style="width: 60px;"/>
         React Cell Rendering
     </h2>
 
+    <pre><span class="codeComment">// create your cellRenderer as a Angular 2 component</span>
+class NameCellRenderer extends React.Component {
+    render() {
+    <span class="codeComment">// put in render logic</span>
+        return &lt;span>{this.props.value}&lt;/span>;
+    }
+}
+
+<span class="codeComment">// then reference the Component in your colDef like this</span>
+colDef = {
+
+    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    cellRendererFramework: NameCellRenderer
+
+    <span class="codeComment">// specify all the other fields as normal</span>
+    headerName: 'Name',
+    field: 'firstName',
+    ...
+}</pre>
+
     <p>
         It is possible to provide a React cellRenderer for ag-Grid to use. All of the information above is
-        relevant to React cellRenderes. This section explains how to apply this logic to your React component.
+        relevant to React cellRenderers. This section explains how to apply this logic to your React component.
     </p>
 
     <p>
@@ -523,10 +544,130 @@ class NameCellRenderer extends React.Component {
         components <i>refresh()</i> method to update the state of your component.
     </p>
 
-    <h2 id="ng2CellEditing">
+    <!-- Angular 2 from here -->
+    <h2 id="ng2CellRendering">
         <img src="../images/angular2_large.png" style="width: 60px;"/>
         Angular 2 Cell Rendering
     </h2>
-</div>
+
+    <p>
+        It is possible to provide a Angular 2 cellRenderer for ag-Grid to use. All of the information above is
+        relevant to Angular 2 cellRenderers. This section explains how to apply this logic to your Angular 2 component.
+    </p>
+
+    <p>
+        For examples on Angular 2 cellRendering, see the
+        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.
+        Angular 2 Rendererers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
+    </p>
+
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 cellRenderer</h3>
+
+    <p>
+        If you are using the ag-grid-ng2 component to create the ag-Grid instance,
+        then you will have the option of additionally specifying the cellRenderers
+        as Angular 2 components.
+    </p>
+
+    <h2>cellRenderers from Angular 2 Components</h2>
+    <pre><span class="codeComment">// create your cellRenderer as a Angular 2 component</span>
+@Component({
+    selector: 'square-cell',
+    template: `{{valueSquared()}}`
+})
+class SquareComponent implements AgRendererComponent {
+    private params:any;
+
+    agInit(params:any):void {
+        this.params = params;
+    }
+
+    private valueSquared():number {
+        return this.params.value * this.params.value;
+    }
+}
+<span class="codeComment">// then reference the Component in your colDef like this</span>
+colDef = {
+    {
+        headerName: "Square Component",
+        field: "value",
+        <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+        cellRendererFramework: {
+            component: SquareComponent,
+        },
+
+        <span class="codeComment">// specify all the other fields as normal</span>
+        editable:true,
+        colId: "square",
+        width: 200
+    }
+}</pre>
+
+    <p>Your Angular 2 components need to implement <code>AgRendererComponent</code>.
+        The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the cell <code>params</code>.<p>
+
+    <p>When specifying Angular 2 Components you can optionally specify Component dependencies, as well as which modules you wish to import.
+        The latter is important if your component uses built in Angular 2 components (such as ngIf, ngStyle etc).</p>
+
+    <pre>
+cellRendererFramework: {
+    component: YourComponent,
+    dependencies: [YourChildComponent1, YourChildComponent2],       // optional - these go into module.declarations
+    moduleImports: [CommonModule, FormsModule]                      // optional - these go into module.imports
+}
+</pre>
+
+    <p>
+        By using <i>colDef.cellRendererFramework</i> (instead of <i>colDef.cellRenderer</i>) the grid
+        will know it's a Angular 2 component, based on the fact that you are using the Angular 2 version of
+        ag-Grid.
+    </p>
+
+    <p>
+        This same mechanism can be to use a Angular 2 Component in the following locations:
+        <ul>
+        <li>colDef.cellRenderer<b>Framework</b></li>
+        <li>colDef.floatingCellRenderer<b>Framework</b></li>
+        <li>gridOptions.fullWidthCellRenderer<b>Framework</b></li>
+        <li>gridOptions.groupRowRenderer<b>Framework</b></li>
+        <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
+    </ul>
+        In other words, wherever you specify a normal cellRenderer, you can now specify a Angular 2 cellRenderer
+    in the property of the same name excepting ending 'Framework'. As long as you are using the Angular 2 ag-Grid component,
+    the grid will know the framework to use is Angular 2.
+    </p>
+
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Methods / Lifecycle</h3>
+
+    <p>
+        All of the methods in the ICellRenderer interface described above are applicable
+        to the Angular 2 Component with the following exceptions:
+        <ul>
+        <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
+        <li><i>destroy()</i> is not used. Instead implement the Angular 2<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
+            any cleanup you need to do.</li>
+        <li><i>getGui()</i> is not used. Instead do normal Angular 2 magic in your <i>render()</i> method..</li>
+    </ul>
+
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Handling Refresh</h3>
+
+    <p>To receive update (for example, after an edit) you should implement the optional <code>refresh</code> method on the <code>AgRendererComponent</code> interface.</p>
+
+    <h2>cellRenderers from Angular 2 Templates</h2>
+<pre ng-non-bindable><span class="codeComment">// then reference the Component in your colDef like this</span>
+colDef = {
+    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    cellRendererFramework: {
+        template: '{{params.value | currency}}',
+        moduleImports: [CommonModule]
+    },
+    <span class="codeComment">// specify all the other fields as normal</span>
+    headerName: "Currency Pipe Template",
+    field: "value",
+    width: 200
+    </pre>
+
+    <p>Note in the above configuration we specify CommonModule as an import as we're using the <code>currency</code> pipe.
+        Note too that there is no <code>dependencies</code> option for templates.</p></div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
