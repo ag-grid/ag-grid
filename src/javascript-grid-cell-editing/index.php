@@ -510,7 +510,6 @@ colDef = {
     <p>
         For an example of Angular 2 cellEditing, see the
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.
-        In the example, the 'name' column uses a Angular 2 cellEditor.</p>
     </p>
 
     <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 cellEditor</h3>
