@@ -11,7 +11,7 @@ import {ICellRenderer, ICellEditor, MethodNotImplementedException}   from 'ag-gr
 
 import {AgRendererComponent} from "./agRendererComponent";
 import {AgEditorComponent} from "./agEditorComponent";
-import {AgInitable} from "./agInitable";
+import {AgFrameworkComponent} from "./agFrameworkComponent";
 
 @Injectable()
 export class AgComponentFactory {
@@ -90,16 +90,6 @@ export class AgComponentFactory {
                 this._componentRef.changeDetectorRef.detectChanges();
             }
 
-            getGui():HTMLElement {
-                return this._eGui;
-            }
-
-            destroy():void {
-                if (this._componentRef) {
-                    this._componentRef.destroy();
-                }
-            }
-
             refresh(params:any):void {
                 this._params = params;
 
@@ -138,10 +128,6 @@ export class AgComponentFactory {
                 super.init(params);
             }
 
-            getGui():HTMLElement {
-                return this._eGui;
-            }
-
             getValue():any {
                 return this._agAwareComponent.getValue();
             }
@@ -149,12 +135,6 @@ export class AgComponentFactory {
             isPopup():boolean {
                 return this._agAwareComponent.isPopup ?
                     this._agAwareComponent.isPopup() : false;
-            }
-
-            destroy():void {
-                if (this._componentRef) {
-                    this._componentRef.destroy();
-                }
             }
 
             isCancelBeforeStart():boolean {
@@ -204,7 +184,7 @@ export class AgComponentFactory {
     }
 
 
-    private  createComponentModule(componentType:any, moduleImports:any[], childDependencies:any[]) {
+    private  createComponentModule(componentType:any, moduleImports:any[], childDependencies:any[]) : any {
         @NgModule({
             imports: moduleImports,
             declarations: [componentType, ...childDependencies],
@@ -224,28 +204,48 @@ export class AgComponentFactory {
             agInit(params:any):void {
                 this.params = params;
             }
+
+            // not applicable for template components
+            getFrameworkComponentInstance():any {
+                return undefined;
+            }
         }
         return DynamicComponent;
     }
 }
 
-abstract class BaseGuiComponent<T extends AgInitable> {
+abstract class BaseGuiComponent<T extends AgFrameworkComponent> {
     protected _params:any;
     protected _eGui:HTMLElement;
     protected _componentRef:ComponentRef<T>;
     protected _agAwareComponent:T;
+    protected _frameworkComponentInstance:any;  // the users component - for accessing methods they create
 
-    init(params:any):void {
+    protected init(params:any):void {
         this._params = params;
 
         this._componentRef = this.createComponent();
         this._agAwareComponent = this._componentRef.instance;
+        this._frameworkComponentInstance = this._componentRef.instance;
         this._eGui = this._componentRef.location.nativeElement;
 
         this._agAwareComponent.agInit(this._params);
     }
 
-    protected abstract createComponent():ComponentRef<T>;
+    public getGui():HTMLElement {
+        return this._eGui;
+    }
 
+    public destroy():void {
+        if (this._componentRef) {
+            this._componentRef.destroy();
+        }
+    }
+
+    public getFrameworkComponentInstance() : any {
+        return this._frameworkComponentInstance;
+    }
+
+    protected abstract createComponent():ComponentRef<T>;
 }
 

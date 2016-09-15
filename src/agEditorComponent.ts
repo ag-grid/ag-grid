@@ -1,7 +1,8 @@
-import {AgInitable} from "./agInitable";
+import {AgFrameworkComponent} from "./agFrameworkComponent";
 
-export interface AgEditorComponent extends AgInitable {
-    agInit(params:any) : void;          // for clarity
+export interface AgEditorComponent extends AgFrameworkComponent {
+    agInit(params:any) : void;                  // for clarity
+    getFrameworkComponentInstance() : any;      // for clarity
     getValue() : any;
     isPopup?(): boolean;
     isCancelBeforeStart?(): boolean;
