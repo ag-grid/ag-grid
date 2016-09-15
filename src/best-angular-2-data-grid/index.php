@@ -236,106 +236,11 @@ include '../documentation-main/documentation_header.php';
     <note>
         <p>
             We here at ag-Grid owe a debt of thanks to Neal Borelli @ Thermo Fisher Scientific who provided a fully
-            working implementation for us to use as a basis for our Angular 2 "dynamic cell" offering.
+            working implementation for us to use as a basis for our initial Angular 2 "dynamic cell" offering.
             Neal's assistance was a big help in being able to get something out much faster than we would have otherwise
             - thanks Neal!
         </p>
     </note>
-
-    <h3>AgComponentFactory</h3>
-
-    <p><code>AgComponentFactory</code> offers two methods to add cellRenderers to ag-Grid, either via a Template String,
-        or via a Component. In both methods you'll need to pass in the <code>ViewContainerRef</code> for the current
-        component into the Factory.</p>
-    <p>To reference <code>AgComponentFactory</code> you'll need to pull in the dependency:</p>
-
-    <pre>import {AgComponentFactory} from 'ag-grid-ng2/main';</pre>
-
-    <h4>Adding cellRenderers via Template Strings</h4>
-
-    You can add a cellRenderer component supplying a string as a template - the <code>params</code> argument passed to
-    cellRenders is available in the template:
-
-    <pre ng-non-bindable>
-{
-    headerName: "Square Template",
-    field: "index",
-    cellRenderer: agComponentFactory.createCellRendererFromTemplate('{{params.value * params.value}}', this._viewContainerRef)
-    width: 200
-},</pre>
-
-    <h4>Adding cellRenderers via Components</h4>
-
-    <p>You can add a cellRenderer component supplying a regular Angular 2 Component.</p>
-
-    <p>If your component implements the <code>AgAware</code> (or just implements <code>agInit(params)</code>), then the
-        <code>params</code> argument
-        passed to cellRenders will be set via this method
-
-    <pre ng-non-bindable>
-@Component({
-    selector: 'square-cell',
-    template: `{{valueSquared()}}`
-})
-class SquareComponent implements AgAware {
-    private params:any;
-
-    agInit(params:any):void {
-        this.params = params;
-    }
-
-    private valueSquared():number {
-        return this.params.value * this.params.value;
-    }
-}</pre>
-    <pre>
-{
-    headerName: "Square Component",
-    field: "index",
-    cellRenderer: agComponentFactory.createCellRendererFromComponent(SquareComponent, this._viewContainerRef),
-    width: 200
-},</pre>
-
-    <h4>Supplying declarations to your Components</h4>
-
-    <p>If your component in turn depends on other components (or directives), you'll need to supply them to the
-        factory:</p>
-<pre>
-cellRenderer: this.agComponentFactory.createCellRendererFromComponent(RatioParentComponent,
-    this._viewContainerRef,
-    [RatioComponent]
-)
-</pre>
-    <p>In this case <code>RatioParentComponent</code> uses <code>RatioComponent</code>, so we supply it as the 3rd
-        argument.</p>
-
-    <h4>Supplying imports to your Components</h4>
-
-    <p>If your component requires other modules (for example. CommonModule for ngIf), you'll need to supply them to the
-        factory:</p>
-<pre>
-cellRenderer: this.agComponentFactory.createCellRendererFromComponent(MyComponent,
-    this._viewContainerRef,
-    [], // other declerations
-    [CommonModule] // we want to have CommonModule available to MyComponent
-)
-</pre>
-
-    <h2>Destroy</h2>
-
-    <p>
-        The grid ties in with the Angular 2 lifecycle and releases all resources when the directive is destroyed. The
-        example above demonstrates this
-        by taking the element out of the DOM via *ngIf (which, unlike *ng-show, destroys the directives).
-    </p>
-    <p>
-        If you have any resources you wish to release in a given component then you need to implement
-        <code>ngOnDestroy</code>
-        <pre ng-non-bindable>
-ngOnDestroy() {
-    console.log(`Destroying SquareComponent`);
-}</pre>
-    </p>
 
     <h2>Known Issues</h2>
 
