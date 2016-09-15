@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,6 +101,18 @@ var GridApi = (function () {
     };
     GridApi.prototype.setFloatingBottomRowData = function (rows) {
         this.floatingRowModel.setFloatingBottomRowData(rows);
+    };
+    GridApi.prototype.getFloatingTopRowCount = function () {
+        return this.floatingRowModel.getFloatingTopRowCount();
+    };
+    GridApi.prototype.getFloatingBottomRowCount = function () {
+        return this.floatingRowModel.getFloatingBottomRowCount();
+    };
+    GridApi.prototype.getFloatingTopRow = function (index) {
+        return this.floatingRowModel.getFloatingTopRow(index);
+    };
+    GridApi.prototype.getFloatingBottomRow = function (index) {
+        return this.floatingRowModel.getFloatingBottomRow(index);
     };
     GridApi.prototype.setColumnDefs = function (colDefs) {
         this.columnController.setColumnDefs(colDefs);
@@ -303,13 +315,17 @@ var GridApi = (function () {
     };
     GridApi.prototype.getFilterApiForColDef = function (colDef) {
         console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
-        return this.getFilterApi(colDef);
+        return this.getFilterInstance(colDef);
     };
-    GridApi.prototype.getFilterApi = function (key) {
+    GridApi.prototype.getFilterInstance = function (key) {
         var column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterApi(column);
+            return this.filterManager.getFilterComponent(column);
         }
+    };
+    GridApi.prototype.getFilterApi = function (key) {
+        console.warn('ag-Grid: getFilterApi is deprecated, use getFilterComponent instead');
+        return this.getFilterInstance(key);
     };
     GridApi.prototype.destroyFilter = function (key) {
         var column = this.columnController.getPrimaryColumn(key);

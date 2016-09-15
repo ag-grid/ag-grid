@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -86,6 +86,18 @@ var FloatingRowModel = (function () {
     };
     FloatingRowModel.prototype.getFloatingTopTotalHeight = function () {
         return this.getTotalHeight(this.floatingTopRows);
+    };
+    FloatingRowModel.prototype.getFloatingTopRowCount = function () {
+        return this.floatingTopRows ? this.floatingTopRows.length : 0;
+    };
+    FloatingRowModel.prototype.getFloatingBottomRowCount = function () {
+        return this.floatingBottomRows ? this.floatingBottomRows.length : 0;
+    };
+    FloatingRowModel.prototype.getFloatingTopRow = function (index) {
+        return this.floatingTopRows[index];
+    };
+    FloatingRowModel.prototype.getFloatingBottomRow = function (index) {
+        return this.floatingBottomRows[index];
     };
     FloatingRowModel.prototype.forEachFloatingTopRow = function (callback) {
         if (utils_1.Utils.missingOrEmpty(this.floatingTopRows)) {

@@ -1,13 +1,14 @@
-// Type definitions for ag-grid v5.4.0
+// Type definitions for ag-grid v6.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
-import { ICellEditor } from "./cellEditors/iCellEditor";
+import { ICellEditor, ICellEditorParams } from "./cellEditors/iCellEditor";
 export declare class CellEditorFactory {
     private static TEXT;
     private static SELECT;
     private static POPUP_TEXT;
     private static POPUP_SELECT;
+    private static LARGE_TEXT;
     private context;
     private gridOptionsWrapper;
     private cellEditorMap;
@@ -17,5 +18,5 @@ export declare class CellEditorFactory {
     }): void;
     createCellEditor(key: string | {
         new (): ICellEditor;
-    }): ICellEditor;
+    }, params: ICellEditorParams): ICellEditor;
 }

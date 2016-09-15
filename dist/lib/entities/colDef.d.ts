@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.4.0
+// Type definitions for ag-grid v6.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -8,6 +8,7 @@ import { TextAndNumberFilterParameters } from "../filter/textAndNumberFilterPara
 import { ICellEditor } from "../rendering/cellEditors/iCellEditor";
 import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 import { Column } from "./column";
+import { IFilter } from "../interfaces/iFilter";
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
     /** The name to render in the column header */
@@ -77,16 +78,19 @@ export interface ColDef extends AbstractColDef {
     cellRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
+    cellRendererFramework?: any;
     cellRendererParams?: {};
     /** Cell editor */
     cellEditor?: {
         new (): ICellEditor;
     } | string;
+    cellEditorFramework?: any;
     cellEditorParams?: {};
     /** A function for rendering a floating cell. */
     floatingCellRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
+    floatingCellRendererFramework?: any;
     floatingCellRendererParams?: {};
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     cellFormatter?: (params: any) => string;
@@ -135,7 +139,10 @@ export interface ColDef extends AbstractColDef {
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
     templateUrl?: string;
     /** one of the built in filter names: [set, number, text], or a filter function*/
-    filter?: string | Function;
+    filter?: string | {
+        new (): IFilter;
+    };
+    filterFramework?: any;
     /** The filter params are specific to each filter! */
     filterParams?: SetFilterParameters | TextAndNumberFilterParameters;
     /** Rules for applying css classes */

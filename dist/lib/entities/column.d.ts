@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.4.0
+// Type definitions for ag-grid v6.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -6,6 +6,9 @@ import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { ColDef, AbstractColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
+import { ICellRenderer, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellEditor } from "../rendering/cellEditors/iCellEditor";
+import { IFilter } from "../interfaces/iFilter";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     static EVENT_MOVING_CHANGED: string;
     static EVENT_LEFT_CHANGED: string;
@@ -13,7 +16,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     static EVENT_LAST_LEFT_PINNED_CHANGED: string;
     static EVENT_FIRST_RIGHT_PINNED_CHANGED: string;
     static EVENT_VISIBLE_CHANGED: string;
-    static EVENT_FILTER_ACTIVE_CHANGED: string;
+    static EVENT_FILTER_CHANGED: string;
     static EVENT_SORT_CHANGED: string;
     static EVENT_ROW_GROUP_CHANGED: string;
     static EVENT_PIVOT_CHANGED: string;
@@ -24,6 +27,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     static SORT_DESC: string;
     private gridOptionsWrapper;
     private columnUtils;
+    private frameworkFactory;
     private colDef;
     private colId;
     private actualWidth;
@@ -41,16 +45,34 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private filterActive;
     private eventService;
     private fieldContainsDots;
+    private tooltipFieldContainsDots;
     private rowGroupActive;
     private pivotActive;
     private aggregationActive;
     private primary;
+    private cellRenderer;
+    private floatingCellRenderer;
+    private cellEditor;
+    private filter;
     constructor(colDef: ColDef, colId: String, primary: boolean);
     initialise(): void;
+    getCellRenderer(): {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    getCellEditor(): {
+        new (): ICellEditor;
+    } | string;
+    getFloatingCellRenderer(): {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    getFilter(): {
+        new (): IFilter;
+    } | string;
     getUniqueId(): string;
     isPrimary(): boolean;
     isFilterAllowed(): boolean;
     isFieldContainsDots(): boolean;
+    isTooltipFieldContainsDots(): boolean;
     private validate();
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

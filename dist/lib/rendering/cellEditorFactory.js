@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,6 +21,7 @@ var popupEditorWrapper_1 = require("./cellEditors/popupEditorWrapper");
 var popupTextCellEditor_1 = require("./cellEditors/popupTextCellEditor");
 var popupSelectCellEditor_1 = require("./cellEditors/popupSelectCellEditor");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var largeTextCellEditor_1 = require("./cellEditors/largeTextCellEditor");
 var CellEditorFactory = (function () {
     function CellEditorFactory() {
         this.cellEditorMap = {};
@@ -30,6 +31,7 @@ var CellEditorFactory = (function () {
         this.cellEditorMap[CellEditorFactory.SELECT] = selectCellEditor_1.SelectCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = popupTextCellEditor_1.PopupTextCellEditor;
         this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = popupSelectCellEditor_1.PopupSelectCellEditor;
+        this.cellEditorMap[CellEditorFactory.LARGE_TEXT] = largeTextCellEditor_1.LargeTextCellEditor;
     };
     CellEditorFactory.prototype.addCellEditor = function (key, cellEditor) {
         this.cellEditorMap[key] = cellEditor;
@@ -40,7 +42,7 @@ var CellEditorFactory = (function () {
     //         this.addCellEditor(key, cellEditor);
     //     });
     // }
-    CellEditorFactory.prototype.createCellEditor = function (key) {
+    CellEditorFactory.prototype.createCellEditor = function (key, params) {
         var CellEditorClass;
         if (utils_1.Utils.missing(key)) {
             CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
@@ -57,8 +59,14 @@ var CellEditorFactory = (function () {
         }
         var cellEditor = new CellEditorClass();
         this.context.wireBean(cellEditor);
+        // we have to call init first, otherwise when using the frameworks, the wrapper
+        // classes won't be set up
+        if (cellEditor.init) {
+            cellEditor.init(params);
+        }
         if (cellEditor.isPopup && cellEditor.isPopup()) {
             cellEditor = new popupEditorWrapper_1.PopupEditorWrapper(cellEditor);
+            cellEditor.init(params);
         }
         return cellEditor;
     };
@@ -66,6 +74,7 @@ var CellEditorFactory = (function () {
     CellEditorFactory.SELECT = 'select';
     CellEditorFactory.POPUP_TEXT = 'popupText';
     CellEditorFactory.POPUP_SELECT = 'popupSelect';
+    CellEditorFactory.LARGE_TEXT = 'largeText';
     __decorate([
         context_1.Autowired('context'), 
         __metadata('design:type', context_1.Context)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,12 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
         return;
     }
     var eGridDiv = $element[0];
-    var grid = new grid_1.Grid(eGridDiv, gridOptions, null, $scope, $compile, quickFilterOnScope);
+    var gridParams = {
+        $scope: $scope,
+        $compile: $compile,
+        quickFilterOnScope: quickFilterOnScope
+    };
+    var grid = new grid_1.Grid(eGridDiv, gridOptions, gridParams);
     $scope.$on("$destroy", function () {
         grid.destroy();
     });

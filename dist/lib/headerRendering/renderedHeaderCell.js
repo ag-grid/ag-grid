@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -100,9 +100,9 @@ var RenderedHeaderCell = (function () {
             utils_1.Utils.addOrRemoveCssClass(_this.eHeaderCell, 'ag-header-cell-filtered', filterPresent);
             utils_1.Utils.addOrRemoveCssClass(eFilterIcon, 'ag-hidden', !filterPresent);
         };
-        this.column.addEventListener(column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, filterChangedListener);
+        this.column.addEventListener(column_1.Column.EVENT_FILTER_CHANGED, filterChangedListener);
         this.destroyFunctions.push(function () {
-            _this.column.removeEventListener(column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, filterChangedListener);
+            _this.column.removeEventListener(column_1.Column.EVENT_FILTER_CHANGED, filterChangedListener);
         });
         filterChangedListener();
     };

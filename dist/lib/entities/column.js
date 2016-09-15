@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,10 @@ var Column = (function () {
     }
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
+        this.floatingCellRenderer = this.frameworkFactory.colDefFloatingCellRenderer(this.colDef);
+        this.cellRenderer = this.frameworkFactory.colDefCellRenderer(this.colDef);
+        this.cellEditor = this.frameworkFactory.colDefCellEditor(this.colDef);
+        this.filter = this.frameworkFactory.colDefFilter(this.colDef);
         this.setPinned(this.colDef.pinned);
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
         var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
@@ -59,7 +63,20 @@ var Column = (function () {
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
         var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = utils_1.Utils.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = utils_1.Utils.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
         this.validate();
+    };
+    Column.prototype.getCellRenderer = function () {
+        return this.cellRenderer;
+    };
+    Column.prototype.getCellEditor = function () {
+        return this.cellEditor;
+    };
+    Column.prototype.getFloatingCellRenderer = function () {
+        return this.floatingCellRenderer;
+    };
+    Column.prototype.getFilter = function () {
+        return this.filter;
     };
     Column.prototype.getUniqueId = function () {
         return this.getId();
@@ -72,6 +89,9 @@ var Column = (function () {
     };
     Column.prototype.isFieldContainsDots = function () {
         return this.fieldContainsDots;
+    };
+    Column.prototype.isTooltipFieldContainsDots = function () {
+        return this.tooltipFieldContainsDots;
     };
     Column.prototype.validate = function () {
         if (!this.gridOptionsWrapper.isEnterprise()) {
@@ -167,7 +187,7 @@ var Column = (function () {
     Column.prototype.setFilterActive = function (active) {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
+            this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
         }
     };
     Column.prototype.setPinned = function (pinned) {
@@ -321,9 +341,9 @@ var Column = (function () {
     // + renderedColumn - for changing visibility icon
     Column.EVENT_VISIBLE_CHANGED = 'visibleChanged';
     // + renderedHeaderCell - marks the header with filter icon
-    Column.EVENT_FILTER_ACTIVE_CHANGED = 'filterChanged';
+    Column.EVENT_FILTER_CHANGED = 'filterChanged';
     // + renderedHeaderCell - marks the header with sort icon
-    Column.EVENT_SORT_CHANGED = 'filterChanged';
+    Column.EVENT_SORT_CHANGED = 'sortChanged';
     // + toolpanel, for gui updates
     Column.EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
     // + toolpanel, for gui updates
@@ -342,6 +362,10 @@ var Column = (function () {
         context_1.Autowired('columnUtils'), 
         __metadata('design:type', columnUtils_1.ColumnUtils)
     ], Column.prototype, "columnUtils", void 0);
+    __decorate([
+        context_1.Autowired('frameworkFactory'), 
+        __metadata('design:type', Object)
+    ], Column.prototype, "frameworkFactory", void 0);
     __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.4.0
+// Type definitions for ag-grid v6.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -16,10 +16,24 @@ export declare class GridOptionsWrapper {
     private columnController;
     private eventService;
     private enterprise;
+    private frameworkFactory;
     private propertyEventService;
+    private fullWidthCellRenderer;
+    private groupRowRenderer;
+    private groupRowInnerRenderer;
     private agWire(gridApi, columnApi);
     private destroy();
     init(): void;
+    private setupCellRenderers();
+    getFullWidthCellRenderer(): {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    getGroupRowRenderer(): {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
+    getGroupRowInnerRenderer(): {
+        new (): ICellRenderer;
+    } | ICellRendererFunc | string;
     isEnterprise(): boolean;
     isRowSelection(): boolean;
     isRowDeselection(): boolean;
@@ -62,9 +76,6 @@ export declare class GridOptionsWrapper {
     getRowClassFunc(): Function;
     getDoesDataFlowerFunc(): (data: any) => boolean;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
-    getFullWidthCellRenderer(): {
-        new (): ICellRenderer;
-    } | ICellRendererFunc | string;
     getFullWidthCellRendererParams(): any;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getHeaderCellRenderer(): any;
@@ -119,13 +130,7 @@ export declare class GridOptionsWrapper {
     getIsScrollLag(): () => boolean;
     getSortingOrder(): string[];
     getSlaveGrids(): GridOptions[];
-    getGroupRowRenderer(): {
-        new (): ICellRenderer;
-    } | ICellRendererFunc | string;
     getGroupRowRendererParams(): any;
-    getGroupRowInnerRenderer(): {
-        new (): ICellRenderer;
-    } | ICellRendererFunc | string;
     getOverlayLoadingTemplate(): string;
     getOverlayNoRowsTemplate(): string;
     getCheckboxSelection(): Function;

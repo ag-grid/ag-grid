@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,27 @@ var Utils = (function () {
             result.push(value);
         });
         return result;
+    };
+    Utils.getValueUsingField = function (data, field, fieldContainsDots) {
+        if (!field || !data) {
+            return;
+        }
+        // if no '.', then it's not a deep value
+        if (!fieldContainsDots) {
+            return data[field];
+        }
+        else {
+            // otherwise it is a deep value, so need to dig for it
+            var fields = field.split('.');
+            var currentObject = data;
+            for (var i = 0; i < fields.length; i++) {
+                currentObject = currentObject[fields[i]];
+                if (this.missing(currentObject)) {
+                    return null;
+                }
+            }
+            return currentObject;
+        }
     };
     Utils.iterateObject = function (object, callback) {
         if (this.missing(object)) {

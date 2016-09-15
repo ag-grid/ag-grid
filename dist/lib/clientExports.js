@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -99,6 +99,8 @@ var animateShowChangeCellRenderer_1 = require("./rendering/cellRenderers/animate
 var inMemoryNodeManager_1 = require("./rowControllers/inMemory/inMemoryNodeManager");
 var virtualPageCache_1 = require("./rowControllers/virtualPagination/virtualPageCache");
 var virtualPage_1 = require("./rowControllers/virtualPagination/virtualPage");
+var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
+var methodNotImplementedException_1 = require("./misc/methodNotImplementedException");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -158,6 +160,7 @@ function populateClientExports(exports) {
     exports.VerticalStack = verticalStack_1.VerticalStack;
     // misc
     exports.FocusService = focusService_1.FocusService;
+    exports.MethodNotImplementedException = methodNotImplementedException_1.MethodNotImplementedException;
     // rendering / cellEditors
     exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
     exports.PopupEditorWrapper = popupEditorWrapper_1.PopupEditorWrapper;
@@ -203,6 +206,7 @@ function populateClientExports(exports) {
     exports.Listener = componentAnnotations_1.Listener;
     exports.QuerySelector = componentAnnotations_1.QuerySelector;
     // root
+    exports.BaseFrameworkFactory = baseFrameworkFactory_1.BaseFrameworkFactory;
     exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
     exports.ColumnChangeEvent = columnChangeEvent_1.ColumnChangeEvent;
     exports.Constants = constants_1.Constants;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,6 +43,7 @@ var cellRendererService_1 = require("./cellRendererService");
 var valueFormatterService_1 = require("./valueFormatterService");
 var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
 var setLeftFeature_1 = require("./features/setLeftFeature");
+var methodNotImplementedException_1 = require("../misc/methodNotImplementedException");
 var RenderedCell = (function (_super) {
     __extends(RenderedCell, _super);
     function RenderedCell(column, node, rowIndex, scope, renderedRow) {
@@ -423,30 +424,29 @@ var RenderedCell = (function (_super) {
             _this.eGridCell.removeEventListener('keydown', editingKeyListener);
         });
     };
-    RenderedCell.prototype.createCellEditor = function (keyPress, charPress) {
+    RenderedCell.prototype.createCellEditorParams = function (keyPress, charPress) {
+        var params = {
+            value: this.getValue(),
+            keyPress: keyPress,
+            charPress: charPress,
+            column: this.column,
+            node: this.node,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext(),
+            onKeyDown: this.onKeyDown.bind(this),
+            stopEditing: this.stopEditingAndFocus.bind(this),
+            eGridCell: this.eGridCell
+        };
         var colDef = this.column.getColDef();
-        var cellEditor = this.cellEditorFactory.createCellEditor(colDef.cellEditor);
-        if (cellEditor.init) {
-            var params = {
-                value: this.getValue(),
-                keyPress: keyPress,
-                charPress: charPress,
-                column: this.column,
-                node: this.node,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext(),
-                onKeyDown: this.onKeyDown.bind(this),
-                stopEditing: this.stopEditingAndFocus.bind(this),
-                eGridCell: this.eGridCell
-            };
-            if (colDef.cellEditorParams) {
-                utils_1.Utils.assign(params, colDef.cellEditorParams);
-            }
-            if (cellEditor.init) {
-                cellEditor.init(params);
-            }
+        if (colDef.cellEditorParams) {
+            utils_1.Utils.assign(params, colDef.cellEditorParams);
         }
+        return params;
+    };
+    RenderedCell.prototype.createCellEditor = function (keyPress, charPress) {
+        var params = this.createCellEditorParams(keyPress, charPress);
+        var cellEditor = this.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
         return cellEditor;
     };
     // cell editors call this, when they want to stop for reasons other
@@ -469,6 +469,10 @@ var RenderedCell = (function (_super) {
         }
         if (!cellEditor.getGui) {
             console.warn("ag-Grid: cellEditor for column " + this.column.getId() + " is missing getGui() method");
+            // no getGui, for React guys, see if they attached a react component directly
+            if (cellEditor.render) {
+                console.warn("ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?");
+            }
             return;
         }
         this.cellEditor = cellEditor;
@@ -799,40 +803,64 @@ var RenderedCell = (function (_super) {
         if (animate === void 0) { animate = false; }
         if (newData === void 0) { newData = false; }
         this.value = this.getValue();
+        var refreshFailed = false;
+        var that = this;
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
         // then we are not showing a movement in the stock price, rather we are showing different stock.
-        if (!newData && this.cellRenderer && this.cellRenderer.refresh) {
-            // if the cell renderer has a refresh method, we call this instead of doing a refresh
-            // note: should pass in params here instead of value?? so that client has formattedValue
-            var valueFormatted = this.formatValue(this.value);
-            var cellRendererParams = this.column.getColDef().cellRendererParams;
-            var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-            this.cellRenderer.refresh(params);
-            // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
-            this.addClassesFromRules();
+        var attemptRefresh = !newData && this.cellRenderer && this.cellRenderer.refresh;
+        if (attemptRefresh) {
+            try {
+                doRefresh();
+            }
+            catch (e) {
+                if (e instanceof methodNotImplementedException_1.MethodNotImplementedException) {
+                    refreshFailed = true;
+                }
+                else {
+                    throw e;
+                }
+            }
         }
-        else {
-            // otherwise we rip out the cell and replace it
-            utils_1.Utils.removeAllChildren(this.eParentOfValue);
-            // remove old renderer component if it exists
-            if (this.cellRenderer && this.cellRenderer.destroy) {
-                this.cellRenderer.destroy();
-            }
-            this.cellRenderer = null;
-            this.populateCell();
-            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-            if (this.gridOptionsWrapper.isAngularCompileRows()) {
-                this.$compile(this.eGridCell)(this.scope);
-            }
+        // we do the replace if not doing refresh, or if refresh was unsuccessful.
+        // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
+        // wrapper has the refresh method, but the underlying component doesn't
+        if (!attemptRefresh || refreshFailed) {
+            doReplace();
         }
         if (animate) {
             this.animateCellWithDataChanged();
+        }
+        function doRefresh() {
+            // if the cell renderer has a refresh method, we call this instead of doing a refresh
+            // note: should pass in params here instead of value?? so that client has formattedValue
+            var valueFormatted = that.formatValue(that.value);
+            var cellRendererParams = that.column.getColDef().cellRendererParams;
+            var params = that.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+            that.cellRenderer.refresh(params);
+            // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
+            that.addClassesFromRules();
+        }
+        function doReplace() {
+            // otherwise we rip out the cell and replace it
+            utils_1.Utils.removeAllChildren(that.eParentOfValue);
+            // remove old renderer component if it exists
+            if (that.cellRenderer && that.cellRenderer.destroy) {
+                that.cellRenderer.destroy();
+            }
+            that.cellRenderer = null;
+            that.populateCell();
+            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+            if (that.gridOptionsWrapper.isAngularCompileRows()) {
+                that.$compile(that.eGridCell)(that.scope);
+            }
         }
     };
     RenderedCell.prototype.putDataIntoCell = function () {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
+        var cellRenderer = this.column.getCellRenderer();
+        var floatingCellRenderer = this.column.getFloatingCellRenderer();
         var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
@@ -848,13 +876,13 @@ var RenderedCell = (function (_super) {
                 this.eParentOfValue.innerHTML = template;
             }
         }
-        else if (colDef.floatingCellRenderer && this.node.floating) {
+        else if (floatingCellRenderer && this.node.floating) {
             // if floating, then give preference to floating cell renderer
-            this.useCellRenderer(colDef.floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
+            this.useCellRenderer(floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
         }
-        else if (colDef.cellRenderer) {
+        else if (cellRenderer) {
             // use normal cell renderer
-            this.useCellRenderer(colDef.cellRenderer, colDef.cellRendererParams, valueFormatted);
+            this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueFormatted);
         }
         else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
@@ -868,8 +896,10 @@ var RenderedCell = (function (_super) {
         if (colDef.tooltipField) {
             var data = this.getDataForRow();
             if (utils_1.Utils.exists(data)) {
-                var tooltip = data[colDef.tooltipField];
-                this.eParentOfValue.setAttribute('title', tooltip);
+                var tooltip = utils_1.Utils.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
+                if (utils_1.Utils.exists(tooltip)) {
+                    this.eParentOfValue.setAttribute('title', tooltip);
+                }
             }
         }
     };

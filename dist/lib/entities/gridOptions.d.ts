@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.4.0
+// Type definitions for ag-grid v6.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -136,10 +136,12 @@ export interface GridOptions {
     groupRowRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
+    groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
     groupRowInnerRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
+    groupRowInnerRendererFramework?: any;
     isScrollLag?(): boolean;
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
@@ -149,6 +151,7 @@ export interface GridOptions {
     fullWidthCellRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
+    fullWidthCellRendererFramework?: any;
     fullWidthCellRendererParams?: any;
     isFullWidthCell?(rowNode: RowNode): boolean;
     headerCellRenderer?: any;

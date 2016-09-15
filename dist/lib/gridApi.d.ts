@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.4.0
+// Type definitions for ag-grid v6.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -11,6 +11,7 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 import { GridCell } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
+import { IFilter } from "./interfaces/iFilter";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column | ColDef;
@@ -56,6 +57,10 @@ export declare class GridApi {
     setRowData(rowData: any[]): void;
     setFloatingTopRowData(rows: any[]): void;
     setFloatingBottomRowData(rows: any[]): void;
+    getFloatingTopRowCount(): number;
+    getFloatingBottomRowCount(): number;
+    getFloatingTopRow(index: number): RowNode;
+    getFloatingBottomRow(index: number): RowNode;
     setColumnDefs(colDefs: ColDef[]): void;
     refreshRows(rowNodes: RowNode[]): void;
     refreshCells(rowNodes: RowNode[], colIds: string[], animate?: boolean): void;
@@ -104,7 +109,8 @@ export declare class GridApi {
     forEachNodeAfterFilter(callback: (rowNode: RowNode) => void): void;
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode) => void): void;
     getFilterApiForColDef(colDef: any): any;
-    getFilterApi(key: string | Column | ColDef): any;
+    getFilterInstance(key: string | Column | ColDef): IFilter;
+    getFilterApi(key: string | Column | ColDef): IFilter;
     destroyFilter(key: string | Column | ColDef): void;
     getColumnDef(key: string | Column | ColDef): ColDef;
     onFilterChanged(): void;

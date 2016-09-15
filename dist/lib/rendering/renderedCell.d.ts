@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v5.4.0
+// Type definitions for ag-grid v6.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -76,6 +76,7 @@ export declare class RenderedCell extends Component {
     private addKeyPressListener();
     private onKeyDown(event);
     private addKeyDownListener();
+    private createCellEditorParams(keyPress?, charPress?);
     private createCellEditor(keyPress?, charPress?);
     private stopEditingAndFocus();
     startEditingIfEnabled(keyPress?: number, charPress?: string): void;

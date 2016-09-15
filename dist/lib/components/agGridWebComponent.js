@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,7 +54,10 @@ function initialiseAgGridWithWebComponents() {
     AgileGridProto.setGridOptions = function (options) {
         var globalEventListener = this.globalEventListener.bind(this);
         this._gridOptions = componentUtil_1.ComponentUtil.copyAttributesToGridOptions(options, this);
-        this._agGrid = new grid_1.Grid(this, this._gridOptions, globalEventListener);
+        var gridParams = {
+            globalEventListener: globalEventListener
+        };
+        this._agGrid = new grid_1.Grid(this, this._gridOptions, gridParams);
         this.api = options.api;
         this.columnApi = options.columnApi;
         this._initialised = true;

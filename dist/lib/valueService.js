@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v5.4.0
+ * @version v6.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,6 @@ var ValueService = (function () {
         this.initialised = false;
     }
     ValueService.prototype.init = function () {
-        this.suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.userProvidedTheGroups = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
@@ -53,7 +52,7 @@ var ValueService = (function () {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         }
         else if (field && data) {
-            result = this.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = utils_1.Utils.getValueUsingField(data, field, column.isFieldContainsDots());
         }
         else {
             result = undefined;
@@ -64,27 +63,6 @@ var ValueService = (function () {
             result = this.executeValueGetter(cellValueGetter, data, column, node);
         }
         return result;
-    };
-    ValueService.prototype.getValueUsingField = function (data, field, fieldContainsDots) {
-        if (!field || !data) {
-            return;
-        }
-        // if no '.', then it's not a deep value
-        if (!fieldContainsDots) {
-            return data[field];
-        }
-        else {
-            // otherwise it is a deep value, so need to dig for it
-            var fields = field.split('.');
-            var currentObject = data;
-            for (var i = 0; i < fields.length; i++) {
-                currentObject = currentObject[fields[i]];
-                if (utils_1.Utils.missing(currentObject)) {
-                    return null;
-                }
-            }
-            return currentObject;
-        }
     };
     ValueService.prototype.setValue = function (rowNode, colKey, newValue) {
         var column = this.columnController.getPrimaryColumn(colKey);
