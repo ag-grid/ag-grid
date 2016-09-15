@@ -14,7 +14,7 @@ export class AgReactComponent {
         this.parentComponent = parentComponent;
     }
 
-    public getFrameworkComponent(): any {
+    public getFrameworkComponentInstance(): any {
         return this.componentRef;
     }
 

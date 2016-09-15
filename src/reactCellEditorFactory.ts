@@ -10,7 +10,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
         }
 
         public getValue(): any {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.getValue) {
                 return componentRef.getValue();
             } else {
@@ -20,14 +20,14 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
         }
 
         public afterGuiAttached(): void {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.afterGuiAttached) {
                 componentRef.afterGuiAttached();
             }
         }
 
         public isPopup(): boolean {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isPopup) {
                 return componentRef.isPopup();
             } else {
@@ -36,7 +36,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
         }
 
         public isCancelBeforeStart(): boolean {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isCancelBeforeStart) {
                 return componentRef.isCancelBeforeStart();
             } else {
@@ -45,7 +45,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
         }
 
         public isCancelAfterEnd(): boolean {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isCancelAfterEnd) {
                 return componentRef.isCancelAfterEnd();
             } else {

@@ -16,7 +16,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public isFilterActive(): boolean {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isFilterActive) {
                 return componentRef.isFilterActive();
             } else {
@@ -26,7 +26,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public doesFilterPass(params: any): boolean {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.doesFilterPass) {
                 return componentRef.doesFilterPass(params);
             } else {
@@ -36,7 +36,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public getModel(): any {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.getModel) {
                 return componentRef.getModel();
             } else {
@@ -47,7 +47,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
 
         /** Restores the filter state. */
         public setModel(model: any): void {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.setModel) {
                 componentRef.setModel(model);
             } else {
@@ -56,14 +56,14 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public afterGuiAttached(params: {hidePopup?: ()=>void}): void {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.afterGuiAttached) {
                 componentRef.afterGuiAttached(params);
             }
         }
 
         public onNewRowsLoaded(): void {
-            var componentRef = this.getFrameworkComponent();
+            var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.onNewRowsLoaded) {
                 componentRef.onNewRowsLoaded();
             }
