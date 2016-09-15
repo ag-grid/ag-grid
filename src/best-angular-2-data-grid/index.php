@@ -11,14 +11,23 @@ include '../documentation-main/documentation_header.php';
     <h2>Best Angular 2 Data Grid</h2>
 
     <p>
-        When using Angular 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
-        already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
-        are, then don't worry, you will be none the wiser).
+        If you are building an Angular 2 application then you have the choice between A) using the plain JavaScript version
+        of ag-Grid or B) using the ag-Grid Angular 2 Component from the <a href="https://github.com/ceolter/ag-grid-ng2">
+            ag-grid-ng2</a> project. If you use the ag-Grid Angular 2 Component, then the grid's properties, events and API
+        will all tie in with the Angular 2 ecosystem. This will make your Angular 2 coding easier.
     </p>
 
-    <p>If you MUST use the UMD version of Angular 2, then use the plain Javascript version of ag-Grid.</p>
+    <note>
+        <p>
+            When using Angular 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
+            already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
+            are, then don't worry, you will be none the wiser).
+        </p>
+        <p>If you MUST use the UMD version of Angular 2, then use the plain Javascript version of ag-Grid.</p>
+    </note>
 
-    <note>6.x adds many Angular 2 related improvements to the ag-Grid offering - this includes easier configuration,
+
+    <note>ag-Gird v6.x adds many Angular 2 related improvements to the ag-Grid offering - this includes easier configuration,
         better renderer definition and cell editor support.
     </note>
 
@@ -29,15 +38,23 @@ include '../documentation-main/documentation_header.php';
         element of instability in using it.
         Please keep this in mind if you plan on using it for a Production release.
     <p>
-    <p>Please use the github project (<a href="https://github.com/ceolter/ag-grid-ng2">https://github.com/ceolter/ag-grid-ng2</a>)
+    <p>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
         for feedback or issue reporting around this functionality.</p>
+
+    <h2>ag-Grid React Features</h2>
+
+    <p>
+        Every feature of ag-Grid is available when using the ag-Grid Angular 2 Component. The Angular 2 Component wraps
+        the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
+        Angular 2 ag-Grid when it comes to features.
+    </p>
 
     <h3>Angular 2 Full Example</h3>
 
     <p>
         This page goes through the
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a>
-        example on Github. Because the example depends on SystemX and JSPM, it is not included in the
+        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a>
+        on Github. Because the example depends on SystemX and JSPM, it is not included in the
         online documentation.
     </p>
 
@@ -65,11 +82,11 @@ include '../documentation-main/documentation_header.php';
         In your package.json file, specify dependency on ag-grid AND ag-grid-ng2.
         The ag-grid package contains the core ag-grid engine and the ag-grid-ng2
         contains the Angular 2 component.
-        <pre><code>"dependencies": {
-                ...
-                "ag-grid": "6.0.x",
-                "ag-grid-ng2": "6.0.x"
-                }</code></pre>
+        <pre>"dependencies": {
+    ...
+    "ag-grid": "6.0.x",
+    "ag-grid-ng2": "6.0.x"
+}</pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
     for patch versions, the component will not be released.
@@ -177,30 +194,30 @@ include '../documentation-main/documentation_header.php';
         The example has ag-Grid configured through the template in the following ways:
     </p>
 
-    <pre>// notice the grid has an id called agGrid, which can be used to call the API
+    <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
 &lt;ag-grid-ng2 #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
 
-    // items bound to properties on the controller
+    <span class="codeComment">// items bound to properties on the controller</span>
     [gridOptions]="gridOptions"
     [columnDefs]="columnDefs"
     [showToolPanel]="showToolPanel"
     [rowData]="rowData"
 
-    // boolean values 'turned on'
+    <span class="codeComment">// boolean values 'turned on'</span>
     enableColResize
     enableSorting
     enableFilter
 
-    // simple values, not bound
+    <span class="codeComment">// simple values, not bound</span>
     rowHeight="22"
     rowSelection="multiple"
 
-    // event callbacks
+    <span class="codeComment">// event callbacks</span>
     (modelUpdated)="onModelUpdated()"
     (cellClicked)="onCellClicked($event)"
     (cellDoubleClicked)="onCellDoubleClicked($event)">
-&lt;/ag-grid-ng2></pre>
 
+&lt;/ag-grid-ng2></pre>
 
     <p>
         The above is all you need to get started using ag-Grid in a React application. Now would
@@ -226,12 +243,6 @@ include '../documentation-main/documentation_header.php';
         the ag-grid-ng2 component, consider using plain ag-Grid Components (as explained on the pages for
         rendering etc) inside ag-Grid instead of creating Angular 2 counterparts.
     </p>
-
-    <h2>Cell Rendering using Angular 2</h2>
-
-    <p>ag-Grid supports the addition of cellRenderers via Angular 2 components - we do this by wrapping Angular 2
-        Components in a CellRenderer, which allows for two way binding
-        and all normal Angular 2 Component functionality (two way binding, dependency injection and so on).</p>
 
     <note>
         <p>

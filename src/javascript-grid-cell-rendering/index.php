@@ -566,7 +566,11 @@ class NameCellRenderer extends React.Component {
     <p>
         If you are using the ag-grid-ng2 component to create the ag-Grid instance,
         then you will have the option of additionally specifying the cellRenderers
-        as Angular 2 components.
+        as Angular 2 components. You have two options that are described below:
+        <ol>
+        <li>Angular 2 Components</li>
+        <li>Angular 2 Templates</li>
+    </ol>
     </p>
 
     <h2>cellRenderers from Angular 2 Components</h2>
@@ -612,8 +616,12 @@ colDef = {
     <pre>
 cellRendererFramework: {
     component: YourComponent,
-    dependencies: [YourChildComponent1, YourChildComponent2],       // optional - these go into module.declarations
-    moduleImports: [CommonModule, FormsModule]                      // optional - these go into module.imports
+
+    <span class="codeComment">// dependencies are optional - these go into module.declarations</span>
+    dependencies: [YourChildComponent1, YourChildComponent2],
+
+    <span class="codeComment">// module imports are optional - these go into module.imports</span>
+    moduleImports: [CommonModule, FormsModule]
 }
 </pre>
 
@@ -646,7 +654,7 @@ cellRendererFramework: {
         <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
         <li><i>destroy()</i> is not used. Instead implement the Angular 2<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
             any cleanup you need to do.</li>
-        <li><i>getGui()</i> is not used. Instead do normal Angular 2 magic in your <i>render()</i> method..</li>
+        <li><i>getGui()</i> is not used. Instead do normal Angular 2 magic in your Component via the Angular 2 template.</li>
     </ul>
 
     <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Handling Refresh</h3>
