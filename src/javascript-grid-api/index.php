@@ -105,6 +105,19 @@ include '../documentation-main/documentation_header.php';
                 where groups don't actually appear in the selection normally.</td>
         </tr>
         <tr>
+            <th>
+                setFloatingTopRowData(rowData)<br/>
+                setFloatingBottomRowData()<br/>
+                getFloatingTopRowCount()<br/>
+                getFloatingBottomRowCount()<br/>
+                getFloatingTopRow(index)<br/>
+                getFloatingBottomRow(index)
+            </th>
+            <td>
+                Methods for getting and setting the data and getting the Row Nodes of the floating rows.
+            </td>
+        </tr>
+        <tr>
             <th>refreshView()</th>
             <td>Rip out and re-insert all visible rows. Handy as a blanket 'redraw all' if changes have been made to the row data.</td>
         </tr>
@@ -269,7 +282,7 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <td>destroyFilter()</td>
+            <th>destroyFilter()</th>
             <td>Destroys a filter, useful to create get a particular filter created from scratch again.</td>
         </tr>
         <tr>

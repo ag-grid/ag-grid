@@ -91,6 +91,8 @@ filterParams = {
     <li>Breaking Change: Filter params are now consistent with other components, they are appended to normal params.</li>
     <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
     <li>Enhancement: Reworked how all the editors, renderers and filters worked with the framework.</li>
+    <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
+        api.getFloatingBottomRow(index) for accessing floating rows</li>
 
     <h3>Version 5.4.x</h3>
 
