@@ -1,5 +1,7 @@
 Doing releases:
 
+Update the license manager, to next version.
+
 ag-Grid
 
 + Update version in bower.json
