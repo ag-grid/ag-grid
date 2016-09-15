@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 6.0.x</h2>
 
-    <h4>ag-Grid 6.0.0, ag-Grid-Enterprise 6.0.0, ag-Grid-React 6.0.0, , ag-Grid-NG2 6.0.0</h4>
+    <h4>ag-Grid 6.0.1, ag-Grid-Enterprise 6.0.1, ag-Grid-React 6.0.1, , ag-Grid-NG2 6.0.1</h4>
 
     <p>
         Version 6.0.x brings the following changes:

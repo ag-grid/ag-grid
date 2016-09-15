@@ -19,13 +19,30 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">9th Sept 2016</div>
-        <div class="news-header">ag-grid v5.4.x Released</div>
-        <div style="float: right;">
-            <img src="../images/superDev.jpg"/>
+        <div class="news-header">15th Sept 2016</div>
+        <div class="news-header">ag-grid v6.0.x Released</div>
+        <div style="text-align: center">
+            <img src="../images/angular2_large.png" style="width: 50px; margin: 10px;"/>
+            <img src="../images/react_large.png" style="width: 50px; margin: 10px;"/>
         </div>
         <div>
-            A mixture of medium sized enhancements and some bug fixes, check the <a href="../change-log/changeLogIndex.php">Change Log</a> for details.
+            <ol>
+                <li>
+                    New React and Angular 2 integration
+                </li>
+                <li>
+                    Enhanced custom filters
+                </li>
+                <li>
+                    Other smaller enhancements and bug fixes
+                    <br/>
+                    <br/>
+                    See <a href="../change-log/changeLogIndex.php">change log</a> for details.
+                </li>
+            </ol>
+        </div>
+        <div style="text-align: right">
+            <img src="../images/dino.png"/>
         </div>
     </div>
 
