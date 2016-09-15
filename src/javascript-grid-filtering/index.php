@@ -522,7 +522,7 @@ class NameFilter extends React.Component {
         ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
         method. If your component is a React component, then this will give you a reference to the ag-Grid's
         Component which wraps your React Component. Just like Russian Dolls. To get to the wrapped React instance
-        of your component, use the <i>getComponentRef()</i> method as follows:
+        of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
         <pre><span class="codeComment">// lets assume a React component as follows</span>
 class NameFilter extends React.Component {
 
@@ -541,7 +541,7 @@ laterOnInYourApplicationSomewhere() {
     var agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
 
     <span class="codeComment">// get React instance from the ag-Grid instance</span>
-    var reactFilterInstance = agGridFilter.getComponentRef();
+    var reactFilterInstance = agGridFilter.getFrameworkComponentInstance();
 
     <span class="codeComment">// now were sucking diesel!!!</span>
     reactFilterInstance.myMethod();
