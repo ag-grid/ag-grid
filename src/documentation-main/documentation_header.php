@@ -120,6 +120,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-properties/index.php">Properties</a>
                 <?php } ?>
 
+                <?php if ($key == "Column Definitions") { ?>
+                    <span class="sidebarLinkSelected">Columns</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-definitions/index.php">Columns</a>
+                <?php } ?>
+
                 <?php if ($key == "Events") { ?>
                     <span class="sidebarLinkSelected">Events</span>
                 <?php } else { ?>
@@ -147,12 +153,6 @@ if (strcmp($version , 'latest') == 0) {
                 <h4>
                     Core Features
                 </h4>
-
-                <?php if ($key == "Column Definitions") { ?>
-                    <span class="sidebarLinkSelected">Column Definitions</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-definitions/index.php">Column Definitions</a>
-                <?php } ?>
 
                 <?php if ($key == "Sorting") { ?>
                     <span class="sidebarLinkSelected">Sorting</span>

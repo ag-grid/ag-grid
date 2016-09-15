@@ -329,11 +329,11 @@ include '../documentation-main/documentation_header.php';
                 and virtual pagination, defines the block size the datasource is asked for data.</td>
         </tr>
         <tr>
-            <th>groupRowInnerRenderer<br/> groupRowRenderer <br/>groupRowRendererParams</th>
+            <th>groupRowInnerRenderer<br/> groupRowInnerRendererFramework<br/> groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
             <td>Sets grouping row cell renderer. See the section on <a href="../javascript-grid-grouping/index.php#groupingCallbacks">row grouping</a> for detailed explanation.</td>
         </tr>
         <tr>
-            <th>fullWidthCellRenderer, fullWidthCellRendererParams</th>
+            <th>fullWidthCellRenderer, fullWidthCellRendererFramework, fullWidthCellRendererParams</th>
             <td>For rendering <a href="../javascript-grid-master-detail/">fullWidth</a> rows.</td>
         </tr>
         <tr>
