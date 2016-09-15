@@ -126,6 +126,9 @@ columnDefinition = {
     </ul>
     </p>
 
-</div>
+<!--    <p>
+        To use the
+    </p>
+--></div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
