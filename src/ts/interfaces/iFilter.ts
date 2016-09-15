@@ -41,6 +41,10 @@ export interface IFilter {
      made 'not visible', as the gui is kept to be shown again if the user selects
      that filter again. The filter is destroyed when the grid is destroyed. */
     destroy?(): void;
+
+    /** If using React or Angular 2, returns the underlying component instance, so you can call methods
+     * on it if you want. */
+    getFrameworkComponentInstance?(): any;
 }
 
 export interface IDoesFilterPassParams {
