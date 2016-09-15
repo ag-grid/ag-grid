@@ -143,6 +143,22 @@ export class GridApi {
         this.floatingRowModel.setFloatingBottomRowData(rows);
     }
 
+    public getFloatingTopRowCount(): number {
+        return this.floatingRowModel.getFloatingTopRowCount();
+    }
+
+    public getFloatingBottomRowCount(): number {
+        return this.floatingRowModel.getFloatingBottomRowCount();
+    }
+
+    public getFloatingTopRow(index: number): RowNode {
+        return this.floatingRowModel.getFloatingTopRow(index);
+    }
+
+    public getFloatingBottomRow(index: number): RowNode {
+        return this.floatingRowModel.getFloatingBottomRow(index);
+    }
+
     public setColumnDefs(colDefs: ColDef[]) {
         this.columnController.setColumnDefs(colDefs);
     }
