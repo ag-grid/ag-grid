@@ -58,7 +58,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public colDefCellEditor(colDef:ColDef):{new(): ICellEditor} | string {
         if (colDef.cellEditorFramework) {
-            return this._agComponentFactory.createEditor(colDef.cellEditorFramework.component,
+            return this._agComponentFactory.createEditorFromComponent(colDef.cellEditorFramework.component,
                 this._viewContainerRef,
                 colDef.cellEditorFramework.dependencies,
                 colDef.cellEditorFramework.moduleImports)

@@ -1,6 +1,7 @@
+import {AgInitable} from "./agInitable";
 
-export interface AgEditorComponent {
-    agInit(params:any) : void;
+export interface AgEditorComponent extends AgInitable {
+    agInit(params:any) : void;          // for clarity
     getValue() : any;
     isPopup?(): boolean;
     isCancelBeforeStart?(): boolean;
