@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.0.1
+// ag-grid-ng2 v6.0.3
 import { ViewContainerRef, ElementRef } from '@angular/core';
 import { GridApi, ColumnApi } from 'ag-grid/main';
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";

@@ -1,6 +1,6 @@
-// ag-grid-ng2 v6.0.1
+// ag-grid-ng2 v6.0.3
 import { AgFrameworkComponent } from "./agFrameworkComponent";
-export interface AgEditorComponent extends AgFrameworkComponent {
+export interface AgEditorComponent extends AgFrameworkComponent<any> {
     agInit(params: any): void;
     getValue(): any;
     isPopup?(): boolean;
