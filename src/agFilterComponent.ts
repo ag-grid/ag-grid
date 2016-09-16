@@ -30,6 +30,4 @@ export interface AgFilterComponent extends AgFrameworkComponent<IFilterParams> {
     /** returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
-
-    //destroy?(): void;
 }
