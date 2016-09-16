@@ -222,8 +222,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Cell Rendering & Cell Editing using Angular 2</h2>
 
     <p>
-        It is possible to build <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a> and
-        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> using Angular 2. Doing each of these
+        It is possible to build
+        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
+        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular 2. Doing each of these
         is explained in the section on each.
     </p>
 
