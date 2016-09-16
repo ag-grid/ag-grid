@@ -43,7 +43,10 @@ ag-Grid-React-Example
 
 + Update version in package.json
 + Make sure it's referencing correct ag-Grid version (including enterprise and react modules)
++ Release in GitHub
++ No npm publish
 
++ then ng2 (ng2 publish too)
 
 ag-Grid-Docs
 
