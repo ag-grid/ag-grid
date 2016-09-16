@@ -1,6 +1,6 @@
 import {AgFrameworkComponent} from "./agFrameworkComponent";
 
-export interface AgEditorComponent extends AgFrameworkComponent {
+export interface AgEditorComponent extends AgFrameworkComponent<any> {
     agInit(params:any) : void;                  // for clarity
     getValue() : any;
     isPopup?(): boolean;

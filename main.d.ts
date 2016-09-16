@@ -5,3 +5,4 @@ export * from './lib/agAware';                  // deprecated
 export * from './lib/AgFrameworkComponent';
 export * from './lib/AgRendererComponent';
 export * from './lib/AgEditorComponent';
+export * from './lib/AgFilterComponent';

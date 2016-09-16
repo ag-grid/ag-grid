@@ -1,4 +1,4 @@
 
-export interface AgFrameworkComponent {
-    agInit(params:any) : void;
+export interface AgFrameworkComponent<T> {
+    agInit(params:T) : void;
 }
