@@ -79,6 +79,7 @@ export interface GridOptions {
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
     layoutInterval?: number;
+    intervalRunner?: Function;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
