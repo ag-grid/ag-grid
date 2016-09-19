@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "./main.d.ts",

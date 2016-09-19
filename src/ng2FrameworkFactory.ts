@@ -101,7 +101,15 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
     }
 
     public colDefFilter(colDef:ColDef):{new (): IFilter;} | string {
-        return this._baseFrameworkFactory.colDefFilter(colDef);
+        if (colDef.filterFramework) {
+            return this._agComponentFactory.createFilterFromComponent(colDef.filterFramework.component,
+                this._viewContainerRef,
+                colDef.filterFramework.dependencies,
+                colDef.filterFramework.moduleImports)
+        } else {
+
+            return this._baseFrameworkFactory.colDefFilter(colDef);
+        }
     }
 
 

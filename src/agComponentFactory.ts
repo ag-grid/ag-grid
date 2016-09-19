@@ -7,11 +7,19 @@ import {Component,
     ModuleWithComponentFactories} from '@angular/core';
 import {RuntimeCompiler } from "@angular/compiler";
 
-import {ICellRenderer, ICellEditor, MethodNotImplementedException}   from 'ag-grid/main';
+import {ICellRenderer,
+    ICellEditor,
+    MethodNotImplementedException,
+    RowNode,
+    IDoesFilterPassParams,
+    IFilter,
+    IFilterParams,
+    IAfterFilterGuiAttachedParams}   from 'ag-grid/main';
 
 import {AgRendererComponent} from "./agRendererComponent";
 import {AgEditorComponent} from "./agEditorComponent";
 import {AgFrameworkComponent} from "./agFrameworkComponent";
+import {AgFilterComponent} from "./agFilterComponent";
 
 @Injectable()
 export class AgComponentFactory {
@@ -76,6 +84,19 @@ export class AgComponentFactory {
             childDependencies);
     }
 
+    public createFilterFromComponent(componentType:{ new(...args:any[]): AgFilterComponent; },
+                                     viewContainerRef:ViewContainerRef,
+                                     childDependencies:any[] = [],
+                                     moduleImports:any[] = []):{new(): IFilter} {
+        return this.adaptComponentToFilter(componentType,
+            viewContainerRef,
+            this._runtimeCompiler,
+            (<any>componentType).name,
+            moduleImports,
+            childDependencies);
+    }
+
+
     private adaptComponentToRenderer(componentType:{ new(...args:any[]): AgRendererComponent; },
                                      viewContainerRef:ViewContainerRef,
                                      compiler:RuntimeCompiler,
@@ -84,7 +105,7 @@ export class AgComponentFactory {
                                      childDependencies:any[]):{new(): ICellRenderer} {
 
         let that = this;
-        class CellRenderer extends BaseGuiComponent<AgRendererComponent> implements ICellRenderer {
+        class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRenderer {
             init(params:any):void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
@@ -122,7 +143,7 @@ export class AgComponentFactory {
                                    childDependencies:any[]):{new(): ICellEditor} {
 
         let that = this;
-        class CellEditor extends BaseGuiComponent<AgEditorComponent> implements ICellEditor {
+        class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditor {
 
             init(params:any):void {
                 super.init(params);
@@ -160,6 +181,61 @@ export class AgComponentFactory {
         return CellEditor;
     }
 
+    private adaptComponentToFilter(componentType:{ new(...args:any[]): AgFilterComponent; },
+                                   viewContainerRef:ViewContainerRef,
+                                   compiler:RuntimeCompiler,
+                                   name:string,
+                                   moduleImports:any[],
+                                   childDependencies:any[]):{new(): IFilter} {
+
+        let that = this;
+        class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilter {
+            init(params:IFilterParams):void {
+                super.init(params);
+                this._componentRef.changeDetectorRef.detectChanges();
+            }
+
+            isFilterActive():boolean {
+                return this._agAwareComponent.isFilterActive();
+            }
+
+            doesFilterPass(params:IDoesFilterPassParams):boolean {
+                return this._agAwareComponent.doesFilterPass(params);
+            }
+
+            getModel():any {
+                return this._agAwareComponent.getModel();
+            }
+
+            setModel(model:any):void {
+                this._agAwareComponent.setModel(model);
+            }
+
+            afterGuiAttached(params:IAfterFilterGuiAttachedParams):void {
+                if(this._agAwareComponent.afterGuiAttached) {
+                    this._agAwareComponent.afterGuiAttached(params);
+                }
+            }
+
+            getFrameworkComponentInstance() : any {
+                return this._frameworkComponentInstance;
+            }
+
+            protected createComponent():ComponentRef<AgFilterComponent> {
+                return that.createComponent(componentType,
+                    viewContainerRef,
+                    compiler,
+                    name,
+                    moduleImports,
+                    childDependencies);
+            }
+
+        }
+
+        return Filter;
+    }
+
+
     public createComponent<T>(componentType:{ new(...args:any[]): T; },
                               viewContainerRef:ViewContainerRef,
                               compiler:RuntimeCompiler,
@@ -184,7 +260,7 @@ export class AgComponentFactory {
     }
 
 
-    private  createComponentModule(componentType:any, moduleImports:any[], childDependencies:any[]) : any {
+    private  createComponentModule(componentType:any, moduleImports:any[], childDependencies:any[]):any {
         @NgModule({
             imports: moduleImports,
             declarations: [componentType, ...childDependencies],
@@ -209,19 +285,23 @@ export class AgComponentFactory {
             getFrameworkComponentInstance():any {
                 return undefined;
             }
+
+            // not applicable for template components
+            refresh(params:any):void {
+            }
         }
         return DynamicComponent;
     }
 }
 
-abstract class BaseGuiComponent<T extends AgFrameworkComponent> {
-    protected _params:any;
+abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
+    protected _params:P;
     protected _eGui:HTMLElement;
     protected _componentRef:ComponentRef<T>;
     protected _agAwareComponent:T;
     protected _frameworkComponentInstance:any;  // the users component - for accessing methods they create
 
-    protected init(params:any):void {
+    protected init(params:P):void {
         this._params = params;
 
         this._componentRef = this.createComponent();
@@ -242,7 +322,7 @@ abstract class BaseGuiComponent<T extends AgFrameworkComponent> {
         }
     }
 
-    public getFrameworkComponentInstance() : any {
+    public getFrameworkComponentInstance():any {
         return this._frameworkComponentInstance;
     }
 

@@ -1,9 +1,10 @@
-// ag-grid-ng2 v6.0.1
+// ag-grid-ng2 v6.0.3
 import { ViewContainerRef, ComponentRef } from '@angular/core';
 import { RuntimeCompiler } from "@angular/compiler";
-import { ICellRenderer, ICellEditor } from 'ag-grid/main';
+import { ICellRenderer, ICellEditor, IFilter } from 'ag-grid/main';
 import { AgRendererComponent } from "./agRendererComponent";
 import { AgEditorComponent } from "./agEditorComponent";
+import { AgFilterComponent } from "./agFilterComponent";
 export declare class AgComponentFactory {
     private _runtimeCompiler;
     private _cacheOfModules;
@@ -35,8 +36,14 @@ export declare class AgComponentFactory {
     }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
         new (): ICellEditor;
     };
+    createFilterFromComponent(componentType: {
+        new (...args: any[]): AgFilterComponent;
+    }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
+        new (): IFilter;
+    };
     private adaptComponentToRenderer(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
     private adaptComponentToEditor(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
+    private adaptComponentToFilter(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
     createComponent<T>(componentType: {
         new (...args: any[]): T;
     }, viewContainerRef: ViewContainerRef, compiler: RuntimeCompiler, name: string, moduleImports: any[], childDependencies: any[]): ComponentRef<T>;
