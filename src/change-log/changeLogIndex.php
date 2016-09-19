@@ -8,12 +8,161 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h2>Version 6.0.x</h2>
+
+    <h4>ag-Grid 6.0.1, ag-Grid-Enterprise 6.0.1, ag-Grid-React 6.0.1, , ag-Grid-NG2 6.0.1</h4>
+
+    <p>
+        Version 6.0.x brings the following changes:
+        <ol>
+            <li>Bug Fixes and Improvements</li>
+            <li>Improved React and Angular 2 Support</li>
+            <li>Refactored Filters</li>
+        </ol>
+        Below goes through each of these in turn.
+    </p>
+
+    <h3>1 - Bug Fixes and Improvements</h3>
+
+    <li>Breaking Change: React now uses props directly for the init params in filters, cellRenderers and cellEditors.</li>
+    <li>Breaking Change: Filter interface now called IFilter.</li>
+    <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
+    <li>Enhancement: Tooltips now don't show if null or undefined.</li>
+    <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
+        api.getFloatingBottomRow(index) for accessing floating rows</li>
+
+    <h3>2 - Improved React and Angular 2 Support</h3>
+
+    <p>
+        Lots of work has been done to support natively React and Angular 2, to allow you to plug in React
+        and Angular 2 cellEditors and cellRenders simply. Now, instead of using cellRenderer, you use
+        cellRendererFramework as follows:
+        <pre><span class="codeComment">// when not using React or Angular 2</span>
+colDef.cellRenderer = MyCellRenderer;
+
+<span class="codeComment">// in v6, you can use React or Angular 2 components directly</span>
+colDef.cellRendererFramework = MyReactCellRenderer; <span class="codeComment">// for React</span>
+colDef.cellRendererFramework = MyAngular2CellRenderer; <span class="codeComment">// for Angular</span></pre>
+        Full details on how get this all working are in the updated React and Angular 2 sections of the docs.
+        If you are using Angular 2 or React, it's best you read these sections to see how to do things
+        in the new improved way.
+    </p>
+
+    <h3>3 - Changes to Filters</h3>
+
+    <p>
+        How filters were working were out of line with how cellRenderers and cellEditors were working. This is
+        because filters were done as one of the first items in ag-Grid and the interface has not changed. The
+        changes in this release bring them in line with the newer 'Component Model' that is in ag-Grid, so they
+        now behave in the same way as cellRenderers and cellEditors, including fitting in with React and
+        Angular 2 components, the same way the renderers and editors do. The main core changes are as follows:
+        <ol>
+        <li><b>If you were providing a Filter API</b> then be aware the API is no longer a separate part of the component. Instead it is now possible to get a reference
+        to the filter component directly via api.getFilterInstance(colKey). From here you can access all
+        methods on the filter component. So if you want to add extra items to (what used to be) the API, now
+        you just add them directly to your filter component.
+        <pre>
+<span class="codeComment">// eg if your filter was like this:</span>
+function MyFilter() {}
+
+MyFilter.prototype.getApi = function() {
+    return {
+        getModel: function() {
+            ...
+        },
+        setModel: function(model) {
+            ...
+        },
+    }
+}
+
+<span class="codeComment">// it should now be like this:</span>
+function MyFilter() {}
+
+MyFilter.prototype.getModel = function() {
+    ...
+}
+
+MyFilter.prototype.setModel = function(model) {
+    ...
+}</pre>
+        </li>
+        <li><b>If you were providing custom params to your custom filters</b> then these used to be passed to the filter embedded into the filter params.
+        Now the custom params are added to the main params.
+        <pre>
+<span class="codeComment">// eg when you define this:</span>
+colDef = {
+    ...
+    filter: MyFilter,
+    filterParams: {a: 'A', b: 'B'}
+}
+
+<span class="codeComment">// the old way resulted in:</span>
+params = {
+    column: Column,
+    ...
+    filterParams: {
+        a: 'A',
+        b: 'B'
+    }
+}
+
+<span class="codeComment">// but now it results in:</span>
+params = {
+    column: Column,
+    ...
+    a: 'A',
+    b: 'B'
+}</pre>
+        </li>
+        <li>
+            <p>
+                The constants for Number and Text filters are now strings and not numbers. If you were storing
+                user preferences for these filters, you need to map the old numbers to the new string values.
+            </p>
+            <p>
+                For Number filter, the mapping is as follows:
+                <ul>
+                    <li>1 => 'equals'</li>
+                    <li>2 => 'notEqual'</li>
+                    <li>3 => 'lessThan'</li>
+                    <li>4 => 'lessThanOrEqual'</li>
+                    <li>5 => 'greaterThan'</li>
+                    <li>6 => 'greaterThanOrEqual'</li>
+                </ul>
+            </p>
+            <p>
+                For Number filter, the mapping is as follows:
+            <ul>
+                <li>1 => 'contains'</li>
+                <li>2 => 'equals'</li>
+                <li>3 => 'notEquals'</li>
+                <li>4 => 'startsWith'</li>
+                <li>5 => 'endsWith'</li>
+            </ul>
+            </p>
+        </li>
+    </ol>
+    </p>
+    <p>
+        All the examples are up to date with the new way of doing things.
+    </p>
+
+    <h3>Version 5.4.x</h3>
+
+    <h4>ag-Grid 5.4.0, ag-Grid-Enterprise 5.4.0, ag-Grid-React 5.4.0, , ag-Grid-NG2 5.4.0</h4>
+
+    <li>Enhancement: added API for startEditing().</li>
+    <li>Enhancement: now rememberGroupStateWhenNewData works when inserting/removing rows, ie group open/closed state is now kept when updating rows.</li>
     <li>Enhancement: added columnKeys to api.copySelectedRowsToClipboard(), so you can choose which columns get used.</li>
     <li>Enhancement: columns can now be reordered when in pivot mode (previously they were static).</li>
     <li>Enhancement: ag-grid-react - now you pass in parent component to React cellRenderer - makes cellRenderer work with React Router and also should give performance improvements.</li>
     <li>Enhancement: export to csv now allows you to specify particular columns.</li>
     <li>Enhancement: export to csv now includes floating top and floating bottom rows.</li>
     <li>Enhancement: toolPanel has lazy intialisation, so now if toolPanel not showing, it doesn't initialise.</li>
+    <li>Bugfix: copy range to clipboard was not taking in group values when group key was using valueGetter.</li>
+    <li>Bugfix: removed styles from border layout templates, used css classes instead. Fixed bug where chrome complained about 'styles violate Content Security Policy #1093'</li>
+    <li>Bugfix: for menus, sub menu was appearing in wrong place when normal 'display to right' position was off screen.</li>
 
     <h3>Version 5.3.x</h3>
 

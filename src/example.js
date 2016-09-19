@@ -231,7 +231,7 @@ var gridOptions = {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
     },
     onRangeSelectionChanged: function (event) {
-        console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
+        // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
     getContextMenuItems: getContextMenuItems
 };
@@ -345,7 +345,7 @@ var defaultCols = [
         headerName: 'Game of Choice',
         children: [
             {headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
-                tooltipField: 'gameName',
+                tooltipField: 'game.name',
         cellClass: function () {
             return 'alphabet';
         },
@@ -563,7 +563,6 @@ function createRowItem(row, colCount) {
         name: games[Math.floor(row*13/17*19) % games.length],
         bought: booleanValues[row % booleanValues.length]
     };
-    rowItem.gameName = 'toolTip: ' + rowItem.game.name.toUpperCase();
 
     rowItem.bankBalance = ((Math.round(pseudoRandom() * 10000000)) / 100) - 3000;
     rowItem.rating = (Math.round(pseudoRandom() * 5));
@@ -744,6 +743,10 @@ PersonFilter.prototype.getApi = function () {
     }
 };
 
+// lazy, the example doesn't use getModel() and setModel()
+PersonFilter.prototype.getModel = function () {};
+PersonFilter.prototype.setModel = function () {};
+
 function WinningsFilter() {
 }
 
@@ -799,6 +802,10 @@ WinningsFilter.prototype.doesFilterPass = function (node) {
 WinningsFilter.prototype.isFilterActive = function () {
     return !this.cbNoFilter.checked;
 };
+
+// lazy, the example doesn't use getModel() and setModel()
+WinningsFilter.prototype.getModel = function () {};
+WinningsFilter.prototype.setModel = function () {};
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {

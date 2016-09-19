@@ -1,8 +1,8 @@
 <html>
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid.js?ignore=notused31"></script>
-    <script src="exampleInsertRemove.js"></script>
+    <script src="../dist/ag-grid-enterprise.js?ignore=notused31"></script>
+    <script src="exampleInsertRemoveGroups.js"></script>
 </head>
 <body style="position: relative;">
 
@@ -11,8 +11,8 @@
     </div>
 
     <div style="position: absolute; top: 0px; left: 0px;">
-        <button onclick="onAddRow()">Add Row</button>
-        <button onclick="onInsertRowAt2()">Insert Row @ 2</button>
+        <button onclick="onAddRow('Ford')">Add 'Ford' Row To End</button>
+        <button onclick="onInsertRowAtZero('Sugar')">Insert 'Sugar' At Start</button>
         <button onclick="onRemoveSelected()">Remove Selected</button>
         <button onclick="getRowData()">Get Row Data</button>
     </div>

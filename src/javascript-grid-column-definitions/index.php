@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Column Definitions</h2>
+    <h2>Columns</h2>
 
     <p>
         Each column in the grid is defined using a column definition. Below is the set off all the
@@ -76,6 +76,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to 'left' or 'right' to pin.</td>
         </tr>
         <tr>
+            <th>filter<br/>filterFramework</th>
+            <td>Filter component to use for this column.</td>
+        </tr>
+        <tr>
             <th>headerTooltip</th>
             <td>Tooltip for the column header</td>
         </tr>
@@ -117,16 +121,16 @@ include '../documentation-main/documentation_header.php';
             <td>An object of css values. Or a function returning an object of css values.</td>
         </tr>
         <tr>
-            <th>cellRenderer(params)</th>
-            <td>A function for rendering a cell.</td>
+            <th>cellRenderer<br/>cellRendererFramework</th>
+            <td>cellRenderer to use for this column.</td>
         </tr>
         <tr>
             <th>cellFormatter</th>
             <td>A function for formatting a cell.</td>
         </tr>
         <tr>
-            <th>floatingCellRenderer(params)</th>
-            <td>A function for rendering floating cells. Floating cells will use floatingCellRenderer if available,
+            <th>floatingCellRenderer<br/>floatingCellRendererFramework</th>
+            <td>cellRenderer to use for floating rows in this column. Floating cells will use floatingCellRenderer if available,
                 if not then cellRenderer.</td>
         </tr>
         <tr>
@@ -205,6 +209,10 @@ include '../documentation-main/documentation_header.php';
             <th>editable</th>
             <td>Set to true if this col is editable, otherwise false. Can also be a function
                 to have different rows editable.</td>
+        </tr>
+        <tr>
+            <th>cellEditor<br/>cellEditorFramework</th>
+            <td>cellEditor to use for this column.</td>
         </tr>
         <tr>
             <th>newValueHandler(params)<br/>onCellValueChanged(params)</th>

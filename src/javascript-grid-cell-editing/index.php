@@ -52,9 +52,10 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Create your own cellEditor by providing a cellEditor component.
+    </p>
 
     <note>
-        Like cellRenderers, cellEditor components have nothing to do with Angular or Reach or any other
+        Like cellRenderers, cellEditor components have nothing to do with Angular or React or any other
         framework components. The are called components because they follow similar concepts. All you
         need to do to create an ag-Grid cellRenderer component is implement the required methods in
         your class.
@@ -65,34 +66,35 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <pre>interface ICellEditor {
-    // gets called once after the editor is created
+
+    <span class="codeComment">// gets called once after the editor is created</span>
     init?(params: ICellEditorParams): void;
 
-    // Gets called once after GUI is attached to DOM.
-    // Useful if you want to focus or highlight a component
-    // (this is not possible when the element is not attached)
+    <span class="codeComment">// Gets called once after GUI is attached to DOM.</span>
+    <span class="codeComment">// Useful if you want to focus or highlight a component</span>
+    <span class="codeComment">// (this is not possible when the element is not attached)</span>
     afterGuiAttached?(): void;
 
-    // Return the DOM element of your editor, this is what the grid puts into the DOM
+    <span class="codeComment">// Return the DOM element of your editor, this is what the grid puts into the DOM</span>
     getGui(): HTMLElement;
 
-    // Should return the final value to the grid, the result of the editing
+    <span class="codeComment">// Should return the final value to the grid, the result of the editing</span>
     getValue(): any;
 
-    // Gets called once by grid after editing is finished
-    // if your editor needs to do any cleanup, do it here
+    <span class="codeComment">// Gets called once by grid after editing is finished</span>
+    <span class="codeComment">// if your editor needs to do any cleanup, do it here</span>
     destroy?(): void;
 
-    // Gets called once after initialised.
-    // If you return true, the editor will appear in a popup
+    <span class="codeComment">// Gets called once after initialised.</span>
+    <span class="codeComment">// If you return true, the editor will appear in a popup</span>
     isPopup?(): boolean;
 
-    // Gets called once before editing starts, to give editor a chance to
-    // cancel the editing before it even starts.
+    <span class="codeComment">// Gets called once before editing starts, to give editor a chance to</span>
+    <span class="codeComment">// cancel the editing before it even starts.</span>
     isCancelBeforeStart?(): boolean;
 
-    // Gets called once when editing is finished (eg if enter is pressed).
-    // If you return true, then the result of the edit will be ignored.
+    <span class="codeComment">// Gets called once when editing is finished (eg if enter is pressed).</span>
+    <span class="codeComment">// If you return true, then the result of the edit will be ignored.</span>
     isCancelBeforeEnd?(): boolean;
 }</pre>
 
@@ -100,41 +102,41 @@ include '../documentation-main/documentation_header.php';
         Below is a simple example of cellEditor class:
     </p>
 
-<pre><code><b>// function to act as a class</b>
+<pre><code><span class="codeComment">// function to act as a class</span>
 function MyCellEditor () {}
 
-<b>// gets called once before the renderer is used</b>
+<span class="codeComment">// gets called once before the renderer is used</span>
 MyCellEditor.prototype.init = function(params) {
-    // create the cell
+    <span class="codeComment">// create the cell</span>
     this.eInput = document.createElement('input');
     this.eInput.value = params.value;
 };
 
-<b>// gets called once when grid ready to insert the element</b>
+<span class="codeComment">// gets called once when grid ready to insert the element</span>
 MyCellEditor.prototype.getGui = function() {
     return this.eInput;
 };
 
-<b>// focus and select can be done after the gui is attached</b>
+<span class="codeComment">// focus and select can be done after the gui is attached</span>
 MyCellEditor.prototype.afterGuiAttached = function() {
     this.eInput.focus();
     this.eInput.select();
 };
 
-<b>// returns the new value after editing</b>
+<span class="codeComment">// returns the new value after editing</span>
 MyCellEditor.prototype.getValue = function() {
     return this.eInput.value;
 };
 
-<b>// any cleanup we need to be done here</b>
+<span class="codeComment">// any cleanup we need to be done here</span>
 MyCellEditor.prototype.destroy = function() {
-    // but this example is simple, no cleanup, we could
-    // even leave this method out as it's optional
+    <span class="codeComment">// but this example is simple, no cleanup, we could</span>
+    <span class="codeComment">// even leave this method out as it's optional</span>
 };
 
-<b>// if true, then this editor will appear in a popup </b>
+<span class="codeComment">// if true, then this editor will appear in a popup </span>
 MyCellEditor.prototype.isPopup = function() {
-    // and we could leave this method out also, false is the default
+    <span class="codeComment"> and we could leave this method out also, false is the default</span>
     return false;
 };</code></pre>
 
@@ -211,11 +213,11 @@ MyCellEditor.prototype.isPopup = function() {
         as the 'country' parameter:
     </p>
 
-<pre><code><b>// define cellRenderer to be reused</b>
+<pre><code><span class="codeComment">// define cellRenderer to be reused</span>
 var myCellEditor = .....
 
-<b>// use with a color</b>
-colDef.cellEditor = ... /* provide cellEditor as before */
+<span class="codeComment">// use with a color</span>
+colDef.cellEditor = ... <span class="codeComment">// provide cellEditor as before</span>
 colDef.cellEditorParams = {
     country: 'Ireland'
 }
@@ -236,6 +238,7 @@ colDef.cellEditorParams = {
             places this character into the edit field so that the user experience is they are typing into the cell.</li>
         <li><b>Mouse Double Click</b>: If the mouse is double clicked. There is a grid property <i>singleClickEdit</i>
             that will allow single click to start editing instead of double click.</li>
+        <li><b>api.startEditing()</b>: If you call startEditing() on the grid API</li>
     </ul>
     </p>
 
@@ -375,6 +378,27 @@ colDef.cellEditorParams = {
         newValue for onCellValueChanged will have the number.
     </p>
 
+    <h3>Editing API</h3>
+
+    <p>
+        There are two api methods for editing, <code>startEditing()</code> and <code>stopEditing(params)</code>.
+    </p>
+
+    <p>
+        <b>startEditing(params)</b><br/>
+        Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
+        <ul>
+        <li><b>rowIndex</b>: The row index of the row to start editing.</li>
+        <li><b>colKey</b>: The column key of the column to start editing.</li>
+        <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cellEditor</li>
+    </ul>
+    </p>
+
+    <p>
+        <b>stopEditing()</b><br/>
+        Takes no parameters and stops the current editing. If not editing, then does nothing.
+    </p>
+
     <h3>Cell Editing Example</h3>
 
     <p>The example below illustrates:
@@ -383,10 +407,257 @@ colDef.cellEditorParams = {
         <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
         <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.</li>
         <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
+        <li>The buttons a the top demonstrate different usages of the editing API.</li>
     </ul>
     </p>
 
     <show-example example="exampleCellEditing"></show-example>
+
+    <h2 id="reactCellEditing">
+        <img src="../images/react_large.png" style="width: 60px;"/>
+        React Cell Editing
+    </h2>
+
+    <p>
+        It is possible to provide a React cellEditor for ag-Grid to use. All of the information above is
+        relevant to React cellEditors. This section explains how to apply this logic to your React component.
+    </p>
+
+    <p>
+        For an example of React cellEditing, see the
+        <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+        In the example, the 'name' column uses a React cellEditor.</p>
+    </p>
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React cellEditor</h3>
+
+    <p>
+        If you are using the ag-grid-react component to create the ag-Grid instance,
+        then you will have the option of additionally specifying the cellEditors
+        as React components.
+    </p>
+
+    <pre><span class="codeComment">// create your cellEditor as a React component</span>
+class NameCellEditor extends React.Component {
+
+    <span class="codeComment">// constructor gets the props</span>
+    constructor(props) {
+        <span class="codeComment">// set initial state to be the value to be edited</span>
+        this.state = {value: props.value};
+    }
+
+    render() {
+    <span class="codeComment">// put in render logic</span>
+        return &lt;input type="text" value="{this.state.value}">&lt;/input>;
+    }
+
+    <span class="codeComment">// more logic is needed, but enough for now to show the general setup</span>
+}
+
+<span class="codeComment">// then reference the Component in your colDef like this</span>
+colDef = {
+
+    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    cellEditorFramework: NameCellEditor
+
+    <span class="codeComment">// specify all the other fields as normal</span>
+    cellRendererFramework: NameCellRenderer     <span class="codeComment">// if you have a React cellRenderer</span>
+    headerName: 'Name',
+    field: 'firstName',
+    ...
+}</pre>
+
+    <p>
+        By using <i>colDef.cellEditorFramework</i> (instead of <i>colDef.cellEditor</i>) the grid
+        will know it's a React component, based on the fact that you are using the React version of
+        ag-Grid.
+    </p>
+
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
+
+    <p>
+        The React component will get the 'cellEditor Params' as described above as it's React Props.
+        Therefore you can access all the parameters as React Props.
+
+    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
+
+    <p>
+        All of the methods in the ICellEditor interface described above are applicable
+        to the React Component with the following exceptions:
+    <ul>
+        <li><i>init()</i> is not used. Instead use the React props passed to your Component.</li>
+        <li><i>destroy()</i> is not used. Instead use the React <i>componentWillUnmount()</i> method for
+            any cleanup you need to do.</li>
+        <li><i>getGui()</i> is not used. Instead do normal React magic in your <i>render()</i> method..</li>
+    </ul>
+
+    <p>
+        All of the other methods (<i>isPopup(), isCancelBeforeStart(), isCancelBeforeEnd(), afterGuiAttached()</i> etc)
+        should be put onto your React component and will work as normal.
+    </p>
+
+    <h2 id="ng2CellEditing">
+        <img src="../images/angular2_large.png" style="width: 60px;"/>
+        Angular 2 Cell Editing
+    </h2>
+
+    <p>
+        It is possible to provide a Angular 2 cellEditor for ag-Grid to use. All of the information above is
+        relevant to Angular 2 cellEditors. This section explains how to apply this logic to your Angular 2 component.
+    </p>
+
+    <p>
+        For an example of Angular 2 cellEditing, see the
+        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.
+    </p>
+
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 cellEditor</h3>
+
+    <p>
+        If you are using the ag-grid-ng2 component to create the ag-Grid instance,
+        then you will have the option of additionally specifying the cellEditors
+        as Angular 2 components.
+    </p>
+
+    <pre ng-non-bindable><span class="codeComment">// create your cellEditor as a Angular 2 component</span>
+@Component({
+    selector: 'editor-cell',
+    template: `
+        &lt;div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
+            &lt;img src="../images/smiley.png" (click)="setHappy(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
+            &lt;img src="../images/smiley-sad.png" (click)="setHappy(false)" [ngClass]="{'selected' : !happy, 'default' : happy}">
+        &lt;/div>
+    `,
+    styles: [`
+        .mood {
+            border-radius: 15px;
+            border: 1px solid grey;
+            background: #e6e6e6;
+            padding: 15px;
+            text-align:center;
+            display:inline-block;
+            outline:none
+        }
+
+        .default {
+            padding-left:10px;
+            padding-right:10px;
+            border: 1px solid transparent;
+            padding: 4px;
+        }
+
+        .selected {
+            padding-left:10px;
+            padding-right:10px;
+            border: 1px solid lightgreen;
+            padding: 4px;
+        }
+    `]
+})
+class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
+    private params:any;
+
+    @ViewChild('container', {read: ViewContainerRef}) container;
+    private happy:boolean = false;
+
+    // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
+    ngAfterViewInit() {
+        this.container.element.nativeElement.focus();
+    }
+
+    agInit(params:any):void {
+        this.params = params;
+        this.setHappy(params.value === "Happy");
+    }
+
+    getValue():any {
+        return this.happy ? "Happy" : "Sad";
+    }
+
+    isPopup():boolean {
+        return true;
+    }
+
+    setHappy(happy:boolean):void {
+        this.happy = happy;
+    }
+
+    toggleMood():void {
+        this.setHappy(!this.happy);
+    }
+
+    onKeyDown(event):void {
+        let key = event.which || event.keyCode;
+        if (key == 37 ||  // left
+            key == 39) {  // right
+            this.toggleMood();
+            event.stopPropagation();
+        }
+    }
+}
+<span class="codeComment">// then reference the Component in your colDef like this</span>
+colDef = {
+        headerName: "Mood",
+        field: "mood",
+        <span class="codeComment">// instead of cellEditor we use cellEditorFramework</span>
+        cellEditorFramework: {
+            component: MoodEditorComponent,
+            moduleImports: [CommonModule]
+        },
+
+        <span class="codeComment">// specify all the other fields as normal</span>
+        editable: true,
+        width: 150
+    }
+}</pre>
+
+    <p>Your Angular 2 components need to implement <code>AgEditorComponent</code>.</p>
+
+    <p>When specifying Angular 2 Components you can optionally specify Component dependencies, as well as which modules you wish to import.
+        The latter is important if your component uses built in Angular 2 components (such as ngIf, ngStyle etc).</p>
+
+    <pre>
+cellEditorFramework: {
+    component: YourComponent,
+
+    <span class="codeComment">// optional - these go into module.declarations</span>
+    dependencies: [YourChildComponent1, YourChildComponent2],
+
+    <span class="codeComment">// optional - these go into module.imports</span>
+    moduleImports: [CommonModule, FormsModule]
+}
+</pre>
+
+    <p>
+        By using <i>colDef.cellEditorFramework</i> (instead of <i>colDef.cellEditor</i>) the grid
+        will know it's a Angular 2 component, based on the fact that you are using the Angular 2 version of
+        ag-Grid.
+    </p>
+
+
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Parameters</h3>
+
+    <p>Your Angular 2 components need to implement <code>AgEditorComponent</code>.
+        The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the cell <code>params</code>.</p>
+
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Methods / Lifecycle</h3>
+
+    <p>
+        All of the methods in the ICellEditor interface described above are applicable
+        to the Angular 2 Component with the following exceptions:
+    <ul>
+        <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
+        <li><i>destroy()</i> is not used. Instead implement the Angular 2<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
+            any cleanup you need to do.</li>
+        <li><i>getGui()</i> is not used. Instead do normal Angular 2 magic in your Component via the Angular 2 template.</li>
+        <li><i>afterGuiAttached()</i> is not used. Instead implement <code>AfterViewInit</code> (<code>ngAfterViewInit</code>) for any post Gui setup (ie to focus on an element).</li>
+    </ul>
+
+    <p>
+        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelBeforeEnd()</i> etc)
+        should be put onto your Angular 2 component and will work as normal.
+    </p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

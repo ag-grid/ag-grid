@@ -100,6 +100,12 @@
         <div class="quote-company">CTO / Co-Founder, Interloop</div>
     </div>
 
+    <div class="row quote">
+        <div class="quote-text">"Ag-grid is one of the best Grids I have ever worked with. In spite of being feature rich it is still one of the fastest grids I have ever used. This grid will be an essential part of my tool kit especially when working with extremely large datasets."</div>
+        <div class="quote-from">Zach Lewis</div>
+        <div class="quote-company">Senior Software Developer, Nutraceutical</div>
+    </div>
+
     <div class="row">
         <div class="col-md-9">    
             <hr/>

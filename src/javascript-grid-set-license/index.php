@@ -29,6 +29,11 @@ include '../documentation-main/documentation_header.php';
         <pre>var enterprise = require("ag-grid-enterprise");<br/>enterprise.LicenseManager.setLicenseKey("your license key");</pre>
     </p>
 
+    <note>
+        If you are distributing your product and including ag-Grid Enterprise, we realise that your license key will be
+        visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
+        product is JavaScript, there is little we can do to prevent this.
+    </note>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

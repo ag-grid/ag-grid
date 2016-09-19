@@ -11,37 +11,62 @@ include '../documentation-main/documentation_header.php';
     <h2>Best Angular 2 Data Grid</h2>
 
     <p>
-        When using Angular 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
-        already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
-        are, then don't worry, you will be none the wiser).
+        If you are building an Angular 2 application then you have the choice between A) using the plain JavaScript version
+        of ag-Grid or B) using the ag-Grid Angular 2 Component from the <a href="https://github.com/ceolter/ag-grid-ng2">
+            ag-grid-ng2</a> project. If you use the ag-Grid Angular 2 Component, then the grid's properties, events and API
+        will all tie in with the Angular 2 ecosystem. This will make your Angular 2 coding easier.
     </p>
 
-    <p>If you MUST use the UMD version of Angular 2, then use the plain Javascript version of ag-Grid.</p>
-
-    <h3>Angular 2 Still in Release Candidate</h3>
-
+    <note>
         <p>
-            Angular 2 is currently on Release Candidate 6 - until Angular 2 is actually released there is of course an element of instability in using it.
-            Please keep this in mind if you plan on using it for a Production release.
-        <p>
-    <p>Please use the github project (<a href="https://github.com/ceolter/ag-grid-ng2">https://github.com/ceolter/ag-grid-ng2</a>) for feedback or issue reporting around this functionality.</p>
+            When using Angular 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
+            already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
+            are, then don't worry, you will be none the wiser).
+        </p>
+        <p>If you MUST use the UMD version of Angular 2, then use the plain Javascript version of ag-Grid.</p>
+    </note>
+
+
+    <note>ag-Gird v6.x adds many Angular 2 related improvements to the ag-Grid offering - this includes easier configuration,
+        better renderer definition and cell editor support.
+    </note>
+
+    <p>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
+        for feedback or issue reporting around this functionality.</p>
+
+    <h2>ag-Grid React Features</h2>
+
+    <p>
+        Every feature of ag-Grid is available when using the ag-Grid Angular 2 Component. The Angular 2 Component wraps
+        the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
+        Angular 2 ag-Grid when it comes to features.
+    </p>
 
     <h3>Angular 2 Full Example</h3>
 
     <p>
         This page goes through the
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a>
-        example on Github. Because the example depends on SystemX and JSPM, it is not included in the
+        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a>
+        on Github. Because the example depends on SystemX and JSPM, it is not included in the
         online documentation.
     </p>
 
-    <p>The example project is 4 seperate grids on a page, with each section demonstrating a different feature set:
-        <ul>
+    <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
+        feature set:
+    <ul>
         <li>A Feature Rich Grid Example, demonstrating many of ag-Grid's features using Angular 2 as a wrapper</li>
         <li>A Simple Example, using CellRenders created from Angular 2 Components</li>
         <li>A Simple Example, using CellRenders created from Template Strings</li>
-        <li>A Richer Example, using CellRenderers created from Angular 2 Components, with child components, and two-way binding (parent to child components events)</li>
-        </ul>
+        <li>A Richer Example, using CellRenderers created from Angular 2 Components, with child components, and two-way
+            binding (parent to child components events)
+        </li>
+        <li>Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates
+            different editor related features
+        </li>
+        <li>A Float Row Renderer Example</li>
+        <li>A Full Width Renderer Example</li>
+        <li>An Example demonstrating Group Inner Cell Renderers</li>
+    </ul>
     </p>
 
     <h3>Dependencies</h3>
@@ -50,11 +75,11 @@ include '../documentation-main/documentation_header.php';
         In your package.json file, specify dependency on ag-grid AND ag-grid-ng2.
         The ag-grid package contains the core ag-grid engine and the ag-grid-ng2
         contains the Angular 2 component.
-        <pre><code>"dependencies": {
+        <pre>"dependencies": {
     ...
-    "ag-grid": "5.3.x",
-    "ag-grid-ng2": "5.3.x"
-}</code></pre>
+    "ag-grid": "6.0.x",
+    "ag-grid-ng2": "6.0.x"
+}</pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
     for patch versions, the component will not be released.
@@ -68,12 +93,10 @@ include '../documentation-main/documentation_header.php';
         Which you can then use as a dependency inside your module:
     </p>
 
-    <note><code>AgGridModule</code> needs to be at the root level. Specifically, <code>AgComponentFactory</code> needs to be an app wide provider.</note>
-
     <pre>@NgModule({
     imports: [
         BrowserModule,
-        AgGridModule,
+        AgGridModule.forRoot(),
     ...
 })</pre>
 
@@ -164,127 +187,66 @@ include '../documentation-main/documentation_header.php';
         The example has ag-Grid configured through the template in the following ways:
     </p>
 
-    <pre>// notice the grid has an id called agGrid, which can be used to call the API
+    <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
 &lt;ag-grid-ng2 #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
 
-    // items bound to properties on the controller
+    <span class="codeComment">// items bound to properties on the controller</span>
     [gridOptions]="gridOptions"
     [columnDefs]="columnDefs"
     [showToolPanel]="showToolPanel"
     [rowData]="rowData"
 
-    // boolean values 'turned on'
+    <span class="codeComment">// boolean values 'turned on'</span>
     enableColResize
     enableSorting
     enableFilter
 
-    // simple values, not bound
+    <span class="codeComment">// simple values, not bound</span>
     rowHeight="22"
     rowSelection="multiple"
 
-    // event callbacks
+    <span class="codeComment">// event callbacks</span>
     (modelUpdated)="onModelUpdated()"
     (cellClicked)="onCellClicked($event)"
     (cellDoubleClicked)="onCellDoubleClicked($event)">
+
 &lt;/ag-grid-ng2></pre>
 
-    <h2>Cell Rendering using Angular 2</h2>
+    <p>
+        The above is all you need to get started using ag-Grid in a React application. Now would
+        be a good time to try it in a simple app and get some data displaying and practice with
+        some of the grid settings before moving onto the advanced features of cellRendering
+        and custom filtering.
+    </p>
 
-    <p>ag-Grid supports the addition of cellRenderers via Angular 2 components - we do this by wrapping Angular 2 Components in a CellRenderer, which allows for two way binding
-    and all normal Angular 2 Component functionality (two way binding, dependency injection and so on).</p>
+    <h2>Cell Rendering & Cell Editing using Angular 2</h2>
+
+    <p>
+        It is possible to build
+        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
+        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular 2. Doing each of these
+        is explained in the section on each.
+    </p>
+
+    <p>
+        Although it is possible to use Angular 2 for your customisations of ag-Grid, it is not necessary. The grid
+        will happily work with both Angular 2 and non-Angular 2 portions (eg cellRenderers in Angular 2 or normal JavaScript).
+        If you do use Angular 2, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
+        internal framework is already highly tuned to work incredibly fast and does not require Angular 2 or anything
+        else to make it faster. If you are looking for a lightning fast grid, even if you are using Angular 2 and
+        the ag-grid-ng2 component, consider using plain ag-Grid Components (as explained on the pages for
+        rendering etc) inside ag-Grid instead of creating Angular 2 counterparts.
+    </p>
 
     <note>
         <p>
-            We here at ag-Grid owe a debt of thanks to Neal Borelli @ Thermo Fisher Scientific who provided a fully working implementation for us to use as a basis for our Angular 2 "dynamic cell" offering.
-            Neal's assistance was a big help in being able to get something out much faster than we would have otherwise - thanks Neal!
+            We here at ag-Grid owe a debt of thanks to Neal Borelli @ Thermo Fisher Scientific who provided a fully
+            working implementation for us to use as a basis for our initial Angular 2 "dynamic cell" offering.
+            Neal's assistance was a big help in being able to get something out much faster than we would have otherwise
+            - thanks Neal!
         </p>
     </note>
-
-    <h3>AgComponentFactory</h3>
-
-    <p><code>AgComponentFactory</code> offers two methods to add cellRenderers to ag-Grid, either via a Template String, or via a Component. In both methods you'll need to pass in the <code>ViewContainerRef</code> for the current component into the Factory.</p>
-    <p>To reference <code>AgComponentFactory</code> you'll need to pull in the dependency:</p>
-
-    <pre>import {AgComponentFactory} from 'ag-grid-ng2/main';</pre>
-
-    <h4>Adding cellRenderers via Template Strings</h4>
-
-    You can add a cellRenderer component supplying a string as a template - the <code>params</code> argument passed to cellRenders is available in the template:
-
-    <pre ng-non-bindable>
-{
-    headerName: "Square Template",
-    field: "index",
-    cellRenderer: agComponentFactory.createCellRendererFromTemplate('{{params.value * params.value}}', this._viewContainerRef)
-    width: 200
-},</pre>
-
-    <h4>Adding cellRenderers via Components</h4>
-
-    <p>You can add a cellRenderer component supplying a regular Angular 2 Component.</p>
-
-    <p>If your component implements the <code>AgAware</code> (or just implements <code>agInit(params)</code>), then the <code>params</code> argument
-        passed to cellRenders will be set via this method
-
-    <pre ng-non-bindable>
-@Component({
-    selector: 'square-cell',
-    template: `{{valueSquared()}}`
-})
-class SquareComponent implements AgAware {
-    private params:any;
-
-    agInit(params:any):void {
-        this.params = params;
-    }
-
-    private valueSquared():number {
-        return this.params.value * this.params.value;
-    }
-}</pre>
-    <pre>
-{
-    headerName: "Square Component",
-    field: "index",
-    cellRenderer: agComponentFactory.createCellRendererFromComponent(SquareComponent, this._viewContainerRef),
-    width: 200
-},</pre>
-
-    <h4>Supplying declarations to your Components</h4>
-
-    <p>If your component in turn depends on other components (or directives), you'll need to supply them to the factory:</p>
-<pre>
-cellRenderer: this.agComponentFactory.createCellRendererFromComponent(RatioParentComponent,
-    this._viewContainerRef,
-    [RatioComponent]
-)
-</pre>
-    <p>In this case <code>RatioParentComponent</code> uses <code>RatioComponent</code>, so we supply it as the 3rd argument.</p>
-
-    <h4>Supplying imports to your Components</h4>
-
-    <p>If your component requires other modules (for example. CommonModule for ngIf), you'll need to supply them to the factory:</p>
-<pre>
-cellRenderer: this.agComponentFactory.createCellRendererFromComponent(MyComponent,
-    this._viewContainerRef,
-    [], // other declarations
-    [CommonModule] // we want to have CommonModule available to MyComponent
-)
-</pre>
-
-    <h2>Destroy</h2>
-
-    <p>
-        The grid ties in with the Angular 2 lifecycle and releases all resources when the directive is destroyed. The example above demonstrates this
-        by taking the element out of the DOM via *ngIf (which, unlike *ng-show, destroys the directives).
-    </p>
-    <p>
-        If you have any resources you wish to release in a given component then you need to implement <code>ngOnDestroy</code>
-        <pre ng-non-bindable>
-ngOnDestroy() {
-    console.log(`Destroying SquareComponent`);
-}</pre>
-    </p>
 
     <h2>Known Issues</h2>
 
@@ -293,7 +255,8 @@ ngOnDestroy() {
     </p>
 
     <p>
-        If you are getting the above error, then check out <a href="https://www.ag-grid.com/forum/showthread.php?tid=3537">this post</a>
+        If you are getting the above error, then check out <a
+            href="https://www.ag-grid.com/forum/showthread.php?tid=3537">this post</a>
         where jose_DS shines some light on the issue.
     </p>
 
@@ -306,4 +269,4 @@ ngOnDestroy() {
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
