@@ -561,11 +561,11 @@ class NameCellRenderer extends React.Component {
         Angular 2 Rendererers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 cellRenderer</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 Cell Renderers</h3>
 
     <p>
         If you are using the ag-grid-ng2 component to create the ag-Grid instance,
-        then you will have the option of additionally specifying the cellRenderers
+        then you will have the option of additionally specifying the Cell Renderer
         as Angular 2 components. You have two options that are described below:
         <ol>
         <li>Angular 2 Components</li>
@@ -573,8 +573,8 @@ class NameCellRenderer extends React.Component {
     </ol>
     </p>
 
-    <h2>cellRenderers from Angular 2 Components</h2>
-    <pre><span class="codeComment">// create your cellRenderer as a Angular 2 component</span>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Cell Renderers from Angular 2 Components</h3>
+    <pre><span class="codeComment">// create your Cell Renderer as a Angular 2 component</span>
 @Component({
     selector: 'square-cell',
     template: `{{valueSquared()}}`
@@ -661,7 +661,7 @@ cellRendererFramework: {
 
     <p>To receive update (for example, after an edit) you should implement the optional <code>refresh</code> method on the <code>AgRendererComponent</code> interface.</p>
 
-    <h2>cellRenderers from Angular 2 Templates</h2>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Cell Renderers from Angular 2 Templates</h3>
 <pre ng-non-bindable><span class="codeComment">// then reference the Component in your colDef like this</span>
 colDef = {
     <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
