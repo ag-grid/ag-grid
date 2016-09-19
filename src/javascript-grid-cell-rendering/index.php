@@ -418,26 +418,6 @@ TAKING OUT as want to reconsider how to register components
         React Cell Rendering
     </h2>
 
-    <pre><span class="codeComment">// create your cellRenderer as a Angular 2 component</span>
-class NameCellRenderer extends React.Component {
-    render() {
-    <span class="codeComment">// put in render logic</span>
-        return &lt;span>{this.props.value}&lt;/span>;
-    }
-}
-
-<span class="codeComment">// then reference the Component in your colDef like this</span>
-colDef = {
-
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
-    cellRendererFramework: NameCellRenderer
-
-    <span class="codeComment">// specify all the other fields as normal</span>
-    headerName: 'Name',
-    field: 'firstName',
-    ...
-}</pre>
-
     <p>
         It is possible to provide a React cellRenderer for ag-Grid to use. All of the information above is
         relevant to React cellRenderers. This section explains how to apply this logic to your React component.
@@ -574,6 +554,9 @@ class NameCellRenderer extends React.Component {
     </p>
 
     <h2>cellRenderers from Angular 2 Components</h2>
+
+    <h2>Angular 2 Component in ag-Grid</h2>
+
     <pre><span class="codeComment">// create your cellRenderer as a Angular 2 component</span>
 @Component({
     selector: 'square-cell',
