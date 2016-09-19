@@ -230,7 +230,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         as '#myGrid' which then allows something like this:
     </p>
 
-    <pre><code>&lt;button (click)="<b>agGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+    <pre><code>&lt;button (click)="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
 
     <h2>
         <img src="/images/webComponents.png" height="50px"/>
