@@ -31,13 +31,6 @@ include '../documentation-main/documentation_header.php';
         better renderer definition and cell editor support.
     </note>
 
-    <h3>Angular 2 Still in Release Candidate</h3>
-
-    <p>
-        Angular 2 is currently on Release Candidate 7 - until Angular 2 is actually released there is of course an
-        element of instability in using it.
-        Please keep this in mind if you plan on using it for a Production release.
-    <p>
     <p>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
         for feedback or issue reporting around this functionality.</p>
 
@@ -229,8 +222,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Cell Rendering & Cell Editing using Angular 2</h2>
 
     <p>
-        It is possible to build <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a> and
-        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> using Angular 2. Doing each of these
+        It is possible to build
+        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
+        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular 2. Doing each of these
         is explained in the section on each.
     </p>
 
