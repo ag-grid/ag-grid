@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid Angular 2 Support";
+$pageTitle = "Angular 2 Data Grid Support";
 $pageDescription = "ag-Grid v6 offers full Angular 2 Support - a discussion on what this means for ag-Grid.";
 $pageKeyboards = "ag-Grid javascript data grid pivot";
 
@@ -10,7 +10,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>Announcing ag-Grid v6 and Angular 2 Support</h2>
+        <h2>Announcing ag-Grid v6 and Angular 2 Data Grid Support</h2>
     </div>
 </div>
 
@@ -42,8 +42,8 @@ include('../includes/mediaHeader.php');
         <p>The <code>forRoot</code> part is to ensure our providers are injected at the root level (or rather, are singletons). We do this as we cache the dynamically created modules under the hood.</p>
         <p>Remember, Angular 2 Components can only belong to a single Module...</p>
         <p>
-            Under the hood, ag-Grid had a module that dynamically creates modules & components on the fly, and adapts them to corresponding
-            ag-Grid interfaces (Renderers, Editors and Filters). The interface ag-Grid offers is unobtrusive and intuitive, allowing for simply configuration.
+            Under the hood, ag-Grid has a module that dynamically creates modules & components on the fly, and adapts them to corresponding
+            ag-Grid components (Renderers, Editors, Filters etc). ag-Grid offers a simple configuration for Angular 2 components.
         </p>
 
         <h3>Colour me a Picture</h3>
@@ -64,7 +64,7 @@ colDef = {
     width: 200
     </pre>
 
-        <p>See? Easy! From this you can see that we also support pipes in the templates - in this case we have to provide the <code>CommonModule</code> as we're using the provided <code>currency</code> pipe, but you can provide your own.</p>
+        <p>Easy! From this you can see that we also support pipes in the templates - in this case we have to provide the <code>CommonModule</code> as we're using the provided <code>currency</code> pipe, but you can provide your own.</p>
 
 
         <p>For richer cell rendering, you can provide a full Angular 2 component. In this example we have a "parent" component that uses a "child" one.</p>
@@ -75,10 +75,10 @@ colDef = {
 @Component({
     selector: 'ratio-cell',
     template: `
-    <ag-ratio style="height:20px" [topRatio]="params?.value?.top" [bottomRatio]="params?.value?.bottom"></ag-ratio>
+    &lt;ag-ratio style="height:20px" [topRatio]="params?.value?.top" [bottomRatio]="params?.value?.bottom"></ag-ratio>
     `,
     styles: [`
-        ..styles omitted for brevity..
+        <span class="codeComment">//styles omitted for brevity</span>
     `]
 })
 export class RatioParentComponent implements AgRendererComponent {
@@ -101,7 +101,7 @@ export class RatioParentComponent implements AgRendererComponent {
     &lt;/svg>
   `,
   styles: [
-      ..styles omitted for brevity..
+        <span class="codeComment">//styles omitted for brevity</span>
   `]
 })
 export class RatioComponent {
@@ -137,7 +137,7 @@ cellRendererFramework: {
         &lt;/div>
     `,
     styles: [`
-        ..styles omitted for brevity..
+        <span class="codeComment">//styles omitted for brevity</span>
     `]
 })
 class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
@@ -146,7 +146,7 @@ class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
     @ViewChild('container', {read: ViewContainerRef}) private container;
     private happy:boolean = false;
 
-    // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
+    <span class="codeComment">// dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this</span>
     ngAfterViewInit() {
         this.container.element.nativeElement.focus();
     }
@@ -174,8 +174,8 @@ class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
 
     onKeyDown(event):void {
         let key = event.which || event.keyCode;
-        if (key == 37 ||  // left
-            key == 39) {  // right
+        if (key == 37 || <span class="codeComment">// left</span>
+            key == 39) {  <span class="codeComment">// right</span>
             this.toggleMood();
             event.stopPropagation();
         }
@@ -183,7 +183,7 @@ class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
 }
 </pre>
 
-        <p>Now let's tell the grid that we want to use this Component as an editor:</p>
+        <p>Now tell's the grid that we want to use this Component as an editor:</p>
 <pre>
 cellEditorFramework: {
     component: MoodEditorComponent,
@@ -274,7 +274,7 @@ filterFramework: {
 
         <img src="../images/ng2-filter-example.png"/>
 
-        <p>There's so much more you can do if you decide to combine Angular 2 Components with ag-Grid - powerful functionality, fast grid and easy configuration. What are you waiting for?</p>
+        <p>There's so much more you can do if you decide to combine Angular 2 Components with ag-Grid - powerful functionality, fast grid and easy configuration. What are you waiting for?!</p>
 
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-javascript-pivot-grid/" data-text="Announcing ag-Grid v5 and Pivot" data-via="ceolter" data-size="large">Tweet</a>
