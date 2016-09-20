@@ -45,9 +45,6 @@
                             <li>
                                 <a href="/about.php#team">Team</a>
                             </li>
-                             <li>
-                                <a href="/media.php">Blog</a>
-                            </li>
                             <li>
                                 <a href="/testimonials.php">Testimonials</a>
                             </li>
