@@ -183,7 +183,7 @@ class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
 }
 </pre>
 
-        <p>Now tell's the grid that we want to use this Component as an editor:</p>
+        <p>Now tell the grid that we want to use this Component as an editor:</p>
 <pre>
 cellEditorFramework: {
     component: MoodEditorComponent,
