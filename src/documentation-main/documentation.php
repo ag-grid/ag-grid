@@ -19,6 +19,20 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">ag-Grid @ Angular Connect London 2016</div>
+        <div style="text-align: center;">
+            <a href="http://angularconnect.com/">
+                <img src="../images/angularConnect2.png"/>
+            </a>
+        </div>
+        <div>
+            ag-Grid is an official sponsor of Angular
+            Connect London 2016 - come visit our stand
+            and meet the team.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">15th Sept 2016</div>
         <div class="news-header">ag-grid v6.0.x Released</div>
         <div style="text-align: center">
