@@ -45,25 +45,25 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <pre><code><span class="codeComment">// put the value in bold</span>
-        colDef.cellRenderer = function(params) {
-        return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
-        }
+colDef.cellRenderer = function(params) {
+    return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
+}
 
-        <span class="codeComment">// put a tooltip on the value</span>
-        colDef.cellRenderer = function(params) {
-        return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
-        }
+<span class="codeComment">// put a tooltip on the value</span>
+colDef.cellRenderer = function(params) {
+    return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
+}
 
-        <span class="codeComment">// create a DOM object </span>
-        colDef.cellRenderer = function(params) {
-        var eDiv = document.createElement('div');
-        eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
-        var eButton = eDiv.querySelectorAll('.btn-simple')[0];
-        var eButton.addEventListener('click', function() {
+<span class="codeComment">// create a DOM object </span>
+colDef.cellRenderer = function(params) {
+    var eDiv = document.createElement('div');
+    eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
+    var eButton = eDiv.querySelectorAll('.btn-simple')[0];
+    var eButton.addEventListener('click', function() {
         console.log('button was clicked!!');
-        });
-        return eDiv;
-        }</code></pre>
+    });
+    return eDiv;
+}</code></pre>
 
     <p>
         See further below for the set of parameters passed to the rendering function.
@@ -112,13 +112,11 @@ include '../documentation-main/documentation_header.php';
         Below is a simple example of cellRenderer class:
     </p>
 
-<pre>
-<code>
-    <span class="codeComment">// function to act as a class</span>
-    function MyCellRenderer () {}
+<pre><span class="codeComment">// function to act as a class</span>
+function MyCellRenderer () {}
 
-    <span class="codeComment">// gets called once before the renderer is used</span>
-    MyCellRenderer.prototype.init = function(params) {
+<span class="codeComment">// gets called once before the renderer is used</span>
+MyCellRenderer.prototype.init = function(params) {
     <span class="codeComment">// create the cell</span>
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
@@ -136,27 +134,27 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// add event listener to button</span>
     this.eventListener = function() {
-    console.log('button was clicked!!');
+        console.log('button was clicked!!');
     };
     this.eButton.addEventListener('click', this.eventListener);
-    };
+};
 
-    <span class="codeComment">// gets called once when grid ready to insert the element</span>
-    MyCellRenderer.prototype.getGui = function() {
+<span class="codeComment">// gets called once when grid ready to insert the element</span>
+MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
-    };
+};
 
-    <span class="codeComment">// gets called whenever the user gets the cell to refresh</span>
-    MyCellRenderer.prototype.refresh = function(params) {
+<span class="codeComment">// gets called whenever the user gets the cell to refresh</span>
+MyCellRenderer.prototype.refresh = function(params) {
     <span class="codeComment">// set value into cell again</span>
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
-    };
+};
 
-    <span class="codeComment">// gets called when the cell is removed from the grid</span>
-    MyCellRenderer.prototype.destroy = function() {
+<span class="codeComment">// gets called when the cell is removed from the grid</span>
+MyCellRenderer.prototype.destroy = function() {
     <span class="codeComment">// do cleanup, remove event listener from button</span>
     this.eButton.removeEventListener('click', this.eventListener);
-    };</code></pre>
+};</code></pre>
 
     <h3>cellRenderer Component Refresh</h3>
 
@@ -330,21 +328,21 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <pre><code><span class="codeComment">// define cellRenderer to be reused</span>
-        var myCellRenderer = function(params) {
-        return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
-        }
+var myCellRenderer = function(params) {
+    return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
+}
 
-        <span class="codeComment">// use with a color</span>
-        colDef.cellRenderer = myCellRenderer;
-        colDef.cellRendererParams = {
-        color: 'guinnessBlack'
-        }
+<span class="codeComment">// use with a color</span>
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
+    color: 'guinnessBlack'
+}
 
-        <span class="codeComment">// use with another color</span>
-        colDef.cellRenderer = myCellRenderer;
-        colDef.cellRendererParams = {
-        color: 'irishGreen'
-        }</code></pre>
+<span class="codeComment">// use with another color</span>
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
+    color: 'irishGreen'
+}</code></pre>
 
     <h3>Provided cellRenderers</h3>
 
@@ -653,6 +651,7 @@ colDef = {
     headerName: "Currency Pipe Template",
     field: "value",
     width: 200
+}
     </pre>
 
     <p>Note in the above configuration we specify CommonModule as an import as we're using the <code>currency</code> pipe.
