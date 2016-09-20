@@ -38,7 +38,7 @@
                             <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
                         </span>
                         <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/media.php"> <i class="fa fa-road"></i> Media</a>
+                            <a class="top-button-selected" href="/media/media.php"> <i class="fa fa-road"></i> Blog</a>
                         </span>
                         <span class="top-button-wrapper">
                             <a class="top-button" href="/support.php"> <i class="fa fa-users"></i> Support</a>

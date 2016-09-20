@@ -4,7 +4,7 @@ $pageTitle = "ag-Grid Blog";
 $pageDescription = "A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid";
 $pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
 
-include('includes/mediaHeader.php');
+include('../includes/mediaHeader.php');
 ?>
 
 <div class="row">
@@ -21,14 +21,14 @@ include('includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
-        <a href="ag-grid-javascript-pivot-grid/">
-            <img src="images/agGridDaily.png"/>
+        <a href="/ag-grid-angular2-support/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="ag-grid-angular2-support/">
+            <a href="/ag-grid-angular2-support/">
                 Announcing ag-Grid v6 and Angular 2 Support
             </a>
         </div>
@@ -46,14 +46,14 @@ include('includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
-        <a href="ag-grid-javascript-pivot-grid/">
-            <img src="images/agGridDaily.png"/>
+        <a href="/ag-grid-javascript-pivot-grid/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="ag-grid-javascript-pivot-grid/">
+            <a href="/ag-grid-javascript-pivot-grid/">
                 Announcing ag-Grid v5 and Pivot
             </a>
         </div>
@@ -73,13 +73,13 @@ include('includes/mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="ag-grid-goes-commercial/">
-            <img src="images/agGridDaily.png"/>
+        <a href="/ag-grid-goes-commercial/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="ag-grid-goes-commercial/">
+            <a href="/ag-grid-goes-commercial/">
                 ag-Grid Goes Commercial
             </a>
         </div>
@@ -100,13 +100,13 @@ include('includes/mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
-            <img src="images/agGridDaily.png"/>
+        <a href="/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
+            <a href="/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/">
                 Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else
             </a>
         </div>
@@ -128,13 +128,13 @@ include('includes/mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="react-and-ag-grid/">
-            <img src="images/agGridDaily.png"/>
+        <a href="/react-and-ag-grid/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="react-and-ag-grid/">
+            <a href="/react-and-ag-grid/">
                 Announcing React and ag-Grid
             </a>
         </div>
@@ -156,13 +156,13 @@ include('includes/mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="ag-grid-in-2016/">
-            <img src="images/agGridDaily.png"/>
+        <a href="/ag-grid-in-2016/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="ag-grid-in-2016/">
+            <a href="/ag-grid-in-2016/">
                 Stepping it Up, ag-Grid Focuses on Agnostic in 2016
             </a>
         </div>
@@ -184,7 +184,7 @@ include('includes/mediaHeader.php');
 
     <div style="float: left; width: 240px;">
         <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
-            <img src="images/angularConnectTalk.png"/>
+            <img src="/images/angularConnectTalk.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
@@ -213,13 +213,13 @@ include('includes/mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="embracing-the-future-with-angularjs2-web-components-and-ag-grid/">
-            <img src="images/agGridDaily.png"/>
+        <a href="/embracing-the-future-with-angularjs2-web-components-and-ag-grid/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="embracing-the-future-with-angularjs2-web-components-and-ag-grid/">
+            <a href="/embracing-the-future-with-angularjs2-web-components-and-ag-grid/">
                 Embracing the Future with Angular 2.0, Web Components and ag-Grid
             </a>
         </div>
@@ -242,7 +242,7 @@ include('includes/mediaHeader.php');
 
     <div style="float: left; width: 240px;">
         <a href="https://www.youtube.com/watch?v=jQ_nyTiKbZg">
-            <img src="images/angularAir.png"/>
+            <img src="/images/angularAir.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
@@ -268,13 +268,13 @@ include('includes/mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
 
     <div style="float: left; width: 240px;">
-        <a href="why-the-world-needed-another-angularjs-grid/">
-            <img src="images/agGridDaily.png"/>
+        <a href="//why-the-world-needed-another-angularjs-grid/">
+            <img src="/images/agGridDaily.png"/>
         </a>
     </div>
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="why-the-world-needed-another-angularjs-grid/">
+            <a href="/why-the-world-needed-another-angularjs-grid/">
                 Why The World Needed Another AngularJS Grid
             </a>
         </div>
@@ -294,10 +294,10 @@ include('includes/mediaHeader.php');
 
 </div>
 
-<?php include_once("./includes/footer.php"); ?>
+<?php include_once("../includes/footer.php"); ?>
 
 </body>
 
-<?php include_once("./includes/analytics.php"); ?>
+<?php include_once("../includes/analytics.php"); ?>
 
 </html>

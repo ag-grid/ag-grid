@@ -9,7 +9,7 @@
 		                    	Niall Crosby spent years building Enterprise Web Applications and found the JavaScript
 								data grid choice frustrating. That frustration led to Niall quitting his job and
 								setting up the ag-Grid project.
-		                    	<a href="/media.php">Read more about ag-Grid &rarr;</a></p></li>
+		                    	<a href="/media/media.php">Read more about ag-Grid &rarr;</a></p></li>
 		                </ul>
 		            </div>
 
@@ -19,7 +19,7 @@
 		                    <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
 		                   	<li><a href="/about.php">About</a></li>
 		                    <li><a href="/about.php#team">Team</a></li>
-		                    <li><a href="/media.php">Media</a></li>
+		                    <li><a href="/media/media.php">Blog</a></li>
 		                    <li><a href="/testimonials.php">Testimonials</a></li>
 		                </ul>
 		            </div>

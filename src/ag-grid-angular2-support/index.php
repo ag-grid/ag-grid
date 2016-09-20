@@ -10,7 +10,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>Announcing ag-Grid v6 and Angular 2 Data Grid Support</h2>
+        <h2><img src="/images/angular2_large.png"/>Announcing ag-Grid v6 and Angular 2 Data Grid Support</h2>
     </div>
 </div>
 
@@ -120,7 +120,7 @@ cellRendererFramework: {
         <p>In this case we need to tell Angular that we need RatioComponent too - we need to do this as the component creation is dynamically!</p>
         <p>The result would be something like this (taken from our <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> project):</p>
 
-        <img src="../images/ng2-renderer-example.png"/>
+        <img src="/images/ng2-renderer-example.png"/>
 
         <h3>I want to Provide Input!</h3>
 
@@ -277,7 +277,7 @@ filterFramework: {
         <p>There's so much more you can do if you decide to combine Angular 2 Components with ag-Grid - powerful functionality, fast grid and easy configuration. What are you waiting for?!</p>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-javascript-pivot-grid/" data-text="Announcing ag-Grid v5 and Pivot" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular2-support/" data-text="Announcing ag-Grid v6 and Angular 2 Data Grid Support" data-via="seanlandsman" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -285,7 +285,7 @@ filterFramework: {
     <div class="col-md-3">
 
         <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-javascript-pivot-grid/" data-text="Announcing ag-Grid v5 and Pivot" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular2-support/" data-text="Announcing ag-Grid v6 and Angular 2 Data Grid Support" data-via="seanlandsman" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 

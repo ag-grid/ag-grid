@@ -29,7 +29,7 @@
                         <a href="/documentation-main/documentation.php">Documentation</a>
                     </li>
                     <li class="<?php if ($navKey == "blog") { ?>active<?php }?>">
-                        <a href="/media.php">Blog</a>
+                        <a href="/media/media.php">Blog</a>
                     </li>
 
                     <li class="<?php if ($navKey == "support") { ?>active<?php }?>">
