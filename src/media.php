@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid Media";
+$pageTitle = "ag-Grid Blog";
 $pageDescription = "A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid";
 $pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
 

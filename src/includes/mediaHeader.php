@@ -26,8 +26,8 @@
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "media"; include 'navbar.php'; ?>
+<?php $navKey = "blog"; include 'navbar.php'; ?>
 
-<?php $headerTitle = "Media"; include 'headerRow.php'; ?>
+<?php $headerTitle = "ag-Grid Blog"; include 'headerRow.php'; ?>
 
 <div class="container">

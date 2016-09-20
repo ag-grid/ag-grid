@@ -28,6 +28,9 @@
                     <li class="<?php if ($navKey == "documentation") { ?>active<?php }?>">
                         <a href="/documentation-main/documentation.php">Documentation</a>
                     </li>
+                    <li class="<?php if ($navKey == "blog") { ?>active<?php }?>">
+                        <a href="/media.php">Blog</a>
+                    </li>
 
                     <li class="<?php if ($navKey == "support") { ?>active<?php }?>">
                         <a href="/support.php">Support</a>
@@ -43,7 +46,7 @@
                                 <a href="/about.php#team">Team</a>
                             </li>
                              <li>
-                                <a href="/media.php">Media</a>
+                                <a href="/media.php">Blog</a>
                             </li>
                             <li>
                                 <a href="/testimonials.php">Testimonials</a>
