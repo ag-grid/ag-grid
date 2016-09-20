@@ -18,17 +18,17 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You configure cellRenderers as part of the column definition and can be one of the following:
-        <ul>
+    <ul>
         <li>function: The cellRenderer is a function that gets called once for each cell. The function
-        should return a string (which will be treated as html) or a DOM object. Use this if you
-        have no cleanup or refresh requirements of the cell - it's a 'fire and forget' approach
-        to the cell rendering.</li>
+            should return a string (which will be treated as html) or a DOM object. Use this if you
+            have no cleanup or refresh requirements of the cell - it's a 'fire and forget' approach
+            to the cell rendering.</li>
         <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
-        lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
-        refresh requirements.</li>
+            lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
+            refresh requirements.</li>
         <li>string: The cellRenderer is looked up from the provided cellRenderers. Use this if you
-        want to use a built in renderer (eg 'group') or you want to register your own cellRenderers
-        for reuse.</li>
+            want to use a built in renderer (eg 'group') or you want to register your own cellRenderers
+            for reuse.</li>
     </ul>
     </p>
 
@@ -45,25 +45,25 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <pre><code><span class="codeComment">// put the value in bold</span>
-colDef.cellRenderer = function(params) {
-    return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
-}
+        colDef.cellRenderer = function(params) {
+        return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
+        }
 
-<span class="codeComment">// put a tooltip on the value</span>
-colDef.cellRenderer = function(params) {
-    return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
-}
+        <span class="codeComment">// put a tooltip on the value</span>
+        colDef.cellRenderer = function(params) {
+        return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
+        }
 
-<span class="codeComment">// create a DOM object </span>
-colDef.cellRenderer = function(params) {
-    var eDiv = document.createElement('div');
-    eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
-    var eButton = eDiv.querySelectorAll('.btn-simple')[0];
-    var eButton.addEventListener('click', function() {
+        <span class="codeComment">// create a DOM object </span>
+        colDef.cellRenderer = function(params) {
+        var eDiv = document.createElement('div');
+        eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
+        var eButton = eDiv.querySelectorAll('.btn-simple')[0];
+        var eButton.addEventListener('click', function() {
         console.log('button was clicked!!');
-    });
-    return eDiv;
-}</code></pre>
+        });
+        return eDiv;
+        }</code></pre>
 
     <p>
         See further below for the set of parameters passed to the rendering function.
@@ -114,18 +114,18 @@ colDef.cellRenderer = function(params) {
 
 <pre>
 <code>
-<span class="codeComment">// function to act as a class</span>
-function MyCellRenderer () {}
+    <span class="codeComment">// function to act as a class</span>
+    function MyCellRenderer () {}
 
-<span class="codeComment">// gets called once before the renderer is used</span>
-MyCellRenderer.prototype.init = function(params) {
+    <span class="codeComment">// gets called once before the renderer is used</span>
+    MyCellRenderer.prototype.init = function(params) {
     <span class="codeComment">// create the cell</span>
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
-        '&lt;span class="my-css-class">
-            &lt;button class="btn-simple">Push Me&lt;/button>
-            &lt;span class="my-value">&lt;/span>
-        &lt;/span>';
+    '&lt;span class="my-css-class">
+    &lt;button class="btn-simple">Push Me&lt;/button>
+    &lt;span class="my-value">&lt;/span>
+    &lt;/span>';
 
     <span class="codeComment">// get references to the elements we want</span>
     this.eButton = this.eGui.querySelectorAll('.btn-simple')[0];
@@ -136,27 +136,27 @@ MyCellRenderer.prototype.init = function(params) {
 
     <span class="codeComment">// add event listener to button</span>
     this.eventListener = function() {
-        console.log('button was clicked!!');
+    console.log('button was clicked!!');
     };
     this.eButton.addEventListener('click', this.eventListener);
-};
+    };
 
-<span class="codeComment">// gets called once when grid ready to insert the element</span>
-MyCellRenderer.prototype.getGui = function() {
+    <span class="codeComment">// gets called once when grid ready to insert the element</span>
+    MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
-};
+    };
 
-<span class="codeComment">// gets called whenever the user gets the cell to refresh</span>
-MyCellRenderer.prototype.refresh = function(params) {
+    <span class="codeComment">// gets called whenever the user gets the cell to refresh</span>
+    MyCellRenderer.prototype.refresh = function(params) {
     <span class="codeComment">// set value into cell again</span>
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
-};
+    };
 
-<span class="codeComment">// gets called when the cell is removed from the grid</span>
-MyCellRenderer.prototype.destroy = function() {
+    <span class="codeComment">// gets called when the cell is removed from the grid</span>
+    MyCellRenderer.prototype.destroy = function() {
     <span class="codeComment">// do cleanup, remove event listener from button</span>
     this.eButton.removeEventListener('click', this.eventListener);
-};</code></pre>
+    };</code></pre>
 
     <h3>cellRenderer Component Refresh</h3>
 
@@ -229,11 +229,11 @@ MyCellRenderer.prototype.destroy = function() {
 
     <p>
         The cellRenderer function and cellRenderer component take parameters as follows:
-        <ul>
+    <ul>
         <li><b>cellRenderer function: </b> Passed to function.</li>
         <li><b>cellRenderer component: </b> Passed to init method.</li>
-        </ul>
-        The parameters are identical regardless of which cellRenderer type you use and contain the following:
+    </ul>
+    The parameters are identical regardless of which cellRenderer type you use and contain the following:
     </p>
 
     <table class="table">
@@ -301,13 +301,13 @@ MyCellRenderer.prototype.destroy = function() {
         <tr>
             <th>refreshCell</th>
             <td>A callback function, to tell the grid to refresh this cell and reapply all css styles and classes.
-            Useful if you update the data for the cell and want to just render again from scratch.</td>
+                Useful if you update the data for the cell and want to just render again from scratch.</td>
         </tr>
         <tr>
             <th>eGridCell</th>
             <td>A reference to the DOM element representing the grid cell that your component will live inside.
-            Useful if you want to add event listeners or classes at this level. This is the DOM element that
-            gets browser focus when selecting cells.</td>
+                Useful if you want to add event listeners or classes at this level. This is the DOM element that
+                gets browser focus when selecting cells.</td>
         </tr>
         <tr>
             <th>eParentOfValue</th>
@@ -330,30 +330,30 @@ MyCellRenderer.prototype.destroy = function() {
     </p>
 
 <pre><code><span class="codeComment">// define cellRenderer to be reused</span>
-var myCellRenderer = function(params) {
-    return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
-}
+        var myCellRenderer = function(params) {
+        return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
+        }
 
-<span class="codeComment">// use with a color</span>
-colDef.cellRenderer = myCellRenderer;
-colDef.cellRendererParams = {
-    color: 'guinnessBlack'
-}
+        <span class="codeComment">// use with a color</span>
+        colDef.cellRenderer = myCellRenderer;
+        colDef.cellRendererParams = {
+        color: 'guinnessBlack'
+        }
 
-<span class="codeComment">// use with another color</span>
-colDef.cellRenderer = myCellRenderer;
-colDef.cellRendererParams = {
-    color: 'irishGreen'
-}</code></pre>
+        <span class="codeComment">// use with another color</span>
+        colDef.cellRenderer = myCellRenderer;
+        colDef.cellRendererParams = {
+        color: 'irishGreen'
+        }</code></pre>
 
     <h3>Provided cellRenderers</h3>
 
     <p>Instead of providing a cellRenderer function or component, you can select from ones that come with the
-    grid or install your own into the grid.</p>
+        grid or install your own into the grid.</p>
 
     <p>
         The cellRenderers provided by the grid are as follows:
-        <ul>
+    <ul>
         <li><b>group</b>: For group rendering.</li>
         <li><b>animateShowChange</b>: Cell renderer that when data changes, it animates showing the difference by showing the delta for a period of time.</li>
         <li><b>animateSlide</b>: Cell renderer that when data changes, it animates showing the old value fading away to the left.</li>
@@ -361,7 +361,7 @@ colDef.cellRendererParams = {
     </p>
 
     <p>
-        From the provided cellRenderers, it is intended the you use 'group' as is, however 
+        From the provided cellRenderers, it is intended the you use 'group' as is, however
         'animateShowChange' and 'animateSlide' are given as examples on what is possible. How you show
         changes or otherwise want to refresh is going to be different for everyone. So take influence from
         what you see, but consider creating your own.
@@ -466,14 +466,14 @@ colDef = {
 
     <p>
         This same mechanism can be to use a React Component in the following locations:
-        <ul>
+    <ul>
         <li>colDef.cellRenderer<b>Framework</b></li>
         <li>colDef.floatingCellRenderer<b>Framework</b></li>
         <li>gridOptions.fullWidthCellRenderer<b>Framework</b></li>
         <li>gridOptions.groupRowRenderer<b>Framework</b></li>
         <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
     </ul>
-        In other words, wherever you specify a normal cellRenderer, you can now specify a React cellRenderer
+    In other words, wherever you specify a normal cellRenderer, you can now specify a React cellRenderer
     in the property of the same name excepting ending 'Framework'. As long as you are using the React ag-Grid component,
     the grid will know the framework to use is React.
     </p>
@@ -508,7 +508,7 @@ class NameCellRenderer extends React.Component {
     <p>
         All of the methods in the ICellRenderer interface described above are applicable
         to the React Component with the following exceptions:
-        <ul>
+    <ul>
         <li><i>init()</i> is not used. Instead use the React props passed to your Component.</li>
         <li><i>destroy()</i> is not used. Instead use the React <i>componentWillUnmount()</i> method for
             any cleanup you need to do.</li>
@@ -531,12 +531,12 @@ class NameCellRenderer extends React.Component {
     </h2>
 
     <p>
-        It is possible to provide a Angular 2 cellRenderer for ag-Grid to use. All of the information above is
-        relevant to Angular 2 cellRenderers. This section explains how to apply this logic to your Angular 2 component.
+        It is possible to provide a Angular 2 cellRenderers for ag-Grid to use. All of the information above is
+        relevant to Angular 2 cellRendererss. This section explains how to apply this logic to your Angular 2 component.
     </p>
 
     <p>
-        For examples on Angular 2 cellRendering, see the
+        For examples on Angular 2 cellRenderering, see the
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.
         Angular 2 Rendererers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
     </p>
@@ -547,16 +547,13 @@ class NameCellRenderer extends React.Component {
         If you are using the ag-grid-ng2 component to create the ag-Grid instance,
         then you will have the option of additionally specifying the cellRenderers
         as Angular 2 components. You have two options that are described below:
-        <ol>
+    <ol>
         <li>Angular 2 Components</li>
         <li>Angular 2 Templates</li>
     </ol>
     </p>
 
-    <h2>cellRenderers from Angular 2 Components</h2>
-
-    <h2>Angular 2 Component in ag-Grid</h2>
-
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> cellRenderers from Angular 2 Components</h3>
     <pre><span class="codeComment">// create your cellRenderer as a Angular 2 component</span>
 @Component({
     selector: 'square-cell',
@@ -616,14 +613,14 @@ cellRendererFramework: {
 
     <p>
         This same mechanism can be to use a Angular 2 Component in the following locations:
-        <ul>
+    <ul>
         <li>colDef.cellRenderer<b>Framework</b></li>
         <li>colDef.floatingCellRenderer<b>Framework</b></li>
         <li>gridOptions.fullWidthCellRenderer<b>Framework</b></li>
         <li>gridOptions.groupRowRenderer<b>Framework</b></li>
         <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
     </ul>
-        In other words, wherever you specify a normal cellRenderer, you can now specify a Angular 2 cellRenderer
+    In other words, wherever you specify a normal cellRenderer, you can now specify a Angular 2 cellRenderer
     in the property of the same name excepting ending 'Framework'. As long as you are using the Angular 2 ag-Grid component,
     the grid will know the framework to use is Angular 2.
     </p>
@@ -633,7 +630,7 @@ cellRendererFramework: {
     <p>
         All of the methods in the ICellRenderer interface described above are applicable
         to the Angular 2 Component with the following exceptions:
-        <ul>
+    <ul>
         <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
         <li><i>destroy()</i> is not used. Instead implement the Angular 2<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
             any cleanup you need to do.</li>
@@ -644,7 +641,7 @@ cellRendererFramework: {
 
     <p>To receive update (for example, after an edit) you should implement the optional <code>refresh</code> method on the <code>AgRendererComponent</code> interface.</p>
 
-    <h2>cellRenderers from Angular 2 Templates</h2>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> cellRenderer from Angular 2 Templates</h3>
 <pre ng-non-bindable><span class="codeComment">// then reference the Component in your colDef like this</span>
 colDef = {
     <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
