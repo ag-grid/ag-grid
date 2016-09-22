@@ -167,7 +167,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
                 dragItem: this.getAllColumnsInThisGroup(),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
-            this.dragAndDropService.addDragSource(dragSource);
+            this.dragAndDropService.addDragSource(dragSource, true);
         }
     }
 

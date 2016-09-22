@@ -245,7 +245,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
                 dragItemName: this.displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
-            this.dragAndDropService.addDragSource(dragSource);
+            this.dragAndDropService.addDragSource(dragSource, true);
         }
     }
 

@@ -28,6 +28,7 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    enableTouch?: boolean;
     enableColResize?: boolean;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
