@@ -8,6 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <!--
+
+    added editType
+
+    -->
+
     <h2>Version 6.0.x</h2>
 
     <h4>ag-Grid 6.0.1, ag-Grid-Enterprise 6.0.1, ag-Grid-React 6.0.1, , ag-Grid-NG2 6.0.1</h4>

@@ -413,6 +413,14 @@ colDef.cellEditorParams = {
 
     <show-example example="exampleCellEditing"></show-example>
 
+    <h2>Full Line Editing</h2>
+
+    <p>
+        This is how you do full line editing.
+    </p>
+
+    <show-example example="exampleFullLineEditing"></show-example>
+
     <h2 id="reactCellEditing">
         <img src="../images/react_large.png" style="width: 60px;"/>
         React Cell Editing
