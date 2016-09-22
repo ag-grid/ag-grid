@@ -189,6 +189,7 @@ var gridOptions = {
             return '';
         }
     },
+    // enableTouch: true,
 // isScrollLag: function() { return true; },
 //suppressScrollLag: true,
 // floatingTopRowData: [{},{},{}],
