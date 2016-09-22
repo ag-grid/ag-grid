@@ -87,6 +87,7 @@ export interface GridOptions {
     paginationOverflowSize?: number;
     paginationInitialRowCount?: number;
     paginationPageSize?: number;
+    editType?: string;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
