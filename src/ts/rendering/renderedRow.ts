@@ -206,6 +206,15 @@ export class RenderedRow {
         this.forEachRenderedCell( renderedCell => {
             renderedCell.stopEditing(cancel);
         });
+        if (!cancel) {
+            var event = {
+                node: this.rowNode,
+                data: this.rowNode.data,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+            this.mainEventService.dispatchEvent(Events.EVENT_ROW_VALUE_CHANGED, event);
+        }
     }
 
     public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: RenderedCell = null): void {
