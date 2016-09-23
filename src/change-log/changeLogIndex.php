@@ -11,10 +11,14 @@ include '../documentation-main/documentation_header.php';
     <!--
 
     column virtualisation is off in demo, breaks line editing
+    need to enable virtualisation in the demo again
+
 
     added editType
 
     new editor params: cellStartedEdit
+
+add to docs - do not use list when doing full line edit
 
     -->
 
