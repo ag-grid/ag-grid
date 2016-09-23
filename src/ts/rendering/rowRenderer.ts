@@ -259,8 +259,8 @@ export class RowRenderer {
     }
 
     public stopEditing(cancel: boolean = false) {
-        this.forEachRenderedCell( renderedCell => {
-            renderedCell.stopEditing(cancel);
+        this.forEachRenderedRow( (key: string, renderedRow: RenderedRow) => {
+            renderedRow.stopEditing(cancel);
         });
     }
     
@@ -580,7 +580,7 @@ export class RowRenderer {
 
     public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
         var cell = this.getComponentForCell(gridCell);
-        cell.startEditingIfEnabled(keyPress, charPress);
+        cell.startRowOrCellEdit(keyPress, charPress);
     }
 
     private getComponentForCell(gridCell: GridCell): RenderedCell {
@@ -642,7 +642,7 @@ export class RowRenderer {
             }
 
             if (startEditing) {
-                nextRenderedCell.startEditingIfEnabled();
+                nextRenderedCell.startRowOrCellEdit();
                 nextRenderedCell.focusCell(false);
             } else {
                 nextRenderedCell.focusCell(true);

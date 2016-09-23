@@ -300,10 +300,12 @@ export class RenderedCell extends Component {
             }
 
             // if another cell was focused, and we are editing, then stop editing
-            if (this.editingCell && !cellFocused) {
-                this.stopEditing();
+            var fullRowEdit = this.gridOptionsWrapper.isFullRowEdit();
+            if (!cellFocused && !fullRowEdit && this.editingCell) {
+                this.stopRowOrCellEdit();
             }
         };
+
         this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
@@ -337,7 +339,6 @@ export class RenderedCell extends Component {
         this.addCellFocusedListener();
         this.addKeyDownListener();
         this.addKeyPressListener();
-        // this.addFocusListener();
 
         var setLeftFeature = new SetLeftFeature(this.column, this.eGridCell);
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
@@ -356,29 +357,29 @@ export class RenderedCell extends Component {
 
     private onEnterKeyDown(): void {
         if (this.editingCell) {
-            this.stopEditing();
+            this.stopRowOrCellEdit();
             this.focusCell(true);
         } else {
-            this.startEditingIfEnabled(Constants.KEY_ENTER);
+            this.startRowOrCellEdit(Constants.KEY_ENTER);
         }
     }
 
     private onF2KeyDown(): void {
         if (!this.editingCell) {
-            this.startEditingIfEnabled(Constants.KEY_F2);
+            this.startRowOrCellEdit(Constants.KEY_F2);
         }
     }
 
     private onEscapeKeyDown(): void {
         if (this.editingCell) {
-            this.stopEditing(true);
+            this.stopRowOrCellEdit(true);
             this.focusCell(true);
         }
     }
 
     private onPopupEditorClosed(): void {
         if (this.editingCell) {
-            this.stopEditing(true);
+            this.stopRowOrCellEdit(true);
 
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
@@ -393,7 +394,7 @@ export class RenderedCell extends Component {
         var editNextCell: boolean;
         if (this.editingCell) {
             // if editing, we stop editing, then start editing next cell
-            this.stopEditing();
+            this.stopRowOrCellEdit();
             editNextCell = true;
         } else {
             // otherwise we just move to the next cell
@@ -409,7 +410,7 @@ export class RenderedCell extends Component {
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
         if (!this.editingCell) {
-            this.startEditingIfEnabled(key);
+            this.startRowOrCellEdit(key);
         }
     }
 
@@ -424,7 +425,7 @@ export class RenderedCell extends Component {
 
     private onNavigationKeyPressed(event: any, key: number): void {
         if (this.editingCell) {
-            this.stopEditing();
+            this.stopRowOrCellEdit();
         }
         this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
@@ -445,7 +446,7 @@ export class RenderedCell extends Component {
                     this.onSpaceKeyPressed(event);
                 } else {
                     if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
-                        this.startEditingIfEnabled(null, pressedChar);
+                        this.startRowOrCellEdit(null, pressedChar);
                         // if we don't prevent default, then the keypress also gets applied to the text field
                         // (at least when doing the default editor), but we need to allow the editor to decide
                         // what it wants to do. we only do this IF editing was started - otherwise it messes
@@ -499,7 +500,7 @@ export class RenderedCell extends Component {
         });
     }
 
-    private createCellEditorParams(keyPress?: number, charPress?: string): ICellEditorParams {
+    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
         var params: ICellEditorParams = {
             value: this.getValue(),
             keyPress: keyPress,
@@ -507,6 +508,7 @@ export class RenderedCell extends Component {
             column: this.column,
             node: this.node,
             api: this.gridOptionsWrapper.getApi(),
+            cellStartedEdit: cellStartedEdit,
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
             onKeyDown: this.onKeyDown.bind(this),
@@ -522,9 +524,9 @@ export class RenderedCell extends Component {
         return params;
     }
 
-    private createCellEditor(keyPress?: number, charPress?: string): ICellEditor {
+    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditor {
 
-        var params = this.createCellEditorParams(keyPress, charPress);
+        var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
 
         var cellEditor = this.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
 
@@ -534,23 +536,34 @@ export class RenderedCell extends Component {
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
     private stopEditingAndFocus(): void {
-        this.stopEditing();
+        this.stopRowOrCellEdit();
         this.focusCell(true);
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startEditingIfEnabled(keyPress?: number, charPress?: string) {
+    public startRowOrCellEdit(keyPress?: number, charPress?: string): void {
+        if (this.gridOptionsWrapper.isFullRowEdit()) {
+            this.renderedRow.startRowEditing(keyPress, charPress, this);
+        } else {
+            this.startEditingIfEnabled(keyPress, charPress, true);
+        }
+    }
+
+    // either called internally if single cell editing, or called by rowRenderer if row editing
+    public startEditingIfEnabled(keyPress: number, charPress: string, cellStartedEdit: boolean) {
 
         if (!this.isCellEditable()) {
-            return;
+            return false;
         }
 
-        var cellEditor = this.createCellEditor(keyPress, charPress);
+        console.log('starting to edit');
+
+        var cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
             if (cellEditor.destroy) {
                 cellEditor.destroy();
             }
-            return;
+            return false;
         }
 
         if (!cellEditor.getGui) {
@@ -561,7 +574,7 @@ export class RenderedCell extends Component {
                 console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
             }
 
-            return;
+            return false;
         }
 
         this.cellEditor = cellEditor;
@@ -578,6 +591,8 @@ export class RenderedCell extends Component {
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
+
+        return true;
     }
 
     private addInCellEditor(): void {
@@ -623,11 +638,19 @@ export class RenderedCell extends Component {
     }
 
     // pass in 'true' to cancel the editing.
-    public stopEditing(cancel: boolean = false) {
+    public stopRowOrCellEdit(cancel: boolean = false) {
+        if (this.gridOptionsWrapper.isFullRowEdit()) {
+            this.renderedRow.stopRowEditing(cancel);
+        } else {
+            this.stopEditing(cancel);
+        }
+    }
+
+    public stopEditing(cancel: boolean): void {
         if (!this.editingCell) {
             return;
         }
-        
+
         this.editingCell = false;
 
         // also have another option here to cancel after editing, so for example user could have a popup editor and
@@ -748,7 +771,7 @@ export class RenderedCell extends Component {
         }
 
         if (!this.gridOptionsWrapper.isSingleClickEdit()) {
-            this.startEditingIfEnabled();
+            this.startRowOrCellEdit();
         }
     }
 
@@ -784,7 +807,7 @@ export class RenderedCell extends Component {
         }
 
         if (this.gridOptionsWrapper.isSingleClickEdit()) {
-            this.startEditingIfEnabled();
+            this.startRowOrCellEdit();
         }
     }
 

@@ -21,15 +21,18 @@ export class LargeTextCellEditor extends Component implements ICellEditor {
         '<div class="ag-large-textarea"></div>' +
         '</div>';
 
-    private params:ILargeTextEditorParams;
-    private textarea:any;
+    private params: ILargeTextEditorParams;
+    private textarea: any;
+    private focusAfterAttached: boolean;
 
     constructor() {
         super(LargeTextCellEditor.TEMPLATE);
     }
 
-    public init(params:ILargeTextEditorParams):void {
+    public init(params:ILargeTextEditorParams): void {
         this.params = params;
+
+        this.focusAfterAttached = params.cellStartedEdit;
 
         this.textarea = document.createElement("textarea");
         this.textarea.maxLength = params.maxLength ? params.maxLength : "200";
@@ -45,7 +48,7 @@ export class LargeTextCellEditor extends Component implements ICellEditor {
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     }
 
-    private onKeyDown(event:KeyboardEvent):void {
+    private onKeyDown(event:KeyboardEvent): void {
         var key = event.which || event.keyCode;
         if (key == Constants.KEY_LEFT ||
             key == Constants.KEY_UP ||
@@ -56,15 +59,17 @@ export class LargeTextCellEditor extends Component implements ICellEditor {
         }
     }
 
-    public afterGuiAttached():void {
-        this.textarea.focus();
+    public afterGuiAttached(): void {
+        if (this.focusAfterAttached) {
+            this.textarea.focus();
+        }
     }
 
-    public getValue():any {
+    public getValue(): any {
         return this.textarea.value;
     }
 
-    public isPopup():boolean {
+    public isPopup(): boolean {
         return true;
     }
 }

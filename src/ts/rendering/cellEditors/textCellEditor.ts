@@ -1,6 +1,6 @@
 import {Constants} from "../../constants";
 import {Component} from "../../widgets/component";
-import {ICellEditor} from "./iCellEditor";
+import {ICellEditor, ICellEditorParams} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 
 export class TextCellEditor extends Component implements ICellEditor {
@@ -8,32 +8,40 @@ export class TextCellEditor extends Component implements ICellEditor {
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
 
     private highlightAllOnFocus: boolean;
-    private putCursorAtEndOnFocus: boolean;
+    private focusAfterAttached: boolean;
 
     constructor() {
         super(TextCellEditor.TEMPLATE);
     }
 
-    public init(params: any): void {
+    public init(params: ICellEditorParams): void {
 
         var eInput = <HTMLInputElement> this.getGui();
         var startValue: string;
 
-        var keyPressBackspaceOrDelete =
-            params.keyPress === Constants.KEY_BACKSPACE
-            || params.keyPress === Constants.KEY_DELETE;
+        // cellStartedEdit is only false if we are doing fullRow editing
+        if (params.cellStartedEdit) {
 
-        if (keyPressBackspaceOrDelete) {
-            startValue = '';
-        } else if (params.charPress) {
-            startValue = params.charPress;
-        } else {
-            startValue = params.value;
-            if (params.keyPress === Constants.KEY_F2) {
-                this.putCursorAtEndOnFocus = true;
+            this.focusAfterAttached = true;
+
+            var keyPressBackspaceOrDelete =
+                params.keyPress === Constants.KEY_BACKSPACE
+                || params.keyPress === Constants.KEY_DELETE;
+
+            if (keyPressBackspaceOrDelete) {
+                startValue = '';
+            } else if (params.charPress) {
+                startValue = params.charPress;
             } else {
-                this.highlightAllOnFocus = true;
+                startValue = params.value;
+                if (params.keyPress !== Constants.KEY_F2) {
+                    this.highlightAllOnFocus = true;
+                }
             }
+
+        } else {
+            this.focusAfterAttached = false;
+            startValue = params.value;
         }
 
         if (_.exists(startValue)) {
@@ -49,6 +57,8 @@ export class TextCellEditor extends Component implements ICellEditor {
     }
 
     public afterGuiAttached(): void {
+        if (!this.focusAfterAttached) { return; }
+
         var eInput = <HTMLInputElement> this.getGui();
         eInput.focus();
         if (this.highlightAllOnFocus) {

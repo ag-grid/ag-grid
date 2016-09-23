@@ -16,7 +16,7 @@ export interface ICellEditor {
      onKeyDown: callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid - however you do
                 not need to call this as the grid is already listening for the events as they propagate. this is only required if
                 you are preventing event propagation
-     stopEditing: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
+     stopRowOrCellEdit: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
      */
     init?(params: ICellEditorParams): void;
 
@@ -58,6 +58,7 @@ export interface ICellEditorParams {
     node: RowNode;
     api: GridApi;
     columnApi: ColumnApi;
+    cellStartedEdit: boolean;
     context: any;
     onKeyDown: (event: KeyboardEvent)=>void;
     stopEditing: ()=>void;

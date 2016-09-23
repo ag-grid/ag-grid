@@ -58,6 +58,8 @@ export class RenderedRow {
 
     private renderedRowEventService: EventService;
 
+    private editingRow = false;
+
     private initialised = false;
 
     constructor(parentScope: any,
@@ -193,6 +195,29 @@ export class RenderedRow {
         this.addDataChangedListener();
 
         this.initialised = true;
+    }
+
+    public stopRowEditing(cancel: boolean): void {
+        this.stopEditing(cancel);
+        this.editingRow = false;
+    }
+
+    public stopEditing(cancel: boolean): void {
+        this.forEachRenderedCell( renderedCell => {
+            renderedCell.stopEditing(cancel);
+        });
+    }
+
+    public startRowEditing(keyPress: number, charPress: string, sourceRenderedCell: RenderedCell): void {
+        this.forEachRenderedCell( renderedCell => {
+            var cellStartedEdit = renderedCell === sourceRenderedCell;
+            if (cellStartedEdit) {
+                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
+            } else {
+                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit)
+            }
+        });
+        this.editingRow = true;
     }
 
     // because data can change, especially in virtual pagination and viewport row models, need to allow setting
@@ -384,6 +409,10 @@ export class RenderedRow {
                 this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
                 this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
                 rowFocusedLastTime = rowFocused;
+            }
+
+            if (!rowFocused && this.editingRow) {
+                this.stopEditing(false);
             }
         };
         this.mainEventService.addEventListener(Events.EVENT_CELL_FOCUSED, rowFocusedListener);

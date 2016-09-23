@@ -5,11 +5,15 @@ import {Constants} from "../../constants";
 
 export class SelectCellEditor extends Component implements ICellEditor {
 
+    private focusAfterAttached: boolean;
+
     constructor() {
         super('<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>');
     }
 
     public init(params: any) {
+        this.focusAfterAttached = params.cellStartedEdit;
+
         var eSelect = <HTMLSelectElement> this.getGui().querySelector('select');
         if (_.missing(params.values)) {
             console.log('ag-Grid: no values found for select cellEditor');
@@ -40,8 +44,10 @@ export class SelectCellEditor extends Component implements ICellEditor {
     }
 
     public afterGuiAttached() {
-        var eSelect = <HTMLSelectElement> this.getGui().querySelector('select');
-        eSelect.focus();
+        if (this.focusAfterAttached) {
+            var eSelect = <HTMLSelectElement> this.getGui().querySelector('select');
+            eSelect.focus();
+        }
     }
 
     public getValue(): any {
