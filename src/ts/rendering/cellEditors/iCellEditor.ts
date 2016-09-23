@@ -48,6 +48,12 @@ export interface ICellEditor {
      *  want to cancel the editing. */
     isCancelAfterEnd?(): boolean;
 
+    /** If doing full line edit, then gets called when focus should be put into the editor */
+    focusIn?(): void;
+
+    /** If doing full line edit, then gets called when focus is leaving the editor */
+    focusOut?(): void;
+
 }
 
 export interface ICellEditorParams {

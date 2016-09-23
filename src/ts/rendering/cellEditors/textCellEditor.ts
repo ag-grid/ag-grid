@@ -75,6 +75,13 @@ export class TextCellEditor extends Component implements ICellEditor {
         }
     }
 
+    // gets called when tabbing trough cells and in full row edit mode
+    public focusIn(): void {
+        var eInput = <HTMLInputElement> this.getGui();
+        eInput.focus();
+        eInput.select();
+    }
+
     public getValue(): any {
         var eInput = <HTMLInputElement> this.getGui();
         return eInput.value;

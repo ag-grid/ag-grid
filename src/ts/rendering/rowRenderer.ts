@@ -263,7 +263,7 @@ export class RowRenderer {
             renderedRow.stopEditing(cancel);
         });
     }
-    
+
     public forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
         _.iterateObject(this.renderedRows, (key: any, renderedRow: RenderedRow)=> {
             renderedRow.forEachRenderedCell(callback);
@@ -605,11 +605,70 @@ export class RowRenderer {
         return cellComponent;
     }
 
-    // called by the cell, when tab is pressed while editing.
-    // @return: true when navigation successful, otherwise false
-    public moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean): boolean {
+    public onTabKeyDown(previousRenderedCell: RenderedCell, keyboardEvent: KeyboardEvent): void {
 
-        var nextCell = new GridCell(rowIndex, floating, column);
+        var editing = previousRenderedCell.isEditing();
+        var gridCell = previousRenderedCell.getGridCell();
+
+        // find the next cell to start editing
+        var nextRenderedCell = this.moveFocusToNextCell(gridCell, keyboardEvent.shiftKey, editing);
+
+        var foundCell = _.exists(nextRenderedCell);
+
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+
+            if (editing) {
+                if (this.gridOptionsWrapper.isFullRowEdit()) {
+                    this.moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+                } else {
+                    this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
+                }
+            } else {
+                nextRenderedCell.focusCell(true);
+            }
+
+            keyboardEvent.preventDefault();
+        }
+    }
+
+    private moveEditToNextCell(previousRenderedCell: RenderedCell, nextRenderedCell: RenderedCell): void {
+        previousRenderedCell.stopEditing();
+        nextRenderedCell.startEditingIfEnabled(null, null, true);
+        nextRenderedCell.focusCell(false);
+    }
+
+    private moveEditToNextRow(previousRenderedCell: RenderedCell, nextRenderedCell: RenderedCell): void {
+        let pGridCell = previousRenderedCell.getGridCell();
+        let nGridCell = nextRenderedCell.getGridCell();
+
+        let rowsMatch = (pGridCell.rowIndex === nGridCell.rowIndex)
+            && (pGridCell.floating === nGridCell.floating);
+
+        if (rowsMatch) {
+            // same row, so we don't start / stop editing, we just move the focus along
+            previousRenderedCell.setFocusOutOnEditor();
+            nextRenderedCell.setFocusInOnEditor();
+        } else {
+            let pRow = previousRenderedCell.getRenderedRow();
+            let nRow = nextRenderedCell.getRenderedRow();
+
+            previousRenderedCell.setFocusOutOnEditor();
+            pRow.stopEditing();
+
+            nextRenderedCell.setFocusInOnEditor();
+            nRow.startRowEditing();
+
+            nextRenderedCell.focusCell();
+        }
+    }
+
+    // called by the cell, when tab is pressed while editing.
+    // @return: RenderedCell when navigation successful, otherwise null
+    private moveFocusToNextCell(gridCell: GridCell, shiftKey: boolean, startEditing: boolean): RenderedCell {
+
+        var nextCell = gridCell;
 
         while (true) {
 
@@ -618,7 +677,7 @@ export class RowRenderer {
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) {
-                return false;
+                return null;
             }
 
             // this scrolls the row into view
@@ -641,13 +700,6 @@ export class RowRenderer {
                 continue;
             }
 
-            if (startEditing) {
-                nextRenderedCell.startRowOrCellEdit();
-                nextRenderedCell.focusCell(false);
-            } else {
-                nextRenderedCell.focusCell(true);
-            }
-
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
@@ -655,7 +707,7 @@ export class RowRenderer {
             }
 
             // we successfully tabbed onto a grid cell, so return true
-            return true;
+            return nextRenderedCell;
         }
     }
 }

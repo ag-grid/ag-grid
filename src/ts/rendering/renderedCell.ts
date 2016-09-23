@@ -104,6 +104,22 @@ export class RenderedCell extends Component {
         this.gridCell = new GridCell(rowIndex, node.floating, column);
     }
 
+    public getGridCell(): GridCell {
+        return this.gridCell;
+    }
+
+    public setFocusInOnEditor(): void {
+        if (this.editingCell && this.cellEditor && this.cellEditor.focusIn) {
+            this.cellEditor.focusIn();
+        }
+    }
+
+    public setFocusOutOnEditor(): void {
+        if (this.editingCell && this.cellEditor && this.cellEditor.focusOut) {
+            this.cellEditor.focusOut();
+        }
+    }
+
     public destroy(): void {
         super.destroy();
         if (this.cellEditor && this.cellEditor.destroy) {
@@ -390,22 +406,12 @@ export class RenderedCell extends Component {
         }
     }
 
-    private onTabKeyDown(event: any): void {
-        var editNextCell: boolean;
-        if (this.editingCell) {
-            // if editing, we stop editing, then start editing next cell
-            this.stopRowOrCellEdit();
-            editNextCell = true;
-        } else {
-            // otherwise we just move to the next cell
-            editNextCell = false;
-        }
-        var foundCell = this.rowRenderer.moveFocusToNextCell(this.rowIndex, this.column, this.node.floating, event.shiftKey, editNextCell);
-        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
-        // to the normal tabbing so user can exit the grid.
-        if (foundCell) {
-            event.preventDefault();
-        }
+    public isEditing(): boolean {
+        return this.editingCell;
+    }
+
+    private onTabKeyDown(event: KeyboardEvent): void {
+        this.rowRenderer.onTabKeyDown(this, event);
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
@@ -550,7 +556,7 @@ export class RenderedCell extends Component {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditingIfEnabled(keyPress: number, charPress: string, cellStartedEdit: boolean) {
+    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false) {
 
         if (!this.isCellEditable()) {
             return false;
@@ -633,7 +639,7 @@ export class RenderedCell extends Component {
         }
     }
 
-    public focusCell(forceBrowserFocus: boolean): void {
+    public focusCell(forceBrowserFocus = false): void {
         this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
@@ -646,7 +652,7 @@ export class RenderedCell extends Component {
         }
     }
 
-    public stopEditing(cancel: boolean): void {
+    public stopEditing(cancel = true): void {
         if (!this.editingCell) {
             return;
         }
@@ -715,10 +721,11 @@ export class RenderedCell extends Component {
         return agEvent;
     }
 
+    public getRenderedRow(): RenderedRow {
+        return this.renderedRow;
+    }
+
     public isCellEditable() {
-        if (this.editingCell) {
-            return false;
-        }
 
         // never allow editing of groups
         if (this.node.group) {

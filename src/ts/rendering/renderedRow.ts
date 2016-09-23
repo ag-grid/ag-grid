@@ -202,13 +202,13 @@ export class RenderedRow {
         this.editingRow = false;
     }
 
-    public stopEditing(cancel: boolean): void {
+    public stopEditing(cancel = false): void {
         this.forEachRenderedCell( renderedCell => {
             renderedCell.stopEditing(cancel);
         });
     }
 
-    public startRowEditing(keyPress: number, charPress: string, sourceRenderedCell: RenderedCell): void {
+    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: RenderedCell = null): void {
         this.forEachRenderedCell( renderedCell => {
             var cellStartedEdit = renderedCell === sourceRenderedCell;
             if (cellStartedEdit) {
