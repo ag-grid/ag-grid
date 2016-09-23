@@ -10,6 +10,8 @@ include '../documentation-main/documentation_header.php';
 
     <!--
 
+    column virtualisation is off in demo, breaks line editing
+
     added editType
 
     new editor params: cellStartedEdit

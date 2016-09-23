@@ -101,7 +101,8 @@ function suppressColumnMoveAnimation() {
 
 var gridOptions = {
 //debug: true,
-//suppressEnterprise: true,
+    editType: 'fullRow',
+suppressEnterprise: true,
 //     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
@@ -139,7 +140,7 @@ var gridOptions = {
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-    // suppressColumnVirtualisation: true,
+    suppressColumnVirtualisation: true,
 //suppressContextMenu: true,
 //suppressFieldDotNotation: true,
     groupColumnDef: groupColumn,
@@ -297,7 +298,7 @@ var defaultCols = [
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,
-                cellEditor: 'select',
+                // cellEditor: 'select',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -320,7 +321,7 @@ var defaultCols = [
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                cellEditor: 'richSelect',
+                // cellEditor: 'richSelect',
                 cellEditorParams: {
                     cellRenderer: CountryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
@@ -920,15 +921,17 @@ function countryCellRenderer(params) {
 }
 
 function CountryCellRenderer() {
+    this.eGui = document.createElement('span');
+    this.eGui.style.cursor = 'default';
 }
 
 CountryCellRenderer.prototype.init = function (params) {
 //get flags from here: http://www.freeflagicons.com/
     if (params.value === "" || params.value === undefined || params.value === null) {
-        this.eGui = '';
+        this.eGui.innerHTML = '';
     } else {
         var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
-        this.eGui = '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
+        this.eGui.innerHTML = flag + ' ' + params.value;
     }
 };
 
