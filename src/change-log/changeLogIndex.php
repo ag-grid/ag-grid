@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
 
     added editType
 
+    new editor params: cellStartedEdit
+
     -->
 
     <h2>Version 6.0.x</h2>
