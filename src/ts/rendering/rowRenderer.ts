@@ -657,8 +657,8 @@ export class RowRenderer {
             previousRenderedCell.setFocusOutOnEditor();
             pRow.stopEditing();
 
-            nextRenderedCell.setFocusInOnEditor();
             nRow.startRowEditing();
+            nextRenderedCell.setFocusInOnEditor();
 
             nextRenderedCell.focusCell();
         }

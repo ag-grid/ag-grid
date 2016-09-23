@@ -69,6 +69,12 @@ export class CellEditorFactory {
         }
 
         if (cellEditor.isPopup && cellEditor.isPopup()) {
+
+            if (this.gridOptionsWrapper.isFullRowEdit()) {
+                console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                    '- either turn off fullRowEdit, or stop using popup editors.');
+            }
+
             cellEditor = new PopupEditorWrapper(cellEditor);
             cellEditor.init(params);
         }

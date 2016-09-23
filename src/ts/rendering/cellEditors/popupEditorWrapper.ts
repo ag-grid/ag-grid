@@ -70,4 +70,16 @@ export class PopupEditorWrapper extends Component implements ICellEditor {
         }
     }
 
+    public focusIn(): void {
+        if (this.cellEditor.focusIn) {
+            this.cellEditor.focusIn();
+        }
+    }
+
+    public focusOut(): void {
+        if (this.cellEditor.focusOut) {
+            this.cellEditor.focusOut();
+        }
+    }
+
 }

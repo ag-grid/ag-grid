@@ -30,6 +30,7 @@ import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
 import {BaseFrameworkFactory} from "../baseFrameworkFactory";
 import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
+import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 
 export class RenderedCell extends Component {
 
@@ -561,8 +562,6 @@ export class RenderedCell extends Component {
         if (!this.isCellEditable()) {
             return false;
         }
-
-        console.log('starting to edit');
 
         var cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
