@@ -209,6 +209,9 @@ suppressEnterprise: true,
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
+    onRowDataChanged: function (params) {
+        console.log('Callback onRowDataChanged: ');
+    },
 // callback when cell double clicked
     onCellDoubleClicked: function (params) {
         // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
