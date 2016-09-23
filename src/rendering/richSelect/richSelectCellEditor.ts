@@ -23,6 +23,8 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     private params: IRichCellEditorParams;
     private virtualList: VirtualList;
 
+    private focusAfterAttached: boolean;
+
     private selectedValue: any;
 
     private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
@@ -34,7 +36,8 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     public init(params: IRichCellEditorParams): void {
         this.params = params;
         this.selectedValue = params.value;
-        this.cellRenderer = this.params.cellRenderer;
+        this.cellRenderer = params.cellRenderer;
+        this.focusAfterAttached = params.cellStartedEdit;
 
         this.virtualList = new VirtualList();
         this.context.wireBean(this.virtualList);
@@ -166,7 +169,10 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
         // we call refresh again, as the list could of moved, and we need to render the new rows
         this.virtualList.refresh();
-        this.getGui().focus();
+
+        if (this.focusAfterAttached) {
+            this.getGui().focus();
+        }
     }
 
     public getValue(): any {
