@@ -206,6 +206,7 @@ export class RenderedRow {
         this.forEachRenderedCell( renderedCell => {
             renderedCell.stopEditing(cancel);
         });
+        this.editingRow = false;
         if (!cancel) {
             var event = {
                 node: this.rowNode,
@@ -362,6 +363,13 @@ export class RenderedRow {
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             this.angular1Compile(renderedCell.getGui());
+
+            // if we are editing the row, then the cell needs to turn
+            // into edit mode
+            if (this.editingRow) {
+                renderedCell.startEditingIfEnabled();
+            }
+
             return renderedCell;
         }
     }

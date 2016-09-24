@@ -28,9 +28,7 @@ import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
-import {BaseFrameworkFactory} from "../baseFrameworkFactory";
 import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
-import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 
 export class RenderedCell extends Component {
 
@@ -86,9 +84,7 @@ export class RenderedCell extends Component {
     private firstRightPinned = false;
     private lastLeftPinned = false;
 
-    constructor(column: any,
-                node: any, rowIndex: number, scope: any,
-                renderedRow: RenderedRow) {
+    constructor(column: Column, node: RowNode, rowIndex: number, scope: any, renderedRow: RenderedRow) {
         super('<div/>');
 
         // because we reference eGridCell everywhere in this class,
