@@ -101,7 +101,7 @@ function suppressColumnMoveAnimation() {
 
 var gridOptions = {
 //debug: true,
-    editType: 'fullRow',
+//     editType: 'fullRow',
 suppressEnterprise: true,
 //     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
@@ -140,7 +140,7 @@ suppressEnterprise: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-    suppressColumnVirtualisation: true,
+    // suppressColumnVirtualisation: true,
 //suppressContextMenu: true,
 //suppressFieldDotNotation: true,
     groupColumnDef: groupColumn,
@@ -301,7 +301,7 @@ var defaultCols = [
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,
-                // cellEditor: 'select',
+                cellEditor: 'select',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -324,7 +324,7 @@ var defaultCols = [
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                // cellEditor: 'richSelect',
+                cellEditor: 'richSelect',
                 cellEditorParams: {
                     cellRenderer: CountryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
