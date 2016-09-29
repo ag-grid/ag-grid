@@ -41,9 +41,9 @@ export class FocusedCellController {
     // we check if the browser is focusing something, and if it is, and
     // it's the cell we think is focused, then return the cell. so this
     // methods returns the cell if a) we think it has focus and b) the
-    // browser thinks it has focus. this then returns nothign if we
+    // browser thinks it has focus. this then returns nothing if we
     // first focus a cell, then second click outside the grid, as then the
-    // grid cell will still be focused as far as the grid is conerned,
+    // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): GridCell {
         if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {

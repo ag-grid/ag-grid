@@ -10,6 +10,8 @@ import {GridCell} from "../entities/gridCell";
 // tracks when focus goes into a cell. cells listen to this, so they know to stop editing
 // if focus goes into another cell.
 
+/** THIS IS NOT USED - it was something Niall was working on, but doesn't work well with popup editors */
+
 @Bean('focusService')
 export class FocusService {
 
@@ -30,17 +32,19 @@ export class FocusService {
     
     @PostConstruct
     private init(): void {
-        var focusListener = (focusEvent: FocusEvent)=> {
-            var gridCell = this.getCellForFocus(focusEvent);
-            if (gridCell) {
-                this.informListeners({gridCell: gridCell});
-            }
-        };
+        var focusListener = this.onFocus.bind(this);
         var eRootGui = this.gridCore.getRootGui();
         eRootGui.addEventListener('focus', focusListener, true);
         this.destroyMethods.push( () => {
             eRootGui.removeEventListener('focus', focusListener);
         });
+    }
+
+    private onFocus(focusEvent: FocusEvent): void {
+        var gridCell = this.getCellForFocus(focusEvent);
+        if (gridCell) {
+            this.informListeners({gridCell: gridCell});
+        }
     }
 
     private getCellForFocus(focusEvent: FocusEvent): GridCell {

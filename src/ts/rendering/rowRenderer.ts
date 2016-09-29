@@ -659,9 +659,9 @@ export class RowRenderer {
 
             nRow.startRowEditing();
             nextRenderedCell.setFocusInOnEditor();
-
-            nextRenderedCell.focusCell();
         }
+
+        nextRenderedCell.focusCell();
     }
 
     // called by the cell, when tab is pressed while editing.
