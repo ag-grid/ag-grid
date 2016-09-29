@@ -1,7 +1,7 @@
 var columnDefs = [
-    // this row shows the row index, doesn't use any data from the row
+    // this col shows the row index, doesn't use any data from the row
     {headerName: "#", width: 50, cellRenderer: function(params) {
-        return params.node.id + 1;
+        return params.rowIndex;
     } },
     {headerName: "Code", field: "code", width: 70},
     {headerName: "Name", field: "name", width: 300},
