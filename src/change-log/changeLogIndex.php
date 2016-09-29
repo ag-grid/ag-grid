@@ -16,6 +16,8 @@ include '../documentation-main/documentation_header.php';
 
     added editType
 
+    class ag-row-editing for when editing row
+
     new editor params: cellStartedEdit
 
 add to docs - do not use list when doing full line edit

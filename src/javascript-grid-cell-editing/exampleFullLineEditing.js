@@ -16,7 +16,10 @@ for (var i = 0; i<10; i++) {
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-    editType: 'fullRow'
+    editType: 'fullRow',
+    onCellFocused: function(event) {
+        console.log('onCellFocused: rowIndex = ' + event.rowIndex + ', column = ' + event.column.getId());
+    }
 };
 
 // wait for the document to be loaded, otherwise
