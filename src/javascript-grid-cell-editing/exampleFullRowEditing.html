@@ -2,8 +2,15 @@
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid.js?ignore=notused31"></script>
-    <script src="exampleFullLineEditing.js"></script>
+    <script src="exampleFullRowEditing.js"></script>
 </head>
+<style>
+    /* if you want to highlight the editing row, you can make use of the ag-row-editing class, it gets put onto
+       the row that is currently in edit mode. */
+    .ag-row-editing {
+        background-color: #5bc0de !important;
+    }
+</style>
 <body>
     <div style="height: 100%; padding-top: 20px; box-sizing: border-box;">
         <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>

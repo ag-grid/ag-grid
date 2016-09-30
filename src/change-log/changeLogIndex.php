@@ -8,17 +8,14 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <!--
+    <h2>Version 6.1.x</h2>
 
-    added editType
-
-    class ag-row-editing for when editing row
-
-    new editor params: cellStartedEdit
-
-add to docs - do not use list when doing full line edit
-
-    -->
+    <li>New Feature - <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a> - to enable all cells
+    in a row to be editable at the same time.</li>
+    <li>New Property - colDef.suppressNavigable - set to true (or function to return true) to stop the cell getting
+        focus when tabbing around.</li>
+    <li>New Event - <i>rowValueChanged</i> - gets fired after a full row is updated.</li>
+    <li>New Event - <i>rowValueChanged</i> - gets fired after a full row is updated.</li>
 
     <h2>Version 6.0.x</h2>
 

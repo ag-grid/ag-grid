@@ -19,6 +19,13 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     editType: 'fullRow',
+    onCellValueChanged: function(event) {
+        console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
+    },
+    onRowValueChanged: function(event) {
+        var data = event.data;
+        console.log('onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ')');
+    },
     onGridReady: function(event) {
         event.api.sizeColumnsToFit();
     }

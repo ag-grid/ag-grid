@@ -96,6 +96,12 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// Gets called once when editing is finished (eg if enter is pressed).</span>
     <span class="codeComment">// If you return true, then the result of the edit will be ignored.</span>
     isCancelBeforeEnd?(): boolean;
+
+    <span class="codeComment">// If doing full row edit, then gets called when tabbing into the cell.</span>
+    focusIn?(): boolean;
+
+    <span class="codeComment">// If doing full row edit, then gets called when tabbing out of the cell.</span>
+    focusOut?(): boolean;
 }</pre>
 
     <p>
@@ -202,6 +208,13 @@ MyCellEditor.prototype.isPopup = function() {
             <td>A reference to the DOM element representing the grid cell that your component will live inside.
                 Useful if you want to add event listeners or classes at this level. This is the DOM element that
                 gets browser focus when selecting cells.</td>
+        </tr>
+        <tr>
+            <th>cellStartedEdit</th>
+            <td>
+                If doing full row edit, this is true if the cell is the one that started the edit (eg it is
+                the cell the use double clicked on, or pressed a key on etc).
+            </td>
         </tr>
     </table>
 
@@ -413,14 +426,14 @@ colDef.cellEditorParams = {
 
     <show-example example="exampleCellEditing"></show-example>
 
-    <h2>Full Line Editing</h2>
+    <h2 id="fullRowEdit">Full Row Editing</h2>
 
     <p>
-        Full line editing is for when you want all cells in the row to become editable at the same time.
+        Full row editing is for when you want all cells in the row to become editable at the same time.
         This gives the impression to the user that the record the row represents is getting edited.
     </p>
     <p>
-        To enable full line editing, set the grid option <code>editType = 'fullRow'</code>.
+        To enable full row editing, set the grid option <code>editType = 'fullRow'</code>.
     </p>
     <p>
         If using custom cell editors, the cell editors will work in the exact same way with the
@@ -432,16 +445,38 @@ colDef.cellEditorParams = {
         <li><b>focusOut:</b> If your cellEditor has a focusOut method, it will get called when the
             user tabs out of the cell. No intended use for this, is just there to compliment the
             focusIn method, maybe you will have a reason to use it.</li>
+        <li><b>Events: </b> When a row stops editing, the <i>cellValueChanged</i> event gets called
+            for each column and <i>rowValueChanged</i> gets called once for the row.</li>
     </ul>
     </p>
 
+    <h4>Full Row Edit and Popup Editors</h4>
+
     <p>
-        The example below shows full line editing. In addition to standard full line editing,
+        Full row editing is not compatible with popup editors. This is because a) the grid would look
+        confusing to pop up an editor for each cell in the row at the same time and b) the complexity
+        of navigation and popup is almost impossible to model - thus the grid and your application code
+        would be to messy and very error prone. If you are using full row edit, then you are blocked
+        from using popup editors.
+    </p>
+
+    <p>
+        This does not mean that you cannot show a popup from your 'in cell' editor - you are free to
+        do that - however the responsibility of showing and hiding the popup belongs with your editor.
+        You may want to use the grids focus events to hide the popups when the user tabs or clicks out
+        of the cell.
+    </p>
+
+    <h4>Full Row Edit Example</h4>
+
+    <p>
+        The example below shows full row editing. In addition to standard full row editing,
         the following should also be noted:
         <ul>
             <li>
                 The 'Price' column has a custom editor demonstrating how you should implement
-                the <i>'focusIn'</i> method.
+                the <i>'focusIn'</i> method. Both <i>focusIn</i> and <i>focusOut</i> for this
+                editor are logged to the console.
             </li>
             <li>
                 The 'Suppress Navigable' column is not navigable using tab. In other words,
@@ -457,10 +492,17 @@ colDef.cellEditorParams = {
                 however the result is the whole row will become editable starting with the
                 specified cell.
             </li>
+            <li>
+                <i>cellValueChanged</i> and <i>rowValueChanged</i> events are logged to console.
+            </li>
+            <li>
+                The CSS class <i>ag-row-editing</i> changes the background color to highlight
+                the editing row.
+            </li>
         </ul>
     </p>
 
-    <show-example example="exampleFullLineEditing"></show-example>
+    <show-example example="exampleFullRowEditing"></show-example>
 
     <h2 id="reactCellEditing">
         <img src="../images/react_large.png" style="width: 60px;"/>
