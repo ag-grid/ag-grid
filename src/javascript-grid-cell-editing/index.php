@@ -414,8 +414,7 @@ colDef.cellEditorParams = {
     <show-example example="exampleCellEditing"></show-example>
 
     <h2>Full Line Editing</h2>
-
-
+    
     <p>
         Full line editing is for when you want all cells in the row to become editable at the same time.
         This gives the impression to the user that the record the row represents is getting edited.
