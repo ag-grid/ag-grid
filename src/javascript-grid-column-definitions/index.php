@@ -211,6 +211,11 @@ include '../documentation-main/documentation_header.php';
                 to have different rows editable.</td>
         </tr>
         <tr>
+            <th>editable</th>
+            <td>Set to true if this col is navigable (ie can be tabbed into), otherwise false.
+                Can also be a function to have different rows navigable.</td>
+        </tr>
+        <tr>
             <th>cellEditor<br/>cellEditorFramework</th>
             <td>cellEditor to use for this column.</td>
         </tr>

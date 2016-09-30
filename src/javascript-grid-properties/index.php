@@ -256,6 +256,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow editable cells to start editing with a single click.</td>
         </tr>
         <tr>
+            <th>editType</th>
+            <td>Set to 'fullRow' to enable full row editing. Otherwise leave blank to edit one
+                cell at a time.</td>
+        </tr>
+        <tr>
             <th>suppressHorizontalScroll</th>
             <td>Set to true to never show the horizontal scroll. This is useful if the grid is a slave grid,
                 and will scroll with a master grid.</td>

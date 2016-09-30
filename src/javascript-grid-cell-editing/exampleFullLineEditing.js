@@ -24,6 +24,14 @@ var gridOptions = {
     }
 };
 
+function onBtStartEditing() {
+    gridOptions.api.setFocusedCell(2, 'make');
+    gridOptions.api.startEditingCell({
+        rowIndex: 2,
+        colKey: 'make'
+    });
+}
+
 // function to act as a class
 function NumericCellEditor() {
 }

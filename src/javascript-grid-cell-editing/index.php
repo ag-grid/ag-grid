@@ -414,7 +414,7 @@ colDef.cellEditorParams = {
     <show-example example="exampleCellEditing"></show-example>
 
     <h2>Full Line Editing</h2>
-    
+
     <p>
         Full line editing is for when you want all cells in the row to become editable at the same time.
         This gives the impression to the user that the record the row represents is getting edited.
@@ -451,6 +451,11 @@ colDef.cellEditorParams = {
                 The 'Not Editable' column is not editable, so when the row goes into edit mode,
                 this column is not impacted. Also when editing, this column is not navigated to
                 when tabbing.
+            </li>
+            <li>
+                The button will start editing line two. It uses the api to start editing a cell,
+                however the result is the whole row will become editable starting with the
+                specified cell.
             </li>
         </ul>
     </p>

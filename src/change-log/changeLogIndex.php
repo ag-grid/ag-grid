@@ -10,10 +10,6 @@ include '../documentation-main/documentation_header.php';
 
     <!--
 
-    column virtualisation is off in demo, breaks line editing
-    need to enable virtualisation in the demo again
-
-
     added editType
 
     class ag-row-editing for when editing row
