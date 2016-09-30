@@ -3,7 +3,9 @@
 var columnDefs = [
     {headerName: "Make", field: "make", editable: true},
     {headerName: "Model", field: "model", editable: true},
-    {headerName: "Price", field: "price", editable: true}
+    {headerName: "Price", field: "price", editable: true},
+    {headerName: "Suppress Navigable", field: "make", editable: true, suppressNavigable: true},
+    {headerName: "Not Editable", field: "model", editable: false}
 ];
 
 var rowData = [];
@@ -19,6 +21,9 @@ var gridOptions = {
     editType: 'fullRow',
     onCellFocused: function(event) {
         console.log('onCellFocused: rowIndex = ' + event.rowIndex + ', column = ' + event.column.getId());
+    },
+    onGridReady: function(event) {
+        event.api.sizeColumnsToFit();
     }
 };
 
