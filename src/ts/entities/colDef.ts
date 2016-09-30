@@ -5,6 +5,8 @@ import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 import {Column} from "./column";
 import {IFilter} from "../interfaces/iFilter";
+import {GridApi} from "../gridApi";
+import {ColumnApi} from "../columnController/columnController";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -163,7 +165,10 @@ export interface ColDef extends AbstractColDef {
     enableValue?: boolean;
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
-    editable?: boolean | (Function);
+    editable?: boolean | IsColumnFunc;
+
+    /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
+    suppressNavigable?: boolean | IsColumnFunc;
 
     /** Callbacks for editing.See editing section for further details. */
     newValueHandler?: Function;
@@ -212,4 +217,17 @@ export interface ColDef extends AbstractColDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column;
 
+}
+
+export interface IsColumnFunc {
+    (params: IsColumnFuncParams): boolean;
+}
+
+export interface IsColumnFuncParams {
+    node: RowNode;
+    column: Column;
+    colDef: ColDef;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
 }

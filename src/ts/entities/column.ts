@@ -1,13 +1,18 @@
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {ColDef, AbstractColDef, IAggFunc} from "./colDef";
+import {
+    ColDef,
+    AbstractColDef,
+    IAggFunc,
+    IsColumnFunc,
+    IsColumnFuncParams
+} from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
 import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
-import {BaseFrameworkFactory} from "../baseFrameworkFactory";
 import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 import {IFilter} from "../interfaces/iFilter";
@@ -192,6 +197,33 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.eventService.removeEventListener(eventType, listener);
     }
 
+    private createIsColumnFuncParams(rowNode: RowNode): IsColumnFuncParams {
+        return {
+            node: rowNode,
+            column: this,
+            colDef: this.colDef,
+            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+    }
+
+    public isSuppressNavigable(rowNode: RowNode): boolean {
+        // if boolean set, then just use it
+        if (typeof this.colDef.suppressNavigable === 'boolean') {
+            return <boolean> this.colDef.suppressNavigable;
+        }
+
+        // if function, then call the function to find out
+        if (typeof this.colDef.suppressNavigable === 'function') {
+            var params = this.createIsColumnFuncParams(rowNode);
+            var suppressNaviableFunc = <IsColumnFunc> this.colDef.suppressNavigable;
+            return suppressNaviableFunc(params);
+        }
+
+        return false;
+    }
+
     public isCellEditable(rowNode: RowNode): boolean {
         // if boolean set, then just use it
         if (typeof this.colDef.editable === 'boolean') {
@@ -200,15 +232,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
         // if function, then call the function to find out
         if (typeof this.colDef.editable === 'function') {
-            var params = {
-                node: rowNode,
-                column: this,
-                colDef: this.colDef,
-                context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi()
-            };
-            var editableFunc = <Function>this.colDef.editable;
+            var params = this.createIsColumnFuncParams(rowNode);
+            var editableFunc = <IsColumnFunc> this.colDef.editable;
             return editableFunc(params);
         }
 

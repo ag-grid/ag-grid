@@ -720,6 +720,10 @@ export class RenderedCell extends Component {
         return this.renderedRow;
     }
 
+    public isSuppressNavigable(): boolean {
+        return this.column.isSuppressNavigable(this.node);
+    }
+
     public isCellEditable() {
 
         // never allow editing of groups

@@ -700,6 +700,10 @@ export class RowRenderer {
                 continue;
             }
 
+            if (nextRenderedCell.isSuppressNavigable()) {
+                continue;
+            }
+
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
