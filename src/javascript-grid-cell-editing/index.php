@@ -416,7 +416,43 @@ colDef.cellEditorParams = {
     <h2>Full Line Editing</h2>
 
     <p>
-        This is how you do full line editing.
+        Full line editing is for when you want all cells in the row to become editable at the same time.
+        This gives the impression to the user that the record the row represents is getting edited.
+    </p>
+    <p>
+        To enable full line editing, set the grid option <code>editType = 'fullRow'</code>.
+    </p>
+    <p>
+        If using custom cell editors, the cell editors will work in the exact same way with the
+        following additions:
+        <ul>
+        <li><b>focusIn:</b> If your cellEditor has a focusIn method, it will get called when the
+            user tabs into the cell. This should be used to put the focus on the particular item
+            to be focused, eg the textfield within your cellEditor.</li>
+        <li><b>focusOut:</b> If your cellEditor has a focusOut method, it will get called when the
+            user tabs out of the cell. No intended use for this, is just there to compliment the
+            focusIn method, maybe you will have a reason to use it.</li>
+    </ul>
+    </p>
+
+    <p>
+        The example below shows full line editing. In addition to standard full line editing,
+        the following should also be noted:
+        <ul>
+            <li>
+                The 'Price' column has a custom editor demonstrating how you should implement
+                the <i>'focusIn'</i> method.
+            </li>
+            <li>
+                The 'Suppress Navigable' column is not navigable using tab. In other words,
+                when tabbing around the grid, you cannot tab onto this cel.
+            </li>
+            <li>
+                The 'Not Editable' column is not editable, so when the row goes into edit mode,
+                this column is not impacted. Also when editing, this column is not navigated to
+                when tabbing.
+            </li>
+        </ul>
     </p>
 
     <show-example example="exampleFullLineEditing"></show-example>
