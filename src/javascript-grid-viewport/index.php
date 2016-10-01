@@ -61,29 +61,29 @@ include '../documentation-main/documentation_header.php';
 
     <pre>interface IViewportDatasource {
 
-    // Gets called exactly once before viewPort is used.
-    // Passes methods to be used to tell viewPort of data loads / changes.
+    <span class="codeComment">// Gets called exactly once before viewPort is used.</span>
+    <span class="codeComment">// Passes methods to be used to tell viewPort of data loads / changes.</span>
     init(params: IViewportDatasourceParams): void;
 
-    // Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get
+    <span class="codeComment">// Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get</span>
     setViewportRange(firstRow: number, lastRow: number): void;
 
-    // Gets called once when viewPort is no longer used. If you need to do any cleanup, do it here.
+    <span class="codeComment">// Gets called once when viewPort is no longer used. If you need to do any cleanup, do it here.</span>
     destroy?(): void;
 }
         
 interface IViewportDatasourceParams {
 
-    // datasource calls this method when the total row count changes. 
-    // This in turn sets the height of the grids vertical scroll.
+    <span class="codeComment">// datasource calls this method when the total row count changes. </span>
+    <span class="codeComment">// This in turn sets the height of the grids vertical scroll.</span>
     setRowCount: (count:number) => void;
 
-    // datasource calls this when new data arrives. The grid then updates 
-    // the provided rows. The rows are mapped [rowIndex]=>rowData].
+    <span class="codeComment">// datasource calls this when new data arrives. The grid then updates </span>
+    <span class="codeComment">// the provided rows. The rows are mapped [rowIndex]=>rowData].</span>
     setRowData: (rowData:{[key:number]:any}) => void;
 
-    // datasource calls this when it wants a row node - typically used
-    // when it wants to update the row node data
+    <span class="codeComment">// datasource calls this when it wants a row node - typically used</span>
+    <span class="codeComment">// when it wants to update the row node data</span>
     getRow: (rowIndex: number) => RowNode;
 }
 </pre>

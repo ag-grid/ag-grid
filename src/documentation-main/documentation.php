@@ -19,47 +19,40 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">ag-Grid @ Angular Connect London 2016</div>
+        <div class="news-header">Angular Connect London 2016</div>
         <div style="text-align: center;">
-            <a href="http://angularconnect.com/">
-                <img src="../images/angularConnect2.png"/>
+            <a href="https://www.youtube.com/watch?v=jamr2jmEzh8/">
+                <img src="../images/angularConnect2016Talk.png"/>
             </a>
         </div>
-        <div>
-            ag-Grid is an official sponsor of Angular
-            Connect London 2016 - come visit our stand
-            and meet the team.
+        <div style="padding-top: 10px;">
+            As part of sponsoring
+            <a href="http://angularconnect.com/2016/sponsors/">Angular Connect London 2016</a>
+            Niall and Sean from ag-Grid presented a
+            <a href="https://www.youtube.com/watch?v=jamr2jmEzh8/">
+                3 minute lightening talk
+            </a> on ag-Grid with Angular 2.
+        </div>
+        <div style="padding-top: 10px;">
+            ag-Grid is Agnostic, Angular 2 is just one of the
+            frameworks we are integrating with.
         </div>
     </div>
 
     <div class="news-box">
-        <div class="news-header">15th Sept 2016</div>
-        <div class="news-header">ag-grid v6.0.x Released</div>
-        <div style="text-align: center">
-            <img src="../images/angular2_large.png" style="width: 50px; margin: 10px;"/>
-            <img src="../images/react_large.png" style="width: 50px; margin: 10px;"/>
+        <div class="news-header">Ireland Visit</div>
+        <div style="text-align: center;">
+            <img src="../images/agIreland.png"/>
         </div>
-        <div>
-            <ol>
-                <li>
-                    New React and Angular 2 integration
-                </li>
-                <li>
-                    Enhanced custom filters
-                </li>
-                <li>
-                    Other smaller enhancements and bug fixes
-                    <br/>
-                    <br/>
-                    See <a href="../change-log/changeLogIndex.php">change log</a> for details.
-                </li>
-            </ol>
-        </div>
-        <div style="text-align: right">
-            <img src="../images/dino.png"/>
+        <div style="padding-top: 10px;">
+            We are going to be in Dublin 10th and 11th
+            of October 2016 running office hours sessions.
+            If you think you might have business in meeting
+            us, please email
+            <a href="mailto:accounts@ag-grid.com">accounts@ag-grid.com</a>
+            to arrange.
         </div>
     </div>
-
 </div>
 
 <p>
