@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.0.4
+// ag-grid-ng2 v6.1.0
 export interface AgFrameworkComponent<T> {
     agInit(params: T): void;
 }
