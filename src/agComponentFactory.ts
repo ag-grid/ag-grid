@@ -168,6 +168,19 @@ export class AgComponentFactory {
                     this._agAwareComponent.isCancelAfterEnd() : false;
             }
 
+            focusIn():void {
+                if (this._agAwareComponent.focusIn) {
+                    this._agAwareComponent.focusIn();
+                }
+            }
+
+            focusOut():void {
+                if (this._agAwareComponent.focusOut) {
+                    this._agAwareComponent.focusOut();
+                }
+            }
+
+
             protected createComponent():ComponentRef<AgEditorComponent> {
                 return that.createComponent(componentType,
                     viewContainerRef,
@@ -212,12 +225,12 @@ export class AgComponentFactory {
             }
 
             afterGuiAttached(params:IAfterFilterGuiAttachedParams):void {
-                if(this._agAwareComponent.afterGuiAttached) {
+                if (this._agAwareComponent.afterGuiAttached) {
                     this._agAwareComponent.afterGuiAttached(params);
                 }
             }
 
-            getFrameworkComponentInstance() : any {
+            getFrameworkComponentInstance():any {
                 return this._frameworkComponentInstance;
             }
 

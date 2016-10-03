@@ -6,6 +6,9 @@ export interface AgEditorComponent extends AgFrameworkComponent<any> {
     isPopup?(): boolean;
     isCancelBeforeStart?(): boolean;
     isCancelAfterEnd?(): boolean;
+    /** If doing full line edit, then gets called when focus should be put into the editor */
+    focusIn?(): void;
 
-    // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
+    /** If doing full line edit, then gets called when focus is leaving the editor */
+    focusOut?(): void;
 }
