@@ -19,12 +19,12 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">3rs October 2016</div>
+        <div class="news-header">3rd October 2016</div>
         <div class="news-header">ag-Grid 6.1.x Released</div>
         <div style="padding-top: 10px;">
             ag-Grid 6.1.x released with new Feature <a href="../javascript-grid-cell-editing/#fullRowEdit">
                 Full Row Editing</a>, to enable all cells in a row to be editable at the same time.
-            See <a href="../change-log/">Change Log</a> for full release details.
+            See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>
 
