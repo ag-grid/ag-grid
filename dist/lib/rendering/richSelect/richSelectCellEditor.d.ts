@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.0.1
+// ag-grid-enterprise v6.1.0
 import { ICellEditor, ICellEditorParams, Component, Context, ICellRenderer, ICellRendererFunc, CellRendererService } from "ag-grid/main";
 export interface IRichCellEditorParams extends ICellEditorParams {
     values: string[];
@@ -12,6 +12,7 @@ export declare class RichSelectCellEditor extends Component implements ICellEdit
     cellRendererService: CellRendererService;
     private params;
     private virtualList;
+    private focusAfterAttached;
     private selectedValue;
     private cellRenderer;
     constructor();

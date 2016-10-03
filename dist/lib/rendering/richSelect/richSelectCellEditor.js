@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.0.1
+// ag-grid-enterprise v6.1.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -24,7 +24,8 @@ var RichSelectCellEditor = (function (_super) {
     RichSelectCellEditor.prototype.init = function (params) {
         this.params = params;
         this.selectedValue = params.value;
-        this.cellRenderer = this.params.cellRenderer;
+        this.cellRenderer = params.cellRenderer;
+        this.focusAfterAttached = params.cellStartedEdit;
         this.virtualList = new virtualList_1.VirtualList();
         this.context.wireBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
@@ -127,7 +128,9 @@ var RichSelectCellEditor = (function (_super) {
         }
         // we call refresh again, as the list could of moved, and we need to render the new rows
         this.virtualList.refresh();
-        this.getGui().focus();
+        if (this.focusAfterAttached) {
+            this.getGui().focus();
+        }
     };
     RichSelectCellEditor.prototype.getValue = function () {
         return this.selectedValue;
