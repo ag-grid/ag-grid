@@ -15,6 +15,7 @@ include '../documentation-main/documentation_header.php';
     <li>New Property - colDef.suppressNavigable - set to true (or function to return true) to stop the cell getting
         focus when tabbing around.</li>
     <li>New Event - <i>rowValueChanged</i> - gets fired after a full row is updated.</li>
+    <li>ag-grid-ng2 - Upgrade to Typescript 2</li>
 
     <h2>Version 6.0.x</h2>
 
