@@ -13,7 +13,7 @@ function tscTask() {
     var tsResult = gulp
         .src([
             // this solves the 'cannot resolve Promise' issue
-            'typings/index.d.ts',
+            'node_modules/@types/core-js/index.d.ts',
             'src/**/*.ts'
         ])
         .pipe(gulpTypescript({
