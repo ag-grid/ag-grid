@@ -49,7 +49,7 @@ export function populateClientExports(exports: any): void {
     exports.PivotStage = PivotStage;
 
     exports.SetFilter = SetFilter;
-    exports.SetFilter = SetFilterListItem;
+    exports.SetFilterListItem = SetFilterListItem;
     exports.SetFilterModel = SetFilterModel;
 
     exports.StatusBar = StatusBar;
