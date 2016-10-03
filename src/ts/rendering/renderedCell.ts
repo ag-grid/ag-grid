@@ -647,7 +647,7 @@ export class RenderedCell extends Component {
         }
     }
 
-    public stopEditing(cancel = true): void {
+    public stopEditing(cancel = false): void {
         if (!this.editingCell) {
             return;
         }
