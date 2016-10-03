@@ -1,7 +1,7 @@
 import {ICellEditor} from 'ag-grid';
 import {AgReactComponent} from "./agReactComponent";
 
-export function reactCellEditorFactory(reactComponent: any, parentComponent?: any): {new(): ICellEditor} {
+export function reactCellEditorFactory(reactComponent:any, parentComponent?:any):{new(): ICellEditor} {
 
     class ReactCellEditor extends AgReactComponent implements ICellEditor {
 
@@ -9,7 +9,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
             super(reactComponent, parentComponent);
         }
 
-        public getValue(): any {
+        public getValue():any {
             var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.getValue) {
                 return componentRef.getValue();
@@ -19,14 +19,14 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
             }
         }
 
-        public afterGuiAttached(): void {
+        public afterGuiAttached():void {
             var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.afterGuiAttached) {
                 componentRef.afterGuiAttached();
             }
         }
 
-        public isPopup(): boolean {
+        public isPopup():boolean {
             var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isPopup) {
                 return componentRef.isPopup();
@@ -35,7 +35,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
             }
         }
 
-        public isCancelBeforeStart(): boolean {
+        public isCancelBeforeStart():boolean {
             var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isCancelBeforeStart) {
                 return componentRef.isCancelBeforeStart();
@@ -44,7 +44,7 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
             }
         }
 
-        public isCancelAfterEnd(): boolean {
+        public isCancelAfterEnd():boolean {
             var componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isCancelAfterEnd) {
                 return componentRef.isCancelAfterEnd();
@@ -53,6 +53,19 @@ export function reactCellEditorFactory(reactComponent: any, parentComponent?: an
             }
         }
 
+        public focusIn():void {
+            var componentRef = this.getFrameworkComponentInstance();
+            if (componentRef.focusIn) {
+                componentRef.focusIn();
+            }
+        }
+
+        public focusOut():void {
+            var componentRef = this.getFrameworkComponentInstance();
+            if (componentRef.focusOut) {
+                componentRef.focusOut();
+            }
+        }
     }
 
     return ReactCellEditor;
