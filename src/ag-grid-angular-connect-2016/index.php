@@ -9,7 +9,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>We're Gonna Need a Bigger Boat - ag-Grid Sponsors Angular Connect 2016</h2>
+        <h2>We're Gonna Need a Bigger Boat - From Speaker To Sponsor with ag-Grid</h2>
     </div>
 </div>
 
@@ -22,35 +22,36 @@ include('../includes/mediaHeader.php');
             it ag-Grid. After presenting it at Angular Connect 2015 last year I quit my job to work on the
             project full time. By the time Angular Connect 2016 this year had come along, things had changed.
             This article describes the experience of this once small project becoming one of
-            the major sponsors of Angular Connect 2016 - one of Europe's largest technical conferences.
+            the major sponsors of Angular Connect 2016 - Europe's largest Angular conferences.
         </p>
 
         <div style="float: left; padding-right: 20px; padding-bottom: 20px; padding-top: 5px;">
-            <img src="../images/angularConnect2016/niallAt2015.png"/>
+            <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
+                <img src="../images/angularConnect2016/niallAt2015.png"/>
+            </a>
             <div style="padding: 0px; width: 400px; color: darkgrey; font-size: 12px;">
-                Niall speaking at Angular Connect 2015
+                Niall speaking at <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
+                Angular Connect 2015</a>. If my eyes look tired, it's because I was.
             </div>
         </div>
 
         <p>
-            Presenting at Angular Connect 2015 last year was an amazing opportunity. To be perfectly honest, it scared me.
-            I had never spoken in public before, not mind to 1,000 people and streamed live on YouTube.
-            I spent weeks preparing the talk and then
-            practiced in front of friends, work colleagues, my girlfriend,
-            pretty much anyone who was willing to watch as I went through the talk again and again,
-            getting the timing right, cutting out bad parts, focusing on the important points etc.
-            The work required getting onto that stage was tiring.
-            When I finally delivered the talk, coming off stage, I could not recall what parts of the talk
+            Speaking at <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">Angular Connect 2015</a>
+            scared me. I had never spoken in public before, not mind to 1,000 people and streamed live on YouTube.
+            I spent weeks preparing the talk and practiced in front of friends, work colleagues, my girlfriend,
+            pretty much anyone who was willing to watch. I practiced my timing, cut out bad parts,
+            identified items to focus on etc. The work required was tiring.
+            When I delivered the talk, coming off stage, I could not recall what parts of the talk
             went well and which didn't - I had practiced it so many times, the real one and the practice ones
-            were blurred into one and I was fatigued. Later that evening I watched the playback on YouTube
-            and it had a surreal feeling, almost like watching a Ted Talk, ie someone else on stage, I couldn't
+            were blurred and I was fatigued. Later that evening I watched the playback on YouTube
+            and it had a surreal feeling, it was like watching a Ted Talk, ie someone else on stage, I couldn't
             really remember doing it.
         </p>
 
         <p>
             2016 for ag-Grid was very different different to 2015. Hardly surprising given I had quit my job.
-            ag-Grid re-branded to be Agnostic Grid
-            (previously Angular Grid) to target all platforms and was busy creating a product offering
+            ag-Grid re-branded to be <b>Ag</b>nostic Grid
+            (previously <b>A</b>n<b>g</b>ular Grid) to target all platforms and was busy creating a product offering
             for enterprise.
             The launch of ag-Grid Enterprise was a huge success and resulted in hundreds of customers.
             The company moved into Techhub@Campus (Google's London incubation centre for start-ups)
@@ -58,25 +59,22 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            One recent Monday evening, I went to a JavaScript meet-up in London, with the intention of prospecting
-            ag-Grid hires. I bumped into one of the Angular Connect organisers and had a chat. He asked
-            if I was speaking at Angular Connect 2016 - which was the following week.
-            I said I didn't apply due to the time required to prepare last year, but it was a pity as the exposure
-            last year was great, to which
-            he then suggested why didn't we sponsor. Wow. That thought had never occurred to me. We were so busy
+            I didn't apply to speak at Angular Connect 2016 as we were to busy in creating the ag-Grid company,
+            I felt I didn't have the time to prepare another talk. One week before the conference, I bumped
+            into one of the conference organisers and had a chat. When he heard I was not speaking he suggested that
+            we sponsor. Wow. That thought had never occurred to me. We were so busy
             bringing the product to market and satisfying our customers we didn't think of taking the company
             to the next level with regards restructuring our image. People probably thought ag-Grid was still one
-            guy in a bedroom earning some pocket money. I'm not sure if this Angular Connect organiser imagined
-            we'd be platinum sponsors (that's one down from the main sponsor) - the only other platinum sponsor
-            was Angular themselves and Progress (the guys who own Telerik and KendoUI, our main competitor) and if they were platinum,
+            guy in a bedroom earning some pocket money. There were different levels of sponsorship that you can take.
+            The second from the top is Platinum and the only other Platinum sponsors were
+            Angular themselves and Progress (the guys who own Telerik and KendoUI, our main competitor) and if they were platinum,
             it provided balance in my mind to match them. It was 5 working days to the conference, if this was
             going to happen, we were going to have to turn it around pretty fast.
          </p>
 
         <p>
             The next day I organised a task force in ag-Grid consisting of Sean (our lead Angular 2 tech guy),
-            John (our head of Customer Experience) and I and got us
-            around the table and told them we were going to platinum sponsor Angular Connect 2016.
+            John (our head of Customer Experience) and I. I told them we were going to Platinum sponsor Angular Connect 2016.
             We worked on how much we could get prepared in 5 days and who was doing what.
             We organised printing a large backdrop for our stand,
             got to work recording a 20 minute demonstration of ag-Grid to play on repeat,
@@ -93,8 +91,8 @@ include('../includes/mediaHeader.php');
         </div>
 
         <p>
-            We arrived the day before and set up our stand. We pulled the ag-Grid backdrop out of it's roller (it
-            rolls out like a window blind) and saw the 2m x 2m logo against the newly selected background for
+            We arrived the day before and set up our stand. We pulled the ag-Grid backdrop out of it's packing
+            and saw the 2m x 2m logo against the newly selected background for
             the first time (the background of the logo on our website wouldn't print well according to the print shop,
             it had too much black in it and the ink would bleed). We connected the 20 minute demo movie to
             the large rented TV and saw it play for the first time on something other than our laptops. We cleaned
@@ -109,15 +107,16 @@ include('../includes/mediaHeader.php');
             felt pretty cool to be hitting at the same weight. We left and I mentally prepared myself for hardly
             anyone coming to our stand, just in case, that way I can only be positively surprised if anything
             better happened - I am not sure if preparing for the worst is a good thing to do, it's the
-            opposite of positive thinking!! However sometimes I do it.
+            opposite of positive thinking. However sometimes I do it.
         </p>
 
         <p>
-            John and I walked up to the stand at 8:05am with our takeaway coffees. There were already people
+            On the first day of the conference John and I walked up to the stand at 8:05am with our takeaway coffees.
+            There were already people
             on the conference floor. I started to play our 20 minute looping video and then as I turned
             around, someone came straight up and engaged. John also got nabbed within seconds.
             Between the first person talking to me and the next I had literally 10 seconds of a breather
-            and looked around, Sean had arrived and both Sean and John were busy talking
+            and looked around and saw that Sean had arrived and both Sean and John were busy talking
             to more interested delegates. Then I was engaged again. We were all full time busy right from the start
             up until the main conference track started at 9:30am. My coffee was cold. Wow. That
             90 minutes ripped the fear of looking silly right out of me. In the quiet few moments that followed,
@@ -174,7 +173,7 @@ include('../includes/mediaHeader.php');
             take a selfie with me! Now I know fully well that ag-Grid
             is used by companies, a lot of which are banks and private equity funds, and solving the worlds
             humanitarian problems is not what we do. But for this guy, his problem was displaying a large
-            amount of data on a web-page and ag-Grid helped him do this.
+            amount of data on a web page and ag-Grid helped him do this.
             He wanted a selfie. That was cool.
         </p>
 
@@ -186,8 +185,9 @@ include('../includes/mediaHeader.php');
         </div>
 
         <p>
-            Part of our sponsorship included presenting a five minute lightening talk on the main track
-            on the second day. It was between two popular talks so we had a lot of people in the room.
+            Part of our sponsorship included presenting a <a hreg="https://www.youtube.com/watch?v=jamr2jmEzh8">
+            five minute lightening talk</a> on the main track on the second day.
+            It was between two popular talks so we had a lot of people in the room.
             Sean and I were to deliver the talk, with me talking
             and Sean on the laptop driving the demo. We were going to show how ag-Grid can use Angular 2
             internally in the grid for customising the cells, something Sean had been working on for the previous
@@ -214,7 +214,8 @@ include('../includes/mediaHeader.php');
         <div style="float: right; padding-left: 20px; padding-bottom: 20px; padding-top: 5px;">
             <img src="../images/angularConnect2016/lighteningTalk.png"/>
             <div style="padding: 0px; width: 400px; color: darkgrey; font-size: 12px;">
-                Niall and Sean on stage giving the 3 minute lightening talk.
+                Niall and Sean on stage giving the <a hreg="https://www.youtube.com/watch?v=jamr2jmEzh8">
+                    3 minute lightening talk</a>.
             </div>
         </div>
 
