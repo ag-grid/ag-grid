@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,9 +16,11 @@ var SelectCellEditor = (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
         _super.call(this, '<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>');
+        this.eSelect = this.getGui().querySelector('select');
     }
     SelectCellEditor.prototype.init = function (params) {
-        var eSelect = this.getGui().querySelector('select');
+        var _this = this;
+        this.focusAfterAttached = params.cellStartedEdit;
         if (utils_1.Utils.missing(params.values)) {
             console.log('ag-Grid: no values found for select cellEditor');
             return;
@@ -30,26 +32,29 @@ var SelectCellEditor = (function (_super) {
             if (params.value === value) {
                 option.selected = true;
             }
-            eSelect.appendChild(option);
+            _this.eSelect.appendChild(option);
         });
-        this.addDestroyableEventListener(eSelect, 'change', function () { return params.stopEditing(); });
-        this.addDestroyableEventListener(eSelect, 'keydown', function (event) {
+        this.addDestroyableEventListener(this.eSelect, 'change', function () { return params.stopEditing(); });
+        this.addDestroyableEventListener(this.eSelect, 'keydown', function (event) {
             var isNavigationKey = event.keyCode === constants_1.Constants.KEY_UP || event.keyCode === constants_1.Constants.KEY_DOWN;
             if (isNavigationKey) {
                 event.stopPropagation();
             }
         });
-        this.addDestroyableEventListener(eSelect, 'mousedown', function (event) {
+        this.addDestroyableEventListener(this.eSelect, 'mousedown', function (event) {
             event.stopPropagation();
         });
     };
     SelectCellEditor.prototype.afterGuiAttached = function () {
-        var eSelect = this.getGui().querySelector('select');
-        eSelect.focus();
+        if (this.focusAfterAttached) {
+            this.eSelect.focus();
+        }
+    };
+    SelectCellEditor.prototype.focusIn = function () {
+        this.eSelect.focus();
     };
     SelectCellEditor.prototype.getValue = function () {
-        var eSelect = this.getGui().querySelector('select');
-        return eSelect.value;
+        return this.eSelect.value;
     };
     return SelectCellEditor;
 })(component_1.Component);

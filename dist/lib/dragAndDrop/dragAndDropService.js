@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,13 +55,14 @@ var DragAndDropService = (function () {
     // we do not need to clean up drag sources, as we are just adding a listener to the element.
     // when the element is disposed, the drag source is also disposed, even though this service
     // remains. this is a bit different to normal 'addListener' methods
-    DragAndDropService.prototype.addDragSource = function (dragSource) {
+    DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
+        if (allowTouch === void 0) { allowTouch = false; }
         this.dragService.addDragSource({
             eElement: dragSource.eElement,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
-        });
+        }, allowTouch);
     };
     DragAndDropService.prototype.nudge = function () {
         if (this.dragging) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,7 @@ var LargeTextCellEditor = (function (_super) {
     }
     LargeTextCellEditor.prototype.init = function (params) {
         this.params = params;
+        this.focusAfterAttached = params.cellStartedEdit;
         this.textarea = document.createElement("textarea");
         this.textarea.maxLength = params.maxLength ? params.maxLength : "200";
         this.textarea.cols = params.cols ? params.cols : "60";
@@ -40,7 +41,9 @@ var LargeTextCellEditor = (function (_super) {
         }
     };
     LargeTextCellEditor.prototype.afterGuiAttached = function () {
-        this.textarea.focus();
+        if (this.focusAfterAttached) {
+            this.textarea.focus();
+        }
     };
     LargeTextCellEditor.prototype.getValue = function () {
         return this.textarea.value;

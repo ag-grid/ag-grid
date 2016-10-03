@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.0.1
+// Type definitions for ag-grid v6.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,6 +19,7 @@ export declare class LargeTextCellEditor extends Component implements ICellEdito
     private static TEMPLATE;
     private params;
     private textarea;
+    private focusAfterAttached;
     constructor();
     init(params: ILargeTextEditorParams): void;
     private onKeyDown(event);

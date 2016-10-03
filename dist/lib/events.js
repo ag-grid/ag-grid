@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,6 +52,7 @@ var Events = (function () {
     Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
     Events.EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
     Events.EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
+    Events.EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
     Events.EVENT_CELL_FOCUSED = 'cellFocused';
     Events.EVENT_ROW_SELECTED = 'rowSelected';
     Events.EVENT_SELECTION_CHANGED = 'selectionChanged';

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,7 @@ var RenderedRow = (function () {
         this.eAllRowContainers = [];
         this.renderedCells = {};
         this.destroyFunctions = [];
+        this.editingRow = false;
         this.initialised = false;
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
@@ -134,6 +135,44 @@ var RenderedRow = (function () {
         });
         this.addDataChangedListener();
         this.initialised = true;
+    };
+    RenderedRow.prototype.stopRowEditing = function (cancel) {
+        this.stopEditing(cancel);
+    };
+    RenderedRow.prototype.stopEditing = function (cancel) {
+        if (cancel === void 0) { cancel = false; }
+        this.forEachRenderedCell(function (renderedCell) {
+            renderedCell.stopEditing(cancel);
+        });
+        this.setEditingRow(false);
+        if (!cancel) {
+            var event = {
+                node: this.rowNode,
+                data: this.rowNode.data,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+            this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_VALUE_CHANGED, event);
+        }
+    };
+    RenderedRow.prototype.startRowEditing = function (keyPress, charPress, sourceRenderedCell) {
+        if (keyPress === void 0) { keyPress = null; }
+        if (charPress === void 0) { charPress = null; }
+        if (sourceRenderedCell === void 0) { sourceRenderedCell = null; }
+        this.forEachRenderedCell(function (renderedCell) {
+            var cellStartedEdit = renderedCell === sourceRenderedCell;
+            if (cellStartedEdit) {
+                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
+            }
+            else {
+                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit);
+            }
+        });
+        this.setEditingRow(true);
+    };
+    RenderedRow.prototype.setEditingRow = function (value) {
+        this.editingRow = value;
+        this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-editing', value); });
     };
     // because data can change, especially in virtual pagination and viewport row models, need to allow setting
     // styles and classes after the data has changed
@@ -259,6 +298,11 @@ var RenderedRow = (function () {
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             this.angular1Compile(renderedCell.getGui());
+            // if we are editing the row, then the cell needs to turn
+            // into edit mode
+            if (this.editingRow) {
+                renderedCell.startEditingIfEnabled();
+            }
             return renderedCell;
         }
     };
@@ -307,6 +351,9 @@ var RenderedRow = (function () {
                 _this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused); });
                 _this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused); });
                 rowFocusedLastTime = rowFocused;
+            }
+            if (!rowFocused && _this.editingRow) {
+                _this.stopEditing(false);
             }
         };
         this.mainEventService.addEventListener(events_1.Events.EVENT_CELL_FOCUSED, rowFocusedListener);

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -175,8 +175,8 @@ var RowRenderer = (function () {
     };
     RowRenderer.prototype.stopEditing = function (cancel) {
         if (cancel === void 0) { cancel = false; }
-        this.forEachRenderedCell(function (renderedCell) {
-            renderedCell.stopEditing(cancel);
+        this.forEachRenderedRow(function (key, renderedRow) {
+            renderedRow.stopEditing(cancel);
         });
     };
     RowRenderer.prototype.forEachRenderedCell = function (callback) {
@@ -445,7 +445,7 @@ var RowRenderer = (function () {
     };
     RowRenderer.prototype.startEditingCell = function (gridCell, keyPress, charPress) {
         var cell = this.getComponentForCell(gridCell);
-        cell.startEditingIfEnabled(keyPress, charPress);
+        cell.startRowOrCellEdit(keyPress, charPress);
     };
     RowRenderer.prototype.getComponentForCell = function (gridCell) {
         var rowComponent;
@@ -466,16 +466,64 @@ var RowRenderer = (function () {
         var cellComponent = rowComponent.getRenderedCellForColumn(gridCell.column);
         return cellComponent;
     };
+    RowRenderer.prototype.onTabKeyDown = function (previousRenderedCell, keyboardEvent) {
+        var editing = previousRenderedCell.isEditing();
+        var gridCell = previousRenderedCell.getGridCell();
+        // find the next cell to start editing
+        var nextRenderedCell = this.moveFocusToNextCell(gridCell, keyboardEvent.shiftKey, editing);
+        var foundCell = utils_1.Utils.exists(nextRenderedCell);
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            if (editing) {
+                if (this.gridOptionsWrapper.isFullRowEdit()) {
+                    this.moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+                }
+                else {
+                    this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
+                }
+            }
+            else {
+                nextRenderedCell.focusCell(true);
+            }
+            keyboardEvent.preventDefault();
+        }
+    };
+    RowRenderer.prototype.moveEditToNextCell = function (previousRenderedCell, nextRenderedCell) {
+        previousRenderedCell.stopEditing();
+        nextRenderedCell.startEditingIfEnabled(null, null, true);
+        nextRenderedCell.focusCell(false);
+    };
+    RowRenderer.prototype.moveEditToNextRow = function (previousRenderedCell, nextRenderedCell) {
+        var pGridCell = previousRenderedCell.getGridCell();
+        var nGridCell = nextRenderedCell.getGridCell();
+        var rowsMatch = (pGridCell.rowIndex === nGridCell.rowIndex)
+            && (pGridCell.floating === nGridCell.floating);
+        if (rowsMatch) {
+            // same row, so we don't start / stop editing, we just move the focus along
+            previousRenderedCell.setFocusOutOnEditor();
+            nextRenderedCell.setFocusInOnEditor();
+        }
+        else {
+            var pRow = previousRenderedCell.getRenderedRow();
+            var nRow = nextRenderedCell.getRenderedRow();
+            previousRenderedCell.setFocusOutOnEditor();
+            pRow.stopEditing();
+            nRow.startRowEditing();
+            nextRenderedCell.setFocusInOnEditor();
+        }
+        nextRenderedCell.focusCell();
+    };
     // called by the cell, when tab is pressed while editing.
-    // @return: true when navigation successful, otherwise false
-    RowRenderer.prototype.moveFocusToNextCell = function (rowIndex, column, floating, shiftKey, startEditing) {
-        var nextCell = new gridCell_1.GridCell(rowIndex, floating, column);
+    // @return: RenderedCell when navigation successful, otherwise null
+    RowRenderer.prototype.moveFocusToNextCell = function (gridCell, shiftKey, startEditing) {
+        var nextCell = gridCell;
         while (true) {
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) {
-                return false;
+                return null;
             }
             // this scrolls the row into view
             var cellIsNotFloating = utils_1.Utils.missing(nextCell.floating);
@@ -493,12 +541,8 @@ var RowRenderer = (function () {
             if (startEditing && !nextRenderedCell.isCellEditable()) {
                 continue;
             }
-            if (startEditing) {
-                nextRenderedCell.startEditingIfEnabled();
-                nextRenderedCell.focusCell(false);
-            }
-            else {
-                nextRenderedCell.focusCell(true);
+            if (nextRenderedCell.isSuppressNavigable()) {
+                continue;
             }
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
@@ -506,7 +550,7 @@ var RowRenderer = (function () {
                 this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
             }
             // we successfully tabbed onto a grid cell, so return true
-            return true;
+            return nextRenderedCell;
         }
     };
     __decorate([

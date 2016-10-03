@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.0.1
+// Type definitions for ag-grid v6.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -48,6 +48,7 @@ export declare class Events {
     static EVENT_CELL_DOUBLE_CLICKED: string;
     static EVENT_CELL_CONTEXT_MENU: string;
     static EVENT_CELL_VALUE_CHANGED: string;
+    static EVENT_ROW_VALUE_CHANGED: string;
     static EVENT_CELL_FOCUSED: string;
     static EVENT_ROW_SELECTED: string;
     static EVENT_SELECTION_CHANGED: string;

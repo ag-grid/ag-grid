@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.0.1
+// Type definitions for ag-grid v6.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -38,6 +38,7 @@ export declare class RenderedRow {
     private ePinnedRightContainer;
     private destroyFunctions;
     private renderedRowEventService;
+    private editingRow;
     private initialised;
     constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, eFullWidthContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedRightContainer: HTMLElement, node: RowNode, rowIndex: number);
     private setupRowContainers();
@@ -46,6 +47,10 @@ export declare class RenderedRow {
     private setupFullWidthGroupContainers();
     private setupNormalContainers();
     init(): void;
+    stopRowEditing(cancel: boolean): void;
+    stopEditing(cancel?: boolean): void;
+    startRowEditing(keyPress?: number, charPress?: string, sourceRenderedCell?: RenderedCell): void;
+    private setEditingRow(value);
     private addDataChangedListener();
     private angular1Compile(element);
     private addColumnListener();

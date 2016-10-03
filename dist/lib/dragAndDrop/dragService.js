@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,12 +18,15 @@ var logger_1 = require("../logger");
 var utils_1 = require("../utils");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = (function () {
     function DragService() {
         this.onMouseUpListener = this.onMouseUp.bind(this);
         this.onMouseMoveListener = this.onMouseMove.bind(this);
+        this.onTouchEndListener = this.onTouchUp.bind(this);
+        this.onTouchMoveListener = this.onTouchMove.bind(this);
         this.destroyFunctions = [];
     }
     DragService.prototype.init = function () {
@@ -38,10 +41,34 @@ var DragService = (function () {
             utils_1.Utils.addOrRemoveCssClass(this.eBody, 'ag-body-no-select', noSelect);
         }
     };
-    DragService.prototype.addDragSource = function (params) {
-        var listener = this.onMouseDown.bind(this, params);
-        params.eElement.addEventListener('mousedown', listener);
-        this.destroyFunctions.push(function () { return params.eElement.removeEventListener('mousedown', listener); });
+    DragService.prototype.addDragSource = function (params, includeTouch) {
+        if (includeTouch === void 0) { includeTouch = false; }
+        var mouseListener = this.onMouseDown.bind(this, params);
+        params.eElement.addEventListener('mousedown', mouseListener);
+        this.destroyFunctions.push(function () { return params.eElement.removeEventListener('mousedown', mouseListener); });
+        if (includeTouch && this.gridOptionsWrapper.isEnableTouch()) {
+            var touchListener = this.onTouchStart.bind(this, params);
+            params.eElement.addEventListener('touchstart', touchListener);
+            this.destroyFunctions.push(function () { return params.eElement.removeEventListener('touchstart', touchListener); });
+        }
+    };
+    // gets called whenever mouse down on any drag source
+    DragService.prototype.onTouchStart = function (params, touchEvent) {
+        touchEvent.preventDefault();
+        this.currentDragParams = params;
+        this.dragging = false;
+        var touch = touchEvent.targetTouches[0];
+        this.touchLastTime = touch;
+        this.touchStart = touch;
+        // we temporally add these listeners, for the duration of the drag, they
+        // are removed in mouseup handling.
+        document.addEventListener('touchmove', this.onTouchMoveListener);
+        document.addEventListener('touchend', this.onTouchEndListener);
+        document.addEventListener('touchcancel', this.onTouchEndListener);
+        // see if we want to start dragging straight away
+        if (params.dragStartPixels === 0) {
+            this.onTouchMove(touchEvent);
+        }
     };
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
@@ -51,8 +78,8 @@ var DragService = (function () {
         }
         this.currentDragParams = params;
         this.dragging = false;
-        this.eventLastTime = mouseEvent;
-        this.dragStartEvent = mouseEvent;
+        this.mouseEventLastTime = mouseEvent;
+        this.mouseStartEvent = mouseEvent;
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in mouseup handling.
         document.addEventListener('mousemove', this.onMouseMoveListener);
@@ -64,40 +91,78 @@ var DragService = (function () {
     };
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
-    DragService.prototype.isEventNearStartEvent = function (event) {
+    DragService.prototype.isEventNearStartEvent = function (currentEvent, startEvent) {
         // by default, we wait 4 pixels before starting the drag
         var requiredPixelDiff = utils_1.Utils.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
         if (requiredPixelDiff === 0) {
             return false;
         }
-        var diffX = Math.abs(event.clientX - this.dragStartEvent.clientX);
-        var diffY = Math.abs(event.clientY - this.dragStartEvent.clientY);
+        var diffX = Math.abs(currentEvent.clientX - startEvent.clientX);
+        var diffY = Math.abs(currentEvent.clientY - startEvent.clientY);
         return Math.max(diffX, diffY) <= requiredPixelDiff;
     };
-    // only gets called after a mouse down - as this is only added after mouseDown
-    // and is removed when mouseUp happens
-    DragService.prototype.onMouseMove = function (mouseEvent) {
+    DragService.prototype.getFirstActiveTouch = function (touchList) {
+        for (var i = 0; i < touchList.length; i++) {
+            var matches = touchList[i].identifier === this.touchStart.identifier;
+            if (matches) {
+                return touchList[i];
+            }
+        }
+        return null;
+    };
+    DragService.prototype.onCommonMove = function (currentEvent, startEvent) {
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
-            var toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(mouseEvent);
+            var toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(currentEvent, startEvent);
             if (toEarlyToDrag) {
                 return;
             }
             else {
+                // alert(`started`);
                 this.dragging = true;
                 this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STARTED);
-                this.currentDragParams.onDragStart(this.dragStartEvent);
+                this.currentDragParams.onDragStart(startEvent);
                 this.setNoSelectToBody(true);
             }
         }
-        this.currentDragParams.onDragging(mouseEvent);
+        this.currentDragParams.onDragging(currentEvent);
+    };
+    DragService.prototype.onTouchMove = function (touchEvent) {
+        var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
+        if (!touch) {
+            return;
+        }
+        this.onCommonMove(touch, this.touchStart);
+    };
+    // only gets called after a mouse down - as this is only added after mouseDown
+    // and is removed when mouseUp happens
+    DragService.prototype.onMouseMove = function (mouseEvent) {
+        this.onCommonMove(mouseEvent, this.mouseStartEvent);
+    };
+    DragService.prototype.onTouchUp = function (touchEvent) {
+        var touch = this.getFirstActiveTouch(touchEvent.targetTouches);
+        // i haven't worked this out yet, but there is no matching touch
+        // when we get the touch up event. to get around this, we swap in
+        // the last touch. this is a hack to 'get it working' while we
+        // figure out what's going on, why we are not getting a touch in
+        // current event.
+        if (!touch) {
+            touch = this.touchLastTime;
+        }
+        document.removeEventListener('touchmove', this.onTouchMoveListener);
+        document.removeEventListener('touchend', this.onTouchEndListener);
+        document.removeEventListener('touchcancel', this.onTouchEndListener);
+        this.onUpCommon(touch);
     };
     DragService.prototype.onMouseUp = function (mouseEvent) {
         document.removeEventListener('mouseup', this.onMouseUpListener);
         document.removeEventListener('mousemove', this.onMouseMoveListener);
+        this.onUpCommon(mouseEvent);
+    };
+    DragService.prototype.onUpCommon = function (mouseEvent) {
         this.setNoSelectToBody(false);
-        this.dragStartEvent = null;
-        this.eventLastTime = null;
+        this.mouseStartEvent = null;
+        this.mouseEventLastTime = null;
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(mouseEvent);
@@ -112,6 +177,10 @@ var DragService = (function () {
         context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
     ], DragService.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], DragService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 

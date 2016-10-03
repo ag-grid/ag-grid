@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.0.1
+// Type definitions for ag-grid v6.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -84,5 +84,8 @@ export declare class RowRenderer {
     navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell(gridCell);
-    moveFocusToNextCell(rowIndex: any, column: any, floating: string, shiftKey: boolean, startEditing: boolean): boolean;
+    onTabKeyDown(previousRenderedCell: RenderedCell, keyboardEvent: KeyboardEvent): void;
+    private moveEditToNextCell(previousRenderedCell, nextRenderedCell);
+    private moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+    private moveFocusToNextCell(gridCell, shiftKey, startEditing);
 }

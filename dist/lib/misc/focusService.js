@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,6 +21,7 @@ var constants_1 = require("../constants");
 var gridCell_1 = require("../entities/gridCell");
 // tracks when focus goes into a cell. cells listen to this, so they know to stop editing
 // if focus goes into another cell.
+/** THIS IS NOT USED - it was something Niall was working on, but doesn't work well with popup editors */
 var FocusService = (function () {
     function FocusService() {
         this.destroyMethods = [];
@@ -33,18 +34,18 @@ var FocusService = (function () {
         utils_1.Utils.removeFromArray(this.listeners, listener);
     };
     FocusService.prototype.init = function () {
-        var _this = this;
-        var focusListener = function (focusEvent) {
-            var gridCell = _this.getCellForFocus(focusEvent);
-            if (gridCell) {
-                _this.informListeners({ gridCell: gridCell });
-            }
-        };
+        var focusListener = this.onFocus.bind(this);
         var eRootGui = this.gridCore.getRootGui();
         eRootGui.addEventListener('focus', focusListener, true);
         this.destroyMethods.push(function () {
             eRootGui.removeEventListener('focus', focusListener);
         });
+    };
+    FocusService.prototype.onFocus = function (focusEvent) {
+        var gridCell = this.getCellForFocus(focusEvent);
+        if (gridCell) {
+            this.informListeners({ gridCell: gridCell });
+        }
     };
     FocusService.prototype.getCellForFocus = function (focusEvent) {
         var column = null;

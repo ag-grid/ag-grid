@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.0.1
+ * @version v6.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -151,7 +151,8 @@ var ComponentUtil = (function () {
     ComponentUtil.EVENTS = [];
     ComponentUtil.STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
-        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType'];
+        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
+        'editType'];
     ComponentUtil.OBJECT_PROPERTIES = [
         'rowStyle', 'context', 'groupColumnDef', 'localeText', 'icons', 'datasource', 'viewportDatasource',
         'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams'
@@ -181,7 +182,7 @@ var ComponentUtil = (function () {
         'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
-        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly'
+        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'enableTouch'
     ];
     ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
         'groupRowRenderer', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.0.1
+// Type definitions for ag-grid v6.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -20,7 +20,7 @@ export interface ICellEditor {
      onKeyDown: callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid - however you do
                 not need to call this as the grid is already listening for the events as they propagate. this is only required if
                 you are preventing event propagation
-     stopEditing: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
+     stopRowOrCellEdit: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
      */
     init?(params: ICellEditorParams): void;
     /** Gets called once after GUI is attached to DOM. Useful if you want to focus or highlight a component (this is not possible when the element is not attached)*/
@@ -44,6 +44,10 @@ export interface ICellEditor {
      *  editing will have no impact on the record. Use this if you do not want a new value from your gui, i.e. you
      *  want to cancel the editing. */
     isCancelAfterEnd?(): boolean;
+    /** If doing full line edit, then gets called when focus should be put into the editor */
+    focusIn?(): void;
+    /** If doing full line edit, then gets called when focus is leaving the editor */
+    focusOut?(): void;
 }
 export interface ICellEditorParams {
     value: any;
@@ -53,6 +57,7 @@ export interface ICellEditorParams {
     node: RowNode;
     api: GridApi;
     columnApi: ColumnApi;
+    cellStartedEdit: boolean;
     context: any;
     onKeyDown: (event: KeyboardEvent) => void;
     stopEditing: () => void;

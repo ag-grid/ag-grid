@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.0.1
+// Type definitions for ag-grid v6.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -28,6 +28,7 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    enableTouch?: boolean;
     enableColResize?: boolean;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
@@ -87,6 +88,7 @@ export interface GridOptions {
     paginationOverflowSize?: number;
     paginationInitialRowCount?: number;
     paginationPageSize?: number;
+    editType?: string;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

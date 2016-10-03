@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.0.1
+// Type definitions for ag-grid v6.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -44,6 +44,7 @@ export declare class GridOptionsWrapper {
     isRowModelVirtual(): boolean;
     isRowModelViewport(): boolean;
     isRowModelDefault(): boolean;
+    isFullRowEdit(): boolean;
     isSuppressFocusAfterRefresh(): boolean;
     isShowToolPanel(): boolean;
     isToolPanelSuppressRowGroups(): boolean;
@@ -51,6 +52,7 @@ export declare class GridOptionsWrapper {
     isToolPanelSuppressPivots(): boolean;
     isToolPanelSuppressPivotMode(): boolean;
     isEnableCellChangeFlash(): boolean;
+    isEnableTouch(): boolean;
     isGroupSelectsChildren(): boolean;
     isGroupIncludeFooter(): boolean;
     isGroupSuppressBlankHeader(): boolean;
