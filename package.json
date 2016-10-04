@@ -1,11 +1,12 @@
 {
   "name": "ag-grid-ng2",
-  "version": "6.1.0",
+  "version": "6.1.1-beta",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/.bin/ngc"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,10 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
+    "@angular/common": "2.x",
+    "@angular/compiler-cli": "0.6.x",
+    "@angular/platform-browser": "2.x",
+    "@angular/platform-server": "2.x",
     "@types/core-js": "^0.9.34",
     "gulp": "3.9.1",
     "gulp-header": "1.7.0",

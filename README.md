@@ -9,9 +9,9 @@ Building
 To build:
 - npm install
 - npm install gulp -g
-- npm install @angular/core@2.0.1
-- npm install @angular/compiler@2.0.1
+- npm install @angular/core@2.x
+- npm install @angular/compiler@2.x
 - npm install ag-grid
-- (or: npm install @angular/core@2.0.1 && npm install @angular/compiler@2.0.1 && npm install ag-grid)
+- (or: npm install @angular/core@2.x && npm install @angular/compiler@2.x && npm install ag-grid)
 
 - gulp

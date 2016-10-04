@@ -26,9 +26,7 @@
     "./src/agRendererComponent.ts",
     "./src/aggrid.module.ts",
     "./src/ng2FrameworkFactory.ts",
+    "./src/agNoopComponentFactory.ts",
     "./main.d.ts"
-  ],
-  "angularCompilerOptions": {
-     "skipTemplateCodegen": true
-   }
+  ]
 }
