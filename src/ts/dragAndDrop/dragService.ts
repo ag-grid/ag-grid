@@ -1,9 +1,10 @@
-import {Bean, PreDestroy, Autowired, PostConstruct} from "../context/context";
+import {Bean, PreDestroy, Autowired, PostConstruct, Optional} from "../context/context";
 import {LoggerFactory, Logger} from "../logger";
 import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Component} from "../widgets/component";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -13,6 +14,9 @@ export class DragService {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    @Autowired('eGridDiv') private _TempGridDiv: HTMLElement;
+    @Optional('statusBar') private statusBar: any;
 
     private currentDragParams: DragListenerParams;
     private dragging: boolean;
@@ -33,15 +37,73 @@ export class DragService {
 
     private eBody: HTMLElement;
 
+    private dragSources: DragSourceAndListener[] = [];
+
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('DragService');
         this.eBody = <HTMLElement> document.querySelector('body');
     }
 
+    private playWithTouch(): void {
+        var firstTouch: Touch;
+
+        // see if we can add the drag to the body, and listen on that instead
+
+        this._TempGridDiv.addEventListener('touchstart', (e: TouchEvent)=> {
+            // e.preventDefault();
+            console.log('touchstart', e);
+            firstTouch = e.touches[0];
+            // this.statusBar.setInfoText(Math.random() + ' touchStart length=' + e.touches.length + ' ' + firstTouch.identifier + ' ' + firstTouch.clientY);
+        });
+
+        this._TempGridDiv.addEventListener('touchmove', (e: TouchEvent)=> {
+            console.log('touchmove', e);
+            // e.preventDefault();
+            var touch: Touch;
+            for (var i = 0; i<e.touches.length; i++) {
+                if (e.touches[i].identifier === firstTouch.identifier) {
+                    touch = e.touches[i];
+                }
+            }
+            if (touch) {
+                // this.statusBar.setInfoText(Math.random() + ' touchmove ' + '(' + touch.clientX + ',' + touch.clientY + ')');
+            }
+        });
+
+        this._TempGridDiv.addEventListener('touchend', (e: TouchEvent)=> {
+            console.log('touchend', e);
+            // this.statusBar.setInfoText(Math.random() + ' touchend');
+        });
+
+        this._TempGridDiv.addEventListener('touchcancel', (e: TouchEvent)=> {
+            console.log('touchcancel', e);
+            // this.statusBar.setInfoText(Math.random() + ' touchcancel');
+        });
+    }
+
     @PreDestroy
     private destroy(): void {
         this.destroyFunctions.forEach( func => func() );
+
+        this.dragSources.forEach( this.removeListener.bind(this) );
+
+        this.dragSources.length = 0;
+    }
+
+    private removeListener(dragSourceAndListener: DragSourceAndListener): void {
+        var element = dragSourceAndListener.dragSource.eElement;
+        var mouseDownListener = dragSourceAndListener.mouseDownListener;
+        element.removeEventListener('mousedown', mouseDownListener);
+    }
+
+    public removeDragSource(params: DragListenerParams): void {
+        let dragSourceAndListener = _.find( this.dragSources, item => item.dragSource === params);
+
+        if (!dragSourceAndListener) { return; }
+
+        this.removeListener(dragSourceAndListener);
+        _.removeFromArray(this.dragSources, dragSourceAndListener);
     }
 
     private setNoSelectToBody(noSelect: boolean): void {
@@ -51,15 +113,25 @@ export class DragService {
     }
 
     public addDragSource(params: DragListenerParams, includeTouch: boolean = false): void {
+
         var mouseListener = this.onMouseDown.bind(this, params);
         params.eElement.addEventListener('mousedown', mouseListener);
         this.destroyFunctions.push( ()=>  params.eElement.removeEventListener('mousedown', mouseListener));
 
+        let touchListener: (touchEvent: TouchEvent)=>void = null;
+
         if (includeTouch && this.gridOptionsWrapper.isEnableTouch()) {
-            var touchListener = this.onTouchStart.bind(this, params);
+            touchListener = this.onTouchStart.bind(this, params);
             params.eElement.addEventListener('touchstart', touchListener);
             this.destroyFunctions.push( ()=>  params.eElement.removeEventListener('touchstart', touchListener));
         }
+
+        this.dragSources.push({
+            dragSource: params,
+            mouseDownListener: mouseListener
+        });
+
+        console.log(`count is ${this.dragSources.length}`);
     }
 
     // gets called whenever mouse down on any drag source
@@ -204,6 +276,12 @@ export class DragService {
             this.eventService.dispatchEvent(Events.EVENT_DRAG_STOPPED);
         }
     }
+}
+
+interface DragSourceAndListener {
+    dragSource: DragListenerParams;
+    mouseDownListener: (mouseEvent: MouseEvent)=>void;
+    // touchStartListener: (touchEvent: TouchEvent)=>void;
 }
 
 export interface DragListenerParams {
