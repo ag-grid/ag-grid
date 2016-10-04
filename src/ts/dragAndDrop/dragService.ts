@@ -130,8 +130,6 @@ export class DragService {
             dragSource: params,
             mouseDownListener: mouseListener
         });
-
-        console.log(`count is ${this.dragSources.length}`);
     }
 
     // gets called whenever mouse down on any drag source
