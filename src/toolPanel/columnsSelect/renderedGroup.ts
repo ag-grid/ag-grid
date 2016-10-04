@@ -116,6 +116,7 @@ export class RenderedGroup extends Component {
             dragItem: this.columnGroup.getLeafColumns()
         };
         this.dragAndDropService.addDragSource(dragSource);
+        this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
     }
 
     private setupExpandContract(): void {

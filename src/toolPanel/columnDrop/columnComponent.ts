@@ -76,6 +76,7 @@ export class ColumnComponent extends Component {
             dragSourceDropTarget: this.dragSourceDropTarget
         };
         this.dragAndDropService.addDragSource(dragSource);
+        this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
     }
 
     private setupComponents(): void {

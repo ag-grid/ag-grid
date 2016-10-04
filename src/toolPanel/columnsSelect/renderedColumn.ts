@@ -177,6 +177,7 @@ export class RenderedColumn extends Component {
             dragItem: [this.column]
         };
         this.dragAndDropService.addDragSource(dragSource);
+        this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
     }
 
     private onColumnStateChanged(): void {

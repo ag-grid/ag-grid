@@ -27,6 +27,7 @@ export class StatusBar extends Component {
     private statusItemAvg: StatusItem;
 
     private aggregationsComponent = new Component('<div class="ag-status-bar-aggregations"></div>');
+    private infoLabel = new Component(`<div class="ag-status-bar-info-label"></div>`);
 
     constructor() {
         super(StatusBar.TEMPLATE);
@@ -53,7 +54,12 @@ export class StatusBar extends Component {
             statusItem.setVisible(false);
         });
 
+        this.appendChild(this.infoLabel);
         this.appendChild(this.aggregationsComponent);
+    }
+
+    public setInfoText(text: string): void {
+        this.infoLabel.getGui().innerText = text;
     }
 
     private forEachStatusItem(callback: (statusItem: StatusItem)=>void): void {
