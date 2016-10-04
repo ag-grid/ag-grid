@@ -23,7 +23,7 @@ import {AgFilterComponent} from "./agFilterComponent";
 
 @Injectable()
 export class AgComponentFactory {
-    private _cacheOfModules:any = {};
+    private _factoryCache:{[key: string]: ComponentFactory<any>} = {};
 
     constructor(private _runtimeCompiler:RuntimeCompiler) {
     }
@@ -255,18 +255,13 @@ export class AgComponentFactory {
                               name:string,
                               moduleImports:any[],
                               childDependencies:any[]):ComponentRef<T> {
-        let module:any = this._cacheOfModules[name];
-        if (!module) {
-            module = this.createComponentModule(componentType, moduleImports, childDependencies);
-            this._cacheOfModules[name] = module;
-        }
+        let factory:ComponentFactory<any> = this._factoryCache[name];
+        if (!factory) {
+            let module = this.createComponentModule(componentType, moduleImports, childDependencies);
+            let moduleWithFactories = compiler.compileModuleAndAllComponentsSync(module);
 
-        var moduleWithFactories = compiler.compileModuleAndAllComponentsSync(module);
-        let factory:ComponentFactory<T> = null;
-        for (let i = 0; i < moduleWithFactories.componentFactories.length && factory === null; i++) {
-            if (moduleWithFactories.componentFactories[i].componentType === componentType) {
-                factory = moduleWithFactories.componentFactories[i];
-            }
+            factory = moduleWithFactories.componentFactories.find((factory:ComponentFactory<T>) => factory.componentType === componentType);
+            this._factoryCache[name] = factory;
         }
 
         return viewContainerRef.createComponent(factory);

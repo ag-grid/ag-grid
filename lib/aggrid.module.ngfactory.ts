@@ -6,7 +6,7 @@
 
 import * as import0 from '@angular/core/src/linker/ng_module_factory';
 import * as import1 from './aggrid.module';
-import * as import2 from '../agNoopComponentFactory';
+import * as import2 from './agNoopComponentFactory';
 import * as import3 from './ng2FrameworkFactory';
 import * as import4 from '@angular/core/src/di/injector';
 import * as import5 from './agComponentFactory';
