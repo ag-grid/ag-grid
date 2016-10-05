@@ -88,7 +88,9 @@ export class SetFilterModel {
             this.allUniqueValues = Utils.toStrings(uniqueValuesAsAnyObjects);
         }
 
-        this.sortValues(this.allUniqueValues);
+        if (!this.suppressSorting) {
+            this.sortValues(this.allUniqueValues);
+        }
     }
 
     private createAvailableUniqueValues() {

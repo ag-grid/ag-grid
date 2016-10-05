@@ -46,7 +46,7 @@ export class SetFilter extends Component implements IFilter {
     public init(params: IFilterParams): void {
         this.params = <ISetFilterParams> params;
         this.applyActive = this.params.apply === true;
-        this.suppressSorting = this.params.suppressSorting;
+        this.suppressSorting = this.params.suppressSorting === true;
         this.newRowsActionKeep = this.params.newRowsAction === 'keep';
 
         if (Utils.exists(this.params.cellHeight)) {
