@@ -103,6 +103,7 @@ import {VirtualPageCache} from "./rowControllers/virtualPagination/virtualPageCa
 import {VirtualPage} from "./rowControllers/virtualPagination/virtualPage";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
+import {TouchListener} from "./widgets/touchListener";
 
 export function populateClientExports(exports: any): void {
 
@@ -225,6 +226,7 @@ export function populateClientExports(exports: any): void {
     exports.MenuList = MenuList;
     exports.Listener = Listener;
     exports.QuerySelector = QuerySelector;
+    exports.TouchListener = TouchListener;
 
     // root
     exports.BaseFrameworkFactory = BaseFrameworkFactory;

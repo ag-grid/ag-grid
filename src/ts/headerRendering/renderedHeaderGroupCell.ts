@@ -11,6 +11,7 @@ import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
+import {TouchListener} from "../widgets/touchListener";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -220,11 +221,23 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         eGroupIcon.className = 'ag-header-expand-icon';
         eGroupCellLabel.appendChild(eGroupIcon);
 
-        var that = this;
-        eGroupIcon.onclick = function() {
-            var newExpandedValue = !that.columnGroup.isExpanded();
-            that.columnController.setColumnGroupOpened(that.columnGroup, newExpandedValue);
+        var expandAction = ()=> {
+            var newExpandedValue = !this.columnGroup.isExpanded();
+            this.columnController.setColumnGroupOpened(this.columnGroup, newExpandedValue);
         };
+
+        eGroupIcon.addEventListener('click', expandAction);
+
+        this.destroyFunctions.push( ()=> {
+            eGroupIcon.removeEventListener('click', expandAction);
+        });
+
+        let touchListener = new TouchListener(eGroupIcon);
+        touchListener.addEventListener(TouchListener.EVENT_TAP, expandAction);
+        this.destroyFunctions.push( ()=> {
+            touchListener.removeEventListener(TouchListener.EVENT_TAP, expandAction);
+            touchListener.destroy();
+        });
     }
 
     public onDragStart(): void {
