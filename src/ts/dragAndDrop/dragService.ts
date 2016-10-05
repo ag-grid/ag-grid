@@ -81,8 +81,7 @@ export class DragService {
 
         let touchListener: (touchEvent: TouchEvent)=>void = null;
 
-        var touchEnabled = includeTouch && this.gridOptionsWrapper.isEnableTouch();
-        if (touchEnabled) {
+        if (includeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
             params.eElement.addEventListener('touchstart', touchListener);
         }
@@ -91,7 +90,7 @@ export class DragService {
             dragSource: params,
             mouseDownListener: mouseListener,
             touchStartListener: touchListener,
-            touchEnabled: touchEnabled
+            touchEnabled: includeTouch
         });
     }
 
