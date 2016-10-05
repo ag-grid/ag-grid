@@ -103,8 +103,7 @@ columnDefinition = {
         applying a different color background to this style.
     </p>
 
-    <show-example example="setFilterExample"></show-example>
-
+    <show-example example="exampleSetFilter"></show-example>
 
     <h3>Set Filter API</h3>
     <p>
@@ -129,6 +128,13 @@ columnDefinition = {
 <!--    <p>
         To use the
     </p>
---></div>
+-->
+
+<!--    <h3>Another Example</h3>
+
+    <show-example example="exampleSetFilter2"></show-example>-->
+
+
+</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

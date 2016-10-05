@@ -14,6 +14,8 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
         a function, so you can be selective on which rows have checkboxes.</li>
 
+    <li>Bugfix - suppressSorting in Set Filter was not getting used.</li>
+
     <h2>Version 6.1.x</h2>
 
     <li>New Feature - <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a> - to enable all cells
