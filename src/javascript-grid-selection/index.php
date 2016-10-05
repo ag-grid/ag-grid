@@ -120,13 +120,26 @@ var selected = node.isSelected();</pre>
         list.
     </p>
 
+    <h4>Checkbox Selection Example 1</h4>
+
     <p>
         The example also shows a checkbox for selection on the age column. In practice, it is not
         normal to have more than two columns for selection, the below is just for demonstration.
         Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
-    <show-example example="groupSelection" example-height="450px"></show-example>
+    <show-example example="exampleGroupSelection" example-height="450px"></show-example>
+
+    <h4>Checkbox Selection Example 2</h4>
+
+    <p>
+        The example below is similar to the previous example except it does not put checkboxes
+        on the leaf level nodes, only allowing entire groups to be selected. This is achieved
+        by providing functions for
+        <i>colDef.checkboxSelection</i> and <i>groupColumnDef.cellRendererParams.checkbox</i>.
+    </p>
+
+    <show-example example="exampleSelectionCheckbox" example-height="450px"></show-example>
 
     <p>
         If you select 'group' for the 'groupCheckboxSelection', then the group will be selectable

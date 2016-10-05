@@ -8,6 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h2>Version 6.2.x</h2>
+
+    <li>New Feature - Touch support.</li>
+    <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
+        a function, so you can be selective on which rows have checkboxes.</li>
+
     <h2>Version 6.1.x</h2>
 
     <li>New Feature - <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a> - to enable all cells
