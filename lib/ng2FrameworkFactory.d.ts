@@ -1,12 +1,12 @@
-// ag-grid-ng2 v6.1.0
+// ag-grid-ng2 v6.1.2-beta
 import { ViewContainerRef } from '@angular/core';
 import { ICellRenderer, ICellEditor, IFrameworkFactory, IFilter, ICellRendererFunc, ColDef, GridOptions } from 'ag-grid/main';
-import { AgComponentFactory } from "./agComponentFactory";
+import { BaseComponentFactory } from "./baseComponentFactory";
 export declare class Ng2FrameworkFactory implements IFrameworkFactory {
-    private _agComponentFactory;
+    private _componentFactory;
     private _viewContainerRef;
     private _baseFrameworkFactory;
-    constructor(_agComponentFactory: AgComponentFactory);
+    constructor(_componentFactory: BaseComponentFactory);
     colDefFloatingCellRenderer(colDef: ColDef): {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;

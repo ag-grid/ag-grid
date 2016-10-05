@@ -2,9 +2,9 @@ import {NgModule} from '@angular/core';
 import {COMPILER_PROVIDERS} from '@angular/compiler';
 
 import {AgGridNg2} from './agGridNg2';
-import {AgComponentFactory} from './agComponentFactory';
 import {Ng2FrameworkFactory} from './ng2FrameworkFactory';
-import {AgNoopComponentFactory} from "./agNoopComponentFactory";
+import {Ng2ComponentFactory} from './ng2ComponentFactory';
+import {BaseComponentFactory} from "./baseComponentFactory";
 
 @NgModule({
     imports: [],
@@ -16,7 +16,8 @@ import {AgNoopComponentFactory} from "./agNoopComponentFactory";
     ],
     providers: [
         Ng2FrameworkFactory,
-        {provide: AgComponentFactory, useClass: AgNoopComponentFactory}
+        BaseComponentFactory,
+        {provide: BaseComponentFactory, useClass: BaseComponentFactory}
     ]
 })
 export class AgGridModule {
@@ -25,7 +26,8 @@ export class AgGridModule {
         return {
             ngModule: AgGridModule,
             providers: [ // singletons across the whole app
-                {provide: AgComponentFactory, useClass: AgComponentFactory},
+                Ng2ComponentFactory,
+                {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory},
                 COMPILER_PROVIDERS
             ],
         };

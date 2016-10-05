@@ -198,7 +198,7 @@ export class AgGridNg2 {
     private _initialised = false;
     private _destroyed = false;
 
-    private gridOptions:GridOptions;
+    public gridOptions:GridOptions;
     private gridParams:GridParams;
 
     // making these public, so they are accessible to people using the ng2 component references

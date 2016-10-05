@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.1.0
+// ag-grid-ng2 v6.1.2-beta
 import { AgFrameworkComponent } from "./agFrameworkComponent";
 export interface AgEditorComponent extends AgFrameworkComponent<any> {
     agInit(params: any): void;

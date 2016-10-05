@@ -16,19 +16,20 @@ import {ICellRenderer,
     ColDef,
     GridOptions}   from 'ag-grid/main';
 
-import {AgComponentFactory} from "./agComponentFactory";
+import {Ng2ComponentFactory} from "./ng2ComponentFactory";
+import {BaseComponentFactory} from "./baseComponentFactory";
 
 @Injectable()
 export class Ng2FrameworkFactory implements IFrameworkFactory {
     private _viewContainerRef:ViewContainerRef;
     private _baseFrameworkFactory:IFrameworkFactory = new BaseFrameworkFactory();    // todo - inject this
 
-    constructor(private _agComponentFactory:AgComponentFactory) {
+    constructor(private _componentFactory:BaseComponentFactory) {
     }
 
     public colDefFloatingCellRenderer(colDef:ColDef):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (colDef.floatingCellRendererFramework) {
-            return this._agComponentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework.component,
+            return this._componentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework.component,
                 this._viewContainerRef,
                 colDef.floatingCellRendererFramework.dependencies,
                 colDef.floatingCellRendererFramework.moduleImports
@@ -41,11 +42,11 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
     public colDefCellRenderer(colDef:ColDef):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (colDef.cellRendererFramework) {
             if (colDef.cellRendererFramework.template) {
-                return this._agComponentFactory.createRendererFromTemplate(colDef.cellRendererFramework.template,
+                return this._componentFactory.createRendererFromTemplate(colDef.cellRendererFramework.template,
                     this._viewContainerRef,
                     colDef.cellRendererFramework.moduleImports);
             } else {
-                return this._agComponentFactory.createRendererFromComponent(colDef.cellRendererFramework.component,
+                return this._componentFactory.createRendererFromComponent(colDef.cellRendererFramework.component,
                     this._viewContainerRef,
                     colDef.cellRendererFramework.dependencies,
                     colDef.cellRendererFramework.moduleImports
@@ -58,7 +59,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public colDefCellEditor(colDef:ColDef):{new(): ICellEditor} | string {
         if (colDef.cellEditorFramework) {
-            return this._agComponentFactory.createEditorFromComponent(colDef.cellEditorFramework.component,
+            return this._componentFactory.createEditorFromComponent(colDef.cellEditorFramework.component,
                 this._viewContainerRef,
                 colDef.cellEditorFramework.dependencies,
                 colDef.cellEditorFramework.moduleImports)
@@ -69,7 +70,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public gridOptionsFullWidthCellRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.fullWidthCellRendererFramework) {
-            return this._agComponentFactory.createRendererFromComponent(gridOptions.fullWidthCellRendererFramework.component,
+            return this._componentFactory.createRendererFromComponent(gridOptions.fullWidthCellRendererFramework.component,
                 this._viewContainerRef,
                 gridOptions.fullWidthCellRendererFramework.dependencies,
                 gridOptions.fullWidthCellRendererFramework.moduleImports)
@@ -80,7 +81,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public gridOptionsGroupRowRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.groupRowRendererFramework) {
-            return this._agComponentFactory.createRendererFromComponent(gridOptions.groupRowRendererFramework.component,
+            return this._componentFactory.createRendererFromComponent(gridOptions.groupRowRendererFramework.component,
                 this._viewContainerRef,
                 gridOptions.groupRowRendererFramework.dependencies,
                 gridOptions.groupRowRendererFramework.moduleImports)
@@ -91,7 +92,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public gridOptionsGroupRowInnerRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
         if (gridOptions.groupRowInnerRendererFramework) {
-            return this._agComponentFactory.createRendererFromComponent(gridOptions.groupRowInnerRendererFramework.component,
+            return this._componentFactory.createRendererFromComponent(gridOptions.groupRowInnerRendererFramework.component,
                 this._viewContainerRef,
                 gridOptions.groupRowInnerRendererFramework.dependencies,
                 gridOptions.groupRowInnerRendererFramework.moduleImports)
@@ -102,7 +103,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public colDefFilter(colDef:ColDef):{new (): IFilter;} | string {
         if (colDef.filterFramework) {
-            return this._agComponentFactory.createFilterFromComponent(colDef.filterFramework.component,
+            return this._componentFactory.createFilterFromComponent(colDef.filterFramework.component,
                 this._viewContainerRef,
                 colDef.filterFramework.dependencies,
                 colDef.filterFramework.moduleImports)

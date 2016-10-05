@@ -20,12 +20,14 @@ import {AgRendererComponent} from "./agRendererComponent";
 import {AgEditorComponent} from "./agEditorComponent";
 import {AgFrameworkComponent} from "./agFrameworkComponent";
 import {AgFilterComponent} from "./agFilterComponent";
+import {BaseComponentFactory} from "./baseComponentFactory";
 
 @Injectable()
-export class AgComponentFactory {
+export class Ng2ComponentFactory extends BaseComponentFactory {
     private _factoryCache:{[key: string]: ComponentFactory<any>} = {};
 
     constructor(private _runtimeCompiler:RuntimeCompiler) {
+        super();
     }
 
     /**

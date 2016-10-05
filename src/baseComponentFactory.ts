@@ -16,7 +16,7 @@ import {AgEditorComponent} from "./agEditorComponent";
 import {AgFilterComponent} from "./agFilterComponent";
 
 @Injectable()
-export class AgNoopComponentFactory {
+export class BaseComponentFactory {
     public createCellRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
                                            viewContainerRef:ViewContainerRef,
                                            childDependencies?:any[],

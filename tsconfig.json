@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "target": "es5",
+    "noImplicitAny": true,
     "moduleResolution": "node",
     "noEmitOnError": true,
-    "noImplicitAny": false,
     "outDir": "lib/",
-    "target": "es5",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -18,15 +18,14 @@
   },
   "files": [
     "./src/agAware.ts",
-    "./src/agComponentFactory.ts",
     "./src/agEditorComponent.ts",
     "./src/agFilterComponent.ts",
     "./src/agFrameworkComponent.ts",
     "./src/agGridNg2.ts",
     "./src/agRendererComponent.ts",
     "./src/aggrid.module.ts",
-    "./src/ng2FrameworkFactory.ts",
-    "./src/agNoopComponentFactory.ts",
-    "./main.d.ts"
+    "./src/baseComponentFactory.ts",
+    "./src/ng2ComponentFactory.ts",
+    "./src/ng2FrameworkFactory.ts"
   ]
 }

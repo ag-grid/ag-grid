@@ -1,6 +1,6 @@
-// ag-grid-ng2 v6.1.0
+// ag-grid-ng2 v6.1.2-beta
 import { ViewContainerRef, ElementRef } from '@angular/core';
-import { GridApi, ColumnApi } from 'ag-grid/main';
+import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
 export declare class AgGridNg2 {
     private viewContainerRef;
@@ -8,7 +8,7 @@ export declare class AgGridNg2 {
     private _nativeElement;
     private _initialised;
     private _destroyed;
-    private gridOptions;
+    gridOptions: GridOptions;
     private gridParams;
     api: GridApi;
     columnApi: ColumnApi;
