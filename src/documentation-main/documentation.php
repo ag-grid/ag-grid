@@ -19,6 +19,20 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">5th October 2016</div>
+        <div class="news-header"></div>
+        <a href="../ag-grid-angular-connect-2016/" style="text-align: center;">
+            <img src="../images/angularConnect2016/agGridStand-small.png"/>
+        </a>
+        <a href="../ag-grid-angular-connect-2016/" style="text-align: center; padding-top: 10px;">
+            We're gonna need a bigger boat
+        </a>
+        <div style="">
+
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">3rd October 2016</div>
         <div class="news-header">ag-Grid 6.1.x Released</div>
         <div style="padding-top: 10px;">
@@ -49,20 +63,6 @@ include 'documentation_header.php';
         </div>
     </div>
 
-    <div class="news-box">
-        <div class="news-header">Ireland Visit</div>
-        <div style="text-align: center;">
-            <img src="../images/agIreland.png"/>
-        </div>
-        <div style="padding-top: 10px;">
-            We are going to be in Dublin 10th and 11th
-            of October 2016 running office hours sessions.
-            If you think you might have business in meeting
-            us, please email
-            <a href="mailto:accounts@ag-grid.com">accounts@ag-grid.com</a>
-            to arrange.
-        </div>
-    </div>
 </div>
 
 <p>

@@ -21,6 +21,32 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-angular-connect-2016/">
+            <img src="../images/angularConnect2016/agGridStand-small.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-angular-connect-2016/">
+                We're gonna need a bigger boat: from speaker to sponsor with ag-Grid
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            5th October 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        The story behind ag-Grid sponsoring Angular Connect 2016 – one of Europe’s largest Angular conferences.
+        Not bad considering only 6 months after ag-Grid Enterprise launched.
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="/ag-grid-angular2-support/">
             <img src="/images/agGridDaily.png"/>
         </a>
