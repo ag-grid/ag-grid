@@ -190,7 +190,7 @@ suppressEnterprise: true,
             return '';
         }
     },
-    // enableTouch: true,
+    enableTouch: true,
 // isScrollLag: function() { return true; },
 //suppressScrollLag: true,
 // floatingTopRowData: [{},{},{}],
