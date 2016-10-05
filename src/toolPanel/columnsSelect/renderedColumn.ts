@@ -10,6 +10,7 @@ import {
     GridPanel,
     Column,
     Events,
+    TouchListener,
     QuerySelector,
     PostConstruct,
     EventService,
@@ -81,6 +82,14 @@ export class RenderedColumn extends Component {
 
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
+
+        this.addTap();
+    }
+
+    private addTap(): void {
+        let touchListener = new TouchListener(this.getGui());
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this));
+        this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
     }
 
     private onClick(): void {
@@ -176,7 +185,7 @@ export class RenderedColumn extends Component {
             dragItemName: this.displayName,
             dragItem: [this.column]
         };
-        this.dragAndDropService.addDragSource(dragSource);
+        this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
     }
 

@@ -58,10 +58,6 @@ export class StatusBar extends Component {
         this.appendChild(this.aggregationsComponent);
     }
 
-    public setInfoText(text: string): void {
-        this.infoLabel.getGui().innerText = text;
-    }
-
     private forEachStatusItem(callback: (statusItem: StatusItem)=>void): void {
         [this.statusItemAvg, this.statusItemCount, this.statusItemMin, this.statusItemMax, this.statusItemSum].forEach(callback);
     }
