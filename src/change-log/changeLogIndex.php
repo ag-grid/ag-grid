@@ -16,6 +16,12 @@ include '../documentation-main/documentation_header.php';
 
     <li>Bugfix - suppressSorting in Set Filter was not getting used.</li>
 
+    <h2>Version 6.1.1</h2>
+
+    <h4>ag-grid-ng2 6.1.1</h4>
+
+    <li><a href="../best-angular-2-data-grid/#aot">AOT support</a> - AOT is now an option when using ag-grid-ng2.</li>
+
     <h2>Version 6.1.x</h2>
 
     <li>New Feature - <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a> - to enable all cells
