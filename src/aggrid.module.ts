@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule,ModuleWithProviders} from '@angular/core';
 import {COMPILER_PROVIDERS} from '@angular/compiler';
 
 import {AgGridNg2} from './agGridNg2';
@@ -13,23 +13,41 @@ import {BaseComponentFactory} from "./baseComponentFactory";
     ],
     exports: [
         AgGridNg2
-    ],
-    providers: [
-        Ng2FrameworkFactory,
-        BaseComponentFactory,
-        {provide: BaseComponentFactory, useClass: BaseComponentFactory}
     ]
 })
 export class AgGridModule {
-    static forRoot()
-    {
+    /**
+     * Use this if you wish to have AOT support, but note that you will NOT be able to have dynamic/angular 2
+     * component within the grid (due to restrictions around the CLI)
+     */
+    static withAotSupport():ModuleWithProviders {
         return {
             ngModule: AgGridModule,
-            providers: [ // singletons across the whole app
+            providers: [
+                Ng2FrameworkFactory,
+                BaseComponentFactory
+            ],
+        };
+    }
+
+    /**
+     * Use this if you wish to have dynamic/angular 2 components within the grid, but note you will NOT be able to
+     * use AOT if you use this (due to restrictions around the CLI)
+     */
+    static withNg2ComponentSupport():ModuleWithProviders {
+        return {
+            ngModule: AgGridModule,
+            providers: [ // singletons across the whole app,
+                Ng2FrameworkFactory,
                 Ng2ComponentFactory,
                 {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory},
                 COMPILER_PROVIDERS
             ],
         };
+    }
+
+    // deprecated - please use withDynamicComponentSupport
+    static forRoot() {
+        return AgGridModule.withNg2ComponentSupport();
     }
 }

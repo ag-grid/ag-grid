@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.1.2-beta
+// ag-grid-ng2 v6.1.1
 import { IFilterParams, IDoesFilterPassParams, IAfterFilterGuiAttachedParams } from 'ag-grid/main';
 import { AgFrameworkComponent } from "./agFrameworkComponent";
 export interface AgFilterComponent extends AgFrameworkComponent<IFilterParams> {

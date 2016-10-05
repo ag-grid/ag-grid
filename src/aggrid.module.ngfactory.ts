@@ -6,23 +6,11 @@
 
 import * as import0 from '@angular/core/src/linker/ng_module_factory';
 import * as import1 from './aggrid.module';
-import * as import2 from './baseComponentFactory';
-import * as import3 from './ng2FrameworkFactory';
-import * as import4 from '@angular/core/src/di/injector';
+import * as import2 from '@angular/core/src/di/injector';
 class AgGridModuleInjector extends import0.NgModuleInjector<import1.AgGridModule> {
   _AgGridModule_0:import1.AgGridModule;
-  __BaseComponentFactory_1:import2.BaseComponentFactory;
-  __Ng2FrameworkFactory_2:import3.Ng2FrameworkFactory;
-  constructor(parent:import4.Injector) {
+  constructor(parent:import2.Injector) {
     super(parent,[],[]);
-  }
-  get _BaseComponentFactory_1():import2.BaseComponentFactory {
-    if ((this.__BaseComponentFactory_1 == (null as any))) { (this.__BaseComponentFactory_1 = new import2.BaseComponentFactory()); }
-    return this.__BaseComponentFactory_1;
-  }
-  get _Ng2FrameworkFactory_2():import3.Ng2FrameworkFactory {
-    if ((this.__Ng2FrameworkFactory_2 == (null as any))) { (this.__Ng2FrameworkFactory_2 = new import3.Ng2FrameworkFactory(this._BaseComponentFactory_1)); }
-    return this.__Ng2FrameworkFactory_2;
   }
   createInternal():import1.AgGridModule {
     this._AgGridModule_0 = new import1.AgGridModule();
@@ -30,8 +18,6 @@ class AgGridModuleInjector extends import0.NgModuleInjector<import1.AgGridModule
   }
   getInternal(token:any,notFoundResult:any):any {
     if ((token === import1.AgGridModule)) { return this._AgGridModule_0; }
-    if ((token === import2.BaseComponentFactory)) { return this._BaseComponentFactory_1; }
-    if ((token === import3.Ng2FrameworkFactory)) { return this._Ng2FrameworkFactory_2; }
     return notFoundResult;
   }
   destroyInternal():void {

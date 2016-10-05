@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.1.2-beta
+// ag-grid-ng2 v6.1.1
 import { AgRendererComponent } from "./agRendererComponent";
 /**
 * Deprecated - please use AgRendererComponent instead
