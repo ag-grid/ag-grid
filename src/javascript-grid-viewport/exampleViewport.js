@@ -31,7 +31,13 @@ var gridOptions = {
     enableColResize: true,
     debug: true,
     columnDefs: columnDefs,
-    rowModelType: 'viewport'
+    rowSelection: 'multiple',
+    rowModelType: 'viewport',
+    // implement this so that we can do selection
+    getRowNodeId: function(data) {
+        // the code is unique, so perfect for the id
+        return data.code;
+    }
 };
 
 function numberFormatter(params) {

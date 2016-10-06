@@ -183,6 +183,14 @@ interface IViewportDatasourceParams {
         to display the new data.
     </p>
 
+    <h2>Selection</h2>
+
+    <p>
+        Selection works with viewport. It is recommended that you implement <i>getRowNodeId()</i> to give a unique
+        key to each row. That way, should the same row appear again but in a different location, it will keep it's
+        selection value. See the example below for setting up <i>getRowNodeId()</i>.
+    </p>
+
     <h2>Grouping</h2>
 
     <p>
