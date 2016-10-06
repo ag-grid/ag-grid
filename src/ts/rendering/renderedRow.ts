@@ -218,6 +218,9 @@ export class RenderedRow {
     }
 
     public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: RenderedCell = null): void {
+        // don't do it if already editing
+        if (this.editingRow) { return; }
+
         this.forEachRenderedCell( renderedCell => {
             var cellStartedEdit = renderedCell === sourceRenderedCell;
             if (cellStartedEdit) {

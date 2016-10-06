@@ -555,9 +555,11 @@ export class RenderedCell extends Component {
     // either called internally if single cell editing, or called by rowRenderer if row editing
     public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false) {
 
-        if (!this.isCellEditable()) {
-            return false;
-        }
+        // don't do it if not editable
+        if (!this.isCellEditable()) { return; }
+
+        // don't do it if already editing
+        if (this.editingCell) { return; }
 
         var cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
