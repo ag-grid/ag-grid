@@ -130,7 +130,7 @@ export class ViewportRowModel implements IRowModel {
 
     public getRow(rowIndex: number): RowNode {
         if (!this.rowNodesByIndex[rowIndex]) {
-            this.rowNodesByIndex[rowIndex] = this.createNode(null, rowIndex);
+            this.rowNodesByIndex[rowIndex] = this.createBlankRowNode(rowIndex);
         }
 
         return this.rowNodesByIndex[rowIndex];
@@ -176,35 +176,29 @@ export class ViewportRowModel implements IRowModel {
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
             if (index >= this.firstRow && index <= this.lastRow) {
-                var nodeAlreadyExists = !!this.rowNodesByIndex[index];
-                if (nodeAlreadyExists) {
-                    // if the grid already asked for this row (the normal case), then we would
-                    // of put a placeholder node in place.
-                    this.rowNodesByIndex[index].setData(dataItem);
-                } else {
-                    // the abnormal case is we requested a row even though the grid didn't need it
-                    // as a result of the paging and buffer (ie the row is off screen), in which
-                    // case we need to create a new node now
-                    this.rowNodesByIndex[index] = this.createNode(dataItem, index);
+                var rowNode = this.rowNodesByIndex[index];
+
+                // the abnormal case is we requested a row even though the grid didn't need it
+                // as a result of the paging and buffer (ie the row is off screen), in which
+                // case we need to create a new node now
+                if (Utils.missing(rowNode)) {
+                    rowNode = this.createBlankRowNode(index);
+                    this.rowNodesByIndex[index] = rowNode;
                 }
+
+                // now we deffo have a row node, so set in the details
+                // if the grid already asked for this row (the normal case), then we would
+                // of put a placeholder node in place.
+                rowNode.setDataAndId(dataItem, index.toString());
             }
         });
     }
 
-    // this is duplicated in virtualPageRowModel, need to refactor
-    private createNode(data: any, rowIndex: number): RowNode {
-        var rowHeight = this.rowHeight;
-        var top = rowHeight * rowIndex;
-
-        // need to refactor this, get it in sync with VirtualPageRowController, which was not
-        // written with the rowNode.rowUpdated in mind
-        var rowNode = new RowNode();
+    private createBlankRowNode(rowIndex: number): RowNode {
+        let rowNode = new RowNode();
         this.context.wireBean(rowNode);
-        rowNode.id = rowIndex.toString();
-        rowNode.data = data;
-        rowNode.rowTop = top;
-        rowNode.rowHeight = rowHeight;
-
+        rowNode.rowHeight = this.rowHeight;
+        rowNode.rowTop = this.rowHeight * rowIndex;
         return rowNode;
     }
 
