@@ -1,4 +1,4 @@
-import {Component, EventEmitter, ViewEncapsulation, ViewContainerRef, ElementRef} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewEncapsulation, ViewContainerRef, ElementRef} from '@angular/core';
 
 import {Grid, GridOptions, GridApi, ColumnApi, ComponentUtil} from 'ag-grid/main';
 import {GridParams} from "ag-grid/main";
@@ -7,185 +7,6 @@ import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
 
 @Component({
     selector: 'ag-grid-ng2',
-    outputs: [
-        'columnEverythingChanged',
-        'newColumnsLoaded',
-        'columnPivotModeChanged',
-        'columnRowGroupChanged',
-        'columnPivotChanged',
-        'gridColumnsChanged',
-        'columnValueChanged',
-        'columnMoved',
-        'columnVisible',
-        'columnPinned',
-        'columnGroupOpened',
-        'columnResized',
-        'displayedColumnsChanged',
-        'virtualColumnsChanged',
-        'rowGroupOpened',
-        'rowDataChanged',
-        'floatingRowDataChanged',
-        'rangeSelectionChanged',
-        'columnRowGroupAddRequest',
-        'columnRowGroupRemoveRequest',
-        'columnPivotAddRequest',
-        'columnPivotRemoveRequest',
-        'columnValueAddRequest',
-        'columnValueRemoveRequest',
-        'columnAggFuncChangeRequest',
-        'clipboardPaste',
-        'modelUpdated',
-        'cellClicked',
-        'cellDoubleClicked',
-        'cellContextMenu',
-        'cellValueChanged',
-        'cellFocused',
-        'rowSelected',
-        'selectionChanged',
-        'beforeFilterChanged',
-        'filterChanged',
-        'afterFilterChanged',
-        'filterModified',
-        'beforeSortChanged',
-        'sortChanged',
-        'afterSortChanged',
-        'virtualRowRemoved',
-        'rowClicked',
-        'rowDoubleClicked',
-        'gridReady',
-        'gridSizeChanged',
-        'viewportChanged',
-        'dragStarted',
-        'dragStopped',
-        'itemsAdded',
-        'itemsRemoved'
-    ],
-    inputs: [
-        'gridOptions',
-        'slaveGrids',
-        'rowData',
-        'floatingTopRowData',
-        'floatingBottomRowData',
-        'columnDefs',
-        'rowStyle',
-        'context',
-        'groupColumnDef',
-        'localeText',
-        'icons',
-        'datasource',
-        'viewportDatasource',
-        'groupRowRendererParams',
-        'aggFuncs',
-        'fullWidthCellRendererParams',
-        'sortingOrder',
-        'rowClass',
-        'rowSelection',
-        'overlayLoadingTemplate',
-        'overlayNoRowsTemplate',
-        'headerCellTemplate',
-        'quickFilterText',
-        'rowModelType',
-        'rowHeight',
-        'rowBuffer',
-        'colWidth',
-        'headerHeight',
-        'groupDefaultExpanded',
-        'minColWidth',
-        'maxColWidth',
-        'viewportRowModelPageSize',
-        'viewportRowModelBufferSize',
-        'layoutInterval',
-        'autoSizePadding',
-        'maxPagesInCache',
-        'maxConcurrentDatasourceRequests',
-        'paginationOverflowSize',
-        'paginationPageSize',
-        'paginationInitialRowCount',
-        'headerCellRenderer',
-        'localeTextFunc',
-        'groupRowInnerRenderer',
-        'groupRowRenderer',
-        'isScrollLag',
-        'isExternalFilterPresent',
-        'getRowHeight',
-        'doesExternalFilterPass',
-        'getRowClass',
-        'getRowStyle',
-        'getHeaderCellTemplate',
-        'traverseNode',
-        'getContextMenuItems',
-        'getMainMenuItems',
-        'processRowPostCreate',
-        'processCellForClipboard',
-        'getNodeChildDetails',
-        'groupRowAggNodes',
-        'getRowNodeId',
-        'isFullWidthCell',
-        'fullWidthCellRenderer',
-        'doesDataFlower',
-        'toolPanelSuppressRowGroups',
-        'toolPanelSuppressValues',
-        'toolPanelSuppressPivots',
-        'toolPanelSuppressPivotMode',
-        'suppressRowClickSelection',
-        'suppressCellSelection',
-        'suppressHorizontalScroll',
-        'debug',
-        'enableColResize',
-        'enableCellExpressions',
-        'enableSorting',
-        'enableServerSideSorting',
-        'enableFilter',
-        'enableServerSideFilter',
-        'angularCompileRows',
-        'angularCompileFilters',
-        'angularCompileHeaders',
-        'groupSuppressAutoColumn',
-        'groupSelectsChildren',
-        'groupIncludeFooter',
-        'groupUseEntireRow',
-        'groupSuppressRow',
-        'groupSuppressBlankHeader',
-        'forPrint',
-        'suppressMenuHide',
-        'rowDeselection',
-        'unSortIcon',
-        'suppressMultiSort',
-        'suppressScrollLag',
-        'singleClickEdit',
-        'suppressLoadingOverlay',
-        'suppressNoRowsOverlay',
-        'suppressAutoSize',
-        'suppressParentsInRowNodes',
-        'showToolPanel',
-        'suppressColumnMoveAnimation',
-        'suppressMovableColumns',
-        'suppressFieldDotNotation',
-        'enableRangeSelection',
-        'suppressEnterprise',
-        'rowGroupPanelShow',
-        'pivotPanelShow',
-        'suppressContextMenu',
-        'suppressMenuFilterPanel',
-        'suppressMenuMainPanel',
-        'suppressMenuColumnPanel',
-        'enableStatusBar',
-        'rememberGroupStateWhenNewData',
-        'enableCellChangeFlash',
-        'suppressDragLeaveHidesColumns',
-        'suppressMiddleClickScrolls',
-        'suppressPreventDefaultOnMouseWheel',
-        'suppressUseColIdForGroups',
-        'suppressCopyRowsToClipboard',
-        'pivotMode',
-        'suppressAggFuncInHeader',
-        'suppressColumnVirtualisation',
-        'suppressFocusAfterRefresh',
-        'functionsPassive',
-        'functionsReadOnly',
-        'enableTouch'
-    ],
-
     template: '',
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
@@ -198,7 +19,6 @@ export class AgGridNg2 {
     private _initialised = false;
     private _destroyed = false;
 
-    public gridOptions:GridOptions;
     private gridParams:GridParams;
 
     // making these public, so they are accessible to people using the ng2 component references
@@ -263,4 +83,185 @@ export class AgGridNg2 {
             console.log('ag-Grid-ng2: could not find EventEmitter: ' + eventType);
         }
     }
+
+    /**
+     * inputs
+     */
+    @Input() public gridOptions:GridOptions;
+    @Input() public slaveGrids:any;
+    @Input() public rowData:any;
+    @Input() public floatingTopRowData:any;
+    @Input() public floatingBottomRowData:any;
+    @Input() public columnDefs:any;
+    @Input() public rowStyle:any;
+    @Input() public context:any;
+    @Input() public groupColumnDef:any;
+    @Input() public localeText:any;
+    @Input() public icons:any;
+    @Input() public datasource:any;
+    @Input() public viewportDatasource:any;
+    @Input() public groupRowRendererParams:any;
+    @Input() public aggFuncs:any;
+    @Input() public fullWidthCellRendererParams:any;
+    @Input() public sortingOrder:any;
+    @Input() public rowClass:any;
+    @Input() public rowSelection:any;
+    @Input() public overlayLoadingTemplate:any;
+    @Input() public overlayNoRowsTemplate:any;
+    @Input() public headerCellTemplate:any;
+    @Input() public quickFilterText:any;
+    @Input() public rowModelType:any;
+    @Input() public rowHeight:any;
+    @Input() public rowBuffer:any;
+    @Input() public colWidth:any;
+    @Input() public headerHeight:any;
+    @Input() public groupDefaultExpanded:any;
+    @Input() public minColWidth:any;
+    @Input() public maxColWidth:any;
+    @Input() public viewportRowModelPageSize:any;
+    @Input() public viewportRowModelBufferSize:any;
+    @Input() public layoutInterval:any;
+    @Input() public autoSizePadding:any;
+    @Input() public maxPagesInCache:any;
+    @Input() public maxConcurrentDatasourceRequests:any;
+    @Input() public paginationOverflowSize:any;
+    @Input() public paginationPageSize:any;
+    @Input() public paginationInitialRowCount:any;
+    @Input() public headerCellRenderer:any;
+    @Input() public localeTextFunc:any;
+    @Input() public groupRowInnerRenderer:any;
+    @Input() public groupRowRenderer:any;
+    @Input() public isScrollLag:any;
+    @Input() public isExternalFilterPresent:any;
+    @Input() public getRowHeight:any;
+    @Input() public doesExternalFilterPass:any;
+    @Input() public getRowClass:any;
+    @Input() public getRowStyle:any;
+    @Input() public getHeaderCellTemplate:any;
+    @Input() public traverseNode:any;
+    @Input() public getContextMenuItems:any;
+    @Input() public getMainMenuItems:any;
+    @Input() public processRowPostCreate:any;
+    @Input() public processCellForClipboard:any;
+    @Input() public getNodeChildDetails:any;
+    @Input() public groupRowAggNodes:any;
+    @Input() public getRowNodeId:any;
+    @Input() public isFullWidthCell:any;
+    @Input() public fullWidthCellRenderer:any;
+    @Input() public doesDataFlower:any;
+    @Input() public toolPanelSuppressRowGroups:any;
+    @Input() public toolPanelSuppressValues:any;
+    @Input() public toolPanelSuppressPivots:any;
+    @Input() public toolPanelSuppressPivotMode:any;
+    @Input() public suppressRowClickSelection:any;
+    @Input() public suppressCellSelection:any;
+    @Input() public suppressHorizontalScroll:any;
+    @Input() public debug:any;
+    @Input() public enableColResize:any;
+    @Input() public enableCellExpressions:any;
+    @Input() public enableSorting:any;
+    @Input() public enableServerSideSorting:any;
+    @Input() public enableFilter:any;
+    @Input() public enableServerSideFilter:any;
+    @Input() public angularCompileRows:any;
+    @Input() public angularCompileFilters:any;
+    @Input() public angularCompileHeaders:any;
+    @Input() public groupSuppressAutoColumn:any;
+    @Input() public groupSelectsChildren:any;
+    @Input() public groupIncludeFooter:any;
+    @Input() public groupUseEntireRow:any;
+    @Input() public groupSuppressRow:any;
+    @Input() public groupSuppressBlankHeader:any;
+    @Input() public forPrint:any;
+    @Input() public suppressMenuHide:any;
+    @Input() public rowDeselection:any;
+    @Input() public unSortIcon:any;
+    @Input() public suppressMultiSort:any;
+    @Input() public suppressScrollLag:any;
+    @Input() public singleClickEdit:any;
+    @Input() public suppressLoadingOverlay:any;
+    @Input() public suppressNoRowsOverlay:any;
+    @Input() public suppressAutoSize:any;
+    @Input() public suppressParentsInRowNodes:any;
+    @Input() public showToolPanel:any;
+    @Input() public suppressColumnMoveAnimation:any;
+    @Input() public suppressMovableColumns:any;
+    @Input() public suppressFieldDotNotation:any;
+    @Input() public enableRangeSelection:any;
+    @Input() public suppressEnterprise:any;
+    @Input() public rowGroupPanelShow:any;
+    @Input() public pivotPanelShow:any;
+    @Input() public suppressContextMenu:any;
+    @Input() public suppressMenuFilterPanel:any;
+    @Input() public suppressMenuMainPanel:any;
+    @Input() public suppressMenuColumnPanel:any;
+    @Input() public enableStatusBar:any;
+    @Input() public rememberGroupStateWhenNewData:any;
+    @Input() public enableCellChangeFlash:any;
+    @Input() public suppressDragLeaveHidesColumns:any;
+    @Input() public suppressMiddleClickScrolls:any;
+    @Input() public suppressPreventDefaultOnMouseWheel:any;
+    @Input() public suppressUseColIdForGroups:any;
+    @Input() public suppressCopyRowsToClipboard:any;
+    @Input() public pivotMode:any;
+    @Input() public suppressAggFuncInHeader:any;
+    @Input() public suppressColumnVirtualisation:any;
+    @Input() public suppressFocusAfterRefresh:any;
+    @Input() public functionsPassive:any;
+    @Input() public functionsReadOnly:any;
+
+    /**
+     * Outputs
+     */
+    @Output() public gridReady:EventEmitter<any>;
+    @Output() public columnEverythingChanged:EventEmitter<any>;
+    @Output() public newColumnsLoaded:EventEmitter<any>;
+    @Output() public columnPivotModeChanged:EventEmitter<any>;
+    @Output() public columnRowGroupChanged:EventEmitter<any>;
+    @Output() public columnPivotChanged:EventEmitter<any>;
+    @Output() public gridColumnsChanged:EventEmitter<any>;
+    @Output() public columnValueChanged:EventEmitter<any>;
+    @Output() public columnMoved:EventEmitter<any>;
+    @Output() public columnVisible:EventEmitter<any>;
+    @Output() public columnPinned:EventEmitter<any>;
+    @Output() public columnGroupOpened:EventEmitter<any>;
+    @Output() public columnResized:EventEmitter<any>;
+    @Output() public displayedColumnsChanged:EventEmitter<any>;
+    @Output() public virtualColumnsChanged:EventEmitter<any>;
+    @Output() public rowGroupOpened:EventEmitter<any>;
+    @Output() public rowDataChanged:EventEmitter<any>;
+    @Output() public floatingRowDataChanged:EventEmitter<any>;
+    @Output() public rangeSelectionChanged:EventEmitter<any>;
+    @Output() public columnRowGroupAddRequest:EventEmitter<any>;
+    @Output() public columnRowGroupRemoveRequest:EventEmitter<any>;
+    @Output() public columnPivotAddRequest:EventEmitter<any>;
+    @Output() public columnPivotRemoveRequest:EventEmitter<any>;
+    @Output() public columnValueAddRequest:EventEmitter<any>;
+    @Output() public columnValueRemoveRequest:EventEmitter<any>;
+    @Output() public columnAggFuncChangeRequest:EventEmitter<any>;
+    @Output() public clipboardPaste:EventEmitter<any>;
+    @Output() public modelUpdated:EventEmitter<any>;
+    @Output() public cellClicked:EventEmitter<any>;
+    @Output() public cellDoubleClicked:EventEmitter<any>;
+    @Output() public cellContextMenu:EventEmitter<any>;
+    @Output() public cellValueChanged:EventEmitter<any>;
+    @Output() public cellFocused:EventEmitter<any>;
+    @Output() public rowSelected:EventEmitter<any>;
+    @Output() public selectionChanged:EventEmitter<any>;
+    @Output() public beforeFilterChanged:EventEmitter<any>;
+    @Output() public filterChanged:EventEmitter<any>;
+    @Output() public afterFilterChanged:EventEmitter<any>;
+    @Output() public filterModified:EventEmitter<any>;
+    @Output() public beforeSortChanged:EventEmitter<any>;
+    @Output() public sortChanged:EventEmitter<any>;
+    @Output() public afterSortChanged:EventEmitter<any>;
+    @Output() public virtualRowRemoved:EventEmitter<any>;
+    @Output() public rowClicked:EventEmitter<any>;
+    @Output() public rowDoubleClicked:EventEmitter<any>;
+    @Output() public gridSizeChanged:EventEmitter<any>;
+    @Output() public viewportChanged:EventEmitter<any>;
+    @Output() public dragStarted:EventEmitter<any>;
+    @Output() public dragStopped:EventEmitter<any>;
+    @Output() public itemsAdded:EventEmitter<any>;
+    @Output() public itemsRemoved:EventEmitter<any>;
 }
