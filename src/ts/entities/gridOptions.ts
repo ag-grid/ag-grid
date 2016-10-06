@@ -128,7 +128,7 @@ export interface GridOptions {
     rowDeselection?: boolean;
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
-    checkboxSelection?: Function;
+    checkboxSelection?: (params: any)=> boolean;
     rowHeight?: number;
     headerCellTemplate?: string;
 

@@ -158,7 +158,7 @@ export class RenderedCell extends Component {
         this.eParentRow = eParentRow;
     }
 
-    public calculateCheckboxSelection() {
+    public calculateCheckboxSelection(): boolean {
         // never allow selection on floating rows
         if (this.node.floating) {
             return false;
@@ -167,14 +167,14 @@ export class RenderedCell extends Component {
         // if boolean set, then just use it
         var colDef = this.column.getColDef();
         if (typeof colDef.checkboxSelection === 'boolean') {
-            return colDef.checkboxSelection;
+            return <boolean> colDef.checkboxSelection;
         }
 
         // if function, then call the function to find out. we first check colDef for
         // a function, and if missing then check gridOptions, so colDef has precedence
-        var selectionFunc: Function;
+        var selectionFunc: (params: any)=>boolean;
         if (typeof colDef.checkboxSelection === 'function') {
-            selectionFunc = <Function>colDef.checkboxSelection;
+            selectionFunc = <(params: any)=>boolean> colDef.checkboxSelection;
         }
         if (!selectionFunc && this.gridOptionsWrapper.getCheckboxSelection()) {
             selectionFunc = this.gridOptionsWrapper.getCheckboxSelection();

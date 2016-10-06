@@ -204,7 +204,7 @@ export class GridOptionsWrapper {
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
-    public getCheckboxSelection(): Function { return this.gridOptions.checkboxSelection; }
+    public getCheckboxSelection(): (params: any)=>boolean { return this.gridOptions.checkboxSelection; }
     public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
