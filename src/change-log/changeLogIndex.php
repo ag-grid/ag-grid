@@ -17,6 +17,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Bugfix - suppressSorting in Set Filter was not getting used.</li>
     <li>Bugfix - export to CSV was failing when doing avg aggregation on data.</li>
+    <li>Bugfix - single click editing was resetting the edit when you clicked on an edited cell. This was introduced in the last release with 'fullRowEdit'.</li>
 
     <h2>Version 6.1.1</h2>
 
