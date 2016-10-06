@@ -13,7 +13,6 @@ export * from './dist/lib/context/context';
 
 export * from './dist/lib/dragAndDrop/dragAndDropService';
 export * from './dist/lib/dragAndDrop/dragService';
-export * from './dist/lib/dragAndDrop/oldToolPanelDragAndDropService';
 
 export * from './dist/lib/entities/colDef';
 export * from './dist/lib/entities/column';
