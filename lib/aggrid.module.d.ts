@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.1.1
+// ag-grid-ng2 v6.1.4
 import { ModuleWithProviders } from '@angular/core';
 export declare class AgGridModule {
     /**
