@@ -196,7 +196,11 @@ function aggAvg(input: any[]): any {
         // the grid by default uses toString to render values for an object, so this
         // is a trick to get the default cellRenderer to display the avg value
         toString: function() {
-            return this.value;
+            if (typeof this.value === 'number') {
+                return this.value.toString();
+            } else {
+                return '';
+            }
         }
     };
 
