@@ -96,9 +96,12 @@ include '../documentation-main/documentation_header.php';
     <pre>@NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.forRoot(),
+        AgGridModule.withNg2ComponentSupport(),
     ...
 })</pre>
+
+    <note>Note: this configuration allows for Angular 2 Components within the grid, but not AOT. If you wish to use AOT please see the
+    relevant section <a href="#aot">below</a>.</note>
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
@@ -137,6 +140,26 @@ include '../documentation-main/documentation_header.php';
         you in the right direction. If you need more information on this, please see the documentation
         for those projects.
     </p>
+
+    <h2 id="aot">Ahead of Time (AOT) Compilation</h2>
+
+    <p>AOT is an option, but if you use AOT you will be <strong>unable</strong> to use Angular 2 Components within the grid.
+    This is because of restrictions/limitations within the Angular Compiler.</p>
+
+    <p>In other words, you can either have:
+    <ul>
+        <li>Angular 2 Components within the grid, and <strong>no</strong> AOT support</li>
+        <li>AOT support, and <strong>no</strong> Angular 2 Components within the grid</li>
+    </ul></p>
+
+    <p>To enable AOT support, you need to import the following:</p>
+
+    <pre>@NgModule({
+    imports: [
+        BrowserModule,
+        AgGridModule.withAotSupport(),
+    ...
+})</pre>
 
     <h2>Configuring ag-Grid in Angular 2</h2>
 

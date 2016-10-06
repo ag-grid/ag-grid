@@ -27,8 +27,14 @@ include 'documentation_header.php';
         <a href="../ag-grid-angular-connect-2016/" style="text-align: center; padding-top: 10px;">
             We're gonna need a bigger boat
         </a>
-        <div style="">
+    </div>
 
+    <div class="news-box">
+        <div class="news-header">5th October 2016</div>
+        <div class="news-header">ag-grid-ng2 6.1.1 Released</div>
+        <div style="padding-top: 10px;">
+            ag-grid-ng2 6.1.1 released with <a href="../best-angular-2-data-grid/#aot">AOT support</a>.
+            See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>
 
