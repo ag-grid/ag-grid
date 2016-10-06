@@ -19,6 +19,22 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">ag-Grid Sponsors ng-Europe</div>
+        <div style="text-align: center;">
+            <a href="https://ngeurope.org/#platinum-sprs" style="text-align: center;">
+                <img src="../images/ngEurope.png"/>
+            </a>
+        </div>
+        <div style="padding-top: 10px;">
+            Come see us at
+            <a href="https://ngeurope.org/#platinum-sprs" >
+                ng-Europe
+            </a>
+            on 25th & 26th October 2016.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">5th October 2016</div>
         <div class="news-header"></div>
         <a href="../ag-grid-angular-connect-2016/" style="text-align: center;">

@@ -15,6 +15,7 @@ include '../documentation-main/documentation_header.php';
         a function, so you can be selective on which rows have checkboxes.</li>
 
     <li>Bugfix - suppressSorting in Set Filter was not getting used.</li>
+    <li>Bugfix - export to CSV was failing when doing avg aggregation on data.</li>
 
     <h2>Version 6.1.1</h2>
 
