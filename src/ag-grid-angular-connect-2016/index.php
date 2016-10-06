@@ -187,7 +187,7 @@ include('../includes/mediaHeader.php');
             At one point between tracks a stranger came up and said, "I wanted to say thank you for making my life so much easier". We chatted for a few minutes, then he asked if he could take a selfie with me!
         </p>
         <p>
-            Now, I am fully aware ag-Grid is by enterprise with many customers banks and private equity funds - solving the worlds humanitarian problems is not what we do - but this guy’s problem was displaying a large amount of data on a web page and ag-Grid helped him do this. He wanted a selfie. That was cool.
+            Now, I am fully aware ag-Grid is used by enterprise with many customers banks and private equity funds - solving the worlds humanitarian problems is not what we do - but this guy’s problem was displaying a large amount of data on a web page and ag-Grid helped him do this. He wanted a selfie. That was cool.
         </p>
 
         <h3>Don’t swear on stage</h3>

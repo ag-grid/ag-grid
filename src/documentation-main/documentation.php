@@ -182,13 +182,6 @@ include 'documentation_header.php';
 <iframe width="560" height="315" src="https://www.youtube.com/embed/jCId-Lbg_6k" frameborder="0" allowfullscreen></iframe>
 -->
 
-<h4>Angular 2 Bindings</h4>
-
-<p>
-    You can now provide Angular 2 cellRenderers. We are enhancing this to cellEditors and custom filters.
-    This should all be delivered during September 2016.
-</p>
-
 <h4>Aurelia Support</h4>
 
 <p>
