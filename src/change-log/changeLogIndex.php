@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Version 6.2.x</h2>
 
     <li>New Feature - Touch support.</li>
+    <li>New Feature - <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>. So instead of declaring common properties in each column, define them once in the default.</li>
     <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
         a function, so you can be selective on which rows have checkboxes.</li>
     <li>Enhancement - viewport row model now works with <i>getRowNodeId()</i>, so selection can now work with business keys.</li>

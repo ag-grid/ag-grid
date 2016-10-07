@@ -60,6 +60,16 @@ include '../documentation-main/documentation_header.php';
             <td>Array of Column Definitions.</td>
         </tr>
         <tr>
+            <th>defaultColDef</th>
+            <td>A default column definition. All column definitions will use these properties. Items defined in the
+            actual column definition get precedence.</td>
+        </tr>
+        <tr>
+            <th>defaultColGroupDef</th>
+            <td>A default column group definition. All column group definitions will use these properties. Items defined in the
+                actual column group definition get precedence.</td>
+        </tr>
+        <tr>
             <th>headerHeight</th>
             <td>Height, in pixels, of the header row. The default is 25px. If grouping, each group row will be this height.</td>
         </tr>

@@ -103,9 +103,9 @@ include 'documentation_header.php';
 <div class="backgroundGradient">
     <img src="../images/github100.png" style="float: left; margin-left: 20px;"/>
     <div style="text-align: center;">
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">Over 2,000 Github Stars</div>
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">So Happy!! - Over 2,000 Github Stars</div>
         <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-        <div>Have you starred us yet? We want your love!</div>
+        <div><b>Have you starred us yet? We want your love!</b></div>
     </div>
 </div>
 

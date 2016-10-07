@@ -124,6 +124,15 @@ include '../documentation-main/documentation_header.php';
         <img src="headerResize.jpg"/>
     </p>
 
+    <h3>Coloring Groups</h3>
+
+    <p>
+        The grid doesn't color the groups for you. However you can use the column definition
+        <i>headerClass</i> for this purpose. The <i>headerClass</i> attribute is available
+        on both columns and column groups. The example below shows using the headerClass
+        to set the header name based on the group the column is inside.
+    </p>
+
     <h3>Grouping Example</h3>
 
     <p>

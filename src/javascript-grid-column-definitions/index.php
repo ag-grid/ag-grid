@@ -23,6 +23,37 @@ include '../documentation-main/documentation_header.php';
         (if <i>children</i> is present, it knows it's a group).
     </p>
 
+    <h2 id="defaultProperties">Default Properties</h2>
+
+    <p>
+        As well as defining columns, you can define default properties for the columns, so you don't
+        have to repeat the item everywhere. For example, the following defines two columns, both
+        of which are editable:
+    </p>
+
+    <pre>var gridOptions = {
+    rowData: myRowData,
+
+    <span class="codeComment">// define 3 columns for this grid</span>
+    columnDefs: {
+        {headerName: 'Col A', field: 'a'}
+        {headerName: 'Col B', field: 'b'}
+        <span class="codeComment">// this column overrides the stated default, and  uses the number filter</span>
+        {headerName: 'Col C', field: 'c', filter: 'number'}
+    },
+
+    <span class="codeComment">// the default col def, gets applied to every col</span>
+    defaultColDef: {
+        <span class="codeComment">// make every column editable</span>
+        editable: true,
+        <span class="codeComment">// make every column use 'text' filter by default</span>
+        filter: 'text'
+    },
+
+    <span class="codeComment">// if we had column groups, we could provide default group items here</span>
+    defaultColGroupDef: {}
+}</pre>
+
     <h2>Properties for Column Groups & Columns</h2>
 
     <table class="table">
