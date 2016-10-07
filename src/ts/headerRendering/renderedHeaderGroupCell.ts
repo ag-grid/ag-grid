@@ -57,7 +57,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
         this.eHeaderGroupCell = document.createElement('div');
 
-        CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper);
+        CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper, null, this.columnGroup);
 
         this.displayName = this.columnGroup.getHeaderName();
 
@@ -97,10 +97,11 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell');
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
-        if (this.columnGroup.getColGroupDef()) {
-            _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-with-group');
-        } else {
+        // columnGroup.getColGroupDef
+        if (this.columnGroup.isPadding()) {
             _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-no-group');
+        } else {
+            _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-with-group');
         }
     }
 

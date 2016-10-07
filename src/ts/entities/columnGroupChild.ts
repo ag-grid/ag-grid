@@ -10,4 +10,6 @@ export interface ColumnGroupChild extends IEventEmitter {
     getLeft(): number;
     getDefinition(): AbstractColDef;
     getColumnGroupShow(): string;
+    getParent(): ColumnGroupChild;
+    setParent(parent: ColumnGroupChild): void;
 }

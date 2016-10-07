@@ -96,6 +96,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private cellEditor: {new(): ICellEditor} | string;
     private filter: {new(): IFilter} | string;
 
+    private parent: ColumnGroupChild;
+
     constructor(colDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
         this.visible = !colDef.hide;
@@ -103,6 +105,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+    }
+
+    public setParent(parent: ColumnGroupChild): void {
+        this.parent = parent;
+    }
+
+    public getParent(): ColumnGroupChild {
+        return this.parent;
     }
 
     // this is done after constructor as it uses gridOptionsWrapper

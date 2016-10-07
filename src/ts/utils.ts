@@ -127,7 +127,7 @@ export class Utils {
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
         var result: T[] = [];
-        array.forEach(function(item: T) {
+        array.forEach(function (item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -386,7 +386,7 @@ export class Utils {
         }
 
     }
-    
+
     static removeFromArray<T>(array: T[], object: T) {
         if (array.indexOf(object) >= 0) {
             array.splice(array.indexOf(object), 1);

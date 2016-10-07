@@ -66,7 +66,19 @@ export class DisplayedGroupCreator {
             previousOriginalPath = currentOriginalPath;
         });
 
+        this.setupParentsIntoColumns(result, null);
+
         return result;
+    }
+
+    private setupParentsIntoColumns(columnsOrGroups: ColumnGroupChild[], parent: ColumnGroupChild): void {
+        columnsOrGroups.forEach( columnsOrGroup => {
+            columnsOrGroup.setParent(parent);
+            if (columnsOrGroup instanceof ColumnGroup) {
+                let columnGroup = <ColumnGroup> columnsOrGroup;
+                this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
+            }
+        });
     }
 
     private createFakePath(balancedColumnTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] {
@@ -76,7 +88,7 @@ export class DisplayedGroupCreator {
         var index = 0;
         while (currentChildren && currentChildren[0] && currentChildren[0] instanceof OriginalColumnGroup) {
             // putting in a deterministic fake id, in case the API in the future needs to reference the col
-            result.push(new OriginalColumnGroup(null, 'FAKE_PATH_' + index));
+            result.push(new OriginalColumnGroup(null, 'FAKE_PATH_' + index, true));
             currentChildren = (<OriginalColumnGroup>currentChildren[0]).getChildren();
             index++;
         }

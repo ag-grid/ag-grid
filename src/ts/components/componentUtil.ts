@@ -19,8 +19,8 @@ export class ComponentUtil {
 
     public static OBJECT_PROPERTIES = [
         'rowStyle','context','groupColumnDef','localeText','icons','datasource','viewportDatasource',
-        'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams'
-        //,'cellRenderers','cellEditors'
+        'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams','defaultColGroupDef','defaultColDef'
+    //,'cellRenderers','cellEditors'
     ];
 
     public static ARRAY_PROPERTIES = [
