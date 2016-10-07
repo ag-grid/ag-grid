@@ -12,18 +12,24 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
 
     <link rel="stylesheet" type="text/css" href="/style.css">
 
-    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
+    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
 </head>
 
 <body ng-app="index" class="big-text">
 
-<?php $navKey = "licenseAndPricing"; include 'includes/navbar.php'; ?>
+<?php $navKey = "licenseAndPricing";
+include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "License and Pricing"; include 'includes/headerRow.php'; ?>
+<?php $headerTitle = "License and Pricing";
+include 'includes/headerRow.php'; ?>
 
 <div class="container info-page">
 
@@ -31,20 +37,24 @@
         .theTable {
             text-align: center;
         }
+
         .tableCell {
             width: 48%;
             border-left: 1px solid #888;
             border-right: 1px solid #888;
             padding: 10px;
         }
+
         .tableHighlightCell {
             border-top: 1px solid #888;
             border-bottom: 1px solid #888;
             background-color: #eee;
         }
+
         .gapCol {
             width: 4%;
         }
+
         .titleCell {
             font-family: Impact, Charcoal, sans-serif;
             font-size: 35px;
@@ -52,23 +62,40 @@
             border-top: 1px solid #888;
             border-bottom: 1px solid #888;
         }
+
         .gridFeature {
             padding: 4px;
         }
+
         .gridFeaturesTitle {
             /*background-color: #eee;*/
             font-weight: bold;
         }
+
         .gridFeaturePlus {
             font-weight: bold;
         }
+
         .gridFeaturesList {
             /*background-color: #eee;*/
         }
+
         .benefitsCell {
             border-bottom: 1px solid #888;
         }
     </style>
+
+    <div id="thankyou">
+        <div class="row" style="margin-top: 20px; margin-bottom: 0">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Thank you! We'll be in contact shortly.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
@@ -102,45 +129,12 @@
                 <li>
                     You limit your trial to two months (after that, either uninstall or purchase).
                 </li>
-                <li>
-                    You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
-                    and inform us you are taking a trial.
-                </li>
+                <li>You get in touch using the contact form below and inform us you are taking a trial.</li>
             </ul>
             </p>
         </div>
     </div>
 
-<!--    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                Enterprise Non-Commercial License
-            </h2>
-
-            <p>
-                If you wish to use ag-Grid-Enterprise within a non-profit charity or for educational purposes,
-                then you can use ag-Grid-Enterprise for free. All we ask in return is the following:
-                <ul>
-                    <li>
-                        If you are hosting ag-Grid-Enterprise on a website, you provide a link back to the ag-Grid website.
-                    </li>
-                    <li>
-                        You do not alter any of the copyright headers in the javascript files.
-                    </li>
-                    <li>
-                        Your users are aware that ag-Grid-Enterprise is not free for commercial use.
-                    </li>
-                    <li>
-                        You get in touch (<a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>)
-                        and inform us you are using ag-Grid-Enterprise for non-commercial use.
-                    </li>
-                </ul>
-                The non-commercial license is for using ag-Grid-Enterprise only. It does not cover any warranty or support.
-            </p>
-        </div>
-    </div>
--->
     <div class="row">
         <div class="col-md-12">
 
@@ -266,11 +260,7 @@
                     </td>
                     <td class="gapCol"/>
                     <td class="tableHighlightCell tableCell">
-
-                        <a href="order.php" class="btn btn-primary btn-large bigLink">
-                            Continue to Ordering
-                        </a>
-
+                        Complete Form Below
                     </td>
                 </tr>
             </table>
@@ -287,10 +277,11 @@
 
     <div class="row">
         <div class="col-md-12" style="text-align: center;">
-            Any questions on licensing or ordering? Email <a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>
+            For questions on licensing or ordering, please contact us using the form below.
         </div>
     </div>
 
+    <?php include("includes/orderForm.php"); ?>
     <?php include("includes/commonQuestions.php"); ?>
 
 </div>

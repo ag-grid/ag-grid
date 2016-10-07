@@ -56,7 +56,7 @@
             <p>
                 SaaS is <a href="https://en.wikipedia.org/wiki/Software_as_a_service">Software as a Service</a>.
                 If you will be <span style="text-decoration: underline;">selling</span>
-                ag-Grid as part of a SaaS then you require additional SaaS license.
+                ag-Grid as part of a SaaS then you require an additional SaaS license.
             </p>
 
             <p>
