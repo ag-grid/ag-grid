@@ -6,10 +6,6 @@ $pageKeyboards = "ag-Grid JavaScript Grid Documentation";
 include 'documentation_header.php';
 ?>
 
-<h2>
-    Introduction
-</h2>
-
 <div style="margin-left: 10px; width: 260px; float: right;">
 
     <style>
@@ -86,6 +82,36 @@ include 'documentation_header.php';
     </div>
 
 </div>
+
+<style>
+    .backgroundGradient {
+        background: #539bd6; /* Old browsers */
+        background: -moz-linear-gradient(top, #539bd6 0%, #c3d6e5 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #539bd6 0%,#c3d6e5 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #539bd6 0%,#c3d6e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#539bd6', endColorstr='#c3d6e5',GradientType=0 );
+        margin: 10px;
+        display: inline-block;
+        width: 650px;
+        padding: 20px;
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+        /*padding: 20px;*/
+    }
+</style>
+
+<div class="backgroundGradient">
+    <img src="../images/github100.png" style="float: left; margin-left: 20px;"/>
+    <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">Over 2,000 Github Stars</div>
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        <div>Have you starred us yet? We want your love!</div>
+    </div>
+</div>
+
+<h2>
+    Introduction
+</h2>
 
 <p>
     ag-Grid is an Enterprise Grade Javascript Data Grid.
