@@ -90,9 +90,7 @@ include 'documentation_header.php';
         background: -webkit-linear-gradient(top, #539bd6 0%,#c3d6e5 100%); /* Chrome10-25,Safari5.1-6 */
         background: linear-gradient(to bottom, #539bd6 0%,#c3d6e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#539bd6', endColorstr='#c3d6e5',GradientType=0 );
-        margin: 10px;
-        display: inline-block;
-        width: 650px;
+        margin-right: 280px;
         padding: 20px;
         border-top: 1px solid black;
         border-bottom: 1px solid black;
@@ -101,6 +99,17 @@ include 'documentation_header.php';
 </style>
 
 <div class="backgroundGradient">
+    <div style="float: left;">
+        <img src="../images/github100.png"/>
+    </div>
+    <div style="text-align: center;">
+            <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">So Happy!! - Over 2,000 Github Stars</div>
+            <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+            <div><b>Have you starred us yet? We want your love!</b></div>
+    </div>
+</div>
+
+<!--<div class="backgroundGradient">
     <img src="../images/github100.png" style="float: left; margin-left: 20px;"/>
     <div style="text-align: center;">
         <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">So Happy!! - Over 2,000 Github Stars</div>
@@ -108,7 +117,7 @@ include 'documentation_header.php';
         <div><b>Have you starred us yet? We want your love!</b></div>
     </div>
 </div>
-
+-->
 <h2>
     Introduction
 </h2>
