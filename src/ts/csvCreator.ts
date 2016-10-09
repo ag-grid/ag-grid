@@ -190,7 +190,7 @@ export class CsvCreator {
                 context: this.gridOptionsWrapper.getContext()
             });
         } else {
-            return this.columnController.getDisplayNameForCol(column, true);
+            return this.columnController.getDisplayNameForColumn(column, true);
         }
     }
 

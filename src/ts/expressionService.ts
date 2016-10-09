@@ -17,7 +17,8 @@ export class ExpressionService {
         try {
             var javaScriptFunction = this.createExpressionFunction(expression);
             var result = javaScriptFunction(params.value, params.context, params.node,
-                params.data, params.colDef, params.rowIndex, params.api, params.getValue);
+                params.data, params.colDef, params.rowIndex, params.api, params.getValue,
+                params.column, params.columnGroup);
             return result;
         } catch (e) {
             // the expression failed, which can happen, as it's the client that
@@ -36,7 +37,7 @@ export class ExpressionService {
         }
         // if not found in cache, return the function
         var functionBody = this.createFunctionBody(expression);
-        var theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api, getValue', functionBody);
+        var theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api, getValue, column, columnGroup', functionBody);
 
         // store in cache
         this.expressionToFunctionCache[expression] = theFunction;

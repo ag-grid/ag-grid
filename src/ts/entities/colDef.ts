@@ -16,6 +16,8 @@ export interface AbstractColDef {
     columnGroupShow?: string;
     /** CSS class for the header */
     headerClass?: string | string[] | ((params: any) => string | string[]);
+    /** Expression or function to get the cells value. */
+    headerValueGetter?: string | Function;
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -51,9 +53,6 @@ export interface ColDef extends AbstractColDef {
 
     /** The field of the row to get the cells data from */
     field?: string;
-
-    /** Expression or function to get the cells value. */
-    headerValueGetter?: string | Function;
 
     /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
      *  however we want all default values to be false and we want columns to be visible by default. */

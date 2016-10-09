@@ -68,7 +68,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         // label div
         var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
 
-        this.displayName = this.columnController.getDisplayNameForCol(this.column, true);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, true);
 
         this.setupMovingCss();
         this.setupTooltip();

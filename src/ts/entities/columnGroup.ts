@@ -45,16 +45,6 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.groupId + '_' + this.instanceId;
     }
 
-    // returns header name if it exists, otherwise null. if will not exist if
-    // this group is a padding group, as they don't have colGroupDef's
-    public getHeaderName(): string {
-        if (this.originalColumnGroup.getColGroupDef()) {
-            return this.originalColumnGroup.getColGroupDef().headerName;
-        } else {
-            return null;
-        }
-    }
-
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
         this.displayedChildren.forEach( (child: ColumnGroupChild) => {
