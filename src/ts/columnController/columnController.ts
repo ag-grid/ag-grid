@@ -1460,13 +1460,13 @@ export class ColumnController {
     }
 
     public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[]): void {
-
         var newColsPresent = colDefs && colDefs.length>0;
-        
+
         // if not cols passed, and we had to cols anyway, then do nothing
         if (!newColsPresent && !this.secondaryColumnsPresent) { return; }
-        
+
         if (newColsPresent) {
+            this.processSecondaryColumnDefinitions(colDefs);
             var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(colDefs, false);
             this.secondaryBalancedTree = balancedTreeResult.balancedTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
@@ -1481,6 +1481,34 @@ export class ColumnController {
 
         this.copyDownGridColumns();
         this.updateDisplayedColumns();
+    }
+
+    private processSecondaryColumnDefinitions(colDefs: (ColDef|ColGroupDef)[]): (ColDef|ColGroupDef)[] {
+
+        let columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
+        let groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
+
+        if (!columnCallback && !groupCallback) { return; }
+
+        searchForColDefs(colDefs);
+
+        function searchForColDefs(colDefs2: (ColDef|ColGroupDef)[]): void {
+            colDefs2.forEach( function(abstractColDef: AbstractColDef) {
+                var isGroup = _.exists((<any>abstractColDef).children);
+                if (isGroup) {
+                    let colGroupDef = <ColGroupDef> abstractColDef;
+                    if (groupCallback) {
+                        groupCallback(colGroupDef);
+                    }
+                    searchForColDefs(colGroupDef.children);
+                } else {
+                    let colDef = <ColGroupDef> abstractColDef;
+                    if (columnCallback) {
+                        columnCallback(colDef);
+                    }
+                }
+            });
+        }
     }
 
     // called from: setColumnState, setColumnDefs, setAlternativeColumnDefs

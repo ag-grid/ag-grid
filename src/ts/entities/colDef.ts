@@ -18,6 +18,8 @@ export interface AbstractColDef {
     headerClass?: string | string[] | ((params: any) => string | string[]);
     /** Expression or function to get the cells value. */
     headerValueGetter?: string | Function;
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotKeys?: string[];
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -209,9 +211,6 @@ export interface ColDef extends AbstractColDef {
     
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
-
-    /** Never set this, it is used internally by grid when doing in-grid pivoting */
-    pivotKeys?: string[];
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column;
