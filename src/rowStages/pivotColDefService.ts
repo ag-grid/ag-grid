@@ -12,7 +12,9 @@ export class PivotColDefService {
 
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
 
+        // this is passed to the columnController, to configure the columns and groups we show
         var pivotColumnGroupDefs: (ColDef|ColGroupDef)[] = [];
+        // this is used by the aggregation stage, to do the aggregation based on the pivot columns
         var pivotColumnDefs: ColDef[] = [];
 
         var pivotColumns = this.columnController.getPivotColumns();
@@ -21,9 +23,14 @@ export class PivotColDefService {
 
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep);
 
+        // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
+        // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
+        // as these use the col defs also
+        var pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map(colDef => Utils.cloneObject(colDef) );
+
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
-            pivotColumnDefs: pivotColumnDefs
+            pivotColumnDefs: pivotColumnDefsClone
         };
     }
 
@@ -43,7 +50,8 @@ export class PivotColDefService {
             if (createGroup) {
                 var groupDef: ColGroupDef = {
                     children: [],
-                    headerName: key
+                    headerName: key,
+                    pivotKeys: newPivotKeys
                 };
                 parentChildren.push(groupDef);
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep);
@@ -52,7 +60,8 @@ export class PivotColDefService {
                 var measureColumns = this.columnController.getValueColumns();
                 var valueGroup: ColGroupDef = {
                     children: [],
-                    headerName: key
+                    headerName: key,
+                    pivotKeys: newPivotKeys
                 };
                 parentChildren.push(valueGroup);
                 // if no value columns selected, then we insert one blank column, so the user at least sees columns
@@ -60,12 +69,12 @@ export class PivotColDefService {
                 // impression that the grid is broken
                 if (measureColumns.length===0) {
                     // this is the blank column, for when no value columns enabled.
-                    var colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence, `'n/a'`);
+                    var colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
                     valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
                 } else {
                     measureColumns.forEach( measureColumn => {
-                        var colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence, null);
+                        var colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
                         valueGroup.children.push(colDef);
                         pivotColumnDefs.push(colDef);
                     });
@@ -77,7 +86,7 @@ export class PivotColDefService {
         });
     }
 
-    private createColDef(valueColumn: Column, headerName: any, pivotKeys: string[], columnIdSequence: NumberSequence, valueGetter: string): ColDef {
+    private createColDef(valueColumn: Column, headerName: any, pivotKeys: string[], columnIdSequence: NumberSequence): ColDef {
 
         var colDef: ColDef = {};
 
@@ -89,7 +98,6 @@ export class PivotColDefService {
             colDef.hide = false;
         }
 
-        colDef.valueGetter = valueGetter;
         colDef.headerName = headerName;
         colDef.colId = 'pivot_' + columnIdSequence.next();
 
