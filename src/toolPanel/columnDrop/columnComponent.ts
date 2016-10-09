@@ -61,7 +61,7 @@ export class ColumnComponent extends Component {
 
     @PostConstruct
     public init(): void {
-        this.displayName = this.columnController.getDisplayNameForCol(this.column);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column);
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();

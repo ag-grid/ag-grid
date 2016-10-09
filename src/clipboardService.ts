@@ -235,7 +235,7 @@ export class ClipboardService implements IClipboardService {
             if (!includeHeaders) { return; }
 
             columns.forEach( (column, index) => {
-                var value = this.columnController.getDisplayNameForCol(column, true);
+                var value = this.columnController.getDisplayNameForColumn(column, true);
                 if (index != 0) {
                     data += '\t';
                 }
