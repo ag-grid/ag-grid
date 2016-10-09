@@ -106,10 +106,14 @@ include '../documentation-main/documentation_header.php';
             <td>Returns the column group with the given name.</td>
         </tr>
         <tr>
-            <th>getDisplayNameForCol(column)</th>
-            <td>Returns the display name for a col. Useful if you are doing your own header rendering
-            and want the grid to work out if headerValueGetter is used, or if you are doing your own
-            column management GUI, to know what to show as the column name.</td>
+            <th>getDisplayNameForColumn(column)</th>
+            <td>Returns the display name for a column. Useful if you are doing your own header rendering
+                and want the grid to work out if headerValueGetter is used, or if you are doing your own
+                column management GUI, to know what to show as the column name.</td>
+        </tr>
+        <tr>
+            <th>getDisplayNameForColumnGroup(columnGroup)</th>
+            <td>Returns the display name for a column group (when grouping columns).</td>
         </tr>
         <tr>
             <th>getColumn(key)</th>

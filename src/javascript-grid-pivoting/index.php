@@ -239,9 +239,17 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
         The example also demonstrates exporting to CSV while using Pivot. Basically what you see inside the grid
         is what will be exported.
     </p>
-    
+
     <show-example example="examplePivotApi"></show-example>
-    
+
+    <h2>Manipulating Secondary Columns</h2>
+
+    <p>
+        Wow
+    </p>
+
+    <show-example example="examplePivotAdvancedColumns"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

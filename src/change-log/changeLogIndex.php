@@ -16,6 +16,8 @@ include '../documentation-main/documentation_header.php';
         a function, so you can be selective on which rows have checkboxes.</li>
     <li>Enhancement - viewport row model now works with <i>getRowNodeId()</i>, so selection can now work with business keys.</li>
 
+    <li>New Feature - headerValueGetter now also works for column groups.</li>
+
     <li>Bugfix - suppressSorting in Set Filter was not getting used.</li>
     <li>Bugfix - export to CSV was failing when doing avg aggregation on data.</li>
     <li>Bugfix - single click editing was resetting the edit when you clicked on an edited cell. This was introduced in the last release with 'fullRowEdit'.</li>
