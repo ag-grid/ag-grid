@@ -15,8 +15,8 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
         a function, so you can be selective on which rows have checkboxes.</li>
     <li>Enhancement - viewport row model now works with <i>getRowNodeId()</i>, so selection can now work with business keys.</li>
-
     <li>New Feature - headerValueGetter now also works for column groups.</li>
+    <li>New Feature - new methods for pivoting: <i>processSecondaryColDef</i> and <i>processSecondaryColGroupDef</i> - allow modifying the secondary columns.</li>
 
     <li>Bugfix - suppressSorting in Set Filter was not getting used.</li>
     <li>Bugfix - export to CSV was failing when doing avg aggregation on data.</li>

@@ -245,7 +245,11 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
     <h2>Manipulating Secondary Columns</h2>
 
     <p>
-        Wow
+        If you are not happy with the secondary columns provided by the grid, you have the opportunity to change
+        any detail inside them. This is done by providing callbacks <i>processSecondaryColDef</i> and
+        <i>processSecondaryColGroupDef</i>. The example below shows using these callbacks to modify the labels
+        for the headers. You are free to change any of the items you can define on a column except <i>field</i>
+        as the field attribute is needed by the grid to pull out the value.
     </p>
 
     <show-example example="examplePivotAdvancedColumns"></show-example>

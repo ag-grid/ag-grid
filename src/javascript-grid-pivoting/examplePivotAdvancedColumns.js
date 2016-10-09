@@ -14,26 +14,31 @@ var gridOptions = {
     enableColResize: true,
     columnDefs: columnDefs,
     // we don't want the grid putting in 'sum' in the headers for us
-    suppressAggFuncInHeader: true
-    // these will override the headerValueGetter for all the secondary columns
-    // defaultColDef: {
-    //     headerValueGetter: function(params) {
-    //         // for the Gold name, return Bananas instead
-    //         var originalHeaderName = params.colDef.headerName;
-    //         if (originalHeaderName==='Gold') {
-    //             return 'Bananas';
-    //         } else {
-    //             return originalHeaderName;
-    //         }
-    //     }
-    // },
-    // this overrides the group columns (ie Gold, Silver, Bronze etc)
-    // defaultColGroupDef: {
-    //     headerValueGetter: function(params) {
-    //         var originalHeaderName = params.colDef.headerName;
-    //         return 'Year ' + originalHeaderName;
-    //     }
-    // }
+    suppressAggFuncInHeader: true,
+
+    // this is a callback that gets called on each column definition
+    processSecondaryColDef: function(colDef) {
+        // make all the columns upper case
+        colDef.headerName = colDef.headerName.toUpperCase();
+
+        // the pivot keys are the keys use for the pivot
+        // don't change these, but you can use them for your information
+        console.log('Pivot Keys:');
+        console.log(colDef.pivotKeys);
+        // the value column is the value we are aggregating on
+        console.log('Pivot Value Keys:');
+        console.log(colDef.pivotValueColumn);
+    },
+
+    // this is a callback that gets called on each group definition
+    processSecondaryColGroupDef: function(colGroupDef) {
+        // for fun, add a css class for 2002
+        if (colGroupDef.pivotKeys[0] === '2002') {
+            colGroupDef.headerClass = 'color-background';
+        }
+        // put 'year' in front of each group
+        colGroupDef.headerName = 'Year ' + colGroupDef.headerName;
+    }
 };
 
 // setup the grid after the page has finished loading

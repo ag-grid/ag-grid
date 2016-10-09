@@ -155,6 +155,14 @@ include '../documentation-main/documentation_header.php';
             <td>Allows you to process cells for the clipboard. Handy if you have date objects that you need
                 to have a particular format if importing into Excel.</td>
         </tr>
+        <tr>
+            <th>processSecondaryColDef(colDef)</th>
+            <td>Callback to be used with pivoting, to allow changing the second column definition.</td>
+        </tr>
+        <tr>
+            <th>processSecondaryColGroupDef(colGroupDef)</th>
+            <td>Callback to be used with pivoting, to allow changing the second column group definition.</td>
+        </tr>
     </table>
 </div>
 
