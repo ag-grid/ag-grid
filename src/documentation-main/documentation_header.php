@@ -292,6 +292,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-master-slave/index.php">Master / Slave</a>
                 <?php } ?>
 
+                <?php if ($key == "Touch") { ?>
+                    <span class="sidebarLinkSelected">Touch</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-touch/index.php">Touch</a>
+                <?php } ?>
+
                 <?php if ($key == "Row Model") { ?>
                     <span class="sidebarLinkSelected">Row Model</span>
                 <?php } else { ?>
