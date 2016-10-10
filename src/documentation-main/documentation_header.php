@@ -506,6 +506,11 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } else { ?>
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>change-log/changeLogIndex.php">Change Log</a>
                     <?php } ?>
+                    <?php if ($key == "Roadmap") { ?>
+                        <span class="sidebarLinkSelected">Feature Roadmap</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-roadmap/index.php">Feature Roadmap</a>
+                    <?php } ?>
                     <a class="sidebarLink" href="/archive/">Archive Docs</a>
                 <?php } ?>
 
