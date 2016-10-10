@@ -137,6 +137,10 @@ export class RenderedRow {
         }
 
         this.eFullWidthRow = this.createRowContainer(this.eFullWidthContainer);
+
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.addMouseWheelListenerToFullWidthRow();
+        }
     }
 
     private setupNormalContainers(): void {
