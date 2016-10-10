@@ -65,6 +65,8 @@ export class ColumnSelectPanel extends Component {
         // only render group if user provided the definition
         var newDept: number;
 
+        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) { return; }
+
         if (!columnGroup.isPadding()) {
             var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
@@ -82,6 +84,8 @@ export class ColumnSelectPanel extends Component {
     }
 
     private recursivelyRenderColumnComponent(column: Column, dept: number): void {
+        if (column.getColDef() && column.getColDef().suppressToolPanel) { return; }
+
         var renderedColumn = new RenderedColumn(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
         this.appendChild(renderedColumn.getGui());
@@ -89,7 +93,7 @@ export class ColumnSelectPanel extends Component {
         this.renderedItems[column.getId()] = renderedColumn;
     }
 
-    private recursivelyRenderComponents(tree: any[], dept: number): void {
+    private recursivelyRenderComponents(tree: OriginalColumnGroupChild[], dept: number): void {
         tree.forEach( child => {
             if (child instanceof OriginalColumnGroup) {
                 this.recursivelyRenderGroupComponent(<OriginalColumnGroup> child, dept);
