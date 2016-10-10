@@ -5,7 +5,8 @@ var students = [
         gender: 'Male',
         age: 12,
         address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
-        mood: "Happy"
+        mood: "Happy",
+        country: {name: 'Ireland', code: 'IE'}
     },
     {
         first_name: 'Mary',
@@ -13,7 +14,8 @@ var students = [
         gender: 'Female',
         age: 11,
         address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
-        mood: "Sad"
+        mood: "Sad",
+        country: {name: 'Ireland', code: 'IE'}
     },
     {
         first_name: 'Sadiq',
@@ -21,7 +23,8 @@ var students = [
         gender: 'Male',
         age: 12,
         address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
-        mood: "Happy"
+        mood: "Happy",
+        country: {name: 'Ireland', code: 'IE'}
     },
     {
         first_name: 'Jerry',
@@ -29,9 +32,78 @@ var students = [
         gender: 'Male',
         age: 12,
         address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
-        mood: "Happy"
+        mood: "Happy",
+        country: {name: 'Ireland', code: 'IE'}
     }
 ];
+
+var columnDefs = [
+    {headerName: "First Name", field: "first_name", width: 100, editable: true},
+    {headerName: "Last Name", field: "last_name", width: 100, editable: true},
+    {
+        headerName: "Gender",
+        field: "gender",
+        width: 90,
+        editable: true,
+        cellRenderer: GenderCellRenderer,
+        cellEditor: 'richSelect',
+        cellEditorParams: {
+            cellRenderer: GenderCellRenderer,
+            values: ['Male', 'Female']
+        }
+    },
+    {
+        headerName: "Age",
+        field: "age",
+        width: 70,
+        editable: true,
+        cellEditor: NumericCellEditor
+    },
+    {
+        headerName: "Mood",
+        field: "mood",
+        width: 70,
+        cellRenderer: MoodCellRenderer,
+        cellEditor: MoodEditor,
+        editable: true
+    },
+    {
+        headerName: "Country",
+        field: "country",
+        width: 100,
+        cellRenderer: CountryCellRenderer,
+        cellEditor: 'richSelect',
+        cellEditorParams: {
+            cellRenderer: CountryCellRenderer,
+            values: [
+                {name: 'Ireland', code: 'IE'},
+                {name: 'UK', code: 'UK'},
+                {name: 'France', code: 'FR'}
+            ]
+        },
+        editable: true
+    },
+    {
+        headerName: "Address",
+        field: "address",
+        width: 502,
+        editable: true,
+        cellEditor: 'largeText',
+        cellEditorParams: {
+            maxLength: '300',   // override the editor defaults
+            cols: '50',
+            rows: '6'
+        }
+    }
+];
+
+var gridOptions = {
+    columnDefs: columnDefs,
+    rowData: null,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
+};
 
 function onBtStopEditing() {
     gridOptions.api.stopEditing();
@@ -62,6 +134,11 @@ function isKeyPressedNumeric(event) {
     var charStr = String.fromCharCode(charCode);
     return isCharNumeric(charStr);
 
+}
+
+// simple function cellRenderer, just returns back the name of the country
+function CountryCellRenderer(params) {
+    return params.value.name;
 }
 
 // function to act as a class
@@ -233,55 +310,6 @@ MoodEditor.prototype.destroy = function () {
 
 MoodEditor.prototype.isPopup = function () {
     return true;
-};
-
-var columnDefs = [
-    {headerName: "First Name", field: "first_name", width: 100, editable: true},
-    {headerName: "Last Name", field: "last_name", width: 100, editable: true},
-    {
-        headerName: "Gender",
-        field: "gender",
-        width: 90,
-        editable: true,
-        cellRenderer: GenderCellRenderer,
-        cellEditor: 'richSelect',
-        cellEditorParams: {
-            cellRenderer: GenderCellRenderer,
-            values: ['Male', 'Female']
-        }
-    },
-    {
-        headerName: "Age",
-        field: "age",
-        width: 70,
-        editable: true,
-        cellEditor: NumericCellEditor
-    },
-    {
-        headerName: "Mood",
-        field: "mood",
-        width: 70,
-        cellRenderer: MoodCellRenderer,
-        cellEditor: MoodEditor,
-        editable: true
-    },
-    {
-        headerName: "Address",
-        field: "address",
-        width: 502,
-        editable: true,
-        cellEditor: 'largeText',
-        cellEditorParams: {
-            maxLength: '300',   // override the editor defaults
-            cols: '50',
-            rows: '6'
-        }
-    }
-];
-
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: null
 };
 
 // setup the grid after the page has finished loading

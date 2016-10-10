@@ -420,6 +420,7 @@ colDef.cellEditorParams = {
         <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
         <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.</li>
         <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
+        <li>'Country' columns shows using 'richSelect' for a complex object - the cellRenderer takes care of only rendering the country name.</li>
         <li>The buttons a the top demonstrate different usages of the editing API.</li>
     </ul>
     </p>
