@@ -20,6 +20,8 @@ export interface AbstractColDef {
     headerValueGetter?: string | Function;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
+    /** Set to true to not include this column in the toolpanel */
+    suppressToolPanel?: boolean;
 }
 
 export interface ColGroupDef extends AbstractColDef {
