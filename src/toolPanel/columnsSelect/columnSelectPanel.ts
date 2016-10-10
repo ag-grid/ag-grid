@@ -65,7 +65,6 @@ export class ColumnSelectPanel extends Component {
         // only render group if user provided the definition
         var newDept: number;
 
-
         if (!columnGroup.isPadding()) {
             var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
