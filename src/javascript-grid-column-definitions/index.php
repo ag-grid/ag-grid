@@ -196,6 +196,11 @@ include '../documentation-main/documentation_header.php';
             <td>Comparator function for custom sorting.</td>
         </tr>
         <tr>
+            <th>pivotComparator(valueA, valueB)</th>
+            <td>Comparator to use when ordering the pivot columns, when this column is used to pivot on. The values will
+            always be strings, as the pivot service uses strings as keys for the pivot groups.</td>
+        </tr>
+        <tr>
             <th>checkboxSelection</th>
             <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
         </tr>

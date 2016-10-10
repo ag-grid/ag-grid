@@ -1,6 +1,6 @@
 var columnDefs = [
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 1},
-    {headerName: "Year", field: "year", width: 90, pivotIndex: 1},
+    {headerName: "Year", field: "year", width: 90, pivotIndex: 1, pivotComparator: MyYearPivotComparator},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
@@ -40,6 +40,11 @@ var gridOptions = {
         colGroupDef.headerName = 'Year ' + colGroupDef.headerName;
     }
 };
+
+function MyYearPivotComparator(a, b) {
+    var requiredOrder = ['2012', '2010', '2008', '2006', '2004', '2002', '2000'];
+    return requiredOrder.indexOf(a) - requiredOrder.indexOf(b);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

@@ -242,6 +242,30 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
 
     <show-example example="examplePivotApi"></show-example>
 
+    <h2>Ordering Pivot Columns</h2>
+
+    <p>
+        The user is free to drag columns to reorder them and you are able to reorder columns via the columnApi
+        in the normal way. However you may want to change the default order of the pivot columns.
+    </p>
+
+    <p>
+        <b>Order of Pivot Value Column Groups</b><br/>
+        Pivot value columns are the column groups created by the pivot values - eg if 'Country' is a pivot
+        column, thn the Pivot Value Column Groups are 'Ireland', 'UK', etc. These columns are ordered alphabetically
+        by default. To override this, provide <i>pivotComparator(a,b)</i> function in the column definition.
+        See the example below for a demonstration.
+    </p>
+
+    <p>
+        <b>Order of Pivot Value Columns</b><br/>
+        Pivot value columns are the lowest level column and correspond to the values selected in your pivot.
+        For example, if value columns are the months of the year, then the values will be 'Jan', 'Feb', 'Mar'
+        etc, one for each value column added. The order of these will either be a) the order the value columns
+        appear in the original column definitions if you provide 'aggFunc' as part of the columns or
+        b) the order you add the columns as value columns.
+    </p>
+
     <h2>Manipulating Secondary Columns</h2>
 
     <p>

@@ -15,6 +15,8 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
         a function, so you can be selective on which rows have checkboxes.</li>
     <li>Enhancement - viewport row model now works with <i>getRowNodeId()</i>, so selection can now work with business keys.</li>
+    <li>Enhancement - removed sorting the order of value columns when in pivot mode - now value columns displayed in order added.</li>
+    <li>Enhancement - added 'pivotComparator' to allow defining order of pivot columns.</li>
     <li>New Feature - headerValueGetter now also works for column groups.</li>
     <li>New Feature - new methods for pivoting: <i>processSecondaryColDef</i> and <i>processSecondaryColGroupDef</i> - allow modifying the secondary columns.</li>
 
