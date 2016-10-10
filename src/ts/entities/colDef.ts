@@ -129,6 +129,9 @@ export interface ColDef extends AbstractColDef {
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
 
+    /** Comparator for ordering the pivot columns */
+    pivotComparator?: (valueA: string, valueB: string) => number;
+
     /** Set to true to render a selection checkbox in the column. */
     checkboxSelection?: boolean | ((params: any)=>boolean);
 
