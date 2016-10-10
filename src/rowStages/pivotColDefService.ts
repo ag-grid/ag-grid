@@ -21,7 +21,7 @@ export class PivotColDefService {
         var levelsDeep = pivotColumns.length;
         var columnIdSequence = new NumberSequence();
 
-        this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep);
+        this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
 
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
@@ -39,7 +39,7 @@ export class PivotColDefService {
     // @uniqueValues - the values for which we should create a col for
     // @pivotKeys - the keys for the pivot, eg if pivoting on {Language,Country} then could be {English,Ireland}
     private recursivelyAddGroup(parentChildren: (ColGroupDef|ColDef)[], pivotColumnDefs: ColDef[], index: number, uniqueValues: any,
-                                pivotKeys: string[], columnIdSequence: NumberSequence, levelsDeep: number): void {
+                                pivotKeys: string[], columnIdSequence: NumberSequence, levelsDeep: number, primaryPivotColumns: Column[]): void {
 
         Utils.iterateObject(uniqueValues, (key: string, value: any)=> {
 
@@ -54,7 +54,7 @@ export class PivotColDefService {
                     pivotKeys: newPivotKeys
                 };
                 parentChildren.push(groupDef);
-                this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep);
+                this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns);
             } else {
 
                 var measureColumns = this.columnController.getValueColumns();
@@ -79,11 +79,13 @@ export class PivotColDefService {
                         pivotColumnDefs.push(colDef);
                     });
                 }
-                valueGroup.children.sort(this.headerNameComparator.bind(this));
-
             }
-            parentChildren.sort(this.headerNameComparator.bind(this));
         });
+        // sort by either user provided comparator, or our own one
+        var colDef = primaryPivotColumns[index-1].getColDef();
+        var userComparator = colDef.pivotComparator;
+        var comparator = this.headerNameComparator.bind(this, userComparator);
+        parentChildren.sort(comparator);
     }
 
     private createColDef(valueColumn: Column, headerName: any, pivotKeys: string[], columnIdSequence: NumberSequence): ColDef {
@@ -107,13 +109,17 @@ export class PivotColDefService {
         return colDef;
     }
 
-    private headerNameComparator(a: ColGroupDef|ColDef, b: ColGroupDef|ColDef): number {
-        if (a.headerName<b.headerName) {
-            return -1;
-        } else if (a.headerName>b.headerName) {
-            return 1;
+    private headerNameComparator(userComparator: (a: string, b: string)=>number, a: ColGroupDef|ColDef, b: ColGroupDef|ColDef): number {
+        if (userComparator) {
+            return userComparator(a.headerName, b.headerName);
         } else {
-            return 0;
+            if (a.headerName<b.headerName) {
+                return -1;
+            } else if (a.headerName>b.headerName) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 }
