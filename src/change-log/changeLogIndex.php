@@ -10,19 +10,20 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 6.2.x</h2>
 
-    <li>New Feature - Touch support.</li>
+    <li>New Feature - <a href="../javascript-grid-touch/">Touch support.</a></li>
     <li>New Feature - <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>. So instead of declaring common properties in each column, define them once in the default.</li>
     <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
         a function, so you can be selective on which rows have checkboxes.</li>
-    <li>Enhancement - viewport row model now works with <i>getRowNodeId()</i>, so selection can now work with business keys.</li>
-    <li>Enhancement - removed sorting the order of value columns when in pivot mode - now value columns displayed in order added.</li>
-    <li>Enhancement - added 'pivotComparator' to allow defining order of pivot columns.</li>
-    <li>New Feature - headerValueGetter now also works for column groups.</li>
-    <li>New Feature - new methods for pivoting: <i>processSecondaryColDef</i> and <i>processSecondaryColGroupDef</i> - allow modifying the secondary columns.</li>
+    <li>Enhancement - <a href="../javascript-grid-viewport/">Viewport</a> row model now works with <i>getRowNodeId()</i>, so selection can now work with business keys.</li>
+    <li>Enhancement - Removed sorting the order of value columns when in pivot mode - now value columns displayed in order added.</li>
+    <li>Enhancement - Added <a href="../javascript-grid-pivoting/#orderingPivotColumns">'pivotComparator'</a> to allow defining order of pivot columns.</li>
+    <li>Enhancement - Added <a href="../javascript-grid-tool-panel/#suppressExample">'suppressToolPanel'</a> to column definitions, so suppress columns from appearing in the toolpanel.</li>
+    <li>Enhancement - headerValueGetter now also works for column groups.</li>
+    <li>Enhancement - Added <a href="../javascript-grid-pivoting/#manipulatingSecondaryColumns"> <i>processSecondaryColDef</i> and <i>processSecondaryColGroupDef</i></a> for pivoting, to allow modification of the pivot columns.</li>
 
-    <li>Bugfix - suppressSorting in Set Filter was not getting used.</li>
-    <li>Bugfix - export to CSV was failing when doing avg aggregation on data.</li>
-    <li>Bugfix - single click editing was resetting the edit when you clicked on an edited cell. This was introduced in the last release with 'fullRowEdit'.</li>
+    <li>Bugfix - suppressSorting in Set Filter was not getting used, now fixed.</li>
+    <li>Bugfix - export to CSV was failing when doing avg aggregation on data, now fixed.</li>
+    <li>Bugfix - single click editing was resetting the edit when you clicked on an edited cell. This was introduced in the last release with 'fullRowEdit'. Now fixed.</li>
 
     <h2>Version 6.1.1</h2>
 

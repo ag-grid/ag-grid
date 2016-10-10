@@ -1,13 +1,15 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
-    {headerName: "Age", field: "age", width: 90, enableValue: true},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true},
-    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
-    {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true},
-    {headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true},
-    {headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true},
+    {headerName: "No Tool Panel 1", field: "athlete", width: 150, suppressToolPanel: true},
+    {headerName: "No Tool Panel 2", field: "athlete", width: 150, suppressToolPanel: true},
+    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Age", field: "age", width: 90},
+    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Year", field: "year", width: 90},
+    {headerName: "Date", field: "date", width: 110},
+    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Gold", field: "gold", width: 100, hide: true},
+    {headerName: "Silver", field: "silver", width: 100, hide: true},
+    {headerName: "Bronze", field: "bronze", width: 100, hide: true},
     {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
 ];
 
@@ -19,8 +21,7 @@ var gridOptions = {
     toolPanelSuppressRowGroups: true,
     toolPanelSuppressValues: true,
     toolPanelSuppressPivots: true,
-    toolPanelSuppressPivotMode: true,
-    rowGroupPanelShow: 'always'
+    toolPanelSuppressPivotMode: true
 };
 
 // setup the grid after the page has finished loading

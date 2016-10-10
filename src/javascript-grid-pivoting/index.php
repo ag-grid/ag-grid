@@ -242,7 +242,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
 
     <show-example example="examplePivotApi"></show-example>
 
-    <h2>Ordering Pivot Columns</h2>
+    <h2 id="orderingPivotColumns">Ordering Pivot Columns</h2>
 
     <p>
         The user is free to drag columns to reorder them and you are able to reorder columns via the columnApi
@@ -266,7 +266,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
         b) the order you add the columns as value columns.
     </p>
 
-    <h2>Manipulating Secondary Columns</h2>
+    <h2 id="manipulatingSecondaryColumns">Manipulating Secondary Columns</h2>
 
     <p>
         If you are not happy with the secondary columns provided by the grid, you have the opportunity to change

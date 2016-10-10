@@ -87,10 +87,18 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="toolPanelExample"></show-example>
 
-    <h3>Suppress Example</h3>
+    <h3 id="suppressExample">Suppress Example</h3>
 
     <p>
-        Below shows using the suppress properties items to hide Pivot Mode, Row Groups, Values and Pivots sections.
+        Below shows using the suppress properties that can be used with the toolpanel as follows:
+        <ul>
+        <li>Grid Property <i>toolPanelSuppressRowGroups</i>: When true, the row group section does not appear in the tool panel.</li>
+        <li>Grid Property <i>toolPanelSuppressValues</i>: When true, the value section does not appear in the tool panel.</li>
+        <li>Grid Property <i>toolPanelSuppressPivots</i>: When true, the pivot section does not appear in the tool panel.</li>
+        <li>Grid Property <i>toolPanelSuppressPivotMode</i>: When true, the pivot mode section does not appear in the tool panel.</li>
+        <li>Column Property <i>suppressToolPanel</i>: When true, the column will not appear in the tool panel or in the column section of the column menu.
+        This is useful when you have a column working in the background, eg a column you want to group by, but not present to the user.</li>
+    </ul>
     </p>
     
     <show-example example="exampleToolPanelSuppress"></show-example>

@@ -73,6 +73,10 @@ include '../documentation-main/documentation_header.php';
             <th>headerClass</th>
             <td>Class to use for the header cell. Can be string, array of strings, or function.</td>
         </tr>
+        <tr>
+            <th>suppressToolPanel</th>
+            <td>Set to true if you do not want this column or group to appear in the tool panel.</td>
+        </tr>
     </table>
 
     <h2>Properties for Columns</h2>
