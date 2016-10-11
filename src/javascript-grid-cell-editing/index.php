@@ -327,6 +327,12 @@ colDef.cellEditorParams = {
     </ul>
     </p>
 
+    <note>We have found the standard HTML 'select' to behave odd when in the grid. This is because the browser
+    doesn't have a great API for opening and closing the select's popup. We advise you don't use
+    it unless you have to - that is we advise against 'select' and 'popupSelect' as
+    they give poor user experience, especially if using keyboard navigation. If using ag-Grid Enterprise, then you should use the provided
+    richSelect.</note>
+
     <p>
         The default text cellEditor takes no parameters. The select cellEditor takes a list of values
         from which the user can select. The example below shows configuring the select cellEditor.
