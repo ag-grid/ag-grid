@@ -26,6 +26,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix - export to CSV was failing when doing avg aggregation on data, now fixed.</li>
     <li>Bugfix - single click editing was resetting the edit when you clicked on an edited cell. This was introduced in the last release with 'fullRowEdit'. Now fixed.</li>
     <li>Bugfix - when grouping, full width rows were not getting mouse scroll events processed, noe fixed.</li>
+    <li>Bugfix - when pasting, the cells did not get refreshed if first row was not editable.</li>
 
     <h2>Version 6.1.1</h2>
 
