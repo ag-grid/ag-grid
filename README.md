@@ -14,4 +14,4 @@ To build:
 - npm install ag-grid
 - (or: npm install @angular/core@2.x && npm install @angular/compiler@2.x && npm install ag-grid)
 
-- gulp
+- npm run build

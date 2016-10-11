@@ -74,6 +74,6 @@ class _View_AgGridNg20 extends import1.AppView<import3.AgGridNg2> {
   }
 }
 export function viewFactory_AgGridNg20(viewUtils:import5.ViewUtils,parentInjector:import6.Injector,declarationEl:import2.AppElement):import1.AppView<import3.AgGridNg2> {
-  if ((renderType_AgGridNg2 === (null as any))) { (renderType_AgGridNg2 = viewUtils.createRenderComponentType('C:/Users/seanl/IdeaProjects/ag-grid/ag/ng2/ag-grid-ng2/src/agGridNg2.ts class AgGridNg2 - inline template',0,import11.ViewEncapsulation.None,styles_AgGridNg2,{})); }
+  if ((renderType_AgGridNg2 === (null as any))) { (renderType_AgGridNg2 = viewUtils.createRenderComponentType('',0,import11.ViewEncapsulation.None,styles_AgGridNg2,{})); }
   return new _View_AgGridNg20(viewUtils,parentInjector,declarationEl);
 }

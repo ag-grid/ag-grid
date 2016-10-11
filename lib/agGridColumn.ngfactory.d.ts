@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.1.4
+// ag-grid-ng2 v6.2.0
 import * as import1 from '@angular/core/src/linker/view';
 import * as import2 from '@angular/core/src/linker/element';
 import * as import3 from './agGridColumn';

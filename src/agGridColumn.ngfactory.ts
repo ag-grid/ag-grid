@@ -67,6 +67,6 @@ class _View_AgGridColumn0 extends import1.AppView<import3.AgGridColumn> {
   }
 }
 export function viewFactory_AgGridColumn0(viewUtils:import5.ViewUtils,parentInjector:import6.Injector,declarationEl:import2.AppElement):import1.AppView<import3.AgGridColumn> {
-  if ((renderType_AgGridColumn === (null as any))) { (renderType_AgGridColumn = viewUtils.createRenderComponentType('C:/Users/seanl/IdeaProjects/ag-grid/ag/ng2/ag-grid-ng2/src/agGridColumn.ts class AgGridColumn - inline template',0,import9.ViewEncapsulation.None,styles_AgGridColumn,{})); }
+  if ((renderType_AgGridColumn === (null as any))) { (renderType_AgGridColumn = viewUtils.createRenderComponentType('',0,import9.ViewEncapsulation.None,styles_AgGridColumn,{})); }
   return new _View_AgGridColumn0(viewUtils,parentInjector,declarationEl);
 }
