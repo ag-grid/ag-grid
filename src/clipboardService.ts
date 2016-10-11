@@ -156,7 +156,7 @@ export class ClipboardService implements IClipboardService {
                 var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
 
-                if (index === 0) {
+                if (updatedColumnIds.indexOf(column.getId()) < 0) {
                     updatedColumnIds.push(column.getId());
                 }
 
