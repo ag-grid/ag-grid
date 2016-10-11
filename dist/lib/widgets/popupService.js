@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -163,12 +163,16 @@ var PopupService = (function () {
                 eBody.addEventListener('keydown', hidePopupOnEsc);
             }
             eBody.addEventListener('click', hidePopup);
+            eBody.addEventListener('touchstart', hidePopup);
             eBody.addEventListener('contextmenu', hidePopup);
             //eBody.addEventListener('mousedown', hidePopup);
-            eChild.addEventListener('click', consumeClick);
+            eChild.addEventListener('click', consumeMouseClick);
+            eChild.addEventListener('touchstart', consumeTouchClick);
             //eChild.addEventListener('mousedown', consumeClick);
         }, 0);
-        var eventFromChild = null;
+        // var timeOfMouseEventOnChild = new Date().getTime();
+        var childMouseClick = null;
+        var childTouch = null;
         function hidePopupOnEsc(event) {
             var key = event.which || event.keyCode;
             if (key === constants_1.Constants.KEY_ESCAPE) {
@@ -176,7 +180,11 @@ var PopupService = (function () {
             }
         }
         function hidePopup(event) {
-            if (event && event === eventFromChild) {
+            // we don't hide popup if the event was on the child
+            if (event && event === childMouseClick) {
+                return;
+            }
+            if (event && event === childTouch) {
                 return;
             }
             // this method should only be called once. the client can have different
@@ -190,15 +198,22 @@ var PopupService = (function () {
             eBody.removeEventListener('keydown', hidePopupOnEsc);
             //eBody.removeEventListener('mousedown', hidePopupOnEsc);
             eBody.removeEventListener('click', hidePopup);
+            eBody.removeEventListener('touchstart', hidePopup);
             eBody.removeEventListener('contextmenu', hidePopup);
-            eChild.removeEventListener('click', consumeClick);
+            eChild.removeEventListener('click', consumeMouseClick);
+            eChild.removeEventListener('touchstart', consumeTouchClick);
             //eChild.removeEventListener('mousedown', consumeClick);
             if (closedCallback) {
                 closedCallback();
             }
         }
-        function consumeClick(event) {
-            eventFromChild = event;
+        function consumeMouseClick(event) {
+            console.log('consumeMouseClick');
+            childMouseClick = event;
+        }
+        function consumeTouchClick(event) {
+            console.log('consumeTouchClick');
+            childTouch = event;
         }
         return hidePopup;
     };

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -213,13 +213,15 @@ var GridPanel = (function () {
         var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
             this.eFloatingTop, this.eFloatingBottom];
         containers.forEach(function (container) {
-            _this.dragService.addDragSource({
+            var params = {
                 dragStartPixels: 0,
                 eElement: container,
                 onDragStart: _this.rangeController.onDragStart.bind(_this.rangeController),
                 onDragStop: _this.rangeController.onDragStop.bind(_this.rangeController),
                 onDragging: _this.rangeController.onDragging.bind(_this.rangeController)
-            });
+            };
+            _this.dragService.addDragSource(params);
+            _this.destroyFunctions.push(function () { return _this.dragService.removeDragSource(params); });
         });
     };
     GridPanel.prototype.addCellListeners = function () {

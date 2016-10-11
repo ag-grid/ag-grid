@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,6 +20,7 @@ var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var constants_1 = require("./constants");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
 var utils_1 = require("./utils");
+var selectionController_1 = require("./selectionController");
 var LINE_SEPARATOR = '\r\n';
 var CsvCreator = (function () {
     function CsvCreator() {
@@ -67,6 +68,7 @@ var CsvCreator = (function () {
         var columnSeparator = (params && params.columnSeparator) || ',';
         var suppressQuotes = params && params.suppressQuotes;
         var columnKeys = params && params.columnKeys;
+        var onlySelectedAllPages = params && params.onlySelectedAllPages;
         var processCellCallback = params && params.processCellCallback;
         var processHeaderCallback = params && params.processHeaderCallback;
         // when in pivot mode, we always render cols on screen, never 'all columns'
@@ -98,7 +100,13 @@ var CsvCreator = (function () {
             inMemoryRowModel.forEachPivotNode(processRow);
         }
         else {
-            inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+            if (onlySelectedAllPages) {
+                var selectedNodes = this.selectionController.getSelectedNodes();
+                selectedNodes.forEach(processRow);
+            }
+            else {
+                inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+            }
         }
         this.floatingRowModel.forEachFloatingBottomRow(processRow);
         if (includeCustomFooter) {
@@ -167,7 +175,7 @@ var CsvCreator = (function () {
             });
         }
         else {
-            return this.columnController.getDisplayNameForCol(column, true);
+            return this.columnController.getDisplayNameForColumn(column, true);
         }
     };
     CsvCreator.prototype.processCell = function (rowNode, column, value, processCellCallback) {
@@ -235,6 +243,10 @@ var CsvCreator = (function () {
         context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], CsvCreator.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('selectionController'), 
+        __metadata('design:type', selectionController_1.SelectionController)
+    ], CsvCreator.prototype, "selectionController", void 0);
     CsvCreator = __decorate([
         context_1.Bean('csvCreator'), 
         __metadata('design:paramtypes', [])

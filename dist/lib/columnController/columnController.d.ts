@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -12,7 +12,8 @@ export declare class ColumnApi {
     sizeColumnsToFit(gridWidth: any): void;
     setColumnGroupOpened(group: ColumnGroup | string, newValue: boolean, instanceId?: number): void;
     getColumnGroup(name: string, instanceId?: number): ColumnGroup;
-    getDisplayNameForCol(column: any): string;
+    getDisplayNameForColumn(column: Column): string;
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup): string;
     getColumn(key: any): Column;
     setColumnState(columnState: any): boolean;
     getColumnState(): any[];
@@ -77,6 +78,7 @@ export declare class ColumnApi {
     addAggregationColumn(colKey: (Column | ColDef | String)): void;
     addAggregationColumns(colKeys: (Column | ColDef | String)[]): void;
     setColumnAggFunction(column: Column, aggFunc: string): void;
+    getDisplayNameForCol(column: any): string;
 }
 export declare class ColumnController {
     static GROUP_AUTO_COLUMN_ID: string;
@@ -210,8 +212,9 @@ export declare class ColumnController {
     getPrimaryColumn(key: string | ColDef | Column): Column;
     getGridColumn(key: string | ColDef | Column): Column;
     private getColumn(key, columnList);
-    getDisplayNameForCol(column: any, includeAggFunc?: boolean): string;
-    private getHeaderName(column);
+    getDisplayNameForColumn(column: Column, includeAggFunc?: boolean): string;
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup): string;
+    private getHeaderName(colDef, column, columnGroup);
     private wrapHeaderNameWithAggFunc(column, headerName);
     getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup;
     setColumnDefs(columnDefs: AbstractColDef[]): void;
@@ -226,6 +229,7 @@ export declare class ColumnController {
     private updateDisplayedColumns();
     isSecondaryColumnsPresent(): boolean;
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
+    private processSecondaryColumnDefinitions(colDefs);
     private copyDownGridColumns();
     private clearDisplayedColumns();
     private updateGroupsAndDisplayedColumns();

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,6 +101,7 @@ var virtualPageCache_1 = require("./rowControllers/virtualPagination/virtualPage
 var virtualPage_1 = require("./rowControllers/virtualPagination/virtualPage");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
 var methodNotImplementedException_1 = require("./misc/methodNotImplementedException");
+var touchListener_1 = require("./widgets/touchListener");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -205,6 +206,7 @@ function populateClientExports(exports) {
     exports.MenuList = menuList_1.MenuList;
     exports.Listener = componentAnnotations_1.Listener;
     exports.QuerySelector = componentAnnotations_1.QuerySelector;
+    exports.TouchListener = touchListener_1.TouchListener;
     // root
     exports.BaseFrameworkFactory = baseFrameworkFactory_1.BaseFrameworkFactory;
     exports.CellNavigationService = cellNavigationService_1.CellNavigationService;

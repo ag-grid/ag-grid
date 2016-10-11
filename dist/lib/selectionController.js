@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -124,6 +124,9 @@ var SelectionController = (function () {
         if (this.selectedNodes[rowNode.id] !== undefined) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
+        }
+        else {
+            rowNode.setSelectedInitialValue(false);
         }
     };
     SelectionController.prototype.reset = function () {

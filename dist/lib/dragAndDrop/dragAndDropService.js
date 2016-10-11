@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,7 @@ var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var DragSourceType = exports.DragSourceType;
 var DragAndDropService = (function () {
     function DragAndDropService() {
+        this.dragSourceAndParamsList = [];
         this.dropTargets = [];
     }
     DragAndDropService.prototype.init = function () {
@@ -52,17 +53,30 @@ var DragAndDropService = (function () {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         }
     };
-    // we do not need to clean up drag sources, as we are just adding a listener to the element.
-    // when the element is disposed, the drag source is also disposed, even though this service
-    // remains. this is a bit different to normal 'addListener' methods
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
-        this.dragService.addDragSource({
+        var params = {
             eElement: dragSource.eElement,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
-        }, allowTouch);
+        };
+        this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
+        this.dragService.addDragSource(params, allowTouch);
+    };
+    DragAndDropService.prototype.removeDragSource = function (dragSource) {
+        var sourceAndParams = utils_1.Utils.find(this.dragSourceAndParamsList, function (item) { return item.dragSource === dragSource; });
+        if (sourceAndParams) {
+            this.dragService.removeDragSource(sourceAndParams.params);
+            utils_1.Utils.removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
+        }
+    };
+    DragAndDropService.prototype.destroy = function () {
+        var _this = this;
+        this.dragSourceAndParamsList.forEach(function (sourceAndParams) {
+            _this.dragService.removeDragSource(sourceAndParams.params);
+        });
+        this.dragSourceAndParamsList.length = 0;
     };
     DragAndDropService.prototype.nudge = function () {
         if (this.dragging) {
@@ -315,6 +329,12 @@ var DragAndDropService = (function () {
         __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
         __metadata('design:returntype', void 0)
     ], DragAndDropService.prototype, "setBeans", null);
+    __decorate([
+        context_1.PreDestroy, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], DragAndDropService.prototype, "destroy", null);
     DragAndDropService = __decorate([
         context_1.Bean('dragAndDropService'), 
         __metadata('design:paramtypes', [])

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,6 +22,17 @@ exports.Timer = Timer;
 var Utils = (function () {
     function Utils() {
     }
+    // returns true if the event is close to the original event by X pixels either vertically or horizontally.
+    // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
+    Utils.areEventsNear = function (e1, e2, pixelCount) {
+        // by default, we wait 4 pixels before starting the drag
+        if (pixelCount === 0) {
+            return false;
+        }
+        var diffX = Math.abs(e1.clientX - e2.clientX);
+        var diffY = Math.abs(e1.clientY - e2.clientY);
+        return Math.max(diffX, diffY) <= pixelCount;
+    };
     Utils.getNameOfClass = function (TheClass) {
         var funcNameRegex = /function (.{1,})\(/;
         var funcAsString = TheClass.toString();

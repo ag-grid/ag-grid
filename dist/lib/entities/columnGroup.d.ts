@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,9 +19,11 @@ export declare class ColumnGroup implements ColumnGroupChild {
     private moving;
     private left;
     private eventService;
+    private parent;
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number);
+    getParent(): ColumnGroupChild;
+    setParent(parent: ColumnGroupChild): void;
     getUniqueId(): string;
-    getHeaderName(): string;
     checkLeft(): void;
     getLeft(): number;
     setLeft(left: number): void;
@@ -40,6 +42,7 @@ export declare class ColumnGroup implements ColumnGroupChild {
     getDisplayedLeafColumns(): Column[];
     getDefinition(): AbstractColDef;
     getColGroupDef(): ColGroupDef;
+    isPadding(): boolean;
     isExpandable(): boolean;
     isExpanded(): boolean;
     setExpanded(expanded: boolean): void;

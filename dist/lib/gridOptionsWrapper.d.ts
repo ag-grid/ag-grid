@@ -1,11 +1,11 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./entities/rowNode";
 import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams, GetRowNodeIdFunc } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
-import { ColDef, IAggFunc } from "./entities/colDef";
+import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
@@ -52,7 +52,6 @@ export declare class GridOptionsWrapper {
     isToolPanelSuppressPivots(): boolean;
     isToolPanelSuppressPivotMode(): boolean;
     isEnableCellChangeFlash(): boolean;
-    isEnableTouch(): boolean;
     isGroupSelectsChildren(): boolean;
     isGroupIncludeFooter(): boolean;
     isGroupSuppressBlankHeader(): boolean;
@@ -135,11 +134,13 @@ export declare class GridOptionsWrapper {
     getGroupRowRendererParams(): any;
     getOverlayLoadingTemplate(): string;
     getOverlayNoRowsTemplate(): string;
-    getCheckboxSelection(): Function;
+    getCheckboxSelection(): (params: any) => boolean;
     isSuppressAutoSize(): boolean;
     isSuppressParentsInRowNodes(): boolean;
     isEnableStatusBar(): boolean;
     isFunctionsReadOnly(): boolean;
+    getDefaultColDef(): ColDef;
+    getDefaultColGroupDef(): ColGroupDef;
     getHeaderCellTemplate(): string;
     getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
     getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);
@@ -147,6 +148,8 @@ export declare class GridOptionsWrapper {
     getContextMenuItemsFunc(): GetContextMenuItems;
     getMainMenuItemsFunc(): GetMainMenuItems;
     getRowNodeIdFunc(): GetRowNodeIdFunc;
+    getProcessSecondaryColDefFunc(): (colDef: ColDef) => void;
+    getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef) => void;
     getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams) => any;
     getViewportRowModelPageSize(): number;
     getViewportRowModelBufferSize(): number;
