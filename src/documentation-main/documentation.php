@@ -31,6 +31,17 @@ include 'documentation_header.php';
     </div>
 
     <div class="news-box">
+        <div class="news-header">11th October 2016</div>
+        <div class="news-header">ag-Grid 6.2.x Released</div>
+        <div style="padding-top: 10px;">
+            ag-Grid 6.2.x released with <a href="../javascript-grid-touch/">Touch support.</a>,
+            <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>,
+            <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a> and many other Enhancements and Bug Fixes.
+            See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">5th October 2016</div>
         <div class="news-header"></div>
         <a href="../ag-grid-angular-connect-2016/" style="text-align: center;">
@@ -103,9 +114,9 @@ include 'documentation_header.php';
         <img src="../images/github100.png"/>
     </div>
     <div style="text-align: center;">
-            <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">So Happy!! - Over 2,000 Github Stars</div>
-            <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-            <div><b>Have you starred us yet? We want your love!</b></div>
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">So Happy!! - Over 2,000 Github Stars</div>
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        <div><b>Have you starred us yet? We want your love!</b></div>
     </div>
 </div>
 
@@ -164,7 +175,7 @@ include 'documentation_header.php';
 
 <p>
     The documentation is broken in the following sections:
-    <ul>
+<ul>
     <li><b>The Basics: </b> Learn how to set up ag-Grid with the framework that you have chosen.</li>
     <li><b>Interfacing: </b> A quick reference guide detailing all the configuration options for ag-Grid.</li>
     <li><b>Core Features: </b> A detailed look at all the core features.</li>
@@ -210,7 +221,7 @@ include 'documentation_header.php';
             <input style="width: 200px" placeholder="First Name" type="text" value="" name="FNAME" class="" id="mce-FNAME">
             <input style="width: 200px" placeholder="Last Name" type="text" value="" name="LNAME" class="" id="mce-LNAME">
             <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"
-                        style="padding-left: 10px; padding-right: 10px; margin: 0px; margin-top: 4px;">
+                   style="padding-left: 10px; padding-right: 10px; margin: 0px; margin-top: 4px;">
             <div id="mce-responses" class="clear">
                 <div class="response" id="mce-error-response" style="display:none"></div>
                 <div class="response" id="mce-success-response" style="display:none"></div>

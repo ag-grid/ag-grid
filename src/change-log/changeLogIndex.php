@@ -12,6 +12,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>New Feature - <a href="../javascript-grid-touch/">Touch support.</a></li>
     <li>New Feature - <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>. So instead of declaring common properties in each column, define them once in the default.</li>
+    <li>New Feature - <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a>. Option to create Grids with Markup (declaratively).</li>
     <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
         a function, so you can be selective on which rows have checkboxes.</li>
     <li>Enhancement - <a href="../javascript-grid-viewport/">Viewport</a> row model now works with <i>getRowNodeId()</i>, so selection can now work with business keys.</li>
@@ -38,7 +39,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Version 6.1.x</h2>
 
     <li>New Feature - <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a> - to enable all cells
-    in a row to be editable at the same time.</li>
+        in a row to be editable at the same time.</li>
     <li>New Property - colDef.suppressNavigable - set to true (or function to return true) to stop the cell getting
         focus when tabbing around.</li>
     <li>New Event - <i>rowValueChanged</i> - gets fired after a full row is updated.</li>
@@ -50,12 +51,12 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Version 6.0.x brings the following changes:
-        <ol>
-            <li>Bug Fixes and Improvements</li>
-            <li>Improved React and Angular 2 Support</li>
-            <li>Refactored Filters</li>
-        </ol>
-        Below goes through each of these in turn.
+    <ol>
+        <li>Bug Fixes and Improvements</li>
+        <li>Improved React and Angular 2 Support</li>
+        <li>Refactored Filters</li>
+    </ol>
+    Below goes through each of these in turn.
     </p>
 
     <h3>1 - Bug Fixes and Improvements</h3>
@@ -79,9 +80,9 @@ colDef.cellRenderer = MyCellRenderer;
 <span class="codeComment">// in v6, you can use React or Angular 2 components directly</span>
 colDef.cellRendererFramework = MyReactCellRenderer; <span class="codeComment">// for React</span>
 colDef.cellRendererFramework = MyAngular2CellRenderer; <span class="codeComment">// for Angular</span></pre>
-        Full details on how get this all working are in the updated React and Angular 2 sections of the docs.
-        If you are using Angular 2 or React, it's best you read these sections to see how to do things
-        in the new improved way.
+    Full details on how get this all working are in the updated React and Angular 2 sections of the docs.
+    If you are using Angular 2 or React, it's best you read these sections to see how to do things
+    in the new improved way.
     </p>
 
     <h3>3 - Changes to Filters</h3>
@@ -93,10 +94,10 @@ colDef.cellRendererFramework = MyAngular2CellRenderer; <span class="codeComment"
         now behave in the same way as cellRenderers and cellEditors, including fitting in with React and
         Angular 2 components, the same way the renderers and editors do. The main core changes are as follows:
         <ol>
-        <li><b>If you were providing a Filter API</b> then be aware the API is no longer a separate part of the component. Instead it is now possible to get a reference
-        to the filter component directly via api.getFilterInstance(colKey). From here you can access all
-        methods on the filter component. So if you want to add extra items to (what used to be) the API, now
-        you just add them directly to your filter component.
+            <li><b>If you were providing a Filter API</b> then be aware the API is no longer a separate part of the component. Instead it is now possible to get a reference
+                to the filter component directly via api.getFilterInstance(colKey). From here you can access all
+                methods on the filter component. So if you want to add extra items to (what used to be) the API, now
+                you just add them directly to your filter component.
         <pre>
 <span class="codeComment">// eg if your filter was like this:</span>
 function MyFilter() {}
@@ -122,9 +123,9 @@ MyFilter.prototype.getModel = function() {
 MyFilter.prototype.setModel = function(model) {
     ...
 }</pre>
-        </li>
-        <li><b>If you were providing custom params to your custom filters</b> then these used to be passed to the filter embedded into the filter params.
-        Now the custom params are added to the main params.
+            </li>
+            <li><b>If you were providing custom params to your custom filters</b> then these used to be passed to the filter embedded into the filter params.
+                Now the custom params are added to the main params.
         <pre>
 <span class="codeComment">// eg when you define this:</span>
 colDef = {
@@ -150,34 +151,34 @@ params = {
     a: 'A',
     b: 'B'
 }</pre>
-        </li>
-        <li>
-            <p>
-                The constants for Number and Text filters are now strings and not numbers. If you were storing
-                user preferences for these filters, you need to map the old numbers to the new string values.
-            </p>
-            <p>
-                For Number filter, the mapping is as follows:
-                <ul>
-                    <li>1 => 'equals'</li>
-                    <li>2 => 'notEqual'</li>
-                    <li>3 => 'lessThan'</li>
-                    <li>4 => 'lessThanOrEqual'</li>
-                    <li>5 => 'greaterThan'</li>
-                    <li>6 => 'greaterThanOrEqual'</li>
-                </ul>
-            </p>
-            <p>
-                For Number filter, the mapping is as follows:
-            <ul>
-                <li>1 => 'contains'</li>
-                <li>2 => 'equals'</li>
-                <li>3 => 'notEquals'</li>
-                <li>4 => 'startsWith'</li>
-                <li>5 => 'endsWith'</li>
-            </ul>
-            </p>
-        </li>
+            </li>
+            <li>
+    <p>
+        The constants for Number and Text filters are now strings and not numbers. If you were storing
+        user preferences for these filters, you need to map the old numbers to the new string values.
+    </p>
+    <p>
+        For Number filter, the mapping is as follows:
+    <ul>
+        <li>1 => 'equals'</li>
+        <li>2 => 'notEqual'</li>
+        <li>3 => 'lessThan'</li>
+        <li>4 => 'lessThanOrEqual'</li>
+        <li>5 => 'greaterThan'</li>
+        <li>6 => 'greaterThanOrEqual'</li>
+    </ul>
+    </p>
+    <p>
+        For Number filter, the mapping is as follows:
+    <ul>
+        <li>1 => 'contains'</li>
+        <li>2 => 'equals'</li>
+        <li>3 => 'notEquals'</li>
+        <li>4 => 'startsWith'</li>
+        <li>5 => 'endsWith'</li>
+    </ul>
+    </p>
+    </li>
     </ol>
     </p>
     <p>
@@ -212,8 +213,8 @@ params = {
     <li>Enhancement: new feature - <a href="../javascript-grid-master-detail">Full Width Rows and Master / Details</a></li>
     <li>Enhancement: setFilter - now the search box is focused when you open setFilter</li>
     <li>Breaking Change: if using groupUseEntireRow=true, you will notice the group row is now a fullWidth row, hence
-    will span pinned sections and not scroll horizontally. This is by design. Functionality should be the same,
-    just the grid will look a big different.</li>
+        will span pinned sections and not scroll horizontally. This is by design. Functionality should be the same,
+        just the grid will look a big different.</li>
     <li>Bugfix: Aggregation function 'count' was only working with number values. Now works with any value type.</li>
     <li>Bugfix: forPrint was broken with last release, now fixed again.</li>
 
@@ -228,7 +229,7 @@ params = {
     <li>Enhancement: Added columnApi.autoSizeAllColumns().</li>
     <li>Enhancement: Allowed following methods to work with pagination: forEachLeafNode, forEachNodeAfterFilter, forEachNodeAfterFilterAndSort.</li>
     <li>Enhancement: Callbacks getRowStyle and getRowClass get called after the data is set as well as when the row is created.
-    Helps viewport and infinite pagination, to add styles and classes after the rows are loaded.</li>
+        Helps viewport and infinite pagination, to add styles and classes after the rows are loaded.</li>
     <li>Enhancement: external filter present can not be true when grid initialises</li>
     <li>Enhancement: updated virtual pagination example, to show graceful deletion</li>
     <li>Bugfix: setFilter was not removing entries correctly when other filters were set if filterParams was missing.</li>
@@ -250,7 +251,7 @@ params = {
     </li>
     <li>Enhancement: node id's are now strings, not numbers. This is to allow you to give nodes the same id's as your data store.</li>
     <li>Enhancement: new callback getRowNodeId(), for setting node ids to what you want. Useful for pagination and virtual pagination
-    to allow for selection of rows when doing server side sorting and filtering.</li>
+        to allow for selection of rows when doing server side sorting and filtering.</li>
 
     <h3>Version 5.0.x</h3>
 
@@ -327,7 +328,7 @@ params = {
     <li>Enhancement: enhancements to Material Design look and feel</li>
     <li>Enhancement: added api.stopEditing()</li>
     <li>Bugfix: SetFilter was failing when you loaded more data into the grid - filter didn't populate with new values correctly.</li>
-    
+
     <h3>Version 4.2.x</h3>
 
     <h4><b>Big Changes</b></h4>
@@ -387,7 +388,7 @@ params = {
 
     <b>Small changes</b>
     <li>Enhancement: New event - viewportChanged - gets called when the rendered rows changes, either
-    due to scrolling, new data or grid resize. Using this, you know exactly what divs will be rendered in the DOM.</li>
+        due to scrolling, new data or grid resize. Using this, you know exactly what divs will be rendered in the DOM.</li>
     <li>Navigation: When not editing, tab moves between cells. Shift+tab goes backwards.</li>
     <li>Editing: Hitting any key started editing.</li>
     <li>Enhancement: New api methods: showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterMouseClick(colKey, mouseEvent)</li>
@@ -438,7 +439,7 @@ params = {
     <li>Enterprise Feature: You can now drag columns from the tool panel into the grid to make them visible.</li>
 
     <li>Enterprise Feature: Row grouping and aggregation are no longer in the tool panel as they can be done
-    bia column menu (grouping and aggregation) or dragging to the row group panel (grouping).</li>
+        bia column menu (grouping and aggregation) or dragging to the row group panel (grouping).</li>
 
     <li>Enterprise Feature: Context Menu</li>
 
@@ -448,14 +449,14 @@ params = {
     <li>Enterprise Feature: Status bar</li>
 
     <li>Tool panel, set filter, row grouping and aggregation are now only available in Enterprise version
-    of ag-Grid.</li>
+        of ag-Grid.</li>
 
     <!-- ENHANCEMENTS -->
     <h4>Enhancements & Changes</h4>
 
     <li>Performance improvements - no longer attaching listeners to each cell, so when scrolling, the dom is not
-    been ripped up with adding and removing listeners. Instead the grid has one listener (eg for mouse click),
-    and when the click happens, the grid then works out which cell it was for.</li>
+        been ripped up with adding and removing listeners. Instead the grid has one listener (eg for mouse click),
+        and when the click happens, the grid then works out which cell it was for.</li>
 
     <li>rowNode is now a class object with methods (previously it only have properties, a simple data object).
         Methods now include: setSelected(), isSelected(), addEventListener(), removeEventListener(),
@@ -487,8 +488,8 @@ params = {
         of operation: Normal, Pagination and Virtual Pagination.</li>
 
     <li>rowsAlreadyGrouped replaced with getNodeChildDetails. If you are providing already grouped data to the grid,
-    see the new section 'Tree Data' on how this is now done. It had to change because Node is now an object with
-    functinality, so you can't just pass in JSON an expect them to be treated like nodes.</li>
+        see the new section 'Tree Data' on how this is now done. It had to change because Node is now an object with
+        functinality, so you can't just pass in JSON an expect them to be treated like nodes.</li>
 
     <li>Renamed: columnApi.getState()/setState()/resetState() to columnApi.getColumnState()/setColumnState()/resetColumnState() </li>
 
@@ -526,10 +527,10 @@ params = {
 
     Took out virtual dom. This was an implementation detail, no change in how you interface with the grid.
     It only made an improvement on IE, and now that we are using delayed scrolling, IE is
-        working fast enough now. In addition, I have now tested with Windows 10 and Edge (the IE replacement) and
-        it's work very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
-        design. So I've favored a clean design rather than a more complex design just to get it faster in IE. If
-        you want to see how little difference a virtual DOM made, see the Angular Connect 2015 talk I gave.
+    working fast enough now. In addition, I have now tested with Windows 10 and Edge (the IE replacement) and
+    it's work very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
+    design. So I've favored a clean design rather than a more complex design just to get it faster in IE. If
+    you want to see how little difference a virtual DOM made, see the Angular Connect 2015 talk I gave.
 
 
 
@@ -607,28 +608,28 @@ params = {
     </p>
 
     <ul>
-    <li>Major: Grouping of headers is now called 'columnGrouping' and can now take multiple levels of groups.</li>
-    <li>Major: Pinning can now be done on the left and right, previously was just the right.</li>
-    <li>Major: Row pivoting is now called row grouping. So the two types of grouping are now called Row Grouping and Column Grouping. Pivoting was taken out as it wasn't true pivoting. The was done to allow true pivoting to happen in a future release and avoid any name clashes.</li>
-    <li>Major: gridOptions.groupKeys and gridOptions.groupAggFields are now gone. These were duplicated ways of setting rowGroups and rowAggregation. The correct (and only non-duplicated way) is to use colDef.rowGroupIndex and colDef.aggFunc.</li>
-    <li>Major: New Column API method setColumnPinned().</li>
-    <li>Major: api.refreshPivot() now called api.refreshRowGroup()</li>
-    <li>Major: Event EVENT_COLUMN_PINNED_COUNT_CHANGED removed and EVENT_COLUMN_PINNED added.</li>
-    <li>Major: Column getState() and setState() now include pinned state.</li>
-    <li>Major: Header Height is now height per row, so if 25, and three column groups, total header height is 3x25 = 75. Before it was total header height (so height was split evenly across the header rows)</li>
-    <li>Major: gridOptions.groupHeaders is no longer a property, as grouping in the headers is now defined inside the column definitions.</li>
-    <li>Minor: CSS Classes ag-header-cell-grouped and ag-header-cell-not-grouped are no longer used.</li>
-    <li>Major: colDef.headerGroupShow is now called colDef.columnGroupShow.</li>
-    <li>Major: Icons {headerGroupOpened, headerGroupClosed} now called {columnGroupOpened, columnGroupClosed}</li>
-    <li>Major: Column API - columnGroupOpened() renamed to setColumnGroupOpened()</li>
-    <li>Major: setColumnVisible(key) now takes a 'key' which can be a colId, field, ColDef object or Column object - previously you had to provide a Column object. Also new method setColumnsVisible(listOfKeys) for updating batches of columns.</li>
-    <li>Major: New methods setColumnPinned(key) and setColumnsPinned(listOfKeys) - behave similar to previously mentioned 'visible' methods</li>
-    <li>Major: In get/set column state, pivotIndex is now called rowGroupIndex</li>
-    <li>Major: If doing raw Javascript version, then angularGridGlobalFunction() is now deprecated, use "new ag.grid.Grid()" method instead.</li>
-    <li>Major: checkboxSelection (on colDef) can now be a function, so you can use params in the function
-        to work out at runtime if the cell should have a checkbox. gridOptions now also has function of the same
-        name, so you can configure the grid to have a checkbox in the first column always regardless of the colDef
-        (this is what the test drive does).</li>
+        <li>Major: Grouping of headers is now called 'columnGrouping' and can now take multiple levels of groups.</li>
+        <li>Major: Pinning can now be done on the left and right, previously was just the right.</li>
+        <li>Major: Row pivoting is now called row grouping. So the two types of grouping are now called Row Grouping and Column Grouping. Pivoting was taken out as it wasn't true pivoting. The was done to allow true pivoting to happen in a future release and avoid any name clashes.</li>
+        <li>Major: gridOptions.groupKeys and gridOptions.groupAggFields are now gone. These were duplicated ways of setting rowGroups and rowAggregation. The correct (and only non-duplicated way) is to use colDef.rowGroupIndex and colDef.aggFunc.</li>
+        <li>Major: New Column API method setColumnPinned().</li>
+        <li>Major: api.refreshPivot() now called api.refreshRowGroup()</li>
+        <li>Major: Event EVENT_COLUMN_PINNED_COUNT_CHANGED removed and EVENT_COLUMN_PINNED added.</li>
+        <li>Major: Column getState() and setState() now include pinned state.</li>
+        <li>Major: Header Height is now height per row, so if 25, and three column groups, total header height is 3x25 = 75. Before it was total header height (so height was split evenly across the header rows)</li>
+        <li>Major: gridOptions.groupHeaders is no longer a property, as grouping in the headers is now defined inside the column definitions.</li>
+        <li>Minor: CSS Classes ag-header-cell-grouped and ag-header-cell-not-grouped are no longer used.</li>
+        <li>Major: colDef.headerGroupShow is now called colDef.columnGroupShow.</li>
+        <li>Major: Icons {headerGroupOpened, headerGroupClosed} now called {columnGroupOpened, columnGroupClosed}</li>
+        <li>Major: Column API - columnGroupOpened() renamed to setColumnGroupOpened()</li>
+        <li>Major: setColumnVisible(key) now takes a 'key' which can be a colId, field, ColDef object or Column object - previously you had to provide a Column object. Also new method setColumnsVisible(listOfKeys) for updating batches of columns.</li>
+        <li>Major: New methods setColumnPinned(key) and setColumnsPinned(listOfKeys) - behave similar to previously mentioned 'visible' methods</li>
+        <li>Major: In get/set column state, pivotIndex is now called rowGroupIndex</li>
+        <li>Major: If doing raw Javascript version, then angularGridGlobalFunction() is now deprecated, use "new ag.grid.Grid()" method instead.</li>
+        <li>Major: checkboxSelection (on colDef) can now be a function, so you can use params in the function
+            to work out at runtime if the cell should have a checkbox. gridOptions now also has function of the same
+            name, so you can configure the grid to have a checkbox in the first column always regardless of the colDef
+            (this is what the test drive does).</li>
     </ul>
 
     <h3>Version 2.3.7</h3>
@@ -667,13 +668,13 @@ params = {
 
     <h3>Version 2.2.0</h3>
     <li>Major - Implemented 'destroy' API method, to release grids resources. Needed for Web Components and native
-    Javascript (AngularJS lifecycle manages this for you).</li>
+        Javascript (AngularJS lifecycle manages this for you).</li>
     <li>Major - Column resize events now have 'finished' flag, so if resizing, you know which event from a stream of
-    'dragging' events is the final one.</li>
+        'dragging' events is the final one.</li>
     <li>Major - New event: rowDeselected.</li>
     <li>Major - Now have 'customHeader' and 'customFooter' for export to csv.</li>
     <li>Minor - Now filters are positioned relative to their actual size instead of assuming each filter
-                is 200px wide. Now wide filters don't fall off the edge of the grid.</li>
+        is 200px wide. Now wide filters don't fall off the edge of the grid.</li>
     <li>Minor - Bug fix #459 - getTopLevelNodes was called for not reason during filter initialisation which resulted in 'undefined' error for server side filtering</li>
 
     <h3>Version 2.1.3</h3>

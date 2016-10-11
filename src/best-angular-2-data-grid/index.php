@@ -102,7 +102,7 @@ include '../documentation-main/documentation_header.php';
 })</pre>
 
     <note>Note: this configuration allows for Angular 2 Components within the grid, but not AOT. If you wish to use AOT please see the
-    relevant section <a href="#aot">below</a>.</note>
+        relevant section <a href="#aot">below</a>.</note>
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
@@ -145,7 +145,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="aot">Ahead of Time (AOT) Compilation</h2>
 
     <p>AOT is an option, but if you use AOT you will be <strong>unable</strong> to use Angular 2 Components within the grid.
-    This is because of restrictions/limitations within the Angular Compiler.</p>
+        This is because of restrictions/limitations within the Angular Compiler.</p>
 
     <p>In other words, you can either have:
     <ul>
@@ -249,7 +249,7 @@ include '../documentation-main/documentation_header.php';
     <p>The above section details how to specify the Grid itself. To declare columns you can specify them as follows:</p>
 
     <h3>Column Definition</h3>
-<pre ng-non-bindable>
+<pre>
 &lt;ag-grid-column headerName="Name" field="name" [width]="150">&lt;/ag-grid-column>
 </pre>
 
@@ -257,7 +257,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Setting Column Properties</h3>
     <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-<pre>
+<pre ng-non-bindable>
 <span class="codeComment">// string value</span>
 propertyName="String Value"
 [propertyName]="'String Value'"
