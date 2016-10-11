@@ -1,18 +1,22 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var columnGroup_1 = require("./columnGroup");
 var column_1 = require("./column");
 var OriginalColumnGroup = (function () {
-    function OriginalColumnGroup(colGroupDef, groupId) {
+    function OriginalColumnGroup(colGroupDef, groupId, padding) {
         this.expandable = false;
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
+        this.padding = padding;
     }
+    OriginalColumnGroup.prototype.isPadding = function () {
+        return this.padding;
+    };
     OriginalColumnGroup.prototype.setExpanded = function (expanded) {
         this.expanded = expanded;
     };
@@ -53,12 +57,11 @@ var OriginalColumnGroup = (function () {
         });
     };
     OriginalColumnGroup.prototype.getColumnGroupShow = function () {
-        if (this.colGroupDef) {
+        if (!this.padding) {
             return this.colGroupDef.columnGroupShow;
         }
         else {
-            // if there is no col def, then this must be a padding
-            // group, which means we have exactly only child. we then
+            // if this is padding we have exactly only child. we then
             // take the value from the child and push it up, making
             // this group 'invisible'.
             return this.children[0].getColumnGroupShow();

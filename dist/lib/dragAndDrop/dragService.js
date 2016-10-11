@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,14 +27,34 @@ var DragService = (function () {
         this.onMouseMoveListener = this.onMouseMove.bind(this);
         this.onTouchEndListener = this.onTouchUp.bind(this);
         this.onTouchMoveListener = this.onTouchMove.bind(this);
-        this.destroyFunctions = [];
+        this.dragEndFunctions = [];
+        this.dragSources = [];
     }
     DragService.prototype.init = function () {
         this.logger = this.loggerFactory.create('DragService');
         this.eBody = document.querySelector('body');
     };
     DragService.prototype.destroy = function () {
-        this.destroyFunctions.forEach(function (func) { return func(); });
+        this.dragSources.forEach(this.removeListener.bind(this));
+        this.dragSources.length = 0;
+    };
+    DragService.prototype.removeListener = function (dragSourceAndListener) {
+        var element = dragSourceAndListener.dragSource.eElement;
+        var mouseDownListener = dragSourceAndListener.mouseDownListener;
+        element.removeEventListener('mousedown', mouseDownListener);
+        // remove touch listener only if it exists
+        if (dragSourceAndListener.touchEnabled) {
+            var touchStartListener = dragSourceAndListener.touchStartListener;
+            element.removeEventListener('touchstart', touchStartListener);
+        }
+    };
+    DragService.prototype.removeDragSource = function (params) {
+        var dragSourceAndListener = utils_1.Utils.find(this.dragSources, function (item) { return item.dragSource === params; });
+        if (!dragSourceAndListener) {
+            return;
+        }
+        this.removeListener(dragSourceAndListener);
+        utils_1.Utils.removeFromArray(this.dragSources, dragSourceAndListener);
     };
     DragService.prototype.setNoSelectToBody = function (noSelect) {
         if (utils_1.Utils.exists(this.eBody)) {
@@ -45,33 +65,45 @@ var DragService = (function () {
         if (includeTouch === void 0) { includeTouch = false; }
         var mouseListener = this.onMouseDown.bind(this, params);
         params.eElement.addEventListener('mousedown', mouseListener);
-        this.destroyFunctions.push(function () { return params.eElement.removeEventListener('mousedown', mouseListener); });
-        if (includeTouch && this.gridOptionsWrapper.isEnableTouch()) {
-            var touchListener = this.onTouchStart.bind(this, params);
+        var touchListener = null;
+        if (includeTouch) {
+            touchListener = this.onTouchStart.bind(this, params);
             params.eElement.addEventListener('touchstart', touchListener);
-            this.destroyFunctions.push(function () { return params.eElement.removeEventListener('touchstart', touchListener); });
         }
+        this.dragSources.push({
+            dragSource: params,
+            mouseDownListener: mouseListener,
+            touchStartListener: touchListener,
+            touchEnabled: includeTouch
+        });
     };
     // gets called whenever mouse down on any drag source
     DragService.prototype.onTouchStart = function (params, touchEvent) {
-        touchEvent.preventDefault();
+        var _this = this;
         this.currentDragParams = params;
         this.dragging = false;
-        var touch = touchEvent.targetTouches[0];
+        var touch = touchEvent.touches[0];
         this.touchLastTime = touch;
         this.touchStart = touch;
+        touchEvent.preventDefault();
         // we temporally add these listeners, for the duration of the drag, they
-        // are removed in mouseup handling.
-        document.addEventListener('touchmove', this.onTouchMoveListener);
-        document.addEventListener('touchend', this.onTouchEndListener);
-        document.addEventListener('touchcancel', this.onTouchEndListener);
+        // are removed in touch end handling.
+        params.eElement.addEventListener('touchmove', this.onTouchMoveListener);
+        params.eElement.addEventListener('touchend', this.onTouchEndListener);
+        params.eElement.addEventListener('touchcancel', this.onTouchEndListener);
+        this.dragEndFunctions.push(function () {
+            params.eElement.removeEventListener('touchmove', _this.onTouchMoveListener);
+            params.eElement.removeEventListener('touchend', _this.onTouchEndListener);
+            params.eElement.removeEventListener('touchcancel', _this.onTouchEndListener);
+        });
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
-            this.onTouchMove(touchEvent);
+            this.onCommonMove(touch, this.touchStart);
         }
     };
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
+        var _this = this;
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
             return;
@@ -84,6 +116,10 @@ var DragService = (function () {
         // are removed in mouseup handling.
         document.addEventListener('mousemove', this.onMouseMoveListener);
         document.addEventListener('mouseup', this.onMouseUpListener);
+        this.dragEndFunctions.push(function () {
+            document.removeEventListener('mousemove', _this.onMouseMoveListener);
+            document.removeEventListener('mouseup', _this.onMouseUpListener);
+        });
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
             this.onMouseMove(mouseEvent);
@@ -94,12 +130,7 @@ var DragService = (function () {
     DragService.prototype.isEventNearStartEvent = function (currentEvent, startEvent) {
         // by default, we wait 4 pixels before starting the drag
         var requiredPixelDiff = utils_1.Utils.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
-        if (requiredPixelDiff === 0) {
-            return false;
-        }
-        var diffX = Math.abs(currentEvent.clientX - startEvent.clientX);
-        var diffY = Math.abs(currentEvent.clientY - startEvent.clientY);
-        return Math.max(diffX, diffY) <= requiredPixelDiff;
+        return utils_1.Utils.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     };
     DragService.prototype.getFirstActiveTouch = function (touchList) {
         for (var i = 0; i < touchList.length; i++) {
@@ -128,10 +159,11 @@ var DragService = (function () {
         this.currentDragParams.onDragging(currentEvent);
     };
     DragService.prototype.onTouchMove = function (touchEvent) {
-        var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
+        var touch = this.getFirstActiveTouch(touchEvent.touches);
         if (!touch) {
             return;
         }
+        // this.___statusBar.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
         this.onCommonMove(touch, this.touchStart);
     };
     // only gets called after a mouse down - as this is only added after mouseDown
@@ -149,25 +181,34 @@ var DragService = (function () {
         if (!touch) {
             touch = this.touchLastTime;
         }
-        document.removeEventListener('touchmove', this.onTouchMoveListener);
-        document.removeEventListener('touchend', this.onTouchEndListener);
-        document.removeEventListener('touchcancel', this.onTouchEndListener);
+        // if mouse was left up before we started to move, then this is a tap.
+        // we check this before onUpCommon as onUpCommon resets the dragging
+        // var tap = !this.dragging;
+        // var tapTarget = this.currentDragParams.eElement;
         this.onUpCommon(touch);
+        // if tap, tell user
+        // console.log(`${Math.random()} tap = ${tap}`);
+        // if (tap) {
+        //     tapTarget.click();
+        // }
     };
     DragService.prototype.onMouseUp = function (mouseEvent) {
-        document.removeEventListener('mouseup', this.onMouseUpListener);
-        document.removeEventListener('mousemove', this.onMouseMoveListener);
         this.onUpCommon(mouseEvent);
     };
-    DragService.prototype.onUpCommon = function (mouseEvent) {
+    DragService.prototype.onUpCommon = function (eventOrTouch) {
+        if (this.dragging) {
+            this.dragging = false;
+            this.currentDragParams.onDragStop(eventOrTouch);
+            this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STOPPED);
+        }
         this.setNoSelectToBody(false);
         this.mouseStartEvent = null;
         this.mouseEventLastTime = null;
-        if (this.dragging) {
-            this.dragging = false;
-            this.currentDragParams.onDragStop(mouseEvent);
-            this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STOPPED);
-        }
+        this.touchStart = null;
+        this.touchLastTime = null;
+        this.currentDragParams = null;
+        this.dragEndFunctions.forEach(function (func) { return func(); });
+        this.dragEndFunctions.length = 0;
     };
     __decorate([
         context_1.Autowired('loggerFactory'), 

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -287,6 +287,7 @@ var RenderedCell = (function (_super) {
         this.addCellFocusedListener();
         this.addKeyDownListener();
         this.addKeyPressListener();
+        this.addSuppressShortcutKeyListenersWhileEditing();
         var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.eGridCell);
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         // only set tab index if cell selection is enabled
@@ -471,8 +472,13 @@ var RenderedCell = (function (_super) {
         if (keyPress === void 0) { keyPress = null; }
         if (charPress === void 0) { charPress = null; }
         if (cellStartedEdit === void 0) { cellStartedEdit = false; }
+        // don't do it if not editable
         if (!this.isCellEditable()) {
-            return false;
+            return;
+        }
+        // don't do it if already editing
+        if (this.editingCell) {
+            return;
         }
         var cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
@@ -621,6 +627,19 @@ var RenderedCell = (function (_super) {
             return false;
         }
         return this.column.isCellEditable(this.node);
+    };
+    RenderedCell.prototype.addSuppressShortcutKeyListenersWhileEditing = function () {
+        var _this = this;
+        var keyDownListener = function (event) {
+            if (_this.editingCell) {
+                var metaKey = event.ctrlKey || event.metaKey;
+                var keyOfInterest = [constants_1.Constants.KEY_A, constants_1.Constants.KEY_C, constants_1.Constants.KEY_V, constants_1.Constants.KEY_D].indexOf(event.which) >= 0;
+                if (metaKey && keyOfInterest) {
+                    event.stopPropagation();
+                }
+            }
+        };
+        this.addDestroyableEventListener(this.eGridCell, 'keydown', keyDownListener);
     };
     RenderedCell.prototype.onMouseEvent = function (eventName, mouseEvent) {
         switch (eventName) {

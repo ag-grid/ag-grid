@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -63,6 +63,7 @@ export declare class DragAndDropService {
     static ICON_NOT_ALLOWED: string;
     static GHOST_TEMPLATE: string;
     private logger;
+    private dragSourceAndParamsList;
     private dragItem;
     private eventLastTime;
     private dragSource;
@@ -85,6 +86,8 @@ export declare class DragAndDropService {
     private init();
     private setBeans(loggerFactory);
     addDragSource(dragSource: DragSource, allowTouch?: boolean): void;
+    removeDragSource(dragSource: DragSource): void;
+    private destroy();
     nudge(): void;
     private onDragStart(dragSource, mouseEvent);
     private onDragStop(mouseEvent);
