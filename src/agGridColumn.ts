@@ -21,7 +21,8 @@ import {ColDef,
     ColumnApi,
     RowNode,
     IsColumnFunc,
-    IAggFunc
+    IAggFunc,
+    ColGroupDef
 } from "ag-grid/main";
 
 @Component({
@@ -43,7 +44,7 @@ export class AgGridColumn {
         let colDef:ColDef = this.createColDefFromGridColumn(this);
 
         if (this.hasChildColumns()) {
-            colDef["children"] = this.getChildColDefs(this.childColumns);
+            (<any>colDef)["children"] = this.getChildColDefs(this.childColumns);
         }
         return colDef;
     }
@@ -137,4 +138,13 @@ export class AgGridColumn {
         [key: string]: string;
     };
     @Input() public enableCellChangeFlash:boolean;
+
+    @Input() public headerName: string;
+    @Input() public columnGroupShow: string;
+    @Input() public headerClass: string | string[] | ((params: any) => string | string[]);
+    @Input() public children: (ColDef | ColGroupDef)[];
+    @Input() public groupId: string;
+    @Input() public openByDefault: boolean;
+    @Input() public marryChildren: boolean;
+
 }
