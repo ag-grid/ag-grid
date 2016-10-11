@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
             <td>Returns the display name for a column group (when grouping columns).</td>
         </tr>
         <tr>
-            <th>getColumn(key)</th>
+            <th>getColumn(colKey)</th>
             <td>Returns the column with the given 'key'. The key can either be the colId (a string)
             or the colDef (an object).</td>
         </tr>
@@ -165,27 +165,27 @@ include '../documentation-main/documentation_header.php';
             <td>Same as getVisibleColAfter except gives col to the left.</td>
         </tr>
         <tr>
-            <th>setColumnVisible(key, visible)</th>
+            <th>setColumnVisible(colKey, visible)</th>
             <td>Sets the visibility of a column. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
-            <th>setColumnsVisible(keys, visible)</th>
+            <th>setColumnsVisible(colKeys, visible)</th>
             <td>Same as setColumnVisible, but provide a list of column keys.</td>
         </tr>
         <tr>
-            <th>setColumnPinned(key, pinned)</th>
+            <th>setColumnPinned(colKey, pinned)</th>
             <td>Sets the column pinned / unpinned. Key can be the column id, field, ColDef object or Column object.</td>
         </tr>
         <tr>
-            <th>setColumnsPinned(keys, pinned)</th>
+            <th>setColumnsPinned(colKeys, pinned)</th>
             <td>Same as setColumnPinned, but provide a list of column keys.</td>
         </tr>
         <tr>
-            <th>autoSizeColumn(key)</th>
+            <th>autoSizeColumn(colKey)</th>
             <td>Auto-sizes a column based on it's contents.</td>
         </tr>
         <tr>
-            <th>autoSizeColumns(keys)</th>
+            <th>autoSizeColumns(colKeys)</th>
             <td>Same as autoSizeColumn, but provide a list of column keys.</td>
         </tr>
         <tr>
