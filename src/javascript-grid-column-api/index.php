@@ -84,6 +84,15 @@ include '../documentation-main/documentation_header.php';
         use columnApi directly on the DOM element.
     </p>
 
+    <h2>Column Keys</h2>
+
+    <p>
+        Some of the API methods take Column Key (named colKey). This means you can pass either a column object (that
+        you receive from calling one of the other methods) or you pass in the Column ID. The Column ID is either the
+        id you provide in the column definition, the field of the columns, or a generated ID if both are missing.
+        The grid also ensures column ID's are unique.
+    </p>
+
     <h2>List of Column API Functions</h2>
 
     <table class="table">
