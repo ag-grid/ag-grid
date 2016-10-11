@@ -26,6 +26,7 @@
     "./src/aggrid.module.ts",
     "./src/baseComponentFactory.ts",
     "./src/ng2ComponentFactory.ts",
-    "./src/ng2FrameworkFactory.ts"
+    "./src/ng2FrameworkFactory.ts",
+    "./src/agGridColumn.ts"
   ]
 }

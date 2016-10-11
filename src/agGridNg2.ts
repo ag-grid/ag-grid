@@ -1,9 +1,24 @@
-import {Component, EventEmitter, Input, Output, ViewEncapsulation, ViewContainerRef, ElementRef} from '@angular/core';
+import {Component,
+    EventEmitter,
+    Input,
+    Output,
+    ViewEncapsulation,
+    ViewContainerRef,
+    ElementRef,
+    ContentChildren,
+    QueryList,
+    OnInit,
+    AfterViewInit} from '@angular/core';
 
-import {Grid, GridOptions, GridApi, ColumnApi, ComponentUtil} from 'ag-grid/main';
-import {GridParams} from "ag-grid/main";
+import {Grid,
+    GridOptions,
+    GridApi,
+    ColumnApi,
+    GridParams,
+    ComponentUtil} from 'ag-grid/main';
 
 import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
+import {AgGridColumn} from "./agGridColumn";
 
 @Component({
     selector: 'ag-grid-ng2',
@@ -11,8 +26,7 @@ import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridNg2 {
-
+export class AgGridNg2 implements OnInit, AfterViewInit {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement:any;
@@ -24,6 +38,8 @@ export class AgGridNg2 {
     // making these public, so they are accessible to people using the ng2 component references
     public api:GridApi;
     public columnApi:ColumnApi;
+
+    @ContentChildren(AgGridColumn) public columns:QueryList<AgGridColumn>;
 
     constructor(elementDef:ElementRef,
                 private viewContainerRef:ViewContainerRef,
@@ -41,11 +57,21 @@ export class AgGridNg2 {
 
     // this gets called after the directive is initialised
     public ngOnInit():void {
+    }
+
+    ngAfterViewInit():void {
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
             frameworkFactory: this.ng2FrameworkFactory
         };
+
+        if(this.columns && this.columns.length > 0) {
+            this.gridOptions.columnDefs = this.columns
+                .map((column:AgGridColumn) => {
+                return column.toColDef();
+            });
+        }
 
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
         this.api = this.gridOptions.api;

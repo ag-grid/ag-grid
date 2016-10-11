@@ -1,8 +1,9 @@
 // ag-grid-ng2 v6.1.4
-import { EventEmitter, ViewContainerRef, ElementRef } from '@angular/core';
+import { EventEmitter, ViewContainerRef, ElementRef, QueryList, OnInit, AfterViewInit } from '@angular/core';
 import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
-export declare class AgGridNg2 {
+import { AgGridColumn } from "./agGridColumn";
+export declare class AgGridNg2 implements OnInit, AfterViewInit {
     private viewContainerRef;
     private ng2FrameworkFactory;
     private _nativeElement;
@@ -11,8 +12,10 @@ export declare class AgGridNg2 {
     private gridParams;
     api: GridApi;
     columnApi: ColumnApi;
+    columns: QueryList<AgGridColumn>;
     constructor(elementDef: ElementRef, viewContainerRef: ViewContainerRef, ng2FrameworkFactory: Ng2FrameworkFactory);
     ngOnInit(): void;
+    ngAfterViewInit(): void;
     ngOnChanges(changes: any): void;
     ngOnDestroy(): void;
     private globalEventListener(eventType, event);

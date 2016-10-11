@@ -5,14 +5,17 @@ import {AgGridNg2} from './agGridNg2';
 import {Ng2FrameworkFactory} from './ng2FrameworkFactory';
 import {Ng2ComponentFactory} from './ng2ComponentFactory';
 import {BaseComponentFactory} from "./baseComponentFactory";
+import {AgGridColumn} from "./agGridColumn";
 
 @NgModule({
     imports: [],
     declarations: [
-        AgGridNg2
+        AgGridNg2,
+        AgGridColumn
     ],
     exports: [
-        AgGridNg2
+        AgGridNg2,
+        AgGridColumn
     ]
 })
 export class AgGridModule {
