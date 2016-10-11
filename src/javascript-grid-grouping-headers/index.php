@@ -160,14 +160,28 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The example also shows using the API to open and close groups. To do this, you will need
-        to provide your groups with an ID during the definition, or look up the groups ID via the API
-        (as an ID is generated if you don't provide one).
+        The example also demonstrates the following features:
+    </p>
+    <ul>
+        <li>
+            Using the API to open and close groups. To do this, you will need
+            to provide your groups with an ID during the definition, or look up the groups ID via the API
+            (as an ID is generated if you don't provide one).
+        </li>
+        <li>
+            Demonstrates <i>colDef.openByDefault</i> property, where it sets this on F
+            and G groups, resulting in these groups appearing as open by default.
+        </li>
+        <li>
+            Uses <i>defaultColGroupDef</i> and <i>defaultColDef</i> to apply a class to some of
+            the headers. Using this technique, you can apply style to any of the header sections.
+        </li>
+    </ul>
+
+    <p>
     </p>
 
     <p>
-        The example also demonstrates <i>colDef.openByDefault</i> property, where it sets this on F
-        and G groups, resulting in these groups appearing as open by default.
     </p>
 
     <show-example example="exampleColumnGroupComplex"></show-example>
