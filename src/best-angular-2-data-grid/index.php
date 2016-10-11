@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
     <p>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
         for feedback or issue reporting around this functionality.</p>
 
-    <h2>ag-Grid React Features</h2>
+    <h2>ag-Grid Angular 2 Features</h2>
 
     <p>
         Every feature of ag-Grid is available when using the ag-Grid Angular 2 Component. The Angular 2 Component wraps
@@ -55,6 +55,7 @@ include '../documentation-main/documentation_header.php';
         feature set:
     <ul>
         <li>A Feature Rich Grid Example, demonstrating many of ag-Grid's features using Angular 2 as a wrapper</li>
+        <li>An Example using Markup to create a Grid</li>
         <li>A Simple Example, using CellRenders created from Angular 2 Components</li>
         <li>A Simple Example, using CellRenders created from Template Strings</li>
         <li>A Richer Example, using CellRenderers created from Angular 2 Components, with child components, and two-way
@@ -77,8 +78,8 @@ include '../documentation-main/documentation_header.php';
         contains the Angular 2 component.
         <pre>"dependencies": {
     ...
-    "ag-grid": "6.0.x",
-    "ag-grid-ng2": "6.0.x"
+    "ag-grid": "6.2.x",
+    "ag-grid-ng2": "6.2.x"
 }</pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
@@ -236,11 +237,77 @@ include '../documentation-main/documentation_header.php';
 &lt;/ag-grid-ng2></pre>
 
     <p>
-        The above is all you need to get started using ag-Grid in a React application. Now would
+        The above is all you need to get started using ag-Grid in a Angular 2 application. Now would
         be a good time to try it in a simple app and get some data displaying and practice with
         some of the grid settings before moving onto the advanced features of cellRendering
         and custom filtering.
     </p>
+
+    <h2 id="ng2markup">Creating Grids with Markup</h2>
+
+    <p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via declaratively with markup.</p>
+    <p>The above section details how to specify the Grid itself. To declare columns you can specify them as follows:</p>
+
+    <h3>Column Definition</h3>
+<pre ng-non-bindable>
+&lt;ag-grid-column headerName="Name" field="name" [width]="150">&lt;/ag-grid-column>
+</pre>
+
+    <p>This example declares a simple Column Definition, specifying header name, field and width.</p>
+
+    <h3>Setting Column Properties</h3>
+    <p>There are some simple rules you should follow when setting column properties via Markup:</p>
+<pre>
+<span class="codeComment">// string value</span>
+propertyName="String Value"
+[propertyName]="'String Value'"
+[propertyName]="{{Interpolated Value}}"
+[propertyName]="functionCallReturningAString()"
+
+<span class="codeComment">// boolean value</span>
+[propertyName]="true|false"
+[propertyName]="{{Interpolated Value}}"
+[propertyName]="functionCallReturningABoolean()"
+
+<span class="codeComment">// numeric value</span>
+[propertyName]="Numeric Value"
+[propertyName]="functionCallReturningANumber()"
+
+<span class="codeComment">// function value</span>
+[propertyName]="functionName"
+[propertyName]="functionCallReturningAFunction()"
+</pre>
+
+    <h4>Setting a Class or a Complex Value:</h4>
+    <p>You can set a Class or a Complex property in the following way:</p>
+<pre>
+<span class="codeComment">// return a Class definition for a Filter</span>
+[filter]="getSkillFilter()"
+
+private getSkillFilter():any {
+    return SkillFilter;
+}
+
+<span class="codeComment">// return an Object for filterParams</span>
+[filterParams]="getCountryFilterParams()"
+
+private getCountryFilterParams():any {
+    return {
+        cellRenderer: this.countryCellRenderer,
+        cellHeight: 20
+    }
+}
+</pre>
+
+    <h3>Grouped Column Definition</h3>
+    <p>To specify a Grouped Column, you can nest a column defintion:</p>
+<pre ng-non-bindable>
+&lt;ag-grid-column headerName="IT Skills">
+    &lt;ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true" [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()">&lt;/ag-grid-column>
+    &lt;ag-grid-column headerName="Proficiency" field="proficiency" [width]="120" [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()">&lt;/ag-grid-column>
+&lt;/ag-grid-column>
+</pre>
+    <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
     <h2>Cell Rendering & Cell Editing using Angular 2</h2>
 
