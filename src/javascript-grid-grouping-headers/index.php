@@ -157,9 +157,6 @@ include '../documentation-main/documentation_header.php';
         And here, to hammer in the 'no limit to the number of levels or groups', we have a more
         complex example. The grid here doesn't make much sense, it's just using the same Olympic
         Winners data and going crazy with the column groups.
-    </p>
-
-    <p>
         The example also demonstrates the following features:
     </p>
     <ul>
