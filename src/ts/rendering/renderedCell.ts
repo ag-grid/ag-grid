@@ -352,6 +352,7 @@ export class RenderedCell extends Component {
         this.addCellFocusedListener();
         this.addKeyDownListener();
         this.addKeyPressListener();
+        this.addSuppressShortcutKeyListenersWhileEditing();
 
         var setLeftFeature = new SetLeftFeature(this.column, this.eGridCell);
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
@@ -734,6 +735,19 @@ export class RenderedCell extends Component {
         }
 
         return this.column.isCellEditable(this.node);
+    }
+
+    private addSuppressShortcutKeyListenersWhileEditing(): void {
+        var keyDownListener = (event: any)=> {
+            if (this.editingCell) {
+                var metaKey = event.ctrlKey || event.metaKey;
+                var keyOfInterest = [Constants.KEY_A, Constants.KEY_C, Constants.KEY_V, Constants.KEY_D].indexOf(event.which) >= 0;
+                if (metaKey && keyOfInterest) {
+                    event.stopPropagation();
+                }
+            }
+        };
+        this.addDestroyableEventListener(this.eGridCell, 'keydown', keyDownListener);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
