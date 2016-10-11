@@ -15,6 +15,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">11th October 2016</div>
+        <div class="news-header">ag-Grid 6.2.x Released</div>
+        <div style="padding-top: 10px;">
+            ag-Grid 6.2.x released with <a href="../javascript-grid-touch/">Touch support.</a>,
+            <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>,
+            <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a> and many other Enhancements and Bug Fixes.
+            See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">ag-Grid Sponsors ng-Europe</div>
         <div style="text-align: center;">
             <a href="https://ngeurope.org/#platinum-sprs" style="text-align: center;">
@@ -27,17 +38,6 @@ include 'documentation_header.php';
                 ng-Europe
             </a>
             on 25th & 26th October 2016.
-        </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">11th October 2016</div>
-        <div class="news-header">ag-Grid 6.2.x Released</div>
-        <div style="padding-top: 10px;">
-            ag-Grid 6.2.x released with <a href="../javascript-grid-touch/">Touch support.</a>,
-            <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>,
-            <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a> and many other Enhancements and Bug Fixes.
-            See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>
 
