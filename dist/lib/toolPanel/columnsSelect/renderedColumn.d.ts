@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 import { Component, Column } from "ag-grid/main";
 export declare class RenderedColumn extends Component {
     private static TEMPLATE;
@@ -18,6 +18,7 @@ export declare class RenderedColumn extends Component {
     private processingColumnStateChange;
     constructor(column: Column, columnDept: number, allowDragging: boolean);
     init(): void;
+    private addTap();
     private onClick();
     private onChange(event);
     private actionUnCheckedPivotMode();

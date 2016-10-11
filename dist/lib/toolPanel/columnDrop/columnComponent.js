@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -27,36 +27,46 @@ var ColumnComponent = (function (_super) {
         this.ghost = ghost;
     }
     ColumnComponent.prototype.init = function () {
-        this.displayName = this.columnController.getDisplayNameForCol(this.column);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column);
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
         }
     };
     ColumnComponent.prototype.addDragSource = function () {
+        var _this = this;
         var dragSource = {
             type: main_1.DragSourceType.ToolPanel,
-            eElement: this.getGui(),
+            eElement: this.eText,
             dragItem: [this.column],
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
         };
-        this.dragAndDropService.addDragSource(dragSource);
+        this.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
     };
     ColumnComponent.prototype.setupComponents = function () {
-        var _this = this;
         this.setTextValue();
-        this.addDestroyableEventListener(this.btRemove, 'click', function (event) {
-            _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
-            event.stopPropagation();
-        });
-        main_1.Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        this.setupRemove();
         if (this.ghost) {
             main_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
+    };
+    ColumnComponent.prototype.setupRemove = function () {
+        var _this = this;
+        main_1.Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        this.addDestroyableEventListener(this.btRemove, 'click', function (event) {
+            _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
+            event.stopPropagation();
+        });
+        var touchListener = new main_1.TouchListener(this.btRemove);
+        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, function () {
+            _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
+        });
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
     ColumnComponent.prototype.setTextValue = function () {
         var displayValue;

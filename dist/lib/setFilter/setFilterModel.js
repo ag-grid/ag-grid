@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {
@@ -57,7 +57,9 @@ var SetFilterModel = (function () {
             var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
             this.allUniqueValues = main_1.Utils.toStrings(uniqueValuesAsAnyObjects);
         }
-        this.sortValues(this.allUniqueValues);
+        if (!this.suppressSorting) {
+            this.sortValues(this.allUniqueValues);
+        }
     };
     SetFilterModel.prototype.createAvailableUniqueValues = function () {
         var dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet;

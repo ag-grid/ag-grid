@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -27,7 +27,6 @@ var RenderedGroup = (function (_super) {
         this.allowDragging = allowDragging;
     }
     RenderedGroup.prototype.init = function () {
-        var _this = this;
         this.instantiate(this.context);
         var eText = this.queryForHtmlElement('#eText');
         this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
@@ -38,9 +37,13 @@ var RenderedGroup = (function (_super) {
         this.setupExpandContract();
         var eIndent = this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
-        this.addDestroyableEventListener(eText, 'click', function () { return _this.cbSelect.setSelected(!_this.cbSelect.isSelected()); });
+        this.addDestroyableEventListener(eText, 'click', this.onClick.bind(this));
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        var eCheckboxAndText = this.queryForHtmlElement('#eCheckboxAndText');
+        var touchListener = new main_1.TouchListener(eCheckboxAndText);
+        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onClick.bind(this));
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
         this.setOpenClosedIcons();
         if (this.allowDragging) {
             this.addDragSource();
@@ -58,13 +61,15 @@ var RenderedGroup = (function (_super) {
         });
     };
     RenderedGroup.prototype.addDragSource = function () {
+        var _this = this;
         var dragSource = {
             type: main_1.DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItemName: this.displayName,
             dragItem: this.columnGroup.getLeafColumns()
         };
-        this.dragAndDropService.addDragSource(dragSource);
+        this.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
     };
     RenderedGroup.prototype.setupExpandContract = function () {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
@@ -73,6 +78,13 @@ var RenderedGroup = (function (_super) {
         this.eGroupOpenedIcon.appendChild(main_1.Utils.createIcon('columnSelectOpen', this.gridOptionsWrapper, null, svgFactory.createFolderOpen));
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        var eColumnGroupIcons = this.queryForHtmlElement('#eColumnGroupIcons');
+        var touchListener = new main_1.TouchListener(eColumnGroupIcons);
+        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+    };
+    RenderedGroup.prototype.onClick = function () {
+        this.cbSelect.setSelected(!this.cbSelect.isSelected());
     };
     RenderedGroup.prototype.onCheckboxChanged = function () {
         if (this.processingColumnStateChange) {
@@ -199,12 +211,14 @@ var RenderedGroup = (function (_super) {
     };
     RenderedGroup.TEMPLATE = '<div class="ag-column-select-column-group">' +
         '  <span id="eIndent" class="ag-column-select-indent"></span>' +
-        '  <span class="ag-column-group-icons">' +
+        '  <span id="eColumnGroupIcons" class="ag-column-group-icons">' +
         '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
         '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
         '  </span>' +
-        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-        '  <span id="eText" class="ag-column-select-column-group-label"></span>' +
+        '  <span id="eCheckboxAndText">' +
+        '    <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
+        '    <span id="eText" class="ag-column-select-column-group-label"></span>' +
+        '  </span>' +
         '</div>';
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 

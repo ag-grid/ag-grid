@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -31,7 +31,7 @@ var SetFilter = (function (_super) {
     SetFilter.prototype.init = function (params) {
         this.params = params;
         this.applyActive = this.params.apply === true;
-        this.suppressSorting = this.params.suppressSorting;
+        this.suppressSorting = this.params.suppressSorting === true;
         this.newRowsActionKeep = this.params.newRowsAction === 'keep';
         if (main_1.Utils.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);

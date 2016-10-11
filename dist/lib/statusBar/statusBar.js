@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -21,6 +21,7 @@ var StatusBar = (function (_super) {
     function StatusBar() {
         _super.call(this, StatusBar.TEMPLATE);
         this.aggregationsComponent = new main_1.Component('<div class="ag-status-bar-aggregations"></div>');
+        this.infoLabel = new main_1.Component("<div class=\"ag-status-bar-info-label\"></div>");
     }
     StatusBar.prototype.init = function () {
         this.createStatusItems();
@@ -39,6 +40,7 @@ var StatusBar = (function (_super) {
             _this.aggregationsComponent.appendChild(statusItem);
             statusItem.setVisible(false);
         });
+        this.appendChild(this.infoLabel);
         this.appendChild(this.aggregationsComponent);
     };
     StatusBar.prototype.forEachStatusItem = function (callback) {

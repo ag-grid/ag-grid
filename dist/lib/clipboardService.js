@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -107,7 +107,7 @@ var ClipboardService = (function () {
                 _this.valueService.setValue(rowNode, column, value);
                 var cellId = new main_1.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
-                if (index === 0) {
+                if (updatedColumnIds.indexOf(column.getId()) < 0) {
                     updatedColumnIds.push(column.getId());
                 }
                 column = _this.columnController.getDisplayedColAfter(column);
@@ -176,7 +176,7 @@ var ClipboardService = (function () {
                 return;
             }
             columns.forEach(function (column, index) {
-                var value = _this.columnController.getDisplayNameForCol(column, true);
+                var value = _this.columnController.getDisplayNameForColumn(column, true);
                 if (index != 0) {
                     data += '\t';
                 }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -25,7 +25,7 @@ var RenderedColumn = (function (_super) {
         this.allowDragging = allowDragging;
     }
     RenderedColumn.prototype.init = function () {
-        this.displayName = this.columnController.getDisplayNameForCol(this.column);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column);
         this.eText.innerHTML = this.displayName;
         this.eIndent.style.width = (this.columnDept * 10) + 'px';
         if (this.allowDragging) {
@@ -41,6 +41,12 @@ var RenderedColumn = (function (_super) {
         this.onColumnStateChanged();
         this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
+        this.addTap();
+    };
+    RenderedColumn.prototype.addTap = function () {
+        var touchListener = new main_1.TouchListener(this.getGui());
+        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onClick.bind(this));
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
     RenderedColumn.prototype.onClick = function () {
         if (this.cbSelect.isReadOnly()) {
@@ -135,13 +141,15 @@ var RenderedColumn = (function (_super) {
         }
     };
     RenderedColumn.prototype.addDragSource = function () {
+        var _this = this;
         var dragSource = {
             type: main_1.DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItemName: this.displayName,
             dragItem: [this.column]
         };
-        this.dragAndDropService.addDragSource(dragSource);
+        this.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
     };
     RenderedColumn.prototype.onColumnStateChanged = function () {
         this.processingColumnStateChange = true;

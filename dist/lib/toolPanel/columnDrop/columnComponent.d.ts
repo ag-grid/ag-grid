@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 import { PopupService, Component, ColumnController, Context, EventService, DragAndDropService, GridPanel, GridOptionsWrapper, DropTarget, Column } from "ag-grid/main";
 import { AggFuncService } from "../../aggregation/aggFuncService";
 export declare class ColumnComponent extends Component {
@@ -24,6 +24,7 @@ export declare class ColumnComponent extends Component {
     init(): void;
     private addDragSource();
     private setupComponents();
+    private setupRemove();
     private setTextValue();
     private onShowAggFuncSelection();
     private createAggSelect(hidePopup, value);

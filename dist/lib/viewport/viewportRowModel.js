@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -98,7 +98,7 @@ var ViewportRowModel = (function () {
     };
     ViewportRowModel.prototype.getRow = function (rowIndex) {
         if (!this.rowNodesByIndex[rowIndex]) {
-            this.rowNodesByIndex[rowIndex] = this.createNode(null, rowIndex);
+            this.rowNodesByIndex[rowIndex] = this.createBlankRowNode(rowIndex);
         }
         return this.rowNodesByIndex[rowIndex];
     };
@@ -139,33 +139,26 @@ var ViewportRowModel = (function () {
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
             if (index >= _this.firstRow && index <= _this.lastRow) {
-                var nodeAlreadyExists = !!_this.rowNodesByIndex[index];
-                if (nodeAlreadyExists) {
-                    // if the grid already asked for this row (the normal case), then we would
-                    // of put a placeholder node in place.
-                    _this.rowNodesByIndex[index].setData(dataItem);
+                var rowNode = _this.rowNodesByIndex[index];
+                // the abnormal case is we requested a row even though the grid didn't need it
+                // as a result of the paging and buffer (ie the row is off screen), in which
+                // case we need to create a new node now
+                if (main_1.Utils.missing(rowNode)) {
+                    rowNode = _this.createBlankRowNode(index);
+                    _this.rowNodesByIndex[index] = rowNode;
                 }
-                else {
-                    // the abnormal case is we requested a row even though the grid didn't need it
-                    // as a result of the paging and buffer (ie the row is off screen), in which
-                    // case we need to create a new node now
-                    _this.rowNodesByIndex[index] = _this.createNode(dataItem, index);
-                }
+                // now we deffo have a row node, so set in the details
+                // if the grid already asked for this row (the normal case), then we would
+                // of put a placeholder node in place.
+                rowNode.setDataAndId(dataItem, index.toString());
             }
         });
     };
-    // this is duplicated in virtualPageRowModel, need to refactor
-    ViewportRowModel.prototype.createNode = function (data, rowIndex) {
-        var rowHeight = this.rowHeight;
-        var top = rowHeight * rowIndex;
-        // need to refactor this, get it in sync with VirtualPageRowController, which was not
-        // written with the rowNode.rowUpdated in mind
+    ViewportRowModel.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = new main_1.RowNode();
         this.context.wireBean(rowNode);
-        rowNode.id = rowIndex.toString();
-        rowNode.data = data;
-        rowNode.rowTop = top;
-        rowNode.rowHeight = rowHeight;
+        rowNode.rowHeight = this.rowHeight;
+        rowNode.rowTop = this.rowHeight * rowIndex;
         return rowNode;
     };
     ViewportRowModel.prototype.setRowCount = function (rowCount) {

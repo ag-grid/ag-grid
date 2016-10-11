@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 import { Component } from 'ag-grid/main';
 export declare class StatusBar extends Component {
     private static TEMPLATE;
@@ -16,6 +16,7 @@ export declare class StatusBar extends Component {
     private statusItemMax;
     private statusItemAvg;
     private aggregationsComponent;
+    private infoLabel;
     constructor();
     private init();
     private createStatusItems();

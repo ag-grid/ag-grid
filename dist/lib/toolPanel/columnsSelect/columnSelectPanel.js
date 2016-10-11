@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -48,7 +48,10 @@ var ColumnSelectPanel = (function (_super) {
     ColumnSelectPanel.prototype.recursivelyRenderGroupComponent = function (columnGroup, dept) {
         // only render group if user provided the definition
         var newDept;
-        if (columnGroup.getColGroupDef()) {
+        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) {
+            return;
+        }
+        if (!columnGroup.isPadding()) {
             var renderedGroup = new renderedGroup_1.RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
             this.appendChild(renderedGroup.getGui());
@@ -63,6 +66,9 @@ var ColumnSelectPanel = (function (_super) {
         this.recursivelyRenderComponents(columnGroup.getChildren(), newDept);
     };
     ColumnSelectPanel.prototype.recursivelyRenderColumnComponent = function (column, dept) {
+        if (column.getColDef() && column.getColDef().suppressToolPanel) {
+            return;
+        }
         var renderedColumn = new renderedColumn_1.RenderedColumn(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
         this.appendChild(renderedColumn.getGui());

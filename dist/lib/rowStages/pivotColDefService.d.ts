@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.1.0
+// ag-grid-enterprise v6.2.0
 import { ColDef, ColGroupDef } from "ag-grid/main";
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
@@ -7,7 +7,7 @@ export interface PivotColDefServiceResult {
 export declare class PivotColDefService {
     private columnController;
     createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult;
-    private recursivelyAddGroup(parentChildren, pivotColumnDefs, index, uniqueValues, pivotKeys, columnIdSequence, levelsDeep);
-    private createColDef(valueColumn, headerName, pivotKeys, columnIdSequence, valueGetter);
-    private headerNameComparator(a, b);
+    private recursivelyAddGroup(parentChildren, pivotColumnDefs, index, uniqueValues, pivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns);
+    private createColDef(valueColumn, headerName, pivotKeys, columnIdSequence);
+    private headerNameComparator(userComparator, a, b);
 }
