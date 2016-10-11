@@ -20,6 +20,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement - Added <a href="../javascript-grid-tool-panel/#suppressExample">'suppressToolPanel'</a> to column definitions, so suppress columns from appearing in the toolpanel.</li>
     <li>Enhancement - headerValueGetter now also works for column groups.</li>
     <li>Enhancement - Added <a href="../javascript-grid-pivoting/#manipulatingSecondaryColumns"> <i>processSecondaryColDef</i> and <i>processSecondaryColGroupDef</i></a> for pivoting, to allow modification of the pivot columns.</li>
+    <li>Enhancement - Added <i>onlySelectedAllPages</i> to CSV export - so if doing pagination, exports selected across all pages.</li>
 
     <li>Bugfix - suppressSorting in Set Filter was not getting used, now fixed.</li>
     <li>Bugfix - export to CSV was failing when doing avg aggregation on data, now fixed.</li>
