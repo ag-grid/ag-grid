@@ -3,9 +3,9 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <title>ag-Grid Support</title>
+    <title>ag-Grid About</title>
     <meta name="description" content="ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.">
-    <meta name="keywords" content="ag-Grid Javascript Grid Support"/>
+    <meta name="keywords" content="ag-Grid Javascript Grid About"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
