@@ -1,4 +1,4 @@
-// ag-grid-react v6.1.0
+// ag-grid-react v6.2.0
 export declare class AgReactComponent {
     private eParentElement;
     private componentRef;
