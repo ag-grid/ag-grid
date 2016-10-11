@@ -251,8 +251,8 @@ include '../documentation-main/documentation_header.php';
                 to have different rows editable.</td>
         </tr>
         <tr>
-            <th>editable</th>
-            <td>Set to true if this col is navigable (ie can be tabbed into), otherwise false.
+            <th>suppressNavigable</th>
+            <td>Set to true if this col is not navigable (ie cannot be tabbed into), otherwise false.
                 Can also be a function to have different rows navigable.</td>
         </tr>
         <tr>
