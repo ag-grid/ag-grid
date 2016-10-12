@@ -168,12 +168,14 @@ function aggAvg(input: any[]): any {
 
         var currentItem = input[i];
 
+        var itemIsGroupResult = Utils.exists(currentItem) && typeof currentItem.value === 'number' && typeof currentItem.count === 'number';
+
         // skip values that are not numbers (ie skip empty values)
         if (typeof currentItem === 'number') {
             sum += currentItem;
             count++;
         // check if it's a group (ie value is a wrapper object)
-        } else if (typeof currentItem.value === 'number' && typeof currentItem.count === 'number') {
+        } else if (itemIsGroupResult) {
             // we are aggregating groups, so we take the
             // aggregated values to calculated a weighted average
             sum += currentItem.value * currentItem.count;
