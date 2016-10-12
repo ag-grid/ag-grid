@@ -80,7 +80,12 @@ export class VirtualPageCache {
 
     public getRowIndexAtPixel(pixel: number): number {
         if (this.cacheParams.rowHeight !== 0) { // avoid divide by zero error
-            return Math.floor(pixel / this.cacheParams.rowHeight);
+            var rowIndexForPixel = Math.floor(pixel / this.cacheParams.rowHeight);
+            if (rowIndexForPixel >= this.virtualRowCount) {
+                return this.virtualRowCount - 1;
+            } else {
+                return rowIndexForPixel;
+            }
         } else {
             return 0;
         }
