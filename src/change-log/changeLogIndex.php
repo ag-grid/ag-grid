@@ -10,6 +10,10 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 6.2.x</h2>
 
+    <li>Bugfix - range select threw error for virtual pagination when drag went below the available rows.</li>
+
+    <h2>Version 6.2.x</h2>
+
     <li>New Feature - <a href="../javascript-grid-touch/">Touch support.</a></li>
     <li>New Feature - <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>. So instead of declaring common properties in each column, define them once in the default.</li>
     <li>New Feature - <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a>. Option to create Grids with Markup (declaratively).</li>
