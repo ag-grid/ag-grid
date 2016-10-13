@@ -140,7 +140,7 @@ function aggCount(input: any[]): any {
     var result = {
         value: 0,
         toString: function() {
-            return this.value;
+            return this.value.toString();
         }
     };
     var length = input.length;
