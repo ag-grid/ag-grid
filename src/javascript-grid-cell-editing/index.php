@@ -546,7 +546,7 @@ class NameCellEditor extends React.Component {
 
     render() {
     <span class="codeComment">// put in render logic</span>
-        return &lt;input type="text" value="{this.state.value}">&lt;/input>;
+        return &lt;input type="text" value={this.state.value}>&lt;/input>;
     }
 
     <span class="codeComment">// more logic is needed, but enough for now to show the general setup</span>
