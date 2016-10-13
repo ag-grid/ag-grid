@@ -12,6 +12,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Bugfix - range select threw error for virtual pagination when drag went below the available rows.</li>
     <li>Bugfix - avg aggregation function was failing when value was undefined or null.</li>
+    <li>Bugfix - export to CSV was failing when doing count aggregation on data, now fixed.</li>
 
     <h2>Version 6.2.x</h2>
 
