@@ -51,6 +51,7 @@ ag-Grid-React-Example
 
 ag-Grid-Docs
 
++ update changeLogIndex.php with release details
 + Update 'notusedXXX' across the project to the next number
 + Update version in package.json
 + Commit to Github (do NOT include built files in /dist)
@@ -58,4 +59,3 @@ ag-Grid-Docs
 + Copy dist folder to website (might be easier to zip it first, the explode zip in hostgater file manager)
 
 
-+ update changeLogIndex.php with release details
