@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.0
+ * @version v6.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -99,7 +99,7 @@ var RowRenderer = (function () {
         var eCells = [];
         utils_1.Utils.iterateObject(this.renderedRows, callback);
         utils_1.Utils.iterateObject(this.renderedBottomFloatingRows, callback);
-        utils_1.Utils.iterateObject(this.renderedBottomFloatingRows, callback);
+        utils_1.Utils.iterateObject(this.renderedTopFloatingRows, callback);
         function callback(key, renderedRow) {
             var eCell = renderedRow.getCellForCol(column);
             if (eCell) {
