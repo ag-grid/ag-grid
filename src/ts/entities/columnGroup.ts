@@ -17,32 +17,32 @@ export class ColumnGroup implements ColumnGroupChild {
     // depends on the open/closed state of the group, only displaying columns are stored here
     private displayedChildren:ColumnGroupChild[] = [];
 
-    private groupId:string;
-    private instanceId:number;
-    private originalColumnGroup:OriginalColumnGroup;
+    private groupId: string;
+    private instanceId: number;
+    private originalColumnGroup: OriginalColumnGroup;
 
     private moving = false;
-    private left:number;
+    private left: number;
     private eventService:EventService = new EventService();
 
-    constructor(originalColumnGroup:OriginalColumnGroup, groupId:string, instanceId:number) {
+    private parent: ColumnGroupChild;
+
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number) {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
     }
 
-    public getUniqueId(): string {
-        return this.groupId + '_' + this.instanceId;
+    public getParent(): ColumnGroupChild {
+        return this.parent;
     }
 
-    // returns header name if it exists, otherwise null. if will not exist if
-    // this group is a padding group, as they don't have colGroupDef's
-    public getHeaderName(): string {
-        if (this.originalColumnGroup.getColGroupDef()) {
-            return this.originalColumnGroup.getColGroupDef().headerName;
-        } else {
-            return null;
-        }
+    public setParent(parent: ColumnGroupChild): void {
+        this.parent = parent;
+    }
+
+    public getUniqueId(): string {
+        return this.groupId + '_' + this.instanceId;
     }
 
     public checkLeft(): void {
@@ -161,8 +161,13 @@ export class ColumnGroup implements ColumnGroupChild {
     public getDefinition(): AbstractColDef {
         return this.originalColumnGroup.getColGroupDef();
     }
+
     public getColGroupDef(): ColGroupDef {
         return this.originalColumnGroup.getColGroupDef();
+    }
+
+    public isPadding(): boolean {
+        return this.originalColumnGroup.isPadding();
     }
 
     public isExpandable(): boolean {

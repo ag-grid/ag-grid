@@ -17,7 +17,7 @@ export class StandardMenuFactory implements IMenuFactory {
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper:GridOptionsWrapper;
 
-    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent): void {
+    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent|Touch): void {
         this.showPopup(column, (eMenu: HTMLElement) => {
             this.popupService.positionPopupUnderMouseEvent({
                 mouseEvent: mouseEvent,

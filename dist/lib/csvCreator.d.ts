@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,6 +19,7 @@ export interface CsvExportParams {
     allColumns?: boolean;
     columnSeparator?: string;
     onlySelected?: boolean;
+    onlySelectedAllPages?: boolean;
     processCellCallback?(params: ProcessCellForExportParams): void;
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 }
@@ -28,6 +29,7 @@ export declare class CsvCreator {
     private columnController;
     private valueService;
     private gridOptionsWrapper;
+    private selectionController;
     exportDataAsCsv(params?: CsvExportParams): void;
     getDataAsCsv(params?: CsvExportParams): string;
     private getHeaderName(callback, column);

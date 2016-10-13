@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -57,7 +57,7 @@ export declare class RenderedCell extends Component {
     private setPinnedClasses();
     getParentRow(): HTMLElement;
     setParentRow(eParentRow: HTMLElement): void;
-    calculateCheckboxSelection(): any;
+    calculateCheckboxSelection(): boolean;
     getColumn(): Column;
     private getValue();
     private getDataForRow();
@@ -97,6 +97,7 @@ export declare class RenderedCell extends Component {
     getRenderedRow(): RenderedRow;
     isSuppressNavigable(): boolean;
     isCellEditable(): boolean;
+    private addSuppressShortcutKeyListenersWhileEditing();
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     private onContextMenu(mouseEvent);
     private onCellDoubleClicked(mouseEvent);

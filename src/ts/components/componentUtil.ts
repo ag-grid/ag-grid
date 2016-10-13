@@ -19,8 +19,8 @@ export class ComponentUtil {
 
     public static OBJECT_PROPERTIES = [
         'rowStyle','context','groupColumnDef','localeText','icons','datasource','viewportDatasource',
-        'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams'
-        //,'cellRenderers','cellEditors'
+        'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams','defaultColGroupDef','defaultColDef'
+    //,'cellRenderers','cellEditors'
     ];
 
     public static ARRAY_PROPERTIES = [
@@ -50,7 +50,7 @@ export class ComponentUtil {
         'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard','pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
-        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'enableTouch'
+        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer',
@@ -58,7 +58,7 @@ export class ComponentUtil {
         'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
         'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
-        'doesDataFlower'];
+        'doesDataFlower', 'processSecondaryColDef','processSecondaryColGroupDef'];
 
     public static ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)

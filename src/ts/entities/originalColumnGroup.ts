@@ -12,10 +12,17 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
     private expandable = false;
     private expanded: boolean;
 
-    constructor(colGroupDef: ColGroupDef, groupId: string) {
+    private padding: boolean;
+
+    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
+        this.padding = padding;
+    }
+
+    public isPadding(): boolean {
+        return this.padding;
     }
 
     public setExpanded(expanded: boolean): void {
@@ -67,11 +74,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
     }
 
     public getColumnGroupShow(): string {
-        if (this.colGroupDef) {
+        if (!this.padding) {
             return this.colGroupDef.columnGroupShow;
         } else {
-            // if there is no col def, then this must be a padding
-            // group, which means we have exactly only child. we then
+            // if this is padding we have exactly only child. we then
             // take the value from the child and push it up, making
             // this group 'invisible'.
             return this.children[0].getColumnGroupShow();

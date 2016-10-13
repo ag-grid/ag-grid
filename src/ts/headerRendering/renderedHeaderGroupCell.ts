@@ -11,6 +11,7 @@ import {CssClassApplier} from "./cssClassApplier";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
+import {TouchListener} from "../widgets/touchListener";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -56,9 +57,10 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
         this.eHeaderGroupCell = document.createElement('div');
 
-        CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper);
+        CssClassApplier.addHeaderClassesFromCollDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper, null, this.columnGroup);
 
-        this.displayName = this.columnGroup.getHeaderName();
+        // this.displayName = this.columnGroup.getHeaderName();
+        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup);
 
         this.setupResize();
         this.addClasses();
@@ -96,10 +98,11 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell');
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
-        if (this.columnGroup.getColGroupDef()) {
-            _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-with-group');
-        } else {
+        // columnGroup.getColGroupDef
+        if (this.columnGroup.isPadding()) {
             _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-no-group');
+        } else {
+            _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-with-group');
         }
     }
 
@@ -168,6 +171,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource, true);
+            this.destroyFunctions.push( ()=> this.dragAndDropService.removeDragSource(dragSource) );
         }
     }
 
@@ -219,11 +223,23 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         eGroupIcon.className = 'ag-header-expand-icon';
         eGroupCellLabel.appendChild(eGroupIcon);
 
-        var that = this;
-        eGroupIcon.onclick = function() {
-            var newExpandedValue = !that.columnGroup.isExpanded();
-            that.columnController.setColumnGroupOpened(that.columnGroup, newExpandedValue);
+        var expandAction = ()=> {
+            var newExpandedValue = !this.columnGroup.isExpanded();
+            this.columnController.setColumnGroupOpened(this.columnGroup, newExpandedValue);
         };
+
+        eGroupIcon.addEventListener('click', expandAction);
+
+        this.destroyFunctions.push( ()=> {
+            eGroupIcon.removeEventListener('click', expandAction);
+        });
+
+        let touchListener = new TouchListener(eGroupIcon);
+        touchListener.addEventListener(TouchListener.EVENT_TAP, expandAction);
+        this.destroyFunctions.push( ()=> {
+            touchListener.removeEventListener(TouchListener.EVENT_TAP, expandAction);
+            touchListener.destroy();
+        });
     }
 
     public onDragStart(): void {

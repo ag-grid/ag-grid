@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,10 +19,13 @@ export declare class DragService {
     private onTouchEndListener;
     private onTouchMoveListener;
     private logger;
-    private destroyFunctions;
+    private dragEndFunctions;
     private eBody;
+    private dragSources;
     private init();
     private destroy();
+    private removeListener(dragSourceAndListener);
+    removeDragSource(params: DragListenerParams): void;
     private setNoSelectToBody(noSelect);
     addDragSource(params: DragListenerParams, includeTouch?: boolean): void;
     private onTouchStart(params, touchEvent);
@@ -34,7 +37,7 @@ export declare class DragService {
     private onMouseMove(mouseEvent);
     onTouchUp(touchEvent: TouchEvent): void;
     onMouseUp(mouseEvent: MouseEvent): void;
-    onUpCommon(mouseEvent: MouseEvent | Touch): void;
+    onUpCommon(eventOrTouch: MouseEvent | Touch): void;
 }
 export interface DragListenerParams {
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */

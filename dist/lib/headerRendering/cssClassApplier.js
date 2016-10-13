@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,7 +8,7 @@ var utils_1 = require('../utils');
 var CssClassApplier = (function () {
     function CssClassApplier() {
     }
-    CssClassApplier.addHeaderClassesFromCollDef = function (abstractColDef, eHeaderCell, gridOptionsWrapper) {
+    CssClassApplier.addHeaderClassesFromCollDef = function (abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup) {
         if (abstractColDef && abstractColDef.headerClass) {
             var classToUse;
             if (typeof abstractColDef.headerClass === 'function') {
@@ -17,6 +17,8 @@ var CssClassApplier = (function () {
                     // however most people won't appreciate the difference,
                     // so keeping it as colDef to avoid confusion.
                     colDef: abstractColDef,
+                    column: column,
+                    columnGroup: columnGroup,
                     context: gridOptionsWrapper.getContext(),
                     api: gridOptionsWrapper.getApi()
                 };

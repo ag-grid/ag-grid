@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,6 +26,7 @@ var context_1 = require("../context/context");
 var context_2 = require("../context/context");
 var context_3 = require("../context/context");
 var context_4 = require("../context/context");
+var utils_1 = require("../utils");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var BalancedColumnTreeBuilder = (function () {
     function BalancedColumnTreeBuilder() {
@@ -69,7 +70,8 @@ var BalancedColumnTreeBuilder = (function () {
                 var newChild = child;
                 for (var i = columnDept - 1; i >= currentDept; i--) {
                     var newColId = columnKeyCreator.getUniqueKey(null, null);
-                    var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(null, newColId);
+                    var colGroupDefMerged = _this.createMergedColGroupDef(null);
+                    var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, newColId, true);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
                 }
@@ -99,24 +101,41 @@ var BalancedColumnTreeBuilder = (function () {
             return result;
         }
         abstractColDefs.forEach(function (abstractColDef) {
-            _this.checkForDeprecatedItems(abstractColDef);
+            var newGroupOrColumn;
             if (_this.isColumnGroup(abstractColDef)) {
-                var groupColDef = abstractColDef;
-                var groupId = columnKeyCreator.getUniqueKey(groupColDef.groupId, null);
-                var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(groupColDef, groupId);
-                var children = _this.recursivelyCreateColumns(groupColDef.children, level + 1, columnKeyCreator, primaryColumns);
-                originalGroup.setChildren(children);
-                result.push(originalGroup);
+                newGroupOrColumn = _this.createColumnGroup(columnKeyCreator, primaryColumns, abstractColDef, level);
             }
             else {
-                var colDef = abstractColDef;
-                var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-                var column = new column_1.Column(colDef, colId, primaryColumns);
-                _this.context.wireBean(column);
-                result.push(column);
+                newGroupOrColumn = _this.createColumn(columnKeyCreator, primaryColumns, abstractColDef);
             }
+            result.push(newGroupOrColumn);
         });
         return result;
+    };
+    BalancedColumnTreeBuilder.prototype.createColumnGroup = function (columnKeyCreator, primaryColumns, colGroupDef, level) {
+        var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
+        var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
+        var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
+        originalGroup.setChildren(children);
+        return originalGroup;
+    };
+    BalancedColumnTreeBuilder.prototype.createMergedColGroupDef = function (colGroupDef) {
+        var colGroupDefMerged = {};
+        utils_1.Utils.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
+        utils_1.Utils.assign(colGroupDefMerged, colGroupDef);
+        this.checkForDeprecatedItems(colGroupDefMerged);
+        return colGroupDefMerged;
+    };
+    BalancedColumnTreeBuilder.prototype.createColumn = function (columnKeyCreator, primaryColumns, colDef3) {
+        var colDefMerged = {};
+        utils_1.Utils.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
+        utils_1.Utils.assign(colDefMerged, colDef3);
+        this.checkForDeprecatedItems(colDefMerged);
+        var colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+        var column = new column_1.Column(colDefMerged, colId, primaryColumns);
+        this.context.wireBean(column);
+        return column;
     };
     BalancedColumnTreeBuilder.prototype.checkForDeprecatedItems = function (colDef) {
         if (colDef) {

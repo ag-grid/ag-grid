@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -9,7 +9,7 @@ import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { MenuItem } from "../widgets/menuItemComponent";
 import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
-import { IAggFunc } from "./colDef";
+import { IAggFunc, ColGroupDef, ColDef } from "./colDef";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -28,7 +28,6 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
-    enableTouch?: boolean;
     enableColResize?: boolean;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
@@ -95,6 +94,8 @@ export interface GridOptions {
     localeText?: any;
     localeTextFunc?: Function;
     suppressScrollLag?: boolean;
+    defaultColGroupDef?: ColGroupDef;
+    defaultColDef?: ColDef;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -118,7 +119,7 @@ export interface GridOptions {
     rowDeselection?: boolean;
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
-    checkboxSelection?: Function;
+    checkboxSelection?: (params: any) => boolean;
     rowHeight?: number;
     headerCellTemplate?: string;
     /****************************************************************
@@ -167,6 +168,8 @@ export interface GridOptions {
     doesDataFlower?(dataItem: any): boolean;
     processRowPostCreate?(params: ProcessRowParams): void;
     processCellForClipboard?(params: ProcessCellForExportParams): any;
+    processSecondaryColDef?(colDef: ColDef): void;
+    processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

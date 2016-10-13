@@ -29,7 +29,10 @@ export class ColumnApi {
     public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
     public setColumnGroupOpened(group: ColumnGroup|string, newValue: boolean, instanceId?: number): void { this._columnController.setColumnGroupOpened(group, newValue, instanceId); }
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
-    public getDisplayNameForCol(column: any): string { return this._columnController.getDisplayNameForCol(column); }
+
+    public getDisplayNameForColumn(column: Column): string { return this._columnController.getDisplayNameForColumn(column); }
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup): string { return this._columnController.getDisplayNameForColumnGroup(columnGroup); }
+
     public getColumn(key: any): Column { return this._columnController.getPrimaryColumn(key); }
     public setColumnState(columnState: any): boolean { return this._columnController.setColumnState(columnState); }
     public getColumnState(): any[] { return this._columnController.getColumnState(); }
@@ -118,7 +121,6 @@ export class ColumnApi {
         this.resetColumnState();
     }
 
-
     public getAggregationColumns(): Column[] {
         console.error('ag-Grid: getAggregationColumns is deprecated, use getValueColumns');
         return this._columnController.getValueColumns();
@@ -147,6 +149,11 @@ export class ColumnApi {
     public setColumnAggFunction(column: Column, aggFunc: string): void {
         console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
         this._columnController.setColumnAggFunc(column, aggFunc); 
+    }
+
+    public getDisplayNameForCol(column: any): string {
+        console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
+        return this.getDisplayNameForColumn(column);
     }
 
 }
@@ -1158,8 +1165,8 @@ export class ColumnController {
         return null;
     }
 
-    public getDisplayNameForCol(column: any, includeAggFunc = false): string {
-        var headerName = this.getHeaderName(column);
+    public getDisplayNameForColumn(column: Column, includeAggFunc = false): string {
+        var headerName = this.getHeaderName(column.getColDef(), column, null);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);
         } else {
@@ -1167,13 +1174,23 @@ export class ColumnController {
         }
     }
 
-    private getHeaderName(column: Column): string {
-        var colDef = column.getColDef();
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup): string {
+        var colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
+        if (colGroupDef) {
+            return this.getHeaderName(colGroupDef, null, columnGroup);
+        } else {
+            return null;
+        }
+    }
+
+    private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup): string {
         var headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
             var params = {
                 colDef: colDef,
+                column: column,
+                columnGroup: columnGroup,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
@@ -1192,6 +1209,35 @@ export class ColumnController {
             return colDef.headerName;
         }
     }
+
+    /*
+        private getHeaderGroupName(columnGroup: ColumnGroup): string {
+            var colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
+            var headerValueGetter = colGroupDef.headerValueGetter;
+
+            if (headerValueGetter) {
+                var params = {
+                    columnGroup: columnGroup,
+                    colDef: colGroupDef,
+                    api: this.gridOptionsWrapper.getApi(),
+                    context: this.gridOptionsWrapper.getContext()
+                };
+
+                if (typeof headerValueGetter === 'function') {
+                    // valueGetter is a function, so just call it
+                    return headerValueGetter(params);
+                } else if (typeof headerValueGetter === 'string') {
+                    // valueGetter is an expression, so execute the expression
+                    return this.expressionService.evaluate(headerValueGetter, params);
+                } else {
+                    console.warn('ag-grid: headerValueGetter must be a function or a string');
+                    return '';
+                }
+            } else {
+                return colGroupDef.headerName;
+            }
+        }
+    */
 
     private wrapHeaderNameWithAggFunc(column: Column, headerName: string): string {
         if (this.gridOptionsWrapper.isSuppressAggFuncInHeader()) {
@@ -1414,13 +1460,13 @@ export class ColumnController {
     }
 
     public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[]): void {
-
         var newColsPresent = colDefs && colDefs.length>0;
-        
+
         // if not cols passed, and we had to cols anyway, then do nothing
         if (!newColsPresent && !this.secondaryColumnsPresent) { return; }
-        
+
         if (newColsPresent) {
+            this.processSecondaryColumnDefinitions(colDefs);
             var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(colDefs, false);
             this.secondaryBalancedTree = balancedTreeResult.balancedTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
@@ -1435,6 +1481,34 @@ export class ColumnController {
 
         this.copyDownGridColumns();
         this.updateDisplayedColumns();
+    }
+
+    private processSecondaryColumnDefinitions(colDefs: (ColDef|ColGroupDef)[]): (ColDef|ColGroupDef)[] {
+
+        let columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
+        let groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
+
+        if (!columnCallback && !groupCallback) { return; }
+
+        searchForColDefs(colDefs);
+
+        function searchForColDefs(colDefs2: (ColDef|ColGroupDef)[]): void {
+            colDefs2.forEach( function(abstractColDef: AbstractColDef) {
+                var isGroup = _.exists((<any>abstractColDef).children);
+                if (isGroup) {
+                    let colGroupDef = <ColGroupDef> abstractColDef;
+                    if (groupCallback) {
+                        groupCallback(colGroupDef);
+                    }
+                    searchForColDefs(colGroupDef.children);
+                } else {
+                    let colDef = <ColGroupDef> abstractColDef;
+                    if (columnCallback) {
+                        columnCallback(colDef);
+                    }
+                }
+            });
+        }
     }
 
     // called from: setColumnState, setColumnDefs, setAlternativeColumnDefs

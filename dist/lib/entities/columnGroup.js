@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,18 +16,14 @@ var ColumnGroup = (function () {
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
     }
+    ColumnGroup.prototype.getParent = function () {
+        return this.parent;
+    };
+    ColumnGroup.prototype.setParent = function (parent) {
+        this.parent = parent;
+    };
     ColumnGroup.prototype.getUniqueId = function () {
         return this.groupId + '_' + this.instanceId;
-    };
-    // returns header name if it exists, otherwise null. if will not exist if
-    // this group is a padding group, as they don't have colGroupDef's
-    ColumnGroup.prototype.getHeaderName = function () {
-        if (this.originalColumnGroup.getColGroupDef()) {
-            return this.originalColumnGroup.getColGroupDef().headerName;
-        }
-        else {
-            return null;
-        }
     };
     ColumnGroup.prototype.checkLeft = function () {
         // first get all children to setLeft, as it impacts our decision below
@@ -129,6 +125,9 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.prototype.getColGroupDef = function () {
         return this.originalColumnGroup.getColGroupDef();
+    };
+    ColumnGroup.prototype.isPadding = function () {
+        return this.originalColumnGroup.isPadding();
     };
     ColumnGroup.prototype.isExpandable = function () {
         return this.originalColumnGroup.isExpandable();

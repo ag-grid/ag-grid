@@ -62,7 +62,6 @@ export class FilterManager {
                 _.removeFromArray(modelKeys, colId);
                 var newModel = model[colId];
                 this.setModelOnFilterWrapper(filterWrapper.filter, newModel);
-                this.setModelOnFilterWrapper(filterWrapper.filter, newModel);
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
             _.iterateArray(modelKeys, (colId) => {

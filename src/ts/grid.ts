@@ -10,7 +10,6 @@ import {FilterManager} from "./filter/filterManager";
 import {ValueService} from "./valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
-import {OldToolPanelDragAndDropService} from "./dragAndDrop/oldToolPanelDragAndDropService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {GridApi} from "./gridApi";
 import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
@@ -117,7 +116,7 @@ export class Grid {
                 FilterManager, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
                 TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
-                LoggerFactory, OldToolPanelDragAndDropService, ColumnUtils, AutoWidthCalculator, GridApi,
+                LoggerFactory, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,

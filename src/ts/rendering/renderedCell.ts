@@ -158,7 +158,7 @@ export class RenderedCell extends Component {
         this.eParentRow = eParentRow;
     }
 
-    public calculateCheckboxSelection() {
+    public calculateCheckboxSelection(): boolean {
         // never allow selection on floating rows
         if (this.node.floating) {
             return false;
@@ -167,14 +167,14 @@ export class RenderedCell extends Component {
         // if boolean set, then just use it
         var colDef = this.column.getColDef();
         if (typeof colDef.checkboxSelection === 'boolean') {
-            return colDef.checkboxSelection;
+            return <boolean> colDef.checkboxSelection;
         }
 
         // if function, then call the function to find out. we first check colDef for
         // a function, and if missing then check gridOptions, so colDef has precedence
-        var selectionFunc: Function;
+        var selectionFunc: (params: any)=>boolean;
         if (typeof colDef.checkboxSelection === 'function') {
-            selectionFunc = <Function>colDef.checkboxSelection;
+            selectionFunc = <(params: any)=>boolean> colDef.checkboxSelection;
         }
         if (!selectionFunc && this.gridOptionsWrapper.getCheckboxSelection()) {
             selectionFunc = this.gridOptionsWrapper.getCheckboxSelection();
@@ -352,6 +352,7 @@ export class RenderedCell extends Component {
         this.addCellFocusedListener();
         this.addKeyDownListener();
         this.addKeyPressListener();
+        this.addSuppressShortcutKeyListenersWhileEditing();
 
         var setLeftFeature = new SetLeftFeature(this.column, this.eGridCell);
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
@@ -555,9 +556,11 @@ export class RenderedCell extends Component {
     // either called internally if single cell editing, or called by rowRenderer if row editing
     public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false) {
 
-        if (!this.isCellEditable()) {
-            return false;
-        }
+        // don't do it if not editable
+        if (!this.isCellEditable()) { return; }
+
+        // don't do it if already editing
+        if (this.editingCell) { return; }
 
         var cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
@@ -732,6 +735,19 @@ export class RenderedCell extends Component {
         }
 
         return this.column.isCellEditable(this.node);
+    }
+
+    private addSuppressShortcutKeyListenersWhileEditing(): void {
+        var keyDownListener = (event: any)=> {
+            if (this.editingCell) {
+                var metaKey = event.ctrlKey || event.metaKey;
+                var keyOfInterest = [Constants.KEY_A, Constants.KEY_C, Constants.KEY_V, Constants.KEY_D].indexOf(event.which) >= 0;
+                if (metaKey && keyOfInterest) {
+                    event.stopPropagation();
+                }
+            }
+        };
+        this.addDestroyableEventListener(this.eGridCell, 'keydown', keyDownListener);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {

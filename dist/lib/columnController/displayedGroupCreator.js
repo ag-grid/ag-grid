@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -67,7 +67,18 @@ var DisplayedGroupCreator = (function () {
             previousRealPath = currentRealPath;
             previousOriginalPath = currentOriginalPath;
         });
+        this.setupParentsIntoColumns(result, null);
         return result;
+    };
+    DisplayedGroupCreator.prototype.setupParentsIntoColumns = function (columnsOrGroups, parent) {
+        var _this = this;
+        columnsOrGroups.forEach(function (columnsOrGroup) {
+            columnsOrGroup.setParent(parent);
+            if (columnsOrGroup instanceof columnGroup_1.ColumnGroup) {
+                var columnGroup = columnsOrGroup;
+                _this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
+            }
+        });
     };
     DisplayedGroupCreator.prototype.createFakePath = function (balancedColumnTree) {
         var result = [];
@@ -76,7 +87,7 @@ var DisplayedGroupCreator = (function () {
         var index = 0;
         while (currentChildren && currentChildren[0] && currentChildren[0] instanceof originalColumnGroup_1.OriginalColumnGroup) {
             // putting in a deterministic fake id, in case the API in the future needs to reference the col
-            result.push(new originalColumnGroup_1.OriginalColumnGroup(null, 'FAKE_PATH_' + index));
+            result.push(new originalColumnGroup_1.OriginalColumnGroup(null, 'FAKE_PATH_' + index, true));
             currentChildren = currentChildren[0].getChildren();
             index++;
         }

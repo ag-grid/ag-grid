@@ -11,6 +11,7 @@ import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {ColDef} from "./entities/colDef";
 import {Utils as _} from "./utils";
+import {SelectionController} from "./selectionController";
 
 var LINE_SEPARATOR = '\r\n';
 
@@ -28,6 +29,7 @@ export interface CsvExportParams {
     allColumns?: boolean;
     columnSeparator?: string;
     onlySelected?: boolean;
+    onlySelectedAllPages?: boolean;
     processCellCallback?(params: ProcessCellForExportParams): void;
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 }
@@ -40,6 +42,7 @@ export class CsvCreator {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
 
     public exportDataAsCsv(params?: CsvExportParams): void {
         var csvString = this.getDataAsCsv(params);
@@ -87,6 +90,7 @@ export class CsvCreator {
         var columnSeparator = (params && params.columnSeparator) || ',';
         var suppressQuotes = params && params.suppressQuotes;
         var columnKeys = params && params.columnKeys;
+        var onlySelectedAllPages = params && params.onlySelectedAllPages
         var processCellCallback = params && params.processCellCallback;
         var processHeaderCallback = params && params.processHeaderCallback;
 
@@ -122,7 +126,12 @@ export class CsvCreator {
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
         } else {
-            inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+            if (onlySelectedAllPages) {
+                var selectedNodes = this.selectionController.getSelectedNodes();
+                selectedNodes.forEach(processRow);
+            } else {
+                inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+            }
         }
 
         this.floatingRowModel.forEachFloatingBottomRow(processRow);
@@ -190,7 +199,7 @@ export class CsvCreator {
                 context: this.gridOptionsWrapper.getContext()
             });
         } else {
-            return this.columnController.getDisplayNameForCol(column, true);
+            return this.columnController.getDisplayNameForColumn(column, true);
         }
     }
 

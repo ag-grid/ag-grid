@@ -133,6 +133,8 @@ export class SelectionController {
         if (this.selectedNodes[rowNode.id] !== undefined) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
+        } else {
+            rowNode.setSelectedInitialValue(false);
         }
     }
 

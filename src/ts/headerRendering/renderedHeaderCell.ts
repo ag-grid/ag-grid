@@ -13,6 +13,7 @@ import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {SortController} from "../sortController";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
+import {TouchListener} from "../widgets/touchListener";
 
 export class RenderedHeaderCell implements IRenderedHeaderElement {
 
@@ -62,16 +63,17 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
         this.createScope();
         this.addAttributes();
-        CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper);
+        CssClassApplier.addHeaderClassesFromCollDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper, this.column, null);
 
         // label div
         var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
 
-        this.displayName = this.columnController.getDisplayNameForCol(this.column, true);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, true);
 
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
+        this.setupTap();
         this.setupMove(eHeaderCellLabel);
         this.setupMenu();
         this.setupSort(eHeaderCellLabel);
@@ -246,7 +248,28 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource, true);
+            this.destroyFunctions.push( ()=> this.dragAndDropService.removeDragSource(dragSource) );
         }
+    }
+
+    private setupTap(): void {
+
+        let touchListener = new TouchListener(this.getGui());
+        let tapListener = (touch: Touch)=> {
+            this.sortController.progressSort(this.column, false);
+        };
+        let longTapListener = (touch: Touch)=> {
+            this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.column, touch);
+        };
+
+        touchListener.addEventListener(TouchListener.EVENT_TAP, tapListener);
+        touchListener.addEventListener(TouchListener.EVENT_LONG_TAP, longTapListener);
+
+        this.destroyFunctions.push( ()=> {
+            touchListener.removeEventListener(TouchListener.EVENT_TAP, tapListener);
+            touchListener.removeEventListener(TouchListener.EVENT_LONG_TAP, longTapListener);
+            touchListener.destroy();
+        });
     }
 
     private setupResize(): void {

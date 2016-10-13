@@ -1,10 +1,10 @@
 import {Logger, LoggerFactory} from "../logger";
-import {Qualifier, PostConstruct, Bean, Autowired} from "../context/context";
+import {Qualifier, PostConstruct, Bean, Autowired, PreDestroy} from "../context/context";
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SvgFactory} from "../svgFactory";
-import {DragService} from "./dragService";
+import {DragService, DragListenerParams} from "./dragService";
 import {ColumnController} from "../columnController/columnController";
 
 var svgFactory = SvgFactory.getInstance();
@@ -83,6 +83,8 @@ export class DragAndDropService {
 
     private logger: Logger;
 
+    private dragSourceAndParamsList: {params: DragListenerParams, dragSource: DragSource}[] = [];
+
     private dragItem: Column[];
     private eventLastTime: MouseEvent;
     private dragSource: DragSource;
@@ -128,16 +130,33 @@ export class DragAndDropService {
         }
     }
 
-    // we do not need to clean up drag sources, as we are just adding a listener to the element.
-    // when the element is disposed, the drag source is also disposed, even though this service
-    // remains. this is a bit different to normal 'addListener' methods
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
-        this.dragService.addDragSource({
+        let params = <DragListenerParams> {
             eElement: dragSource.eElement,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
-        }, allowTouch);
+        };
+
+        this.dragSourceAndParamsList.push({params: params, dragSource: dragSource});
+
+        this.dragService.addDragSource(params, allowTouch);
+    }
+
+    public removeDragSource(dragSource: DragSource): void {
+        var sourceAndParams = _.find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
+        if (sourceAndParams) {
+            this.dragService.removeDragSource(sourceAndParams.params);
+            _.removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
+        }
+    }
+
+    @PreDestroy
+    private destroy(): void {
+        this.dragSourceAndParamsList.forEach( sourceAndParams => {
+            this.dragService.removeDragSource(sourceAndParams.params);
+        });
+        this.dragSourceAndParamsList.length = 0;
     }
 
     public nudge(): void {

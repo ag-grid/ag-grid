@@ -147,7 +147,7 @@ export class RowRenderer {
 
         _.iterateObject(this.renderedRows, callback);
         _.iterateObject(this.renderedBottomFloatingRows, callback);
-        _.iterateObject(this.renderedBottomFloatingRows, callback);
+        _.iterateObject(this.renderedTopFloatingRows, callback);
 
         function callback(key: any, renderedRow: RenderedRow) {
             var eCell = renderedRow.getCellForCol(column);

@@ -6,7 +6,7 @@ export interface IMenuFactory {
 
     showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void;
 
-    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent): void;
+    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent|Touch): void;
 
     isMenuEnabled(column: Column): boolean;
 }

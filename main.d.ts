@@ -13,7 +13,6 @@ export * from './dist/lib/context/context';
 
 export * from './dist/lib/dragAndDrop/dragAndDropService';
 export * from './dist/lib/dragAndDrop/dragService';
-export * from './dist/lib/dragAndDrop/oldToolPanelDragAndDropService';
 
 export * from './dist/lib/entities/colDef';
 export * from './dist/lib/entities/column';
@@ -116,6 +115,7 @@ export * from './dist/lib/widgets/componentAnnotations';
 export * from './dist/lib/widgets/menuItemComponent';
 export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
+export * from './dist/lib/widgets/touchListener';
 
 export * from './dist/lib/baseFrameworkFactory';
 export * from './dist/lib/cellNavigationService';

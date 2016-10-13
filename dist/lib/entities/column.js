@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.1.0
+ * @version v6.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,6 +39,12 @@ var Column = (function () {
         this.colId = colId;
         this.primary = primary;
     }
+    Column.prototype.setParent = function (parent) {
+        this.parent = parent;
+    };
+    Column.prototype.getParent = function () {
+        return this.parent;
+    };
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
         this.floatingCellRenderer = this.frameworkFactory.colDefFloatingCellRenderer(this.colDef);

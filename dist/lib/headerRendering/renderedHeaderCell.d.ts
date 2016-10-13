@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.1.0
+// Type definitions for ag-grid v6.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -41,6 +41,7 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     showMenu(eventSource: HTMLElement): void;
     private setupMovingCss();
     private setupMove(eHeaderCellLabel);
+    private setupTap();
     private setupResize();
     private useRenderer(headerNameValue, headerCellRenderer, eText);
     setupSort(eHeaderCellLabel: HTMLElement): void;

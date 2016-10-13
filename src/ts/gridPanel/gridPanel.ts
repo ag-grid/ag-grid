@@ -10,7 +10,7 @@ import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy} from ".
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {IRowModel} from "../interfaces/iRowModel";
-import {DragService} from "../dragAndDrop/dragService";
+import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {SelectionController} from "../selectionController";
@@ -291,13 +291,17 @@ export class GridPanel {
             this.eFloatingTop, this.eFloatingBottom];
 
         containers.forEach(container => {
-            this.dragService.addDragSource({
+            var params = <DragListenerParams> {
                 dragStartPixels: 0,
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
                 onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
                 onDragging: this.rangeController.onDragging.bind(this.rangeController)
-            });
+            };
+
+            this.dragService.addDragSource(params);
+
+            this.destroyFunctions.push( ()=> this.dragService.removeDragSource(params) );
         });
     }
 
