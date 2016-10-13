@@ -8,7 +8,8 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h2>Version 6.2.x</h2>
+    <h4>Version 6.2.1</h4>
+    <h4>ag-grid 6.2.1, ag-grid-enterprise 6.2.1</h4>
 
     <li>Bugfix - range select threw error for virtual pagination when drag went below the available rows.</li>
     <li>Bugfix - avg aggregation function was failing when value was undefined or null.</li>
