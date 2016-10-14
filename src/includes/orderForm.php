@@ -50,6 +50,7 @@
         <div class="form-group">
             <label for="WebToContact[message]">Your message to us below. If ordering, please provide the following information:</label>
             <ul>
+                <li>Company Address and VAT Number (EU only for VAT number).</li>
                 <li>Do you require an Application Developer or a Site Developer license?
                     <i data-toggle="popover"
                        title="<strong>Application Developer vs Site Developer?</strong"
