@@ -163,9 +163,9 @@ export class RowNode {
         return this.selected;
     }
 
-    public deptFirstSearch( callback: (rowNode: RowNode) => void ): void {
+    public depthFirstSearch( callback: (rowNode: RowNode) => void ): void {
         if (this.childrenAfterGroup) {
-            this.childrenAfterGroup.forEach( child => child.deptFirstSearch(callback) );
+            this.childrenAfterGroup.forEach( child => child.depthFirstSearch(callback) );
         }
         callback(this);
     }
@@ -360,7 +360,7 @@ export class RowNode {
         var inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         inMemoryRowModel.getTopLevelNodes().forEach( topLevelNode => {
             if (topLevelNode.group) {
-                topLevelNode.deptFirstSearch( childNode => {
+                topLevelNode.depthFirstSearch( childNode => {
                     if (childNode.group) {
                         childNode.calculateSelectedFromChildren();
                     }

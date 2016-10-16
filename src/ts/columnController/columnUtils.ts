@@ -98,39 +98,39 @@ export class ColumnUtils {
         }
     }*/
 
-    public deptFirstOriginalTreeSearch(tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild)=>void ): void {
+    public depthFirstOriginalTreeSearch(tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild)=>void ): void {
 
         if (!tree) { return; }
 
         tree.forEach( (child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                this.deptFirstOriginalTreeSearch((<OriginalColumnGroup>child).getChildren(), callback);
+                this.depthFirstOriginalTreeSearch((<OriginalColumnGroup>child).getChildren(), callback);
             }
             callback(child);
         });
 
     }
 
-    public deptFirstAllColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
+    public depthFirstAllColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
 
         if (!tree) { return; }
 
         tree.forEach( (child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                this.deptFirstAllColumnTreeSearch((<ColumnGroup>child).getChildren(), callback);
+                this.depthFirstAllColumnTreeSearch((<ColumnGroup>child).getChildren(), callback);
             }
             callback(child);
         });
 
     }
 
-    public deptFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
+    public depthFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
 
         if (!tree) { return; }
 
         tree.forEach( (child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                this.deptFirstDisplayedColumnTreeSearch((<ColumnGroup>child).getDisplayedChildren(), callback);
+                this.depthFirstDisplayedColumnTreeSearch((<ColumnGroup>child).getDisplayedChildren(), callback);
             }
             callback(child);
         });

@@ -89,7 +89,7 @@ export class SelectionController {
         }
         var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
         inMemoryRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
-            rowNode.deptFirstSearch( (rowNode)=> {
+            rowNode.depthFirstSearch( (rowNode)=> {
                 if (rowNode.group) {
                     rowNode.calculateSelectedFromChildren();
                 }
