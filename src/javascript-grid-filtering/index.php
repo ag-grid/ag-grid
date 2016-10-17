@@ -101,6 +101,16 @@ columnDefinition = {
         to filter the data (which will include the new quick filter).
     </p>
 
+    <h4>Reset Quick Filters</h4>
+
+    <p>Quick filters can be reset in any of the following ways:
+        <ul>
+            <li>Each rowNode has a <code>resetQuickFilterAggregateText</code> method on it - call this to reset the quick filter</li>
+            <li><code>rowNode.setDataValue(colKey, newValue)</code> will also reset the quick filter</li>
+            <li>Lastly, if using the grid editing features, when you update a cell, the quick filter will get reset.</li>
+        </ul>
+    </p>
+
     <h3>Built In Filters Example</h3>
 
     <p>
@@ -381,7 +391,7 @@ nameFilter.setModel(model);</pre>
         The example also shows 'gridApi.destroyFilter(col)' which completely destroys a filter. Use this is if you want
         a filter to be created again with new initialisation values.
     </p>
-    
+
     <p>
         (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
     </p>
