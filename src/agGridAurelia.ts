@@ -1,5 +1,5 @@
-import {bindable,autoinject
-     noView,
+import {bindable,autoinject,
+     inlineView,
     customElement,
     ComponentAttached,
     ComponentDetached,
@@ -17,7 +17,8 @@ import {AureliaFrameworkFactory} from "./aureliaFrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 
 @customElement('ag-grid-aurelia')
-@noView()
+// <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
+@inlineView(`<template><slot></slot></template>`)
 @autoinject()
 export class AgGridAurelia implements ComponentAttached, ComponentDetached {
     // not intended for user to interact with. so putting _ in so if user gets reference
@@ -32,7 +33,8 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
     public api:GridApi;
     public columnApi:ColumnApi;
 
-    @children('ag-grid-column')  public columns:AgGridColumn[];
+    @children('ag-grid-column')
+    public columns:AgGridColumn[] = [];
 
     constructor(element:Element,
                 private ng2FrameworkFactory:AureliaFrameworkFactory,
@@ -74,8 +76,17 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
         this._initialised = true;
     }
 
-    //todo: need generic onChanges for aurelia
-    public ngOnChanges(changes:any):void {
+    /**
+     * Called by Aurelia whenever a bound property changes
+     * @param propertyName
+     * @param newValue
+     * @param oldValue
+     */
+    propertyChanged(propertyName, newValue, oldValue) {
+        //emulate an Angular2 SimpleChanges Object
+        var changes = {};
+        changes[propertyName] = {currentValue:newValue, previousValue:oldValue};
+
         if (this._initialised) {
             ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
         }

@@ -16,7 +16,13 @@ export declare class AgGridAurelia implements ComponentAttached, ComponentDetach
     columns: AgGridColumn[];
     constructor(element: Element, ng2FrameworkFactory: AureliaFrameworkFactory, container: Container, viewResources: ViewResources);
     attached(): void;
-    ngOnChanges(changes: any): void;
+    /**
+     * Called by Aurelia whenever a bound property changes
+     * @param propertyName
+     * @param newValue
+     * @param oldValue
+     */
+    propertyChanged(propertyName: any, newValue: any, oldValue: any): void;
     detached(): void;
     private globalEventListener(eventType, event);
     /**

@@ -1,5 +1,5 @@
 import {bindable,
-    noView,
+    inlineView,
     customElement,
     children} from 'aurelia-framework';
 import {ColDef,
@@ -19,9 +19,11 @@ import {ColDef,
 } from "ag-grid/main";
 
 @customElement('ag-grid-column')
-@noView()
+// <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
+@inlineView(`<template><slot></slot></template>`)
 export class AgGridColumn {
-    @children('ag-grid-column') public childColumns:AgGridColumn[];
+    @children('ag-grid-column')
+    public childColumns:AgGridColumn[] = [];
 
     public hasChildColumns():boolean {
         return this.childColumns && this.childColumns.length > 0;
@@ -38,7 +40,6 @@ export class AgGridColumn {
 
     private getChildColDefs(childColumns:AgGridColumn[]) {
         return childColumns
-            // necessary because of https://github.com/angular/angular/issues/10098
             .filter(column => !column.hasChildColumns())
             .map((column:AgGridColumn) => {
                 return column.toColDef();
@@ -47,7 +48,9 @@ export class AgGridColumn {
 
     private createColDefFromGridColumn(from:AgGridColumn):ColDef {
         let colDef:ColDef = {};
-        Object.assign(colDef, from);
+        for (var prop in this) {
+            colDef[prop] = this[prop];
+        }
         delete (<any>colDef).childColumns;
         return colDef;
     };

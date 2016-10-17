@@ -40,5 +40,13 @@
   },
   "dependencies": {
 
+  },
+  "aurelia": {
+    "build": {
+      "resources": [
+        "ag-grid-aurelia/lib/agGridAurelia",
+        "ag-grid-aurelia/lib/agGridColumn"
+      ]
+    }
   }
 }
