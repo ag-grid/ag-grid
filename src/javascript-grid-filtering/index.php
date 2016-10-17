@@ -111,7 +111,7 @@ columnDefinition = {
         <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
-        <li>'suppressFilter' is set on Total to prevent filtering on this column</li>
+        <li>'suppressFilter' is set on Total to hide the filter on this column</li>
     </ul>
     </p>
 
