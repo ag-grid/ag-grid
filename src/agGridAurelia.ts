@@ -110,8 +110,7 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
         //var emitter = <EventEmitter<any>> (<any>this)[eventType];
         var emitter = (<any>this)[eventType];
         if (emitter) {
-            //todo: maybe .call.  not too sure
-            emitter.call(event);
+            emitter(event);
         } else {
             console.log('ag-Grid-aurelia: could not find EventEmitter: ' + eventType);
         }
