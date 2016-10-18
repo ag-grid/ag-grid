@@ -119,6 +119,7 @@ export class AgGridNg2 implements OnInit, AfterViewInit {
     @Input() public floatingTopRowData:any;
     @Input() public floatingBottomRowData:any;
     @Input() public columnDefs:any;
+    @Input() public defaultColDef:any;
     @Input() public rowStyle:any;
     @Input() public context:any;
     @Input() public groupColumnDef:any;
