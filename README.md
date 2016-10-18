@@ -1,6 +1,7 @@
 
 ag-Grid
 ==============
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 
 "ag" stands for AGnostic
 
