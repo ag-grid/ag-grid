@@ -71,6 +71,7 @@ include '../documentation-main/documentation_header.php';
     <li>Breaking Change: React now uses props directly for the init params in filters, cellRenderers and cellEditors.</li>
     <li>Breaking Change: Filter interface now called IFilter.</li>
     <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
+    <li>Breaking Change: setColumnVisible() no longer accepts ColDefs as an argument. colIds or Columns are the available options now.</li>
     <li>Enhancement: Tooltips now don't show if null or undefined.</li>
     <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
         api.getFloatingBottomRow(index) for accessing floating rows</li>

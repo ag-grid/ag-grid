@@ -166,7 +166,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>setColumnVisible(colKey, visible)</th>
-            <td>Sets the visibility of a column. Key can be the column id, field, ColDef object or Column object.</td>
+            <td>Sets the visibility of a column. Key can be the column id or Column object.</td>
         </tr>
         <tr>
             <th>setColumnsVisible(colKeys, visible)</th>
