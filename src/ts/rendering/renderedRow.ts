@@ -571,8 +571,10 @@ export class RenderedRow {
     }
 
     private destroyFullWidthComponent(): void {
-        if (this.fullWidthRowComponent && this.fullWidthRowComponent.destroy) {
-            this.fullWidthRowComponent.destroy();
+        if (this.fullWidthRowComponent) {
+            if (this.fullWidthRowComponent.destroy) {
+                this.fullWidthRowComponent.destroy();
+            }
             this.fullWidthRowComponent = null;
         }
         _.removeAllChildren(this.eFullWidthRow);

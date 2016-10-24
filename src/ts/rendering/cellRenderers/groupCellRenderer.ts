@@ -105,7 +105,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private createFromInnerRenderer(params: any): void {
-        this.cellRendererService.useCellRenderer(params.innerRenderer, this.eValue, params);
+        let innerComponent = this.cellRendererService.useCellRenderer(params.innerRenderer, this.eValue, params);
+        this.addDestroyFunc( ()=> {
+            if (innerComponent && innerComponent.destroy) {
+                innerComponent.destroy();
+            }
+        });
     }
 
     private createFooterCell(params: any): void {
