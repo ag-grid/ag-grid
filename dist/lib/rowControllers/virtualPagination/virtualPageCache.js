@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.0
+ * @version v6.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,7 +62,13 @@ var VirtualPageCache = (function () {
     };
     VirtualPageCache.prototype.getRowIndexAtPixel = function (pixel) {
         if (this.cacheParams.rowHeight !== 0) {
-            return Math.floor(pixel / this.cacheParams.rowHeight);
+            var rowIndexForPixel = Math.floor(pixel / this.cacheParams.rowHeight);
+            if (rowIndexForPixel >= this.virtualRowCount) {
+                return this.virtualRowCount - 1;
+            }
+            else {
+                return rowIndexForPixel;
+            }
         }
         else {
             return 0;

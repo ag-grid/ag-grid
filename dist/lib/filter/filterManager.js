@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.0
+ * @version v6.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,7 +50,6 @@ var FilterManager = (function () {
             utils_1.Utils.iterateObject(this.allFilters, function (colId, filterWrapper) {
                 utils_1.Utils.removeFromArray(modelKeys, colId);
                 var newModel = model[colId];
-                _this.setModelOnFilterWrapper(filterWrapper.filter, newModel);
                 _this.setModelOnFilterWrapper(filterWrapper.filter, newModel);
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
