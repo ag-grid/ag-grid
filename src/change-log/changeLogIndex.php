@@ -8,7 +8,8 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h2>Version 6.2.x</h2>
+    <h4>Version 6.2.1</h4>
+    <h4>ag-grid 6.2.1, ag-grid-enterprise 6.2.1</h4>
 
     <li>Bugfix - range select threw error for virtual pagination when drag went below the available rows.</li>
     <li>Bugfix - avg aggregation function was failing when value was undefined or null.</li>
@@ -70,6 +71,7 @@ include '../documentation-main/documentation_header.php';
     <li>Breaking Change: React now uses props directly for the init params in filters, cellRenderers and cellEditors.</li>
     <li>Breaking Change: Filter interface now called IFilter.</li>
     <li>Breaking Change: api.getFilterApi() is now api.getFilterInstance().</li>
+    <li>Breaking Change: setColumnVisible() no longer accepts ColDefs as an argument. colIds or Columns are the available options now.</li>
     <li>Enhancement: Tooltips now don't show if null or undefined.</li>
     <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
         api.getFloatingBottomRow(index) for accessing floating rows</li>
