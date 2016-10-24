@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h4>Version NEXT</h4>
+
+    <li>Bugfix - innerRenderer (for group rows) was not getting destory called, is now.</li>
+
     <h4>Version 6.2.1</h4>
     <h4>ag-grid 6.2.1, ag-grid-enterprise 6.2.1</h4>
 
