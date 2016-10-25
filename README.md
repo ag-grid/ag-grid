@@ -1,4 +1,4 @@
-ag-Grid Angular 2 Component
+ag-Grid Autelia Component
 ==============
 
 This project contains the Aurelia Component for use with ag-Grid.
