@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h4>Version NEXT</h4>
 
     <li>Bugfix - innerRenderer (for group rows) was not getting destory called, is now.</li>
+    <li>Bugfix - when doing full row edit, calling api.stopEditing() fired event rowValueChanged for each row, not it only calls it for the editing row.</li>
 
     <li>Enhancement - ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
     <li>Enhancement - ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>

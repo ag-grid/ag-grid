@@ -31,6 +31,10 @@ var gridOptions = {
     }
 };
 
+function onBtStopEditing() {
+    gridOptions.api.stopEditing();
+};
+
 function onBtStartEditing() {
     gridOptions.api.setFocusedCell(2, 'make');
     gridOptions.api.startEditingCell({
