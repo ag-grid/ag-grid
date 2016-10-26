@@ -21,6 +21,9 @@ export class AgReactComponent {
     public init(params: any): void {
         this.eParentElement = document.createElement('div');
 
+        // so user can have access to the react container, to add css class or style
+        params.reactContainer = this.eParentElement;
+
         var ReactComponent = React.createElement(this.reactComponent, params);
         if (!this.parentComponent) {
             this.componentRef = ReactDOM.render(ReactComponent, this.eParentElement);
