@@ -126,8 +126,18 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public isEmpty(): boolean {
-        return _.missing(this.rootNode) || _.missing(this.rootNode.allLeafChildren)
-            || this.rootNode.allLeafChildren.length === 0 || !this.columnController.isReady();
+        var rowsMissing: boolean;
+
+        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (rowsAlreadyGrouped) {
+            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0
+        } else {
+            rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        }
+
+        var empty = _.missing(this.rootNode) || rowsMissing  || !this.columnController.isReady();
+
+        return empty;
     }
 
     public isRowsToRender(): boolean {
