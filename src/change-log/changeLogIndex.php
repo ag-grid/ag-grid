@@ -12,6 +12,9 @@ include '../documentation-main/documentation_header.php';
 
     <li>Bugfix - innerRenderer (for group rows) was not getting destory called, is now.</li>
 
+    <li>Enhancement - ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
+    <li>Enhancement - ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
+
     <h4>Version 6.2.1</h4>
     <h4>ag-grid 6.2.1, ag-grid-enterprise 6.2.1</h4>
 
