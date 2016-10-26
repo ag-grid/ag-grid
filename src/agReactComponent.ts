@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var AgGrid = require('ag-grid');
 
 export class AgReactComponent {
 
@@ -20,6 +21,7 @@ export class AgReactComponent {
 
     public init(params: any): void {
         this.eParentElement = document.createElement('div');
+        AgGrid.Utils.addCssClass(this.eParentElement, 'ag-react-container');
 
         // so user can have access to the react container,
         // to add css class or style
