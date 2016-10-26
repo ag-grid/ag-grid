@@ -209,15 +209,17 @@ export class RenderedRow {
         this.forEachRenderedCell( renderedCell => {
             renderedCell.stopEditing(cancel);
         });
-        this.setEditingRow(false);
-        if (!cancel) {
-            var event = {
-                node: this.rowNode,
-                data: this.rowNode.data,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
-            this.mainEventService.dispatchEvent(Events.EVENT_ROW_VALUE_CHANGED, event);
+        if (this.editingRow) {
+            this.setEditingRow(false);
+            if (!cancel) {
+                var event = {
+                    node: this.rowNode,
+                    data: this.rowNode.data,
+                    api: this.gridOptionsWrapper.getApi(),
+                    context: this.gridOptionsWrapper.getContext()
+                };
+                this.mainEventService.dispatchEvent(Events.EVENT_ROW_VALUE_CHANGED, event);
+            }
         }
     }
 
