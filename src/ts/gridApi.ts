@@ -395,7 +395,7 @@ export class GridApi {
     }
 
     public getFilterApi(key: string|Column|ColDef) {
-        console.warn('ag-Grid: getFilterApi is deprecated, use getFilterComponent instead');
+        console.warn('ag-Grid: getFilterApi is deprecated, use getFilterInstance instead');
         return this.getFilterInstance(key);
     }
 
