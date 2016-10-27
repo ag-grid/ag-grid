@@ -21,6 +21,32 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../javascript-datagrid/">
+            <img src="../images/agGridDaily.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../javascript-datagrid/">
+                Choosing a JavaScript DataGrid
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            27th October 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Having spoken to many users of ag-Grid, we understand why 9 out of 10 cats choose ag-Grid over the competition.
+        This article explains the main reasons why ag-Grid is becoming the globally leading JavaScript data grid.
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../ag-grid-angular-connect-2016/">
             <img src="../images/angularConnect2016/agGridStand-small.png" style="width: 225px;"/>
         </a>

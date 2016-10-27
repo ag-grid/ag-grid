@@ -3,9 +3,9 @@
 <html>
     <head lang="en">
     <meta charset="UTF-8">
-        <title>ag-Grid - Enterprise Javascript Data Grid</title>
-        <meta name="description" content="Enterprise Javascript data grid that's feature rich, blazing fast and with a brilliant API. Supports Plain Javascript, React, AngularJS 1 & 2 and Web Components.">
-        <meta name="keywords" content="javascript data grid react angularjs angular 2 web components"/>
+        <title>Javascript Datagrid</title>
+        <meta name="description" content="ag-Grid - The JavaScript Datagrid for Enterprise. Supporting Plain Javascript, React, AngularJS 1 & 2, Web Components and Aurelia.">
+        <meta name="keywords" content="javascript data grid react angularjs angular 2 web components aurelia"/>
         <meta property="og:image" content="https://www.ag-grid.com/images/ag-Grid2-200.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
@@ -27,7 +27,7 @@
 <!--                            <img inline alt="ag-grid" src="images/logo.png" style="width: 400px;"/>-->
                         </h1>
 
-                        <h1 style="padding-bottom: 10px; padding-top: 10px;">The Data Grid for Enterprise</h1>
+                        <h1 style="padding-bottom: 10px; padding-top: 10px;">The JavaScript Datagrid for Enterprise</h1>
 <!--                        <h2>'ag' stands for Agnostic - not bound to any framework but integrates with <a href="/best-javascript-data-grid/index.php">JavaScript</a>, <a href="/best-react-data-grid/index.php">React</a>, <a href="/best-angularjs-data-grid/index.php">Angular</a>, <a href="/best-angular-2-data-grid/index.php">Angular 2</a> &amp; <a href="/best-web-component-data-grid/index.php">Web Components</a>.</h2>
 -->
 
@@ -59,6 +59,8 @@
         <?php include 'home/intro.php'; ?>
 
         <?php include 'home/testimonials-1.php'; ?>
+
+        <?php include 'home/intro2.php'; ?>
 
         <?php include 'home/demo-1.php'; ?>
 

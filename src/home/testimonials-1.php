@@ -1,4 +1,4 @@
-<section class="HomeSection Testimonials">
+<section class="HomeSection  HomeSection--alt Testimonials">
     <div class="container">
         <div class="row">
             <figure class="Testimonials-item col-md-12 col-sm-12 col-xs-12">
