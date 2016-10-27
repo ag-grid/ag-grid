@@ -3,7 +3,7 @@ var students = [
         first_name: 'Bob',
         last_name: 'Harrison',
         gender: 'Male',
-        age: 12,
+        // age: 12,
         address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
         mood: "Happy",
         country: {name: 'Ireland', code: 'IE'}
@@ -149,7 +149,14 @@ function NumericCellEditor() {
 NumericCellEditor.prototype.init = function (params) {
     // create the cell
     this.eInput = document.createElement('input');
-    this.eInput.value = isCharNumeric(params.charPress) ? params.charPress : params.value;
+
+    if (isCharNumeric(params.charPress)) {
+        this.eInput.value = params.charPress;
+    } else {
+        if (params.value !== undefined && params.value !== null) {
+            this.eInput.value = params.value;
+        }
+    }
 
     var that = this;
     this.eInput.addEventListener('keypress', function (event) {
