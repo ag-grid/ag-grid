@@ -29,7 +29,7 @@ include('../includes/mediaHeader.php');
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
             <a href="../javascript-datagrid/">
-                Choosing a JavaScript DataGrid
+                8 reasons to choose ag-Grid as your JavaScript Datagrid
             </a>
         </div>
         <div style="float: right;  color: #767676;">

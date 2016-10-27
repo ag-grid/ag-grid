@@ -11,9 +11,11 @@ include '../documentation-main/documentation_header.php';
     <h2>Row Model</h2>
 
     <p>
-        You pass row data to the grid. The grid will never modify your row data. This guarantees no side effects
-        to your data from the grid. It also means you can share row data between grids (same also applies to
-        column definitions, they can also be shared).
+        You pass row data to the grid. The grid will not modify the array you pass it, ie the grid may apply
+        sorting or filtering to the data, however this will be done outside of the array you provide the data in.
+        The grid will also not attempt to modify any of the individual data items (unless you are using the editing
+        features of the grid, in which case the grid will update the edited fields only). This guarantees no side
+        effects to your data from the grid.
     </p>
 
     <p>

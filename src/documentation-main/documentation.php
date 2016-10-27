@@ -15,6 +15,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">27th October 2016</div>
+        <div style="padding-top: 10px;">
+            <a href="../javascript-datagrid/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                8 reasons to choose ag-Grid as your JavaScript Datagrid
+            </a>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">11th October 2016</div>
         <div class="news-header">ag-Grid 6.2.x Released</div>
         <div style="padding-top: 10px;">
@@ -33,7 +44,7 @@ include 'documentation_header.php';
             </a>
         </div>
         <div style="padding-top: 10px;">
-            Come see us at
+            ag-Grid sponsored
             <a href="https://ngeurope.org/#platinum-sprs" >
                 ng-Europe
             </a>
@@ -111,12 +122,13 @@ include 'documentation_header.php';
 
 <div class="backgroundGradient">
     <div style="float: left;">
-        <img src="../images/github100.png"/>
+        <img width="50px" src="../images/github100.png"/>
+    </div>
+    <div style="float: right;">
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
     </div>
     <div style="text-align: center;">
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">So Happy!! - Over 2,000 Github Stars</div>
-        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-        <div><b>Have you starred us yet? We want your love!</b></div>
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">If you like ag-Grid, star us on Github</div>
     </div>
 </div>
 
