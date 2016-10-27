@@ -1,7 +1,7 @@
 <?php
 
 $pageTitle = "JavaScript DataGrid";
-$pageDescription = "Guidelines on how to choose a JavaScript datagrid.";
+$pageDescription = "8 reasons to choose ag-Grid as your JavaScript Datagrid";
 $pageKeyboards = "Choosing JavaScript DataGrid";
 
 include('../includes/mediaHeader.php');
@@ -9,7 +9,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>Choosing a JavaScript DataGrid</h2>
+        <h2>8 reasons to choose ag-Grid as your JavaScript Datagrid</h2>
     </div>
 </div>
 
@@ -126,8 +126,8 @@ include('../includes/mediaHeader.php');
         </p>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular-connect-2016/"
-               data-text="We're Gonna Need a Bigger Boat - ag-Grid Sponsors Angular Connect 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/javascript-datagrid/"
+               data-text="8 reasons to choose ag-Grid as your JavaScript Datagrid" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -137,8 +137,8 @@ include('../includes/mediaHeader.php');
         <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
 
         <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular-connect-2016/"
-               data-text="We're Gonna Need a Bigger Boat - ag-Grid Sponsors Angular Connect 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/javascript-datagrid/"
+               data-text="8 reasons to choose ag-Grid as your JavaScript Datagrid" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
