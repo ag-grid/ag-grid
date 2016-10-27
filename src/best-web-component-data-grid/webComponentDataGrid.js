@@ -326,6 +326,14 @@
         };
     };
 
+    SkillFilter.prototype.getModel = function () {
+
+    };
+
+    SkillFilter.prototype.setModel = function (model) {
+
+    };
+
     SkillFilter.prototype.getGui = function () {
         var eGui = document.createElement('div');
         var eInstructions = document.createElement('div');
@@ -396,6 +404,14 @@
         this.filterChangedCallback = params.filterChangedCallback;
         this.selected = PROFICIENCY_NONE;
         this.valueGetter = params.valueGetter;
+    };
+
+    ProficiencyFilter.prototype.getModel = function () {
+
+    };
+
+    ProficiencyFilter.prototype.setModel = function (model) {
+
     };
 
     ProficiencyFilter.prototype.getGui = function () {
