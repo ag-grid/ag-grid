@@ -21,7 +21,7 @@ include('../includes/mediaHeader.php');
             This article explains the main reasons why ag-Grid is becoming the leading JavaScript datagrid.
         </p>
 
-        <h2>1. The 'ag' in ag-Grid stands for AGnostic</h2>
+        <h3>1. The 'ag' in ag-Grid stands for AGnostic</h3>
 
         <p>
             ag-Grid has zero dependencies such as Angular or React,
@@ -42,7 +42,7 @@ include('../includes/mediaHeader.php');
 
         <p>We are not aware of any other datagrid that is agnostic like ag-Grid.</p>
 
-        <h2>2. Enterprise Foundations</h2>
+        <h3>2. Enterprise Foundations</h3>
 
         <p>
             The authors of ag-Grid come with years of delivering reporting and data warehousing solutions to
@@ -64,7 +64,7 @@ include('../includes/mediaHeader.php');
 
         <p>We are not aware of any other datagrid that manages complexity like ag-Grid.</p>
 
-        <h2>3. Integrating, not Wrapping</h2>
+        <h3>3. Integrating, not Wrapping</h3>
 
         <p>
             ag-Grid integrates with frameworks such as Angular and React. That means ag-Grid is not only available
@@ -74,7 +74,7 @@ include('../includes/mediaHeader.php');
 
         <p>We are not aware of any other grid component that allows you to select from any of these frameworks inside the grid while staying agnostic.</p>
 
-        <h2>4. Features Above and Beyond</h2>
+        <h3>4. Features Above and Beyond</h3>
 
         <p>
             ag-Grid gives for free what other grids are charging for. There is no reason to
@@ -84,7 +84,7 @@ include('../includes/mediaHeader.php');
 
         <p>We are not aware of any other grid that provides the same level of enterprise features as ag-Grid.</p>
 
-        <h2>5. Open Source</h2>
+        <h3>5. Open Source</h3>
 
         <p>
             Both ag-Grid and ag-Grid-Enterprise are open source - ag-Grid is free, ag-Grid Enterprise requires
@@ -96,7 +96,7 @@ include('../includes/mediaHeader.php');
 
         <p>We are not aware of any other commercial datagrid that offers its code as open source on Github.</p>
 
-        <h2>6. Free and Commercial</h2>
+        <h3>6. Free and Commercial</h3>
 
         <p>
             ag-Grid has both free and commercial versions. This allows everyone to benefit from ag-Grid
@@ -105,7 +105,7 @@ include('../includes/mediaHeader.php');
             also providing the best standard JavaScript datagrid for free.
         </p>
 
-        <h2>7. Open Source is Risky</h2>
+        <h3>7. Pure Open Source is Risky</h3>
 
         <p>
             Purely open source projects come with no support or warranty. They also run a greater risk
@@ -116,7 +116,7 @@ include('../includes/mediaHeader.php');
 
         <p>ag-Grid has an office, revenue and employees. Keeping ag-Grid alive is our job.</p>
 
-        <h2>8. You Aint' Seen Nothing Yet</h2>
+        <h3>8. You Aint' Seen Nothing Yet</h3>
 
         <p>
             ag-Grid is new on the market. We have already surpassed all the competition. This is just the start.
