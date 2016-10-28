@@ -1067,7 +1067,8 @@ export class RenderedCell extends Component {
             this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueFormatted);
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
-            var valueToRender = _.exists(valueFormatted) ? valueFormatted : this.value;
+            var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            var valueToRender = valueFormattedExits ? valueFormatted : this.value;
             if (_.exists(valueToRender) && valueToRender !== '') {
                 // not using innerHTML to prevent injection of HTML
                 // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
