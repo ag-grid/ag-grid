@@ -3,7 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <title>ag-Grid Support</title>
+    <title>ag-Grid Ordering and Payment</title>
     <meta name="description" content="Ordering and payments page for ag-Grid.">
     <meta name="keywords" content="ag-Grid Javascript Grid Order and Payments"/>
 
