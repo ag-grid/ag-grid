@@ -148,7 +148,7 @@ export class ColumnApi {
 
     public setColumnAggFunction(column: Column, aggFunc: string): void {
         console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
-        this._columnController.setColumnAggFunc(column, aggFunc); 
+        this._columnController.setColumnAggFunc(column, aggFunc);
     }
 
     public getDisplayNameForCol(column: any): string {
@@ -275,7 +275,7 @@ export class ColumnController {
     public isPivotMode(): boolean {
         return this.pivotMode;
     }
-    
+
     public setPivotMode(pivotMode: boolean): void {
         if (pivotMode === this.pivotMode) { return; }
         this.pivotMode = pivotMode;
@@ -308,7 +308,7 @@ export class ColumnController {
 
         return foundColumn;
     }
-    
+
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     }
@@ -438,7 +438,7 @@ export class ColumnController {
     public getAllDisplayedVirtualColumns(): Column[] {
         return this.allDisplayedVirtualColumns;
     }
-    
+
     // used by:
     // + angularGrid -> setting pinned body width
     // todo: this needs to be cached
@@ -491,7 +491,7 @@ export class ColumnController {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
         });
     }
-    
+
     public removeRowGroupColumn(key: Column|ColDef|String): void {
         this.removeRowGroupColumns([key]);
     }
@@ -754,7 +754,7 @@ export class ColumnController {
     public isPivotActive(): boolean {
         return this.pivotColumns && this.pivotColumns.length > 0 && this.pivotMode;
     }
-    
+
     // + toolPanel
     public getRowGroupColumns(): Column[] {
         return this.rowGroupColumns ? this.rowGroupColumns : [];
@@ -968,7 +968,7 @@ export class ColumnController {
         if (!this.pivotMode) {
             this.orderColumnStateList(columnStateList);
         }
-        
+
         return columnStateList;
     }
 
@@ -1288,7 +1288,7 @@ export class ColumnController {
         var checkInstanceId = typeof instanceId === 'number';
         var result: ColumnGroup = null;
 
-        this.columnUtils.deptFirstAllColumnTreeSearch(allColumnGroups, (child: ColumnGroupChild)=> {
+        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: ColumnGroupChild)=> {
             if (child instanceof ColumnGroup) {
                 var columnGroup = <ColumnGroup> child;
                 var matched: boolean;
@@ -1376,7 +1376,7 @@ export class ColumnController {
     // used by updateModel
     private getColumnGroupState(): any {
         var groupState: any = {};
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
                 var columnGroup = <ColumnGroup> child;
                 var key = columnGroup.getGroupId();
@@ -1391,7 +1391,7 @@ export class ColumnController {
 
     // used by updateModel
     private setColumnGroupState(groupState: any): any {
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
                 var columnGroup = <ColumnGroup> child;
                 var key = columnGroup.getGroupId();
@@ -1522,9 +1522,9 @@ export class ColumnController {
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
         }
-        
+
         this.clearDisplayedColumns();
-        
+
         var event = new ColumnChangeEvent(Events.EVENT_GRID_COLUMNS_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_GRID_COLUMNS_CHANGED, event);
     }
@@ -1549,7 +1549,7 @@ export class ColumnController {
         this.allDisplayedColumns = [];
         this.allDisplayedVirtualColumns = [];
     }
-    
+
     private updateGroupsAndDisplayedColumns() {
         this.updateGroups();
         this.updateDisplayedColumnsFromTrees();
@@ -1612,7 +1612,7 @@ export class ColumnController {
 
     private addToDisplayedColumns(displayedColumnTree: ColumnGroupChild[], displayedColumns: Column[]): void {
         displayedColumns.length = 0;
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(displayedColumnTree, (child: ColumnGroupChild)=> {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(displayedColumnTree, (child: ColumnGroupChild)=> {
             if (child instanceof Column) {
                 displayedColumns.push(child);
             }
@@ -1662,7 +1662,7 @@ export class ColumnController {
         }
         return result;
     }
-    
+
     private updateDisplayedVirtualGroups(virtualColIds: any): void {
 
         // go through each group, see if any of it's cols are displayed, and if yes,
@@ -1675,7 +1675,7 @@ export class ColumnController {
         testGroup(this.displayedLeftColumnTree, this.displayedLeftHeaderRows, 0);
         testGroup(this.displayedRightColumnTree, this.displayedRightHeaderRows, 0);
         testGroup(this.displayedCentreColumnTree, this.displayedCentreHeaderRows, 0);
-        
+
         function testGroup(children: ColumnGroupChild[], result: {[row: number]: ColumnGroupChild[]}, dept: number): boolean {
             var returnValue = false;
 
@@ -1831,7 +1831,7 @@ export class ColumnController {
 
     private updateGroups(): void {
         var allGroups = this.getAllDisplayedColumnGroups();
-        this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, (child: ColumnGroupChild)=> {
+        this.columnUtils.depthFirstAllColumnTreeSearch(allGroups, (child: ColumnGroupChild)=> {
             if (child instanceof ColumnGroup) {
                 var group = <ColumnGroup> child;
                 group.calculateDisplayedColumns();
