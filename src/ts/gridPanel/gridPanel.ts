@@ -546,10 +546,12 @@ export class GridPanel {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eViewportToScroll.scrollTop = rowTopPixel;
+            this.rowRenderer.drawVirtualRows();
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var newScrollPosition = rowBottomPixel - viewportHeight;
             eViewportToScroll.scrollTop = newScrollPosition;
+            this.rowRenderer.drawVirtualRows();
         }
         // otherwise, row is already in view, so do nothing
     }
