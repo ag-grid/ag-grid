@@ -26,3 +26,4 @@
     </script>
 
 <?php } ?>
+<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/873243008/?guid=ON&amp;script=0"/>

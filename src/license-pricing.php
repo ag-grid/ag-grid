@@ -288,6 +288,13 @@ include 'includes/headerRow.php'; ?>
 
 <?php include("includes/footer.php"); ?>
 
+<script>
+if(window.location.href.indexOf("/license-pricing.php?submitted=true") !=-1)
+{
+(new Image()).src="//www.googleadservices.com/pagead/conversion/873243008/?label=8TOnCM7BnWsQgMOyoAM&guid=ON&script=0";
+}
+</script>
+
 </body>
 
 <?php include_once("includes/analytics.php"); ?>

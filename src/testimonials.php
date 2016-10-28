@@ -3,7 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <title>ag-Grid Support</title>
+    <title>ag-Grid Testimonials</title>
     <meta name="description" content="ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.">
     <meta name="keywords" content="ag-Grid Javascript Grid Support"/>
 
