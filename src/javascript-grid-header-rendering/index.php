@@ -85,6 +85,11 @@ include '../documentation-main/documentation_header.php';
     then when filtering, the grid will not try and show the filter icon.
     </p>
 
+    <note>
+        The template you provide must contain exactly one root DOM element (eg a div) and should not contain
+        any leading or trailing spaces before the start and end tags.
+    </note>
+
     <h4>Grid API</h4>
 
     <p>There are two methods useful in the API for showing the column menu if you don't like the provided logic:</p>
