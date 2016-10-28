@@ -5,6 +5,7 @@ import {
     ColDef,
     IClipboardService,
     Autowired,
+    ProcessCellForExportParams,
     CsvCreator,
     LoggerFactory,
     SelectionController,
@@ -152,7 +153,10 @@ export class ClipboardService implements IClipboardService {
             values.forEach( (value: any)=> {
                 if (Utils.missing(column)) { return; }
                 if (!column.isCellEditable(rowNode)) { return; }
-                this.valueService.setValue(rowNode, column, value);
+
+                let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
+
+                this.valueService.setValue(rowNode, column, processedValue);
                 var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
 
@@ -251,13 +255,13 @@ export class ClipboardService implements IClipboardService {
             columns.forEach( (column, index) => {
                 var value = this.valueService.getValue(column, rowNode);
 
-                value = this.processRangeCell(rowNode, column, value);
+                let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
 
                 if (index != 0) {
                     data += '\t';
                 }
-                if (Utils.exists(value)) {
-                    data += value;
+                if (Utils.exists(processedValue)) {
+                    data += processedValue;
                 }
                 var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
@@ -270,8 +274,7 @@ export class ClipboardService implements IClipboardService {
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
 
-    private processRangeCell(rowNode: RowNode, column: Column, value: any): void {
-        var func = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
+    private processRangeCell(rowNode: RowNode, column: Column, value: any, func: (params: ProcessCellForExportParams) => void ): any {
         if (func) {
             return func({
                 column: column,
