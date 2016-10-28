@@ -123,7 +123,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>softRefreshView()</th>
-            <td>Leave the rows intact. Each cell that has been market as volatile (via colDef attribute) will be redrawn. Any cells that
+            <td>Leave the rows intact. Each cell that has been marked as volatile (via colDef attribute) will be redrawn. Any cells that
                 are not marked as volatile will be left alone, hence keeping any context or state that they have.</td>
         </tr>
         <tr>
