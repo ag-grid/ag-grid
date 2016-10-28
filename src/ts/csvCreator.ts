@@ -90,7 +90,7 @@ export class CsvCreator {
         var columnSeparator = (params && params.columnSeparator) || ',';
         var suppressQuotes = params && params.suppressQuotes;
         var columnKeys = params && params.columnKeys;
-        var onlySelectedAllPages = params && params.onlySelectedAllPages
+        var onlySelectedAllPages = params && params.onlySelectedAllPages;
         var processCellCallback = params && params.processCellCallback;
         var processHeaderCallback = params && params.processHeaderCallback;
 
