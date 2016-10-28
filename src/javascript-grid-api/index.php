@@ -403,6 +403,10 @@ include '../documentation-main/documentation_header.php';
             <td>If a cell is editing, it stops the editing. Pass 'true' if you don't want to cancel the editing
                 (ie don't accept changes).</td>
         </tr>
+        <tr>
+            <th>startEditingCell(params)</th>
+            <td>Gets the grid to start editing on a particular cell.</td>
+        </tr>
     </table>
 
     <h2>

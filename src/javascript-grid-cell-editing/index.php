@@ -251,7 +251,7 @@ colDef.cellEditorParams = {
             places this character into the edit field so that the user experience is they are typing into the cell.</li>
         <li><b>Mouse Double Click</b>: If the mouse is double clicked. There is a grid property <i>singleClickEdit</i>
             that will allow single click to start editing instead of double click.</li>
-        <li><b>api.startEditing()</b>: If you call startEditing() on the grid API</li>
+        <li><b>api.startEditingCell()</b>: If you call startEditingCell() on the grid API</li>
     </ul>
     </p>
 
@@ -400,11 +400,11 @@ colDef.cellEditorParams = {
     <h3>Editing API</h3>
 
     <p>
-        There are two api methods for editing, <code>startEditing()</code> and <code>stopEditing(params)</code>.
+        There are two api methods for editing, <code>startEditingCell()</code> and <code>stopEditing(params)</code>.
     </p>
 
     <p>
-        <b>startEditing(params)</b><br/>
+        <b>startEditingCell(params)</b><br/>
         Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
         <ul>
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
