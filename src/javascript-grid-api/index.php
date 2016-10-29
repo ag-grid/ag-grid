@@ -123,7 +123,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>softRefreshView()</th>
-            <td>Leave the rows intact. Each cell that has been market as volatile (via colDef attribute) will be redrawn. Any cells that
+            <td>Leave the rows intact. Each cell that has been marked as volatile (via colDef attribute) will be redrawn. Any cells that
                 are not marked as volatile will be left alone, hence keeping any context or state that they have.</td>
         </tr>
         <tr>
@@ -402,6 +402,10 @@ include '../documentation-main/documentation_header.php';
             <th>stopEditing(cancel?)</th>
             <td>If a cell is editing, it stops the editing. Pass 'true' if you don't want to cancel the editing
                 (ie don't accept changes).</td>
+        </tr>
+        <tr>
+            <th>startEditingCell(params)</th>
+            <td>Gets the grid to start editing on a particular cell.</td>
         </tr>
     </table>
 

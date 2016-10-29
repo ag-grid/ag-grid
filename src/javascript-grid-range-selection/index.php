@@ -151,8 +151,11 @@ GridCell {
         is used to update the eager and lazy figures separately.
     </p>
 
-    <p>The example also shows use of <i>processCellForClipboard()</i> by making all the athlete
-    names upper case when copying into the clipboard.</p>
+    <p>
+        The example also shows use of <i>processCellForClipboard()</i> and <i>processCellFromClipboard()</i>
+        by making all the athlete names upper case when copying into the clipboard and lowercase when
+        copying it from the clipboard.
+    </p>
 
     <show-example example="rangeSelection"></show-example>
 

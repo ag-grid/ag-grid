@@ -156,6 +156,11 @@ include '../documentation-main/documentation_header.php';
                 to have a particular format if importing into Excel.</td>
         </tr>
         <tr>
+            <th>processCellFromClipboard(params)</th>
+            <td>Allows you to process cells from the clipboard. Handy if you have for example number fields,
+                and want to block non-numbers from getting into the grid.</td>
+        </tr>
+        <tr>
             <th>processSecondaryColDef(colDef)</th>
             <td>Callback to be used with pivoting, to allow changing the second column definition.</td>
         </tr>

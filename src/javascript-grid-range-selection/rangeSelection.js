@@ -12,6 +12,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true
+    },
     columnDefs: columnDefs,
     enableRangeSelection: true,
     rowData: null,
@@ -19,6 +22,13 @@ var gridOptions = {
     processCellForClipboard: function(params) {
         if (params.column.getColId()==='athlete' && params.value && params.value.toUpperCase) {
             return params.value.toUpperCase();
+        } else {
+            return params.value;
+        }
+    },
+    processCellFromClipboard: function(params) {
+        if (params.column.getColId()==='athlete' && params.value && params.value.toLowerCase) {
+            return params.value.toLowerCase();
         } else {
             return params.value;
         }

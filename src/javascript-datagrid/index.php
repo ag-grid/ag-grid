@@ -46,9 +46,9 @@ include('../includes/mediaHeader.php');
 
         <p>
             The authors of ag-Grid come with years of delivering reporting and data warehousing solutions to
-            investment banks and telecommunications companies. The authors of ag-Grid are not traditional web
-            developers, our skills are not creating shopping carts or online social media websites. We understand
-            data and how to best manage it.
+            investment banks and telecommunications companies. We are not traditional web
+            developers, our skills are not creating consumer facing websites, but enterprise applications.
+            We understand data and how to best manage it.
         </p>
 
         <p>

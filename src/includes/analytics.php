@@ -26,3 +26,5 @@
     </script>
 
 <?php } ?>
+
+<img style="width: 1px; height: 1px; position: fixed; top: 0px; left: 0px;" height="1px" width="1px" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/873243008/?guid=ON&amp;script=0"/>
