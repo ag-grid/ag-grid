@@ -16,6 +16,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix - when using tree data, an there were only groups (all groups were empty), the 'no rows' overlay was showing. Not is doesn't sort when only groups.</li>
     <li>Bugfix - api.ensureIndexVisible() will now also render the rows in the same action, previously you had to wait for the grid to pick up the scroll event (which happened immediatly after)  to render the rows. This causes problems if you wanted to access the row immediatly after ensuring it was visible (eg to start editing).</li>
     <li>Bugfix - Formatted values can now be empty strings, previously empty strings were ignored and the original value was presented.</li>
+    <li>Bugfix - grid options was missing onRowValueChanged property</li>
 
     <li>Enhancement - ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
     <li>Enhancement - ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
