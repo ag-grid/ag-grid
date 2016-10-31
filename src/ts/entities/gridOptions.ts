@@ -224,6 +224,7 @@ export interface GridOptions {
     onCellDoubleClicked?(event?: any): void;
     onCellContextMenu?(event?: any): void;
     onCellValueChanged?(event?: any): void;
+    onRowValueChanged?(event?: any): void;
     onCellFocused?(event?: any): void;
     onRowSelected?(event?: any): void;
     onSelectionChanged?(event?: any): void;
