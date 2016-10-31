@@ -10,7 +10,7 @@ import {ValueService} from "./valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {FloatingRowModel} from "./rowControllers/floatingRowModel";
-import {ColDef, IAggFunc} from "./entities/colDef";
+import {ColDef, IAggFunc, ColGroupDef} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
 import {Column} from "./entities/column";
@@ -159,7 +159,7 @@ export class GridApi {
         return this.floatingRowModel.getFloatingBottomRow(index);
     }
 
-    public setColumnDefs(colDefs: ColDef[]) {
+    public setColumnDefs(colDefs: (ColDef|ColGroupDef)[]) {
         this.columnController.setColumnDefs(colDefs);
     }
 

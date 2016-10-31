@@ -1306,7 +1306,7 @@ export class ColumnController {
         return result;
     }
 
-    public setColumnDefs(columnDefs: AbstractColDef[]) {
+    public setColumnDefs(columnDefs: (ColDef|ColGroupDef)[]) {
         var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);
         this.primaryBalancedTree = balancedTreeResult.balancedTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;

@@ -29,7 +29,7 @@ export class BalancedColumnTreeBuilder {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     }
 
-    public createBalancedColumnGroups(abstractColDefs: AbstractColDef[], primaryColumns: boolean): any {
+    public createBalancedColumnGroups(abstractColDefs: (ColDef|ColGroupDef)[], primaryColumns: boolean): any {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that cold be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
@@ -98,7 +98,7 @@ export class BalancedColumnTreeBuilder {
         return maxDeptThisLevel;
     }
 
-    private recursivelyCreateColumns(abstractColDefs: AbstractColDef[], level: number,
+    private recursivelyCreateColumns(abstractColDefs: (ColDef|ColGroupDef)[], level: number,
                                      columnKeyCreator: ColumnKeyCreator, primaryColumns: boolean): OriginalColumnGroupChild[] {
 
         var result: OriginalColumnGroupChild[] = [];
@@ -107,7 +107,7 @@ export class BalancedColumnTreeBuilder {
             return result;
         }
 
-        abstractColDefs.forEach( (abstractColDef: AbstractColDef)=> {
+        abstractColDefs.forEach( (abstractColDef: ColDef|ColGroupDef)=> {
             let newGroupOrColumn: OriginalColumnGroupChild;
             if (this.isColumnGroup(abstractColDef)) {
                 newGroupOrColumn = this.createColumnGroup(columnKeyCreator, primaryColumns, <ColGroupDef> abstractColDef, level);
@@ -187,7 +187,7 @@ export class BalancedColumnTreeBuilder {
     }
 
     // if object has children, we assume it's a group
-    private isColumnGroup(abstractColDef: AbstractColDef): boolean {
+    private isColumnGroup(abstractColDef: ColDef|ColGroupDef): boolean {
         return (<ColGroupDef>abstractColDef).children !== undefined;
     }
 
