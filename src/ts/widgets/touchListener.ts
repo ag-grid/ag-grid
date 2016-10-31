@@ -73,10 +73,7 @@ export class TouchListener implements IEventEmitter {
 
             let touchesMatch = this.touchStart === touchStartCopy;
 
-            console.log(`touching = ${this.touching}`);
-
             if (this.touching && touchesMatch && !this.moved) {
-                console.log(`dispatching`);
                 this.moved = true;
                 this.eventService.dispatchEvent(TouchListener.EVENT_LONG_TAP, this.touchStart);
             }
@@ -88,13 +85,11 @@ export class TouchListener implements IEventEmitter {
 
         var touch = this.getActiveTouch(touchEvent.touches);
         if (!touch) {
-            console.log(`no matching`);
             return;
         }
 
         var eventIsFarAway = !_.areEventsNear(touch, this.touchStart, 4);
         if (eventIsFarAway) {
-            console.log(`eventIsFarAway`);
             this.moved = true;
         }
     }
