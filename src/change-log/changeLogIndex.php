@@ -10,7 +10,8 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Version NEXT</h4>
 
-    <li>Bugfix - innerRenderer (for group rows) was not getting destory called, is now.</li>
+    <li>Bugfix - groupRowRendererFramework, groupRowInnerRendererFramework and fullWidthRowRendererFramework were getting ignored when getting set as properties in Angular 2 and React.</li>
+    <li>Bugfix - innerRenderer (for group rows) was not getting destroy called, is now.</li>
     <li>Bugfix - when doing full row edit, calling api.stopEditing() fired event rowValueChanged for each row, not it only calls it for the editing row.</li>
     <li>Bugfix - when using tree data, an there were only groups (all groups were empty), the 'no rows' overlay was showing. Not is doesn't sort when only groups.</li>
     <li>Bugfix - api.ensureIndexVisible() will now also render the rows in the same action, previously you had to wait for the grid to pick up the scroll event (which happened immediatly after)  to render the rows. This causes problems if you wanted to access the row immediatly after ensuring it was visible (eg to start editing).</li>
