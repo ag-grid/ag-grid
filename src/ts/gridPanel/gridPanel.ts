@@ -168,9 +168,20 @@ export class GridPanel {
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.scrollWidth = _.getScrollbarWidth();
+        this.setScrollBarWidth();
         this.logger = loggerFactory.create('GridPanel');
         this.findElements();
+    }
+
+    private setScrollBarWidth(): void {
+        // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
+        // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
+        // allow the user to provide the scroll width before we work it out.
+        let scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+        if (typeof scrollWidth !== 'number' || scrollWidth < 0) {
+            scrollWidth = _.getScrollbarWidth();
+        }
+        this.scrollWidth = scrollWidth;
     }
 
     @PreDestroy
