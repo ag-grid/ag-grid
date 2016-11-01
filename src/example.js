@@ -191,7 +191,7 @@ suppressEnterprise: true,
         }
     },
 // isScrollLag: function() { return true; },
-//suppressScrollLag: true,
+// suppressScrollLag: true,
 // floatingTopRowData: [{},{},{}],
 // floatingBottomRowData: [{},{},{}],
 // callback when row clicked
