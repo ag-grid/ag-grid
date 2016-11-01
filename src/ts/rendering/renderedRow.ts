@@ -105,6 +105,15 @@ export class RenderedRow {
         }
     }
 
+    private addDomData(eRowContainer: Element): void {
+        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
+        var gridCellNoType = <any> eRowContainer;
+        gridCellNoType[domDataKey] = {
+            renderedRow: this
+        };
+        this.destroyFunctions.push( ()=> { gridCellNoType[domDataKey] = null; } );
+    }
+
     private setupFullWidthContainers(): void {
         this.fullWidthRow = true;
         this.fullWidthCellRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
@@ -409,7 +418,20 @@ export class RenderedRow {
         });
     }
 
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        switch (eventName) {
+            case 'dblclick': this.onRowDblClick(mouseEvent); break;
+            case 'click': this.onRowClick(mouseEvent); break;
+        }
+    }
+
     private addHoverFunctionality(): void {
+
+        // because we are adding listeners to the row, we give the user the choice to not add
+        // the hover class, as it slows things down, especially in IE, when you add listeners
+        // to each row. we cannot do the trick of adding one listener to the GridPanel (like we
+        // do for other mouse events) as these events don't propogate
+        if (this.gridOptionsWrapper.isSuppressRowHoverClass()) { return; }
 
         var onGuiMouseEnter = this.rowNode.onMouseEnter.bind(this.rowNode);
         var onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
@@ -483,13 +505,6 @@ export class RenderedRow {
         this.destroyFunctions.push(()=> {
             this.rowNode.removeEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
         });
-    }
-
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
-        var renderedCell = this.renderedCells[cell.column.getId()];
-        if (renderedCell) {
-            renderedCell.onMouseEvent(eventName, mouseEvent);
-        }
     }
 
     private setTopAndHeightCss(): void {
@@ -700,23 +715,14 @@ export class RenderedRow {
     private createRowContainer(eParentDF: DocumentFragment, eParent: HTMLElement): HTMLElement {
         var eRow = document.createElement('div');
 
-        var rowClickListener = this.onRowClick.bind(this);
-        var rowDblClickListener = this.onRowDblClick.bind(this);
+        this.addDomData(eRow);
 
-        eRow.addEventListener("click", rowClickListener);
-        eRow.addEventListener("dblclick", rowDblClickListener);
-
-        if (eParentDF) {
-            eParentDF.appendChild(eRow);
-        } else {
-            eParent.appendChild(eRow);
-        }
+        var eTarget = eParentDF ? eParentDF : eParent;
+        eTarget.appendChild(eRow);
 
         this.eAllRowContainers.push(eRow);
 
         this.destroyFunctions.push( ()=> {
-            eRow.removeEventListener("click", rowClickListener);
-            eRow.removeEventListener("dblclick", rowDblClickListener);
             eParent.removeChild(eRow);
         });
 

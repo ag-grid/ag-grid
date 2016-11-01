@@ -20,6 +20,7 @@ import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {RenderedCell} from "../rendering/renderedCell";
+import {RenderedRow} from "../rendering/renderedRow";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -375,6 +376,22 @@ export class GridPanel {
         return null;
     }
 
+    private getRowForEvent(event: MouseEvent | KeyboardEvent): RenderedRow {
+
+        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
+        var sourceElement = _.getTarget(event);
+
+        while (sourceElement) {
+            var domData = (<any>sourceElement)[domDataKey];
+            if (domData && domData.renderedRow) {
+                return <RenderedRow> domData.renderedRow;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+
+        return null;
+    }
+
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         var renderedCell = this.getCellForEvent(keyboardEvent);
         if (renderedCell) {
@@ -390,11 +407,14 @@ export class GridPanel {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+        var renderedCell = this.getCellForEvent(mouseEvent);
+        if (renderedCell) {
+            renderedCell.onMouseEvent(eventName, mouseEvent);
+        }
 
-        if (_.exists(cell)) {
-            //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
-            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
+        var renderedRow = this.getRowForEvent(mouseEvent);
+        if (renderedRow) {
+            renderedRow.onMouseEvent(eventName, mouseEvent);
         }
 
         this.preventDefaultOnContextMenu(mouseEvent);

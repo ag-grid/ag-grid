@@ -475,7 +475,7 @@ export class RowRenderer {
 
     private ensureRowsRendered() {
 
-        // var start = new Date().getTime();
+        var start = new Date().getTime();
 
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -509,26 +509,8 @@ export class RowRenderer {
             setTimeout( () => { this.$scope.$apply(); }, 0);
         }
 
-        // var end = new Date().getTime();
-        // console.log(end-start);
-    }
-
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
-        var renderedRow: RenderedRow;
-        switch (cell.floating) {
-            case Constants.FLOATING_TOP:
-                renderedRow = this.renderedTopFloatingRows[cell.rowIndex];
-                break;
-            case Constants.FLOATING_BOTTOM:
-                renderedRow = this.renderedBottomFloatingRows[cell.rowIndex];
-                break;
-            default:
-                renderedRow = this.renderedRows[cell.rowIndex];
-                break;
-        }
-        if (renderedRow) {
-            renderedRow.onMouseEvent(eventName, mouseEvent, cell);
-        }
+        var end = new Date().getTime();
+        console.log(end-start);
     }
 
     private insertRow(node: any, rowIndex: any) {
