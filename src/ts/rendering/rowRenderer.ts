@@ -475,7 +475,7 @@ export class RowRenderer {
 
     private ensureRowsRendered() {
 
-        var start = new Date().getTime();
+        // var start = new Date().getTime();
 
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -509,8 +509,8 @@ export class RowRenderer {
             setTimeout( () => { this.$scope.$apply(); }, 0);
         }
 
-        var end = new Date().getTime();
-        console.log(end-start);
+        // var end = new Date().getTime();
+        // console.log(end-start);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
