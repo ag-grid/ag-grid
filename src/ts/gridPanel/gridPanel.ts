@@ -19,6 +19,7 @@ import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
+import {RenderedCell} from "../rendering/renderedCell";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -236,7 +237,8 @@ export class GridPanel {
         this.sizeHeaderAndBody();
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
-        this.addCellListeners();
+        this.addMouseEvents();
+        this.addKeyboardEvents();
         this.addBodyViewportListener();
 
         if (this.$scope) {
@@ -316,10 +318,21 @@ export class GridPanel {
         });
     }
 
-    private addCellListeners(): void {
+    private addMouseEvents(): void {
         var eventNames = ['click','mousedown','dblclick','contextmenu'];
         eventNames.forEach( eventName => {
             var listener = this.processMouseEvent.bind(this, eventName);
+            this.eAllCellContainers.forEach( container => {
+                container.addEventListener(eventName, listener);
+                this.destroyFunctions.push( ()=> container.removeEventListener(eventName, listener) );
+            });
+        });
+    }
+
+    private addKeyboardEvents(): void {
+        var eventNames = ['keydown','keypress'];
+        eventNames.forEach( eventName => {
+            var listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach( container => {
                 container.addEventListener(eventName, listener);
                 this.destroyFunctions.push( ()=> container.removeEventListener(eventName, listener) );
@@ -344,6 +357,36 @@ export class GridPanel {
 
         this.eBodyViewport.addEventListener('contextmenu', listener);
         this.destroyFunctions.push( ()=> this.eBodyViewport.removeEventListener('contextmenu', listener) );
+    }
+
+    private getCellForEvent(event: MouseEvent | KeyboardEvent): RenderedCell {
+
+        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
+        var sourceElement = _.getTarget(event);
+
+        while (sourceElement) {
+            var domData = (<any>sourceElement)[domDataKey];
+            if (domData && domData.renderedCell) {
+                return <RenderedCell> domData.renderedCell;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+
+        return null;
+    }
+
+    private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
+        var renderedCell = this.getCellForEvent(keyboardEvent);
+        if (renderedCell) {
+            switch (eventName) {
+                case 'keydown':
+                    renderedCell.onKeyDown(keyboardEvent);
+                    break;
+                case 'keypress':
+                    renderedCell.onKeyPress(keyboardEvent);
+                    break;
+            }
+        }
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -383,7 +426,16 @@ export class GridPanel {
 
     private addShortcutKeyListeners(): void {
         this.eAllCellContainers.forEach( (container)=> {
-            container.addEventListener('keydown', (event: any)=> {
+            container.addEventListener('keydown', (event: KeyboardEvent)=> {
+
+                // if the cell the event came from is editing, then we do not
+                // want to do the default shortcut keys, otherwise the editor
+                // (eg a text field) would not be able to do the normal cut/copy/paste
+                let renderedCell = this.getCellForEvent(event);
+                if (renderedCell && renderedCell.isEditing()) {
+                    return;
+                }
+
                 if (event.ctrlKey || event.metaKey) {
                     switch (event.which) {
                         case Constants.KEY_A: return this.onCtrlAndA(event);

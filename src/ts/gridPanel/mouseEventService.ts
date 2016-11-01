@@ -34,11 +34,11 @@ export class MouseEventService {
     }
 
     private getFloating(mouseEvent: MouseEvent): string {
-        var floatingTopRect = this.gridPanel.getFloatingTopClientRect();
-        var floatingBottomRect = this.gridPanel.getFloatingBottomClientRect();
-
         var floatingTopRowsExist = !this.floatingRowModel.isEmpty(Constants.FLOATING_TOP);
         var floatingBottomRowsExist = !this.floatingRowModel.isEmpty(Constants.FLOATING_BOTTOM);
+
+        var floatingTopRect = floatingTopRowsExist ? this.gridPanel.getFloatingTopClientRect() : null;
+        var floatingBottomRect = floatingBottomRowsExist ? this.gridPanel.getFloatingBottomClientRect() : null;
 
         if (floatingTopRowsExist && floatingTopRect.bottom >= mouseEvent.clientY) {
             return Constants.FLOATING_TOP;

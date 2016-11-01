@@ -58,6 +58,8 @@ export class GridOptionsWrapper {
     private groupRowRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
     private groupRowInnerRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
 
+    private domDataKey = '__AG_'+Math.random().toString;
+
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
@@ -92,6 +94,10 @@ export class GridOptionsWrapper {
         this.fullWidthCellRenderer = this.frameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
         this.groupRowRenderer = this.frameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
         this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
+    }
+
+    public getDomDataKey(): string {
+        return this.domDataKey;
     }
 
     // the cellRenderers come from the instances for this class, not from gridOptions, which allows
