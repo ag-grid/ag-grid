@@ -190,6 +190,7 @@ suppressEnterprise: true,
             return '';
         }
     },
+    // suppressRowHoverClass: true,
 // isScrollLag: function() { return true; },
 // suppressScrollLag: true,
 // floatingTopRowData: [{},{},{}],

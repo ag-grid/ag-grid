@@ -23,10 +23,12 @@ include '../documentation-main/documentation_header.php';
         <ol>
             <li>introduced Document Fragment to build DOM offline when building rows</li>
             <li>cells no do not have any events, all event handling done at grid level - means for example, where before was adding a keydown event to every cell, not it is added to grid and gri work out which cell, means not adding/removing lots of listeners as grid is scrolling rows</li>
+            <li>took events out of rows (same trick as with taking out cells) with the exception of hover listeners</li>
             <li>icon images are now cloned, rather than creating new ones each time one is needed</li>
         </ol>
     </li>
 
+    <li>Enhancement - added property suppressRowHoverClass, so if you do not require the row hover class, it's expensive, set this to true for slight performance tweak</li>
     <li>Enhancement - ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
     <li>Enhancement - ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
     <li>Enhancement - added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
