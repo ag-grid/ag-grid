@@ -1,4 +1,4 @@
-import {Utils as _} from "../utils";
+import {Utils as _, Timer} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ExpressionService} from "../expressionService";
@@ -475,7 +475,7 @@ export class RowRenderer {
 
     private ensureRowsRendered() {
 
-        // var start = new Date().getTime();
+        // var timer = new Timer();
 
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -494,14 +494,18 @@ export class RowRenderer {
             }
         }
 
+        // timer.print('creating template');
+
+        // at this point, everything in our 'rowsToRemove' . . .
+        this.removeVirtualRow(rowsToRemove);
+
+        // timer.print('removing');
+
         if (this.eBodyContainerDF) {
             this.eBodyContainer.appendChild(this.eBodyContainerDF);
             this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
             this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
         }
-
-        // at this point, everything in our 'rowsToRemove' . . .
-        this.removeVirtualRow(rowsToRemove);
 
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
@@ -509,8 +513,7 @@ export class RowRenderer {
             setTimeout( () => { this.$scope.$apply(); }, 0);
         }
 
-        // var end = new Date().getTime();
-        // console.log(end-start);
+        // timer.print('total');
     }
 
     private insertRow(node: any, rowIndex: any) {
