@@ -18,7 +18,14 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix - Formatted values can now be empty strings, previously empty strings were ignored and the original value was presented.</li>
     <li>Bugfix - grid options was missing onRowValueChanged property</li>
 
-    <li>Performance Enhancement - now using Document Fragment to build DOM offline when building rows</li>
+    <li>
+        Performance Enhancements
+        <ol>
+            <li>introduced Document Fragment to build DOM offline when building rows</li>
+            <li>cells no do not have any events, all event handling done at grid level - means for example, where before was adding a keydown event to every cell, not it is added to grid and gri work out which cell, means not adding/removing lots of listeners as grid is scrolling rows</li>
+            <li>icon images are now cloned, rather than creating new ones each time one is needed</li>
+        </ol>
+    </li>
 
     <li>Enhancement - ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
     <li>Enhancement - ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>

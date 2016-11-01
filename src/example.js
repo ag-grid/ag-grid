@@ -452,7 +452,7 @@ months.forEach(function (month) {
 function filterDoubleClicked(event) {
     setInterval(function () {
         gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
-    }, 1000);
+    }, 4000);
 }
 
 function onDataSizeChanged(newDataSize) {
