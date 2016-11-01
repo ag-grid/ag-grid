@@ -50,9 +50,12 @@ export class RenderedRow {
     private parentScope: any;
     private rowRenderer: RowRenderer;
     private eBodyContainer: HTMLElement;
+    private eBodyContainerDF: DocumentFragment;
     private eFullWidthContainer: HTMLElement;
     private ePinnedLeftContainer: HTMLElement;
+    private ePinnedLeftContainerDF: DocumentFragment;
     private ePinnedRightContainer: HTMLElement;
+    private ePinnedRightContainerDF: DocumentFragment;
 
     private destroyFunctions: Function[] = [];
 
@@ -65,17 +68,23 @@ export class RenderedRow {
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
                 eBodyContainer: HTMLElement,
+                eBodyContainerDF: DocumentFragment,
                 eFullWidthContainer: HTMLElement,
                 ePinnedLeftContainer: HTMLElement,
+                ePinnedLeftContainerDF: DocumentFragment,
                 ePinnedRightContainer: HTMLElement,
+                ePinnedRightContainerDF: DocumentFragment,
                 node: RowNode,
                 rowIndex: number) {
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
+        this.eBodyContainerDF = eBodyContainerDF;
         this.eFullWidthContainer = eFullWidthContainer;
         this.ePinnedLeftContainer = ePinnedLeftContainer;
+        this.ePinnedLeftContainerDF = ePinnedLeftContainerDF;
         this.ePinnedRightContainer = ePinnedRightContainer;
+        this.ePinnedRightContainerDF = ePinnedRightContainerDF;
 
         this.rowIndex = rowIndex;
         this.rowNode = node;
@@ -104,7 +113,7 @@ export class RenderedRow {
             console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
         }
 
-        this.eFullWidthRow = this.createRowContainer(this.eFullWidthContainer);
+        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addMouseWheelListenerToFullWidthRow();
@@ -136,7 +145,7 @@ export class RenderedRow {
             }
         }
 
-        this.eFullWidthRow = this.createRowContainer(this.eFullWidthContainer);
+        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addMouseWheelListenerToFullWidthRow();
@@ -146,11 +155,11 @@ export class RenderedRow {
     private setupNormalContainers(): void {
         this.fullWidthRow = false;
 
-        this.eBodyRow = this.createRowContainer(this.eBodyContainer);
+        this.eBodyRow = this.createRowContainer(this.eBodyContainerDF, this.eBodyContainer);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer(this.ePinnedLeftContainer);
-            this.ePinnedRightRow = this.createRowContainer(this.ePinnedRightContainer);
+            this.ePinnedLeftRow = this.createRowContainer(this.ePinnedLeftContainerDF, this.ePinnedLeftContainer);
+            this.ePinnedRightRow = this.createRowContainer(this.ePinnedRightContainerDF, this.ePinnedRightContainer);
         }
     }
 
@@ -688,7 +697,7 @@ export class RenderedRow {
         return agEvent;
     }
 
-    private createRowContainer(eParent: HTMLElement): HTMLElement {
+    private createRowContainer(eParentDF: DocumentFragment, eParent: HTMLElement): HTMLElement {
         var eRow = document.createElement('div');
 
         var rowClickListener = this.onRowClick.bind(this);
@@ -697,7 +706,11 @@ export class RenderedRow {
         eRow.addEventListener("click", rowClickListener);
         eRow.addEventListener("dblclick", rowDblClickListener);
 
-        eParent.appendChild(eRow);
+        if (eParentDF) {
+            eParentDF.appendChild(eRow);
+        } else {
+            eParent.appendChild(eRow);
+        }
 
         this.eAllRowContainers.push(eRow);
 

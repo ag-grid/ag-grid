@@ -59,9 +59,12 @@ export class RowRenderer {
 
     private eFullWidthContainer: HTMLElement;
     private eBodyContainer: HTMLElement;
+    private eBodyContainerDF: DocumentFragment;
     private eBodyViewport: HTMLElement;
     private ePinnedLeftColsContainer: HTMLElement;
+    private ePinnedLeftColsContainerDF: DocumentFragment;
     private ePinnedRightColsContainer: HTMLElement;
+    private ePinnedRightColsContainerDF: DocumentFragment;
     private eFloatingTopContainer: HTMLElement;
     private eFloatingTopPinnedLeftContainer: HTMLElement;
     private eFloatingTopPinnedRightContainer: HTMLElement;
@@ -80,10 +83,20 @@ export class RowRenderer {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     }
 
+    private setupDocumentFragments(): void {
+        let usingDocumentFragments = !!document.createDocumentFragment;
+        if (usingDocumentFragments) {
+            this.eBodyContainerDF = document.createDocumentFragment();
+            this.ePinnedLeftColsContainerDF = document.createDocumentFragment();
+            this.ePinnedRightColsContainerDF = document.createDocumentFragment();
+        }
+    }
+
     @PostConstruct
     public init(): void {
         this.getContainersFromGridPanel();
-        
+        this.setupDocumentFragments();
+
         var columnListener = this.onColumnEvent.bind(this);
         var refreshViewListener = this.refreshView.bind(this);
 
@@ -205,9 +218,12 @@ export class RowRenderer {
                 var renderedRow = new RenderedRow(this.$scope,
                     this,
                     eBodyContainer,
+                    null,
                     eFullWidthContainer,
                     ePinnedLeftContainer,
+                    null,
                     ePinnedRightContainer,
+                    null,
                     node, rowIndex);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
@@ -459,7 +475,7 @@ export class RowRenderer {
 
     private ensureRowsRendered() {
 
-        //var start = new Date().getTime();
+        var start = new Date().getTime();
 
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -478,6 +494,12 @@ export class RowRenderer {
             }
         }
 
+        if (this.eBodyContainerDF) {
+            this.eBodyContainer.appendChild(this.eBodyContainerDF);
+            this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
+            this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
+        }
+
         // at this point, everything in our 'rowsToRemove' . . .
         this.removeVirtualRow(rowsToRemove);
 
@@ -487,8 +509,8 @@ export class RowRenderer {
             setTimeout( () => { this.$scope.$apply(); }, 0);
         }
 
-        //var end = new Date().getTime();
-        //console.log(end-start);
+        var end = new Date().getTime();
+        console.log(end-start);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void {
@@ -515,8 +537,11 @@ export class RowRenderer {
         if (_.missingOrEmpty(columns)) { return; }
 
         var renderedRow = new RenderedRow(this.$scope,
-            this, this.eBodyContainer, this.eFullWidthContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer,
+            this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer,
+            this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF,
+            this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF,
             node, rowIndex);
+
         this.context.wireBean(renderedRow);
 
         this.renderedRows[rowIndex] = renderedRow;
