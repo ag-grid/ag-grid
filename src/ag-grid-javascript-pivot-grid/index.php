@@ -2,7 +2,7 @@
 
 $pageTitle = "Announcing ag-Grid v5 and Pivot";
 $pageDescription = "ag-Grid v5 Introduces Pivot - a discussion on what this means for ag-Grid.";
-$pageKeyboards = "ag-Grid javascript data grid pivot";
+$pageKeyboards = "ag-Grid javascript datagrid pivot";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -19,7 +19,7 @@ include('../includes/mediaHeader.php');
 
         <p>
             This week saw the release of version 5.x of ag-Grid. This release signifies a large step forward
-            for ag-Grid, as it's a big leap into new territory for any general purpose JavaScript data grid.
+            for ag-Grid, as it's a big leap into new territory for any general purpose JavaScript datagrid.
             All other grids on the market either provide a) general features or b) specialise
             in pivot. ag-Grid is the first to combine both.
         </p>
@@ -38,7 +38,7 @@ include('../includes/mediaHeader.php');
 
         <p>
             Under the hood, ag-Grid uses it's own special purpose framework to manage the complex challenge
-            of building a data grid. The framework uses the latest ECMA 7 (via TypeScript) strongly typed
+            of building a datagrid. The framework uses the latest ECMA 7 (via TypeScript) strongly typed
             object oriented design mixed with ag-Grid's own IoC (Inversion of Control) container, with
             auto-wired services and ag-Grid's GUI component for data binding. This custom built library
             has allowed ag-Grid to create a robust foundation which it is now using to take on the
@@ -48,9 +48,9 @@ include('../includes/mediaHeader.php');
         <h3>The Future</h3>
 
         <p>
-            ag-Grids mission is simple - to provide the best general purpose JavaScript data grid for free
+            ag-Grids mission is simple - to provide the best general purpose JavaScript datagrid for free
             and become the world leader in this area, while also providing an Enterprise version for features
-            that are above and beyond what the industry expects from a JavaScript data grid. Going forward, ag-Grid
+            that are above and beyond what the industry expects from a JavaScript datagrid. Going forward, ag-Grid
             will build on this by improving its free core features while also breaking
             new ground with enterprise features.
         </p>

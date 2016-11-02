@@ -1,14 +1,14 @@
 <?php
 $key = "Getting Started ng1";
-$pageTitle = "Best AngularJS Data Grid";
-$pageDescription = "Shows an example of the best Javascript Data Grid. Explains how to set up the Best AngularJS Grid grid, ag-Grid, inside your browser.";
+$pageTitle = "AngularJS Datagrid";
+$pageDescription = "Shows an example of the best Javascript Datagrid. Explains how to set up the Best AngularJS Grid grid, ag-Grid, inside your browser.";
 $pageKeyboards = "Best AngularJS Grid Datagrid";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>Best AngularJS Data Grid</h2>
+    <h1>Implementing the AngularJS Datagrid</h1>
 
     <p>
         When using AngularJS, you have the choice of using the bundled version of ag-Grid
