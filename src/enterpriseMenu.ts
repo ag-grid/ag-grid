@@ -261,12 +261,12 @@ export class EnterpriseMenu {
         var builtInMenuOptions: any = {
             pinSubMenu: {
                 name: localeTextFunc('pinColumn', 'Pin Column'),
-                icon: svgFactory.createPinIcon(),
+                icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null, svgFactory.createPinIcon),
                 childMenu: this.createPinnedSubMenu()
             },
             valueAggSubMenu: {
                 name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                icon: svgFactory.createAggregationIcon(),
+                icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
                 childMenu: this.createAggregationSubMenu()
             },
             autoSizeThis: {
@@ -280,12 +280,12 @@ export class EnterpriseMenu {
             rowGroup: {
                 name: localeTextFunc('groupBy', 'Group by') + ' ' + this.column.getColDef().headerName,
                 action: ()=> this.columnController.addRowGroupColumn(this.column),
-                icon: svgFactory.createGroupIcon12()
+                icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
             },
             rowUnGroup: {
                 name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.column.getColDef().headerName,
                 action: ()=> this.columnController.removeRowGroupColumn(this.column),
-                icon: svgFactory.createGroupIcon12()
+                icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
             },
             resetColumns: {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),

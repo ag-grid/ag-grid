@@ -18,7 +18,7 @@ export interface AbstractColumnDropPanelParams {
     dragAndDropIcon:string;
     emptyMessage:string;
     title: string;
-    iconFactory: ()=>HTMLImageElement;
+    icon: HTMLElement;
 }
 
 export interface AbstractColumnDropPanelBeans {
@@ -197,7 +197,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     private addIconAndTitleToGui(): void {
         var iconFaded = this.horizontal && this.isExistingColumnsEmpty();
 
-        var eGroupIcon = this.params.iconFactory();
+        var eGroupIcon = this.params.icon;
         
         Utils.addCssClass(eGroupIcon, 'ag-column-drop-icon');
         Utils.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);

@@ -46,7 +46,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            iconFactory: svgFactory.createPivotIcon,
+            icon: Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null, svgFactory.createPivotIcon),
             emptyMessage: emptyMessage,
             title: title
         });

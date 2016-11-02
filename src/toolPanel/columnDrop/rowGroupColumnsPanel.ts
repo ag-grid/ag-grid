@@ -8,6 +8,7 @@ import {
     DragAndDropService,
     GridOptionsWrapper,
     PostConstruct,
+    Utils,
     Events,
     Column
 } from "ag-grid/main";
@@ -45,7 +46,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            iconFactory: svgFactory.createGroupIcon,
+            icon: Utils.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null, svgFactory.createGroupIcon),
             emptyMessage: emptyMessage,
             title: title
         });
