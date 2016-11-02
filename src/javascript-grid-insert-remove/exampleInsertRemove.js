@@ -43,6 +43,10 @@ function getRowData() {
     console.log(rowData);
 }
 
+function clearData() {
+    gridOptions.api.setRowData([]);
+}
+
 function onAddRow() {
     var newItem = createNewRowData();
     gridOptions.api.addItems([newItem]);
