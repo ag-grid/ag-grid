@@ -108,7 +108,7 @@ suppressEnterprise: true,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
 //minColWidth: 50,
 //maxColWidth: 300,
-//rowsBuffer: 1,
+//rowBuffer: 0,
 //columnDefs: [],
 //singleClickEdit: true,
 //rowData: [
