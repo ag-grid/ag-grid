@@ -625,6 +625,10 @@ export class GridApi {
         }
     }
 
+    public checkGridSize(): void {
+        this.gridPanel.sizeHeaderAndBody();
+    }
+
     /*
     Taking these out, as we want to reconsider how we register components
     

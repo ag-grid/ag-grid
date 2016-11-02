@@ -1103,7 +1103,7 @@ export class GridPanel {
         }
     }
 
-    private sizeHeaderAndBody(): void {
+    public sizeHeaderAndBody(): void {
         if (this.forPrint) {
             // if doing 'for print', then the header and footers are laid
             // out naturally by the browser. it whatever size that's needed to fit.
