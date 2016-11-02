@@ -17,6 +17,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix - api.ensureIndexVisible() will now also render the rows in the same action, previously you had to wait for the grid to pick up the scroll event (which happened immediatly after)  to render the rows. This causes problems if you wanted to access the row immediatly after ensuring it was visible (eg to start editing).</li>
     <li>Bugfix - Formatted values can now be empty strings, previously empty strings were ignored and the original value was presented.</li>
     <li>Bugfix - grid options was missing onRowValueChanged property</li>
+    <li>Bugfix - fixes <a href="https://www.ag-grid.com/forum/showthread.php?tid=4303">this issue</a>, when left and right pinned on IE, left pinned didn't sync scroll with body always.</li>
 
     <li>
         Performance Enhancements
