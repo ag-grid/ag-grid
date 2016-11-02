@@ -34,6 +34,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement - ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
     <li>Enhancement - added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
     <li>Enhancement - new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy if providing non-standard scrolbars to grid and need to provide alterlative padding to use.</li>
+    <li>Enhancement - added api.checkGridSize(), so you can force grid to check it's size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
 
     <h4>Version 6.2.1</h4>
     <h4>ag-grid 6.2.1, ag-grid-enterprise 6.2.1</h4>
