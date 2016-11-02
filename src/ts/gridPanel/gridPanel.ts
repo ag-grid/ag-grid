@@ -1220,26 +1220,43 @@ export class GridPanel {
             }
         }
 
-        if (this.useScrollLag) {
-            this.eBodyViewport.addEventListener('scroll', this.debounce.bind(this,onBodyViewportScroll) );
-            this.ePinnedRightColsViewport.addEventListener('scroll', this.debounce.bind(this,onPinnedRightScroll) );
-        } else {
-            this.eBodyViewport.addEventListener('scroll', onBodyViewportScroll);
-            this.ePinnedRightColsViewport.addEventListener('scroll', onPinnedRightScroll);
-        }
+        var bodyViewportScrollListener = this.useScrollLag ? this.debounce.bind(this,onBodyViewportScroll) : onBodyViewportScroll;
+        var pinnedRightScrollListener = this.useScrollLag ? this.debounce.bind(this,onPinnedRightScroll) : onPinnedRightScroll;
+
+        this.eBodyViewport.addEventListener('scroll', bodyViewportScrollListener);
+        this.ePinnedRightColsViewport.addEventListener('scroll', pinnedRightScrollListener);
+
+        this.destroyFunctions.push( () => {
+            this.eBodyViewport.removeEventListener('scroll', bodyViewportScrollListener);
+            this.ePinnedRightColsViewport.removeEventListener('scroll', pinnedRightScrollListener);
+        });
 
         // this means the pinned panel was moved, which can only
         // happen when the user is navigating in the pinned container
         // as the pinned col should never scroll. so we rollback
         // the scroll on the pinned.
-        this.ePinnedLeftColsViewport.addEventListener('scroll', () => {
+        var pinnedLeftColsViewportScrollListener = () => {
             this.ePinnedLeftColsViewport.scrollTop = 0;
+        };
+        this.ePinnedLeftColsViewport.addEventListener('scroll', pinnedLeftColsViewportScrollListener);
+        this.destroyFunctions.push( () => {
+            this.ePinnedLeftColsViewport.removeEventListener('scroll', pinnedLeftColsViewportScrollListener);
         });
 
+        this.addIEPinFix(onPinnedRightScroll);
+    }
+
+    // this bit is a fix / hack for IE due to this:
+    // https://www.ag-grid.com/forum/showthread.php?tid=4303
+    // it gets the left panel to reposition itself after a model change
+    private addIEPinFix(onPinnedRightScroll: Function): void {
         var listener = () => {
-
+            if (this.columnController.isPinningRight()) {
+                setTimeout( ()=> {
+                    onPinnedRightScroll();
+                }, 0);
+            }
         };
-
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener);
         this.destroyFunctions.push( ()=> this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, listener) );
     }
