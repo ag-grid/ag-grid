@@ -1,14 +1,14 @@
 <?php
 $key = "Getting Started ng2";
-$pageTitle = "Best Angular 2 Data Grid";
-$pageDescription = "Demonstrate the best Angular 2 data grid. Shows and example of a data grid for using with Angular 2.";
+$pageTitle = "Angular 2 Datagrid";
+$pageDescription = "Demonstrate the best Angular 2 datagrid. Shows and example of a datagrid for using with Angular 2.";
 $pageKeyboards = "Angular 2 Grid";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>Best Angular 2 Data Grid</h2>
+    <h1>Implmenting the Angular 2 Datagrid</h1>
 
     <p>
         If you are building an Angular 2 application then you have the choice between A) using the plain JavaScript version

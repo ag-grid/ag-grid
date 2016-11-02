@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "JavaScript DataGrid";
+$pageTitle = "JavaScript Datagrid";
 $pageDescription = "8 reasons to choose ag-Grid as your JavaScript Datagrid";
 $pageKeyboards = "Choosing JavaScript DataGrid";
 

@@ -17,7 +17,7 @@ include('../includes/mediaHeader.php');
     <div class="col-md-9">
 
         <p>
-            At the start of 2015 I was in a day job with a problem: I couldn’t find a decent JavaScript data grid for our enterprise applications.
+            At the start of 2015 I was in a day job with a problem: I couldn’t find a decent JavaScript datagrid for our enterprise applications.
         </p>
         <p>
             So I decided to write my own. I called it ag-Grid.
@@ -205,7 +205,7 @@ include('../includes/mediaHeader.php');
         </div>
 
         <p>
-            Before going on stage we stood at the back of the conference hall and I started to prepare myself. Silently, I kept repeating, "This is great. Look confident. Deliver one message well. Put energy on the stage. Get people’s attention. Tell everyone with confidence ag-Grid is the best data grid in the world." Positive mental thinking and psyching myself up.
+            Before going on stage we stood at the back of the conference hall and I started to prepare myself. Silently, I kept repeating, "This is great. Look confident. Deliver one message well. Put energy on the stage. Get people’s attention. Tell everyone with confidence ag-Grid is the best datagrid in the world." Positive mental thinking and psyching myself up.
         </p>
         <p>
             I started bouncing up and down lightly on my heels to get the energy going.
@@ -257,7 +257,7 @@ include('../includes/mediaHeader.php');
             However, as it turns out this is the ideal way for me to feel calm, centred and energised before stepping out in front of a large audience.
         </p>
         <p>
-            This time they didn't have strong spotlights pointing at the stage, so I could see the room. We used less than our allocated five minutes, delivered our one message, and then told everyone that ag-Grid is the best JavaScript data grid in the world. Bold! No smoke and mirrors: I truly believe it is.
+            This time they didn't have strong spotlights pointing at the stage, so I could see the room. We used less than our allocated five minutes, delivered our one message, and then told everyone that ag-Grid is the best JavaScript datagrid in the world. Bold! No smoke and mirrors: I truly believe it is.
         </p>
 
         <h3>A bright future for ag-Grid</h3>

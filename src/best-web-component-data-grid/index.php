@@ -1,14 +1,14 @@
 <?php
 $key = "Getting Started Web Components";
-$pageTitle = "Best Web Component Data Grid";
-$pageDescription = "Demonstrates the best Web Component Data Grid. Shows how to use ag-Grid to build a Javascript grid using Web Components and without using any framework";
-$pageKeyboards = "Best Javascript Web Component Data Grid";
+$pageTitle = "Web Component Datagrid";
+$pageDescription = "Demonstrates the best Web Component Datagrid. Shows how to use ag-Grid to build a Javascript grid using Web Components and without using any framework";
+$pageKeyboards = "Best Javascript Web Component Datagrid";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>Best Web Components Data Grid</h2>
+    <h1>Implementing the Web Components Datagrid</h1>
 
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created
