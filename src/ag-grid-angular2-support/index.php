@@ -1,8 +1,8 @@
 <?php
 
-$pageTitle = "Angular 2 Data Grid Support";
+$pageTitle = "Angular 2 Datagrid Support";
 $pageDescription = "ag-Grid v6 offers full Angular 2 Support - a discussion on what this means for ag-Grid.";
-$pageKeyboards = "ag-Grid javascript data grid pivot";
+$pageKeyboards = "ag-Grid javascript datagrid pivot";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -10,7 +10,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2><img src="/images/angular2_large.png"/>Announcing ag-Grid v6 and Angular 2 Data Grid Support</h2>
+        <h2><img src="/images/angular2_large.png"/>Announcing ag-Grid v6 and Angular 2 Datagrid Support</h2>
     </div>
 </div>
 
@@ -277,7 +277,7 @@ filterFramework: {
         <p>There's so much more you can do if you decide to combine Angular 2 Components with ag-Grid - powerful functionality, fast grid and easy configuration. What are you waiting for?!</p>
 
         <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular2-support/" data-text="Announcing ag-Grid v6 and Angular 2 Data Grid Support" data-via="seanlandsman" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular2-support/" data-text="Announcing ag-Grid v6 and Angular 2 Datagrid Support" data-via="seanlandsman" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -285,7 +285,7 @@ filterFramework: {
     <div class="col-md-3">
 
         <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular2-support/" data-text="Announcing ag-Grid v6 and Angular 2 Data Grid Support" data-via="seanlandsman" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular2-support/" data-text="Announcing ag-Grid v6 and Angular 2 Datagrid Support" data-via="seanlandsman" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 

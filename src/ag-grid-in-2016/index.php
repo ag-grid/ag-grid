@@ -27,7 +27,7 @@ include('../includes/mediaHeader.php');
             made the grid super fast (which, btw, involved doing it all in Javascript and not using Angular).
         </p>
         <p>
-            ag-Grid is now one of the worlds leading data grids for modern Javascript applications.
+            ag-Grid is now one of the worlds leading datagrids for modern Javascript applications.
             It was born from the Angular world (as I was building Angular applications at the time) but it is now firmly
             framework agnostic - it has no dependencies on any framework.
         </p>
