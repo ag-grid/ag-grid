@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>IMplmenting the JavaScript Datagrid</h1>
+    <h1>Implmenting the JavaScript Datagrid</h1>
 
     <p>
         When using no framework, you have the choice of using the bundled ag-Grid (which puts
