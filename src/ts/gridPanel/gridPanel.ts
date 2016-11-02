@@ -284,14 +284,31 @@ export class GridPanel {
     }
 
     private addEventListeners(): void {
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
 
-        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
+        let displayedColumnsChangedListener = this.onDisplayedColumnsChanged.bind(this);
+        let columnResizedListener = this.onColumnResized.bind(this);
+        let sizeHeaderAndBodyListener = this.sizeHeaderAndBody.bind(this);
+        let rowDataChangedListener = this.onRowDataChanged.bind(this);
 
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, this.sizeHeaderAndBody.bind(this));
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnResizedListener);
 
-        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
+
+        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
+        this.eventService.addEventListener(Events.EVENT_ITEMS_ADDED, rowDataChangedListener);
+        this.eventService.addEventListener(Events.EVENT_ITEMS_REMOVED, rowDataChangedListener);
+
+        this.destroyFunctions.push( ()=> {
+            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnResizedListener);
+            this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
+            this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
+            this.eventService.removeEventListener(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
+            this.eventService.removeEventListener(Events.EVENT_ITEMS_ADDED, rowDataChangedListener);
+            this.eventService.removeEventListener(Events.EVENT_ITEMS_REMOVED, rowDataChangedListener);
+        });
     }
 
     private addDragListeners(): void {
@@ -1218,6 +1235,13 @@ export class GridPanel {
         this.ePinnedLeftColsViewport.addEventListener('scroll', () => {
             this.ePinnedLeftColsViewport.scrollTop = 0;
         });
+
+        var listener = () => {
+
+        };
+
+        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener);
+        this.destroyFunctions.push( ()=> this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, listener) );
     }
 
     private setLeftAndRightBounds(): void {
