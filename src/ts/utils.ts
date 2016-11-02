@@ -495,11 +495,11 @@ export class Utils {
         return eResult;
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, colDefWrapper: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
         var userProvidedIcon: Function | string;
         // check col for icon first
-        if (colDefWrapper && colDefWrapper.getColDef().icons) {
-            userProvidedIcon = colDefWrapper.getColDef().icons[iconName];
+        if (column && column.getColDef().icons) {
+            userProvidedIcon = column.getColDef().icons[iconName];
         }
         // it not in col, try grid options
         if (!userProvidedIcon && gridOptionsWrapper.getIcons()) {
