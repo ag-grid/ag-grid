@@ -1,7 +1,10 @@
 // ag-grid-aurelia v6.2.0
 import { ColDef, SetFilterParameters, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef } from "ag-grid/main";
+import { AgTemplate } from './agTemplate';
 export declare class AgGridColumn {
     childColumns: AgGridColumn[];
+    cellTemplate: AgTemplate;
+    constructor();
     hasChildColumns(): boolean;
     toColDef(): ColDef;
     private getChildColDefs(childColumns);

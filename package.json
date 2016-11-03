@@ -45,7 +45,8 @@
     "build": {
       "resources": [
         "ag-grid-aurelia/lib/agGridAurelia",
-        "ag-grid-aurelia/lib/agGridColumn"
+        "ag-grid-aurelia/lib/agGridColumn",
+        "ag-grid-aurelia/lib/agTemplate"
       ]
     }
   }

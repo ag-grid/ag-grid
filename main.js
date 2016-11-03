@@ -5,7 +5,7 @@ exports.AureliaComponentFactory = require('./lib/aureliaComponentFactory').Aurel
 exports.AgGridColumn = require('./lib/agGridColumn').AgGridColumn;
 
 function configure(config) {
-    config.globalResources('./lib/agGridAurelia', './lib/agGridColumn');
+    config.globalResources('./lib/agGridAurelia', './lib/agGridColumn', './lib/agTemplate');
 }
 
 exports.configure = configure;

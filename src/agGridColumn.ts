@@ -1,7 +1,9 @@
 import {bindable,
+    autoinject,
     inlineView,
     customElement,
-    children} from 'aurelia-framework';
+    children,
+    child} from 'aurelia-framework';
 import {ColDef,
     SetFilterParameters,
     TextAndNumberFilterParameters,
@@ -18,12 +20,21 @@ import {ColDef,
     ColGroupDef
 } from "ag-grid/main";
 
+import {AgTemplate} from './agTemplate';
+
 @customElement('ag-grid-column')
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
 @inlineView(`<template><slot></slot></template>`)
+@autoinject()
 export class AgGridColumn {
     @children('ag-grid-column')
     public childColumns:AgGridColumn[] = [];
+
+    @child('ag-template')
+    public cellTemplate:AgTemplate;
+
+    constructor(){
+    }
 
     public hasChildColumns():boolean {
         return this.childColumns && this.childColumns.length > 0;
@@ -35,6 +46,11 @@ export class AgGridColumn {
         if (this.hasChildColumns()) {
             (<any>colDef)["children"] = this.getChildColDefs(this.childColumns);
         }
+
+        if (this.cellTemplate) {
+            colDef.cellRendererFramework = {template: this.cellTemplate.template};
+        }
+
         return colDef;
     }
 
