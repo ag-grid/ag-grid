@@ -125,6 +125,7 @@ export class GridOptionsWrapper {
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
     public isToolPanelSuppressPivots() { return isTrue(this.gridOptions.toolPanelSuppressPivots); }
     public isToolPanelSuppressPivotMode() { return isTrue(this.gridOptions.toolPanelSuppressPivotMode); }
+    public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }

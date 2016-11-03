@@ -254,6 +254,8 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
     private setupTap(): void {
 
+        if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
+
         let touchListener = new TouchListener(this.getGui());
         let tapListener = (touch: Touch)=> {
             this.sortController.progressSort(this.column, false);

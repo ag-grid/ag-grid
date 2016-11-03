@@ -45,7 +45,7 @@ export class ComponentUtil {
         'singleClickEdit','suppressLoadingOverlay','suppressNoRowsOverlay','suppressAutoSize',
         'suppressParentsInRowNodes','showToolPanel','suppressColumnMoveAnimation','suppressMovableColumns',
         'suppressFieldDotNotation','enableRangeSelection','suppressEnterprise','rowGroupPanelShow',
-        'pivotPanelShow',
+        'pivotPanelShow', 'suppressTouch',
         'suppressContextMenu','suppressMenuFilterPanel','suppressMenuMainPanel','suppressMenuColumnPanel',
         'enableStatusBar','rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',

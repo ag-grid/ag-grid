@@ -81,7 +81,11 @@ export class DragService {
 
         let touchListener: (touchEvent: TouchEvent)=>void = null;
 
-        if (includeTouch) {
+        let suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
+
+        let reallyIncludeTouch = includeTouch && !suppressTouch;
+
+        if (reallyIncludeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
             params.eElement.addEventListener('touchstart', touchListener);
         }

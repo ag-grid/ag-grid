@@ -90,6 +90,7 @@ export interface GridOptions {
     paginationInitialRowCount?: number;
     paginationPageSize?: number;
     editType?: string;
+    suppressTouch?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
