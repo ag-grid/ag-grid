@@ -127,7 +127,7 @@ suppressEnterprise: true,
 //suppressMovableColumns: true,
 //groupIncludeFooter: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
-    suppressTouch: true,
+    // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
