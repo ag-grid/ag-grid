@@ -6,7 +6,7 @@ for (var i = 0; i<100; i++) {
 
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
-    {headerName: "Age", field: "age", width: 90, filter: 'set',
+    {headerName: "Age - Comparator", field: "age", width: 200, filter: 'set',
         filterParams: {
             values: allAges,
             comparator: function(a,b) {
@@ -21,14 +21,11 @@ var columnDefs = [
                 }
             }
         }},
-    {headerName: "Country", field: "country", width: 140},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-    {headerName: "Total", field: "total", width: 100, filter: 'number'}
+    {headerName: "Age - No Comparator", field: "age", width: 200, filter: 'set',
+        filterParams: {
+            values: allAges
+        }},
+    {headerName: "Country", field: "country", width: 140}
 ];
 
 var gridOptions = {

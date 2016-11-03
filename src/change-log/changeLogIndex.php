@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h2>Version 5.3.x</h2>
+    <h2>Version 6.3.x</h2>
 
     <h4>Enhancements</h4>
 
@@ -41,6 +41,8 @@ include '../documentation-main/documentation_header.php';
         <li>Formatted values can now be empty strings, previously empty strings were ignored and the original value was presented.</li>
         <li>grid options was missing onRowValueChanged property</li>
         <li>fixes <a href="https://www.ag-grid.com/forum/showthread.php?tid=4303">this issue</a>, when left and right pinned on IE, left pinned didn't sync scroll with body always.</li>
+        <li>Set Filter - 'Select All' checkbox was not getting cleared when all items were unchecked.</li>
+        <li>Set Filter - When new rows got loaded into the grid, the filter icon was not cleared down if filter was reset. Now it is.</li>
     </ul>
 
     <h4>Version 6.2.1</h4>

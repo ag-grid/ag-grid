@@ -105,6 +105,23 @@ columnDefinition = {
 
     <show-example example="exampleSetFilter"></show-example>
 
+    <h3 id="sortingSetFilter">Sorting Set Filter Values List</h3>
+
+    <p>
+        Values inside a set filter will be sorted by their string value by default. If you want a different sort
+        order than the natural string sort order, you need to provide a comparator.
+    </p>
+
+    <p>
+        The example below shows sorting on the age columns. The age column is repeated with one difference, the
+        first instance has a comparator, the second has not. The second iteration has the numbers ordered by the
+        default string ordering which is not correct (ie the sequence is 0,1,10,11,2 instead of 0,1,2,3...).
+    </p>
+
+    <show-example example="exampleSetFilterComparator"></show-example>
+
+    <show-example example="exampleSetFilterNewRows"></show-example>
+
     <h3>Set Filter API</h3>
     <p>
         The set filter API is as follows:
