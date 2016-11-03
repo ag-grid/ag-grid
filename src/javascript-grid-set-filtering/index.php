@@ -120,6 +120,29 @@ columnDefinition = {
 
     <show-example example="exampleSetFilterComparator"></show-example>
 
+    <h3 id="newRowsSetFilter">New Rows Action and Values Example</h3>
+
+    <p>
+        Below demonstrates using New Rows Action and Values as follows:
+        <ul>
+        <li>Column Fruit - Normal</li>
+        <li>Column Animal - Using newRowsAction = Keep</li>
+        <li>Column Color - Using values</li>
+        <li>Column Location - Using values and using newRowsAction = Keep</li>
+    </ul>
+        The example is not meant to make business sense, it just demonstrates the filters with random unrelated data.
+    </p>
+
+    <note>
+        Although the example works, it demonstrates one dangerous situation, which is mixing newRowsAction=keep without
+        providing values. This is dangerous and if you do not provide values, then the grid will create the values for
+        you based on the data inside the grid (which is normally great). The problem is that when new values enter the
+        grid, if the set of values is different, then this makes it impossible for the grid to keep the same filter
+        selection. If the set of values is different, then newRowsAction=keep breaks down. In this situation, the grid
+        will keep the same selected values, however it will loose information about previously selected values that
+        no longer exist in the new set.
+    </note>
+
     <show-example example="exampleSetFilterNewRows"></show-example>
 
     <h3>Set Filter API</h3>
