@@ -449,6 +449,10 @@ include '../documentation-main/documentation_header.php';
             <td>If true, then row group, pivot and value aggregation will be read only from the gui. The grid will display
             what values are used for each, but will not allow the use to change the selection.</td>
         </tr>
+        <tr>
+            <th>suppressTouch</th>
+            <td>Disables touch support (but does not remove the browsers efforts to simulate mouse events on touch).</td>
+        </tr>
 
     </table>
 </div>

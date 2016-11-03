@@ -20,6 +20,7 @@ include '../documentation-main/documentation_header.php';
         <li>new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy if providing non-standard scrolbars to grid and need to provide alterlative padding to use.</li>
         <li>added api.checkGridSize(), so you can force grid to check it's size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
         <li>added customisation of the following icons: menuPin, menuValue, menuAddRowGroup, menuRemoveRowGroup, rowGroupPanel, pivotPanel, valuePanel</li>
+        <li>added property <i>suppressTouch</i> to turn off touch support, if you don't want it.</li>
     </ul>
 
     <h4>Performance Enhancements</h4>
