@@ -3,14 +3,12 @@ import {Component,
     ViewContainerRef,
     ComponentRef,
     Injectable,
-    NgModule,
-    ModuleWithComponentFactories} from '@angular/core';
+    NgModule} from '@angular/core';
 import {RuntimeCompiler } from "@angular/compiler";
 
 import {ICellRenderer,
     ICellEditor,
     MethodNotImplementedException,
-    RowNode,
     IDoesFilterPassParams,
     IFilter,
     IFilterParams,
