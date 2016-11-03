@@ -253,7 +253,7 @@ export class SetFilterModel {
     }
 
     public isNothingSelected() {
-        return this.allUniqueValues.length === 0;
+        return this.selectedValuesCount === 0;
     }
 
     public getModel() {

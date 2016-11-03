@@ -120,6 +120,7 @@ export class SetFilter extends Component implements IFilter {
         var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
+        this.updateSelectAll();
         this.virtualList.refresh();
     }
 
@@ -159,7 +160,12 @@ export class SetFilter extends Component implements IFilter {
         });
 
         this.eSelectAll.onclick = this.onSelectAll.bind(this);
+        this.updateSelectAll();
+        this.setupApply();
+        this.virtualList.refresh();
+    }
 
+    private updateSelectAll(): void {
         if (this.model.isEverythingSelected()) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = true;
@@ -169,9 +175,6 @@ export class SetFilter extends Component implements IFilter {
         } else {
             this.eSelectAll.indeterminate = true;
         }
-
-        this.setupApply();
-        this.virtualList.refresh();
     }
 
     private setupApply() {
@@ -213,22 +216,11 @@ export class SetFilter extends Component implements IFilter {
     private onItemSelected(value: any, selected: boolean) {
         if (selected) {
             this.model.selectValue(value);
-            if (this.model.isEverythingSelected()) {
-                this.eSelectAll.indeterminate = false;
-                this.eSelectAll.checked = true;
-            } else {
-                this.eSelectAll.indeterminate = true;
-            }
         } else {
             this.model.unselectValue(value);
-            //if set is empty, nothing is selected
-            if (this.model.isNothingSelected()) {
-                this.eSelectAll.indeterminate = false;
-                this.eSelectAll.checked = false;
-            } else {
-                this.eSelectAll.indeterminate = true;
-            }
         }
+
+        this.updateSelectAll();
 
         this.filterChanged();
     }
@@ -242,28 +234,26 @@ export class SetFilter extends Component implements IFilter {
     }
 
     public selectEverything() {
-        this.eSelectAll.indeterminate = false;
-        this.eSelectAll.checked = true;
-        // not sure if we need to call this, as checking the checkout above might
-        // fire events.
         this.model.selectEverything();
+        this.updateSelectAll();
+        this.virtualList.refresh();
     }
 
     public selectNothing() {
-        this.eSelectAll.indeterminate = false;
-        this.eSelectAll.checked = false;
-        // not sure if we need to call this, as checking the checkout above might
-        // fire events.
         this.model.selectNothing();
+        this.updateSelectAll();
+        this.virtualList.refresh();
     }
 
     public unselectValue(value: any) {
         this.model.unselectValue(value);
+        this.updateSelectAll();
         this.virtualList.refresh();
     }
 
     public selectValue(value: any) {
         this.model.selectValue(value);
+        this.updateSelectAll();
         this.virtualList.refresh();
     }
 
