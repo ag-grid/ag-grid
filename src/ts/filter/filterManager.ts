@@ -111,18 +111,19 @@ export class FilterManager {
         var atLeastOneActive = false;
 
         _.iterateObject(this.allFilters, function (key, filterWrapper) {
-            if (!filterWrapper.filter.isFilterActive) { // because users can do custom filters, give nice error message
-                console.error('Filter is missing method isFilterActive');
-            }
             if (filterWrapper.filter.isFilterActive()) {
                 atLeastOneActive = true;
-                filterWrapper.column.setFilterActive(true);
-            } else {
-                filterWrapper.column.setFilterActive(false);
             }
         });
 
         return atLeastOneActive;
+    }
+
+    private updateFilterFlagInColumns(): void {
+        _.iterateObject(this.allFilters, function (key, filterWrapper) {
+            var filterActive = filterWrapper.filter.isFilterActive();
+            filterWrapper.column.setFilterActive(filterActive);
+        });
     }
 
     // returns true if quickFilter or advancedFilter
@@ -196,6 +197,7 @@ export class FilterManager {
         this.eventService.dispatchEvent(Events.EVENT_BEFORE_FILTER_CHANGED);
 
         this.advancedFilterPresent = this.isAdvancedFilterPresent();
+        this.updateFilterFlagInColumns();
         this.checkExternalFilter();
 
         _.iterateObject(this.allFilters, function (key, filterWrapper) {
@@ -260,13 +262,12 @@ export class FilterManager {
     }
 
     private onNewRowsLoaded() {
-        var that = this;
-        Object.keys(this.allFilters).forEach(function (field) {
-            var filter = that.allFilters[field].filter;
-            if (filter.onNewRowsLoaded) {
-                filter.onNewRowsLoaded();
+        _.iterateObject(this.allFilters, function (key, filterWrapper) {
+            if (filterWrapper.filter.onNewRowsLoaded) {
+                filterWrapper.filter.onNewRowsLoaded();
             }
         });
+        this.updateFilterFlagInColumns();
     }
 
     private createValueGetter(column: Column) {
@@ -311,8 +312,13 @@ export class FilterManager {
         }
 
         var filterInstance = new FilterClass();
+        this.checkFilterHasAllMandatoryMethods(filterInstance, column);
         this.context.wireBean(filterInstance);
 
+        return filterInstance;
+    }
+
+    private checkFilterHasAllMandatoryMethods(filterInstance: IFilter, column: Column): void {
         // help the user, check the mandatory methods exist
         ['getGui','isFilterActive','doesFilterPass','getModel','setModel'].forEach( methodName => {
             var methodIsMissing = !(<any>filterInstance)[methodName];
@@ -320,8 +326,6 @@ export class FilterManager {
                 throw `Filter for column ${column.getColId()} is missing method ${methodName}`;
             }
         });
-
-        return filterInstance;
     }
 
     private createParams(filterWrapper: FilterWrapper): IFilterParams {

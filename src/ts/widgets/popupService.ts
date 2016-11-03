@@ -249,11 +249,9 @@ export class PopupService {
         }
 
         function consumeMouseClick(event: any) {
-            console.log('consumeMouseClick');
             childMouseClick = event;
         }
         function consumeTouchClick(event: any) {
-            console.log('consumeTouchClick');
             childTouch = event;
         }
 
