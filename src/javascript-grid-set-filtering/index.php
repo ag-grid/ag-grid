@@ -123,14 +123,17 @@ columnDefinition = {
     <h3 id="newRowsSetFilter">New Rows Action and Values Example</h3>
 
     <p>
-        Below demonstrates using New Rows Action and Values as follows:
+        Below demonstrates using New Rows Action and Values. The example is not meant to make business sense,
+        it just demonstrates the filters with random unrelated data. The example has the columns configured
+        as follows:
         <ul>
         <li>Column Fruit - Normal</li>
         <li>Column Animal - Using newRowsAction = Keep</li>
         <li>Column Color - Using values</li>
         <li>Column Location - Using values and using newRowsAction = Keep</li>
     </ul>
-        The example is not meant to make business sense, it just demonstrates the filters with random unrelated data.
+        The 'Set New Data' button sets new data into the grid. It is suggested you set the filters and then
+        observe what happens when you hit 'Set New Data'.
     </p>
 
     <note>
