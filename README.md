@@ -51,9 +51,9 @@ In your view template.  Here we are adding columns using markup. ColumnDefs can 
                        grid-ready.call="onGridReady()">
         <ag-grid-column header-name="My Group Column">
           <ag-grid-column header-name="Id" field="id">
-              <ag-template>
+              <ag-cell-template>
                 <button md-button class="btn accent"  click.delegate="params.context.vm.onIdClicked(params.data)">${params.value}</button>
-              </ag-template>
+              </ag-cell-template>
           </ag-grid-column>
           <ag-grid-column header-name="Name" field="name" >
           </ag-grid-column>

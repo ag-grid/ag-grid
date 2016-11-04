@@ -20,7 +20,7 @@ import {ColDef,
     ColGroupDef
 } from "ag-grid/main";
 
-import {AgTemplate} from './agTemplate';
+import {AgCellTemplate, AgEditorTemplate, AgFilterTemplate} from './agTemplate';
 
 @customElement('ag-grid-column')
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
@@ -30,8 +30,14 @@ export class AgGridColumn {
     @children('ag-grid-column')
     public childColumns:AgGridColumn[] = [];
 
-    @child('ag-template')
-    public cellTemplate:AgTemplate;
+    @child('ag-cell-template')
+    public cellTemplate:AgCellTemplate;
+
+    @child('ag-editor-template')
+    public editorTemplate:AgEditorTemplate;
+
+    @child('ag-filter-template')
+    public filterTemplate:AgFilterTemplate;
 
     constructor(){
     }
@@ -49,6 +55,18 @@ export class AgGridColumn {
 
         if (this.cellTemplate) {
             colDef.cellRendererFramework = {template: this.cellTemplate.template};
+            delete (<any>colDef).cellTemplate;
+        }
+
+        if (this.editorTemplate) {
+            colDef.editable = true;
+            colDef.cellEditorFramework = {template: this.editorTemplate.template};
+            delete (<any>colDef).editorTemplate;
+        }
+
+        if (this.filterTemplate) {
+            colDef.filterFramework = {template: this.filterTemplate.template};
+            delete (<any>colDef).filterTemplate;
         }
 
         return colDef;

@@ -9,10 +9,10 @@ import {ICellRenderer,
     IFilterParams,
     IAfterFilterGuiAttachedParams}   from 'ag-grid/main';
 
-import {AgRendererComponent} from "./agRendererComponent";
-import {AgEditorComponent} from "./agEditorComponent";
+
 import {AgFrameworkComponent} from "./agFrameworkComponent";
 import {AgFilterComponent} from "./agFilterComponent";
+import {IAureliaEditorViewModel} from './editorViewModels';
 
 @autoinject()
 @transient()
@@ -37,9 +37,6 @@ export class AureliaComponentFactory {
     // }
 
     public createRendererFromTemplate(container:Container, viewFactory:ViewFactory):{new(): ICellRenderer} {
-
-
-
         class CellRendererComponent implements ICellRenderer {
             private view:View;
 
@@ -62,132 +59,75 @@ export class AureliaComponentFactory {
 
         return CellRendererComponent;
 
-
-
-
     }
 
-    public createEditorFromComponent(componentType:{ new(...args:any[]): AgEditorComponent; },
-                                     viewContainerRef:Container,
-                                     childDependencies:any[] = [],
-                                     moduleImports:any[] = []):{new(): ICellEditor} {
-        return this.adaptComponentToEditor(componentType,
-            viewContainerRef,
-            this._viewCompiler,
-            (<any>componentType).name,
-            moduleImports,
-            childDependencies);
-    }
+    public createEditorFromTemplate(container:Container, viewFactory:ViewFactory):{new(): ICellEditor} {
 
-    public createFilterFromComponent(componentType:{ new(...args:any[]): AgFilterComponent; },
-                                     viewContainerRef:Container,
-                                     childDependencies:any[] = [],
-                                     moduleImports:any[] = []):{new(): IFilter} {
-        return this.adaptComponentToFilter(componentType,
-            viewContainerRef,
-            this._viewCompiler,
-            (<any>componentType).name,
-            moduleImports,
-            childDependencies);
-    }
+        class CellEditor implements ICellEditor {
+
+            private view:View;
+            private editorVm:IAureliaEditorViewModel;
 
 
-    private adaptComponentToRenderer(componentType:{ new(...args:any[]): AgRendererComponent; },
-                                     viewContainerRef:Container,
-                                     compiler:ViewCompiler,
-                                     name:string,
-                                     moduleImports:any[],
-                                     childDependencies:any[]):{new(): ICellRenderer} {
-
-        let that = this;
-        class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRenderer {
             init(params:any):void {
-                super.init(params);
-                this._componentRef.changeDetectorRef.detectChanges();
-            }
+                let bindingContext = {params:params};
+                this.view = viewFactory.create(container);
+                this.view.bind(bindingContext);
 
-            refresh(params:any):void {
-                this._params = params;
+                let controllers:any[] = (<any> this.view).controllers;
 
-                if (this._agAwareComponent.refresh) {
-                    this._agAwareComponent.refresh(params);
-                } else {
-                    throw new MethodNotImplementedException();
+                if (controllers &&
+                    controllers.length == 1 &&
+                    controllers[0].viewModel) {
+                    this.editorVm = controllers[0].viewModel;
+                    //must reset params or it will be nothing
+                    this.editorVm.params = params;
                 }
+                else {
+                    console.error('The editor template component is missing an IEditorViewModel or it contains more than one component');
+                }
+
             }
 
-            protected createComponent():ComponentRef<AgRendererComponent> {
-                return that.createComponent(componentType,
-                    viewContainerRef,
-                    compiler,
-                    name,
-                    moduleImports,
-                    childDependencies);
+            public getGui(): HTMLElement {
+                return this.view.fragment as HTMLElement;
             }
 
-        }
-
-        return CellRenderer;
-    }
-
-    private adaptComponentToEditor(componentType:{ new(...args:any[]): AgEditorComponent; },
-                                   viewContainerRef:Container,
-                                   compiler:ViewCompiler,
-                                   name:string,
-                                   moduleImports:any[],
-                                   childDependencies:any[]):{new(): ICellEditor} {
-
-        let that = this;
-        class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditor {
-
-            init(params:any):void {
-                super.init(params);
+            destroy(){
+                this.view.returnToCache();
             }
 
             getValue():any {
-                return this._agAwareComponent.getValue();
+                return this.editorVm.getValue();
             }
 
             isPopup():boolean {
-                return this._agAwareComponent.isPopup ?
-                    this._agAwareComponent.isPopup() : false;
+               return this.editorVm.isPopup();
             }
 
             isCancelBeforeStart():boolean {
-                return this._agAwareComponent.isCancelBeforeStart ?
-                    this._agAwareComponent.isCancelBeforeStart() : false;
+                return this.editorVm.isCancelBeforeStart();
             }
 
             isCancelAfterEnd():boolean {
-                return this._agAwareComponent.isCancelAfterEnd ?
-                    this._agAwareComponent.isCancelAfterEnd() : false;
+                return this.editorVm.isCancelAfterEnd();
             }
 
             focusIn():void {
-                if (this._agAwareComponent.focusIn) {
-                    this._agAwareComponent.focusIn();
-                }
+                this.editorVm.focusIn();
             }
 
             focusOut():void {
-                if (this._agAwareComponent.focusOut) {
-                    this._agAwareComponent.focusOut();
-                }
+                this.editorVm.focusOut();
             }
 
-
-            protected createComponent():ComponentRef<AgEditorComponent> {
-                return that.createComponent(componentType,
-                    viewContainerRef,
-                    compiler,
-                    name,
-                    moduleImports,
-                    childDependencies);
-            }
         }
 
         return CellEditor;
+
     }
+
+
 
     private adaptComponentToFilter(componentType:{ new(...args:any[]): AgFilterComponent; },
                                    viewContainerRef:Container,

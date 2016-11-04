@@ -60,10 +60,12 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
 
     public colDefCellEditor(colDef:ColDef):{new(): ICellEditor} | string {
         if (colDef.cellEditorFramework) {
-            return this._componentFactory.createEditorFromComponent(colDef.cellEditorFramework.component,
-                this._container,
-                colDef.cellEditorFramework.dependencies,
-                colDef.cellEditorFramework.moduleImports)
+            //cache the columnDef viewFactory
+            if(!colDef.cellEditorFramework.$viewFactory) {
+                colDef.cellEditorFramework.$viewFactory = this._viewCompiler.compile(colDef.cellEditorFramework.template, this._viewResources);
+            }
+            return this._componentFactory.createEditorFromTemplate(this._container,colDef.cellEditorFramework.$viewFactory);
+
         } else {
             return this._baseFrameworkFactory.colDefCellEditor(colDef);
         }
