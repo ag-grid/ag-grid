@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{},"exports":[{"from":"./src/codegen","export":["CodeGenerator"]},{"from":"./src/reflector_host","export":["NodeReflectorHostContext","ReflectorHost","ReflectorHostContext"]},{"from":"./src/static_reflector","export":["StaticReflector","StaticReflectorHost","StaticSymbol"]},{"from":"@angular/tsc-wrapped"}]}

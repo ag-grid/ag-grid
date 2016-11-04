@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"hasLifecycleHook":{"__symbolic":"function","parameters":["hook","token"],"value":{"__symbolic":"error","message":"Reference to a non-exported function","line":15,"character":9,"context":{"name":"getHookName"}}}}}

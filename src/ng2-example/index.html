@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        html, body {
+            height:100%;
+            margin:0
+        }
+    </style>
+    <title>ag-Grid Angular 2 Example</title>
+
+    <!-- 1. Load libraries -->
+    <!-- Polyfill(s) for older browsers -->
+    <script src="node_modules/es6-shim/es6-shim.min.js"></script>
+
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+
+    <!-- ag-grid CSS -->
+    <!-- In your build, you will probably want to include the css in your bundle. -->
+    <!-- To do this you will use a CSS Loader. How to do this is not an ag-Grid -->
+    <!-- problem, so I've not included how to do it here. For simplicity, and -->
+    <!-- explicitness, the CSS files are loaded in directly here. -->
+    <link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" />
+    <link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
+
+    <!-- 2. Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <script>
+        System.import('lib').catch(function(err){ console.error(err);  });
+    </script>
+
+</head>
+
+<!-- 3. Display the application -->
+<body>
+<my-app>Loading...</my-app>
+</body>
+
+</html>

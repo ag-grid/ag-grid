@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"NG_VALUE_ACCESSOR":{"__symbolic":"new","expression":{"__symbolic":"reference","module":"@angular/core","name":"OpaqueToken"},"arguments":["NgValueAccessor"]}}}

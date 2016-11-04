@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"OpaqueToken":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"./metadata","name":"Injectable"}}],"members":{"__ctor__":[{"__symbolic":"constructor","parameters":[{"__symbolic":"reference","name":"string"}]}],"toString":[{"__symbolic":"method"}]}}}}

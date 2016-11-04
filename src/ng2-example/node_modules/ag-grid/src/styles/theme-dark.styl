@@ -1,0 +1,94 @@
+
+ag-style = "dark"
+ag-root-font-family = "Helvetica Neue",Helvetica,Arial,sans-serif
+ag-root-font-size = 14px
+
+ag-scrollbar-background = #302E2E
+ag-scrollbar-thumb = #626262
+
+ag-border-1 = 1px solid grey
+
+ag-border-color-1 = #000
+ag-border-color-2 = #555
+
+ag-background-1 = #302E2E
+ag-background-2 = #f0f0f0
+
+ag-foreground-1 = #ccc
+
+ag-header-foreground-1 = #e0e0e0
+
+ag-separator-color = #555
+
+ag-cell-focused-border = 1px solid darkgrey
+ag-cell-no-focus-border-right = 1px dotted grey
+ag-cell-no-focus-border-top = 1px solid transparent
+ag-cell-no-focus-border-left = 1px solid transparent
+ag-cell-no-focus-border-bottom = 1px solid transparent
+
+ag-cell-highlight-border = 1px solid lightgreen
+
+ag-cell-padding = 2px
+
+ag-row-selected-background-color = #4A708B
+ag-row-odd-background-color = #302E2E
+ag-row-even-background-color = #403E3E
+ag-row-floating-background-color = #333
+
+ag-value-change-delta-up-color = greenyellow
+ag-value-change-delta-down-color = red
+ag-value-change-value-highlight-background-color = chocolate
+
+ag-range-selected-color-1 = rgba(100,160,160,0.4)
+ag-range-selected-color-2 = rgba(100,190,190,0.4)
+ag-range-selected-color-3 = rgba(100,220,220,0.4)
+ag-range-selected-color-4 = rgba(100,250,250,0.4)
+
+ag-header-background-1 = #626262
+
+ag-button-background-1 = #403E3E
+ag-button-foreground-1 = #e0e0e0
+ag-button-border-1 = #666
+
+ag-header-font-weight = normal
+
+ag-tab-border = 1px solid #555
+ag-tab-background = #626262
+ag-tab-selected-background = #302E2E
+ag-tab-padding = 6px 8px 6px 8px
+
+ag-menu-option-active-color = #4A708B
+
+ag-select-background = #302E2E
+ag-select-foreground = #ccc
+
+ag-menu-option-padding = 2px 4px 2px 4px
+ag-menu-option-shortcut-padding = 2px 2px 2px 20px
+
+@import "theme-common"
+
+// custom css for dark, we want to change the scrollbars
+
+.ag-dark
+
+  ::-webkit-scrollbar
+    width 12px
+    height 12px
+    background #302E2E
+
+    &-thumb
+      background-color #626262
+
+  ::-webkit-scrollbar-corner
+    background #302E2E
+
+  select
+    background-color ag-select-background
+    color ag-foreground-1
+
+  input
+    background-color ag-select-background
+    color ag-foreground-1
+
+//stick in an override
+//.ag-common

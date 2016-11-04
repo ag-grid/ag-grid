@@ -1,2 +1,3 @@
 dist/
 node_modules/
+!src/ng2-example/node_modules

@@ -1,0 +1,589 @@
+@import 'nib'
+
+// if we don't do this, then the width and height of the grid would be ignored,
+// as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
+ag-grid-ng2
+    display inline-block
+
+.ag-select-agg-func-popup
+    position absolute
+
+// when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
+// the mouse isn't selecting text when dragging.
+.ag-body-no-select
+    user-select none
+
+.ag-root
+    /* set to relative, so absolute popups appear relative to this */
+    position relative
+    box-sizing border-box
+    /* was getting some 'should be there' scrolls, this sorts it out */
+    overflow hidden
+
+.ag-font-style
+    cursor default
+    /* disable user mouse selection */
+    user-select none
+
+.ag-no-scrolls
+    white-space nowrap
+    display inline-block
+
+.ag-scrolls
+    height 100%
+
+.ag-popup-backdrop
+    position fixed
+    left 0px
+    top 0px
+    width 100%
+    height 100%
+
+.ag-header
+    position absolute
+    top 0px
+    left 0px
+    white-space nowrap
+    box-sizing border-box
+    overflow hidden
+    width 100%
+
+.ag-pinned-left-header
+    float left
+    box-sizing border-box
+    display inline-block
+    overflow hidden
+    height 100%
+
+.ag-pinned-right-header
+    float right
+    box-sizing border-box
+    display inline-block
+    overflow hidden
+    height 100%
+
+.ag-header-viewport
+    box-sizing border-box
+    overflow hidden
+    height 100%
+
+.ag-scrolls .ag-header-row
+    position absolute
+
+.ag-scrolls .ag-header-container
+    box-sizing border-box
+    position relative
+    white-space nowrap
+    height 100%
+
+.ag-no-scrolls .ag-header-container
+    white-space nowrap
+
+.ag-header-overlay
+    display block
+    position absolute
+
+.ag-header-cell
+    box-sizing border-box
+    vertical-align bottom
+    text-align center
+    display inline-block
+    height 100%
+    position absolute
+    //float left // safari doesn't align if we don't float
+
+// the ghost header cell doesn't live inside the grid, it's parent is the body element,
+// so we cannot style using standard themes. hence we break the rules, and style it here
+.ag-dnd-ghost
+    font-size 14px
+    font-family "Helvetica Neue",Helvetica,Arial,sans-serif;
+    position absolute
+    background #e5e5e5
+    border 1px solid black
+    cursor move
+    user-select none
+    box-sizing border-box
+    overflow hidden
+    text-overflow ellipsis
+    padding 3px
+    line-height 1.4
+    //img
+    //    vertical-align: middle;
+    //    border: 0px;
+
+.ag-dnd-ghost-icon
+    display inline-block
+    float left
+    padding-left 2px
+    padding-right 2px
+
+.ag-dnd-ghost-label
+    display inline-block
+
+.ag-header-group-cell
+    height 100%
+    display inline-block
+    box-sizing border-box
+    text-overflow ellipsis
+    overflow hidden
+    position absolute
+    //float: left // safari doesn't align if we don't float
+
+// we needed to have display of table-cell below,
+// as with inline-block, the layout messed up in Safari (not problems in the others).
+.ag-header-group-cell-label
+    //display table-cell
+    text-overflow ellipsis
+    overflow hidden
+
+.ag-header-cell-label
+    text-overflow ellipsis
+    overflow hidden
+
+.ag-header-cell-resize
+    height 100%
+    width 4px
+    float right
+    cursor col-resize
+
+.ag-header-expand-icon
+    padding-left 4px
+
+.ag-header-cell-menu-button
+    float right
+
+.ag-overlay-panel
+    display table
+    width 100%
+    height 100%
+    pointer-events none
+
+.ag-overlay-wrapper
+    display table-cell
+    vertical-align middle
+    text-align center
+
+.ag-bl-overlay
+    pointer-events none
+    position absolute
+    height 100%
+    width: 100%
+    top 0px
+    left 0px
+
+.ag-overlay-loading-center {}
+
+.ag-bl-full-height
+    height 100%
+    overflow auto
+    position relative
+
+.ag-bl-full-height-west
+    height 100%
+    float left
+
+.ag-bl-full-height-east
+    height 100%
+    float right
+
+.ag-bl-full-height-center
+    height 100%
+
+.ag-bl-normal
+    height 100%
+    position relative
+
+.ag-bl-normal-center-row
+    height 100%
+    overflow hidden
+
+.ag-bl-normal-west
+    height 100%
+    float left
+
+.ag-bl-normal-east
+    height 100%
+    float right
+
+.ag-bl-normal-center
+    height 100%
+
+.ag-bl-dont-fill
+    position relative
+
+.ag-body
+    height 100%
+    width 100%
+    box-sizing border-box
+    position absolute
+
+.ag-floating-top
+    position absolute
+    left 0px
+    width 100%
+    white-space nowrap
+    box-sizing border-box
+    overflow hidden
+
+.ag-pinned-left-floating-top
+    float left
+    box-sizing border-box
+    display inline-block
+    overflow hidden
+    height 100%
+
+.ag-pinned-right-floating-top
+    float right
+    box-sizing border-box
+    display inline-block
+    overflow hidden
+    height 100%
+
+.ag-floating-top-viewport
+    box-sizing border-box
+    overflow hidden
+    height 100%
+
+.ag-floating-top-container
+    box-sizing border-box
+    position relative
+    white-space nowrap
+    //height: 100%
+
+.ag-floating-bottom
+    position absolute
+    left 0px
+    width 100%
+    white-space nowrap
+    box-sizing border-box
+    overflow hidden
+
+.ag-pinned-left-floating-bottom
+    float left
+    box-sizing border-box
+    display inline-block
+    overflow hidden
+    height 100%
+
+.ag-pinned-right-floating-bottom
+    float right
+    box-sizing border-box
+    display inline-block
+    overflow hidden
+    height 100%
+
+.ag-floating-bottom-viewport
+    box-sizing border-box
+    overflow hidden
+    height 100%
+
+.ag-floating-bottom-container
+    box-sizing border-box
+    position relative
+    white-space nowrap
+    //height 100%
+
+.ag-pinned-left-cols-viewport
+    float left
+    overflow hidden
+
+.ag-pinned-left-cols-container
+    display inline-block
+    position relative
+
+.ag-pinned-right-cols-viewport
+    float right
+    overflow-x hidden
+    overflow-y auto
+
+.ag-pinned-right-cols-container
+    display inline-block
+    position relative
+
+.ag-body-viewport-wrapper
+    height 100%
+
+.ag-body-viewport
+    overflow-x auto
+    overflow-y auto // if we are pinning to the right, overflow y will be hidden
+    height 100%
+
+.ag-full-width-viewport
+    height 100%
+    width 100%
+    // we want this panel to be on top of the others
+    position absolute
+    top 0px
+    left 0px
+    display inline
+    // because the full width container is an overlay over the rest of the grid, we cannot
+    // have it consume mouse events, otherwise no mouse events would be allowed on the
+    // rest of the grid
+    pointer-events none
+    box-sizing border-box
+    overflow hidden
+
+.ag-full-width-container
+    // if we don't put this in, the RHS will overflow into the viewports margin,
+    // no idea why, trial and error
+    overflow hidden
+    position relative
+    width 100%
+
+.ag-floating-bottom-full-width-container
+    height 100%
+    width 100%
+    position absolute
+    top 0px
+    left 0px
+    pointer-events none
+    overflow hidden
+    display inline
+
+.ag-floating-top-full-width-container
+    height 100%
+    width 100%
+    position absolute
+    top 0px
+    left 0px
+    pointer-events none
+    overflow hidden
+    display inline
+
+.ag-full-width-row
+    // turn events back on, as we removed them in the parent
+    pointer-events all
+    overflow hidden
+
+.ag-scrolls .ag-body-container
+    position relative
+    display inline-block
+
+.ag-scrolls .ag-row
+    white-space nowrap
+    position absolute
+    width 100%
+
+.ag-no-scrolls .ag-row
+//    white-space: nowrap
+    position relative // need at least some position for the cell height to work
+
+.ag-column-drop
+    width 100%
+    box-sizing border-box
+
+.ag-column-drop-vertical
+
+    .ag-column-drop-cell
+        display block
+
+    .ag-column-drop-empty-message
+        display block
+
+    .ag-column-drop-cell-button
+        float right
+        line-height 16px
+
+.ag-column-drop-horizontal
+    white-space: nowrap;
+
+.ag-cell
+    display inline-block
+    white-space nowrap
+    height 100%
+    box-sizing border-box
+    text-overflow ellipsis
+    overflow hidden
+    // this float was needed for layout in safari, without it, when images were used (eg country flags),
+    // then the layout was broken
+    //float: left
+    position absolute
+
+// this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
+// however it is not tied to color, only placement and visiblity, which is behaviour and not style,
+// thus belongs here, besides it doesn't change wih the themes
+.ag-fade-out
+    opacity 1.0
+    margin-right 5px
+    transition opacity 3s, margin-right 3s // as value fades, it also moves to the left via the margin setting
+    transition-timing-function linear
+
+.ag-fade-out-end
+    opacity 0.0
+    margin-right 10px
+
+.ag-cell-edit-input
+    width 100%
+    height 100%
+
+.ag-group-cell-entire-row
+    //position: absolute // took this out because of https://github.com/ceolter/angular-grid/issues/115
+    width: 100%
+    display inline-block
+    white-space nowrap
+    height 100%
+    box-sizing border-box
+    text-overflow ellipsis
+    overflow hidden
+
+.ag-footer-cell-entire-row
+    //position: absolute // took this out because of https://github.com/ceolter/angular-grid/issues/115
+    width 100%
+    display inline-block
+    white-space nowrap
+    height 100%
+    box-sizing border-box
+    text-overflow ellipsis
+    overflow hidden
+
+.ag-large .ag-root
+    font-size 20px
+
+.ag-popup-editor
+    position absolute
+    user-select none
+
+.ag-menu
+    position absolute
+    user-select none
+
+.ag-menu-column-select-wrapper
+    width 200px
+    height 300px
+    overflow auto
+
+.ag-menu-list
+    display table
+    border-collapse collapse
+
+.ag-menu-option
+    display table-row
+
+.ag-menu-option-text
+    display table-cell
+
+.ag-menu-option-shortcut
+    display table-cell
+
+.ag-menu-option-icon
+    display table-cell
+
+.ag-menu-option-popup-pointer
+    display table-cell
+
+.ag-menu-separator
+    display table-row
+
+.ag-menu-separator-cell
+    display table-cell
+
+.ag-filter {}
+    //z-index: 100
+
+.ag-virtual-list-viewport
+    overflow-x auto
+    height 100%
+    width 100%
+
+.ag-virtual-list-container
+    position relative
+    overflow hidden
+
+.ag-rich-select
+    outline none
+
+.ag-rich-select-list
+    width 200px
+    height 200px
+
+.ag-set-filter-list
+    width 200px
+    height 200px
+
+.ag-set-filter-item
+    text-overflow ellipsis
+    overflow hidden
+    white-space nowrap
+
+.ag-virtual-list-item
+    position absolute
+    width 100%;
+
+.ag-filter-filter
+    width 170px
+    margin 4px
+
+.ag-filter-select
+    width 110px
+    margin 4px 4px 0px 4px
+
+.ag-paging-panel {}
+
+.ag-no-vertical-scroll .ag-scrolls
+    height unset
+
+.ag-no-vertical-scroll .ag-body
+    height unset
+
+.ag-no-vertical-scroll .ag-body-viewport-wrapper
+    height unset
+
+.ag-no-vertical-scroll .ag-body-viewport
+    height unset
+
+.ag-list-selection
+    user-select none
+    cursor default
+
+.ag-tool-panel
+    width 200px
+    user-select none
+    cursor default
+    height 100%
+    box-sizing border-box
+    overflow auto
+
+.ag-column-select-indent
+    display inline-block
+
+.ag-column-select-column
+    margin-left 14px
+    white-space nowrap
+
+.ag-column-select-column-group
+    white-space nowrap
+
+//.ag-column-select-panel
+//    height: 100%;
+//    overflow: auto;
+
+.ag-hidden
+    display none
+
+.ag-faded
+    opacity 0.3
+
+.ag-width-half
+    width 50%
+    display inline-block
+
+//.ag-tool-panel-container
+//    user-select: none;
+//    cursor: default;
+//    width: 200px;
+
+// setting shake class to an item will give it a left ot right animation
+// used for the 'left' and 'rigth' arrows when dragging columns and scrolling
+.ag-shake-left-to-right
+    animation-name ag-shake-left-to-right
+    animation-duration 0.2s
+    animation-iteration-count infinite
+    animation-direction alternate
+
+@keyframes ag-shake-left-to-right
+    from
+        padding-left 6px
+        padding-right 2px
+    to
+        padding-left 2px
+        padding-right 6px

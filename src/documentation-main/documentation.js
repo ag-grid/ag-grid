@@ -15,10 +15,13 @@
 
     function ShowExampleController($scope, $http, $attrs) {
         var example = $attrs["example"];
-        $scope.source =  example + ".html";
+        $scope.source =  example.indexOf("?") === -1 ? (example + ".html") : example;
         $scope.selectedTab = 'example';
         $scope.jsfile = $attrs['jsfile'] ? $attrs['jsfile'] : example;
+        $scope.exeExtension = $scope.jsfile.endsWith(".ts") ? "" : ".js";
+        $scope.htmlFile = $attrs['html'] ? $attrs['html'] : "./"+example+".html";
 
+        console.log("asdf")
         if ($attrs.extraPages) {
             $scope.extraPages = $attrs.extraPages.split(',');
             $scope.extraPageContent = {};
@@ -39,14 +42,14 @@
             $scope.iframeStyle = {height: '500px'}
         }
 
-        $http.get("./"+example+".html").
+        $http.get($scope.htmlFile).
             success(function(data, status, headers, config) {
                 $scope.html = data;
             }).
             error(function(data, status, headers, config) {
                 $scope.html = data;
             });
-        $http.get("./"+$scope.jsfile+".js").
+        $http.get("./"+$scope.jsfile+$scope.exeExtension).
             success(function(data, status, headers, config) {
                 $scope.javascript = data;
             }).
