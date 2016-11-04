@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var debug = require('gulp-debug');
 var gulpTypescript = require('gulp-typescript');
 var typescript = require('typescript');
 var merge = require('merge2');
@@ -27,7 +28,8 @@ gulp.task('webpackEnterprise', ['tscEnterprise'], webpackEnterprise);
 gulp.task('webpackGrid', ['stylusGrid','tscGrid'], webpackGrid);
 
 
-gulp.task('liveReloadAfterCopyFromDocs', ['copyFromDocs'], liveReloadTask);
+gulp.task('liveReloadAfterCopyFromDocs', ['copyFromDocsExclNodeModules'], liveReloadTask);
+gulp.task('copyFromDocsExclNodeModules', copyFromDocsExclNodeModules);
 gulp.task('copyFromDocs', copyFromDocs);
 gulp.task('copyFromBootstrap', copyFromBootstrap);
 gulp.task('copyFromFontAwesome', copyFromFontAwesome);
@@ -167,7 +169,17 @@ function webpackGrid() {
 }
 
 function copyFromDocs() {
-    return gulp.src(['../ag-grid-docs/src/**/*'])
+    return gulp.src(
+        ['../ag-grid-docs/src/**/*'])
+        .pipe(gulp.dest('./web-root'));
+}
+
+function copyFromDocsExclNodeModules() {
+    return gulp.src(
+        ['!../ag-grid-docs/src/ng2-example/node_modules',
+            '../ag-grid-docs/src/**/*'
+        ])
+        .pipe(debug())
         .pipe(gulp.dest('./web-root'));
 }
 
