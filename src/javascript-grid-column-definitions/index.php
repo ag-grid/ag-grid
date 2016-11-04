@@ -174,6 +174,11 @@ include '../documentation-main/documentation_header.php';
                 if not then cellFormatter.</td>
         </tr>
         <tr>
+            <th>getQuickFilterText</th>
+            <td>A function to tell the grid what quick filter text to use for this column if you don't want
+                to use the default (which is calling toString on the value).</td>
+        </tr>
+        <tr>
             <th>onCellClicked(params)</th>
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>

@@ -13,6 +13,7 @@ include '../documentation-main/documentation_header.php';
     <h4>Enhancements</h4>
 
     <ul>
+        <li>added <a href="../javascript-grid-filtering/#overridingQuickFilter">colDef.getQuickFilterText</a> to allow overriding of quick filter text</li>
         <li>added property suppressRowHoverClass, so if you do not require the row hover class, it's expensive, set this to true for slight performance tweak</li>
         <li>ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
         <li>ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
