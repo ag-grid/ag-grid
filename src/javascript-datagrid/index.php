@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "JavaScript DataGrid";
+$pageTitle = "JavaScript Datagrid";
 $pageDescription = "8 reasons to choose ag-Grid as your JavaScript Datagrid";
 $pageKeyboards = "Choosing JavaScript DataGrid";
 
@@ -121,7 +121,7 @@ include('../includes/mediaHeader.php');
         <p>
             ag-Grid is new on the market. We have already surpassed all the competition. This is just the start.
             In the coming months and years you can expect ag-Grid to march
-            forward an go to places no JavaScript datagrid has gone before
+            forward and go to places no JavaScript datagrid has gone before
             - all while the other datagrids struggle to catch up.
         </p>
 

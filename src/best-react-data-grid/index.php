@@ -1,14 +1,14 @@
 <?php
 $key = "Getting Started React";
-$pageTitle = "Best React Data Grid";
-$pageDescription = "Demonstrates teh best React Data Grid. Shows and example of a data grid for using with React.";
+$pageTitle = "Best React Datagrid";
+$pageDescription = "Demonstrates the best React Datagrid. Shows an example of a datagrid using React.";
 $pageKeyboards = "React Grid";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>Best React Data Grid</h2>
+    <h1>Implementing the React Datagrid</h1>
 
     <p>
         If you are building a React application then you have the choice between A) using the plain JavaScript version

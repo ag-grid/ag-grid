@@ -105,6 +105,49 @@ columnDefinition = {
 
     <show-example example="exampleSetFilter"></show-example>
 
+    <h3 id="sortingSetFilter">Sorting Set Filter Values List</h3>
+
+    <p>
+        Values inside a set filter will be sorted by their string value by default. If you want a different sort
+        order than the natural string sort order, you need to provide a comparator.
+    </p>
+
+    <p>
+        The example below shows sorting on the age columns. The age column is repeated with one difference, the
+        first instance has a comparator, the second has not. The second iteration has the numbers ordered by the
+        default string ordering which is not correct (ie the sequence is 0,1,10,11,2 instead of 0,1,2,3...).
+    </p>
+
+    <show-example example="exampleSetFilterComparator"></show-example>
+
+    <h3 id="newRowsSetFilter">New Rows Action and Values Example</h3>
+
+    <p>
+        Below demonstrates using New Rows Action and Values. The example is not meant to make business sense,
+        it just demonstrates the filters with random unrelated data. The example has the columns configured
+        as follows:
+        <ul>
+        <li>Column Fruit - Normal</li>
+        <li>Column Animal - Using newRowsAction = Keep</li>
+        <li>Column Color - Using values</li>
+        <li>Column Location - Using values and using newRowsAction = Keep</li>
+    </ul>
+        The 'Set New Data' button sets new data into the grid. It is suggested you set the filters and then
+        observe what happens when you hit 'Set New Data'.
+    </p>
+
+    <note>
+        Although the example works, it demonstrates one dangerous situation, which is mixing newRowsAction=keep without
+        providing values. This is dangerous and if you do not provide values, then the grid will create the values for
+        you based on the data inside the grid (which is normally great). The problem is that when new values enter the
+        grid, if the set of values is different, then this makes it impossible for the grid to keep the same filter
+        selection. If the set of values is different, then newRowsAction=keep breaks down. In this situation, the grid
+        will keep the same selected values, however it will loose information about previously selected values that
+        no longer exist in the new set.
+    </note>
+
+    <show-example example="exampleSetFilterNewRows"></show-example>
+
     <h3>Set Filter API</h3>
     <p>
         The set filter API is as follows:

@@ -108,7 +108,7 @@ suppressEnterprise: true,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
 //minColWidth: 50,
 //maxColWidth: 300,
-//rowsBuffer: 1,
+//rowBuffer: 0,
 //columnDefs: [],
 //singleClickEdit: true,
 //rowData: [
@@ -127,6 +127,7 @@ suppressEnterprise: true,
 //suppressMovableColumns: true,
 //groupIncludeFooter: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
+    // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
@@ -190,8 +191,9 @@ suppressEnterprise: true,
             return '';
         }
     },
+    // suppressRowHoverClass: true,
 // isScrollLag: function() { return true; },
-//suppressScrollLag: true,
+// suppressScrollLag: true,
 // floatingTopRowData: [{},{},{}],
 // floatingBottomRowData: [{},{},{}],
 // callback when row clicked
@@ -452,7 +454,7 @@ months.forEach(function (month) {
 function filterDoubleClicked(event) {
     setInterval(function () {
         gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
-    }, 1000);
+    }, 4000);
 }
 
 function onDataSizeChanged(newDataSize) {

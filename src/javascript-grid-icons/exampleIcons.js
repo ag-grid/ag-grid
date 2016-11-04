@@ -7,20 +7,20 @@ var columnDefs = [
         },
         cellRenderer: 'group'
     },
-    {headerName: "Age", field: "age", width: 90,
+    {headerName: "Age", field: "age", width: 90, enableValue: true,
         icons: {
             // not very useful, but demonstrates you can just have strings
             sortAscending: 'U',
             sortDescending: 'D'
         }
     },
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0,
+    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, enableRowGroup: true,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
         }
     },
-    {headerName: "Year", field: "year", width: 90,
+    {headerName: "Year", field: "year", width: 90, enableRowGroup: true,
         // mix it up a bit, use a function to return back the icon
         icons: {
             sortAscending: function () { return 'ASC'; },
@@ -38,6 +38,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
+    showToolPanel: true,
     enableSorting: true,
     enableFilter: true,
     enableColResize: true,
@@ -58,7 +59,14 @@ var gridOptions = {
         columnMoveMove: '<i class="fa fa-chain"/>',
         columnMoveLeft: '<i class="fa fa-arrow-left"/>',
         columnMoveRight: '<i class="fa fa-arrow-right"/>',
-        columnMoveGroup: '<i class="fa fa-group"/>'
+        columnMoveGroup: '<i class="fa fa-group"/>',
+        rowGroupPanel: '<i class="fa fa-bank"/>',
+        pivotPanel: '<i class="fa fa-magic"/>',
+        valuePanel: '<i class="fa fa-magnet"/>',
+        menuPin: 'P', // just showing letters, no graphic
+        menuValue: 'V',
+        menuAddRowGroup: 'A',
+        menuRemoveRowGroup: 'R'
     }
 };
 

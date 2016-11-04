@@ -357,7 +357,23 @@ include '../documentation-main/documentation_header.php';
                 changes size, or your application changes the size of the div the grid live inside. If you want something
                 other than 500ms, set this to a number of milliseconds. To stop the periodic layout, set it to -1.</td>
         </tr>
-
+        <tr>
+            <th>scrollbarWidth</th>
+            <td>
+                To tell grid how wide the scrollbar is which gets used in calculations on grid width calculations. Set
+                only if using non-standard browser provided scrollbars, so the grid can use the non-standard size in
+                it's calculations.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressRowHoverClass</th>
+            <td>
+                Normally the grid adds CSS class <i>ag-row-hover</i> when mouse is hovering over a row. This requires
+                the grid to add hover listeners to each row which is expensive (only to be considered expensive if you
+                are having performance issues, such as running on old machine with IE). Set this property to true to
+                drop this feature in favour of a slight performance gain.
+            </td>
+        </tr>
     </table>
 
     <p>
@@ -432,6 +448,10 @@ include '../documentation-main/documentation_header.php';
             <th>functionsReadOnly</th>
             <td>If true, then row group, pivot and value aggregation will be read only from the gui. The grid will display
             what values are used for each, but will not allow the use to change the selection.</td>
+        </tr>
+        <tr>
+            <th>suppressTouch</th>
+            <td>Disables touch support (but does not remove the browsers efforts to simulate mouse events on touch).</td>
         </tr>
 
     </table>

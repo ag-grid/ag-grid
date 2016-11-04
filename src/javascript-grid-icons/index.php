@@ -67,6 +67,17 @@ include '../documentation-main/documentation_header.php';
     columnMoveValue // when about to drop into value panel
     columnMovePivot // when about to drop into pivot panel
     dropNotAllowed // when trying to drop column into group/value/pivot panel and column doesn't support it
+
+    // column menu
+    menuPin // beside the column pin option
+    menuValue // beside the column value option
+    menuAddRowGroup // beside the column row group option
+    menuRemoveRowGroup // beside the column row group option
+
+    // column drop panels
+    rowGroupPanel // beside where to drop columns for row group
+    pivotPanel // beside where to drop columns for pivot
+    valuePanel // beside where to drop columns for value
 }
 </pre>
 
@@ -95,7 +106,7 @@ include '../documentation-main/documentation_header.php';
         (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
     </p>
 
-    <show-example example="icons"></show-example>
+    <show-example example="exampleIcons"></show-example>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

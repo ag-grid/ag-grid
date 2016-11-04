@@ -8,17 +8,43 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h4>Version NEXT</h4>
+    <h2>Version 6.3.x</h2>
 
-    <li>Bugfix - innerRenderer (for group rows) was not getting destory called, is now.</li>
-    <li>Bugfix - when doing full row edit, calling api.stopEditing() fired event rowValueChanged for each row, not it only calls it for the editing row.</li>
-    <li>Bugfix - when using tree data, an there were only groups (all groups were empty), the 'no rows' overlay was showing. Not is doesn't sort when only groups.</li>
-    <li>Bugfix - api.ensureIndexVisible() will now also render the rows in the same action, previously you had to wait for the grid to pick up the scroll event (which happened immediatly after)  to render the rows. This causes problems if you wanted to access the row immediatly after ensuring it was visible (eg to start editing).</li>
-    <li>Bugfix - Formatted values can now be empty strings, previously empty strings were ignored and the original value was presented.</li>
+    <h4>Enhancements</h4>
 
-    <li>Enhancement - ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
-    <li>Enhancement - ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
-    <li>Enhancement - added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
+    <ul>
+        <li>added property suppressRowHoverClass, so if you do not require the row hover class, it's expensive, set this to true for slight performance tweak</li>
+        <li>ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
+        <li>ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
+        <li>added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
+        <li>new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy if providing non-standard scrolbars to grid and need to provide alterlative padding to use.</li>
+        <li>added api.checkGridSize(), so you can force grid to check it's size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
+        <li>added customisation of the following icons: menuPin, menuValue, menuAddRowGroup, menuRemoveRowGroup, rowGroupPanel, pivotPanel, valuePanel</li>
+        <li>added property <i>suppressTouch</i> to turn off touch support, if you don't want it.</li>
+    </ul>
+
+    <h4>Performance Enhancements</h4>
+    <ul>
+        <li>introduced Document Fragment to build DOM offline when building rows</li>
+        <li>cells no do not have any events, all event handling done at grid level - means for example, where before was adding a keydown event to every cell, not it is added to grid and gri work out which cell, means not adding/removing lots of listeners as grid is scrolling rows</li>
+        <li>took events out of rows (same trick as with taking out cells) with the exception of hover listeners</li>
+        <li>icon images are now cloned, rather than creating new ones each time one is needed</li>
+    </ul>
+
+    <h4>Bug Fixes</h4>
+
+    <ul>
+        <li>groupRowRendererFramework, groupRowInnerRendererFramework and fullWidthRowRendererFramework were getting ignored when getting set as properties in Angular 2 and React.</li>
+        <li>innerRenderer (for group rows) was not getting destroy called, is now.</li>
+        <li>when doing full row edit, calling api.stopEditing() fired event rowValueChanged for each row, not it only calls it for the editing row.</li>
+        <li>when using tree data, an there were only groups (all groups were empty), the 'no rows' overlay was showing. Not is doesn't sort when only groups.</li>
+        <li>api.ensureIndexVisible() will now also render the rows in the same action, previously you had to wait for the grid to pick up the scroll event (which happened immediatly after)  to render the rows. This causes problems if you wanted to access the row immediatly after ensuring it was visible (eg to start editing).</li>
+        <li>Formatted values can now be empty strings, previously empty strings were ignored and the original value was presented.</li>
+        <li>grid options was missing onRowValueChanged property</li>
+        <li>fixes <a href="https://www.ag-grid.com/forum/showthread.php?tid=4303">this issue</a>, when left and right pinned on IE, left pinned didn't sync scroll with body always.</li>
+        <li>Set Filter - 'Select All' checkbox was not getting cleared when all items were unchecked.</li>
+        <li>Set Filter - When new rows got loaded into the grid, the filter icon was not cleared down if filter was reset. Now it is.</li>
+    </ul>
 
     <h4>Version 6.2.1</h4>
     <h4>ag-grid 6.2.1, ag-grid-enterprise 6.2.1</h4>

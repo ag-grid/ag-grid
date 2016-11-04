@@ -18,7 +18,7 @@ include('../includes/mediaHeader.php');
     <div class="col-md-9">
 
         <p>
-            Today see's the release of version 4.x of ag-Grid. This is the first release offering both free and
+            Today sees the release of version 4.x of ag-Grid. This is the first release offering both free and
             enterprise versions. From now on, the ag-Grid core
             project (formally ag-Grid) is split into ag-Grid (free and covered by MIT license) and ag-Grid-Enterprise
             (not free, covered by a Commercial license).
