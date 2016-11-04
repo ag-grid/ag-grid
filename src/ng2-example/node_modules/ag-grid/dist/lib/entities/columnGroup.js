@@ -1,0 +1,207 @@
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v6.2.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var column_1 = require("./column");
+var eventService_1 = require("../eventService");
+var ColumnGroup = (function () {
+    function ColumnGroup(originalColumnGroup, groupId, instanceId) {
+        // depends on the open/closed state of the group, only displaying columns are stored here
+        this.displayedChildren = [];
+        this.moving = false;
+        this.eventService = new eventService_1.EventService();
+        this.groupId = groupId;
+        this.instanceId = instanceId;
+        this.originalColumnGroup = originalColumnGroup;
+    }
+    ColumnGroup.prototype.getParent = function () {
+        return this.parent;
+    };
+    ColumnGroup.prototype.setParent = function (parent) {
+        this.parent = parent;
+    };
+    ColumnGroup.prototype.getUniqueId = function () {
+        return this.groupId + '_' + this.instanceId;
+    };
+    ColumnGroup.prototype.checkLeft = function () {
+        // first get all children to setLeft, as it impacts our decision below
+        this.displayedChildren.forEach(function (child) {
+            if (child instanceof ColumnGroup) {
+                child.checkLeft();
+            }
+        });
+        // set our left based on first displayed column
+        if (this.displayedChildren.length > 0) {
+            var firstChildLeft = this.displayedChildren[0].getLeft();
+            this.setLeft(firstChildLeft);
+        }
+        else {
+            // this should never happen, as if we have no displayed columns, then
+            // this groups should not even exist.
+            this.setLeft(null);
+        }
+    };
+    ColumnGroup.prototype.getLeft = function () {
+        return this.left;
+    };
+    ColumnGroup.prototype.setLeft = function (left) {
+        if (this.left !== left) {
+            this.left = left;
+            this.eventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
+        }
+    };
+    ColumnGroup.prototype.addEventListener = function (eventType, listener) {
+        this.eventService.addEventListener(eventType, listener);
+    };
+    ColumnGroup.prototype.removeEventListener = function (eventType, listener) {
+        this.eventService.removeEventListener(eventType, listener);
+    };
+    ColumnGroup.prototype.setMoving = function (moving) {
+        this.getDisplayedLeafColumns().forEach(function (column) { return column.setMoving(moving); });
+    };
+    ColumnGroup.prototype.isMoving = function () {
+        return this.moving;
+    };
+    ColumnGroup.prototype.getGroupId = function () {
+        return this.groupId;
+    };
+    ColumnGroup.prototype.getInstanceId = function () {
+        return this.instanceId;
+    };
+    ColumnGroup.prototype.isChildInThisGroupDeepSearch = function (wantedChild) {
+        var result = false;
+        this.children.forEach(function (foundChild) {
+            if (wantedChild === foundChild) {
+                result = true;
+            }
+            if (foundChild instanceof ColumnGroup) {
+                if (foundChild.isChildInThisGroupDeepSearch(wantedChild)) {
+                    result = true;
+                }
+            }
+        });
+        return result;
+    };
+    ColumnGroup.prototype.getActualWidth = function () {
+        var groupActualWidth = 0;
+        if (this.displayedChildren) {
+            this.displayedChildren.forEach(function (child) {
+                groupActualWidth += child.getActualWidth();
+            });
+        }
+        return groupActualWidth;
+    };
+    ColumnGroup.prototype.getMinWidth = function () {
+        var result = 0;
+        this.displayedChildren.forEach(function (groupChild) {
+            result += groupChild.getMinWidth();
+        });
+        return result;
+    };
+    ColumnGroup.prototype.addChild = function (child) {
+        if (!this.children) {
+            this.children = [];
+        }
+        this.children.push(child);
+    };
+    ColumnGroup.prototype.getDisplayedChildren = function () {
+        return this.displayedChildren;
+    };
+    ColumnGroup.prototype.getLeafColumns = function () {
+        var result = [];
+        this.addLeafColumns(result);
+        return result;
+    };
+    ColumnGroup.prototype.getDisplayedLeafColumns = function () {
+        var result = [];
+        this.addDisplayedLeafColumns(result);
+        return result;
+    };
+    // why two methods here doing the same thing?
+    ColumnGroup.prototype.getDefinition = function () {
+        return this.originalColumnGroup.getColGroupDef();
+    };
+    ColumnGroup.prototype.getColGroupDef = function () {
+        return this.originalColumnGroup.getColGroupDef();
+    };
+    ColumnGroup.prototype.isPadding = function () {
+        return this.originalColumnGroup.isPadding();
+    };
+    ColumnGroup.prototype.isExpandable = function () {
+        return this.originalColumnGroup.isExpandable();
+    };
+    ColumnGroup.prototype.isExpanded = function () {
+        return this.originalColumnGroup.isExpanded();
+    };
+    ColumnGroup.prototype.setExpanded = function (expanded) {
+        this.originalColumnGroup.setExpanded(expanded);
+    };
+    ColumnGroup.prototype.addDisplayedLeafColumns = function (leafColumns) {
+        this.displayedChildren.forEach(function (child) {
+            if (child instanceof column_1.Column) {
+                leafColumns.push(child);
+            }
+            else if (child instanceof ColumnGroup) {
+                child.addDisplayedLeafColumns(leafColumns);
+            }
+        });
+    };
+    ColumnGroup.prototype.addLeafColumns = function (leafColumns) {
+        this.children.forEach(function (child) {
+            if (child instanceof column_1.Column) {
+                leafColumns.push(child);
+            }
+            else if (child instanceof ColumnGroup) {
+                child.addLeafColumns(leafColumns);
+            }
+        });
+    };
+    ColumnGroup.prototype.getChildren = function () {
+        return this.children;
+    };
+    ColumnGroup.prototype.getColumnGroupShow = function () {
+        return this.originalColumnGroup.getColumnGroupShow();
+    };
+    ColumnGroup.prototype.getOriginalColumnGroup = function () {
+        return this.originalColumnGroup;
+    };
+    ColumnGroup.prototype.calculateDisplayedColumns = function () {
+        // clear out last time we calculated
+        this.displayedChildren = [];
+        // it not expandable, everything is visible
+        if (!this.originalColumnGroup.isExpandable()) {
+            this.displayedChildren = this.children;
+            return;
+        }
+        // and calculate again
+        for (var i = 0, j = this.children.length; i < j; i++) {
+            var abstractColumn = this.children[i];
+            var headerGroupShow = abstractColumn.getColumnGroupShow();
+            switch (headerGroupShow) {
+                case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
+                    // when set to open, only show col if group is open
+                    if (this.originalColumnGroup.isExpanded()) {
+                        this.displayedChildren.push(abstractColumn);
+                    }
+                    break;
+                case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
+                    // when set to open, only show col if group is open
+                    if (!this.originalColumnGroup.isExpanded()) {
+                        this.displayedChildren.push(abstractColumn);
+                    }
+                    break;
+                default:
+                    // default is always show the column
+                    this.displayedChildren.push(abstractColumn);
+                    break;
+            }
+        }
+    };
+    ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
+    ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
+    ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
+    return ColumnGroup;
+})();
+exports.ColumnGroup = ColumnGroup;

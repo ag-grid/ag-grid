@@ -1,0 +1,58 @@
+// Type definitions for ag-grid v6.2.1
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions: https://github.com/borisyankov/DefinitelyTyped
+import { RowNode } from "../../entities/rowNode";
+import { IInMemoryRowModel } from "../../interfaces/iInMemoryRowModel";
+export declare class InMemoryRowModel implements IInMemoryRowModel {
+    private gridOptionsWrapper;
+    private columnController;
+    private filterManager;
+    private $scope;
+    private selectionController;
+    private eventService;
+    private context;
+    private filterStage;
+    private sortStage;
+    private flattenStage;
+    private groupStage;
+    private aggregationStage;
+    private pivotStage;
+    private rootNode;
+    private rowsToDisplay;
+    private nodeManager;
+    init(): void;
+    getType(): string;
+    private onValueChanged();
+    refreshModel(step: number, fromIndex?: any, groupState?: any): void;
+    isEmpty(): boolean;
+    isRowsToRender(): boolean;
+    setDatasource(datasource: any): void;
+    getTopLevelNodes(): RowNode[];
+    getRow(index: number): RowNode;
+    getVirtualRowCount(): number;
+    getRowCount(): number;
+    getRowIndexAtPixel(pixelToMatch: number): number;
+    private isRowInPixel(rowNode, pixelToMatch);
+    getRowCombinedHeight(): number;
+    forEachLeafNode(callback: Function): void;
+    forEachNode(callback: Function): void;
+    forEachNodeAfterFilter(callback: Function): void;
+    forEachNodeAfterFilterAndSort(callback: Function): void;
+    forEachPivotNode(callback: Function): void;
+    private recursivelyWalkNodesAndCallback(nodes, callback, recursionType, index);
+    doAggregate(): void;
+    expandOrCollapseAll(expand: boolean): void;
+    private doSort();
+    private doRowGrouping(groupState);
+    private restoreGroupState(groupState);
+    private doFilter();
+    private doPivot();
+    private getGroupState();
+    setRowData(rowData: any[], refresh: boolean, firstId?: number): void;
+    private doRowsToDisplay();
+    insertItemsAtIndex(index: number, items: any[]): void;
+    removeItems(rowNodes: RowNode[]): void;
+    addItems(items: any[]): void;
+    private refreshAndFireEvent(eventName, rowNodes, groupState);
+}

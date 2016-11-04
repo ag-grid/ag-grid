@@ -1,0 +1,455 @@
+.ag-material {
+  line-height: 1.4;
+  font-family: Roboto;
+  font-size: 14px;
+  color: #666;
+/* this is for the rowGroupPanel, that appears along the top of the grid */
+/* this is for the column drops that appear in the toolPanel */
+}
+.ag-material img {
+  vertical-align: middle;
+  border: 0;
+}
+.ag-material .ag-root {
+  border: none;
+}
+.ag-material .ag-cell-not-inline-editing {
+  padding: 2px;
+}
+.ag-material .ag-cell-range-selected-1:not(.ag-cell-focus) {
+  background-color: rgba(120,120,120,0.4);
+}
+.ag-material .ag-cell-range-selected-2:not(.ag-cell-focus) {
+  background-color: rgba(80,80,80,0.4);
+}
+.ag-material .ag-cell-range-selected-3:not(.ag-cell-focus) {
+  background-color: rgba(40,40,40,0.4);
+}
+.ag-material .ag-cell-range-selected-4:not(.ag-cell-focus) {
+  background-color: rgba(0,0,0,0.4);
+}
+.ag-material .ag-column-moving .ag-cell {
+  -webkit-transition: left 0.2s;
+  -moz-transition: left 0.2s;
+  -o-transition: left 0.2s;
+  -ms-transition: left 0.2s;
+  transition: left 0.2s;
+}
+.ag-material .ag-column-moving .ag-header-cell {
+  -webkit-transition: left 0.2s;
+  -moz-transition: left 0.2s;
+  -o-transition: left 0.2s;
+  -ms-transition: left 0.2s;
+  transition: left 0.2s;
+}
+.ag-material .ag-column-moving .ag-header-group-cell {
+  -webkit-transition: left 0.2s;
+  -moz-transition: left 0.2s;
+  -o-transition: left 0.2s;
+  -ms-transition: left 0.2s;
+  transition: left 0.2s;
+}
+.ag-material .ag-cell-focus {
+  border: 1px solid #d3d3d3;
+}
+.ag-material .ag-cell-no-focus {
+  border-right: 1px solid transparent;
+  border-top: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-bottom: 1px solid #d3d3d3;
+}
+.ag-material .ag-cell-first-right-pinned {
+  border-left: none;
+}
+.ag-material .ag-cell-last-left-pinned {
+  border-right: none;
+}
+.ag-material .ag-cell-highlight {
+  border: 1px solid #006400;
+}
+.ag-material .ag-cell-highlight-animation {
+  -webkit-transition: border 1s;
+  -moz-transition: border 1s;
+  -o-transition: border 1s;
+  -ms-transition: border 1s;
+  transition: border 1s;
+}
+.ag-material .ag-value-change-delta {
+  padding-right: 2px;
+}
+.ag-material .ag-value-change-delta-up {
+  color: #006400;
+}
+.ag-material .ag-value-change-delta-down {
+  color: #8b0000;
+}
+.ag-material .ag-value-change-value {
+  background-color: transparent;
+  border-radius: 1px;
+  padding-left: 1px;
+  padding-right: 1px;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
+.ag-material .ag-value-change-value-highlight {
+  background-color: #cec;
+  -webkit-transition: background-color 0.1s;
+  -moz-transition: background-color 0.1s;
+  -o-transition: background-color 0.1s;
+  -ms-transition: background-color 0.1s;
+  transition: background-color 0.1s;
+}
+.ag-material .ag-rich-select {
+  font-size: 14px;
+  border: none;
+  background-color: #fff;
+}
+.ag-material .ag-rich-select-value {
+  padding: 2px;
+}
+.ag-material .ag-rich-select-list {
+  border-top: 1px solid #d3d3d3;
+}
+.ag-material .ag-rich-select-row {
+  padding: 2px;
+}
+.ag-material .ag-rich-select-row-selected {
+  background-color: #bde2e5;
+}
+.ag-material .ag-large-text {
+  border: none;
+}
+.ag-material .ag-header {
+  color: #666;
+  background: none;
+  border-bottom: none;
+  font-weight: bold;
+}
+.ag-material .ag-header-icon {
+  color: #666;
+  stroke: none;
+  fill: #666;
+}
+.ag-material .ag-no-scrolls .ag-header-container {
+  background: none;
+  border-bottom: none;
+}
+.ag-material .ag-header-cell {
+  border-right: none;
+}
+.ag-material .ag-header-cell-moving .ag-header-cell-label {
+  opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+}
+.ag-material .ag-header-cell-moving {
+  background-color: #bebebe;
+}
+.ag-material .ag-header-group-cell {
+  border-right: none;
+}
+.ag-material .ag-header-group-cell-with-group {
+  border-bottom: none;
+}
+.ag-material .ag-header-cell-label {
+  padding: 4px 2px 4px 2px;
+}
+.ag-material .ag-header-cell-text {
+  padding-left: 2px;
+}
+.ag-material .ag-header-group-cell-label {
+  padding: 4px;
+  padding-left: 10px;
+}
+.ag-material .ag-header-group-text {
+  margin-right: 2px;
+}
+.ag-material .ag-header-cell-menu-button {
+  padding: 2px;
+  margin-top: 4px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
+  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
+  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
+  line-height: 0px /* normal line height, a space was appearing below the menu button */;
+}
+.ag-material .ag-pinned-right-header {
+  border-left: none;
+}
+.ag-material .ag-header-cell-menu-button:hover {
+  border: none;
+}
+.ag-material .ag-body {
+  background-color: #fff;
+}
+.ag-material .ag-row {
+  -webkit-transition: background-color 0.1s;
+  -moz-transition: background-color 0.1s;
+  -o-transition: background-color 0.1s;
+  -ms-transition: background-color 0.1s;
+  transition: background-color 0.1s;
+}
+.ag-material .ag-row-odd {
+  background-color: #fff;
+}
+.ag-material .ag-row-even {
+  background-color: #fff;
+}
+.ag-material .ag-row-selected {
+  background-color: #f5f5f5;
+}
+.ag-material .ag-floating-top .ag-row {
+  background-color: #f0f0f0;
+}
+.ag-material .ag-floating-bottom .ag-row {
+  background-color: #f0f0f0;
+}
+.ag-material .ag-overlay-loading-wrapper {
+  background-color: rgba(255,255,255,0.5);
+}
+.ag-material .ag-overlay-loading-center {
+  background-color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  color: #000;
+}
+.ag-material .ag-overlay-no-rows-center {
+  background-color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+}
+.ag-material .ag-group-cell-entire-row {
+  background-color: #fff;
+  padding: 2px;
+}
+.ag-material .ag-footer-cell-entire-row {
+  background-color: #fff;
+  padding: 2px;
+}
+.ag-material .ag-group-cell {
+  font-style: italic;
+}
+.ag-material .ag-group-expanded {
+  padding-right: 4px;
+}
+.ag-material .ag-group-contracted {
+  padding-right: 4px;
+}
+.ag-material .ag-group-value {
+  padding-right: 2px;
+}
+.ag-material .ag-group-checkbox {
+  padding-right: 2px;
+}
+.ag-material .ag-footer-cell {
+  font-style: italic;
+}
+.ag-material .ag-menu {
+  border: 1px solid #808080;
+  background-color: #fff;
+  cursor: default;
+  font-family: Roboto;
+  font-size: 14px;
+}
+.ag-material .ag-menu .ag-tab-header {
+  background-color: #f6f6f6;
+}
+.ag-material .ag-menu .ag-tab {
+  padding: 6px 16px 6px 16px;
+  margin: 2px 2px 0px 2px;
+  display: inline-block;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-top: 1px solid transparent;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.ag-material .ag-menu .ag-tab-selected {
+  background-color: #fff;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-top: 1px solid transparent;
+}
+.ag-material .ag-menu-separator {
+  border-top: 1px solid #d3d3d3;
+}
+.ag-material .ag-menu-option-active {
+  background-color: #bde2e5;
+}
+.ag-material .ag-menu-option-icon {
+  padding: 10px 6px 10px 6px;
+  vertical-align: middle;
+}
+.ag-material .ag-menu-option-text {
+  padding: 10px 6px 10px 6px;
+  vertical-align: middle;
+}
+.ag-material .ag-menu-option-shortcut {
+  padding: 10px 6px 10px 20px;
+  vertical-align: middle;
+}
+.ag-material .ag-menu-option-popup-pointer {
+  padding: 10px 6px 10px 6px;
+  vertical-align: middle;
+}
+.ag-material .ag-menu-option-disabled {
+  opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+}
+.ag-material .ag-menu-column-select-wrapper {
+  margin: 2px;
+}
+.ag-material .ag-filter-checkbox {
+  position: relative;
+  top: 2px;
+  left: 2px;
+}
+.ag-material .ag-filter-header-container {
+  border-bottom: 1px solid #d3d3d3;
+}
+.ag-material .ag-filter-apply-panel {
+  border-top: 1px solid #d3d3d3;
+  padding: 2px;
+}
+.ag-material .ag-filter-value {
+  margin-left: 4px;
+}
+.ag-material .ag-selection-checkbox {
+  padding-right: 4px;
+}
+.ag-material .ag-paging-panel {
+  padding: 4px;
+}
+.ag-material .ag-paging-button {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.ag-material .ag-paging-row-summary-panel {
+  display: inline-block;
+  width: 300px;
+}
+.ag-material .ag-tool-panel {
+  background-color: #fff;
+  border-right: none;
+  border-bottom: none;
+  border-top: none;
+  color: #666;
+}
+.ag-material .ag-status-bar {
+  color: #666;
+  background-color: #fff;
+  font-size: 14px;
+  height: 22px;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  padding: 2px;
+}
+.ag-material .ag-status-bar-aggregations {
+  float: right;
+}
+.ag-material .ag-status-bar-item {
+  padding-left: 10px;
+}
+.ag-material .ag-column-drop-cell {
+  background: none;
+  color: #000;
+  border: 1px solid #808080;
+}
+.ag-material .ag-column-drop-cell-ghost {
+  opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+}
+.ag-material .ag-column-drop-cell-text {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.ag-material .ag-column-drop-cell-button {
+  border: 1px solid transparent;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 3px;
+}
+.ag-material .ag-column-drop-cell-button:hover {
+  border: none;
+}
+.ag-material .ag-column-drop-empty-message {
+  padding-left: 2px;
+  padding-right: 2px;
+  color: #808080;
+}
+.ag-material .ag-column-drop-icon {
+  padding-right: 4px;
+}
+.ag-material .ag-column-drop {
+  background-color: #fff;
+}
+.ag-material .ag-column-drop-horizontal {
+  padding: 4px 4px 4px 4px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.ag-material .ag-column-drop-horizontal .ag-column-drop-cell {
+  padding: 2px;
+}
+.ag-material .ag-column-drop-vertical {
+  padding: 4px 4px 10px 4px;
+  border-bottom: none;
+}
+.ag-material .ag-column-drop-vertical .ag-column-drop-cell {
+  margin-top: 2px;
+}
+.ag-material .ag-column-drop-vertical .ag-column-drop-empty-message {
+  text-align: center;
+  padding: 5px;
+}
+.ag-material .ag-pivot-mode {
+  border-bottom: none;
+  padding: 4px;
+  background-color: #fff;
+}
+.ag-material .ag-tool-panel .ag-column-select-panel {
+  border-bottom: none;
+}
+.ag-material .ag-select-agg-func-popup {
+  cursor: default;
+  position: absolute;
+  font-size: 14px;
+  background-color: #fff;
+  border: none;
+}
+.ag-material .ag-select-agg-func-item {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.ag-material .ag-select-agg-func-item:hover {
+  background-color: #bde2e5;
+}
+.ag-material .ag-row-hover {
+  background-color: #eee !important;
+}
+.ag-material .ag-cell-not-inline-editing {
+  padding-top: 15px;
+}
+.ag-material .ag-header-cell-menu-button:hover {
+  border: 1px solid #808080;
+}
+.ag-material .ag-header-cell-label {
+  text-align: left;
+}
+.ag-material .ag-header {
+  border-bottom: 1px solid #808080;
+}
+.ag-material .ag-selection-checkbox {
+  padding-right: 12px;
+  padding-left: 12px;
+}
