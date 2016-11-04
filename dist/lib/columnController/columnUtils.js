@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -102,38 +102,38 @@ var ColumnUtils = (function () {
                 }
             }
         }*/
-    ColumnUtils.prototype.deptFirstOriginalTreeSearch = function (tree, callback) {
+    ColumnUtils.prototype.depthFirstOriginalTreeSearch = function (tree, callback) {
         var _this = this;
         if (!tree) {
             return;
         }
         tree.forEach(function (child) {
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
-                _this.deptFirstOriginalTreeSearch(child.getChildren(), callback);
+                _this.depthFirstOriginalTreeSearch(child.getChildren(), callback);
             }
             callback(child);
         });
     };
-    ColumnUtils.prototype.deptFirstAllColumnTreeSearch = function (tree, callback) {
+    ColumnUtils.prototype.depthFirstAllColumnTreeSearch = function (tree, callback) {
         var _this = this;
         if (!tree) {
             return;
         }
         tree.forEach(function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
-                _this.deptFirstAllColumnTreeSearch(child.getChildren(), callback);
+                _this.depthFirstAllColumnTreeSearch(child.getChildren(), callback);
             }
             callback(child);
         });
     };
-    ColumnUtils.prototype.deptFirstDisplayedColumnTreeSearch = function (tree, callback) {
+    ColumnUtils.prototype.depthFirstDisplayedColumnTreeSearch = function (tree, callback) {
         var _this = this;
         if (!tree) {
             return;
         }
         tree.forEach(function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
-                _this.deptFirstDisplayedColumnTreeSearch(child.getDisplayedChildren(), callback);
+                _this.depthFirstDisplayedColumnTreeSearch(child.getDisplayedChildren(), callback);
             }
             callback(child);
         });

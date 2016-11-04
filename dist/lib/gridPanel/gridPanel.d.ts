@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -64,6 +64,7 @@ export declare class GridPanel {
     private destroyFunctions;
     private useScrollLag;
     agWire(loggerFactory: LoggerFactory): void;
+    private setScrollBarWidth();
     private destroy();
     private onRowDataChanged();
     getLayout(): BorderLayout;
@@ -72,8 +73,12 @@ export declare class GridPanel {
     private disableBrowserDragging();
     private addEventListeners();
     private addDragListeners();
-    private addCellListeners();
+    private addMouseEvents();
+    private addKeyboardEvents();
     private addBodyViewportListener();
+    private getCellForEvent(event);
+    private getRowForEvent(event);
+    private processKeyboardEvent(eventName, keyboardEvent);
     private processMouseEvent(eventName, mouseEvent);
     private onContextMenu(mouseEvent);
     private preventDefaultOnContextMenu(mouseEvent);
@@ -131,12 +136,13 @@ export declare class GridPanel {
     onDisplayedColumnsChanged(): void;
     private setWidthsOfContainers();
     private showPinnedColContainersIfNeeded();
-    private sizeHeaderAndBody();
+    sizeHeaderAndBody(): void;
     setHorizontalScrollPosition(hScrollPosition: number): void;
     scrollHorizontally(pixels: number): number;
     getHorizontalScrollPosition(): number;
     turnOnAnimationForABit(): void;
     private addScrollListener();
+    private addIEPinFix(onPinnedRightScroll);
     private setLeftAndRightBounds();
     private isUseScrollLag();
     private debounce(callback);

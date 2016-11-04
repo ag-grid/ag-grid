@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -70,6 +70,7 @@ export declare class RenderedCell extends Component {
     private addCellFocusedListener();
     private setWidthOnCell();
     init(): void;
+    private addDomData();
     private onEnterKeyDown();
     private onF2KeyDown();
     private onEscapeKeyDown();
@@ -79,9 +80,8 @@ export declare class RenderedCell extends Component {
     private onBackspaceOrDeleteKeyPressed(key);
     private onSpaceKeyPressed(event);
     private onNavigationKeyPressed(event, key);
-    private addKeyPressListener();
-    private onKeyDown(event);
-    private addKeyDownListener();
+    onKeyPress(event: KeyboardEvent): void;
+    onKeyDown(event: KeyboardEvent): void;
     private createCellEditorParams(keyPress, charPress, cellStartedEdit);
     private createCellEditor(keyPress, charPress, cellStartedEdit);
     private stopEditingAndFocus();
@@ -97,7 +97,6 @@ export declare class RenderedCell extends Component {
     getRenderedRow(): RenderedRow;
     isSuppressNavigable(): boolean;
     isCellEditable(): boolean;
-    private addSuppressShortcutKeyListenersWhileEditing();
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     private onContextMenu(mouseEvent);
     private onCellDoubleClicked(mouseEvent);

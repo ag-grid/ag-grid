@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -83,7 +83,7 @@ export declare class RowNode {
     resetQuickFilterAggregateText(): void;
     isExpandable(): boolean;
     isSelected(): boolean;
-    deptFirstSearch(callback: (rowNode: RowNode) => void): void;
+    depthFirstSearch(callback: (rowNode: RowNode) => void): void;
     calculateSelectedFromChildren(): void;
     private calculateSelectedFromChildrenBubbleUp();
     setSelectedInitialValue(selected: boolean): void;

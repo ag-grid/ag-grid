@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -140,6 +140,8 @@ export interface ColDef extends AbstractColDef {
     editable?: boolean | IsColumnFunc;
     /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
     suppressNavigable?: boolean | IsColumnFunc;
+    /** To create the quick filter text for this column, if toString is not good enough on the value. */
+    getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
     /** Callbacks for editing.See editing section for further details. */
     newValueHandler?: Function;
     /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
@@ -186,4 +188,11 @@ export interface IsColumnFuncParams {
     context: any;
     api: GridApi;
     columnApi: ColumnApi;
+}
+export interface GetQuickFilterTextParams {
+    value: any;
+    node: RowNode;
+    data: any;
+    column: Column;
+    colDef: ColDef;
 }

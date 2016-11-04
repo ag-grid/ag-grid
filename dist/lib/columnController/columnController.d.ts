@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
-import { ColDef, AbstractColDef, ColGroupDef } from "../entities/colDef";
+import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 export declare class ColumnApi {
@@ -217,7 +217,7 @@ export declare class ColumnController {
     private getHeaderName(colDef, column, columnGroup);
     private wrapHeaderNameWithAggFunc(column, headerName);
     getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup;
-    setColumnDefs(columnDefs: AbstractColDef[]): void;
+    setColumnDefs(columnDefs: (ColDef | ColGroupDef)[]): void;
     isReady(): boolean;
     private extractRowGroupColumns();
     private extractPivotColumns();

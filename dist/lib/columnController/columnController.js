@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1115,7 +1115,7 @@ var ColumnController = (function () {
         var allColumnGroups = this.getAllDisplayedColumnGroups();
         var checkInstanceId = typeof instanceId === 'number';
         var result = null;
-        this.columnUtils.deptFirstAllColumnTreeSearch(allColumnGroups, function (child) {
+        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
                 var columnGroup = child;
                 var matched;
@@ -1198,7 +1198,7 @@ var ColumnController = (function () {
     // used by updateModel
     ColumnController.prototype.getColumnGroupState = function () {
         var groupState = {};
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
                 var columnGroup = child;
                 var key = columnGroup.getGroupId();
@@ -1212,7 +1212,7 @@ var ColumnController = (function () {
     };
     // used by updateModel
     ColumnController.prototype.setColumnGroupState = function (groupState) {
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
                 var columnGroup = child;
                 var key = columnGroup.getGroupId();
@@ -1404,7 +1404,7 @@ var ColumnController = (function () {
     };
     ColumnController.prototype.addToDisplayedColumns = function (displayedColumnTree, displayedColumns) {
         displayedColumns.length = 0;
-        this.columnUtils.deptFirstDisplayedColumnTreeSearch(displayedColumnTree, function (child) {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(displayedColumnTree, function (child) {
             if (child instanceof column_1.Column) {
                 displayedColumns.push(child);
             }
@@ -1596,7 +1596,7 @@ var ColumnController = (function () {
     };
     ColumnController.prototype.updateGroups = function () {
         var allGroups = this.getAllDisplayedColumnGroups();
-        this.columnUtils.deptFirstAllColumnTreeSearch(allGroups, function (child) {
+        this.columnUtils.depthFirstAllColumnTreeSearch(allGroups, function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
                 var group = child;
                 group.calculateDisplayedColumns();

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,7 +44,7 @@ var BalancedColumnTreeBuilder = (function () {
         var treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
-        this.columnUtils.deptFirstOriginalTreeSearch(balancedTree, function (child) {
+        this.columnUtils.depthFirstOriginalTreeSearch(balancedTree, function (child) {
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
                 child.calculateExpandable();
             }

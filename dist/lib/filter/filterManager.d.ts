@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -27,6 +27,7 @@ export declare class FilterManager {
     private setModelOnFilterWrapper(filter, newModel);
     getFilterModel(): any;
     isAdvancedFilterPresent(): boolean;
+    private updateFilterFlagInColumns();
     isAnyFilterPresent(): boolean;
     private doesFilterPass(node, filterToSkip?);
     private parseQuickFilter(newFilter);
@@ -42,6 +43,7 @@ export declare class FilterManager {
     getFilterComponent(column: Column): IFilter;
     getOrCreateFilterWrapper(column: Column): FilterWrapper;
     private createFilterInstance(column);
+    private checkFilterHasAllMandatoryMethods(filterInstance, column);
     private createParams(filterWrapper);
     private createFilterWrapper(column);
     private initialiseFilterAndPutIntoGui(filterWrapper);

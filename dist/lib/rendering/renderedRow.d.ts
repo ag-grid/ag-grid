@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -6,7 +6,6 @@ import { RenderedCell } from "./renderedCell";
 import { RowNode } from "../entities/rowNode";
 import { RowRenderer } from "./rowRenderer";
 import { Column } from "../entities/column";
-import { GridCell } from "../entities/gridCell";
 export declare class RenderedRow {
     static EVENT_RENDERED_ROW_REMOVED: string;
     private gridOptionsWrapper;
@@ -33,15 +32,19 @@ export declare class RenderedRow {
     private parentScope;
     private rowRenderer;
     private eBodyContainer;
+    private eBodyContainerDF;
     private eFullWidthContainer;
     private ePinnedLeftContainer;
+    private ePinnedLeftContainerDF;
     private ePinnedRightContainer;
+    private ePinnedRightContainerDF;
     private destroyFunctions;
     private renderedRowEventService;
     private editingRow;
     private initialised;
-    constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, eFullWidthContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedRightContainer: HTMLElement, node: RowNode, rowIndex: number);
+    constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, eBodyContainerDF: DocumentFragment, eFullWidthContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedLeftContainerDF: DocumentFragment, ePinnedRightContainer: HTMLElement, ePinnedRightContainerDF: DocumentFragment, node: RowNode, rowIndex: number);
     private setupRowContainers();
+    private addDomData(eRowContainer);
     private setupFullWidthContainers();
     private addMouseWheelListenerToFullWidthRow();
     private setupFullWidthGroupContainers();
@@ -63,12 +66,12 @@ export declare class RenderedRow {
     private getOrCreateCell(column);
     private onRowSelected();
     private addRowSelectedListener();
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     private addHoverFunctionality();
     private addHoverClass(hover);
     private addCellFocusedListener();
     forEachRenderedCell(callback: (renderedCell: RenderedCell) => void): void;
     private addNodeDataChangedListener();
-    onMouseEvent(eventName: string, mouseEvent: MouseEvent, cell: GridCell): void;
     private setTopAndHeightCss();
     private addRowIds();
     addEventListener(eventType: string, listener: Function): void;
@@ -89,7 +92,7 @@ export declare class RenderedRow {
     private addStyleFromRowStyleFunc();
     private createParams();
     private createEvent(event, eventSource);
-    private createRowContainer(eParent);
+    private createRowContainer(eParentDF, eParent);
     private onRowDblClick(event);
     onRowClick(event: MouseEvent): void;
     getRowNode(): any;
