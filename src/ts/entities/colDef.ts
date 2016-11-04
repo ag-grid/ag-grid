@@ -176,6 +176,9 @@ export interface ColDef extends AbstractColDef {
     /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
     suppressNavigable?: boolean | IsColumnFunc;
 
+    /** To create the quick filter text for this column, if toString is not good enough on the value. */
+    getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
+
     /** Callbacks for editing.See editing section for further details. */
     newValueHandler?: Function;
 
@@ -233,4 +236,12 @@ export interface IsColumnFuncParams {
     context: any;
     api: GridApi;
     columnApi: ColumnApi;
+}
+
+export interface GetQuickFilterTextParams {
+    value: any;
+    node: RowNode;
+    data: any;
+    column: Column;
+    colDef: ColDef;
 }

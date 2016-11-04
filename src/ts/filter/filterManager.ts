@@ -12,6 +12,7 @@ import {IRowModel} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {IFilter, IFilterParams, IDoesFilterPassParams} from "../interfaces/iFilter";
+import {GetQuickFilterTextParams} from "../entities/colDef";
 
 @Bean('filterManager')
 export class FilterManager {
@@ -250,15 +251,31 @@ export class FilterManager {
     }
 
     private aggregateRowForQuickFilter(node: RowNode) {
-        var aggregatedText = '';
-        var that = this;
-        this.columnController.getAllPrimaryColumns().forEach(function (column: Column) {
-            var value = that.valueService.getValue(column, node);
-            if (value && value !== '') {
-                aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
+        var stringParts: string[] = [];
+        var columns = this.columnController.getAllPrimaryColumns();
+        columns.forEach( column => {
+            var value = this.valueService.getValue(column, node);
+
+            var valueAfterCallback: any;
+            var colDef = column.getColDef();
+            if (column.getColDef().getQuickFilterText) {
+                var params: GetQuickFilterTextParams = {
+                    value: value,
+                    node: node,
+                    data: node.data,
+                    column: column,
+                    colDef: colDef
+                };
+                valueAfterCallback = column.getColDef().getQuickFilterText(params);
+            } else {
+                valueAfterCallback = value;
+            }
+
+            if (valueAfterCallback && valueAfterCallback !== '') {
+                stringParts.push(valueAfterCallback.toString().toUpperCase());
             }
         });
-        node.quickFilterAggregateText = aggregatedText;
+        node.quickFilterAggregateText = stringParts.join('_');
     }
 
     private onNewRowsLoaded() {
