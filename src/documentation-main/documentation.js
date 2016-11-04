@@ -19,6 +19,7 @@
         $scope.selectedTab = 'example';
         $scope.jsfile = $attrs['jsfile'] ? $attrs['jsfile'] : example;
         $scope.exeExtension = $scope.jsfile.endsWith(".ts") ? "" : ".js";
+        $scope.sourceLang = $scope.jsfile.endsWith(".ts") ? "TypeScript" : "Javascript";
         $scope.htmlFile = $attrs['html'] ? $attrs['html'] : "./"+example+".html";
 
         if ($attrs.extraPages) {
