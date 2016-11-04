@@ -1,0 +1,421 @@
+/*
+todo
+- loading overlay colors
+- rich select colors
+
+*/
+
+
+@import 'nib'
+
+.ag-{ag-style}
+  // copying bootstrap with line-height, sorts out alignment problems with images beside text
+  line-height 1.4
+  font-family ag-root-font-family
+  font-size ag-root-font-size
+  color ag-foreground-1
+  // changing the image is same as what bootstrap does, without the images didn't align right
+  img
+    vertical-align middle
+    border 0
+
+  .ag-root
+    border ag-border-1
+
+  .ag-cell {}
+
+  .ag-cell-not-inline-editing
+    padding: ag-cell-padding;
+
+  // we do not want to color the range color when the cell is also focused
+  .ag-cell-range-selected-1:not(.ag-cell-focus)
+    background-color ag-range-selected-color-1
+
+  .ag-cell-range-selected-2:not(.ag-cell-focus)
+    background-color ag-range-selected-color-2
+
+  .ag-cell-range-selected-3:not(.ag-cell-focus)
+    background-color ag-range-selected-color-3
+
+  .ag-cell-range-selected-4:not(.ag-cell-focus)
+    background-color ag-range-selected-color-4
+
+  .ag-column-moving
+    .ag-cell
+      transition left 0.2s
+    .ag-header-cell
+      transition left 0.2s
+    .ag-header-group-cell
+      transition left 0.2s
+
+  .ag-cell-focus
+    border ag-cell-focused-border
+
+  .ag-cell-no-focus
+    border-right ag-cell-no-focus-border-right
+    border-top ag-cell-no-focus-border-top
+    border-left ag-cell-no-focus-border-left
+    border-bottom ag-cell-no-focus-border-bottom
+
+  .ag-cell-first-right-pinned
+    border-left ag-border-1
+
+  .ag-cell-last-left-pinned
+    border-right ag-border-1
+
+  // this needs to be after the other cell items, so the boarder gets preference
+  .ag-cell-highlight
+    border ag-cell-highlight-border
+
+  .ag-cell-highlight-animation
+    transition border 1s
+
+  // used by the animateShowChangedCellRenderer
+  .ag-value-change-delta
+    padding-right 2px
+  .ag-value-change-delta-up
+    color ag-value-change-delta-up-color
+  .ag-value-change-delta-down
+    color ag-value-change-delta-down-color
+  .ag-value-change-value
+    background-color transparent
+    border-radius 1px
+    padding-left 1px
+    padding-right 1px
+    transition background-color 1s
+  .ag-value-change-value-highlight
+    background-color ag-value-change-value-highlight-background-color
+    transition background-color 0.1s
+
+  .ag-rich-select
+    font-size 14px
+    border ag-border-1
+    background-color ag-select-background
+
+  .ag-rich-select-value
+    padding 2px
+
+  .ag-rich-select-list
+    border-top 1px solid ag-separator-color
+
+  .ag-rich-select-row
+    padding 2px
+
+  .ag-rich-select-row-selected
+    background-color ag-menu-option-active-color
+
+  .ag-large-text
+    border ag-border-1
+
+  .ag-large-textarea {}
+
+  // HEADER SECTION
+  .ag-header
+    color ag-header-foreground-1
+    background ag-header-background-1
+    border-bottom ag-border-1
+    font-weight ag-header-font-weight
+
+  .ag-header-icon
+    color ag-header-foreground-1
+    stroke none
+    fill ag-header-foreground-1
+
+  .ag-no-scrolls .ag-header-container
+    background ag-header-background-1
+    border-bottom ag-border-1
+
+  .ag-header-cell
+    border-right ag-border-1
+
+  .ag-header-cell-moving .ag-header-cell-label
+    opacity 0.5
+
+  .ag-header-cell-moving
+    background-color rgb(190,190,190);
+
+  .ag-header-group-cell
+    border-right ag-border-1
+
+  .ag-header-group-cell-with-group
+    border-bottom ag-border-1
+
+  .ag-header-cell-label
+    padding 4px 2px 4px 2px
+
+  .ag-header-cell-text
+    padding-left 2px
+
+  .ag-header-group-cell-label
+    padding 4px
+    padding-left 10px
+
+  .ag-header-group-text
+    margin-right 2px
+
+  .ag-header-cell-menu-button
+    padding 2px
+    margin-top 4px
+    border 1px solid transparent
+    border-radius 3px
+    box-sizing content-box /* When using bootstrap, box-sizing was set to 'border-box' */
+    line-height 0px /* normal line height, a space was appearing below the menu button */
+
+  .ag-pinned-right-header
+    border-left ag-border-1
+
+  .ag-header-cell-menu-button:hover
+    border ag-border-1
+
+  .ag-body
+    background-color ag-background-1
+
+  .ag-row
+    transition background-color 0.1s
+
+  .ag-row-odd
+    background-color ag-row-odd-background-color
+
+  .ag-row-even
+    background-color ag-row-even-background-color
+
+  .ag-row-selected
+    background-color ag-row-selected-background-color
+
+  .ag-floating-top
+    .ag-row
+      background-color ag-row-floating-background-color
+
+  .ag-floating-bottom
+    .ag-row
+      background-color ag-row-floating-background-color
+
+  .ag-overlay-loading-wrapper
+    background-color rgba(255, 255, 255, 0.5)
+
+  .ag-overlay-loading-center
+    background-color #ffffff
+    border ag-border-1
+    border-radius 10px
+    padding 10px
+    color black
+
+  .ag-overlay-no-rows-center
+    background-color #ffffff
+    border ag-border-1
+    border-radius 10px
+    padding 10px
+
+  .ag-group-cell-entire-row
+    background-color ag-background-1
+    padding ag-cell-padding
+
+  .ag-footer-cell-entire-row
+    background-color ag-background-1
+    padding ag-cell-padding
+
+  .ag-group-cell
+    font-style italic
+
+  .ag-group-expanded
+    padding-right 4px
+
+  .ag-group-contracted
+    padding-right 4px
+
+  .ag-group-value
+    padding-right 2px
+
+  .ag-group-checkbox
+    padding-right 2px
+
+  .ag-footer-cell
+    font-style italic
+
+  .ag-menu
+    border ag-border-color-2
+    background-color ag-background-1
+    //color ag-foreground-1
+    cursor default
+    font-family ag-root-font-family
+    font-size: ag-root-font-size
+
+    .ag-tab-header
+      background-color: ag-tab-background
+
+    .ag-tab
+      padding ag-tab-padding
+      margin 2px 2px 0px 2px
+      display inline-block
+      border-right 1px solid transparent
+      border-left 1px solid transparent
+      border-top 1px solid transparent
+      border-top-right-radius 2px
+      border-top-left-radius 2px
+      // need to specify color and stroke again here because
+      // for blue, the tab header is different to the grid header
+
+    .ag-tab-selected
+      background-color ag-tab-selected-background
+      border-right ag-tab-border
+      border-left ag-tab-border
+      border-top ag-tab-border
+
+  .ag-menu-separator
+    border-top 1px solid ag-separator-color
+
+  .ag-menu-option {}
+
+  .ag-menu-option-active
+    background-color ag-menu-option-active-color
+
+  .ag-menu-option-icon
+    padding ag-menu-option-padding
+    vertical-align middle
+
+  .ag-menu-option-text
+    padding ag-menu-option-padding
+    vertical-align middle
+
+  .ag-menu-option-shortcut
+    padding ag-menu-option-shortcut-padding
+    vertical-align middle
+
+  .ag-menu-option-popup-pointer
+    padding ag-menu-option-padding
+    vertical-align middle
+
+  .ag-menu-option-disabled
+    opacity 0.5
+
+  .ag-menu-column-select-wrapper
+    margin 2px
+
+  .ag-filter-checkbox
+    position relative
+    top 2px
+    left 2px
+
+  .ag-filter-header-container
+    border-bottom 1px solid ag-separator-color
+
+  .ag-filter-apply-panel
+    border-top 1px solid ag-separator-color
+    padding 2px
+
+  .ag-filter-value
+    margin-left 4px
+
+  .ag-selection-checkbox
+    padding-right 4px
+
+  .ag-paging-panel
+    padding 4px
+
+  .ag-paging-button
+    margin-left 4px
+    margin-right 4px
+
+  .ag-paging-row-summary-panel
+    display inline-block
+    width 300px
+
+  .ag-tool-panel
+    background-color ag-background-1
+    border-right ag-border-1
+    border-bottom ag-border-1
+    border-top ag-border-1
+    color ag-foreground-1
+
+  .ag-status-bar
+    color ag-foreground-1
+    background-color ag-background-1
+    font-size ag-root-font-size
+    height 22px
+    border-bottom ag-border-1
+    border-left ag-border-1
+    border-right ag-border-1
+    padding 2px
+
+  .ag-status-bar-aggregations
+    float right
+
+  .ag-status-bar-item
+    padding-left 10px
+
+  .ag-column-drop-cell
+    background ag-button-background-1
+    color ag-button-foreground-1
+    border ag-button-border-1
+
+  .ag-column-drop-cell-ghost
+    opacity 0.5
+
+  .ag-column-drop-cell-text
+    padding-left 2px
+    padding-right 2px
+
+  .ag-column-drop-cell-button
+    border 1px solid transparent
+    padding-left 2px
+    padding-right 2px
+    border-radius 3px
+
+  .ag-column-drop-cell-button:hover
+    border ag-border-1
+
+  .ag-column-drop-empty-message
+    padding-left 2px
+    padding-right 2px
+    color grey
+
+  .ag-column-drop-icon
+    padding-right 4px
+
+  .ag-column-drop
+    background-color ag-background-1
+
+  /* this is for the rowGroupPanel, that appears along the top of the grid */
+  .ag-column-drop-horizontal
+    padding 4px 4px 4px 4px
+    border-top ag-border-1
+    border-left ag-border-1
+    border-right ag-border-1
+
+    .ag-column-drop-cell
+      padding 2px
+
+  /* this is for the column drops that appear in the toolPanel */
+  .ag-column-drop-vertical
+    padding 4px 4px 10px 4px
+    border-bottom ag-border-1
+
+    .ag-column-drop-cell
+      margin-top 2px
+
+    .ag-column-drop-empty-message
+      text-align center
+      padding 5px
+
+  .ag-pivot-mode
+    border-bottom ag-border-1
+    padding 4px
+    background-color ag-background-1
+
+  .ag-tool-panel
+    .ag-column-select-panel
+      border-bottom ag-border-1
+
+  .ag-select-agg-func-popup
+    cursor default
+    position absolute
+    font-size 14px
+    background-color ag-select-background
+    border ag-border-1
+
+  .ag-select-agg-func-item
+    padding-left 2px
+    padding-right 2px
+
+  .ag-select-agg-func-item:hover
+    background-color ag-menu-option-active-color

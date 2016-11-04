@@ -756,6 +756,12 @@ cellEditorFramework: {
         All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelBeforeEnd()</i> etc)
         should be put onto your Angular 2 component and will work as normal.
     </p>
+
+    <h3>Example: Cell Editing using Angular 2 Components</h3>
+    <p>
+        Using Angular 2 Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
+    </p>
+    <show-example example="../ng2-example/index.html?example=editor-component" jsfile="../ng2-example/app/editor-component.component.ts" html="../ng2-example/app/editor-component.component.html"></show-example>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"BaseResponseOptions":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"@angular/core","name":"Injectable"}}],"members":{"__ctor__":[{"__symbolic":"constructor"}]}}}}

@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"___router_private__":{"ROUTER_PROVIDERS":{"__symbolic":"reference","module":"./router_module","name":"ROUTER_PROVIDERS"},"ROUTES":{"__symbolic":"reference","module":"./router_config_loader","name":"ROUTES"},"flatten":{"__symbolic":"reference","module":"./utils/collection","name":"flatten"}}}}

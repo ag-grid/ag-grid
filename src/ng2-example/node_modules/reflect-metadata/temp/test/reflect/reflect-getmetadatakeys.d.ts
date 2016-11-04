@@ -1,0 +1,12 @@
+export declare function ReflectGetMetadataKeysInvalidTarget(): void;
+export declare function ReflectGetMetadataKeysWithoutTargetKeyWhenNotDefined(): void;
+export declare function ReflectGetMetadataKeysWithoutTargetKeyWhenDefined(): void;
+export declare function ReflectGetMetadataKeysWithoutTargetKeyWhenDefinedOnPrototype(): void;
+export declare function ReflectGetMetadataKeysOrderWithoutTargetKey(): void;
+export declare function ReflectGetMetadataKeysOrderAfterRedefineWithoutTargetKey(): void;
+export declare function ReflectGetMetadataKeysOrderWithoutTargetKeyWhenDefinedOnPrototype(): void;
+export declare function ReflectGetMetadataKeysWithTargetKeyWhenNotDefined(): void;
+export declare function ReflectGetMetadataKeysWithTargetKeyWhenDefined(): void;
+export declare function ReflectGetMetadataKeysWithTargetKeyWhenDefinedOnPrototype(): void;
+export declare function ReflectGetMetadataKeysOrderAfterRedefineWithTargetKey(): void;
+export declare function ReflectGetMetadataKeysOrderWithTargetKeyWhenDefinedOnPrototype(): void;

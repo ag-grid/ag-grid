@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{},"exports":[{"from":"./platform_reflection_capabilities","export":["PlatformReflectionCapabilities"]},{"from":"./types","export":["GetterFn","MethodFn","SetterFn"]}]}

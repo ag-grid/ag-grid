@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"INTERNAL_SERVER_PLATFORM_PROVIDERS":{"__symbolic":"select","expression":{"__symbolic":"reference","module":"@angular/platform-server","name":"___platform_server_private__"},"member":"INTERNAL_SERVER_PLATFORM_PROVIDERS"}}}

@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"getDOM":{"__symbolic":"select","expression":{"__symbolic":"reference","module":"@angular/platform-browser","name":"___platform_browser_private__"},"member":"getDOM"}}}

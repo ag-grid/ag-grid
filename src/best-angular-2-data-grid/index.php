@@ -243,6 +243,12 @@ include '../documentation-main/documentation_header.php';
         and custom filtering.
     </p>
 
+    <h3>Example: Rich Grid without Components</h3>
+    <p>
+        The example below shows a rich configuration of ag-Grid, with no Angular 2 Components.
+    </p>
+    <show-example example="../ng2-example/index" jsfile="../ng2-example/app/rich-grid.component.ts" html="../ng2-example/app/rich-grid.component.html"></show-example>
+
     <h2 id="ng2markup">Creating Grids with Markup</h2>
 
     <p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via declaratively with markup.</p>
@@ -308,6 +314,12 @@ private getCountryFilterParams():any {
 &lt;/ag-grid-column>
 </pre>
     <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
+
+    <h3>Example: Rich Grid using Markup</h3>
+    <p>
+        The example below shows the same rich grid as the example above, but with configuration done via Markup.
+    </p>
+    <show-example example="../ng2-example/index.html?example=rich-grid-declarative" jsfile="../ng2-example/app/rich-grid-declarative.component.ts" html="../ng2-example/app/rich-grid-declarative.component.html"></show-example>
 
     <h2>Cell Rendering & Cell Editing using Angular 2</h2>
 

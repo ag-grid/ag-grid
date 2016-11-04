@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"CATCH_ERROR_VAR":{"__symbolic":"call","expression":{"__symbolic":"reference","module":"./output_ast","name":"variable"},"arguments":["error"]},"CATCH_STACK_VAR":{"__symbolic":"call","expression":{"__symbolic":"reference","module":"./output_ast","name":"variable"},"arguments":["stack"]}}}

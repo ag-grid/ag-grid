@@ -1,0 +1,36 @@
+{
+  "name": "ag-grid",
+  "version": "6.2.1",
+  "homepage": "http://www.ag-grid.com/",
+  "authors": [
+    "Niall Crosby <niall.crosby@ag-grid.com>"
+  ],
+  "description": "Advanced Javascript Datagrid. Supports raw Javascript, React, AngularJS 1.x, AngularJS 2.0 and Web Components",
+  "main": [
+    "./main.js"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "web-components",
+    "grid",
+    "data",
+    "table",
+    "react",
+    "reactjs",
+    "angular",
+    "angularjs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+  },
+  "dependencies": {
+  }
+}

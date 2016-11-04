@@ -1,0 +1,1 @@
+{"__symbolic":"module","version":1,"metadata":{"Console":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"./di","name":"Injectable"}}],"members":{"log":[{"__symbolic":"method"}],"warn":[{"__symbolic":"method"}]}}}}
