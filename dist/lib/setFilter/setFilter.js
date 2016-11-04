@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -92,6 +92,7 @@ var SetFilter = (function (_super) {
         var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
+        this.updateSelectAll();
         this.virtualList.refresh();
     };
     SetFilter.prototype.onAnyFilterChanged = function () {
@@ -111,6 +112,11 @@ var SetFilter = (function (_super) {
             _this.onMiniFilterChanged();
         });
         this.eSelectAll.onclick = this.onSelectAll.bind(this);
+        this.updateSelectAll();
+        this.setupApply();
+        this.virtualList.refresh();
+    };
+    SetFilter.prototype.updateSelectAll = function () {
         if (this.model.isEverythingSelected()) {
             this.eSelectAll.indeterminate = false;
             this.eSelectAll.checked = true;
@@ -122,8 +128,6 @@ var SetFilter = (function (_super) {
         else {
             this.eSelectAll.indeterminate = true;
         }
-        this.setupApply();
-        this.virtualList.refresh();
     };
     SetFilter.prototype.setupApply = function () {
         var _this = this;
@@ -163,25 +167,11 @@ var SetFilter = (function (_super) {
     SetFilter.prototype.onItemSelected = function (value, selected) {
         if (selected) {
             this.model.selectValue(value);
-            if (this.model.isEverythingSelected()) {
-                this.eSelectAll.indeterminate = false;
-                this.eSelectAll.checked = true;
-            }
-            else {
-                this.eSelectAll.indeterminate = true;
-            }
         }
         else {
             this.model.unselectValue(value);
-            //if set is empty, nothing is selected
-            if (this.model.isNothingSelected()) {
-                this.eSelectAll.indeterminate = false;
-                this.eSelectAll.checked = false;
-            }
-            else {
-                this.eSelectAll.indeterminate = true;
-            }
         }
+        this.updateSelectAll();
         this.filterChanged();
     };
     SetFilter.prototype.setMiniFilter = function (newMiniFilter) {
@@ -191,25 +181,23 @@ var SetFilter = (function (_super) {
         return this.model.getMiniFilter();
     };
     SetFilter.prototype.selectEverything = function () {
-        this.eSelectAll.indeterminate = false;
-        this.eSelectAll.checked = true;
-        // not sure if we need to call this, as checking the checkout above might
-        // fire events.
         this.model.selectEverything();
+        this.updateSelectAll();
+        this.virtualList.refresh();
     };
     SetFilter.prototype.selectNothing = function () {
-        this.eSelectAll.indeterminate = false;
-        this.eSelectAll.checked = false;
-        // not sure if we need to call this, as checking the checkout above might
-        // fire events.
         this.model.selectNothing();
+        this.updateSelectAll();
+        this.virtualList.refresh();
     };
     SetFilter.prototype.unselectValue = function (value) {
         this.model.unselectValue(value);
+        this.updateSelectAll();
         this.virtualList.refresh();
     };
     SetFilter.prototype.selectValue = function (value) {
         this.model.selectValue(value);
+        this.updateSelectAll();
         this.virtualList.refresh();
     };
     SetFilter.prototype.isValueSelected = function (value) {

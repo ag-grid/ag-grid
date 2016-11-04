@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 var main_1 = require("ag-grid/main");
 var enterpriseMenu_1 = require("./enterpriseMenu");
 var rangeController_1 = require("./rangeController");

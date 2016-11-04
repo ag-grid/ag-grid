@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {
@@ -198,7 +198,7 @@ var SetFilterModel = (function () {
         return this.allUniqueValues.length === this.selectedValuesCount;
     };
     SetFilterModel.prototype.isNothingSelected = function () {
-        return this.allUniqueValues.length === 0;
+        return this.selectedValuesCount === 0;
     };
     SetFilterModel.prototype.getModel = function () {
         if (!this.isFilterActive()) {

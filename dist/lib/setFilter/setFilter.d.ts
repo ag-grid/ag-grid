@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 import { IFilter, IFilterParams, IDoesFilterPassParams, Component } from "ag-grid/main";
 export declare class SetFilter extends Component implements IFilter {
     private gridOptionsWrapper;
@@ -23,6 +23,7 @@ export declare class SetFilter extends Component implements IFilter {
     onAnyFilterChanged(): void;
     private createTemplate();
     private createGui();
+    private updateSelectAll();
     private setupApply();
     private filterChanged();
     private onMiniFilterChanged();

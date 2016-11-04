@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 import { Component } from "ag-grid/main";
 export declare class ToolPanelComp extends Component {
     private static TEMPLATE;

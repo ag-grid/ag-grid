@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -34,7 +34,7 @@ var PivotColumnsPanel = (function (_super) {
         var title = localeTextFunc('pivots', 'Pivots');
         _super.prototype.init.call(this, {
             dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
-            iconFactory: svgFactory.createPivotIcon,
+            icon: main_1.Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null, svgFactory.createPivotIcon),
             emptyMessage: emptyMessage,
             title: title
         });

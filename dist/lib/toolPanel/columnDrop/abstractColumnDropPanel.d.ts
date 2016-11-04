@@ -1,10 +1,10 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 import { Component, EventService, GridOptionsWrapper, Context, LoggerFactory, DragAndDropService, Column } from "ag-grid/main";
 export interface AbstractColumnDropPanelParams {
     dragAndDropIcon: string;
     emptyMessage: string;
     title: string;
-    iconFactory: () => HTMLImageElement;
+    icon: HTMLElement;
 }
 export interface AbstractColumnDropPanelBeans {
     gridOptionsWrapper: GridOptionsWrapper;

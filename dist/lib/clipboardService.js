@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -104,7 +104,8 @@ var ClipboardService = (function () {
                 if (!column.isCellEditable(rowNode)) {
                     return;
                 }
-                _this.valueService.setValue(rowNode, column, value);
+                var processedValue = _this.processRangeCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
+                _this.valueService.setValue(rowNode, column, processedValue);
                 var cellId = new main_1.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
                 if (updatedColumnIds.indexOf(column.getId()) < 0) {
@@ -190,12 +191,12 @@ var ClipboardService = (function () {
         var rowCallback = function (currentRow, rowNode, columns) {
             columns.forEach(function (column, index) {
                 var value = _this.valueService.getValue(column, rowNode);
-                value = _this.processRangeCell(rowNode, column, value);
+                var processedValue = _this.processRangeCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellForClipboardFunc());
                 if (index != 0) {
                     data += '\t';
                 }
-                if (main_1.Utils.exists(value)) {
-                    data += value;
+                if (main_1.Utils.exists(processedValue)) {
+                    data += processedValue;
                 }
                 var cellId = new main_1.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
                 cellsToFlash[cellId] = true;
@@ -206,8 +207,7 @@ var ClipboardService = (function () {
         this.copyDataToClipboard(data);
         this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
-    ClipboardService.prototype.processRangeCell = function (rowNode, column, value) {
-        var func = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
+    ClipboardService.prototype.processRangeCell = function (rowNode, column, value, func) {
         if (func) {
             return func({
                 column: column,

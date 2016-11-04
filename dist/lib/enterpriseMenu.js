@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.2.1
+// ag-grid-enterprise v6.3.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -204,12 +204,12 @@ var EnterpriseMenu = (function () {
         var builtInMenuOptions = {
             pinSubMenu: {
                 name: localeTextFunc('pinColumn', 'Pin Column'),
-                icon: svgFactory.createPinIcon(),
+                icon: main_1.Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null, svgFactory.createPinIcon),
                 childMenu: this.createPinnedSubMenu()
             },
             valueAggSubMenu: {
                 name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                icon: svgFactory.createAggregationIcon(),
+                icon: main_1.Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
                 childMenu: this.createAggregationSubMenu()
             },
             autoSizeThis: {
@@ -223,12 +223,12 @@ var EnterpriseMenu = (function () {
             rowGroup: {
                 name: localeTextFunc('groupBy', 'Group by') + ' ' + this.column.getColDef().headerName,
                 action: function () { return _this.columnController.addRowGroupColumn(_this.column); },
-                icon: svgFactory.createGroupIcon12()
+                icon: main_1.Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
             },
             rowUnGroup: {
                 name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.column.getColDef().headerName,
                 action: function () { return _this.columnController.removeRowGroupColumn(_this.column); },
-                icon: svgFactory.createGroupIcon12()
+                icon: main_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
             },
             resetColumns: {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
