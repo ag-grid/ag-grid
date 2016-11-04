@@ -21,7 +21,6 @@
         $scope.exeExtension = $scope.jsfile.endsWith(".ts") ? "" : ".js";
         $scope.htmlFile = $attrs['html'] ? $attrs['html'] : "./"+example+".html";
 
-        console.log("asdf")
         if ($attrs.extraPages) {
             $scope.extraPages = $attrs.extraPages.split(',');
             $scope.extraPageContent = {};
