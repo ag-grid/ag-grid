@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.2.0
+// ag-grid-ng2 v6.3.0
 import { EventEmitter, ViewContainerRef, ElementRef, QueryList, OnInit, AfterViewInit } from '@angular/core';
 import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
@@ -14,6 +14,8 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     columnApi: ColumnApi;
     columns: QueryList<AgGridColumn>;
     constructor(elementDef: ElementRef, viewContainerRef: ViewContainerRef, ng2FrameworkFactory: Ng2FrameworkFactory);
+    private createComponentEvents();
+    private validateSuppliedProperties();
     ngOnInit(): void;
     ngAfterViewInit(): void;
     ngOnChanges(changes: any): void;
@@ -28,6 +30,7 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     floatingTopRowData: any;
     floatingBottomRowData: any;
     columnDefs: any;
+    defaultColDef: any;
     rowStyle: any;
     context: any;
     groupColumnDef: any;
@@ -144,6 +147,15 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     suppressFocusAfterRefresh: any;
     functionsPassive: any;
     functionsReadOnly: any;
+    defaultColGroupDef: any;
+    editType: any;
+    scrollbarWidth: any;
+    groupRowInnerRendererFramework: any;
+    groupRowRendererFramework: any;
+    fullWidthCellRendererFramework: any;
+    processSecondaryColDef: any;
+    processSecondaryColGroupDef: any;
+    suppressRowHoverClass: any;
     /**
      * Outputs
      */

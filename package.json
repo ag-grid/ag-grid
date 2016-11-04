@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -50,7 +50,7 @@
     "zone.js": "^0.6.26"
   },
   "peerDependencies": {
-    "ag-grid": "6.2.x"
+    "ag-grid": "6.3.x"
   },
   "dependencies": {}
 }

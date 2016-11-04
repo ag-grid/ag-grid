@@ -10,7 +10,7 @@ import * as import2 from '@angular/core/src/di/injector';
 class AgGridModuleInjector extends import0.NgModuleInjector<import1.AgGridModule> {
   _AgGridModule_0:import1.AgGridModule;
   constructor(parent:import2.Injector) {
-    super(parent,[],[]);
+    super(parent,([] as any[]),([] as any[]));
   }
   createInternal():import1.AgGridModule {
     this._AgGridModule_0 = new import1.AgGridModule();
