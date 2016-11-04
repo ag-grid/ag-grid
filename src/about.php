@@ -102,12 +102,16 @@
                 <img src='images/niall.png'/>
             </div>
             <h3>Niall Crosby</h3>
-            <h4>Founder</h4>
+            <h4>Founder, CEO, CTO</h4>
             <p>
-                Niall has 17 years leading greenfield software projects in Telecommunications, Government, Insurance
+                One day Niall said 'to hell with all the other data grids' and two weeks later ag-Grid v1 was born.
+                He has 18 years leading greenfield software projects in Telecommunications, Government, Insurance
                 and most recently Investment Banking. Oracle and Java used to be his bread and butter but is now
                 focusing on front end JavaScript, bringing his skill and knowledge from previous domains to the
                 emerging JavaScript platform.
+            </p>
+            <p>
+                In ag-Grid Niall builds the projects strategy and is responsible for all the core ag-Grid development.
             </p>
         </div>
 
@@ -116,12 +120,37 @@
                 <img src='images/sean.png'/>
             </div>
             <h3>Sean Landsman</h3>
-            <h4>Lead Developer</h4>
+            <h4>Lead Developer - Frameworks</h4>
             <p>
                 Sean is an experienced full stack technical lead with an extensive background in enterprise solutions. Over
                 19 years in the industry has taught him the value of quality code and good team collaboration. The bulk
                 of his background is on the server side, but like Niall is increasingly switching focus to include front end
                 technologies.
+            </p>
+            <p>
+                In ag-Grid Sean is responsible for all the framework connectivity into ag-Grid, he is our framework
+                expert. He also focuses on the users experience, working with customers on training and consultancy.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <div>
+                <img src='images/alberto.png'/>
+            </div>
+            <h3>Alberto Gutierrez</h3>
+            <h4>Lead Developer - Data Internals</h4>
+            <p>
+                Alberto has 15 years of experience in end to end big enterprise scale projects.
+                From worldwide e-commerce applications to tv platforms, airport management
+                systems, financial applications, payments integration and many others. He
+                had the opportunity to work with real time, high load requirements across
+                all the different layers of the technology stack, from the UI, to the backend,
+                integration, configuration... There is no single stage of the software development
+                that he doesn't enjoy, but considers himself above anything else a coder. He is
+                happy when coding.
+            </p>
+            <p>
+                In ag-Grid Alberto helps realise the dream of a data grid that will solve big data enterprise problems.
             </p>
         </div>
 
