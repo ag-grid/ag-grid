@@ -15,6 +15,15 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">4th November 2016</div>
+        <div class="news-header">ag-Grid 6.3.x Released</div>
+        <div style="padding-top: 10px;">
+            ag-Grid 6.3.x released with Performance Improvements and lots of smaller feature and bug fixes.
+            See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">27th October 2016</div>
         <div style="padding-top: 10px;">
             <a href="../javascript-datagrid/">

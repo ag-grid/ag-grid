@@ -13,18 +13,23 @@ include '../documentation-main/documentation_header.php';
     <h4>Enhancements</h4>
 
     <ul>
-        <li>added <a href="../javascript-grid-filtering/#overridingQuickFilter">colDef.getQuickFilterText</a> to allow overriding of quick filter text</li>
-        <li>added property suppressRowHoverClass, so if you do not require the row hover class, it's expensive, set this to true for slight performance tweak</li>
+        <li>quick filter - added <a href="../javascript-grid-filtering/#overridingQuickFilter">colDef.getQuickFilterText</a> to allow overriding of quick filter text</li>
+        <li>performance option - added property suppressRowHoverClass, so if you do not require the row hover class, it's expensive, set this to true for slight performance tweak</li>
         <li>ag-grid-react - now cellRenderers get params.reactContainer so the cell renderer can style the wrapping div</li>
         <li>ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
-        <li>added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
-        <li>new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy if providing non-standard scrolbars to grid and need to provide alterlative padding to use.</li>
-        <li>added api.checkGridSize(), so you can force grid to check it's size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
-        <li>added customisation of the following icons: menuPin, menuValue, menuAddRowGroup, menuRemoveRowGroup, rowGroupPanel, pivotPanel, valuePanel</li>
-        <li>added property <i>suppressTouch</i> to turn off touch support, if you don't want it.</li>
+        <li>clipboard - added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
+        <li>scrolls - new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy if providing non-standard scrolbars to grid and need to provide alterlative padding to use.</li>
+        <li>grid size - added api.checkGridSize(), so you can force grid to check it's size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
+        <li>icons - added customisation of the following icons: menuPin, menuValue, menuAddRowGroup, menuRemoveRowGroup, rowGroupPanel, pivotPanel, valuePanel</li>
+        <li>suppress touch - added property <i>suppressTouch</i> to turn off touch support, if you don't want it.</li>
     </ul>
 
     <h4>Performance Enhancements</h4>
+    <p>
+        In our tests the demo page used to take 1600ms to expand a row after grouping, it's now down to 600ms. We
+        haven't tested teh other browsers, but you can expect these changes to at least have some positive improvements
+        on them also. The changes we made were:
+    </p>
     <ul>
         <li>introduced Document Fragment to build DOM offline when building rows</li>
         <li>cells no do not have any events, all event handling done at grid level - means for example, where before was adding a keydown event to every cell, not it is added to grid and gri work out which cell, means not adding/removing lots of listeners as grid is scrolling rows</li>
