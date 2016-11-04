@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var debug = require('gulp-debug');
 var gulpTypescript = require('gulp-typescript');
 var typescript = require('typescript');
 var merge = require('merge2');
@@ -179,7 +178,6 @@ function copyFromDocsExclNodeModules() {
         ['!../ag-grid-docs/src/ng2-example/node_modules',
             '../ag-grid-docs/src/**/*'
         ])
-        .pipe(debug())
         .pipe(gulp.dest('./web-root'));
 }
 
