@@ -138,11 +138,11 @@ function filterData(filterModel, data) {
             // EQUALS = 1;
             // LESS_THAN = 2;
             // GREATER_THAN = 3;
-            if (filterModel.age.type == 1) {
+            if (filterModel.age.type == 'equals') {
                 if (age !== allowedAge) {
                     continue;
                 }
-            } else if (filterModel.age.type == 2) {
+            } else if (filterModel.age.type == 'notEqual') {
                 if (age >= allowedAge) {
                     continue;
                 }
