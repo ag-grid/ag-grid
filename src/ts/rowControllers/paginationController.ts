@@ -337,6 +337,7 @@ export class PaginationController {
             .replace('[PAGE]', localeTextFunc('page', 'Page'))
             .replace('[TO]', localeTextFunc('to', 'to'))
             .replace('[OF]', localeTextFunc('of', 'of'))
+            .replace('[OF]', localeTextFunc('of', 'of'))
             .replace('[FIRST]', localeTextFunc('first', 'First'))
             .replace('[PREVIOUS]', localeTextFunc('previous', 'Previous'))
             .replace('[NEXT]', localeTextFunc('next', 'Next'))
