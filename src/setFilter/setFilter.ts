@@ -283,6 +283,7 @@ export class SetFilter extends Component implements IFilter {
 
     public setModel(dataModel: any) {
         this.model.setModel(dataModel);
+        this.updateSelectAll();
         this.virtualList.refresh();
     }
 
