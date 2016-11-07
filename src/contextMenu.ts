@@ -4,6 +4,7 @@ import {
     SvgFactory,
     MenuItemComponent,
     Bean,
+    EventService,
     IContextMenuFactory,
     Autowired,
     Context,
@@ -95,6 +96,7 @@ class ContextMenu extends Component {
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('eventService') private eventService: EventService;
 
     private menuList: MenuList;
     private hidePopupFunc: Function;
@@ -157,7 +159,9 @@ class ContextMenu extends Component {
         this.hidePopupFunc();
     }
 
-    public afterGuiAttached(hidePopup: Function): void {
+    public afterGuiAttached(hidePopup: (event?: any)=>void): void {
         this.hidePopupFunc = hidePopup;
+        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
+        this.addDestroyableEventListener(this.eventService, 'bodyScroll', hidePopup);
     }
 }

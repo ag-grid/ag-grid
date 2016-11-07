@@ -110,6 +110,7 @@ export class EnterpriseMenu {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
+    @Autowired('eventService') private eventService: EventService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -117,13 +118,14 @@ export class EnterpriseMenu {
     private mainMenuList: MenuList;
 
     private columnSelectPanel: ColumnSelectPanel;
-    private eventService = new EventService();
+    private localEventService = new EventService();
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
     private tabItemColumns: TabbedItem;
 
     private initialSelection: string;
+    private destroyFunctions: Function[] = [];
 
     constructor(column: Column, initialSelection: string) {
         this.column = column;
@@ -131,7 +133,7 @@ export class EnterpriseMenu {
     }
 
     public addEventListener(event: string, listener: Function): void {
-        this.eventService.addEventListener(event, listener);
+        this.localEventService.addEventListener(event, listener);
     }
 
     public getMinWidth(): number {
@@ -187,7 +189,7 @@ export class EnterpriseMenu {
             case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
         }
         if (key) {
-            this.eventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, {key: key});
+            this.localEventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, {key: key});
         }
     }
 
@@ -198,6 +200,7 @@ export class EnterpriseMenu {
         if (this.mainMenuList) {
             this.mainMenuList.destroy();
         }
+        this.destroyFunctions.forEach(func => func());
     }
 
     private createPinnedSubMenu(): MenuList {
@@ -445,6 +448,10 @@ export class EnterpriseMenu {
         this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
         this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
+
+        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
+        this.eventService.addEventListener('bodyScroll', params.hidePopup);
+        this.destroyFunctions.push( ()=> this.eventService.removeEventListener('bodyScroll', params.hidePopup) );
     }
 
     public getGui(): HTMLElement {
