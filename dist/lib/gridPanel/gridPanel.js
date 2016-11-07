@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,9 +111,19 @@ var GridPanel = (function () {
     GridPanel.prototype.agWire = function (loggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.scrollWidth = utils_1.Utils.getScrollbarWidth();
+        this.setScrollBarWidth();
         this.logger = loggerFactory.create('GridPanel');
         this.findElements();
+    };
+    GridPanel.prototype.setScrollBarWidth = function () {
+        // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
+        // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
+        // allow the user to provide the scroll width before we work it out.
+        var scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+        if (typeof scrollWidth !== 'number' || scrollWidth < 0) {
+            scrollWidth = utils_1.Utils.getScrollbarWidth();
+        }
+        this.scrollWidth = scrollWidth;
     };
     GridPanel.prototype.destroy = function () {
         this.destroyFunctions.forEach(function (func) { return func(); });
@@ -156,7 +166,8 @@ var GridPanel = (function () {
         this.sizeHeaderAndBody();
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
-        this.addCellListeners();
+        this.addMouseEvents();
+        this.addKeyboardEvents();
         this.addBodyViewportListener();
         if (this.$scope) {
             this.addAngularApplyCheck();
@@ -197,11 +208,27 @@ var GridPanel = (function () {
         });
     };
     GridPanel.prototype.addEventListeners = function () {
-        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.sizeHeaderAndBody.bind(this));
-        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, this.sizeHeaderAndBody.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        var _this = this;
+        var displayedColumnsChangedListener = this.onDisplayedColumnsChanged.bind(this);
+        var columnResizedListener = this.onColumnResized.bind(this);
+        var sizeHeaderAndBodyListener = this.sizeHeaderAndBody.bind(this);
+        var rowDataChangedListener = this.onRowDataChanged.bind(this);
+        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnResizedListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
+        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_ITEMS_ADDED, rowDataChangedListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_ITEMS_REMOVED, rowDataChangedListener);
+        this.destroyFunctions.push(function () {
+            _this.eventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnResizedListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
+            _this.gridOptionsWrapper.removeEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_ITEMS_ADDED, rowDataChangedListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_ITEMS_REMOVED, rowDataChangedListener);
+        });
     };
     GridPanel.prototype.addDragListeners = function () {
         var _this = this;
@@ -224,11 +251,22 @@ var GridPanel = (function () {
             _this.destroyFunctions.push(function () { return _this.dragService.removeDragSource(params); });
         });
     };
-    GridPanel.prototype.addCellListeners = function () {
+    GridPanel.prototype.addMouseEvents = function () {
         var _this = this;
         var eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu'];
         eventNames.forEach(function (eventName) {
             var listener = _this.processMouseEvent.bind(_this, eventName);
+            _this.eAllCellContainers.forEach(function (container) {
+                container.addEventListener(eventName, listener);
+                _this.destroyFunctions.push(function () { return container.removeEventListener(eventName, listener); });
+            });
+        });
+    };
+    GridPanel.prototype.addKeyboardEvents = function () {
+        var _this = this;
+        var eventNames = ['keydown', 'keypress'];
+        eventNames.forEach(function (eventName) {
+            var listener = _this.processKeyboardEvent.bind(_this, eventName);
             _this.eAllCellContainers.forEach(function (container) {
                 container.addEventListener(eventName, listener);
                 _this.destroyFunctions.push(function () { return container.removeEventListener(eventName, listener); });
@@ -254,11 +292,51 @@ var GridPanel = (function () {
         this.eBodyViewport.addEventListener('contextmenu', listener);
         this.destroyFunctions.push(function () { return _this.eBodyViewport.removeEventListener('contextmenu', listener); });
     };
+    GridPanel.prototype.getCellForEvent = function (event) {
+        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
+        var sourceElement = utils_1.Utils.getTarget(event);
+        while (sourceElement) {
+            var domData = sourceElement[domDataKey];
+            if (domData && domData.renderedCell) {
+                return domData.renderedCell;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+        return null;
+    };
+    GridPanel.prototype.getRowForEvent = function (event) {
+        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
+        var sourceElement = utils_1.Utils.getTarget(event);
+        while (sourceElement) {
+            var domData = sourceElement[domDataKey];
+            if (domData && domData.renderedRow) {
+                return domData.renderedRow;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+        return null;
+    };
+    GridPanel.prototype.processKeyboardEvent = function (eventName, keyboardEvent) {
+        var renderedCell = this.getCellForEvent(keyboardEvent);
+        if (renderedCell) {
+            switch (eventName) {
+                case 'keydown':
+                    renderedCell.onKeyDown(keyboardEvent);
+                    break;
+                case 'keypress':
+                    renderedCell.onKeyPress(keyboardEvent);
+                    break;
+            }
+        }
+    };
     GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent) {
-        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
-        if (utils_1.Utils.exists(cell)) {
-            //console.log(`row = ${cell.rowIndex}, floating = ${floating}`);
-            this.rowRenderer.onMouseEvent(eventName, mouseEvent, cell);
+        var renderedCell = this.getCellForEvent(mouseEvent);
+        if (renderedCell) {
+            renderedCell.onMouseEvent(eventName, mouseEvent);
+        }
+        var renderedRow = this.getRowForEvent(mouseEvent);
+        if (renderedRow) {
+            renderedRow.onMouseEvent(eventName, mouseEvent);
         }
         this.preventDefaultOnContextMenu(mouseEvent);
     };
@@ -286,6 +364,13 @@ var GridPanel = (function () {
         var _this = this;
         this.eAllCellContainers.forEach(function (container) {
             container.addEventListener('keydown', function (event) {
+                // if the cell the event came from is editing, then we do not
+                // want to do the default shortcut keys, otherwise the editor
+                // (eg a text field) would not be able to do the normal cut/copy/paste
+                var renderedCell = _this.getCellForEvent(event);
+                if (renderedCell && renderedCell.isEditing()) {
+                    return;
+                }
                 if (event.ctrlKey || event.metaKey) {
                     switch (event.which) {
                         case constants_1.Constants.KEY_A: return _this.onCtrlAndA(event);
@@ -428,11 +513,13 @@ var GridPanel = (function () {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eViewportToScroll.scrollTop = rowTopPixel;
+            this.rowRenderer.drawVirtualRows();
         }
         else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var newScrollPosition = rowBottomPixel - viewportHeight;
             eViewportToScroll.scrollTop = newScrollPosition;
+            this.rowRenderer.drawVirtualRows();
         }
         // otherwise, row is already in view, so do nothing
     };
@@ -939,21 +1026,41 @@ var GridPanel = (function () {
                 that.rowRenderer.drawVirtualRows();
             }
         }
-        if (this.useScrollLag) {
-            this.eBodyViewport.addEventListener('scroll', this.debounce.bind(this, onBodyViewportScroll));
-            this.ePinnedRightColsViewport.addEventListener('scroll', this.debounce.bind(this, onPinnedRightScroll));
-        }
-        else {
-            this.eBodyViewport.addEventListener('scroll', onBodyViewportScroll);
-            this.ePinnedRightColsViewport.addEventListener('scroll', onPinnedRightScroll);
-        }
+        var bodyViewportScrollListener = this.useScrollLag ? this.debounce.bind(this, onBodyViewportScroll) : onBodyViewportScroll;
+        var pinnedRightScrollListener = this.useScrollLag ? this.debounce.bind(this, onPinnedRightScroll) : onPinnedRightScroll;
+        this.eBodyViewport.addEventListener('scroll', bodyViewportScrollListener);
+        this.ePinnedRightColsViewport.addEventListener('scroll', pinnedRightScrollListener);
+        this.destroyFunctions.push(function () {
+            _this.eBodyViewport.removeEventListener('scroll', bodyViewportScrollListener);
+            _this.ePinnedRightColsViewport.removeEventListener('scroll', pinnedRightScrollListener);
+        });
         // this means the pinned panel was moved, which can only
         // happen when the user is navigating in the pinned container
         // as the pinned col should never scroll. so we rollback
         // the scroll on the pinned.
-        this.ePinnedLeftColsViewport.addEventListener('scroll', function () {
+        var pinnedLeftColsViewportScrollListener = function () {
             _this.ePinnedLeftColsViewport.scrollTop = 0;
+        };
+        this.ePinnedLeftColsViewport.addEventListener('scroll', pinnedLeftColsViewportScrollListener);
+        this.destroyFunctions.push(function () {
+            _this.ePinnedLeftColsViewport.removeEventListener('scroll', pinnedLeftColsViewportScrollListener);
         });
+        this.addIEPinFix(onPinnedRightScroll);
+    };
+    // this bit is a fix / hack for IE due to this:
+    // https://www.ag-grid.com/forum/showthread.php?tid=4303
+    // it gets the left panel to reposition itself after a model change
+    GridPanel.prototype.addIEPinFix = function (onPinnedRightScroll) {
+        var _this = this;
+        var listener = function () {
+            if (_this.columnController.isPinningRight()) {
+                setTimeout(function () {
+                    onPinnedRightScroll();
+                }, 0);
+            }
+        };
+        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, listener);
+        this.destroyFunctions.push(function () { return _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, listener); });
     };
     GridPanel.prototype.setLeftAndRightBounds = function () {
         if (this.gridOptionsWrapper.isForPrint()) {

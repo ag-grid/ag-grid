@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -97,18 +97,17 @@ var FilterManager = (function () {
     FilterManager.prototype.isAdvancedFilterPresent = function () {
         var atLeastOneActive = false;
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
-            if (!filterWrapper.filter.isFilterActive) {
-                console.error('Filter is missing method isFilterActive');
-            }
             if (filterWrapper.filter.isFilterActive()) {
                 atLeastOneActive = true;
-                filterWrapper.column.setFilterActive(true);
-            }
-            else {
-                filterWrapper.column.setFilterActive(false);
             }
         });
         return atLeastOneActive;
+    };
+    FilterManager.prototype.updateFilterFlagInColumns = function () {
+        utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
+            var filterActive = filterWrapper.filter.isFilterActive();
+            filterWrapper.column.setFilterActive(filterActive);
+        });
     };
     // returns true if quickFilter or advancedFilter
     FilterManager.prototype.isAnyFilterPresent = function () {
@@ -169,6 +168,7 @@ var FilterManager = (function () {
     FilterManager.prototype.onFilterChanged = function () {
         this.eventService.dispatchEvent(events_1.Events.EVENT_BEFORE_FILTER_CHANGED);
         this.advancedFilterPresent = this.isAdvancedFilterPresent();
+        this.updateFilterFlagInColumns();
         this.checkExternalFilter();
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
             if (filterWrapper.filter.onAnyFilterChanged) {
@@ -211,24 +211,39 @@ var FilterManager = (function () {
         return true;
     };
     FilterManager.prototype.aggregateRowForQuickFilter = function (node) {
-        var aggregatedText = '';
-        var that = this;
-        this.columnController.getAllPrimaryColumns().forEach(function (column) {
-            var value = that.valueService.getValue(column, node);
-            if (value && value !== '') {
-                aggregatedText = aggregatedText + value.toString().toUpperCase() + "_";
+        var _this = this;
+        var stringParts = [];
+        var columns = this.columnController.getAllPrimaryColumns();
+        columns.forEach(function (column) {
+            var value = _this.valueService.getValue(column, node);
+            var valueAfterCallback;
+            var colDef = column.getColDef();
+            if (column.getColDef().getQuickFilterText) {
+                var params = {
+                    value: value,
+                    node: node,
+                    data: node.data,
+                    column: column,
+                    colDef: colDef
+                };
+                valueAfterCallback = column.getColDef().getQuickFilterText(params);
+            }
+            else {
+                valueAfterCallback = value;
+            }
+            if (valueAfterCallback && valueAfterCallback !== '') {
+                stringParts.push(valueAfterCallback.toString().toUpperCase());
             }
         });
-        node.quickFilterAggregateText = aggregatedText;
+        node.quickFilterAggregateText = stringParts.join('_');
     };
     FilterManager.prototype.onNewRowsLoaded = function () {
-        var that = this;
-        Object.keys(this.allFilters).forEach(function (field) {
-            var filter = that.allFilters[field].filter;
-            if (filter.onNewRowsLoaded) {
-                filter.onNewRowsLoaded();
+        utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
+            if (filterWrapper.filter.onNewRowsLoaded) {
+                filterWrapper.filter.onNewRowsLoaded();
             }
         });
+        this.updateFilterFlagInColumns();
     };
     FilterManager.prototype.createValueGetter = function (column) {
         var that = this;
@@ -268,7 +283,11 @@ var FilterManager = (function () {
             return null;
         }
         var filterInstance = new FilterClass();
+        this.checkFilterHasAllMandatoryMethods(filterInstance, column);
         this.context.wireBean(filterInstance);
+        return filterInstance;
+    };
+    FilterManager.prototype.checkFilterHasAllMandatoryMethods = function (filterInstance, column) {
         // help the user, check the mandatory methods exist
         ['getGui', 'isFilterActive', 'doesFilterPass', 'getModel', 'setModel'].forEach(function (methodName) {
             var methodIsMissing = !filterInstance[methodName];
@@ -276,7 +295,6 @@ var FilterManager = (function () {
                 throw "Filter for column " + column.getColId() + " is missing method " + methodName;
             }
         });
-        return filterInstance;
     };
     FilterManager.prototype.createParams = function (filterWrapper) {
         var _this = this;

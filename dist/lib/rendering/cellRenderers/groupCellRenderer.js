@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -92,7 +92,12 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.createFromInnerRenderer = function (params) {
-        this.cellRendererService.useCellRenderer(params.innerRenderer, this.eValue, params);
+        var innerComponent = this.cellRendererService.useCellRenderer(params.innerRenderer, this.eValue, params);
+        this.addDestroyFunc(function () {
+            if (innerComponent && innerComponent.destroy) {
+                innerComponent.destroy();
+            }
+        });
     };
     GroupCellRenderer.prototype.createFooterCell = function (params) {
         var footerValue;

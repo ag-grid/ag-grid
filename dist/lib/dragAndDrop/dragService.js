@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,9 @@ var DragService = (function () {
         var mouseListener = this.onMouseDown.bind(this, params);
         params.eElement.addEventListener('mousedown', mouseListener);
         var touchListener = null;
-        if (includeTouch) {
+        var suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
+        var reallyIncludeTouch = includeTouch && !suppressTouch;
+        if (reallyIncludeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
             params.eElement.addEventListener('touchstart', touchListener);
         }

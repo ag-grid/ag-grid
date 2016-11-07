@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -324,7 +324,7 @@ var GridApi = (function () {
         }
     };
     GridApi.prototype.getFilterApi = function (key) {
-        console.warn('ag-Grid: getFilterApi is deprecated, use getFilterComponent instead');
+        console.warn('ag-Grid: getFilterApi is deprecated, use getFilterInstance instead');
         return this.getFilterInstance(key);
     };
     GridApi.prototype.destroyFilter = function (key) {
@@ -528,6 +528,9 @@ var GridApi = (function () {
         else {
             console.warn("ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.");
         }
+    };
+    GridApi.prototype.checkGridSize = function () {
+        this.gridPanel.sizeHeaderAndBody();
     };
     __decorate([
         context_1.Autowired('csvCreator'), 

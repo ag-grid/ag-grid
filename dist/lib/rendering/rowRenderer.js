@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,9 +47,20 @@ var RowRenderer = (function () {
         this.logger = this.loggerFactory.create('RowRenderer');
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     };
+    RowRenderer.prototype.setupDocumentFragments = function () {
+        var usingDocumentFragments = !!document.createDocumentFragment;
+        if (usingDocumentFragments) {
+            this.eBodyContainerDF = document.createDocumentFragment();
+            if (!this.gridOptionsWrapper.isForPrint()) {
+                this.ePinnedLeftColsContainerDF = document.createDocumentFragment();
+                this.ePinnedRightColsContainerDF = document.createDocumentFragment();
+            }
+        }
+    };
     RowRenderer.prototype.init = function () {
         var _this = this;
         this.getContainersFromGridPanel();
+        this.setupDocumentFragments();
         var columnListener = this.onColumnEvent.bind(this);
         var refreshViewListener = this.refreshView.bind(this);
         this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
@@ -134,7 +145,7 @@ var RowRenderer = (function () {
         }
         if (rowNodes) {
             rowNodes.forEach(function (node, rowIndex) {
-                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, eBodyContainer, eFullWidthContainer, ePinnedLeftContainer, ePinnedRightContainer, node, rowIndex);
+                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, eBodyContainer, null, eFullWidthContainer, ePinnedLeftContainer, null, ePinnedRightContainer, null, node, rowIndex);
                 _this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             });
@@ -343,7 +354,7 @@ var RowRenderer = (function () {
         return this.lastRenderedRow;
     };
     RowRenderer.prototype.ensureRowsRendered = function () {
-        //var start = new Date().getTime();
+        // var timer = new Timer();
         var _this = this;
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
@@ -360,32 +371,23 @@ var RowRenderer = (function () {
                 this.insertRow(node, rowIndex);
             }
         }
+        // timer.print('creating template');
         // at this point, everything in our 'rowsToRemove' . . .
         this.removeVirtualRow(rowsToRemove);
+        // timer.print('removing');
+        if (this.eBodyContainerDF) {
+            this.eBodyContainer.appendChild(this.eBodyContainerDF);
+            if (!this.gridOptionsWrapper.isForPrint()) {
+                this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
+                this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
+            }
+        }
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             // we do it in a timeout, in case we are already in an apply
             setTimeout(function () { _this.$scope.$apply(); }, 0);
         }
-        //var end = new Date().getTime();
-        //console.log(end-start);
-    };
-    RowRenderer.prototype.onMouseEvent = function (eventName, mouseEvent, cell) {
-        var renderedRow;
-        switch (cell.floating) {
-            case constants_1.Constants.FLOATING_TOP:
-                renderedRow = this.renderedTopFloatingRows[cell.rowIndex];
-                break;
-            case constants_1.Constants.FLOATING_BOTTOM:
-                renderedRow = this.renderedBottomFloatingRows[cell.rowIndex];
-                break;
-            default:
-                renderedRow = this.renderedRows[cell.rowIndex];
-                break;
-        }
-        if (renderedRow) {
-            renderedRow.onMouseEvent(eventName, mouseEvent, cell);
-        }
+        // timer.print('total');
     };
     RowRenderer.prototype.insertRow = function (node, rowIndex) {
         var columns = this.columnController.getAllDisplayedColumns();
@@ -393,7 +395,7 @@ var RowRenderer = (function () {
         if (utils_1.Utils.missingOrEmpty(columns)) {
             return;
         }
-        var renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.eBodyContainer, this.eFullWidthContainer, this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, node, rowIndex);
+        var renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer, this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF, this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF, node, rowIndex);
         this.context.wireBean(renderedRow);
         this.renderedRows[rowIndex] = renderedRow;
     };

@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v6.2.1
+// Type definitions for ag-grid v6.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { CsvExportParams } from "./csvCreator";
 import { MasterSlaveService } from "./masterSlaveService";
-import { ColDef, IAggFunc } from "./entities/colDef";
+import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { IRowModel } from "./interfaces/iRowModel";
@@ -61,7 +61,7 @@ export declare class GridApi {
     getFloatingBottomRowCount(): number;
     getFloatingTopRow(index: number): RowNode;
     getFloatingBottomRow(index: number): RowNode;
-    setColumnDefs(colDefs: ColDef[]): void;
+    setColumnDefs(colDefs: (ColDef | ColGroupDef)[]): void;
     refreshRows(rowNodes: RowNode[]): void;
     refreshCells(rowNodes: RowNode[], colIds: string[], animate?: boolean): void;
     rowDataChanged(rows: any): void;
@@ -159,4 +159,5 @@ export declare class GridApi {
     isMaxRowFound(): boolean;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
     getVirtualPageState(): any;
+    checkGridSize(): void;
 }

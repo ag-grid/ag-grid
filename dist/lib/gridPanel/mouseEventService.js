@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,10 +38,10 @@ var MouseEventService = (function () {
         }
     };
     MouseEventService.prototype.getFloating = function (mouseEvent) {
-        var floatingTopRect = this.gridPanel.getFloatingTopClientRect();
-        var floatingBottomRect = this.gridPanel.getFloatingBottomClientRect();
         var floatingTopRowsExist = !this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_TOP);
         var floatingBottomRowsExist = !this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_BOTTOM);
+        var floatingTopRect = floatingTopRowsExist ? this.gridPanel.getFloatingTopClientRect() : null;
+        var floatingBottomRect = floatingBottomRowsExist ? this.gridPanel.getFloatingBottomClientRect() : null;
         if (floatingTopRowsExist && floatingTopRect.bottom >= mouseEvent.clientY) {
             return constants_1.Constants.FLOATING_TOP;
         }

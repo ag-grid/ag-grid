@@ -87,8 +87,10 @@ export class RowRenderer {
         let usingDocumentFragments = !!document.createDocumentFragment;
         if (usingDocumentFragments) {
             this.eBodyContainerDF = document.createDocumentFragment();
-            this.ePinnedLeftColsContainerDF = document.createDocumentFragment();
-            this.ePinnedRightColsContainerDF = document.createDocumentFragment();
+            if (!this.gridOptionsWrapper.isForPrint()) {
+                this.ePinnedLeftColsContainerDF = document.createDocumentFragment();
+                this.ePinnedRightColsContainerDF = document.createDocumentFragment();
+            }
         }
     }
 
@@ -503,8 +505,10 @@ export class RowRenderer {
 
         if (this.eBodyContainerDF) {
             this.eBodyContainer.appendChild(this.eBodyContainerDF);
-            this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
-            this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
+            if (!this.gridOptionsWrapper.isForPrint()) {
+                this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
+                this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
+            }
         }
 
         // if we are doing angular compiling, then do digest the scope here

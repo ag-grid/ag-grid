@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -104,8 +104,16 @@ var InMemoryRowModel = (function () {
         }
     };
     InMemoryRowModel.prototype.isEmpty = function () {
-        return utils_1.Utils.missing(this.rootNode) || utils_1.Utils.missing(this.rootNode.allLeafChildren)
-            || this.rootNode.allLeafChildren.length === 0 || !this.columnController.isReady();
+        var rowsMissing;
+        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (rowsAlreadyGrouped) {
+            rowsMissing = utils_1.Utils.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
+        }
+        else {
+            rowsMissing = utils_1.Utils.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        }
+        var empty = utils_1.Utils.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
+        return empty;
     };
     InMemoryRowModel.prototype.isRowsToRender = function () {
         return utils_1.Utils.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;

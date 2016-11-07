@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -214,6 +214,9 @@ var RenderedHeaderCell = (function () {
     };
     RenderedHeaderCell.prototype.setupTap = function () {
         var _this = this;
+        if (this.gridOptionsWrapper.isSuppressTouch()) {
+            return;
+        }
         var touchListener = new touchListener_1.TouchListener(this.getGui());
         var tapListener = function (touch) {
             _this.sortController.progressSort(_this.column, false);

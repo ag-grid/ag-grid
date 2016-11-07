@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.2.1
+ * @version v6.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,9 +52,7 @@ var TouchListener = (function () {
         var touchStartCopy = this.touchStart;
         setTimeout(function () {
             var touchesMatch = _this.touchStart === touchStartCopy;
-            console.log("touching = " + _this.touching);
             if (_this.touching && touchesMatch && !_this.moved) {
-                console.log("dispatching");
                 _this.moved = true;
                 _this.eventService.dispatchEvent(TouchListener.EVENT_LONG_TAP, _this.touchStart);
             }
@@ -66,12 +64,10 @@ var TouchListener = (function () {
         }
         var touch = this.getActiveTouch(touchEvent.touches);
         if (!touch) {
-            console.log("no matching");
             return;
         }
         var eventIsFarAway = !utils_1.Utils.areEventsNear(touch, this.touchStart, 4);
         if (eventIsFarAway) {
-            console.log("eventIsFarAway");
             this.moved = true;
         }
     };
