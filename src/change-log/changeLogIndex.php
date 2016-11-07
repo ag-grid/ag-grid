@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h2>Version NEXT</h2>
+
+    <li>Enhancement - now if you scroll, the column menu and context menu will close, otherwise the menu gets out of line with the columns.</li>
+
     <h2>Version 6.3.x</h2>
 
     <h4>Enhancements</h4>
