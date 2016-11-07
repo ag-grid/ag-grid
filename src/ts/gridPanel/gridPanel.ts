@@ -1190,6 +1190,7 @@ export class GridPanel {
             // we are always interested in horizontal scrolls of the body
             var newLeftPosition = that.eBodyViewport.scrollLeft;
             if (newLeftPosition !== that.lastLeftPosition) {
+                that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
                 that.lastLeftPosition = newLeftPosition;
                 that.horizontallyScrollHeaderCenterAndFloatingCenter();
                 that.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
@@ -1201,6 +1202,7 @@ export class GridPanel {
             if (!that.columnController.isPinningRight()) {
                 var newTopPosition = that.eBodyViewport.scrollTop;
                 if (newTopPosition !== that.lastTopPosition) {
+                    that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
                     that.lastTopPosition = newTopPosition;
                     that.verticallyScrollLeftPinned(newTopPosition);
                     that.verticallyScrollFullWidthCellContainer(newTopPosition);
@@ -1212,6 +1214,7 @@ export class GridPanel {
         function onPinnedRightScroll() {
             var newTopPosition = that.ePinnedRightColsViewport.scrollTop;
             if (newTopPosition !== that.lastTopPosition) {
+                that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
                 that.lastTopPosition = newTopPosition;
                 that.verticallyScrollLeftPinned(newTopPosition);
                 that.verticallyScrollFullWidthCellContainer(newTopPosition);

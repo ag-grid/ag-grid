@@ -89,4 +89,5 @@ export class Events {
     public static EVENT_ITEMS_ADDED = 'itemsAdded';
     public static EVENT_ITEMS_REMOVED = 'itemsRemoved';
 
+    public static EVENT_BODY_SCROLL = 'bodyScroll';
 }
