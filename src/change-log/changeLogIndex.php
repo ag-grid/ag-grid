@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement - now if you scroll, the column menu and context menu will close, otherwise the menu gets out of line with the columns.</li>
 
+    <li>Bugfix - for setFilter, setModel was not updating the 'Select All' button, is now</li>
+
     <h2>Version 6.3.x</h2>
 
     <h4>Enhancements</h4>
