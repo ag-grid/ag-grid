@@ -175,6 +175,10 @@ include '../documentation-main/documentation_header.php';
             <td>A column group was opened / closed.</td>
         </tr>
         <tr>
+            <th>virtualColumnsChanged</th>
+            <td>The list of rendered columns has changed (only columns in the visible scrolled viewport are rendered by default).</td>
+        </tr>
+        <tr>
             <th>viewportChanged</th>
             <td>Informs when rows rendered into the DOM changes.</td>
         </tr>
