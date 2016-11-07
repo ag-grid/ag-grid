@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// Gets called once when editing is finished (eg if enter is pressed).</span>
     <span class="codeComment">// If you return true, then the result of the edit will be ignored.</span>
-    isCancelBeforeEnd?(): boolean;
+    isCancelAfterEnd?(): boolean;
 
     <span class="codeComment">// If doing full row edit, then gets called when tabbing into the cell.</span>
     focusIn?(): boolean;
@@ -591,7 +591,7 @@ colDef = {
     </ul>
 
     <p>
-        All of the other methods (<i>isPopup(), isCancelBeforeStart(), isCancelBeforeEnd(), afterGuiAttached()</i> etc)
+        All of the other methods (<i>isPopup(), isCancelBeforeStart(), isCancelAfterEnd(), afterGuiAttached()</i> etc)
         should be put onto your React component and will work as normal.
     </p>
 
@@ -753,7 +753,7 @@ cellEditorFramework: {
     </ul>
 
     <p>
-        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelBeforeEnd()</i> etc)
+        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
         should be put onto your Angular 2 component and will work as normal.
     </p>
 
