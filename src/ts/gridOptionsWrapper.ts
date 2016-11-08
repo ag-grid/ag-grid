@@ -403,9 +403,10 @@ export class GridOptionsWrapper {
     }
 
     public getRowHeightForNode(rowNode: RowNode): number {
-        if (typeof this.gridOptions.rowHeight === 'number') {
-            return this.gridOptions.rowHeight;
-        } else if (typeof this.gridOptions.getRowHeight === 'function') {
+        // check the function first, in case use set both function and
+        // number, when using virtual pagination then function can be
+        // used for floating rows and the number for the body rows.
+        if (typeof this.gridOptions.getRowHeight === 'function') {
             var params = {
                 node: rowNode,
                 data: rowNode.data,
@@ -413,6 +414,8 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             return this.gridOptions.getRowHeight(params);
+        } else if (typeof this.gridOptions.rowHeight === 'number') {
+            return this.gridOptions.rowHeight;
         } else {
             return DEFAULT_ROW_HEIGHT;
         }
