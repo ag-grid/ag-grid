@@ -69,20 +69,11 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
         return columnValue && columnNotValue;
     }
 
-    protected removeColumns(columns: Column[]): void {
+    protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST, {columns: columns} );
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, {columns: columns} );
         } else {
-            var columnsCurrentlyValueColumns = Utils.filter(columns, (column: Column) => column.isValueActive() );
-            this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
-        }
-    }
-
-    protected addColumns(columns: Column[]) {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_ADD_REQUEST, {columns: columns} );
-        } else {
-            this.columnController.addValueColumns(columns);
+            this.columnController.setValueColumns(columns);
         }
     }
 

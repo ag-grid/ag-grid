@@ -54,7 +54,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     }
 
-    protected isColumnDroppable(column:Column):boolean {
+    protected isColumnDroppable(column: Column): boolean {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return false; }
 
         // we never allow grouping of secondary columns
@@ -65,33 +65,16 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
         return columnGroupable && columnNotAlreadyGrouped;
     }
 
-    protected removeColumns(columns:Column[]) {
+    protected updateColumns(columns:Column[]) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, {columns: columns});
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, {columns: columns});
         } else {
-            // this panel only allows dragging columns (not column groups) so we are guaranteed
-            // the dragItem is a column
-            var rowGroupColumns = this.columnController.getRowGroupColumns();
-            columns.forEach(column => {
-                var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
-                if (columnIsGrouped) {
-                    this.columnController.removeRowGroupColumn(column);
-                    this.columnController.setColumnVisible(column, true);
-                }
-            });
+            this.columnController.setRowGroupColumns(columns);
         }
     }
 
     protected getIconName(): string {
         return this.isPotentialDndColumns() ? DragAndDropService.ICON_GROUP : DragAndDropService.ICON_NOT_ALLOWED;
-    }
-
-    protected addColumns(columns: Column[]) {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, {columns: columns} );
-        } else {
-            this.columnController.addRowGroupColumns(columns);
-        }
     }
 
     protected getExistingColumns(): Column[] {

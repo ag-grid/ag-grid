@@ -43,12 +43,14 @@ export abstract class AbstractColumnDropPanel extends Component {
     private params: AbstractColumnDropPanelParams;
     private beans: AbstractColumnDropPanelBeans;
 
+    private childColumnComponents: ColumnComponent[] = [];
+    private insertIndex: number;
+
     private horizontal: boolean;
     private valueColumn: boolean;
 
     protected abstract isColumnDroppable(column: Column): boolean;
-    protected abstract removeColumns(columns: Column[]): void;
-    protected abstract addColumns(columns: Column[]): void;
+    protected abstract updateColumns(columns: Column[]): void;
     protected abstract getExistingColumns(): Column[];
     protected abstract getIconName(): string;
 
@@ -74,6 +76,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     private destroyGui(): void {
         this.guiDestroyFunctions.forEach( (func) => func() );
         this.guiDestroyFunctions.length = 0;
+        this.childColumnComponents.length = 0;
         Utils.removeAllChildren(this.getGui());
     }
 
@@ -104,10 +107,31 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.beans.dragAndDropService.addDropTarget(this.dropTarget);
     }
 
-    private onDragging(): void {
+    private onDragging(draggingEvent: DraggingEvent): void {
+        // // console.log(`draggingEvent`, draggingEvent);
+        // let newIndex = 0;
+        // let mouseEvent = draggingEvent.event;
+        // this.childColumnComponents.forEach( (childColumn: ColumnComponent, index: number) => {
+        //     let rect = childColumn.getGui().getBoundingClientRect();
+        //
+        //     console.log(`direction = ${draggingEvent.direction}`);
+        //
+        //     if (this.horizontal) {
+        //         // let horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
+        //         let horizontalFit = mouseEvent.clientX >= rect.left;
+        //         if (horizontalFit) {
+        //             newIndex++;
+        //         }
+        //     } else {
+        //         // let verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+        //     }
+        //
+        // });
     }
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
+        this.insertIndex = 1;
+
         // this will contain all columns that are potential drops
         var dragColumns = draggingEvent.dragSource.dragItem;
 
@@ -149,49 +173,73 @@ export abstract class AbstractColumnDropPanel extends Component {
         }
     }
 
+    protected removeColumns(columnsToRemove: Column[]): void {
+        var newColumnList = this.getExistingColumns().slice();
+        columnsToRemove.forEach( column => Utils.removeFromArray(newColumnList, column) );
+        this.updateColumns(newColumnList);
+    }
+
+    protected addColumns(columnsToAdd: Column[]): void {
+        var newColumnList = this.getExistingColumns().slice();
+        columnsToAdd.forEach( column => newColumnList.push(column) );
+        this.updateColumns(newColumnList);
+    }
+
     public refreshGui(): void {
         this.destroyGui();
 
         this.addIconAndTitleToGui();
         this.addEmptyMessageToGui();
-        this.addExistingColumnsToGui();
-        this.addPotentialDragItemsToGui();
+        this.addColumnsToGui();
     }
 
-    private addPotentialDragItemsToGui(): void {
-        var first = this.isExistingColumnsEmpty();
+    private addColumnsToGui(): void {
+        var existingColumns = this.getExistingColumns();
+
+        var itemsToAddToGui: ColumnComponent[] = [];
+
+        var addingGhosts = Utils.exists(this.potentialDndColumns);
+
+        existingColumns.forEach( (column: Column, index: number) => {
+            if (addingGhosts && index >= this.insertIndex) { return; }
+            let columnComponent = this.createColumnComponent(column, false);
+            itemsToAddToGui.push(columnComponent);
+        });
 
         if (this.potentialDndColumns) {
-
             this.potentialDndColumns.forEach( (column) => {
-                if (!first) {
-                    this.addArrowToGui();
-                }
-                first = false;
-
-                var ghostCell = new ColumnComponent(column, this.dropTarget, true, this.valueColumn);
-                ghostCell.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
-                this.beans.context.wireBean(ghostCell);
-                this.getGui().appendChild(ghostCell.getGui());
-                this.guiDestroyFunctions.push( ()=> ghostCell.destroy() );
-
+                let columnComponent = this.createColumnComponent(column, true);
+                itemsToAddToGui.push(columnComponent);
             } );
 
+            existingColumns.forEach( (column: Column, index: number) => {
+                if (index < this.insertIndex) { return; }
+                let columnComponent = this.createColumnComponent(column, false);
+                itemsToAddToGui.push(columnComponent);
+            });
         }
-    }
 
-    private addExistingColumnsToGui(): void {
-        var existingColumns = this.getExistingColumns();
-        existingColumns.forEach( (column: Column, index: number) => {
-            if (index > 0) {
+        itemsToAddToGui.forEach( (columnComponent: ColumnComponent, index: number) => {
+            let needSeparator = index!==0;
+            if (needSeparator) {
                 this.addArrowToGui();
             }
-            var cell = new ColumnComponent(column, this.dropTarget, false, this.valueColumn);
-            cell.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
-            this.beans.context.wireBean(cell);
-            this.getGui().appendChild(cell.getGui());
-            this.guiDestroyFunctions.push( ()=> cell.destroy() );
+            this.getGui().appendChild(columnComponent.getGui());
         });
+
+    }
+
+    private createColumnComponent(column: Column, ghost: boolean): ColumnComponent {
+        var columnComponent = new ColumnComponent(column, this.dropTarget, ghost, this.valueColumn);
+        columnComponent.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
+        this.beans.context.wireBean(columnComponent);
+        this.guiDestroyFunctions.push( ()=> columnComponent.destroy() );
+
+        if (!ghost) {
+            this.childColumnComponents.push(columnComponent);
+        }
+
+        return columnComponent;
     }
 
     private addIconAndTitleToGui(): void {

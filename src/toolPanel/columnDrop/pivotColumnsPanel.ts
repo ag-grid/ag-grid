@@ -99,25 +99,16 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
         return allowPivot && columnNotAlreadyPivoted;
     }
 
-    protected removeColumns(columns: Column[]): void {
+    protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, {columns: columns} );
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, {columns: columns} );
         } else {
-            var columnsPivoted = Utils.filter(columns, (column: Column) => column.isPivotActive() );
-            this.columnController.removePivotColumns(columnsPivoted);
+            this.columnController.setPivotColumns(columns);
         }
     }
 
     protected getIconName(): string {
         return this.isPotentialDndColumns() ? DragAndDropService.ICON_PIVOT : DragAndDropService.ICON_NOT_ALLOWED;
-    }
-
-    protected addColumns(columns: Column[]) {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, {columns: columns} );
-        } else {
-            this.columnController.addPivotColumns(columns);
-        }
     }
 
     protected getExistingColumns(): Column[] {

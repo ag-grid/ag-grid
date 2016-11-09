@@ -1,7 +1,6 @@
 import {
     Context,
     DragSourceType,
-    SvgFactory,
     Autowired,
     Component,
     ColumnController,
@@ -18,8 +17,6 @@ import {
     AgCheckbox,
     DragSource
 } from "ag-grid/main";
-
-var svgFactory = SvgFactory.getInstance();
 
 export class RenderedColumn extends Component {
 
@@ -125,7 +122,9 @@ export class RenderedColumn extends Component {
         // remove pivot if column is pivoted
         if (column.isPivotActive()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, {columns: [column]});
+                let copyOfPivotColumns = this.columnController.getPivotColumns().slice();
+                copyOfPivotColumns.push(column);
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, {columns: copyOfPivotColumns});
             } else {
                 columnController.removePivotColumn(column);
             }
@@ -133,7 +132,9 @@ export class RenderedColumn extends Component {
         // remove value if column is value
         if (column.isValueActive()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST, {columns: [column]});
+                let copyOfValueColumns = this.columnController.getValueColumns().slice();
+                copyOfValueColumns.push(column);
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, {columns: copyOfValueColumns});
             } else {
                 columnController.removeValueColumn(column);
             }
@@ -141,7 +142,9 @@ export class RenderedColumn extends Component {
         // remove group if column is grouped
         if (column.isRowGroupActive()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, {columns: [column]});
+                let copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
+                copyOfRowGroupColumns.push(column);
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, {columns: copyOfRowGroupColumns});
             } else {
                 columnController.removeRowGroupColumn(column);
             }
@@ -149,31 +152,36 @@ export class RenderedColumn extends Component {
     }
 
     private actionCheckedPivotMode(): void {
-        var column = this.column;
-        var columnController = this.columnController;
+        let column = this.column;
 
         // function already active, so do nothing
         if (column.isValueActive() || column.isPivotActive() || column.isRowGroupActive()) { return; }
 
-        var functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
+        let functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
 
         if (column.isAllowValue()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_ADD_REQUEST, {columns: [column]});
+                let copyOfValueColumns = this.columnController.getValueColumns().slice();
+                Utils.removeFromArray(copyOfValueColumns, column);
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, {columns: copyOfValueColumns});
             } else {
-                columnController.addValueColumn(column);
+                this.columnController.addValueColumn(column);
             }
         } else if (column.isAllowRowGroup()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, {columns: [column]});
+                let copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
+                Utils.removeFromArray(copyOfRowGroupColumns, column);
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, {columns: copyOfRowGroupColumns});
             } else {
-                columnController.addRowGroupColumn(column);
+                this.columnController.addRowGroupColumn(column);
             }
         } else if (column.isAllowPivot()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, {columns: [column]});
+                let copyOfPivotColumns = this.columnController.getPivotColumns().slice();
+                Utils.removeFromArray(copyOfPivotColumns, column);
+                this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, {columns: copyOfPivotColumns});
             } else {
-                columnController.addPivotColumn(column);
+                this.columnController.addPivotColumn(column);
             }
         }
     }
