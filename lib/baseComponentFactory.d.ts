@@ -1,4 +1,3 @@
-// ag-grid-ng2 v6.3.0
 import { ViewContainerRef } from '@angular/core';
 import { ICellRenderer, ICellEditor, IFilter } from 'ag-grid/main';
 import { AgRendererComponent } from "./agRendererComponent";

@@ -1,29 +1,13 @@
-// ag-grid-ng2 v6.3.0
-import { ViewContainerRef, ComponentRef } from '@angular/core';
-import { RuntimeCompiler } from "@angular/compiler";
+import { ViewContainerRef, ComponentRef, ComponentFactoryResolver } from '@angular/core';
 import { ICellRenderer, ICellEditor, IFilter } from 'ag-grid/main';
 import { AgRendererComponent } from "./agRendererComponent";
 import { AgEditorComponent } from "./agEditorComponent";
 import { AgFilterComponent } from "./agFilterComponent";
 import { BaseComponentFactory } from "./baseComponentFactory";
 export declare class Ng2ComponentFactory extends BaseComponentFactory {
-    private _runtimeCompiler;
+    private _componentFactoryResolver;
     private _factoryCache;
-    constructor(_runtimeCompiler: RuntimeCompiler);
-    /**
-     * Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.component
-     */
-    createCellRendererFromComponent(componentType: {
-        new (...args: any[]): AgRendererComponent;
-    }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
-        new (): ICellRenderer;
-    };
-    /**
-     * Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.template
-     */
-    createCellRendererFromTemplate(template: string, viewContainerRef: ViewContainerRef): {
-        new (): ICellRenderer;
-    };
+    constructor(_componentFactoryResolver: ComponentFactoryResolver);
     createRendererFromComponent(componentType: {
         new (...args: any[]): AgRendererComponent;
     }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
@@ -42,12 +26,12 @@ export declare class Ng2ComponentFactory extends BaseComponentFactory {
     }, viewContainerRef: ViewContainerRef, childDependencies?: any[], moduleImports?: any[]): {
         new (): IFilter;
     };
-    private adaptComponentToRenderer(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
-    private adaptComponentToEditor(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
-    private adaptComponentToFilter(componentType, viewContainerRef, compiler, name, moduleImports, childDependencies);
+    private adaptComponentToRenderer(componentType, viewContainerRef, name, moduleImports, childDependencies);
+    private adaptComponentToEditor(componentType, viewContainerRef, name, moduleImports, childDependencies);
+    private adaptComponentToFilter(componentType, viewContainerRef, name, moduleImports, childDependencies);
     createComponent<T>(componentType: {
         new (...args: any[]): T;
-    }, viewContainerRef: ViewContainerRef, compiler: RuntimeCompiler, name: string, moduleImports: any[], childDependencies: any[]): ComponentRef<T>;
+    }, viewContainerRef: ViewContainerRef, name: string, moduleImports: any[], childDependencies: any[]): ComponentRef<T>;
     private createComponentModule(componentType, moduleImports, childDependencies);
     private createDynamicComponentType(selector, template);
 }

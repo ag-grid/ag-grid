@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true,
+    "declaration": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "outDir": "lib/",
+    "typeRoots": [
+      "node_modules/@types/"
+    ]
+  },
+  "files": [
+    "./src/agAware.ts",
+    "./src/agEditorComponent.ts",
+    "./src/agFilterComponent.ts",
+    "./src/agFrameworkComponent.ts",
+    "./src/agGridNg2.ts",
+    "./src/agRendererComponent.ts",
+    "./src/aggrid.module.ts",
+    "./src/baseComponentFactory.ts",
+    "./src/ng2ComponentFactory.ts",
+    "./src/ng2FrameworkFactory.ts",
+    "./src/agGridColumn.ts"
+  ],
+  "angularCompilerOptions": {
+    "genDir": "aot"
+  }
+}

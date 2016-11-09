@@ -3,8 +3,8 @@ import {Component,
     ViewContainerRef,
     ComponentRef,
     Injectable,
-    NgModule} from '@angular/core';
-import {RuntimeCompiler } from "@angular/compiler";
+    NgModule,
+    ComponentFactoryResolver} from '@angular/core';
 
 import {ICellRenderer,
     ICellEditor,
@@ -24,28 +24,8 @@ import {BaseComponentFactory} from "./baseComponentFactory";
 export class Ng2ComponentFactory extends BaseComponentFactory {
     private _factoryCache:{[key: string]: ComponentFactory<any>} = {};
 
-    constructor(private _runtimeCompiler:RuntimeCompiler) {
+    constructor(private _componentFactoryResolver:ComponentFactoryResolver) {
         super();
-    }
-
-    /**
-     * Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.component
-     */
-    public createCellRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
-                                           viewContainerRef:ViewContainerRef,
-                                           childDependencies?:any[],
-                                           moduleImports?:any[]):{new(): ICellRenderer} {
-        console.log("createCellRendererFromComponent Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.component");
-        return this.createRendererFromComponent(componentType, viewContainerRef, childDependencies, moduleImports)
-    }
-
-    /**
-     * Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.template
-     */
-    public createCellRendererFromTemplate(template:string,
-                                          viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
-        console.log("createCellRendererFromTemplate Deprecated - please declare ng2 components in ColDefs via colDef.cellRendererFramework.template");
-        return this.createRendererFromTemplate(template, viewContainerRef);
     }
 
     public createRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
@@ -54,7 +34,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                                        moduleImports:any[] = []):{new(): ICellRenderer} {
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef,
-            this._runtimeCompiler,
             (<any>componentType).name,
             moduleImports,
             childDependencies);
@@ -66,7 +45,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
         let componentType:{ new(...args:any[]): AgRendererComponent; } = this.createDynamicComponentType('dynamic-component', template);
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef,
-            this._runtimeCompiler,
             template,
             moduleImports,
             []);
@@ -78,7 +56,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                                      moduleImports:any[] = []):{new(): ICellEditor} {
         return this.adaptComponentToEditor(componentType,
             viewContainerRef,
-            this._runtimeCompiler,
             (<any>componentType).name,
             moduleImports,
             childDependencies);
@@ -90,7 +67,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                                      moduleImports:any[] = []):{new(): IFilter} {
         return this.adaptComponentToFilter(componentType,
             viewContainerRef,
-            this._runtimeCompiler,
             (<any>componentType).name,
             moduleImports,
             childDependencies);
@@ -99,7 +75,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
     private adaptComponentToRenderer(componentType:{ new(...args:any[]): AgRendererComponent; },
                                      viewContainerRef:ViewContainerRef,
-                                     compiler:RuntimeCompiler,
                                      name:string,
                                      moduleImports:any[],
                                      childDependencies:any[]):{new(): ICellRenderer} {
@@ -124,7 +99,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
             protected createComponent():ComponentRef<AgRendererComponent> {
                 return that.createComponent(componentType,
                     viewContainerRef,
-                    compiler,
                     name,
                     moduleImports,
                     childDependencies);
@@ -137,7 +111,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
     private adaptComponentToEditor(componentType:{ new(...args:any[]): AgEditorComponent; },
                                    viewContainerRef:ViewContainerRef,
-                                   compiler:RuntimeCompiler,
                                    name:string,
                                    moduleImports:any[],
                                    childDependencies:any[]):{new(): ICellEditor} {
@@ -184,7 +157,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
             protected createComponent():ComponentRef<AgEditorComponent> {
                 return that.createComponent(componentType,
                     viewContainerRef,
-                    compiler,
                     name,
                     moduleImports,
                     childDependencies);
@@ -196,7 +168,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
     private adaptComponentToFilter(componentType:{ new(...args:any[]): AgFilterComponent; },
                                    viewContainerRef:ViewContainerRef,
-                                   compiler:RuntimeCompiler,
                                    name:string,
                                    moduleImports:any[],
                                    childDependencies:any[]):{new(): IFilter} {
@@ -237,7 +208,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
             protected createComponent():ComponentRef<AgFilterComponent> {
                 return that.createComponent(componentType,
                     viewContainerRef,
-                    compiler,
                     name,
                     moduleImports,
                     childDependencies);
@@ -251,16 +221,16 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
     public createComponent<T>(componentType:{ new(...args:any[]): T; },
                               viewContainerRef:ViewContainerRef,
-                              compiler:RuntimeCompiler,
                               name:string,
                               moduleImports:any[],
                               childDependencies:any[]):ComponentRef<T> {
         let factory:ComponentFactory<any> = this._factoryCache[name];
         if (!factory) {
-            let module = this.createComponentModule(componentType, moduleImports, childDependencies);
-            let moduleWithFactories = compiler.compileModuleAndAllComponentsSync(module);
-
-            factory = moduleWithFactories.componentFactories.find((factory:ComponentFactory<T>) => factory.componentType === componentType);
+            // let module = this.createComponentModule(componentType, moduleImports, childDependencies);
+            // let moduleWithFactories = compiler.compileModuleAndAllComponentsSync(module);
+            //
+            // factory = moduleWithFactories.componentFactories.find((factory:ComponentFactory<T>) => factory.componentType === componentType);
+            factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
             this._factoryCache[name] = factory;
         }
 

@@ -6,7 +6,7 @@
   "typings": "./main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node_modules/.bin/ngc -p tsconfig.json && gulp"
+    "build": "ngc -p tsconfig-aot.json"
   },
   "repository": {
     "type": "git",
