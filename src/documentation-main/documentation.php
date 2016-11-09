@@ -15,6 +15,18 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">9th November 2016</div>
+        <div style="background-color: #122b40; padding: 6px; text-align: center;">
+            <a href="http://angular-up.com/" >
+                <img src="http://angular-up.com/img/sprites/angularup-light.png" style="width: 200px;"/>
+            </a>
+        </div>
+        <div style="padding-top: 10px;">
+            We are sponsoring <a href="http://angular-up.com/">Angular UP</a> in Tel Aviv on 17th November.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">4th November 2016</div>
         <div class="news-header">ag-Grid 6.3.x Released</div>
         <div style="padding-top: 10px;">
