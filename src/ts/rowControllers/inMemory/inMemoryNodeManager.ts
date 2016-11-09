@@ -154,11 +154,13 @@ export class InMemoryNodeManager {
         }
 
         var newNodes: RowNode[] = [];
-        rowData.forEach( (data) => {
-            var newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
+        // go through the items backwards, otherwise they get added in reverse order
+        for (let i = rowData.length - 1; i >= 0; i--) {
+            let data = rowData[i];
+            let newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
             _.insertIntoArray(nodeList, newNode, index);
-             newNodes.push(newNode);
-        });
+            newNodes.push(newNode);
+        }
 
         return newNodes.length > 0 ? newNodes : null;
     }

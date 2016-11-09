@@ -49,14 +49,9 @@ export class Events {
 
     public static EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
 
-    public static EVENT_COLUMN_ROW_GROUP_ADD_REQUEST = 'columnRowGroupAddRequest';
-    public static EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST = 'columnRowGroupRemoveRequest';
-
-    public static EVENT_COLUMN_PIVOT_ADD_REQUEST = 'columnPivotAddRequest';
-    public static EVENT_COLUMN_PIVOT_REMOVE_REQUEST = 'columnPivotRemoveRequest';
-
-    public static EVENT_COLUMN_VALUE_ADD_REQUEST = 'columnValueAddRequest';
-    public static EVENT_COLUMN_VALUE_REMOVE_REQUEST = 'columnValueRemoveRequest';
+    public static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST = 'columnRowGroupChangeRequest';
+    public static EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
+    public static EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
 
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
 

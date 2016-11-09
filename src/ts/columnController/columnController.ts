@@ -63,6 +63,7 @@ export class ColumnApi {
     public isPivotMode(): boolean { return this._columnController.isPivotMode(); }
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column|ColDef|String): Column { return this._columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
+    public setValueColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.setValueColumns(colKeys); }
     public getValueColumns(): Column[] { return this._columnController.getValueColumns(); }
     public removeValueColumn(colKey: (Column|ColDef|String)): void { this._columnController.removeValueColumn(colKey); }
     public removeValueColumns(colKeys: (Column|ColDef|String)[]): void { this._columnController.removeValueColumns(colKeys); }
@@ -450,74 +451,84 @@ export class ColumnController {
         return this.getWidthOfColsInList(this.displayedRightColumns);
     }
 
-    public addRowGroupColumns(keys: (Column|ColDef|String)[], columnsToIncludeInEvent?: Column[]): void {
-        this.actionOnPrimaryColumns(keys, (column: Column)=> {
-            if (!column.isRowGroupActive()) {
-                this.rowGroupColumns.push(column);
-                column.setRowGroupActive(true);
-                return true;
+    public updatePrimaryColumnList(keys: (Column|ColDef|String)[],
+                                   masterList: Column[],
+                                   actionIsAdd: boolean,
+                                   columnCallback: (column: Column)=>void,
+                                   eventType: string): void {
+
+        if (_.missingOrEmpty(keys)) { return; }
+
+        let atLeastOne = false;
+
+        keys.forEach( key => {
+            var columnToAdd = this.getPrimaryColumn(key);
+            if (!columnToAdd) {return;}
+
+            if (actionIsAdd) {
+                if (masterList.indexOf(columnToAdd)>=0) {return;}
+                masterList.push(columnToAdd);
             } else {
-                return false;
+                if (masterList.indexOf(columnToAdd)<0) {return;}
+                _.removeFromArray(masterList, columnToAdd);
             }
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
-        }, columnsToIncludeInEvent);
+
+            columnCallback(columnToAdd);
+            atLeastOne = true;
+        });
+
+        if (!atLeastOne) { return; }
+
+        this.updateDisplayedColumns();
+
+        let event = new ColumnChangeEvent(eventType).withColumns(masterList);
+
+        this.eventService.dispatchEvent(event.getType(), event);
     }
 
-    public setRowGroupColumns(keys: (Column|ColDef|String)[]): void {
-        var updatedColumns: Column[] = [];
-        this.rowGroupColumns.forEach( column => {
-            column.setRowGroupActive(false);
-            updatedColumns.push(column);
-        } );
-        this.rowGroupColumns.length = 0;
-        this.addRowGroupColumns(keys, updatedColumns);
+    public setRowGroupColumns(colKeys: (Column|ColDef|String)[]): void {
+        this.setPrimaryColumnList(colKeys, this.rowGroupColumns,
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            this.setRowGroupActive.bind(this));
+    }
+
+    private setRowGroupActive(active: boolean, column: Column): void {
+        if (active === column.isRowGroupActive()) {return;}
+        column.setRowGroupActive(active);
+        if (!active) {
+            column.setVisible(true);
+        }
     }
 
     public addRowGroupColumn(key: Column|ColDef|String): void {
         this.addRowGroupColumns([key]);
     }
 
+    public addRowGroupColumns(keys: (Column|ColDef|String)[]): void {
+        this.updatePrimaryColumnList(keys, this.rowGroupColumns, true,
+            this.setRowGroupActive.bind(this, true),
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
+    }
+
     public removeRowGroupColumns(keys: (Column|ColDef|String)[]): void {
-        this.actionOnPrimaryColumns(keys, (column: Column)=> {
-            if (column.isRowGroupActive()) {
-                _.removeFromArray(this.rowGroupColumns, column);
-                column.setRowGroupActive(false);
-                return true;
-            } else {
-                return false;
-            }
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
-        });
+        this.updatePrimaryColumnList(keys, this.rowGroupColumns, false,
+            this.setRowGroupActive.bind(this, false),
+            Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
     }
 
     public removeRowGroupColumn(key: Column|ColDef|String): void {
         this.removeRowGroupColumns([key]);
     }
 
-    public addPivotColumns(keys: (Column|ColDef|String)[], columnsToIncludeInEvent?: Column[]): void {
-        this.actionOnPrimaryColumns(keys, (column: Column)=> {
-            if (!column.isPivotActive()) {
-                this.pivotColumns.push(column);
-                column.setPivotActive(true);
-                return true;
-            } else {
-                return false;
-            }
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
-        }, columnsToIncludeInEvent);
+    public addPivotColumns(keys: (Column|ColDef|String)[]): void {
+        this.updatePrimaryColumnList(keys, this.pivotColumns, true,
+            column => column.setPivotActive(true),
+            Events.EVENT_COLUMN_PIVOT_CHANGED);
     }
 
-    public setPivotColumns(keys: (Column|ColDef|String)[]): void {
-        var updatedColumns: Column[] = [];
-        this.pivotColumns.forEach( column => {
-            column.setPivotActive(false);
-            updatedColumns.push(column);
-        } );
-        this.pivotColumns.length = 0;
-        this.addPivotColumns(keys, updatedColumns);
+    public setPivotColumns(colKeys: (Column|ColDef|String)[]): void {
+        this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED,
+            (added: boolean, column: Column) => column.setPivotActive(added) );
     }
 
     public addPivotColumn(key: Column|ColDef|String): void {
@@ -525,39 +536,54 @@ export class ColumnController {
     }
 
     public removePivotColumns(keys: (Column|ColDef|String)[]): void {
-        this.actionOnPrimaryColumns(keys, (column: Column)=> {
-            if (column.isPivotActive()) {
-                _.removeFromArray(this.pivotColumns, column);
-                column.setPivotActive(false);
-                return true;
-            } else {
-                return false;
-            }
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_PIVOT_CHANGED);
-        });
+        this.updatePrimaryColumnList(keys, this.pivotColumns, false,
+            column => column.setPivotActive(false),
+            Events.EVENT_COLUMN_PIVOT_CHANGED);
     }
 
     public removePivotColumn(key: Column|ColDef|String): void {
         this.removePivotColumns([key]);
     }
 
-    public addValueColumns(keys: (Column|ColDef|String)[]): void {
-        this.actionOnPrimaryColumns(keys, (column: Column)=> {
-            if (!column.isValueActive()) {
-                if (!column.getAggFunc()) { // default to SUM if aggFunc is missing
-                    var defaultAggFunc = this.aggFuncService.getDefaultAggFunc();
-                    column.setAggFunc(defaultAggFunc);
-                }
-                this.valueColumns.push(column);
-                column.setValueActive(true);
-                return true;
-            } else {
-                return false;
-            }
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
+    private setPrimaryColumnList(colKeys: (Column|ColDef|String)[],
+                                    masterList: Column[],
+                                    eventName: string,
+                                    columnCallback: (added: boolean, column: Column)=>void ): void {
+        masterList.length = 0;
+        this.getGridColumns(colKeys).forEach( column => masterList.push(column) );
+
+        this.gridColumns.forEach( column => {
+            var added = masterList.indexOf(column) >= 0;
+            columnCallback(added, column);
         });
+
+        this.updateDisplayedColumns();
+
+        var event = new ColumnChangeEvent(eventName)
+            .withColumns(masterList);
+
+        this.eventService.dispatchEvent(event.getType(), event);
+    }
+
+    public setValueColumns(colKeys: (Column|ColDef|String)[]): void {
+        this.setPrimaryColumnList(colKeys, this.valueColumns,
+            Events.EVENT_COLUMN_VALUE_CHANGED,
+            this.setValueActive.bind(this) );
+    }
+
+    private setValueActive(active: boolean, column: Column): void {
+        if (active === column.isValueActive()) {return;}
+        column.setValueActive(active);
+        if (active && !column.getAggFunc()) {
+            var defaultAggFunc = this.aggFuncService.getDefaultAggFunc();
+            column.setAggFunc(defaultAggFunc);
+        }
+    }
+
+    public addValueColumns(keys: (Column|ColDef|String)[]): void {
+        this.updatePrimaryColumnList(keys, this.valueColumns, true,
+            this.setValueActive.bind(this, true),
+            Events.EVENT_COLUMN_VALUE_CHANGED);
     }
 
     public addValueColumn(colKey: (Column|ColDef|String)): void {
@@ -569,17 +595,9 @@ export class ColumnController {
     }
 
     public removeValueColumns(keys: (Column|ColDef|String)[]): void {
-        this.actionOnPrimaryColumns(keys, (column: Column)=> {
-            if (column.isValueActive()) {
-                _.removeFromArray(this.valueColumns, column);
-                column.setValueActive(false);
-                return true;
-            } else {
-                return false;
-            }
-        }, ()=> {
-            return new ColumnChangeEvent(Events.EVENT_COLUMN_VALUE_CHANGED);
-        });
+        this.updatePrimaryColumnList(keys, this.valueColumns, false,
+            this.setValueActive.bind(this, false),
+            Events.EVENT_COLUMN_VALUE_CHANGED);
     }
 
     // returns the width we can set to this col, taking into consideration min and max widths
@@ -837,40 +855,24 @@ export class ColumnController {
         });
     }
 
-    private actionOnGridColumns(keys: (Column|ColDef|String)[],
-                                action: (column:Column) => boolean,
-                                createEvent: ()=>ColumnChangeEvent,
-                                columnsToIncludeInEvent?: Column[]): void {
-        this.actionOnColumns(keys, this.getGridColumn.bind(this), action, createEvent, columnsToIncludeInEvent);
-    }
-
-    private actionOnPrimaryColumns(keys: (Column|ColDef|String)[],
-                                   action: (column:Column) => boolean,
-                                   createEvent: ()=>ColumnChangeEvent,
-                                   columnsToIncludeInEvent?: Column[]): void {
-        this.actionOnColumns(keys, this.getPrimaryColumn.bind(this), action, createEvent, columnsToIncludeInEvent);
-    }
-
     // does an action on a set of columns. provides common functionality for looking up the
     // columns based on key, getting a list of effected columns, and then updated the event
     // with either one column (if it was just one col) or a list of columns
     // used by: autoResize, setVisible, setPinned
-    private actionOnColumns(// the column keys this action will be on
+    private actionOnGridColumns(// the column keys this action will be on
                             keys: (Column|ColDef|String)[],
-                            columnLookup: (key: string|ColDef|Column)=> Column,
                             // the action to do - if this returns false, the column was skipped
                             // and won't be included in the event
                             action: (column:Column) => boolean,
                             // should return back a column event of the right type
-                            createEvent: ()=>ColumnChangeEvent,
-                            columnsToIncludeInEvent: Column[]): void {
+                            createEvent: ()=>ColumnChangeEvent): void {
 
-        if (_.missingOrEmpty(keys) && _.missingOrEmpty(columnsToIncludeInEvent)) { return; }
+        if (_.missingOrEmpty(keys)) { return; }
 
         var updatedColumns: Column[] = [];
 
         keys.forEach( (key: Column|ColDef|String)=> {
-            var column = columnLookup(key);
+            var column = this.getGridColumn(key);
             if (!column) {return;}
             // need to check for false with type (ie !== instead of !=)
             // as not returning anything (undefined) would also be false
@@ -880,15 +882,7 @@ export class ColumnController {
             }
         });
 
-        if (updatedColumns.length===0 && _.missingOrEmpty(columnsToIncludeInEvent)) { return; }
-
-        if (_.existsAndNotEmpty(columnsToIncludeInEvent)) {
-            columnsToIncludeInEvent.forEach( column => {
-                if (updatedColumns.indexOf(column) < 0) {
-                    updatedColumns.push(column);
-                }
-            });
-        }
+        if (updatedColumns.length===0) { return; }
 
         this.updateDisplayedColumns();
         var event = createEvent();
