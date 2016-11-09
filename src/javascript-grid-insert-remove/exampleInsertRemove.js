@@ -52,6 +52,11 @@ function onAddRow() {
     gridOptions.api.addItems([newItem]);
 }
 
+function addItems() {
+    var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
+    gridOptions.api.addItems(newItems);
+}
+
 function onInsertRowAt2() {
     var newItem = createNewRowData();
     gridOptions.api.insertItemsAtIndex(2, [newItem]);
