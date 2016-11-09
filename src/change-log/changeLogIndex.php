@@ -13,6 +13,9 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement - now if you scroll, the column menu and context menu will close, otherwise the menu gets out of line with the columns.</li>
 
     <li>Bugfix - for setFilter, setModel was not updating the 'Select All' button, is now</li>
+    <li>Bugfix - when using api.addItems() for standard row model (ie no virtual pagination or viewport) then items were added in reverse order.</li>
+
+    <li>Breaking Change - the following events now have the final list of columns, rather than those added / removed: columnRowGroupChanged, columnPivotChanged, columnValueChanged</li>
 
     <h2>Version 6.3.x</h2>
 

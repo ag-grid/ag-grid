@@ -303,6 +303,7 @@ var defaultCols = [
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,
                 cellEditor: 'select',
+                rowGroupIndex: 0,
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -326,6 +327,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'richSelect',
+                rowGroupIndex: 1,
                 cellEditorParams: {
                     cellRenderer: CountryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
