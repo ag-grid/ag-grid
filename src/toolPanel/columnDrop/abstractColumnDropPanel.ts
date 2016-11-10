@@ -33,6 +33,12 @@ export interface AbstractColumnDropPanelBeans {
 
 export abstract class AbstractColumnDropPanel extends Component {
 
+    private static STATE_NOT_DRAGGING = 'notDragging';
+    private static STATE_NEW_COLUMNS_IN = 'newColumnsIn';
+    private static STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
+
+    private state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
+
     private logger: Logger;
     private dropTarget: DropTarget;
 
@@ -180,7 +186,21 @@ export abstract class AbstractColumnDropPanel extends Component {
         return newIndex;
     }
 
+    private checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
+        if (this.state!==AbstractColumnDropPanel.STATE_NOT_DRAGGING) { return; }
+
+        this.state = AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS;
+
+        this.potentialDndColumns = draggingEvent.dragSource.dragItem;
+        this.refreshGui();
+
+        this.checkInsertIndex(draggingEvent);
+        this.refreshGui();
+    }
+
     private onDragging(draggingEvent: DraggingEvent): void {
+        this.checkDragStartedBySelf(draggingEvent);
+
         var positionChanged = this.checkInsertIndex(draggingEvent);
         if (positionChanged) {
             this.refreshGui();
@@ -191,6 +211,7 @@ export abstract class AbstractColumnDropPanel extends Component {
 
         // this will contain all columns that are potential drops
         var dragColumns = draggingEvent.dragSource.dragItem;
+        this.state = AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN;
 
         // take out columns that are not groupable
         var goodDragColumns = Utils.filter(dragColumns, this.isColumnDroppable.bind(this) );
@@ -211,8 +232,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'
 
-        var thisPanelStartedTheDrag = draggingEvent.dragSource.dragSourceDropTarget === this.dropTarget;
-        if (thisPanelStartedTheDrag) {
+        if (this.state===AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS) {
             var columns = draggingEvent.dragSource.dragItem;
             this.removeColumns(columns);
         }
@@ -221,26 +241,41 @@ export abstract class AbstractColumnDropPanel extends Component {
             this.potentialDndColumns = null;
             this.refreshGui();
         }
+
+        this.state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
     }
 
     private onDragStop(): void {
         if (this.potentialDndColumns) {
-            this.addColumns(this.potentialDndColumns);
-            this.potentialDndColumns = null;
-            this.refreshGui();
+            if (this.state === AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN) {
+                this.addColumns(this.potentialDndColumns);
+                this.potentialDndColumns = null;
+                this.refreshGui();
+            } else {
+                this.rearrangeColumns(this.potentialDndColumns);
+                this.potentialDndColumns = null;
+                this.refreshGui();
+            }
         }
+
+        this.state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
     }
 
-    protected removeColumns(columnsToRemove: Column[]): void {
+    private removeColumns(columnsToRemove: Column[]): void {
         var newColumnList = this.getExistingColumns().slice();
         columnsToRemove.forEach( column => Utils.removeFromArray(newColumnList, column) );
         this.updateColumns(newColumnList);
     }
 
-    protected addColumns(columnsToAdd: Column[]): void {
+    private addColumns(columnsToAdd: Column[]): void {
         var newColumnList = this.getExistingColumns().slice();
-        var columnsToAddReverse = columnsToAdd.slice().reverse();
-        columnsToAddReverse.forEach( column => Utils.insertIntoArray(newColumnList, column, this.insertIndex) );
+        Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        this.updateColumns(newColumnList);
+    }
+
+    private rearrangeColumns(columnsToAdd: Column[]): void {
+        var newColumnList = this.getNonGhostColumns().slice();
+        Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
         this.updateColumns(newColumnList);
     }
 
@@ -252,14 +287,25 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.addColumnsToGui();
     }
 
-    private addColumnsToGui(): void {
+    private getNonGhostColumns(): Column[] {
         var existingColumns = this.getExistingColumns();
+        var nonGhostColumns: Column[];
+        if (Utils.exists(this.potentialDndColumns)) {
+            nonGhostColumns = Utils.filter(existingColumns, column => this.potentialDndColumns.indexOf(column) < 0 );
+        } else {
+            nonGhostColumns = existingColumns;
+        }
+        return nonGhostColumns;
+    }
+
+    private addColumnsToGui(): void {
+        let nonGhostColumns = this.getNonGhostColumns();
 
         var itemsToAddToGui: ColumnComponent[] = [];
 
         var addingGhosts = Utils.exists(this.potentialDndColumns);
 
-        existingColumns.forEach( (column: Column, index: number) => {
+        nonGhostColumns.forEach( (column: Column, index: number) => {
             if (addingGhosts && index >= this.insertIndex) { return; }
             let columnComponent = this.createColumnComponent(column, false);
             itemsToAddToGui.push(columnComponent);
@@ -271,7 +317,7 @@ export abstract class AbstractColumnDropPanel extends Component {
                 itemsToAddToGui.push(columnComponent);
             } );
 
-            existingColumns.forEach( (column: Column, index: number) => {
+            nonGhostColumns.forEach( (column: Column, index: number) => {
                 if (index < this.insertIndex) { return; }
                 let columnComponent = this.createColumnComponent(column, false);
                 itemsToAddToGui.push(columnComponent);
