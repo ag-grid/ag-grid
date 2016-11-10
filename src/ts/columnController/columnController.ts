@@ -528,7 +528,10 @@ export class ColumnController {
 
     public setPivotColumns(colKeys: (Column|ColDef|String)[]): void {
         this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED,
-            (added: boolean, column: Column) => column.setPivotActive(added) );
+            (added: boolean, column: Column) => {
+                column.setPivotActive(added);
+            }
+        );
     }
 
     public addPivotColumn(key: Column|ColDef|String): void {
@@ -550,9 +553,14 @@ export class ColumnController {
                                     eventName: string,
                                     columnCallback: (added: boolean, column: Column)=>void ): void {
         masterList.length = 0;
-        this.getGridColumns(colKeys).forEach( column => masterList.push(column) );
+        if (_.exists(colKeys)) {
+            colKeys.forEach( key => {
+                let column = this.getPrimaryColumn(key);
+                masterList.push(column);
+            });
+        }
 
-        this.gridColumns.forEach( column => {
+        this.primaryColumns.forEach( column => {
             var added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
         });

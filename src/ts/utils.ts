@@ -397,6 +397,15 @@ export class Utils {
         array.splice(toIndex, 0, object);
     }
 
+    static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
+        if (this.missing(dest) || this.missing(src)) { return; }
+        // put items in backwards, otherwise inserted items end up in reverse order
+        for (let i = src.length - 1; i>=0; i--) {
+            var item = src[i];
+            this.insertIntoArray(dest, item, toIndex);
+        }
+    }
+
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
         // first take out it items from the array
         objectsToMove.forEach( (obj)=> {
