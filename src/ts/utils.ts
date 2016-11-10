@@ -25,6 +25,7 @@ export class Utils {
     // unit tests and we don't have references to window or document in the unit tests
     private static isSafari: boolean;
     private static isIE: boolean;
+    private static isEdge: boolean;
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -599,6 +600,13 @@ export class Utils {
             this.isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
         }
         return this.isIE;
+    }
+
+    static isBrowserEdge(): boolean {
+        if (this.isEdge===undefined) {
+            this.isEdge = !this.isBrowserIE() && !!(<any>window).StyleMedia;
+        }
+        return this.isEdge;
     }
 
     static isBrowserSafari(): boolean {

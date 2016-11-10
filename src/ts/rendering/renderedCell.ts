@@ -814,6 +814,21 @@ export class RenderedCell extends Component {
         if (this.gridOptionsWrapper.isSingleClickEdit()) {
             this.startRowOrCellEdit();
         }
+
+        this.doIeFocusHack();
+    }
+
+    // https://ag-grid.com/forum/showthread.php?tid=4362
+    // when in IE or Edge, when you are editing a cell, then click on another cell,
+    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
+    // don't work. appears that when you update the dom in IE it looses focus
+    private doIeFocusHack(): void {
+        if (_.isBrowserIE() || _.isBrowserEdge()) {
+            if (_.missing(document.activeElement) || document.activeElement===document.body) {
+                // console.log('missing focus');
+                this.getGui().focus();
+            }
+        }
     }
 
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
