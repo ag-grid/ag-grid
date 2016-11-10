@@ -27,7 +27,7 @@ import {
     Qualifier,
     PreDestroy
 } from "./context/context";
-import {DragAndDropService, DragSourceType} from "./dragAndDrop/dragAndDropService";
+import {DragAndDropService, DragSourceType, HDirection, VDirection} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {FilterManager} from "./filter/filterManager";
 import {NumberFilter} from "./filter/numberFilter";
@@ -132,6 +132,8 @@ export function populateClientExports(exports: any): void {
     exports.QuerySelector = QuerySelector;
 
     // dragAndDrop
+    exports.HDirection = HDirection;
+    exports.VDirection = VDirection;
     exports.DragAndDropService = DragAndDropService;
     exports.DragService = DragService;
     exports.DragSourceType = DragSourceType;

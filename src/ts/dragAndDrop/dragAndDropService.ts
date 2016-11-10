@@ -45,11 +45,16 @@ export interface DropTarget {
     onDragStop?(params: DraggingEvent): void;
 }
 
+export enum VDirection {Up, Down}
+
+export enum HDirection {Left, Right}
+
 export interface DraggingEvent {
     event: MouseEvent,
     x: number,
     y: number,
-    direction: string,
+    vDirection: VDirection,
+    hDirection: HDirection,
     dragSource: DragSource,
     fromNudge: boolean
 }
@@ -60,9 +65,6 @@ export class DragAndDropService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('columnController') private columnController: ColumnController;
-
-    public static DIRECTION_LEFT = 'left';
-    public static DIRECTION_RIGHT = 'right';
 
     public static ICON_PINNED = 'pinned';
     public static ICON_ADD = 'add';
@@ -181,7 +183,7 @@ export class DragAndDropService {
 
         this.dragItem.forEach( column => column.setMoving(false) );
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
-            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, false);
+            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
         }
         this.lastDropTarget = null;
@@ -191,7 +193,9 @@ export class DragAndDropService {
 
     private onDragging(mouseEvent: MouseEvent, fromNudge: boolean): void {
 
-        var direction = this.workOutDirection(mouseEvent);
+        var hDirection = this.workOutHDirection(mouseEvent);
+        var vDirection = this.workOutVDirection(mouseEvent);
+
         this.eventLastTime = mouseEvent;
 
         this.positionGhost(mouseEvent);
@@ -200,27 +204,27 @@ export class DragAndDropService {
         var dropTarget = _.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
 
         if (dropTarget!==this.lastDropTarget) {
-            this.leaveLastTargetIfExists(mouseEvent, direction, fromNudge);
-            this.enterDragTargetIfExists(dropTarget, mouseEvent, direction, fromNudge);
+            this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
+            this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
         } else if (dropTarget) {
-            var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
+            var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
     }
 
-    private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, direction: string, fromNudge: boolean): void {
+    private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
         if (!dropTarget) { return; }
 
-        var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
+        var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
         dropTarget.onDragEnter(dragEnterEvent);
         this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
 
-    private leaveLastTargetIfExists(mouseEvent: MouseEvent, direction: string, fromNudge: boolean): void {
+    private leaveLastTargetIfExists(mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
         if (!this.lastDropTarget) { return; }
 
-        var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, direction, fromNudge);
+        var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
         this.lastDropTarget.onDragLeave(dragLeaveEvent);
         this.setGhostIcon(null);
     }
@@ -263,31 +267,39 @@ export class DragAndDropService {
         this.dropTargets.push(dropTarget);
     }
 
-    public workOutDirection(event: MouseEvent): string {
-        var direction: string;
+    public workOutHDirection(event: MouseEvent): HDirection {
         if (this.eventLastTime.clientX > event.clientX) {
-            direction = DragAndDropService.DIRECTION_LEFT;
+            return HDirection.Left;
         } else if (this.eventLastTime.clientX < event.clientX) {
-            direction = DragAndDropService.DIRECTION_RIGHT;
+            return HDirection.Right;
         } else {
-            direction = null;
+            return null;
         }
-
-        return direction;
     }
 
-    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string, fromNudge: boolean): DraggingEvent {
+    public workOutVDirection(event: MouseEvent): VDirection {
+        if (this.eventLastTime.clientY > event.clientY) {
+            return VDirection.Up;
+        } else if (this.eventLastTime.clientY < event.clientY) {
+            return VDirection.Down;
+        } else {
+            return null;
+        }
+    }
+
+    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): DraggingEvent {
 
         // localise x and y to the target component
         var rect = dropTarget.getContainer().getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
 
-        var dropTargetEvent = {
+        var dropTargetEvent = <DraggingEvent> {
             event: event,
             x: x,
             y: y,
-            direction: direction,
+            vDirection: vDirection,
+            hDirection: hDirection,
             dragSource: this.dragSource,
             fromNudge: fromNudge
         };

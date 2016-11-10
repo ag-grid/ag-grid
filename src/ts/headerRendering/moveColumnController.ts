@@ -3,7 +3,7 @@ import {LoggerFactory, Logger} from "../logger";
 import {ColumnController} from "../columnController/columnController";
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
-import {DragAndDropService, DraggingEvent} from "../dragAndDrop/dragAndDropService";
+import {DragAndDropService, DraggingEvent, HDirection} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ColumnGroup} from "../entities/columnGroup";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
@@ -74,8 +74,8 @@ export class MoveColumnController {
         }
     }
 
-    private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, direction: string, xAdjustedForScroll: number) {
-        if (direction === DragAndDropService.DIRECTION_LEFT) {
+    private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, hDirection: HDirection, xAdjustedForScroll: number) {
+        if (hDirection === HDirection.Left) {
             return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumn, xAdjustedForScroll);
         } else {
             return this.getNewIndexForColMovingRight(displayedColumns, allColumns, dragColumn, xAdjustedForScroll);
@@ -105,7 +105,7 @@ export class MoveColumnController {
         this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
-        if (!draggingEvent.direction) {
+        if (_.missing(draggingEvent.hDirection)) {
             return;
         }
 
@@ -119,15 +119,15 @@ export class MoveColumnController {
         }
 
         var columnsToMove = draggingEvent.dragSource.dragItem;
-        this.attemptMoveColumns(columnsToMove, draggingEvent.direction, xAdjustedForScroll, fromEnter);
+        this.attemptMoveColumns(columnsToMove, draggingEvent.hDirection, xAdjustedForScroll, fromEnter);
     }
 
-    private attemptMoveColumns(allMovingColumns: Column[], dragDirection: string, xAdjustedForScroll: number, fromEnter: boolean): void {
+    private attemptMoveColumns(allMovingColumns: Column[], hDirection: HDirection, xAdjustedForScroll: number, fromEnter: boolean): void {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
         var gridColumns = this.columnController.getAllGridColumns();
 
-        var draggingLeft = dragDirection === DragAndDropService.DIRECTION_LEFT;
-        var draggingRight = dragDirection === DragAndDropService.DIRECTION_RIGHT;
+        var draggingLeft = hDirection === HDirection.Left;
+        var draggingRight = hDirection === HDirection.Right;
 
         var dragColumn: Column;
         var displayedMovingColumns = _.filter(allMovingColumns, column => displayedColumns.indexOf(column) >= 0 );
@@ -140,7 +140,7 @@ export class MoveColumnController {
             dragColumn = displayedMovingColumns[displayedMovingColumns.length-1];
         }
 
-        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, dragDirection, xAdjustedForScroll);
+        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjustedForScroll);
         var oldIndex = gridColumns.indexOf(dragColumn);
 
         // the two check below stop an error when the user grabs a group my a middle column, then
