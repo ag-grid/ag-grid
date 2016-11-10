@@ -249,11 +249,15 @@ export abstract class AbstractColumnDropPanel extends Component {
         if (this.potentialDndColumns) {
             if (this.state === AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN) {
                 this.addColumns(this.potentialDndColumns);
-                this.potentialDndColumns = null;
-                this.refreshGui();
             } else {
                 this.rearrangeColumns(this.potentialDndColumns);
-                this.potentialDndColumns = null;
+            }
+            this.potentialDndColumns = null;
+            // if the function is passive, then we don't refresh, as we assume the client application
+            // is going to call setRowGroups / setPivots / setValues at a later point which will then
+            // cause a refresh. this gives a nice gui where the ghost stays until the app has caught
+            // up with the changes.
+            if (!this.beans.gridOptionsWrapper.isFunctionsPassive()) {
                 this.refreshGui();
             }
         }
