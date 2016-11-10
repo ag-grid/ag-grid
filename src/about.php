@@ -174,7 +174,9 @@
             <h3>John Masterson</h3>
             <h4>Customer Experience Manager</h4>
             <p>
-              With a background as a one-time developer but more recently in Business Development, Product Management and Operations for a SaaS company in Sydney, John joins the ag-Grid to look after the rapidly expanding customer base. John is always availalble to deal with customer queries as well building ag-Grid's infrastructure for growth.
+                With a background in Business Development, Product Management and Operations, John joins the ag-Grid team to look after the rapidly expanding customer base. In all his roles whether with large multinationals or SMEs, John has focussed on the application of technology to solve business problems.
+
+                John is always available to deal with customer queries as well building ag-Grid's infrastructure for growth. 
             </p>
         </div>
     </div> <!-- end row -->
