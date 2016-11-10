@@ -1,5 +1,7 @@
 import {
     Utils,
+    HDirection,
+    VDirection,
     Component,
     EventService,
     GridOptionsWrapper,
@@ -107,30 +109,85 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.beans.dragAndDropService.addDropTarget(this.dropTarget);
     }
 
+    private checkInsertIndex(draggingEvent: DraggingEvent): boolean {
+
+        let newIndex: number;
+        if (this.horizontal) {
+            newIndex = this.getNewHorizontalInsertIndex(draggingEvent);
+        } else {
+            newIndex = this.getNewVerticalInsertIndex(draggingEvent);
+        }
+
+        // <0 happens when drag is no a direction we are interested in, eg drag is up/down but in horizontal panel
+        if (newIndex<0) {
+            return false;
+        }
+
+        var changed = newIndex!==this.insertIndex;
+        if (changed) {
+            this.insertIndex = newIndex;
+        }
+        return changed;
+    }
+
+    private getNewHorizontalInsertIndex(draggingEvent: DraggingEvent): number {
+
+        if (Utils.missing(draggingEvent.hDirection)) { return -1; }
+
+        let newIndex = 0;
+        let mouseEvent = draggingEvent.event;
+
+        this.childColumnComponents.forEach( childColumn => {
+            let rect = childColumn.getGui().getBoundingClientRect();
+            if (draggingEvent.hDirection===HDirection.Left) {
+                let horizontalFit = mouseEvent.clientX >= rect.right;
+                if (horizontalFit) {
+                    newIndex++;
+                }
+            } else {
+                let horizontalFit = mouseEvent.clientX >= rect.left;
+                if (horizontalFit) {
+                    newIndex++;
+                }
+            }
+        });
+
+        return newIndex;
+    }
+
+    private getNewVerticalInsertIndex(draggingEvent: DraggingEvent): number {
+
+        if (Utils.missing(draggingEvent.vDirection)) { return -1; }
+
+        let newIndex = 0;
+        let mouseEvent = draggingEvent.event;
+
+        this.childColumnComponents.forEach( childColumn => {
+            let rect = childColumn.getGui().getBoundingClientRect();
+            if (draggingEvent.vDirection===VDirection.Down) {
+                let verticalFit = mouseEvent.clientY >= rect.top;
+                if (verticalFit) {
+                    newIndex++;
+                }
+            } else {
+                let verticalFit = mouseEvent.clientY >= rect.bottom;
+                if (verticalFit) {
+                    newIndex++;
+                }
+            }
+        });
+
+        return newIndex;
+    }
+
     private onDragging(draggingEvent: DraggingEvent): void {
-        // // console.log(`draggingEvent`, draggingEvent);
-        // let newIndex = 0;
-        // let mouseEvent = draggingEvent.event;
-        // this.childColumnComponents.forEach( (childColumn: ColumnComponent, index: number) => {
-        //     let rect = childColumn.getGui().getBoundingClientRect();
-        //
-        //     console.log(`direction = ${draggingEvent.direction}`);
-        //
-        //     if (this.horizontal) {
-        //         // let horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
-        //         let horizontalFit = mouseEvent.clientX >= rect.left;
-        //         if (horizontalFit) {
-        //             newIndex++;
-        //         }
-        //     } else {
-        //         // let verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
-        //     }
-        //
-        // });
+        var positionChanged = this.checkInsertIndex(draggingEvent);
+        if (positionChanged) {
+            this.refreshGui();
+        }
     }
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
-        this.insertIndex = 1;
 
         // this will contain all columns that are potential drops
         var dragColumns = draggingEvent.dragSource.dragItem;
@@ -141,6 +198,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         var weHaveColumnsToDrag = goodDragColumns.length > 0;
         if (weHaveColumnsToDrag) {
             this.potentialDndColumns = goodDragColumns;
+            this.checkInsertIndex(draggingEvent);
             this.refreshGui();
         }
     }
@@ -181,7 +239,8 @@ export abstract class AbstractColumnDropPanel extends Component {
 
     protected addColumns(columnsToAdd: Column[]): void {
         var newColumnList = this.getExistingColumns().slice();
-        columnsToAdd.forEach( column => newColumnList.push(column) );
+        var columnsToAddReverse = columnsToAdd.slice().reverse();
+        columnsToAddReverse.forEach( column => Utils.insertIntoArray(newColumnList, column, this.insertIndex) );
         this.updateColumns(newColumnList);
     }
 
