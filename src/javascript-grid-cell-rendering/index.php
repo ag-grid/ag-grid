@@ -665,13 +665,13 @@ colDef = {
     <p>Note in the above configuration we specify CommonModule as an import as we're using the <code>currency</code> pipe.
         Note too that there is no <code>dependencies</code> option for templates.</p></div>
 
-    <h3>Example: Rendering using Template Strings</h3>
-    <p>
-        Similar to the grid above, but using template strings - this example is using the <code>CurrencyPipe</code> in the 3rd Column
-    </p>
-    <show-example example="../ng2-example/index.html?example=from-template"
-                  jsfile="../ng2-example/app/from-template.component.ts"
-                  html="../ng2-example/app/from-template.component.html"></show-example>
+<!--    <h3>Example: Rendering using Template Strings</h3>-->
+<!--    <p>-->
+<!--        Similar to the grid above, but using template strings - this example is using the <code>CurrencyPipe</code> in the 3rd Column-->
+<!--    </p>-->
+<!--    <show-example example="../ng2-example/index.html?example=from-template"-->
+<!--                  jsfile="../ng2-example/app/from-template.component.ts"-->
+<!--                  html="../ng2-example/app/from-template.component.html"></show-example>-->
 
     <h3>Example: Rendering using more complex Angular 2 Components</h3>
     <p>

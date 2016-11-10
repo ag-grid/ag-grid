@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"SlicePipe":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"@angular/core","name":"Pipe"},"arguments":[{"name":"slice","pure":false}]}],"members":{"transform":[{"__symbolic":"method"}],"supports":[{"__symbolic":"method"}]}}}}

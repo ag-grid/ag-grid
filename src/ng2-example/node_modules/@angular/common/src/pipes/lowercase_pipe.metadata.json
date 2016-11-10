@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"LowerCasePipe":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"@angular/core","name":"Pipe"},"arguments":[{"name":"lowercase"}]}],"members":{"transform":[{"__symbolic":"method"}]}}}}

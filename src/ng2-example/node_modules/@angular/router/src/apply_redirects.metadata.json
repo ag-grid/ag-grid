@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"applyRedirects":{"__symbolic":"function","parameters":["injector","configLoader","urlTree","config"],"value":{"__symbolic":"error","message":"Reference to non-exported class","line":57,"character":0,"context":{"className":"ApplyRedirects"}}}}}

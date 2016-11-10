@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"isSuccess":{"__symbolic":"error","message":"Function call not supported","line":32,"character":25}},"exports":[{"from":"../src/facade/lang","export":["isJsObject"]}]}

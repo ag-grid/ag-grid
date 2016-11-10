@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"controllerKey":{"__symbolic":"function","parameters":["name"],"value":{"__symbolic":"binop","operator":"+","left":{"__symbolic":"binop","operator":"+","left":"$","right":{"__symbolic":"reference","name":"name"}},"right":"Controller"}}}}

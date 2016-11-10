@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"temporaryDeclaration":{"__symbolic":"function","parameters":["bindingId","temporaryNumber"],"value":{"__symbolic":"error","message":"Reference to a non-exported function","line":124,"character":9,"context":{"name":"temporaryName"}}}}}

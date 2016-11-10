@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"APP_BASE_HREF":{"__symbolic":"new","expression":{"__symbolic":"reference","module":"@angular/core","name":"OpaqueToken"},"arguments":["appBaseHref"]}}}

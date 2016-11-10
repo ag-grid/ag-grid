@@ -12,6 +12,7 @@
 
     <link inline rel="stylesheet" href="../style.css">
     <link inline rel="stylesheet" href="../documentation-main/documentation.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 

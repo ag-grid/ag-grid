@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"supportsState":{"__symbolic":"function","parameters":[],"value":{"__symbolic":"pre","operator":"!","operand":{"__symbolic":"pre","operator":"!","operand":{"__symbolic":"select","expression":{"__symbolic":"select","expression":{"__symbolic":"reference","name":"window"},"member":"history"},"member":"pushState"}}}}}}

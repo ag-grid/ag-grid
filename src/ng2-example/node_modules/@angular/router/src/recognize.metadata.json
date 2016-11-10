@@ -1,1 +1,0 @@
-{"__symbolic":"module","version":1,"metadata":{"recognize":{"__symbolic":"function","parameters":["rootComponentType","config","urlTree","url"],"value":{"__symbolic":"error","message":"Reference to non-exported class","line":44,"character":0,"context":{"className":"Recognizer"}}}}}
