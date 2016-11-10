@@ -357,9 +357,7 @@ export class DragAndDropService {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
-        if (this.lastDropTarget) {
-            this.setGhostIcon(this.lastDropTarget.getIconName ? this.lastDropTarget.getIconName() : null);
-        }
+        this.setGhostIcon(null);
 
         var eText = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-label');
         eText.innerHTML = this.dragSource.dragItemName;
