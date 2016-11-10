@@ -14,6 +14,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Bugfix - for setFilter, setModel was not updating the 'Select All' button, is now</li>
     <li>Bugfix - when using api.addItems() for standard row model (ie no virtual pagination or viewport) then items were added in reverse order.</li>
+    <li>Bugfix - in IE and Edge, when you edit a cell, then click another cell, the other cell doesn't get focus (eg navigation keys don't work) - appears to be a glitch in IE And Edge, this bug fix works around it</li>
 
     <li>Breaking Change - the following events now have the final list of columns, rather than those added / removed: columnRowGroupChanged, columnPivotChanged, columnValueChanged</li>
 
