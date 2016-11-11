@@ -5,9 +5,12 @@ var columnDefs = [
     {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
     {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
     {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true},
-    {headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true},
-    {headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true},
+    {headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true, toolPanelClass: 'tp-gold'},
+    {headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true, toolPanelClass: ['tp-silver']},
+    {headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true,
+        toolPanelClass: function(params) {
+            return 'tp-bronze';
+        }},
     {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
 ];
 

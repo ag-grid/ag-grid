@@ -76,13 +76,36 @@ include '../documentation-main/documentation_header.php';
         (ie you are not providing your own aggregation function).
     </p>
 
+    <h3 id="stylingToolPanel">Styling Columns in Tool Panel</h3>
+
+    <p>
+        You can add a CSS class to the columns in the tool panel by specifying <i>toolPanelHeaderClass</i>
+        in the column definintion as follows:
+        <pre>colDefs = {
+    <span class="codeComment">// set as string</span>
+    {headerName: "Gold", field: "gold", toolPanelClass: 'tp-gold'},
+
+    <span class="codeComment">// set as array of strings</span>
+    {headerName: "Silver", field: "silver", toolPanelClass: ['tp-silver']},
+
+    <span class="codeComment">// set as function returning string or array of strings</span>
+    {headerName: "Bronze", field: "bronze",
+        toolPanelClass: function(params) {
+            return 'tp-bronze';
+        }},
+}</pre>
+    </p>
+
     <h3>Example</h3>
 
     <p>
-        The example below demonstrates the tool panel. It also shows usage of properties
-        <i>suppressRowGroup</i> and <i>suppressAggregation</i> so that the 'number of wins'
-        columns cannot be grouped and the other columns cannot be aggregated (as doing
-        either of these just wouldn't make sense).
+        The example below demonstrates the tool panel. Note the following:
+        <ul>
+            <li><i>suppressRowGroup</i> and <i>suppressAggregation</i> are used so that the 'number of wins'
+                columns cannot be grouped and the other columns cannot be aggregated (as doing
+                either of these just wouldn't make sense).</li>
+            <li>The gold, silver and bronze columns have style applied using <i>toolPanelClass</i></li>
+        </ul>
     </p>
 
     <show-example example="toolPanelExample"></show-example>

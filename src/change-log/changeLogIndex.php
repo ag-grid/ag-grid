@@ -10,12 +10,17 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version NEXT</h2>
 
-    <li>Enhancement - now if you scroll, the column menu and context menu will close, otherwise the menu gets out of line with the columns.</li>
+    <h4>Enhancements</h4>
+    <li>Enhancement - for grouping, pivoting and values, now you can reorder the columns in the drop zones.</li>
+    <li>Enhancement - added <a href="../javascript-grid-tool-panel/#stylingToolPanel">toolPanelClass</a> so you can style tool panel items.</li>
+    <li>Enhancement - now if you scroll the grid, if a column menu or context menu are open, they will close, otherwise the menu gets out of line with the columns & cells.</li>
 
+    <h4>Bug Fixes</h4>
     <li>Bugfix - for setFilter, setModel was not updating the 'Select All' button, is now</li>
     <li>Bugfix - when using api.addItems() for standard row model (ie no virtual pagination or viewport) then items were added in reverse order.</li>
     <li>Bugfix - in IE and Edge, when you edit a cell, then click another cell, the other cell doesn't get focus (eg navigation keys don't work) - appears to be a glitch in IE And Edge, this bug fix works around it</li>
 
+    <h4>Breaking Change</h4>
     <li>Breaking Change - the following events now have the final list of columns, rather than those added / removed: columnRowGroupChanged, columnPivotChanged, columnValueChanged</li>
 
     <h2>Version 6.3.x</h2>
