@@ -15,6 +15,15 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">11th November 2016</div>
+        <div class="news-header">ag-Grid 6.4.x Released</div>
+        <div style="padding-top: 10px;">
+            ag-Grid 6.4.x released with Reordering Pivot and Group Columns, as well as lots of smaller feature and bug fixes.
+            See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">9th November 2016</div>
         <div style="background-color: #122b40; padding: 6px; text-align: center;">
             <a href="http://angular-up.com/" >
