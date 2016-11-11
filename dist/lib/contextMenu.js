@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -141,6 +141,8 @@ var ContextMenu = (function (_super) {
     };
     ContextMenu.prototype.afterGuiAttached = function (hidePopup) {
         this.hidePopupFunc = hidePopup;
+        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
+        this.addDestroyableEventListener(this.eventService, 'bodyScroll', hidePopup);
     };
     __decorate([
         main_1.Autowired('context'), 
@@ -158,6 +160,10 @@ var ContextMenu = (function (_super) {
         main_1.Autowired('gridApi'), 
         __metadata('design:type', main_1.GridApi)
     ], ContextMenu.prototype, "gridApi", void 0);
+    __decorate([
+        main_1.Autowired('eventService'), 
+        __metadata('design:type', main_1.EventService)
+    ], ContextMenu.prototype, "eventService", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 

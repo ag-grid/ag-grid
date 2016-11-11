@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 import { PopupService, Component, ColumnController, Context, EventService, DragAndDropService, GridPanel, GridOptionsWrapper, DropTarget, Column } from "ag-grid/main";
 import { AggFuncService } from "../../aggregation/aggFuncService";
 export declare class ColumnComponent extends Component {

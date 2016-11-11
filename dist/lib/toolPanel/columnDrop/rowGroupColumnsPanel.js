@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -19,7 +19,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var RowGroupColumnsPanel = (function (_super) {
     __extends(RowGroupColumnsPanel, _super);
     function RowGroupColumnsPanel(horizontal) {
-        _super.call(this, horizontal, false);
+        _super.call(this, horizontal, false, 'row-group');
     }
     RowGroupColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
@@ -30,8 +30,8 @@ var RowGroupColumnsPanel = (function (_super) {
             dragAndDropService: this.dragAndDropService
         });
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to group');
-        var title = localeTextFunc('groups', 'Groups');
+        var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
+        var title = localeTextFunc('groups', 'Row Groups');
         _super.prototype.init.call(this, {
             dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
             icon: main_1.Utils.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null, svgFactory.createGroupIcon),
@@ -52,34 +52,16 @@ var RowGroupColumnsPanel = (function (_super) {
         var columnNotAlreadyGrouped = !column.isRowGroupActive();
         return columnGroupable && columnNotAlreadyGrouped;
     };
-    RowGroupColumnsPanel.prototype.removeColumns = function (columns) {
-        var _this = this;
+    RowGroupColumnsPanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, { columns: columns });
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, { columns: columns });
         }
         else {
-            // this panel only allows dragging columns (not column groups) so we are guaranteed
-            // the dragItem is a column
-            var rowGroupColumns = this.columnController.getRowGroupColumns();
-            columns.forEach(function (column) {
-                var columnIsGrouped = rowGroupColumns.indexOf(column) >= 0;
-                if (columnIsGrouped) {
-                    _this.columnController.removeRowGroupColumn(column);
-                    _this.columnController.setColumnVisible(column, true);
-                }
-            });
+            this.columnController.setRowGroupColumns(columns);
         }
     };
     RowGroupColumnsPanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_GROUP : main_1.DragAndDropService.ICON_NOT_ALLOWED;
-    };
-    RowGroupColumnsPanel.prototype.addColumns = function (columns) {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, { columns: columns });
-        }
-        else {
-            this.columnController.addRowGroupColumns(columns);
-        }
     };
     RowGroupColumnsPanel.prototype.getExistingColumns = function () {
         return this.columnController.getRowGroupColumns();

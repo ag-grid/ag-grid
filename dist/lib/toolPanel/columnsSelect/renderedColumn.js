@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -14,7 +14,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var svgFactory = main_1.SvgFactory.getInstance();
 var RenderedColumn = (function (_super) {
     __extends(RenderedColumn, _super);
     function RenderedColumn(column, columnDept, allowDragging) {
@@ -42,6 +41,7 @@ var RenderedColumn = (function (_super) {
         this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
         this.addTap();
+        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
     RenderedColumn.prototype.addTap = function () {
         var touchListener = new main_1.TouchListener(this.getGui());
@@ -82,7 +82,9 @@ var RenderedColumn = (function (_super) {
         // remove pivot if column is pivoted
         if (column.isPivotActive()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, { columns: [column] });
+                var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
+                copyOfPivotColumns.push(column);
+                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, { columns: copyOfPivotColumns });
             }
             else {
                 columnController.removePivotColumn(column);
@@ -91,7 +93,9 @@ var RenderedColumn = (function (_super) {
         // remove value if column is value
         if (column.isValueActive()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST, { columns: [column] });
+                var copyOfValueColumns = this.columnController.getValueColumns().slice();
+                copyOfValueColumns.push(column);
+                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, { columns: copyOfValueColumns });
             }
             else {
                 columnController.removeValueColumn(column);
@@ -100,7 +104,9 @@ var RenderedColumn = (function (_super) {
         // remove group if column is grouped
         if (column.isRowGroupActive()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_REMOVE_REQUEST, { columns: [column] });
+                var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
+                copyOfRowGroupColumns.push(column);
+                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, { columns: copyOfRowGroupColumns });
             }
             else {
                 columnController.removeRowGroupColumn(column);
@@ -109,7 +115,6 @@ var RenderedColumn = (function (_super) {
     };
     RenderedColumn.prototype.actionCheckedPivotMode = function () {
         var column = this.column;
-        var columnController = this.columnController;
         // function already active, so do nothing
         if (column.isValueActive() || column.isPivotActive() || column.isRowGroupActive()) {
             return;
@@ -117,26 +122,32 @@ var RenderedColumn = (function (_super) {
         var functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
         if (column.isAllowValue()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_ADD_REQUEST, { columns: [column] });
+                var copyOfValueColumns = this.columnController.getValueColumns().slice();
+                main_1.Utils.removeFromArray(copyOfValueColumns, column);
+                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, { columns: copyOfValueColumns });
             }
             else {
-                columnController.addValueColumn(column);
+                this.columnController.addValueColumn(column);
             }
         }
         else if (column.isAllowRowGroup()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_ADD_REQUEST, { columns: [column] });
+                var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
+                main_1.Utils.removeFromArray(copyOfRowGroupColumns, column);
+                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, { columns: copyOfRowGroupColumns });
             }
             else {
-                columnController.addRowGroupColumn(column);
+                this.columnController.addRowGroupColumn(column);
             }
         }
         else if (column.isAllowPivot()) {
             if (functionPassive) {
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, { columns: [column] });
+                var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
+                main_1.Utils.removeFromArray(copyOfPivotColumns, column);
+                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, { columns: copyOfPivotColumns });
             }
             else {
-                columnController.addPivotColumn(column);
+                this.columnController.addPivotColumn(column);
             }
         }
     };

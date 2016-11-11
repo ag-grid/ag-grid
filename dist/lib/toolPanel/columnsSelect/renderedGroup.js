@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -50,6 +50,7 @@ var RenderedGroup = (function (_super) {
         }
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
+        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     };
     RenderedGroup.prototype.addVisibilityListenersToAllChildren = function () {
         var _this = this;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -19,7 +19,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var PivotColumnsPanel = (function (_super) {
     __extends(PivotColumnsPanel, _super);
     function PivotColumnsPanel(horizontal) {
-        _super.call(this, horizontal, false);
+        _super.call(this, horizontal, false, 'pivot');
     }
     PivotColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
@@ -30,8 +30,8 @@ var PivotColumnsPanel = (function (_super) {
             dragAndDropService: this.dragAndDropService
         });
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to pivot');
-        var title = localeTextFunc('pivots', 'Pivots');
+        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
+        var title = localeTextFunc('pivots', 'Column Labels');
         _super.prototype.init.call(this, {
             dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
             icon: main_1.Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null, svgFactory.createPivotIcon),
@@ -83,25 +83,16 @@ var PivotColumnsPanel = (function (_super) {
         var columnNotAlreadyPivoted = !column.isPivotActive();
         return allowPivot && columnNotAlreadyPivoted;
     };
-    PivotColumnsPanel.prototype.removeColumns = function (columns) {
+    PivotColumnsPanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_REMOVE_REQUEST, { columns: columns });
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, { columns: columns });
         }
         else {
-            var columnsPivoted = main_1.Utils.filter(columns, function (column) { return column.isPivotActive(); });
-            this.columnController.removePivotColumns(columnsPivoted);
+            this.columnController.setPivotColumns(columns);
         }
     };
     PivotColumnsPanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_PIVOT : main_1.DragAndDropService.ICON_NOT_ALLOWED;
-    };
-    PivotColumnsPanel.prototype.addColumns = function (columns) {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_ADD_REQUEST, { columns: columns });
-        }
-        else {
-            this.columnController.addPivotColumns(columns);
-        }
     };
     PivotColumnsPanel.prototype.getExistingColumns = function () {
         return this.columnController.getPivotColumns();

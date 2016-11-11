@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 import { IMenuFactory, Column } from "ag-grid/main";
 export declare class EnterpriseMenuFactory implements IMenuFactory {
     private context;
@@ -22,16 +22,18 @@ export declare class EnterpriseMenu {
     private gridApi;
     private gridOptionsWrapper;
     private aggFuncService;
+    private eventService;
     private tabbedLayout;
     private hidePopupFunc;
     private column;
     private mainMenuList;
     private columnSelectPanel;
-    private eventService;
+    private localEventService;
     private tabItemFilter;
     private tabItemGeneral;
     private tabItemColumns;
     private initialSelection;
+    private destroyFunctions;
     constructor(column: Column, initialSelection: string);
     addEventListener(event: string, listener: Function): void;
     getMinWidth(): number;

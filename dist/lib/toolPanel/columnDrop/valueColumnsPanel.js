@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -19,7 +19,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var ValuesColumnPanel = (function (_super) {
     __extends(ValuesColumnPanel, _super);
     function ValuesColumnPanel(horizontal) {
-        _super.call(this, horizontal, true);
+        _super.call(this, horizontal, true, 'values');
     }
     ValuesColumnPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
@@ -55,21 +55,12 @@ var ValuesColumnPanel = (function (_super) {
         var columnNotValue = !column.isValueActive();
         return columnValue && columnNotValue;
     };
-    ValuesColumnPanel.prototype.removeColumns = function (columns) {
+    ValuesColumnPanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_REMOVE_REQUEST, { columns: columns });
+            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, { columns: columns });
         }
         else {
-            var columnsCurrentlyValueColumns = main_1.Utils.filter(columns, function (column) { return column.isValueActive(); });
-            this.columnController.removeValueColumns(columnsCurrentlyValueColumns);
-        }
-    };
-    ValuesColumnPanel.prototype.addColumns = function (columns) {
-        if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_ADD_REQUEST, { columns: columns });
-        }
-        else {
-            this.columnController.addValueColumns(columns);
+            this.columnController.setValueColumns(columns);
         }
     };
     ValuesColumnPanel.prototype.getExistingColumns = function () {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.3.0
+// ag-grid-enterprise v6.4.0
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -79,12 +79,13 @@ var EnterpriseMenuFactory = (function () {
 exports.EnterpriseMenuFactory = EnterpriseMenuFactory;
 var EnterpriseMenu = (function () {
     function EnterpriseMenu(column, initialSelection) {
-        this.eventService = new main_1.EventService();
+        this.localEventService = new main_1.EventService();
+        this.destroyFunctions = [];
         this.column = column;
         this.initialSelection = initialSelection;
     }
     EnterpriseMenu.prototype.addEventListener = function (event, listener) {
-        this.eventService.addEventListener(event, listener);
+        this.localEventService.addEventListener(event, listener);
     };
     EnterpriseMenu.prototype.getMinWidth = function () {
         return this.tabbedLayout.getMinWidth();
@@ -139,7 +140,7 @@ var EnterpriseMenu = (function () {
                 break;
         }
         if (key) {
-            this.eventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, { key: key });
+            this.localEventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, { key: key });
         }
     };
     EnterpriseMenu.prototype.destroy = function () {
@@ -149,6 +150,7 @@ var EnterpriseMenu = (function () {
         if (this.mainMenuList) {
             this.mainMenuList.destroy();
         }
+        this.destroyFunctions.forEach(function (func) { return func(); });
     };
     EnterpriseMenu.prototype.createPinnedSubMenu = function () {
         var _this = this;
@@ -354,9 +356,13 @@ var EnterpriseMenu = (function () {
         };
     };
     EnterpriseMenu.prototype.afterGuiAttached = function (params) {
+        var _this = this;
         this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
         this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
+        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
+        this.eventService.addEventListener('bodyScroll', params.hidePopup);
+        this.destroyFunctions.push(function () { return _this.eventService.removeEventListener('bodyScroll', params.hidePopup); });
     };
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
@@ -390,6 +396,10 @@ var EnterpriseMenu = (function () {
         main_1.Autowired('aggFuncService'), 
         __metadata('design:type', aggFuncService_1.AggFuncService)
     ], EnterpriseMenu.prototype, "aggFuncService", void 0);
+    __decorate([
+        main_1.Autowired('eventService'), 
+        __metadata('design:type', main_1.EventService)
+    ], EnterpriseMenu.prototype, "eventService", void 0);
     __decorate([
         main_1.PostConstruct, 
         __metadata('design:type', Function), 
