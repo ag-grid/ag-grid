@@ -62,8 +62,8 @@ export abstract class AbstractColumnDropPanel extends Component {
     protected abstract getExistingColumns(): Column[];
     protected abstract getIconName(): string;
 
-    constructor(horizontal: boolean, valueColumn: boolean) {
-        super(`<div class="ag-column-drop ag-font-style ag-column-drop-${horizontal?'horizontal':'vertical'}"></div>`);
+    constructor(horizontal: boolean, valueColumn: boolean, name: string) {
+        super(`<div class="ag-column-drop ag-font-style ag-column-drop-${horizontal?'horizontal':'vertical'} ag-column-drop-${name}"></div>`);
         this.horizontal = horizontal;
         this.valueColumn = valueColumn;
     }
