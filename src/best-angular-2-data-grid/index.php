@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implmenting the Angular 2 Datagrid</h1>
+    <h1>Implementing the Angular 2 Datagrid</h1>
 
     <p>
         If you are building an Angular 2 application then you have the choice between A) using the plain JavaScript version
