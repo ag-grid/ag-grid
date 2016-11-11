@@ -53,7 +53,7 @@
 
         <!-- The table div -->
         <div style="padding-top: 98px; height: 100%; width: 100%;">
-            <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+            <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-fresh"></div>
         </div>
 
         <div class="header-row" style="position: fixed; top: 0px; left: 0px; width: 100%; padding-bottom: 0px;">
