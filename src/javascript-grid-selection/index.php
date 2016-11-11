@@ -40,33 +40,6 @@ include '../documentation-main/documentation_header.php';
             is clicked.</li>
     </ul>
 
-    <h3>Selection API</h3>
-
-    <p>
-        To select rows programmatically, use the node.setSelected() method. This method takes two
-        parameters:
-        <ul>
-        <li><b>selected</b>: set to true to select, false to un-select.</li>
-        <li><b>clearSelection</b> (optional): for selection only. If true, other nodes selection will be cleared.
-        Use this if you do not want multi selection and want this node to be exclusively selected.</li>
-    </ul>
-    <pre>// set selected, keep any other selections
-node.setSelected(true);
-
-// set selected, exclusively, remove any other selections
-node.setSelected(true, true);
-
-// un-select
-node.setSelected(false);
-
-// check status of node selection
-var selected = node.isSelected();</pre>
-
-        The selected status method returns true if the node is selected, or false if it is not selected. If the
-        node is a group node and the group selection is set to 'children', then this will return true if all child
-        (and grand child) nodes are selected, false if all unselected, or undefined if a mixture.
-        </p>
-
     <h3>Example - Single Row Selection</h3>
 
     <p>
@@ -161,6 +134,54 @@ var selected = node.isSelected();</pre>
     </p>
 
     <show-example example="example3" example-height="450px"></show-example>
+
+    <h3>Node Selection API</h3>
+
+    <p>
+        To select rows programmatically, use the node.setSelected() method. This method takes two
+        parameters:
+    <ul>
+        <li><b>selected</b>: set to true to select, false to un-select.</li>
+        <li><b>clearSelection</b> (optional): for selection only. If true, other nodes selection will be cleared.
+            Use this if you do not want multi selection and want this node to be exclusively selected.</li>
+    </ul>
+    <pre><span class="codeComment">// set selected, keep any other selections</span>
+node.setSelected(true);
+
+<span class="codeComment">// set selected, exclusively, remove any other selections</span>
+node.setSelected(true, true);
+
+<span class="codeComment">// un-select</span>
+node.setSelected(false);
+
+<span class="codeComment">// check status of node selection</span>
+var selected = node.isSelected();</pre>
+
+    The selected status method returns true if the node is selected, or false if it is not selected. If the
+    node is a group node and the group selection is set to 'children', then this will return true if all child
+    (and grand child) nodes are selected, false if all unselected, or undefined if a mixture.
+    </p>
+
+    <h3>Grid Selection API</h3>
+
+    <p>
+        The grid API has the following methods for selection:
+        <ul>
+        <li><b>api.selectAll()</b>: Select all rows in the grid. This is independent to filtering, it will always
+        select everything regardless of filtering.</li>
+        <li><b>api.deselectAll()</b>: Remove all grid selection, again regardless of filtering.</li>
+        <li><b>api.getSelectedNodes()</b>: Returns a list of all the selected row nodes. This again is regardless
+        of what filters are set.</li>
+    </ul>
+    </p>
+    <p>
+        If you want to select only filtered out rows nodes, then you do this following:
+        <pre><span class="codeComment">// loop through each node after filter</span>
+api.forEachNodeAfterFilter( function(node) {
+  <span class="codeComment">// select the node</span>
+  node.setSelected(true);
+});</pre>
+    </p>
 
     <h3>Deep Dive Example - Using <i>forEachNode</i></h3>
 
