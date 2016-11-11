@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.3.0
+ * @version v6.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -694,6 +694,19 @@ var RenderedCell = (function (_super) {
         }
         if (this.gridOptionsWrapper.isSingleClickEdit()) {
             this.startRowOrCellEdit();
+        }
+        this.doIeFocusHack();
+    };
+    // https://ag-grid.com/forum/showthread.php?tid=4362
+    // when in IE or Edge, when you are editing a cell, then click on another cell,
+    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
+    // don't work. appears that when you update the dom in IE it looses focus
+    RenderedCell.prototype.doIeFocusHack = function () {
+        if (utils_1.Utils.isBrowserIE() || utils_1.Utils.isBrowserEdge()) {
+            if (utils_1.Utils.missing(document.activeElement) || document.activeElement === document.body) {
+                // console.log('missing focus');
+                this.getGui().focus();
+            }
         }
     };
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)

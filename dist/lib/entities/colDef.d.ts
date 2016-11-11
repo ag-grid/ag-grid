@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.3.0
+// Type definitions for ag-grid v6.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -19,6 +19,8 @@ export interface AbstractColDef {
     columnGroupShow?: string;
     /** CSS class for the header */
     headerClass?: string | string[] | ((params: any) => string | string[]);
+    /** CSS class for the header */
+    toolPanelClass?: string | string[] | ((params: any) => string | string[]);
     /** Expression or function to get the cells value. */
     headerValueGetter?: string | Function;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */

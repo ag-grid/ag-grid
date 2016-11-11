@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.3.0
+ * @version v6.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -999,6 +999,7 @@ var GridPanel = (function () {
             // we are always interested in horizontal scrolls of the body
             var newLeftPosition = that.eBodyViewport.scrollLeft;
             if (newLeftPosition !== that.lastLeftPosition) {
+                that.eventService.dispatchEvent(events_1.Events.EVENT_BODY_SCROLL);
                 that.lastLeftPosition = newLeftPosition;
                 that.horizontallyScrollHeaderCenterAndFloatingCenter();
                 that.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
@@ -1009,6 +1010,7 @@ var GridPanel = (function () {
             if (!that.columnController.isPinningRight()) {
                 var newTopPosition = that.eBodyViewport.scrollTop;
                 if (newTopPosition !== that.lastTopPosition) {
+                    that.eventService.dispatchEvent(events_1.Events.EVENT_BODY_SCROLL);
                     that.lastTopPosition = newTopPosition;
                     that.verticallyScrollLeftPinned(newTopPosition);
                     that.verticallyScrollFullWidthCellContainer(newTopPosition);
@@ -1019,6 +1021,7 @@ var GridPanel = (function () {
         function onPinnedRightScroll() {
             var newTopPosition = that.ePinnedRightColsViewport.scrollTop;
             if (newTopPosition !== that.lastTopPosition) {
+                that.eventService.dispatchEvent(events_1.Events.EVENT_BODY_SCROLL);
                 that.lastTopPosition = newTopPosition;
                 that.verticallyScrollLeftPinned(newTopPosition);
                 that.verticallyScrollFullWidthCellContainer(newTopPosition);

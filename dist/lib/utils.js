@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.3.0
+ * @version v6.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -366,6 +366,16 @@ var Utils = (function () {
     Utils.insertIntoArray = function (array, object, toIndex) {
         array.splice(toIndex, 0, object);
     };
+    Utils.insertArrayIntoArray = function (dest, src, toIndex) {
+        if (this.missing(dest) || this.missing(src)) {
+            return;
+        }
+        // put items in backwards, otherwise inserted items end up in reverse order
+        for (var i = src.length - 1; i >= 0; i--) {
+            var item = src[i];
+            this.insertIntoArray(dest, item, toIndex);
+        }
+    };
     Utils.moveInArray = function (array, objectsToMove, toIndex) {
         var _this = this;
         // first take out it items from the array
@@ -552,6 +562,12 @@ var Utils = (function () {
             this.isIE = false || !!document.documentMode; // At least IE6
         }
         return this.isIE;
+    };
+    Utils.isBrowserEdge = function () {
+        if (this.isEdge === undefined) {
+            this.isEdge = !this.isBrowserIE() && !!window.StyleMedia;
+        }
+        return this.isEdge;
     };
     Utils.isBrowserSafari = function () {
         if (this.isSafari === undefined) {

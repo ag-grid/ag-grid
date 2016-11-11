@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.3.0
+// Type definitions for ag-grid v6.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -12,6 +12,7 @@ export declare class Timer {
 export declare class Utils {
     private static isSafari;
     private static isIE;
+    private static isEdge;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static getNameOfClass(TheClass: any): string;
     static values<T>(object: {
@@ -58,6 +59,7 @@ export declare class Utils {
     static removeRepeatsFromArray<T>(array: T[], object: T): void;
     static removeFromArray<T>(array: T[], object: T): void;
     static insertIntoArray<T>(array: T[], object: T, toIndex: number): void;
+    static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
     static defaultComparator(valueA: any, valueB: any): number;
     static compareArrays(array1: any[], array2: any[]): boolean;
@@ -76,6 +78,7 @@ export declare class Utils {
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string): void;
     static isBrowserIE(): boolean;
+    static isBrowserEdge(): boolean;
     static isBrowserSafari(): boolean;
     static getTarget(event: Event): Element;
     static getBodyWidth(): number;

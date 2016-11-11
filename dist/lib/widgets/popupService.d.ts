@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.3.0
+// Type definitions for ag-grid v6.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -30,5 +30,5 @@ export declare class PopupService {
         keepWithinBounds?: boolean;
     }): void;
     private positionPopup(params);
-    addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void): (event: any) => void;
+    addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void): (event?: any) => void;
 }

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.3.0
+// Type definitions for ag-grid v6.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -25,10 +25,10 @@ export declare class MoveColumnController {
     onDragLeave(draggingEvent: DraggingEvent): void;
     onDragStop(): void;
     private adjustXForScroll(draggingEvent);
-    private workOutNewIndex(displayedColumns, allColumns, dragColumn, direction, xAdjustedForScroll);
+    private workOutNewIndex(displayedColumns, allColumns, dragColumn, hDirection, xAdjustedForScroll);
     private checkCenterForScrolling(xAdjustedForScroll);
     onDragging(draggingEvent: DraggingEvent, fromEnter?: boolean): void;
-    private attemptMoveColumns(allMovingColumns, dragDirection, xAdjustedForScroll, fromEnter);
+    private attemptMoveColumns(allMovingColumns, hDirection, xAdjustedForScroll, fromEnter);
     private getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumn, x);
     private getNewIndexForColMovingRight(displayedColumns, allColumns, dragColumnOrGroup, x);
     private ensureIntervalStarted();

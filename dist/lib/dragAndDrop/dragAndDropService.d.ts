@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.3.0
+// Type definitions for ag-grid v6.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -38,11 +38,20 @@ export interface DropTarget {
     /** Callback for when drag stops */
     onDragStop?(params: DraggingEvent): void;
 }
+export declare enum VDirection {
+    Up = 0,
+    Down = 1,
+}
+export declare enum HDirection {
+    Left = 0,
+    Right = 1,
+}
 export interface DraggingEvent {
     event: MouseEvent;
     x: number;
     y: number;
-    direction: string;
+    vDirection: VDirection;
+    hDirection: HDirection;
     dragSource: DragSource;
     fromNudge: boolean;
 }
@@ -50,8 +59,6 @@ export declare class DragAndDropService {
     private gridOptionsWrapper;
     private dragService;
     private columnController;
-    static DIRECTION_LEFT: string;
-    static DIRECTION_RIGHT: string;
     static ICON_PINNED: string;
     static ICON_ADD: string;
     static ICON_MOVE: string;
@@ -92,13 +99,14 @@ export declare class DragAndDropService {
     private onDragStart(dragSource, mouseEvent);
     private onDragStop(mouseEvent);
     private onDragging(mouseEvent, fromNudge);
-    private enterDragTargetIfExists(dropTarget, mouseEvent, direction, fromNudge);
-    private leaveLastTargetIfExists(mouseEvent, direction, fromNudge);
+    private enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+    private leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
     private getAllContainersFromDropTarget(dropTarget);
     private isMouseOnDropTarget(mouseEvent, dropTarget);
     addDropTarget(dropTarget: DropTarget): void;
-    workOutDirection(event: MouseEvent): string;
-    createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, direction: string, fromNudge: boolean): DraggingEvent;
+    workOutHDirection(event: MouseEvent): HDirection;
+    workOutVDirection(event: MouseEvent): VDirection;
+    createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): DraggingEvent;
     private positionGhost(event);
     private removeGhost();
     private createGhost();

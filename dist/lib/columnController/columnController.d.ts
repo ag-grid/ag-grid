@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.3.0
+// Type definitions for ag-grid v6.4.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -41,6 +41,7 @@ export declare class ColumnApi {
     setPivotMode(pivotMode: boolean): void;
     isPivotMode(): boolean;
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | ColDef | String): Column;
+    setValueColumns(colKeys: (Column | ColDef | String)[]): void;
     getValueColumns(): Column[];
     removeValueColumn(colKey: (Column | ColDef | String)): void;
     removeValueColumns(colKeys: (Column | ColDef | String)[]): void;
@@ -150,16 +151,21 @@ export declare class ColumnController {
     getAllDisplayedVirtualColumns(): Column[];
     getPinnedLeftContainerWidth(): number;
     getPinnedRightContainerWidth(): number;
-    addRowGroupColumns(keys: (Column | ColDef | String)[], columnsToIncludeInEvent?: Column[]): void;
-    setRowGroupColumns(keys: (Column | ColDef | String)[]): void;
+    updatePrimaryColumnList(keys: (Column | ColDef | String)[], masterList: Column[], actionIsAdd: boolean, columnCallback: (column: Column) => void, eventType: string): void;
+    setRowGroupColumns(colKeys: (Column | ColDef | String)[]): void;
+    private setRowGroupActive(active, column);
     addRowGroupColumn(key: Column | ColDef | String): void;
+    addRowGroupColumns(keys: (Column | ColDef | String)[]): void;
     removeRowGroupColumns(keys: (Column | ColDef | String)[]): void;
     removeRowGroupColumn(key: Column | ColDef | String): void;
-    addPivotColumns(keys: (Column | ColDef | String)[], columnsToIncludeInEvent?: Column[]): void;
-    setPivotColumns(keys: (Column | ColDef | String)[]): void;
+    addPivotColumns(keys: (Column | ColDef | String)[]): void;
+    setPivotColumns(colKeys: (Column | ColDef | String)[]): void;
     addPivotColumn(key: Column | ColDef | String): void;
     removePivotColumns(keys: (Column | ColDef | String)[]): void;
     removePivotColumn(key: Column | ColDef | String): void;
+    private setPrimaryColumnList(colKeys, masterList, eventName, columnCallback);
+    setValueColumns(colKeys: (Column | ColDef | String)[]): void;
+    private setValueActive(active, column);
     addValueColumns(keys: (Column | ColDef | String)[]): void;
     addValueColumn(colKey: (Column | ColDef | String)): void;
     removeValueColumn(colKey: (Column | ColDef | String)): void;
@@ -190,9 +196,7 @@ export declare class ColumnController {
     setColumnsVisible(keys: (Column | ColDef | String)[], visible: boolean): void;
     setColumnPinned(key: Column | ColDef | String, pinned: string | boolean): void;
     setColumnsPinned(keys: (Column | ColDef | String)[], pinned: string | boolean): void;
-    private actionOnGridColumns(keys, action, createEvent, columnsToIncludeInEvent?);
-    private actionOnPrimaryColumns(keys, action, createEvent, columnsToIncludeInEvent?);
-    private actionOnColumns(keys, columnLookup, action, createEvent, columnsToIncludeInEvent);
+    private actionOnGridColumns(keys, action, createEvent);
     getDisplayedColBefore(col: any): Column;
     getDisplayedColAfter(col: Column): Column;
     isPinningLeft(): boolean;

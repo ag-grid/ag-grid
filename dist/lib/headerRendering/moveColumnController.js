@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.3.0
+ * @version v6.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,8 +61,8 @@ var MoveColumnController = (function () {
             return draggingEvent.x;
         }
     };
-    MoveColumnController.prototype.workOutNewIndex = function (displayedColumns, allColumns, dragColumn, direction, xAdjustedForScroll) {
-        if (direction === dragAndDropService_1.DragAndDropService.DIRECTION_LEFT) {
+    MoveColumnController.prototype.workOutNewIndex = function (displayedColumns, allColumns, dragColumn, hDirection, xAdjustedForScroll) {
+        if (hDirection === dragAndDropService_1.HDirection.Left) {
             return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumn, xAdjustedForScroll);
         }
         else {
@@ -89,7 +89,7 @@ var MoveColumnController = (function () {
         if (fromEnter === void 0) { fromEnter = false; }
         this.lastDraggingEvent = draggingEvent;
         // if moving up or down (ie not left or right) then do nothing
-        if (!draggingEvent.direction) {
+        if (utils_1.Utils.missing(draggingEvent.hDirection)) {
             return;
         }
         var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
@@ -100,13 +100,13 @@ var MoveColumnController = (function () {
             this.checkCenterForScrolling(xAdjustedForScroll);
         }
         var columnsToMove = draggingEvent.dragSource.dragItem;
-        this.attemptMoveColumns(columnsToMove, draggingEvent.direction, xAdjustedForScroll, fromEnter);
+        this.attemptMoveColumns(columnsToMove, draggingEvent.hDirection, xAdjustedForScroll, fromEnter);
     };
-    MoveColumnController.prototype.attemptMoveColumns = function (allMovingColumns, dragDirection, xAdjustedForScroll, fromEnter) {
+    MoveColumnController.prototype.attemptMoveColumns = function (allMovingColumns, hDirection, xAdjustedForScroll, fromEnter) {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
         var gridColumns = this.columnController.getAllGridColumns();
-        var draggingLeft = dragDirection === dragAndDropService_1.DragAndDropService.DIRECTION_LEFT;
-        var draggingRight = dragDirection === dragAndDropService_1.DragAndDropService.DIRECTION_RIGHT;
+        var draggingLeft = hDirection === dragAndDropService_1.HDirection.Left;
+        var draggingRight = hDirection === dragAndDropService_1.HDirection.Right;
         var dragColumn;
         var displayedMovingColumns = utils_1.Utils.filter(allMovingColumns, function (column) { return displayedColumns.indexOf(column) >= 0; });
         // if dragging left, we want to use the left most column, ie move the left most column to
@@ -117,7 +117,7 @@ var MoveColumnController = (function () {
         else {
             dragColumn = displayedMovingColumns[displayedMovingColumns.length - 1];
         }
-        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, dragDirection, xAdjustedForScroll);
+        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjustedForScroll);
         var oldIndex = gridColumns.indexOf(dragColumn);
         // the two check below stop an error when the user grabs a group my a middle column, then
         // it is possible the mouse pointer is to the right of a column while been dragged left.

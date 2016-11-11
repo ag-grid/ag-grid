@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.3.0
+ * @version v6.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,16 @@ var svgFactory = svgFactory_1.SvgFactory.getInstance();
     DragSourceType[DragSourceType["HeaderCell"] = 1] = "HeaderCell";
 })(exports.DragSourceType || (exports.DragSourceType = {}));
 var DragSourceType = exports.DragSourceType;
+(function (VDirection) {
+    VDirection[VDirection["Up"] = 0] = "Up";
+    VDirection[VDirection["Down"] = 1] = "Down";
+})(exports.VDirection || (exports.VDirection = {}));
+var VDirection = exports.VDirection;
+(function (HDirection) {
+    HDirection[HDirection["Left"] = 0] = "Left";
+    HDirection[HDirection["Right"] = 1] = "Right";
+})(exports.HDirection || (exports.HDirection = {}));
+var HDirection = exports.HDirection;
 var DragAndDropService = (function () {
     function DragAndDropService() {
         this.dragSourceAndParamsList = [];
@@ -97,7 +107,7 @@ var DragAndDropService = (function () {
         this.dragging = false;
         this.dragItem.forEach(function (column) { return column.setMoving(false); });
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
-            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, false);
+            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
         }
         this.lastDropTarget = null;
@@ -105,34 +115,35 @@ var DragAndDropService = (function () {
         this.removeGhost();
     };
     DragAndDropService.prototype.onDragging = function (mouseEvent, fromNudge) {
-        var direction = this.workOutDirection(mouseEvent);
+        var hDirection = this.workOutHDirection(mouseEvent);
+        var vDirection = this.workOutVDirection(mouseEvent);
         this.eventLastTime = mouseEvent;
         this.positionGhost(mouseEvent);
         // check if mouseEvent intersects with any of the drop targets
         var dropTarget = utils_1.Utils.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
         if (dropTarget !== this.lastDropTarget) {
-            this.leaveLastTargetIfExists(mouseEvent, direction, fromNudge);
-            this.enterDragTargetIfExists(dropTarget, mouseEvent, direction, fromNudge);
+            this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
+            this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
         }
         else if (dropTarget) {
-            var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
+            var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
     };
-    DragAndDropService.prototype.enterDragTargetIfExists = function (dropTarget, mouseEvent, direction, fromNudge) {
+    DragAndDropService.prototype.enterDragTargetIfExists = function (dropTarget, mouseEvent, hDirection, vDirection, fromNudge) {
         if (!dropTarget) {
             return;
         }
-        var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, direction, fromNudge);
+        var dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
         dropTarget.onDragEnter(dragEnterEvent);
         this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     };
-    DragAndDropService.prototype.leaveLastTargetIfExists = function (mouseEvent, direction, fromNudge) {
+    DragAndDropService.prototype.leaveLastTargetIfExists = function (mouseEvent, hDirection, vDirection, fromNudge) {
         if (!this.lastDropTarget) {
             return;
         }
-        var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, direction, fromNudge);
+        var dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
         this.lastDropTarget.onDragLeave(dragLeaveEvent);
         this.setGhostIcon(null);
     };
@@ -169,20 +180,29 @@ var DragAndDropService = (function () {
     DragAndDropService.prototype.addDropTarget = function (dropTarget) {
         this.dropTargets.push(dropTarget);
     };
-    DragAndDropService.prototype.workOutDirection = function (event) {
-        var direction;
+    DragAndDropService.prototype.workOutHDirection = function (event) {
         if (this.eventLastTime.clientX > event.clientX) {
-            direction = DragAndDropService.DIRECTION_LEFT;
+            return HDirection.Left;
         }
         else if (this.eventLastTime.clientX < event.clientX) {
-            direction = DragAndDropService.DIRECTION_RIGHT;
+            return HDirection.Right;
         }
         else {
-            direction = null;
+            return null;
         }
-        return direction;
     };
-    DragAndDropService.prototype.createDropTargetEvent = function (dropTarget, event, direction, fromNudge) {
+    DragAndDropService.prototype.workOutVDirection = function (event) {
+        if (this.eventLastTime.clientY > event.clientY) {
+            return VDirection.Up;
+        }
+        else if (this.eventLastTime.clientY < event.clientY) {
+            return VDirection.Down;
+        }
+        else {
+            return null;
+        }
+    };
+    DragAndDropService.prototype.createDropTargetEvent = function (dropTarget, event, hDirection, vDirection, fromNudge) {
         // localise x and y to the target component
         var rect = dropTarget.getContainer().getBoundingClientRect();
         var x = event.clientX - rect.left;
@@ -191,7 +211,8 @@ var DragAndDropService = (function () {
             event: event,
             x: x,
             y: y,
-            direction: direction,
+            vDirection: vDirection,
+            hDirection: hDirection,
             dragSource: this.dragSource,
             fromNudge: fromNudge
         };
@@ -240,9 +261,7 @@ var DragAndDropService = (function () {
     DragAndDropService.prototype.createGhost = function () {
         this.eGhost = utils_1.Utils.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
-        if (this.lastDropTarget) {
-            this.setGhostIcon(this.lastDropTarget.getIconName ? this.lastDropTarget.getIconName() : null);
-        }
+        this.setGhostIcon(null);
         var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
         eText.innerHTML = this.dragSource.dragItemName;
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
@@ -289,8 +308,6 @@ var DragAndDropService = (function () {
         this.eGhostIcon.appendChild(eIcon);
         utils_1.Utils.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
     };
-    DragAndDropService.DIRECTION_LEFT = 'left';
-    DragAndDropService.DIRECTION_RIGHT = 'right';
     DragAndDropService.ICON_PINNED = 'pinned';
     DragAndDropService.ICON_ADD = 'add';
     DragAndDropService.ICON_MOVE = 'move';

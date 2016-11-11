@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.3.0
+ * @version v6.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -125,6 +125,8 @@ function populateClientExports(exports) {
     exports.Listener = componentAnnotations_1.Listener;
     exports.QuerySelector = componentAnnotations_1.QuerySelector;
     // dragAndDrop
+    exports.HDirection = dragAndDropService_1.HDirection;
+    exports.VDirection = dragAndDropService_1.VDirection;
     exports.DragAndDropService = dragAndDropService_1.DragAndDropService;
     exports.DragService = dragService_1.DragService;
     exports.DragSourceType = dragAndDropService_1.DragSourceType;

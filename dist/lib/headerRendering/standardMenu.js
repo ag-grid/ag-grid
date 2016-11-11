@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.3.0
+ * @version v6.4.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ var filterManager_1 = require("../filter/filterManager");
 var utils_1 = require("../utils");
 var popupService_1 = require("../widgets/popupService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var eventService_1 = require("../eventService");
 var StandardMenuFactory = (function () {
     function StandardMenuFactory() {
     }
@@ -37,13 +38,21 @@ var StandardMenuFactory = (function () {
         });
     };
     StandardMenuFactory.prototype.showPopup = function (column, positionCallback) {
+        var _this = this;
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
         var eMenu = document.createElement('div');
         utils_1.Utils.addCssClass(eMenu, 'ag-menu');
         eMenu.appendChild(filterWrapper.gui);
+        var bodyScrollListener = function () {
+            hidePopup();
+        };
+        this.eventService.addEventListener('bodyScroll', bodyScrollListener);
+        var closedCallback = function () {
+            _this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
+        };
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenu, true);
+        var hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
         positionCallback(eMenu);
         if (filterWrapper.filter.afterGuiAttached) {
             var params = {
@@ -56,6 +65,10 @@ var StandardMenuFactory = (function () {
         // for standard, we show menu if filter is enabled, and he menu is not suppressed
         return this.gridOptionsWrapper.isEnableFilter() && column.isFilterAllowed();
     };
+    __decorate([
+        context_1.Autowired('eventService'), 
+        __metadata('design:type', eventService_1.EventService)
+    ], StandardMenuFactory.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('filterManager'), 
         __metadata('design:type', filterManager_1.FilterManager)
