@@ -1,0 +1,679 @@
+ag-grid-ng2 {
+  display: inline-block;
+}
+.ag-select-agg-func-popup {
+  position: absolute;
+}
+.ag-body-no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ag-root {
+/* set to relative, so absolute popups appear relative to this */
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+/* was getting some 'should be there' scrolls, this sorts it out */
+  overflow: hidden;
+}
+.ag-font-style {
+  cursor: default;
+/* disable user mouse selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ag-no-scrolls {
+  white-space: nowrap;
+  display: inline-block;
+}
+.ag-scrolls {
+  height: 100%;
+}
+.ag-popup-backdrop {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+}
+.ag-header {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  white-space: nowrap;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 100%;
+}
+.ag-pinned-left-header {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-pinned-right-header {
+  float: right;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-header-viewport {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-scrolls .ag-header-row {
+  position: absolute;
+}
+.ag-scrolls .ag-header-container {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  white-space: nowrap;
+  height: 100%;
+}
+.ag-no-scrolls .ag-header-container {
+  white-space: nowrap;
+}
+.ag-header-overlay {
+  display: block;
+  position: absolute;
+}
+.ag-header-cell {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  vertical-align: bottom;
+  text-align: center;
+  display: inline-block;
+  height: 100%;
+  position: absolute;
+}
+.ag-dnd-ghost {
+  font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: absolute;
+  background: #e5e5e5;
+  border: 1px solid #000;
+  cursor: move;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  padding: 3px;
+  line-height: 1.4;
+}
+.ag-dnd-ghost-icon {
+  display: inline-block;
+  float: left;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.ag-dnd-ghost-label {
+  display: inline-block;
+}
+.ag-header-group-cell {
+  height: 100%;
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: absolute;
+}
+.ag-header-group-cell-label {
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.ag-header-cell-label {
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.ag-header-cell-resize {
+  height: 100%;
+  width: 4px;
+  float: right;
+  cursor: col-resize;
+}
+.ag-header-expand-icon {
+  padding-left: 4px;
+}
+.ag-header-cell-menu-button {
+  float: right;
+}
+.ag-overlay-panel {
+  display: table;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.ag-overlay-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.ag-bl-overlay {
+  pointer-events: none;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+}
+.ag-bl-full-height {
+  height: 100%;
+  overflow: auto;
+  position: relative;
+}
+.ag-bl-full-height-west {
+  height: 100%;
+  float: left;
+}
+.ag-bl-full-height-east {
+  height: 100%;
+  float: right;
+}
+.ag-bl-full-height-center {
+  height: 100%;
+}
+.ag-bl-normal {
+  height: 100%;
+  position: relative;
+}
+.ag-bl-normal-center-row {
+  height: 100%;
+  overflow: hidden;
+}
+.ag-bl-normal-west {
+  height: 100%;
+  float: left;
+}
+.ag-bl-normal-east {
+  height: 100%;
+  float: right;
+}
+.ag-bl-normal-center {
+  height: 100%;
+}
+.ag-bl-dont-fill {
+  position: relative;
+}
+.ag-body {
+  height: 100%;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: absolute;
+}
+.ag-floating-top {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  white-space: nowrap;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.ag-pinned-left-floating-top {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-pinned-right-floating-top {
+  float: right;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-floating-top-viewport {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-floating-top-container {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  white-space: nowrap;
+}
+.ag-floating-bottom {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  white-space: nowrap;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.ag-pinned-left-floating-bottom {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-pinned-right-floating-bottom {
+  float: right;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-floating-bottom-viewport {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
+}
+.ag-floating-bottom-container {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  white-space: nowrap;
+}
+.ag-pinned-left-cols-viewport {
+  float: left;
+  overflow: hidden;
+}
+.ag-pinned-left-cols-container {
+  display: inline-block;
+  position: relative;
+}
+.ag-pinned-right-cols-viewport {
+  float: right;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.ag-pinned-right-cols-container {
+  display: inline-block;
+  position: relative;
+}
+.ag-body-viewport-wrapper {
+  height: 100%;
+}
+.ag-body-viewport {
+  overflow-x: auto;
+  overflow-y: auto;
+  height: 100%;
+}
+.ag-full-width-viewport {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: inline;
+  pointer-events: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.ag-full-width-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+.ag-floating-bottom-full-width-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  overflow: hidden;
+  display: inline;
+}
+.ag-floating-top-full-width-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  overflow: hidden;
+  display: inline;
+}
+.ag-full-width-row {
+  pointer-events: all;
+  overflow: hidden;
+}
+.ag-scrolls .ag-body-container {
+  position: relative;
+  display: inline-block;
+}
+.ag-scrolls .ag-row {
+  white-space: nowrap;
+  position: absolute;
+  width: 100%;
+}
+.ag-no-scrolls .ag-row {
+  position: relative;
+}
+.ag-column-drop {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ag-column-drop-vertical .ag-column-drop-cell {
+  display: block;
+}
+.ag-column-drop-vertical .ag-column-drop-empty-message {
+  display: block;
+}
+.ag-column-drop-vertical .ag-column-drop-cell-button {
+  float: right;
+  line-height: 16px;
+}
+.ag-column-drop-horizontal {
+  white-space: nowrap;
+}
+.ag-cell {
+  display: inline-block;
+  white-space: nowrap;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: absolute;
+}
+.ag-fade-out {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+  margin-right: 5px;
+  -webkit-transition: opacity 3s, margin-right 3s;
+  -moz-transition: opacity 3s, margin-right 3s;
+  -o-transition: opacity 3s, margin-right 3s;
+  -ms-transition: opacity 3s, margin-right 3s;
+  transition: opacity 3s, margin-right 3s;
+  -webkit-transition-timing-function: linear;
+  -moz-transition-timing-function: linear;
+  -o-transition-timing-function: linear;
+  -ms-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+.ag-fade-out-end {
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  margin-right: 10px;
+}
+.ag-cell-edit-input {
+  width: 100%;
+  height: 100%;
+}
+.ag-group-cell-entire-row {
+  width: 100%;
+  display: inline-block;
+  white-space: nowrap;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.ag-footer-cell-entire-row {
+  width: 100%;
+  display: inline-block;
+  white-space: nowrap;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.ag-large .ag-root {
+  font-size: 20px;
+}
+.ag-popup-editor {
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ag-menu {
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ag-menu-column-select-wrapper {
+  width: 200px;
+  height: 300px;
+  overflow: auto;
+}
+.ag-menu-list {
+  display: table;
+  border-collapse: collapse;
+}
+.ag-menu-option {
+  display: table-row;
+}
+.ag-menu-option-text {
+  display: table-cell;
+}
+.ag-menu-option-shortcut {
+  display: table-cell;
+}
+.ag-menu-option-icon {
+  display: table-cell;
+}
+.ag-menu-option-popup-pointer {
+  display: table-cell;
+}
+.ag-menu-separator {
+  display: table-row;
+}
+.ag-menu-separator-cell {
+  display: table-cell;
+}
+.ag-virtual-list-viewport {
+  overflow-x: auto;
+  height: 100%;
+  width: 100%;
+}
+.ag-virtual-list-container {
+  position: relative;
+  overflow: hidden;
+}
+.ag-rich-select {
+  outline: none;
+}
+.ag-rich-select-list {
+  width: 200px;
+  height: 200px;
+}
+.ag-set-filter-list {
+  width: 200px;
+  height: 200px;
+}
+.ag-set-filter-item {
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ag-virtual-list-item {
+  position: absolute;
+  width: 100%;
+}
+.ag-filter-filter {
+  width: 170px;
+  margin: 4px;
+}
+.ag-filter-select {
+  width: 110px;
+  margin: 4px 4px 0px 4px;
+}
+.ag-no-vertical-scroll .ag-scrolls {
+  height: unset;
+}
+.ag-no-vertical-scroll .ag-body {
+  height: unset;
+}
+.ag-no-vertical-scroll .ag-body-viewport-wrapper {
+  height: unset;
+}
+.ag-no-vertical-scroll .ag-body-viewport {
+  height: unset;
+}
+.ag-list-selection {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+.ag-tool-panel {
+  width: 200px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: auto;
+}
+.ag-column-select-indent {
+  display: inline-block;
+}
+.ag-column-select-column {
+  margin-left: 14px;
+  white-space: nowrap;
+}
+.ag-column-select-column-group {
+  white-space: nowrap;
+}
+.ag-hidden {
+  display: none;
+}
+.ag-faded {
+  opacity: 0.3;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+}
+.ag-width-half {
+  width: 50%;
+  display: inline-block;
+}
+.ag-shake-left-to-right {
+  -webkit-animation-name: ag-shake-left-to-right;
+  -moz-animation-name: ag-shake-left-to-right;
+  -o-animation-name: ag-shake-left-to-right;
+  -ms-animation-name: ag-shake-left-to-right;
+  animation-name: ag-shake-left-to-right;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  -ms-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  -o-animation-iteration-count: infinite;
+  -ms-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  -moz-animation-direction: alternate;
+  -o-animation-direction: alternate;
+  -ms-animation-direction: alternate;
+  animation-direction: alternate;
+}
+@-moz-keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
+}
+@-webkit-keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
+}
+@-o-keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
+}
+@keyframes ag-shake-left-to-right {
+  from {
+    padding-left: 6px;
+    padding-right: 2px;
+  }
+  to {
+    padding-left: 2px;
+    padding-right: 6px;
+  }
+}
