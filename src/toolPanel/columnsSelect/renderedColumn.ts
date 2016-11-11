@@ -5,6 +5,7 @@ import {
     Component,
     ColumnController,
     DragAndDropService,
+    CssClassApplier,
     GridOptionsWrapper,
     GridPanel,
     Column,
@@ -81,6 +82,7 @@ export class RenderedColumn extends Component {
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
 
         this.addTap();
+        CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
     private addTap(): void {

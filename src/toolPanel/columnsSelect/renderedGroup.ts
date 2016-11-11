@@ -1,4 +1,5 @@
 import {
+    CssClassApplier,
     Utils,
     DragSourceType,
     SvgFactory,
@@ -103,6 +104,8 @@ export class RenderedGroup extends Component {
 
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
+
+        CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
     private addVisibilityListenersToAllChildren(): void {
