@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v6.4.1
+// Type definitions for ag-grid v6.4.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -14,6 +14,7 @@ export declare class Utils {
     private static isIE;
     private static isEdge;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
+    static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(TheClass: any): string;
     static values<T>(object: {
         [key: string]: T;

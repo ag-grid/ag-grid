@@ -40,6 +40,23 @@ export class Utils {
         return Math.max(diffX, diffY) <= pixelCount;
     }
 
+    static shallowCompare(arr1: any[], arr2: any[]): boolean {
+        // if both are missing, then they are the same
+        if (this.missing(arr1) && this.missing(arr2)) { return true; }
+        // if one is present, but other is missing, then then are different
+        if (this.missing(arr1) || this.missing(arr2)) { return false; }
+
+        if (arr1.length!==arr2.length) { return false; }
+
+        for (let i = 0; i<arr1.length; i++) {
+            if (arr1[i]!==arr2[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     static getNameOfClass(TheClass: any) {
         var funcNameRegex = /function (.{1,})\(/;
         var funcAsString = TheClass.toString();
