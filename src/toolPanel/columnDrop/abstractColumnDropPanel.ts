@@ -247,17 +247,26 @@ export abstract class AbstractColumnDropPanel extends Component {
 
     private onDragStop(): void {
         if (this.potentialDndColumns) {
+            let success: boolean;
             if (this.state === AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN) {
                 this.addColumns(this.potentialDndColumns);
+                success = true;
             } else {
-                this.rearrangeColumns(this.potentialDndColumns);
+                success = this.rearrangeColumns(this.potentialDndColumns);
             }
             this.potentialDndColumns = null;
             // if the function is passive, then we don't refresh, as we assume the client application
             // is going to call setRowGroups / setPivots / setValues at a later point which will then
             // cause a refresh. this gives a nice gui where the ghost stays until the app has caught
             // up with the changes.
-            if (!this.beans.gridOptionsWrapper.isFunctionsPassive()) {
+            if (this.beans.gridOptionsWrapper.isFunctionsPassive()) {
+                // when functions are passive, we don't refresh,
+                // unless there was no change in the order, then we
+                // do need to refresh to reset the columns
+                if (!success) {
+                    this.refreshGui();
+                }
+            } else {
                 this.refreshGui();
             }
         }
@@ -277,10 +286,16 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.updateColumns(newColumnList);
     }
 
-    private rearrangeColumns(columnsToAdd: Column[]): void {
+    private rearrangeColumns(columnsToAdd: Column[]): boolean {
         var newColumnList = this.getNonGhostColumns().slice();
         Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        this.updateColumns(newColumnList);
+        var noChangeDetected = Utils.shallowCompare(newColumnList, this.getExistingColumns());
+        if (noChangeDetected) {
+            return false;
+        } else {
+            this.updateColumns(newColumnList);
+            return true;
+        }
     }
 
     public refreshGui(): void {
