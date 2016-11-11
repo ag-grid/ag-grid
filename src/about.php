@@ -166,6 +166,19 @@
                 the importance of developing industry-leading responsive user interfaces.
             </p>
         </div>
+
+        <div class="col-md-4">
+            <div>
+                <img src='images/john.png'/>
+            </div>
+            <h3>John Masterson</h3>
+            <h4>Customer Experience Manager</h4>
+            <p>
+                With a background in Business Development, Product Management and Operations, John joins the ag-Grid team to look after the rapidly expanding customer base. In all his roles whether with large multinationals or SMEs, John has focussed on the application of technology to solve business problems.
+
+                John is always available to deal with customer queries as well building ag-Grid's infrastructure for growth. 
+            </p>
+        </div>
     </div> <!-- end row -->
 </div>
 
