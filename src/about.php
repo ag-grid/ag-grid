@@ -83,6 +83,10 @@
             </p>
         </div> <!-- end col -->
 
+    </div>
+
+    <div class="row">
+
         <div class="col-md-12" style="padding-top: 40px;">
 
             <h3 id="team">
@@ -96,6 +100,9 @@
             </p>
 
         </div> <!-- end col -->
+
+    </div>
+    <div class="row" style="margin-top: 50px;">
 
         <div class="col-md-4">
             <div>
@@ -142,15 +149,29 @@
             <p>
                 Alberto has 15 years of experience in end to end big enterprise scale projects.
                 From worldwide e-commerce applications to tv platforms, airport management
-                systems, financial applications, payments integration and many others. He
-                had the opportunity to work with real time, high load requirements across
-                all the different layers of the technology stack, from the UI, to the backend,
-                integration, configuration... There is no single stage of the software development
+                systems, financial applications, payments integration and many others.
+                There is no single stage of the software development
                 that he doesn't enjoy, but considers himself above anything else a coder. He is
                 happy when coding.
             </p>
             <p>
                 In ag-Grid Alberto helps realise the dream of a data grid that will solve big data enterprise problems.
+            </p>
+        </div>
+
+    </div>
+    <div class="row" style="margin-top: 50px;">
+
+        <div class="col-md-4">
+            <div>
+                <img src='images/john.png'/>
+            </div>
+            <h3>John Masterson</h3>
+            <h4>Customer Experience Manager</h4>
+            <p>
+                With a background in Business Development, Product Management and Operations, John joins the ag-Grid team to look after the rapidly expanding customer base. In all his roles whether with large multinationals or SMEs, John has focussed on the application of technology to solve business problems.
+
+                John is always available to deal with customer queries as well as building ag-Grid's infrastructure for growth.
             </p>
         </div>
 
@@ -167,18 +188,6 @@
             </p>
         </div>
 
-        <div class="col-md-4">
-            <div>
-                <img src='images/john.png'/>
-            </div>
-            <h3>John Masterson</h3>
-            <h4>Customer Experience Manager</h4>
-            <p>
-                With a background in Business Development, Product Management and Operations, John joins the ag-Grid team to look after the rapidly expanding customer base. In all his roles whether with large multinationals or SMEs, John has focussed on the application of technology to solve business problems.
-
-                John is always available to deal with customer queries as well building ag-Grid's infrastructure for growth. 
-            </p>
-        </div>
     </div> <!-- end row -->
 </div>
 
