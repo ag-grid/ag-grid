@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 6.4.x</h2>
 
-    <h4>ag-grid-6.4.1, ag-grid-enterprise-6.4.1</h4>
+    <h4>ag-grid-6.4.2, ag-grid-enterprise-6.4.2</h4>
 
     <li>Enhancement - column group / pivot panels don't try and do anything if user rearranges, but leaves things in same order as the start.</li>
 
