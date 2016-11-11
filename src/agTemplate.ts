@@ -5,7 +5,15 @@ import {processContent,
     TargetInstruction
     } from 'aurelia-framework';
 
-
+/**
+ * Function will move the elements innerHtml to a template property
+ * and then remove html from the element so that Aurelia will not render
+ * the template elements
+ * @param compiler
+ * @param resources
+ * @param element
+ * @param instruction
+ */
 function parseElement(compiler:any, resources:any, element:any, instruction:any) {
     let html = element.innerHTML;
     if (html !== '') {

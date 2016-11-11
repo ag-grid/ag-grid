@@ -76,17 +76,22 @@ export class AureliaComponentFactory {
 
                 let controllers:any[] = (<any> this.view).controllers;
 
+                //only one controller is allowed in editor template
                 if (controllers &&
                     controllers.length == 1 &&
                     controllers[0].viewModel) {
                     this.editorVm = controllers[0].viewModel;
+                    //this is a 'hack' because we don't have params.bind="" in the template
                     //must reset params or it will be nothing
                     this.editorVm.params = params;
                 }
                 else {
                     console.error('The editor template component is missing an IEditorViewModel or it contains more than one component');
                 }
+            }
 
+            public afterGuiAttached(){
+                this.view.attached();
             }
 
             public getGui(): HTMLElement {
@@ -94,6 +99,9 @@ export class AureliaComponentFactory {
             }
 
             destroy(){
+                if (this.editorVm.destroy) {
+                    this.editorVm.destroy();
+                }
                 this.view.returnToCache();
             }
 
@@ -102,23 +110,30 @@ export class AureliaComponentFactory {
             }
 
             isPopup():boolean {
-               return this.editorVm.isPopup();
+                return this.editorVm.isPopup ?
+                    this.editorVm.isPopup() : false;
             }
 
             isCancelBeforeStart():boolean {
-                return this.editorVm.isCancelBeforeStart();
+                return this.editorVm.isCancelBeforeStart ?
+                    this.editorVm.isCancelBeforeStart() : false;
             }
 
             isCancelAfterEnd():boolean {
-                return this.editorVm.isCancelAfterEnd();
+                return this.editorVm.isCancelAfterEnd ?
+                    this.editorVm.isCancelAfterEnd() : false;
             }
 
             focusIn():void {
-                this.editorVm.focusIn();
+                if (this.editorVm.focusIn) {
+                    this.editorVm.focusIn();
+                }
             }
 
             focusOut():void {
-                this.editorVm.focusOut();
+                if (this.editorVm.focusOut) {
+                    this.editorVm.focusOut();
+                }
             }
 
         }
