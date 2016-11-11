@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.4.0
+// ag-grid-enterprise v6.4.1
 import { Component, OriginalColumnGroup } from "ag-grid/main";
 export declare class RenderedGroup extends Component {
     private static TEMPLATE;

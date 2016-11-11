@@ -1,4 +1,4 @@
-// ag-grid-enterprise v6.4.0
+// ag-grid-enterprise v6.4.1
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -166,18 +166,28 @@ var AbstractColumnDropPanel = (function (_super) {
     };
     AbstractColumnDropPanel.prototype.onDragStop = function () {
         if (this.potentialDndColumns) {
+            var success;
             if (this.state === AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN) {
                 this.addColumns(this.potentialDndColumns);
+                success = true;
             }
             else {
-                this.rearrangeColumns(this.potentialDndColumns);
+                success = this.rearrangeColumns(this.potentialDndColumns);
             }
             this.potentialDndColumns = null;
             // if the function is passive, then we don't refresh, as we assume the client application
             // is going to call setRowGroups / setPivots / setValues at a later point which will then
             // cause a refresh. this gives a nice gui where the ghost stays until the app has caught
             // up with the changes.
-            if (!this.beans.gridOptionsWrapper.isFunctionsPassive()) {
+            if (this.beans.gridOptionsWrapper.isFunctionsPassive()) {
+                // when functions are passive, we don't refresh,
+                // unless there was no change in the order, then we
+                // do need to refresh to reset the columns
+                if (!success) {
+                    this.refreshGui();
+                }
+            }
+            else {
                 this.refreshGui();
             }
         }
@@ -196,7 +206,14 @@ var AbstractColumnDropPanel = (function (_super) {
     AbstractColumnDropPanel.prototype.rearrangeColumns = function (columnsToAdd) {
         var newColumnList = this.getNonGhostColumns().slice();
         main_1.Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        this.updateColumns(newColumnList);
+        var noChangeDetected = main_1.Utils.shallowCompare(newColumnList, this.getExistingColumns());
+        if (noChangeDetected) {
+            return false;
+        }
+        else {
+            this.updateColumns(newColumnList);
+            return true;
+        }
     };
     AbstractColumnDropPanel.prototype.refreshGui = function () {
         this.destroyGui();
