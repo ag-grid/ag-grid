@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.3.0
+// ag-grid-ng2 v6.4.0
 import { ViewContainerRef, ComponentRef } from '@angular/core';
 import { RuntimeCompiler } from "@angular/compiler";
 import { ICellRenderer, ICellEditor, IFilter } from 'ag-grid/main';

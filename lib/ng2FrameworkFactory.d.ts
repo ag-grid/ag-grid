@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.3.0
+// ag-grid-ng2 v6.4.0
 import { ViewContainerRef } from '@angular/core';
 import { ICellRenderer, ICellEditor, IFrameworkFactory, IFilter, ICellRendererFunc, ColDef, GridOptions } from 'ag-grid/main';
 import { BaseComponentFactory } from "./baseComponentFactory";

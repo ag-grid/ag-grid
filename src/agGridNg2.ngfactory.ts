@@ -153,6 +153,7 @@ export class Wrapper_AgGridNg2 {
   /*private*/ _expr_129:any;
   /*private*/ _expr_130:any;
   /*private*/ _expr_131:any;
+  /*private*/ _expr_132:any;
   constructor(p0:any,p1:any,p2:any) {
     this.changed = false;
     this.changes = {};
@@ -289,6 +290,7 @@ export class Wrapper_AgGridNg2 {
     this._expr_129 = import1.UNINITIALIZED;
     this._expr_130 = import1.UNINITIALIZED;
     this._expr_131 = import1.UNINITIALIZED;
+    this._expr_132 = import1.UNINITIALIZED;
   }
   check_gridOptions(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import2.checkBinding(throwOnChange,this._expr_0,currValue))) {
@@ -1344,6 +1346,14 @@ export class Wrapper_AgGridNg2 {
       this.context.suppressRowHoverClass = currValue;
       this.changes['suppressRowHoverClass'] = new import1.SimpleChange(this._expr_131,currValue);
       this._expr_131 = currValue;
+    }
+  }
+  check_suppressTouch(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import2.checkBinding(throwOnChange,this._expr_132,currValue))) {
+      this.changed = true;
+      this.context.suppressTouch = currValue;
+      this.changes['suppressTouch'] = new import1.SimpleChange(this._expr_132,currValue);
+      this._expr_132 = currValue;
     }
   }
   detectChangesInInputProps(view:import3.AppView<any>,el:any,throwOnChange:boolean):boolean {

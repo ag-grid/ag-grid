@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.3.0
+// ag-grid-ng2 v6.4.0
 import { EventEmitter, ViewContainerRef, ElementRef, QueryList, OnInit, AfterViewInit } from '@angular/core';
 import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
@@ -156,6 +156,7 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     processSecondaryColDef: any;
     processSecondaryColGroupDef: any;
     suppressRowHoverClass: any;
+    suppressTouch: any;
     /**
      * Outputs
      */

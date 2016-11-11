@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.3.0
+// ag-grid-ng2 v6.4.0
 import { QueryList } from '@angular/core';
 import { ColDef, SetFilterParameters, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef } from "ag-grid/main";
 export declare class AgGridColumn {
