@@ -27,57 +27,57 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <pre>
-    // column header items
+    <span class="codeComment">// column header items</span>
     menu
     filter
     sortAscending
     sortDescending
     sortUnSort
         
-    // expand / contract row group
+    <span class="codeComment">// expand / contract row group</span>
     groupExpanded
     groupContracted
 
-    // expand / contract column group
+    <span class="codeComment">// expand / contract column group</span>
     columnGroupOpened
     columnGroupClosed
 
-    // tool panel column group open / close
+    <span class="codeComment">// tool panel column group open / close</span>
     columnSelectOpen
     columnSelectClosed
 
-    // row checkbox selection and tool panel column selection
+    <span class="codeComment">// row checkbox selection and tool panel column selection</span>
     checkboxChecked
     checkboxUnchecked
     checkboxIndeterminate
 
-    // tool panel column selection, when read only (ie disabled checkboxes)
+    <span class="codeComment">// tool panel column selection, when read only (ie disabled checkboxes)</span>
     checkboxCheckedReadOnly
     checkboxUncheckedReadOnly
     checkboxIndeterminateReadOnly
 
-    // when moving columns
-    columnMovePin // when column is to the left, before it gets pinned
-    columnMoveAdd // when adding a column
-    columnMoveHide // when removing a column
-    columnMoveMove // when moving a column
-    columnMoveLeft // when moving and scrolling left
-    columnMoveRight // when moving and scrolling right
-    columnMoveGroup // when about to drop into group panel
-    columnMoveValue // when about to drop into value panel
-    columnMovePivot // when about to drop into pivot panel
-    dropNotAllowed // when trying to drop column into group/value/pivot panel and column doesn't support it
+    <span class="codeComment">// when moving columns</span>
+    columnMovePin <span class="codeComment">// when column is to the left, before it gets pinned</span>
+    columnMoveAdd <span class="codeComment">// when adding a column</span>
+    columnMoveHide <span class="codeComment">// when removing a column</span>
+    columnMoveMove <span class="codeComment">// when moving a column</span>
+    columnMoveLeft <span class="codeComment">// when moving and scrolling left</span>
+    columnMoveRight <span class="codeComment">// when moving and scrolling right</span>
+    columnMoveGroup <span class="codeComment">// when about to drop into group panel</span>
+    columnMoveValue <span class="codeComment">// when about to drop into value panel</span>
+    columnMovePivot <span class="codeComment">// when about to drop into pivot panel</span>
+    dropNotAllowed <span class="codeComment">// when trying to drop column into group/value/pivot panel and column doesn't support it</span>
 
-    // column menu
-    menuPin // beside the column pin option
-    menuValue // beside the column value option
-    menuAddRowGroup // beside the column row group option
-    menuRemoveRowGroup // beside the column row group option
+    <span class="codeComment">// column menu</span>
+    menuPin <span class="codeComment">// beside the column pin option</span>
+    menuValue <span class="codeComment">// beside the column value option</span>
+    menuAddRowGroup <span class="codeComment">// beside the column row group option</span>
+    menuRemoveRowGroup <span class="codeComment">// beside the column row group option</span>
 
-    // column drop panels
-    rowGroupPanel // beside where to drop columns for row group
-    pivotPanel // beside where to drop columns for pivot
-    valuePanel // beside where to drop columns for value
+    <span class="codeComment"></span>// column drop panels
+    rowGroupPanel <span class="codeComment">// beside where to drop columns for row group</span>
+    pivotPanel <span class="codeComment">// beside where to drop columns for pivot</span>
+    valuePanel <span class="codeComment">// beside where to drop columns for value</span>
 }
 </pre>
 
