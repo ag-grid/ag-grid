@@ -10,6 +10,12 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 6.4.x</h2>
 
+    <h4>ag-grid-6.4.1, ag-grid-enterprise-6.4.1</h4>
+
+    <li>Enhancement - column group / pivot panels don't try and do anything if user rearranges, but leaves things in same order as the start.</li>
+
+    <h4>ag-grid-6.4.0, ag-grid-enterprise-6.4.0, ag-grid-ng2-6.4.0, ag-grid-react-6.4.0, </h4>
+
     <h4>Enhancements</h4>
     <li>Big Enhancement - for grouping, pivoting and values, now you can reorder the columns in the drop zones.</li>
     <li>Small Enhancement - added <a href="../javascript-grid-tool-panel/#stylingToolPanel">toolPanelClass</a> so you can style tool panel items.</li>
