@@ -17,7 +17,7 @@ var columnDefs = [
             values: colorValues
         }
     },
-    {headerName: "Location - Values + Keep", field: "location", width: 150, filter: 'set',
+    {headerName: "Location - Values + Keep", field: "location", width: 250, filter: 'set',
         filterParams: {
             values: locationValues,
             newRowsAction: 'keep'

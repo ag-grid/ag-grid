@@ -8,12 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h2>Version NEXT</h2>
+    <h2>Version 6.4.x</h2>
 
     <h4>Enhancements</h4>
-    <li>Enhancement - for grouping, pivoting and values, now you can reorder the columns in the drop zones.</li>
-    <li>Enhancement - added <a href="../javascript-grid-tool-panel/#stylingToolPanel">toolPanelClass</a> so you can style tool panel items.</li>
-    <li>Enhancement - now if you scroll the grid, if a column menu or context menu are open, they will close, otherwise the menu gets out of line with the columns & cells.</li>
+    <li>Big Enhancement - for grouping, pivoting and values, now you can reorder the columns in the drop zones.</li>
+    <li>Small Enhancement - added <a href="../javascript-grid-tool-panel/#stylingToolPanel">toolPanelClass</a> so you can style tool panel items.</li>
+    <li>Small Enhancement - now if you scroll the grid, if a column menu or context menu are open, they will close, otherwise the menu gets out of line with the columns & cells.</li>
 
     <h4>Bug Fixes</h4>
     <li>Bugfix - for setFilter, setModel was not updating the 'Select All' button, is now</li>

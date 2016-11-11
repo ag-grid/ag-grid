@@ -21,7 +21,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <pre>localeText = {
-        // for filter panel
+
+        <span class="codeComment">// for filter panel</span>
         page: 'daPage',
         more: 'daMore',
         to: 'daTo',
@@ -31,24 +32,30 @@ include '../documentation-main/documentation_header.php';
         first: 'daFirsten',
         previous: 'daPreviousen',
         loadingOoo: 'daLoading...',
-        // for set filter
+
+        <span class="codeComment">// for set filter</span>
         selectAll: 'daSelect Allen',
         searchOoo: 'daSearch...',
         blanks: 'daBlanc',
-        // for number filter and text filter
+
+        <span class="codeComment">// for number filter and text filter</span>
         filterOoo: 'daFilter...',
         applyFilter: 'daApplyFilter...',
-        // for number filter
+
+        <span class="codeComment">// for number filter</span>
         equals: 'daEquals',
         lessThan: 'daLessThan',
         greaterThan: 'daGreaterThan',
-        // for text filter
+
+        <span class="codeComment">// for text filter</span>
         contains: 'daContains',
         startsWith: 'daStarts dawith',
         endsWith: 'daEnds dawith',
-        // the header of the default group column
+
+        <span class="codeComment">// the header of the default group column</span>
         group: 'laGroup',
-        // tool panel
+
+        <span class="codeComment">// tool panel</span>
         columns: 'laColumns',
         rowGroupColumns: 'laPivot Cols',
         rowGroupColumnsEmptyMessage: 'la drag cols to group',
@@ -59,9 +66,11 @@ include '../documentation-main/documentation_header.php';
         pivots: 'laPivots',
         valueColumnsEmptyMessage: 'la drag cols to aggregate',
         pivotColumnsEmptyMessage: 'la drag here to pivot',
-        // other
+
+        <span class="codeComment">// other</span>
         noRowsToShow: 'la no rows',
-        // enterprise menu
+
+        <span class="codeComment">// enterprise menu</span>
         pinColumn: 'laPin Column',
         valueAggregation: 'laValue Agg',
         autosizeThiscolumn: 'laAutosize Diz',
@@ -72,11 +81,13 @@ include '../documentation-main/documentation_header.php';
         expandAll: 'laOpen-em-up',
         collapseAll: 'laClose-em-up',
         toolPanel: 'laTool Panelo',
-        // enterprise menu pinning
+
+        <span class="codeComment">// enterprise menu pinning</span>
         pinLeft: 'laPin <<',
         pinRight: 'laPin >>',
         noPin: 'laDontPin <>',
-        // enterprise menu aggregation and status panel
+
+        <span class="codeComment">// enterprise menu aggregation and status panel</span>
         sum: 'laSum',
         min: 'laMin',
         max: 'laMax',
@@ -85,7 +96,8 @@ include '../documentation-main/documentation_header.php';
         none: 'laNone',
         count: 'laCount',
         average: 'laAverage',
-        // standard menu
+
+        <span class="codeComment">// standard menu</span>
         copy: 'laCopy',
         ctrlC: 'ctrl n C',
         paste: 'laPaste',
@@ -110,15 +122,20 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <pre>var gridOptions = {
+
+    <span class="codeComment">// standard grid settings, thrown in here to pad out the example</span>
     enableSorting: true,
     enableFilter: true,
     enableColResize: true,
     columnDefs: columnDefs,
+
     localeTextFunc: function(key, defaultValue) {
-        // to avoid key clash with external keys, we add 'grid' to the start of each key.
+
+        <span class="codeComment">// to avoid key clash with external keys, we add 'grid' to the start of each key.</span>
         var gridKey = 'grid.' + key;
-        // look the value up. here we use the AngularJS $filter service, however you can use whatever
-        // service you want, AngularJS or otherwise.
+
+        <span class="codeComment">// look the value up. here we use the AngularJS $filter service, however you can use whatever</span>
+        <span class="codeComment">// service you want, AngularJS or otherwise.</span>
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }

@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, pinned: 'left',
+    {headerName: "Athlete", field: "athlete", width: 150,
         // for athlete only, have the floating header italics
         floatingCellRenderer: function(params) {
             return '<i>'+params.value+'</i>'
         }},
-    {headerName: "Age", field: "age", width: 90, pinned: 'left'},
+    {headerName: "Age", field: "age", width: 90},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, pinned: 'right'}
+    {headerName: "Sport", field: "sport", width: 110}
 ];
 
 var gridOptions = {

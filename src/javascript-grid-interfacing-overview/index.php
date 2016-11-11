@@ -51,32 +51,33 @@ include '../documentation-main/documentation_header.php';
         The example below shows the different type of items on the gridOptions.
     </p>
     <pre><code>var gridOptions = {
-    // PROPERTIES - object properties, myRowData and myColDefs are created somewhere in your application
+
+    <span class="codeComment">// PROPERTIES - object properties, myRowData and myColDefs are created somewhere in your application</span>
     rowData: myRowData,
     columnDefs: myColDefs,
 
-    // PROPERTIES - simple boolean / string / number properties
+    <span class="codeComment">// PROPERTIES - simple boolean / string / number properties</span>
     enableColResize: true,
     groupHeaders: false,
     rowHeight: 22,
     rowSelection: 'single',
 
-    // EVENTS - add event callback handlers
+    <span class="codeComment">// EVENTS - add event callback handlers</span>
     onRowClicked: function(event) { console.log('a row was clicked'); },
     onColumnResized: function(event) { console.log('a column was resized'); },
     onGridReady: function(event) { console.log('the grid is now ready'); },
 
-    // CALLBACKS
+    <span class="codeComment">// CALLBACKS</span>
     isScrollLag: function() { return false; }
 }</code></pre>
     <p>
         Once the grid is initialised, then the gridOptions will also have available
         the grid's api and columnApi as follows:
     </p>
-    <pre><code>// get the grid to refresh
+    <pre><code><span class="codeComment">// get the grid to refresh</span>
 gridOptions.api.refreshView();
 
-// get the grid to space out it's columns
+<span class="codeComment">// get the grid to space out it's columns</span>
 gridOptions.columnApi.sizeColumnsToFit();
 </code></pre>
 
@@ -90,12 +91,12 @@ gridOptions.columnApi.sizeColumnsToFit();
         the example above, the second is to register for the event like in the following example:
     </p>
 
-    <pre><code>// create handler function
+    <pre><code><span class="codeComment">// create handler function</span>
 function myRowClickedHandler(event) {
     console.log('the row was clicked');
 }
 
-// add the handler function
+<span class="codeComment">// add the handler function</span>
 gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 </code></pre>
 
@@ -142,21 +143,22 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     </p>
 
     <pre><code>&lt;ag-grid-react-component
-    // these are simple attributes, not bound to any state or prop
+
+    <span class="codeComment">// these are simple attributes, not bound to any state or prop</span>
     rowHeight="22"
     rowSelection="multiple"
 
-    // these are bound props, so can use anything in React state or props
+    <span class="codeComment">// these are bound props, so can use anything in React state or props</span>
     columnDefs={this.props.columnDefs}
     showToolPanel]={this.state.showToolPanel}
 
-    // this is a callback
+    <span class="codeComment">// this is a callback</span>
     isScrollLag={this.myIsScrollLagFunction.bind(this)}
 
-    // these are registering event callbacks
+    <span class="codeComment">// these are registering event callbacks</span>
     onCellClicked={this.onCellClicked.bind(this)}"
     onColumnResized={this.onColumnEvent.bind(this)}"
-    onGridReady={this.onGridReady.bind(this)}" // inside onGridReady, you receive the grid API's if you want them
+    onGridReady={this.onGridReady.bind(this)}" <span class="codeComment">// inside onGridReady, you receive the grid API's if you want them</span>
 /></code></pre>
 
     <p>
@@ -199,27 +201,27 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     </p>
 
     <pre><code>&lt;ag-grid-ng2
-    // give an AngularJS ID to the grid
+    <span class="codeComment">// give an AngularJS ID to the grid</span>
     #myGrid
 
-    // these are boolean values, which if included without a value, default to true
-    // (which is different to leaving them out, in which case the default is false)
+    <span class="codeComment">// these are boolean values, which if included without a value, default to true</span>
+    <span class="codeComment">// (which is different to leaving them out, in which case the default is false)</span>
     enable-sorting
     enable-filter
 
-    // these are attributes, not bound, give explicit values here
+    <span class="codeComment">// these are attributes, not bound, give explicit values here</span>
     row-height="22"
     row-selection="multiple"
 
-    // these are bound properties, bound to the AngularJS current context (that's what a
-    // scope is called in Angular JS 2)
+    <span class="codeComment">// these are bound properties, bound to the AngularJS current context (that's what a</span>
+    <span class="codeComment">// scope is called in Angular JS 2)</span>
     [column-defs]="columnDefs"
     [show-tool-panel]="showToolPanel"
 
-    // this is a callback
+    <span class="codeComment">// this is a callback</span>
     [is-scroll-lag]="myIsScrollLagFunction"
 
-    // these are registering event callbacks
+    <span class="codeComment">// these are registering event callbacks</span>
     (cell-clicked)="onCellClicked($event)"
     (column-resized)="onColumnEvent($event)">
 &lt;/ag-grid-ng2></code></pre>
@@ -273,14 +275,14 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     </p>
 
     <pre><code>&lt;ag-grid-ng2
-    // normal id for CSS selector inside Javascript
+    <span class="codeComment">// normal id for CSS selector inside Javascript</span>
     id="myGrid"
 
-    // these are boolean values, which if included without a value, default to Yes
+    <span class="codeComment">// these are boolean values, which if included without a value, default to Yes</span>
     enable-sorting
     enable-filter
 
-    // these are attributes, not bound, give explicit values here
+    <span class="codeComment">// these are attributes, not bound, give explicit values here</span>
     row-height="22"
     row-selection="multiple"
 &lt;/ag-grid-ng2></code></pre>
@@ -291,32 +293,33 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
 <pre><code>
 var myGrid = document.querySelector('#myGrid');
-// calling a method directly on the ag-Grid DOM element.
-// calling setGridOptions starts up the grid and is mandatory (even if gridOptions is empty)
+
+<span class="codeComment">// calling a method directly on the ag-Grid DOM element.</span>
+<span class="codeComment">// calling setGridOptions starts up the grid and is mandatory (even if gridOptions is empty)</span>
 myGrid.setGridOptions(gridOptions);
 
-// add events to grid option 1 - add an event listener
+<span class="codeComment">// add events to grid option 1 - add an event listener</span>
 myGrid.addEventListener('columnresized', function(event) {
     console.log('got an event via option 1');
 });
 
-// add events to grid option 2 - callback on the element
+<span class="codeComment">// add events to grid option 2 - callback on the element</span>
 myGrid.oncolumnresized = function(event) {
     console.log('got an event via option 2');
 };
 
-// add events to grid option 3 - callback on the grid options
-// remember we can still use everything in gridOptions, the
-// Web Components features are all in addition
+<span class="codeComment">// add events to grid option 3 - callback on the grid options</span>
+<span class="codeComment">// remember we can still use everything in gridOptions, the</span>
+<span class="codeComment">// Web Components features are all in addition</span>
 gridOptions.onColumnResized = function(event) {
     console.log('got an event via option 3');
 };
 
-// call something on the API
+<span class="codeComment">// call something on the API</span>
 myGrid.api.refreshView();
 myGrid.columnApi.sizeColumnsToFit();
 
-// change a property
+<span class="codeComment">// change a property</span>
 myGrid.quickFilterText = 'sandy';
 myGrid.showToolPanel = true;
 </code></pre>

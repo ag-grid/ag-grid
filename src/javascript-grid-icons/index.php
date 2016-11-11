@@ -26,59 +26,57 @@ include '../documentation-main/documentation_header.php';
         The icons are set as follows:
     </p>
 
-    <pre>
-    <span class="codeComment">// column header items</span>
-    menu
-    filter
-    sortAscending
-    sortDescending
-    sortUnSort
-        
-    <span class="codeComment">// expand / contract row group</span>
-    groupExpanded
-    groupContracted
+    <pre><span class="codeComment">// column header items</span>
+menu
+filter
+sortAscending
+sortDescending
+sortUnSort
 
-    <span class="codeComment">// expand / contract column group</span>
-    columnGroupOpened
-    columnGroupClosed
+<span class="codeComment">// expand / contract row group</span>
+groupExpanded
+groupContracted
 
-    <span class="codeComment">// tool panel column group open / close</span>
-    columnSelectOpen
-    columnSelectClosed
+<span class="codeComment">// expand / contract column group</span>
+columnGroupOpened
+columnGroupClosed
 
-    <span class="codeComment">// row checkbox selection and tool panel column selection</span>
-    checkboxChecked
-    checkboxUnchecked
-    checkboxIndeterminate
+<span class="codeComment">// tool panel column group open / close</span>
+columnSelectOpen
+columnSelectClosed
 
-    <span class="codeComment">// tool panel column selection, when read only (ie disabled checkboxes)</span>
-    checkboxCheckedReadOnly
-    checkboxUncheckedReadOnly
-    checkboxIndeterminateReadOnly
+<span class="codeComment">// row checkbox selection and tool panel column selection</span>
+checkboxChecked
+checkboxUnchecked
+checkboxIndeterminate
 
-    <span class="codeComment">// when moving columns</span>
-    columnMovePin <span class="codeComment">// when column is to the left, before it gets pinned</span>
-    columnMoveAdd <span class="codeComment">// when adding a column</span>
-    columnMoveHide <span class="codeComment">// when removing a column</span>
-    columnMoveMove <span class="codeComment">// when moving a column</span>
-    columnMoveLeft <span class="codeComment">// when moving and scrolling left</span>
-    columnMoveRight <span class="codeComment">// when moving and scrolling right</span>
-    columnMoveGroup <span class="codeComment">// when about to drop into group panel</span>
-    columnMoveValue <span class="codeComment">// when about to drop into value panel</span>
-    columnMovePivot <span class="codeComment">// when about to drop into pivot panel</span>
-    dropNotAllowed <span class="codeComment">// when trying to drop column into group/value/pivot panel and column doesn't support it</span>
+<span class="codeComment">// tool panel column selection, when read only (ie disabled checkboxes)</span>
+checkboxCheckedReadOnly
+checkboxUncheckedReadOnly
+checkboxIndeterminateReadOnly
 
-    <span class="codeComment">// column menu</span>
-    menuPin <span class="codeComment">// beside the column pin option</span>
-    menuValue <span class="codeComment">// beside the column value option</span>
-    menuAddRowGroup <span class="codeComment">// beside the column row group option</span>
-    menuRemoveRowGroup <span class="codeComment">// beside the column row group option</span>
+<span class="codeComment">// when moving columns</span>
+columnMovePin <span class="codeComment">// when column is to the left, before it gets pinned</span>
+columnMoveAdd <span class="codeComment">// when adding a column</span>
+columnMoveHide <span class="codeComment">// when removing a column</span>
+columnMoveMove <span class="codeComment">// when moving a column</span>
+columnMoveLeft <span class="codeComment">// when moving and scrolling left</span>
+columnMoveRight <span class="codeComment">// when moving and scrolling right</span>
+columnMoveGroup <span class="codeComment">// when about to drop into group panel</span>
+columnMoveValue <span class="codeComment">// when about to drop into value panel</span>
+columnMovePivot <span class="codeComment">// when about to drop into pivot panel</span>
+dropNotAllowed <span class="codeComment">// when trying to drop column into group/value/pivot panel and column doesn't support it</span>
 
-    <span class="codeComment"></span>// column drop panels
-    rowGroupPanel <span class="codeComment">// beside where to drop columns for row group</span>
-    pivotPanel <span class="codeComment">// beside where to drop columns for pivot</span>
-    valuePanel <span class="codeComment">// beside where to drop columns for value</span>
-}
+<span class="codeComment">// column menu</span>
+menuPin <span class="codeComment">// beside the column pin option</span>
+menuValue <span class="codeComment">// beside the column value option</span>
+menuAddRowGroup <span class="codeComment">// beside the column row group option</span>
+menuRemoveRowGroup <span class="codeComment">// beside the column row group option</span>
+
+<span class="codeComment"></span>// column drop panels
+rowGroupPanel <span class="codeComment">// beside where to drop columns for row group</span>
+pivotPanel <span class="codeComment">// beside where to drop columns for pivot</span>
+valuePanel <span class="codeComment">// beside where to drop columns for value</span>
 </pre>
 
     <p>

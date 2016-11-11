@@ -94,10 +94,10 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         and should return the id for the data.
     </p>
 
-    <code><pre>gridOptions.getRowNodeId: function(item) {
-    // the id can be any string, as long as it's unique within your dataset
+    <pre>gridOptions.getRowNodeId: function(item) {
+    <span class="codeComment">// the id can be any string, as long as it's unique within your dataset</span>
     return item.id.toString();
-}</pre></code>
+}</pre>
 
     <p>
         Once you have <i>getRowNodeId</i> implemented, selection will persist across sorts and filters.
@@ -153,14 +153,13 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         undefined. You can check for this and provide your own loading effect.
     </p>
 
-    <code><pre>cellRenderer: function(params) {
+    <pre>cellRenderer: function(params) {
     if (params.value !== undefined) {
         return params.value;
     } else {
         return '&lt;img src="../images/loading.gif">'
     }
-}
-</pre></code>
+}</pre>
 
     <p>Refer to section <a href="../javascript-grid-cell-rendering/">Cell Rendering</a> for how to build
     cell renderers.</p>

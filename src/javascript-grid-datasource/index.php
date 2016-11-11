@@ -21,11 +21,11 @@ include '../documentation-main/documentation_header.php';
         The datasource is set either as a grid property or by calling setDatasource API method.
     </p>
 
-    <code><pre>// before grid initialised
+    <pre><span class="codeComment">// before grid initialised</span>
 gridOptions.datasource = myDatasource;
 
-// using the api
-gridOptions.api.setDatasource(myDatasource);</pre></code>
+<span class="codeComment">// using the api</span>
+gridOptions.api.setDatasource(myDatasource);</pre>
 
     <note>
         If you are getting the error: "TypeError: Cannot read property 'setDatasource' of undefined" - it's because
@@ -55,16 +55,16 @@ gridOptions.api.setDatasource(myDatasource);</pre></code>
         The datasource you provide should implement the following interface:
     </p>
 
-    <code><pre>/** Datasource used by both PaginationController and VirtualPageRowModel */
+    <pre><span class="codeComment">// Datasource used by both PaginationController and VirtualPageRowModel</span>
 interface IDatasource {
 
-    /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/
+    <span class="codeComment">// If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.</span>
     rowCount?: number;
 
-    /** Callback the grid calls that you implement to fetch rows from the server. See below for params.*/
+    <span class="codeComment">// Callback the grid calls that you implement to fetch rows from the server. See below for params.</span>
     getRows(params: IGetRowsParams): void;
 }
-</pre></code>
+</pre>
 
     <h4>Row Count</h4>
     <p>
@@ -82,30 +82,30 @@ interface IDatasource {
         params, which has the following interface:
     </p>
 
-    <code><pre>/** Params for the above IDatasource.getRows() */
+    <pre><span class="codeComment">// Params for the above IDatasource.getRows()</span>
 interface IGetRowsParams {
 
-    /** The first row index to get. */
+    <span class="codeComment">// The first row index to get.</span>
     startRow: number;
 
-    /** The first row index to NOT get. */
+    <span class="codeComment">// The first row index to NOT get.</span>
     endRow: number;
 
-    /** Callback to call for the result when successful. */
+    <span class="codeComment">// Callback to call for the result when successful.</span>
     successCallback(rowsThisPage: any[], lastRow?: number): void;
 
-    /** Callback to call for the result when successful. */
+    <span class="codeComment">// Callback to call for the result when successful.</span>
     failCallback(): void;
 
-    /** If doing server side sorting, contains the sort model */
+    <span class="codeComment">// If doing server side sorting, contains the sort model</span>
     sortModel: any,
 
-    /** If doing server side filtering, contains the filter model */
+    <span class="codeComment">// If doing server side filtering, contains the filter model</span>
     filterModel: any,
 
-    /** The grid context object */
+    <span class="codeComment">// The grid context object</span>
     context: any
-}</pre></code>
+}</pre>
 
     <p>
         <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if page

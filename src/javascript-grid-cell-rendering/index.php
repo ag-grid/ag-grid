@@ -45,25 +45,27 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <pre><code><span class="codeComment">// put the value in bold</span>
-        colDef.cellRenderer = function(params) {
-        return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
-        }
+colDef.cellRenderer = function(params) {
+    return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
+}
 
-        <span class="codeComment">// put a tooltip on the value</span>
-        colDef.cellRenderer = function(params) {
-        return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
-        }
+<span class="codeComment">// put a tooltip on the value</span>
+colDef.cellRenderer = function(params) {
+    return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
+}
 
-        <span class="codeComment">// create a DOM object </span>
-        colDef.cellRenderer = function(params) {
-        var eDiv = document.createElement('div');
-        eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
-        var eButton = eDiv.querySelectorAll('.btn-simple')[0];
-        var eButton.addEventListener('click', function() {
+<span class="codeComment">// create a DOM object </span>
+colDef.cellRenderer = function(params) {
+    var eDiv = document.createElement('div');
+    eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
+    var eButton = eDiv.querySelectorAll('.btn-simple')[0];
+
+    var eButton.addEventListener('click', function() {
         console.log('button was clicked!!');
-        });
-        return eDiv;
-        }</code></pre>
+    });
+
+    return eDiv;
+}</code></pre>
 
     <p>
         See further below for the set of parameters passed to the rendering function.
@@ -119,11 +121,7 @@ function MyCellRenderer () {}
 MyCellRenderer.prototype.init = function(params) {
     <span class="codeComment">// create the cell</span>
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML =
-    '&lt;span class="my-css-class">
-    &lt;button class="btn-simple">Push Me&lt;/button>
-    &lt;span class="my-value">&lt;/span>
-    &lt;/span>';
+    this.eGui.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;span class="my-value">&lt;/span>&lt;/span>';
 
     <span class="codeComment">// get references to the elements we want</span>
     this.eButton = this.eGui.querySelectorAll('.btn-simple')[0];
