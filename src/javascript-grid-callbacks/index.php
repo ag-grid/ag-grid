@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>processRowPostCreate(params)</th>
-            <td>Allows you to process rows after they are created. So do final adding of custom attributes etc.</td>
+            <td>Allows you to process rows after they are created. So you can do final adding of custom attributes etc.</td>
         </tr>
         <tr>
             <th>getRowNodeId(data)</th>
