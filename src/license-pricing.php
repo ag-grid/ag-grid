@@ -98,7 +98,7 @@ include 'includes/headerRow.php'; ?>
     </div>
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-9">
 
             <h2>
                 Choosing a License
@@ -109,6 +109,23 @@ include 'includes/headerRow.php'; ?>
                 ag-Grid-Enterprise comes with a commercial license, extra enterprise features, support and maintenance. If you want
                 to use ag-Grid-Enterprise, you must purchase an ag-Grid-Enterprise license.
             </p>
+        </div>
+        <div class="col-md-3">
+            <h2>
+                &nbsp;
+            </h2>
+            <div style="background-color: beige; border: 1px solid darkgrey; border-radius: 10px; padding: 10px;">
+                <table>
+                    <tr>
+                        <td style="vertical-align: top; padding-right: 10px; font-size: 20px;">
+                            <i class="fa fa-question-circle"></i>
+                        </td>
+                        <td>
+                            email <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry">accounts@ag-grid.com</a> for help with license
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -277,7 +294,9 @@ include 'includes/headerRow.php'; ?>
 
     <div class="row">
         <div class="col-md-12" style="text-align: center;">
-            For questions on licensing or ordering, please contact us using the form below.
+            <span style="background-color: beige; border: 1px solid darkgrey; border-radius: 10px; padding: 10px;">
+                For questions on licensing or ordering, please email <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry">accounts@ag-grid.com</a> <b>OR</b> complete the form below.
+            </span>
         </div>
     </div>
 

@@ -32,7 +32,7 @@
 -->
 
                         <h2>
-                            <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/index.php">
+                            <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/">
                                 <?php include 'images/download.svg'; ?>
                                 Download
                             </a>
@@ -58,21 +58,60 @@
 
         <?php include 'home/intro.php'; ?>
 
-        <?php include 'home/testimonials-1.php'; ?>
+        <?php include 'home/demo-1.php'; ?>
 
         <?php include 'home/intro2.php'; ?>
 
-        <?php include 'home/demo-1.php'; ?>
+        <section class="HomeSection HomeSection--alt HomeDemo">
 
-        <?php include 'home/themes-demo.php'; ?>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12" style="text-align: center; padding-bottom: 20px;">
+                        <h4>Support For Multiple JavaScript Frameworks</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1" style="text-align: center;">
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">
+                        <img src="images/angularjs_large.png"/>
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">
+                        <img src="images/angular2_large.png"/>
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">
+                        <img src="images/react_large.png"/>
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">
+                        <img src="images/webComponents_large.png"/>
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">
+                        <img src="images/javascript_large.png"/>
+                    </div>
+                    <div class="col-md-1" style="text-align: center;">
+                    </div>
+                </div>
+            </div>
 
-        <?php include 'home/testimonials-2.php'; ?>
+        </section>
+
+        <!--
+        < ? php include 'home/themes-demo.php'; ?>
+        -->
+
+        <?php include 'home/demo-3.php'; ?>
+
+        <?php include 'home/testimonials-1.php'; ?>
 
         <?php include 'home/demo-2.php'; ?>
 
+        <?php include 'home/testimonials-2.php'; ?>
+
         <?php include 'home/features.php'; ?>
 
-        <?php include 'home/free_vs_enterprise.php'; ?>
+        <!--
+        < ? php include 'home/free_vs_enterprise.php'; ?>
+        -->
 
         <?php $navKey = "home"; include './includes/footer.php'; ?>
 

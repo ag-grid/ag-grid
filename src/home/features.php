@@ -1,4 +1,4 @@
-<section class="HomeSection HomeBenefits HomeSection--alt">
+<section class="HomeSection HomeBenefits">
     <div class="container">
         <div class="row">
             <h3 class="text-center">Extensive Feature List</h3>

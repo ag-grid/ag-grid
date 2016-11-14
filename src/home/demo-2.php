@@ -1,4 +1,4 @@
-<section class="HomeSection HomeSection--alt HomeDemo hidden-xs">
+<!--<section class="HomeSection HomeSection--alt HomeDemo hidden-xs">
 
     <div class="container">
         <div class="row">
@@ -18,6 +18,7 @@
     </div>
 
 </section>
+-->
 
 <section class="HomeSection HomeDemo hidden-xs">
 

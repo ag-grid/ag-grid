@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 <!--include '../documentation-main/documentation_header.php';-->
 <div>
 
-    <h2>Getting ag-Grid</h2>
+    <h2>Getting Started</h2>
 
     <h3>Download ag-Grid Project</h3>
 

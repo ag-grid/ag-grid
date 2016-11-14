@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
         will all tie in with the Angular 2 ecosystem. This will make your Angular 2 coding easier.
     </p>
 
-    <note>
+<!--    <note>
         <p>
             When using Angular 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
             already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
@@ -30,9 +30,9 @@ include '../documentation-main/documentation_header.php';
     <note>ag-Gird v6.x adds many Angular 2 related improvements to the ag-Grid offering - this includes easier configuration,
         better renderer definition and cell editor support.
     </note>
-
-    <p>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
-        for feedback or issue reporting around this functionality.</p>
+-->
+    <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
+        for feedback or issue reporting around ag-Grid's support for Angular 2.</note>
 
     <h2>ag-Grid Angular 2 Features</h2>
 
@@ -355,14 +355,14 @@ private getCountryFilterParams():any {
         rendering etc) inside ag-Grid instead of creating Angular 2 counterparts.
     </p>
 
-    <note>
+<!--    <note>
         <p>
             We here at ag-Grid owe a debt of thanks to Neal Borelli @ Thermo Fisher Scientific who provided a fully
             working implementation for us to use as a basis for our initial Angular 2 "dynamic cell" offering.
             Neal's assistance was a big help in being able to get something out much faster than we would have otherwise
             - thanks Neal!
         </p>
-    </note>
+    </note>-->
 
     <h2>Known Issues</h2>
 
