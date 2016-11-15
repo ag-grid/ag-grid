@@ -168,7 +168,7 @@ suppressEnterprise: true,
 //headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
-    icons: {
+    icons_niall: {
         //menu: '<i class="fa fa-bars"/>',
         //columnVisible: '<i class="fa fa-eye"/>',
         //columnHidden: '<i class="fa fa-eye-slash"/>',
@@ -271,7 +271,7 @@ var firstColumn = {
             // we put checkbox on the name if we are not doing no grouping
             return params.columnApi.getRowGroupColumns().length === 0;
         },
-        icons: {
+        icons_niall: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
         }
@@ -313,7 +313,7 @@ var defaultCols = [
                 //pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {newRowsAction: 'keep'},
-                icons: {
+                icons_niall: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
@@ -339,7 +339,7 @@ var defaultCols = [
                     cellHeight: 20,
                     newRowsAction: 'keep'
                 },
-                icons: {
+                icons_niall: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
@@ -359,7 +359,7 @@ var defaultCols = [
         enablePivot: true,
         //pinned: 'right',
         // rowGroupIndex: 1,
-        icons: {
+        icons_niall: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
         }
@@ -389,7 +389,7 @@ var defaultCols = [
                 // colId: 'sf',
                 // valueGetter: '55',
                 // aggFunc: 'sum',
-                icons: {
+                icons_niall: {
                     sortAscending: '<i class="fa fa-sort-amount-asc"/>',
                     sortDescending: '<i class="fa fa-sort-amount-desc"/>'
                 }
@@ -420,7 +420,7 @@ var defaultCols = [
         // aggFunc: 'sum',
         enableValue: true,
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-        icons: {
+        icons_niall: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
             sortDescending: '<i class="fa fa-sort-amount-desc"/>'
         }
@@ -543,6 +543,7 @@ function createData() {
             clearInterval(intervalId);
             setTimeout(function () {
                 gridOptions.api.setColumnDefs(colDefs);
+                data = data.slice(0,10);
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
                 eMessageText.innerHTML = '';
