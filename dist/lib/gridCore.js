@@ -16,6 +16,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var HTMLElement = typeof HTMLElement === 'undefined' ? function(){} : HTMLElement;
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var paginationController_1 = require("./rowControllers/paginationController");
 var columnController_1 = require("./columnController/columnController");

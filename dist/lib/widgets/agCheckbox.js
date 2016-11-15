@@ -18,6 +18,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var HTMLElement = typeof HTMLElement === 'undefined' ? function(){} : HTMLElement;
 var component_1 = require("./component");
 var componentAnnotations_1 = require("./componentAnnotations");
 var utils_1 = require("../utils");
