@@ -9,7 +9,7 @@ import {FloatingRowModel} from "../rowControllers/floatingRowModel";
 import {RenderedRow} from "./renderedRow";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
-import {Events} from "../events";
+import {Events, ModelUpdatedEvent} from "../events";
 import {Constants} from "../constants";
 import {RenderedCell} from "./renderedCell";
 import {Bean, PreDestroy, Qualifier, Context, Autowired, PostConstruct, Optional} from "../context/context";
@@ -100,23 +100,24 @@ export class RowRenderer {
         this.setupDocumentFragments();
 
         var columnListener = this.onColumnEvent.bind(this);
-        var refreshViewListener = this.refreshView.bind(this);
+        var modelUpdatedListener = this.onModelUpdated.bind(this);
+        var floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
 
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
         
-        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, refreshViewListener);
-        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
+        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
+        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
 
         this.destroyFunctions.push( () => {
             this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
             this.eventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
 
-            this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, refreshViewListener);
-            this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
+            this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
+            this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
         });
 
-        this.refreshView();
+        this.refreshView(null, true);
     }
 
     public onColumnEvent(event: ColumnChangeEvent): void {
@@ -226,19 +227,27 @@ export class RowRenderer {
                     null,
                     ePinnedRightContainer,
                     null,
-                    node, rowIndex);
+                    node);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             })
         }
     }
 
-    public refreshView(refreshEvent?: any) {
+    private onFloatingRowDataChanged(): void {
+        this.refreshView(null, false);
+    }
+
+    private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
+        this.refreshView(refreshEvent.fromIndex, refreshEvent.newData);
+    }
+
+    public refreshView(refreshFromIndex: number, newData: boolean): void {
         this.logger.log('refreshView');
 
-        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
+        newData = true;
 
-        var refreshFromIndex: number = refreshEvent ? refreshEvent.fromIndex : null;
+        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
@@ -248,7 +257,7 @@ export class RowRenderer {
             this.ePinnedRightColsContainer.style.height = containerHeight + "px";
         }
 
-        this.refreshAllVirtualRows(refreshFromIndex);
+        this.refreshAllVirtualRows(refreshFromIndex, newData);
         this.refreshAllFloatingRows();
 
         this.restoreFocusedCell(focusedCell);
@@ -316,7 +325,7 @@ export class RowRenderer {
             }
         });
         // remove the rows
-        this.removeVirtualRow(indexesToRemove);
+        this.removeVirtualRows(indexesToRemove);
         // add draw them again
         this.drawVirtualRows();
 
@@ -350,7 +359,7 @@ export class RowRenderer {
             }
         });
         // remove the rows
-        this.removeVirtualRow(indexesToRemove);
+        this.removeVirtualRows(indexesToRemove);
         // add draw them again
         this.drawVirtualRows();
     }
@@ -360,16 +369,30 @@ export class RowRenderer {
         this.destroyFunctions.forEach(func => func());
 
         var rowsToRemove = Object.keys(this.renderedRows);
-        this.removeVirtualRow(rowsToRemove);
+        this.removeVirtualRows(rowsToRemove);
     }
 
-    private refreshAllVirtualRows(fromIndex?: any) {
-        // remove all current virtual rows, as they have old data
-        var rowsToRemove = Object.keys(this.renderedRows);
-        this.removeVirtualRow(rowsToRemove, fromIndex);
+    private refreshAllVirtualRows(fromIndex: number, newData: boolean) {
+        let rowsToRemove: string[];
+        let oldRowsByNodeId: {[key: string]: RenderedRow} = {};
 
-        // add in new rows
-        this.drawVirtualRows();
+        if (newData) {
+            rowsToRemove = Object.keys(this.renderedRows);
+        } else {
+            rowsToRemove = [];
+            _.iterateObject(this.renderedRows, (index: string, renderedRow: RenderedRow)=> {
+                var nodeId = renderedRow.getRowNode().id;
+                if (_.exists(nodeId)) {
+                    oldRowsByNodeId[nodeId] = renderedRow;
+                    delete this.renderedRows[index];
+                } else {
+                    rowsToRemove.push(index);
+                }
+            });
+        }
+
+        this.removeVirtualRows(rowsToRemove, fromIndex);
+        this.drawVirtualRows(oldRowsByNodeId);
     }
 
     // public - removes the group rows and then redraws them again
@@ -383,39 +406,30 @@ export class RowRenderer {
             }
         });
         // remove the rows
-        this.removeVirtualRow(rowsToRemove);
+        this.removeVirtualRows(rowsToRemove);
         // and draw them back again
         this.ensureRowsRendered();
     }
 
     // takes array of row indexes
-    private removeVirtualRow(rowsToRemove: any, fromIndex?: any) {
-        var that = this;
+    private removeVirtualRows(rowsToRemove: any[], fromIndex?: any) {
         // if no fromIndex then set to -1, which will refresh everything
         var realFromIndex = (typeof fromIndex === 'number') ? fromIndex : -1;
-        rowsToRemove.forEach(function (indexToRemove: any) {
+        rowsToRemove.forEach( indexToRemove => {
             if (indexToRemove >= realFromIndex) {
-                that.unbindVirtualRow(indexToRemove);
+                var renderedRow = this.renderedRows[indexToRemove];
+                renderedRow.destroy();
+                delete this.renderedRows[indexToRemove];
             }
         });
     }
 
-    private unbindVirtualRow(indexToRemove: any) {
-        var renderedRow = this.renderedRows[indexToRemove];
-        renderedRow.destroy();
-
-        var event = {node: renderedRow.getRowNode(), rowIndex: indexToRemove};
-        this.eventService.dispatchEvent(Events.EVENT_VIRTUAL_ROW_REMOVED, event);
-
-        delete this.renderedRows[indexToRemove];
-    }
-
-    public drawVirtualRows() {
+    public drawVirtualRows(oldRowsByNodeId?: {[key: string]: RenderedRow}) {
         this.workOutFirstAndLastRowsToRender();
-        this.ensureRowsRendered();
+        this.ensureRowsRendered(oldRowsByNodeId);
     }
 
-    public workOutFirstAndLastRowsToRender(): void {
+    private workOutFirstAndLastRowsToRender(): void {
 
         var newFirst: number;
         var newLast: number;
@@ -475,7 +489,7 @@ export class RowRenderer {
         return this.lastRenderedRow;
     }
 
-    private ensureRowsRendered() {
+    private ensureRowsRendered(oldRenderedRowsByNodeId?: {[key: string]: RenderedRow}) {
 
         // var timer = new Timer();
 
@@ -492,14 +506,21 @@ export class RowRenderer {
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getRow(rowIndex);
             if (node) {
-                this.insertRow(node, rowIndex);
+                let renderedRow = this.getOrCreateRenderedRow(node, rowIndex, oldRenderedRowsByNodeId);
+                this.renderedRows[rowIndex] = renderedRow;
             }
         }
 
         // timer.print('creating template');
 
-        // at this point, everything in our 'rowsToRemove' . . .
-        this.removeVirtualRow(rowsToRemove);
+        // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
+        this.removeVirtualRows(rowsToRemove);
+
+        // and everything in our oldRenderedRowsByNodeId is an old row that is no longer used
+        _.iterateObject(oldRenderedRowsByNodeId, (nodeId: string, renderedRow: RenderedRow) => {
+            renderedRow.destroy();
+            delete oldRenderedRowsByNodeId[nodeId];
+        });
 
         // timer.print('removing');
 
@@ -520,20 +541,29 @@ export class RowRenderer {
         // timer.print('total');
     }
 
-    private insertRow(node: any, rowIndex: any) {
-        var columns = this.columnController.getAllDisplayedColumns();
-        // if no cols, don't draw row
-        if (_.missingOrEmpty(columns)) { return; }
+    private getOrCreateRenderedRow(node: any, rowIndex: any,
+                                   oldRowsByNodeId: {[key: string]: RenderedRow}): RenderedRow {
 
-        var renderedRow = new RenderedRow(this.$scope,
-            this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer,
-            this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF,
-            this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF,
-            node, rowIndex);
+        let renderedRow: RenderedRow;
 
-        this.context.wireBean(renderedRow);
+        if (_.exists(oldRowsByNodeId) && oldRowsByNodeId[node.id]) {
 
-        this.renderedRows[rowIndex] = renderedRow;
+            renderedRow = oldRowsByNodeId[node.id];
+            delete oldRowsByNodeId[node.id];
+
+        } else {
+
+            renderedRow = new RenderedRow(this.$scope,
+                this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer,
+                this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF,
+                this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF,
+                node);
+
+            this.context.wireBean(renderedRow);
+
+        }
+
+        return renderedRow;
     }
 
     public getRenderedNodes() {

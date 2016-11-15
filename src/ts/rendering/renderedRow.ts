@@ -41,7 +41,6 @@ export class RenderedRow {
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
     private rowNode: RowNode;
-    private rowIndex: number;
 
     private fullWidthRow: boolean;
     private fullWidthCellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
@@ -74,8 +73,7 @@ export class RenderedRow {
                 ePinnedLeftContainerDF: DocumentFragment,
                 ePinnedRightContainer: HTMLElement,
                 ePinnedRightContainerDF: DocumentFragment,
-                node: RowNode,
-                rowIndex: number) {
+                node: RowNode) {
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
@@ -86,7 +84,6 @@ export class RenderedRow {
         this.ePinnedRightContainer = ePinnedRightContainer;
         this.ePinnedRightContainerDF = ePinnedRightContainerDF;
 
-        this.rowIndex = rowIndex;
         this.rowNode = node;
     }
 
@@ -193,8 +190,10 @@ export class RenderedRow {
         this.addClassesFromRowClass();
         this.addClassesFromRowClassFunc();
 
+        this.addRowIndexes();
         this.addRowIds();
-        this.setTopAndHeightCss();
+        this.setTop();
+        this.setHeight();
 
         this.addRowSelectedListener();
         this.addCellFocusedListener();
@@ -208,7 +207,7 @@ export class RenderedRow {
             ePinnedRightRow: this.ePinnedRightRow,
             node: this.rowNode,
             api: this.gridOptionsWrapper.getApi(),
-            rowIndex: this.rowIndex,
+            rowIndex: this.rowNode.rowIndex,
             addRenderedRowListener: this.addEventListener.bind(this),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
@@ -390,7 +389,7 @@ export class RenderedRow {
             return this.renderedCells[colId];
         } else {
             var renderedCell = new RenderedCell(column,
-                this.rowNode, this.rowIndex, this.scope, this);
+                this.rowNode, this.rowNode.rowIndex, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             this.angular1Compile(renderedCell.getGui());
@@ -465,7 +464,7 @@ export class RenderedRow {
     private addCellFocusedListener(): void {
         var rowFocusedLastTime: boolean = null;
         var rowFocusedListener = () => {
-            var rowFocused = this.focusedCellController.isRowFocused(this.rowIndex, this.rowNode.floating);
+            var rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);
             if (rowFocused !== rowFocusedLastTime) {
                 this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
                 this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
@@ -507,26 +506,57 @@ export class RenderedRow {
         });
     }
 
-    private setTopAndHeightCss(): void {
-        // if showing scrolls, position on the container
-        if (!this.gridOptionsWrapper.isForPrint()) {
+    private setTop(): void {
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
+
+        let setTopListener = () => {
             var topPx = this.rowNode.rowTop + "px";
             this.eAllRowContainers.forEach( row => row.style.top = topPx);
-        }
-        var heightPx = this.rowNode.rowHeight + 'px';
-        this.eAllRowContainers.forEach( row => row.style.height = heightPx);
+        };
+
+        this.rowNode.addEventListener(RowNode.EVENT_TOP_CHANGED, setTopListener);
+        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_TOP_CHANGED, setTopListener) );
+
+        setTopListener();
+    }
+
+    private setHeight(): void {
+        let setHeightListener = () => {
+            var heightPx = this.rowNode.rowHeight + 'px';
+            this.eAllRowContainers.forEach( row => row.style.height = heightPx);
+        };
+
+        this.rowNode.addEventListener(RowNode.EVENT_HEIGHT_CHANGED, setHeightListener);
+        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_HEIGHT_CHANGED, setHeightListener) );
+
+        setHeightListener();
+    }
+
+    private addRowIndexes(): void {
+        var rowIndexListener = () => {
+            var rowStr = this.rowNode.rowIndex.toString();
+            if (this.rowNode.floating===Constants.FLOATING_BOTTOM) {
+                rowStr = 'fb-' + rowStr;
+            } else if (this.rowNode.floating===Constants.FLOATING_TOP) {
+                rowStr = 'ft-' + rowStr;
+            }
+            this.eAllRowContainers.forEach( eRow => {
+                eRow.setAttribute('row', rowStr);
+
+                let rowIsEven = this.rowNode.rowIndex % 2 === 0;
+                _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
+                _.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
+            } );
+        };
+
+        this.rowNode.addEventListener(RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener);
+        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener));
+
+        rowIndexListener();
     }
 
     // adds in row and row-id attributes to the row
     private addRowIds(): void {
-        var rowStr = this.rowIndex.toString();
-        if (this.rowNode.floating===Constants.FLOATING_BOTTOM) {
-            rowStr = 'fb-' + rowStr;
-        } else if (this.rowNode.floating===Constants.FLOATING_TOP) {
-            rowStr = 'ft-' + rowStr;
-        }
-        this.eAllRowContainers.forEach( row => row.setAttribute('row', rowStr) );
-
         if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
             var businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
             if (typeof businessKey === 'string' || typeof businessKey === 'number') {
@@ -568,6 +598,9 @@ export class RenderedRow {
         if (this.renderedRowEventService) {
             this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
         }
+
+        var event = {node: this.rowNode, rowIndex: this.rowNode.rowIndex};
+        this.mainEventService.dispatchEvent(Events.EVENT_VIRTUAL_ROW_REMOVED, event);
     }
 
     private destroyScope(): void {
@@ -611,7 +644,7 @@ export class RenderedRow {
             data: this.rowNode.data,
             node: this.rowNode,
             $scope: this.scope,
-            rowIndex: this.rowIndex,
+            rowIndex: this.rowNode.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
@@ -697,7 +730,7 @@ export class RenderedRow {
         var params = {
             node: this.rowNode,
             data: this.rowNode.data,
-            rowIndex: this.rowIndex,
+            rowIndex: this.rowNode.rowIndex,
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridOptionsWrapper.getApi()
@@ -809,7 +842,7 @@ export class RenderedRow {
             var params = {
                 node: this.rowNode,
                 data: this.rowNode.data,
-                rowIndex: this.rowIndex,
+                rowIndex: this.rowNode.rowIndex,
                 context: this.gridOptionsWrapper.getContext(),
                 api: this.gridOptionsWrapper.getApi()
             };
@@ -835,8 +868,6 @@ export class RenderedRow {
 
         classes.push('ag-row');
         classes.push('ag-row-no-focus');
-
-        classes.push(this.rowIndex % 2 == 0 ? 'ag-row-even' : 'ag-row-odd');
 
         if (this.rowNode.isSelected()) {
             classes.push('ag-row-selected');

@@ -176,7 +176,7 @@ export class GridApi {
     }
 
     public refreshView() {
-        this.rowRenderer.refreshView();
+        this.rowRenderer.refreshView(null, true);
     }
 
     public setFunctionsReadOnly(readOnly: boolean) {

@@ -86,3 +86,13 @@ export class Events {
 
     public static EVENT_BODY_SCROLL = 'bodyScroll';
 }
+
+export interface ModelUpdatedEvent {
+    /** If row is expanded, then only rows after the expanded row need to be updated.
+     * The fromIndes is the first row that needs updating. */
+    fromIndex: number;
+    /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
+     * it's the same data but sorted or filtered, in which case this is true, and rows
+     * can animate around (eg rowNode id 24 is the same row node as last time). */
+    newData: boolean;
+}

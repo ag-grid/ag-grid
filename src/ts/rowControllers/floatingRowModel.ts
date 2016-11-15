@@ -71,9 +71,9 @@ export class FloatingRowModel {
                 this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.floating = isTop ? Constants.FLOATING_TOP : Constants.FLOATING_BOTTOM;
-                rowNode.rowTop = nextRowTop;
-                rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-
+                rowNode.setRowTop(nextRowTop);
+                rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+                rowNode.setRowIndex(rowNodes.length);
                 nextRowTop += rowNode.rowHeight;
                 rowNodes.push(rowNode);
             });

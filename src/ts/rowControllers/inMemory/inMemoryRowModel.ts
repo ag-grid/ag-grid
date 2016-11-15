@@ -5,7 +5,7 @@ import {ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
-import {Events} from "../../events";
+import {Events, ModelUpdatedEvent} from "../../events";
 import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
@@ -116,7 +116,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, {fromIndex: fromIndex});
+        let event: ModelUpdatedEvent = {fromIndex: fromIndex, newData: false};
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
 
         if (this.$scope) {
             setTimeout( () => {

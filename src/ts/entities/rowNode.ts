@@ -18,6 +18,9 @@ export class RowNode {
     public static EVENT_CELL_CHANGED = 'cellChanged';
     public static EVENT_MOUSE_ENTER = 'mouseEnter';
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
+    public static EVENT_HEIGHT_CHANGED = 'heightChanged';
+    public static EVENT_TOP_CHANGED = 'topChanged';
+    public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
 
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -49,6 +52,8 @@ export class RowNode {
     public lastChild: boolean;
     /** The index of this node in the group */
     public childIndex: number;
+    /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
+    public rowIndex: number;
     /** Either 'top' or 'bottom' if floating, otherwise undefined or null */
     public floating: string;
     /** If using quick filter, stores a string representation of the row for searching against */
@@ -125,6 +130,27 @@ export class RowNode {
             }
         } else {
             this.id = id;
+        }
+    }
+
+    public setRowTop(rowTop: number): void {
+        this.rowTop = rowTop;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);
+        }
+    }
+
+    public setRowHeight(rowHeight: number): void {
+        this.rowHeight = rowHeight;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_HEIGHT_CHANGED);
+        }
+    }
+
+    public setRowIndex(rowIndex: number): void {
+        this.rowIndex = rowIndex;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_ROW_INDEX_CHANGED);
         }
     }
 
