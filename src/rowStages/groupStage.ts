@@ -10,6 +10,7 @@ import {
     EventService,
     RowNode,
     Column,
+    NumberSequence,
     Utils
 } from "ag-grid/main";
 
@@ -23,6 +24,12 @@ export class GroupStage implements IRowNodeStage {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
+    // we use a sequence variable so that each time we do a grouping, we don't
+    // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
+    // when it tries to animate between rows. we set to -1 as others row id 0 will be shared
+    // with the other rows.
+    private groupIdSequence = new NumberSequence(1);
+
     public execute(rowNode: RowNode): void {
 
         var groupedCols = this.columnController.getRowGroupColumns();
@@ -35,20 +42,19 @@ export class GroupStage implements IRowNodeStage {
         }
 
         // putting this in a wrapper, so it's pass by reference
-        var groupId = {value: -1};
-        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault, groupId);
+        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault);
     }
 
-    private recursivelyGroup(rowNode: RowNode, groupColumns: Column[], level: number, expandByDefault: any, groupId: any): void {
+    private recursivelyGroup(rowNode: RowNode, groupColumns: Column[], level: number, expandByDefault: any): void {
 
         var groupingThisLevel = level < groupColumns.length;
         rowNode.leafGroup = level === groupColumns.length;
 
         if (groupingThisLevel) {
             var groupColumn = groupColumns[level];
-            this.setChildrenAfterGroup(rowNode, groupColumn, groupId, expandByDefault, level);
+            this.setChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level);
             rowNode.childrenAfterGroup.forEach( child => {
-                this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, groupId);
+                this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault);
             });
         } else {
             rowNode.childrenAfterGroup = rowNode.allLeafChildren;
@@ -60,7 +66,7 @@ export class GroupStage implements IRowNodeStage {
 
     }
 
-    private setChildrenAfterGroup(rowNode: RowNode, groupColumn: Column, groupId: any, expandByDefault: any, level: number): void {
+    private setChildrenAfterGroup(rowNode: RowNode, groupColumn: Column, expandByDefault: any, level: number): void {
 
         rowNode.childrenAfterGroup = [];
         rowNode.childrenMapped = {};
@@ -70,7 +76,7 @@ export class GroupStage implements IRowNodeStage {
 
             var groupForChild = <RowNode> rowNode.childrenMapped[groupKey];
             if (!groupForChild) {
-                groupForChild = this.createGroup(groupColumn, groupKey, rowNode, groupId, expandByDefault, level);
+                groupForChild = this.createGroup(groupColumn, groupKey, rowNode, expandByDefault, level);
                 rowNode.childrenMapped[groupKey] = groupForChild;
                 rowNode.childrenAfterGroup.push(groupForChild);
             }
@@ -93,20 +99,21 @@ export class GroupStage implements IRowNodeStage {
         return result;
     }
 
-    private createGroup(groupColumn: Column, groupKey: string, parent: RowNode, groupId: any, expandByDefault: any, level: number): RowNode {
+    private createGroup(groupColumn: Column, groupKey: string, parent: RowNode, expandByDefault: any, level: number): RowNode {
         var nextGroup = new RowNode();
         this.context.wireBean(nextGroup);
 
         nextGroup.group = true;
         nextGroup.field = groupColumn.getColDef().field;
-        nextGroup.id = groupId.value.toString();
+        // we use negative number for the ids of the groups, this makes sure we don't clash with the
+        // id's of the leaf nodes.
+        nextGroup.id = (this.groupIdSequence.next()*-1).toString();
+        console.log(`used id ${nextGroup.id}`);
         nextGroup.key = groupKey;
         nextGroup.expanded = this.isExpanded(expandByDefault, level);
         nextGroup.allLeafChildren = [];
         nextGroup.allChildrenCount = 0;
         nextGroup.level = level;
-
-        groupId.value--;
 
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         nextGroup.parent = includeParents ? parent : null;

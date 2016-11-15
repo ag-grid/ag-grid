@@ -197,8 +197,9 @@ export class ViewportRowModel implements IRowModel {
     private createBlankRowNode(rowIndex: number): RowNode {
         let rowNode = new RowNode();
         this.context.wireBean(rowNode);
-        rowNode.rowHeight = this.rowHeight;
-        rowNode.rowTop = this.rowHeight * rowIndex;
+        rowNode.setRowHeight(this.rowHeight);
+        rowNode.setRowTop(this.rowHeight * rowIndex);
+        rowNode.setRowIndex(rowIndex);
         return rowNode;
     }
 
