@@ -245,8 +245,6 @@ export class RowRenderer {
     public refreshView(refreshFromIndex: number, newData: boolean): void {
         this.logger.log('refreshView');
 
-        newData = true;
-
         var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (!this.gridOptionsWrapper.isForPrint()) {
@@ -524,11 +522,16 @@ export class RowRenderer {
 
         // timer.print('removing');
 
+        // we prepend rather than append so that new rows appear under current rows. this way the new
+        // rows are not over the current rows which will get animation as they slid to new position
         if (this.eBodyContainerDF) {
-            this.eBodyContainer.appendChild(this.eBodyContainerDF);
+            _.prependDC(this.eBodyContainer, this.eBodyContainerDF);
+            // this.eBodyContainer.appendChild(this.eBodyContainerDF);
             if (!this.gridOptionsWrapper.isForPrint()) {
-                this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
-                this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
+                _.prependDC(this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF);
+                _.prependDC(this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF);
+                // this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
+                // this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
             }
         }
 

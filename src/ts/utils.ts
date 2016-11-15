@@ -512,6 +512,14 @@ export class Utils {
         }
     }
 
+    static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void {
+        if (this.exists(parent.firstChild)) {
+            parent.insertBefore(documentFragment, parent.firstChild);
+        } else {
+            parent.appendChild(documentFragment);
+        }
+    }
+
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
@@ -858,11 +866,17 @@ export class Utils {
 
 export class NumberSequence {
 
-    private nextValue = 0;
+    private nextValue: number;
+    private step: number;
+
+    constructor(initValue = 0, step = 1) {
+        this.nextValue = initValue;
+        this.step = step;
+    }
 
     public next() : number {
         var valToReturn = this.nextValue;
-        this.nextValue++;
+        this.nextValue += this.step;
         return valToReturn;
     }
 }
