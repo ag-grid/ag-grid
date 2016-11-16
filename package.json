@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "6.3.0",
+  "version": "7.0.0-beta.1",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -25,19 +25,19 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "@angular/common": "~2.1.1",
-    "@angular/compiler": "~2.1.1",
-    "@angular/compiler-cli": "^2.1.2",
-    "@angular/core": "~2.1.1",
-    "@angular/forms": "~2.1.1",
-    "@angular/http": "~2.1.1",
-    "@angular/platform-browser": "~2.1.1",
-    "@angular/platform-browser-dynamic": "~2.1.1",
-    "@angular/platform-server": "^2.1.2",
-    "@angular/router": "~3.1.1",
-    "@angular/upgrade": "~2.1.1",
+    "@angular/common": "~2.2.0",
+    "@angular/compiler": "~2.2.0",
+    "@angular/compiler-cli": "~2.2.0",
+    "@angular/core": "~2.2.0",
+    "@angular/forms": "~2.2.0",
+    "@angular/http": "~2.2.0",
+    "@angular/platform-browser": "~2.2.0",
+    "@angular/platform-browser-dynamic": "~2.2.0",
+    "@angular/platform-server": "~2.2.0",
+    "@angular/router": "~3.2.0",
+    "@angular/upgrade": "~2.2.0",
     "@types/core-js": "^0.9.34",
-    "angular-in-memory-web-api": "~0.1.13",
+    "angular-in-memory-web-api": "~0.1.15",
     "core-js": "^2.4.1",
     "gulp": "^3.9.1",
     "gulp-header": "1.7.0",
@@ -50,7 +50,7 @@
     "zone.js": "^0.6.26"
   },
   "peerDependencies": {
-    "ag-grid": "6.3.x"
+    "ag-grid": "6.4.x"
   },
   "dependencies": {}
 }
