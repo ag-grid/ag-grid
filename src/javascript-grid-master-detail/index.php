@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         <ul>
         <li>is not impacted by horizontal scrolling.</li>
         <li>is the width of the grid, regardless of what columns are present.</li>
-        <li>in not impacted by pinned sections of the grid, will span left and right pinned areas regardless.</li>
+        <li>is not impacted by pinned sections of the grid, will span left and right pinned areas regardless.</li>
         <li>does not participate in the navigation, rangeSelection (ag-Grid Enterprise) or contextMenu (ag-Grid Enterprise)
             of the main grid.</li>
     </ul>
