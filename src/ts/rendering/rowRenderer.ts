@@ -516,7 +516,7 @@ export class RowRenderer {
 
         // and everything in our oldRenderedRowsByNodeId is an old row that is no longer used
         _.iterateObject(oldRenderedRowsByNodeId, (nodeId: string, renderedRow: RenderedRow) => {
-            renderedRow.destroy();
+            renderedRow.destroy(true);
             delete oldRenderedRowsByNodeId[nodeId];
         });
 
@@ -526,12 +526,9 @@ export class RowRenderer {
         // rows are not over the current rows which will get animation as they slid to new position
         if (this.eBodyContainerDF) {
             _.prependDC(this.eBodyContainer, this.eBodyContainerDF);
-            // this.eBodyContainer.appendChild(this.eBodyContainerDF);
             if (!this.gridOptionsWrapper.isForPrint()) {
                 _.prependDC(this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF);
                 _.prependDC(this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF);
-                // this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
-                // this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
             }
         }
 

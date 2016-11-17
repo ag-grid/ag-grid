@@ -31,10 +31,33 @@ export class FlattenStage implements IRowNodeStage {
         var showRootNode = pivotMode && rootNode.leafGroup;
         var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
+        // set all row tops to null, then set row tops on all visible rows. if we don't
+        // do this, then the algorithm below only sets row tops, old row tops from old rows
+        // will still lie around
+        this.resetRowTops(rootNode);
+
         this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, pivotMode);
 
         return result;
     }
+
+    private resetRowTops(rowNode: RowNode): void {
+        rowNode.setRowTop(null);
+        if (rowNode.group && rowNode.childrenAfterGroup) {
+            for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
+                this.resetRowTops(rowNode.childrenAfterGroup[i])
+            }
+        }
+    }
+
+    // private recursivelyRemoveRowTop(rowNodes: RowNode[]) {
+    //     for (var i = 0; i < rowNodes.length; i++) {
+    //         var rowNode = rowNodes[i];
+    //         if (rowNode.group) {
+    //             this.recursivelyRemoveRowTop(rowNode.childrenAfterFilter);
+    //         }
+    //     }
+    // }
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],
                                           nextRowTop: NumberWrapper, reduce: boolean) {
@@ -51,13 +74,17 @@ export class FlattenStage implements IRowNodeStage {
             if (!skipGroupNode) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
             }
-            if (rowNode.group && rowNode.expanded) {
-                this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
+            if (rowNode.group) {
+                if (rowNode.expanded) {
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
 
-                // put a footer in if user is looking for it
-                if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-                    var footerNode = this.createFooterNode(rowNode);
-                    this.addRowNodeToRowsToDisplay(footerNode, result, nextRowTop);
+                    // put a footer in if user is looking for it
+                    if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+                        var footerNode = this.createFooterNode(rowNode);
+                        this.addRowNodeToRowsToDisplay(footerNode, result, nextRowTop);
+                    }
+                // } else {
+                //     this.recursivelyRemoveRowTop(rowNode.childrenAfterFilter);
                 }
             }
             if (rowNode.canFlower && rowNode.expanded) {

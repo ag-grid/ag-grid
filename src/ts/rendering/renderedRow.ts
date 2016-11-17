@@ -57,6 +57,8 @@ export class RenderedRow {
     private ePinnedRightContainerDF: DocumentFragment;
 
     private destroyFunctions: Function[] = [];
+    private delayedDestroyFunctions: Function[] = [];
+    // private putToBackFunctions: Function[] = [];
 
     private renderedRowEventService: EventService;
 
@@ -510,8 +512,12 @@ export class RenderedRow {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         let setTopListener = () => {
-            var topPx = this.rowNode.rowTop + "px";
-            this.eAllRowContainers.forEach( row => row.style.top = topPx);
+            // need to make sure rowTop is not null, as this can happen if the node was once
+            // visible (ie parent group was expanded) but is now not visible
+            if (_.exists(this.rowNode.rowTop)) {
+                var topPx = this.rowNode.rowTop + "px";
+                this.eAllRowContainers.forEach( row => row.style.top = topPx);
+            }
         };
 
         this.rowNode.addEventListener(RowNode.EVENT_TOP_CHANGED, setTopListener);
@@ -587,13 +593,21 @@ export class RenderedRow {
         }
     }
 
-    public destroy(): void {
+    public destroy(delayRemoval = false): void {
 
         this.destroyScope();
         this.destroyFullWidthComponent();
         this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
 
         this.destroyFunctions.forEach( func => func() );
+
+        var executeDelayedDestroyFunctions = () => this.delayedDestroyFunctions.forEach( func => func() );
+        if (delayRemoval) {
+            setTimeout(executeDelayedDestroyFunctions, 2000);
+            // this.putToBackFunctions.forEach( func => func() );
+        } else {
+            executeDelayedDestroyFunctions();
+        }
 
         if (this.renderedRowEventService) {
             this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
@@ -755,9 +769,12 @@ export class RenderedRow {
 
         this.eAllRowContainers.push(eRow);
 
-        this.destroyFunctions.push( ()=> {
+        this.delayedDestroyFunctions.push( ()=> {
             eParent.removeChild(eRow);
         });
+        // this.putToBackFunctions.push( ()=> {
+        //     _.prepend(eParent, eRow);
+        // });
 
         return eRow;
     }

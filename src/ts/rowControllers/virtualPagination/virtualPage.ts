@@ -126,7 +126,8 @@ export class VirtualPage implements IEventEmitter {
     private createBlankRowNode(rowIndex: number): RowNode {
         let rowNode = new RowNode();
         this.context.wireBean(rowNode);
-        rowNode.rowHeight = this.cacheParams.rowHeight;
+        rowNode.setRowHeight(this.cacheParams.rowHeight);
+        rowNode.setRowIndex(rowIndex);
         this.setTopOnRowNode(rowNode, rowIndex);
         return rowNode;
     }

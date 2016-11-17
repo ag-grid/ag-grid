@@ -116,7 +116,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
-        let event: ModelUpdatedEvent = {fromIndex: fromIndex, newData: false};
+        let event: ModelUpdatedEvent = {fromIndex: fromIndex, newData: true};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
 
         if (this.$scope) {

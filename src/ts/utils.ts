@@ -261,6 +261,10 @@ export class Utils {
         return this.missing(value) || value.length === 0;
     }
 
+    static missingOrEmptyObject(value: any): boolean {
+        return this.missing(value) || Object.keys(value).length === 0;
+    }
+
     static exists(value: any): boolean {
         if (value===null || value===undefined || value==='') {
             return false;
@@ -519,6 +523,14 @@ export class Utils {
             parent.appendChild(documentFragment);
         }
     }
+
+    // static prepend(parent: HTMLElement, child: HTMLElement): void {
+    //     if (this.exists(parent.firstChild)) {
+    //         parent.insertBefore(child, parent.firstChild);
+    //     } else {
+    //         parent.appendChild(child);
+    //     }
+    // }
 
     /**
      * If icon provided, use this (either a string, or a function callback).
