@@ -15,6 +15,15 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">16th November 2016</div>
+        <div class="news-header">ag-grid-ng2 7.0.0-alpha Released</div>
+        <div style="padding-top: 10px;">
+            ag-grid-ng2 7.0.0-alpha released with support for AOT together with Angular 2 Components. This is a breaking change - please take a look and try it out.<br/>
+            See <a href="/angular-2-beta-release">ag-grid-ng2 7.0.0-alpha</a> for more information.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">11th November 2016</div>
         <div class="news-header">ag-Grid 6.4.x Released</div>
         <div style="padding-top: 10px;">
