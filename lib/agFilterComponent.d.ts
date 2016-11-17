@@ -1,4 +1,4 @@
-// ag-grid-aurelia v6.2.0
+// ag-grid-aurelia v7.0.0
 import { IFilterParams, IDoesFilterPassParams, IAfterFilterGuiAttachedParams } from 'ag-grid/main';
 import { AgFrameworkComponent } from "./agFrameworkComponent";
 export interface AgFilterComponent extends AgFrameworkComponent<IFilterParams> {

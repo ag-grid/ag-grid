@@ -1,4 +1,4 @@
-// ag-grid-aurelia v6.2.0
+// ag-grid-aurelia v7.0.0
 import { AgFrameworkComponent } from "./agFrameworkComponent";
 export interface AgRendererComponent extends AgFrameworkComponent<any> {
     agInit(params: any): void;

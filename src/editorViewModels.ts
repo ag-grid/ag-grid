@@ -2,7 +2,7 @@
  * Implements all the methods of ICellEditor except for Init
  */
 export interface IAureliaEditorViewModel {
-    params:any;
+    params: any;
 
 
     // Gets called once after GUI is attached to DOM.
@@ -44,14 +44,13 @@ export interface IAureliaEditorViewModel {
 /**
  * A base editor component for inline editing
  */
-export abstract class BaseAureliaEditor implements IAureliaEditorViewModel{
+export abstract class BaseAureliaEditor implements IAureliaEditorViewModel {
     /**
      * populated by ag-grid
      */
     params: any;
 
     constructor() {
-
     }
 
     getValue(): any {
@@ -62,6 +61,7 @@ export abstract class BaseAureliaEditor implements IAureliaEditorViewModel{
         return false;
     }
 
-
+    // here to satisfy typescript
+    abstract getGui(): any;
 }
 

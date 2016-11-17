@@ -1,4 +1,4 @@
-// ag-grid-aurelia v6.2.0
+// ag-grid-aurelia v7.0.0
 /**
  * Implements all the methods of ICellEditor except for Init
  */
@@ -28,4 +28,5 @@ export declare abstract class BaseAureliaEditor implements IAureliaEditorViewMod
     constructor();
     getValue(): any;
     isPopup(): boolean;
+    abstract getGui(): any;
 }

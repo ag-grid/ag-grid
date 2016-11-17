@@ -2,16 +2,17 @@ import {autoinject, ViewCompiler, Container, transient, View, ViewFactory} from 
 
 import {ICellRenderer,
     ICellEditor,
-    MethodNotImplementedException,
-    RowNode,
-    IDoesFilterPassParams,
-    IFilter,
-    IFilterParams,
-    IAfterFilterGuiAttachedParams}   from 'ag-grid/main';
+    // MethodNotImplementedException,
+    // RowNode,
+    // IDoesFilterPassParams,
+    // IFilter,
+    // IFilterParams,
+    // IAfterFilterGuiAttachedParams
+}   from 'ag-grid/main';
 
 
-import {AgFrameworkComponent} from "./agFrameworkComponent";
-import {AgFilterComponent} from "./agFilterComponent";
+// import {AgFrameworkComponent} from "./agFrameworkComponent";
+// import {AgFilterComponent} from "./agFilterComponent";
 import {IAureliaEditorViewModel} from './editorViewModels';
 
 @autoinject()
@@ -144,59 +145,59 @@ export class AureliaComponentFactory {
 
 
 
-    private adaptComponentToFilter(componentType:{ new(...args:any[]): AgFilterComponent; },
-                                   viewContainerRef:Container,
-                                   compiler:ViewCompiler,
-                                   name:string,
-                                   moduleImports:any[],
-                                   childDependencies:any[]):{new(): IFilter} {
-
-        let that = this;
-        class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilter {
-            init(params:IFilterParams):void {
-                super.init(params);
-                this._componentRef.changeDetectorRef.detectChanges();
-            }
-
-            isFilterActive():boolean {
-                return this._agAwareComponent.isFilterActive();
-            }
-
-            doesFilterPass(params:IDoesFilterPassParams):boolean {
-                return this._agAwareComponent.doesFilterPass(params);
-            }
-
-            getModel():any {
-                return this._agAwareComponent.getModel();
-            }
-
-            setModel(model:any):void {
-                this._agAwareComponent.setModel(model);
-            }
-
-            afterGuiAttached(params:IAfterFilterGuiAttachedParams):void {
-                if (this._agAwareComponent.afterGuiAttached) {
-                    this._agAwareComponent.afterGuiAttached(params);
-                }
-            }
-
-            getFrameworkComponentInstance():any {
-                return this._frameworkComponentInstance;
-            }
-
-            protected createComponent():ComponentRef<AgFilterComponent> {
-                return that.createComponent(componentType,
-                    viewContainerRef,
-                    compiler,
-                    name,
-                    moduleImports,
-                    childDependencies);
-            }
-
-        }
-
-        return Filter;
-    }
+    // private adaptComponentToFilter(componentType:{ new(...args:any[]): AgFilterComponent; },
+    //                                viewContainerRef:Container,
+    //                                compiler:ViewCompiler,
+    //                                name:string,
+    //                                moduleImports:any[],
+    //                                childDependencies:any[]):{new(): IFilter} {
+    //
+    //     let that = this;
+    //     class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilter {
+    //         init(params:IFilterParams):void {
+    //             super.init(params);
+    //             this._componentRef.changeDetectorRef.detectChanges();
+    //         }
+    //
+    //         isFilterActive():boolean {
+    //             return this._agAwareComponent.isFilterActive();
+    //         }
+    //
+    //         doesFilterPass(params:IDoesFilterPassParams):boolean {
+    //             return this._agAwareComponent.doesFilterPass(params);
+    //         }
+    //
+    //         getModel():any {
+    //             return this._agAwareComponent.getModel();
+    //         }
+    //
+    //         setModel(model:any):void {
+    //             this._agAwareComponent.setModel(model);
+    //         }
+    //
+    //         afterGuiAttached(params:IAfterFilterGuiAttachedParams):void {
+    //             if (this._agAwareComponent.afterGuiAttached) {
+    //                 this._agAwareComponent.afterGuiAttached(params);
+    //             }
+    //         }
+    //
+    //         getFrameworkComponentInstance():any {
+    //             return this._frameworkComponentInstance;
+    //         }
+    //
+    //         protected createComponent():ComponentRef<AgFilterComponent> {
+    //             return that.createComponent(componentType,
+    //                 viewContainerRef,
+    //                 compiler,
+    //                 name,
+    //                 moduleImports,
+    //                 childDependencies);
+    //         }
+    //
+    //     }
+    //
+    //     return Filter;
+    // }
 
 
     // public createComponent<T>(componentType:{ new(...args:any[]): T; },
@@ -252,38 +253,38 @@ export class AureliaComponentFactory {
     // }
 }
 
-abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
-    protected _params:P;
-    protected _eGui:HTMLElement;
-    protected _componentRef:ComponentRef<T>;
-    protected _agAwareComponent:T;
-    protected _frameworkComponentInstance:any;  // the users component - for accessing methods they create
-
-    protected init(params:P):void {
-        this._params = params;
-
-        this._componentRef = this.createComponent();
-        this._agAwareComponent = this._componentRef.instance;
-        this._frameworkComponentInstance = this._componentRef.instance;
-        this._eGui = this._componentRef.location.nativeElement;
-
-        this._agAwareComponent.agInit(this._params);
-    }
-
-    public getGui():HTMLElement {
-        return this._eGui;
-    }
-
-    public destroy():void {
-        if (this._componentRef) {
-            this._componentRef.destroy();
-        }
-    }
-
-    public getFrameworkComponentInstance():any {
-        return this._frameworkComponentInstance;
-    }
-
-    protected abstract createComponent():ComponentRef<T>;
-}
+// abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
+//     protected _params:P;
+//     protected _eGui:HTMLElement;
+//     protected _componentRef:ComponentRef<T>;
+//     protected _agAwareComponent:T;
+//     protected _frameworkComponentInstance:any;  // the users component - for accessing methods they create
+//
+//     protected init(params:P):void {
+//         this._params = params;
+//
+//         this._componentRef = this.createComponent();
+//         this._agAwareComponent = this._componentRef.instance;
+//         this._frameworkComponentInstance = this._componentRef.instance;
+//         this._eGui = this._componentRef.location.nativeElement;
+//
+//         this._agAwareComponent.agInit(this._params);
+//     }
+//
+//     public getGui():HTMLElement {
+//         return this._eGui;
+//     }
+//
+//     public destroy():void {
+//         if (this._componentRef) {
+//             this._componentRef.destroy();
+//         }
+//     }
+//
+//     public getFrameworkComponentInstance():any {
+//         return this._frameworkComponentInstance;
+//     }
+//
+//     protected abstract createComponent():ComponentRef<T>;
+// }
 

@@ -1,10 +1,10 @@
-// ag-grid-aurelia v6.2.0
+// ag-grid-aurelia v7.0.0
 import { ComponentAttached, ComponentDetached, Container, ViewResources } from 'aurelia-framework';
 import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
 import { AureliaFrameworkFactory } from "./aureliaFrameworkFactory";
 import { AgGridColumn } from "./agGridColumn";
 export declare class AgGridAurelia implements ComponentAttached, ComponentDetached {
-    private ng2FrameworkFactory;
+    private auFrameworkFactory;
     private container;
     private viewResources;
     private _nativeElement;
@@ -14,15 +14,12 @@ export declare class AgGridAurelia implements ComponentAttached, ComponentDetach
     api: GridApi;
     columnApi: ColumnApi;
     columns: AgGridColumn[];
-    constructor(element: Element, ng2FrameworkFactory: AureliaFrameworkFactory, container: Container, viewResources: ViewResources);
+    constructor(element: Element, auFrameworkFactory: AureliaFrameworkFactory, container: Container, viewResources: ViewResources);
     attached(): void;
     /**
      * Called by Aurelia whenever a bound property changes
-     * @param propertyName
-     * @param newValue
-     * @param oldValue
      */
-    propertyChanged(propertyName: any, newValue: any, oldValue: any): void;
+    propertyChanged(propertyName: string, newValue: any, oldValue: any): void;
     detached(): void;
     private globalEventListener(eventType, event);
     /**

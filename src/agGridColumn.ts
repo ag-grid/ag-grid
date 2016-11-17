@@ -10,10 +10,7 @@ import {ColDef,
     ICellEditor,
     ICellRendererFunc,
     ICellRenderer,
-    Column,
     IFilter,
-    GridApi,
-    ColumnApi,
     RowNode,
     IsColumnFunc,
     IAggFunc,
@@ -83,7 +80,7 @@ export class AgGridColumn {
     private createColDefFromGridColumn(from:AgGridColumn):ColDef {
         let colDef:ColDef = {};
         for (var prop in this) {
-            colDef[prop] = this[prop];
+            (<any>colDef)[prop] = (<any>this)[prop];
         }
         delete (<any>colDef).childColumns;
         return colDef;
@@ -170,5 +167,4 @@ export class AgGridColumn {
     @bindable() public groupId: string;
     @bindable() public openByDefault: boolean;
     @bindable() public marryChildren: boolean;
-
 }
