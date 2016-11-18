@@ -11,7 +11,7 @@ export interface IAureliaEditorViewModel {
     afterGuiAttached?(): void;
 
     // Return the DOM element of your editor, this is what the grid puts into the DOM
-    getGui(): HTMLElement;
+    getGui?(): HTMLElement;
 
     // Should return the final value to the grid, the result of the editing
     getValue(): any;
@@ -60,8 +60,5 @@ export abstract class BaseAureliaEditor implements IAureliaEditorViewModel {
     isPopup(): boolean {
         return false;
     }
-
-    // here to satisfy typescript
-    abstract getGui(): any;
 }
 

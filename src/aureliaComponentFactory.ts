@@ -1,6 +1,7 @@
 import {autoinject, ViewCompiler, Container, transient, View, ViewFactory} from 'aurelia-framework';
 
-import {ICellRenderer,
+import {
+    ICellRenderer,
     ICellEditor,
     // MethodNotImplementedException,
     // RowNode,
@@ -18,64 +19,46 @@ import {IAureliaEditorViewModel} from './editorViewModels';
 @autoinject()
 @transient()
 export class AureliaComponentFactory {
-    //private _factoryCache:{[key: string]: ComponentFactory<any>} = {};
-
-    constructor(private _viewCompiler:ViewCompiler) {
-
+    constructor(private _viewCompiler: ViewCompiler) {
     }
 
-
-    // public createRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
-    //                                    viewContainerRef:Container,
-    //                                    childDependencies:any[] = [],
-    //                                    moduleImports:any[] = []):{new(): ICellRenderer} {
-    //     return this.adaptComponentToRenderer(componentType,
-    //         viewContainerRef,
-    //         this._viewCompiler,
-    //         (<any>componentType).name,
-    //         moduleImports,
-    //         childDependencies);
-    // }
-
-    public createRendererFromTemplate(container:Container, viewFactory:ViewFactory):{new(): ICellRenderer} {
+    public createRendererFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellRenderer} {
         class CellRendererComponent implements ICellRenderer {
-            private view:View;
+            private view: View;
 
-            init(params: any){
-                let bindingContext = {params:params};
+            init(params: any) {
+                let bindingContext = {params: params};
                 this.view = viewFactory.create(container);
                 this.view.bind(bindingContext);
             }
 
-
-            getGui():HTMLElement {
+            getGui(): HTMLElement {
                 return this.view.fragment as HTMLElement;
             }
 
-            destroy(){
+            destroy() {
                 this.view.returnToCache();
             }
 
         }
 
         return CellRendererComponent;
-
     }
 
-    public createEditorFromTemplate(container:Container, viewFactory:ViewFactory):{new(): ICellEditor} {
+    public createEditorFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellEditor} {
 
         class CellEditor implements ICellEditor {
 
-            private view:View;
-            private editorVm:IAureliaEditorViewModel;
+            private view: View;
+            private editorVm: IAureliaEditorViewModel;
 
 
-            init(params:any):void {
-                let bindingContext = {params:params};
+            init(params: any): void {
+                let bindingContext = {params: params};
                 this.view = viewFactory.create(container);
                 this.view.bind(bindingContext);
 
-                let controllers:any[] = (<any> this.view).controllers;
+                let controllers: any[] = (<any> this.view).controllers;
 
                 //only one controller is allowed in editor template
                 if (controllers &&
@@ -91,7 +74,7 @@ export class AureliaComponentFactory {
                 }
             }
 
-            public afterGuiAttached(){
+            public afterGuiAttached() {
                 this.view.attached();
             }
 
@@ -99,39 +82,39 @@ export class AureliaComponentFactory {
                 return this.view.fragment as HTMLElement;
             }
 
-            destroy(){
+            destroy() {
                 if (this.editorVm.destroy) {
                     this.editorVm.destroy();
                 }
                 this.view.returnToCache();
             }
 
-            getValue():any {
+            getValue(): any {
                 return this.editorVm.getValue();
             }
 
-            isPopup():boolean {
+            isPopup(): boolean {
                 return this.editorVm.isPopup ?
                     this.editorVm.isPopup() : false;
             }
 
-            isCancelBeforeStart():boolean {
+            isCancelBeforeStart(): boolean {
                 return this.editorVm.isCancelBeforeStart ?
                     this.editorVm.isCancelBeforeStart() : false;
             }
 
-            isCancelAfterEnd():boolean {
+            isCancelAfterEnd(): boolean {
                 return this.editorVm.isCancelAfterEnd ?
                     this.editorVm.isCancelAfterEnd() : false;
             }
 
-            focusIn():void {
+            focusIn(): void {
                 if (this.editorVm.focusIn) {
                     this.editorVm.focusIn();
                 }
             }
 
-            focusOut():void {
+            focusOut(): void {
                 if (this.editorVm.focusOut) {
                     this.editorVm.focusOut();
                 }
@@ -142,7 +125,6 @@ export class AureliaComponentFactory {
         return CellEditor;
 
     }
-
 
 
     // private adaptComponentToFilter(componentType:{ new(...args:any[]): AgFilterComponent; },
