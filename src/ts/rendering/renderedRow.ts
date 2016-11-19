@@ -405,8 +405,7 @@ export class RenderedRow {
         if (this.renderedCells[colId]) {
             return this.renderedCells[colId];
         } else {
-            var renderedCell = new RenderedCell(column,
-                this.rowNode, this.rowNode.rowIndex, this.scope, this);
+            var renderedCell = new RenderedCell(column, this.rowNode, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             this.angular1Compile(renderedCell.getGui());

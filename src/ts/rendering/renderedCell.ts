@@ -67,7 +67,6 @@ export class RenderedCell extends Component {
 
     private column: Column;
     private node: RowNode;
-    private rowIndex: number;
     private editingCell: boolean;
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function;
@@ -84,7 +83,7 @@ export class RenderedCell extends Component {
     private firstRightPinned = false;
     private lastLeftPinned = false;
 
-    constructor(column: Column, node: RowNode, rowIndex: number, scope: any, renderedRow: RenderedRow) {
+    constructor(column: Column, node: RowNode, scope: any, renderedRow: RenderedRow) {
         super('<div/>');
 
         // because we reference eGridCell everywhere in this class,
@@ -94,11 +93,20 @@ export class RenderedCell extends Component {
         this.column = column;
 
         this.node = node;
-        this.rowIndex = rowIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
 
-        this.gridCell = new GridCell(rowIndex, node.floating, column);
+        this.setupGridCell();
+    }
+
+    private setupGridCell(): void {
+        var listener = () => {
+            this.gridCell = new GridCell(this.node.rowIndex, this.node.floating, this.column);
+        };
+
+        this.addDestroyableEventListener(this.node, RowNode.EVENT_ROW_INDEX_CHANGED, listener);
+
+        listener();
     }
 
     public getGridCell(): GridCell {
@@ -441,7 +449,7 @@ export class RenderedCell extends Component {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(key, this.gridCell.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
@@ -634,7 +642,7 @@ export class RenderedCell extends Component {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     }
 
     // pass in 'true' to cancel the editing.
@@ -699,7 +707,7 @@ export class RenderedCell extends Component {
             node: this.node,
             data: this.node.data,
             value: this.value,
-            rowIndex: this.rowIndex,
+            rowIndex: this.gridCell.rowIndex,
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
@@ -916,7 +924,7 @@ export class RenderedCell extends Component {
                 data: this.node.data,
                 node: this.node,
                 colDef: colDef,
-                rowIndex: this.rowIndex,
+                rowIndex: this.gridCell.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
@@ -1042,7 +1050,7 @@ export class RenderedCell extends Component {
         var cellRenderer = this.column.getCellRenderer();
         var floatingCellRenderer = this.column.getFloatingCellRenderer();
 
-        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
+        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, this.value);
 
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
@@ -1085,7 +1093,7 @@ export class RenderedCell extends Component {
     }
 
     private formatValue(value: any): any {
-        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, value);
+        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, value);
     }
 
     private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): any {
@@ -1099,7 +1107,7 @@ export class RenderedCell extends Component {
             colDef: this.column.getColDef(),
             column: this.column,
             $scope: this.scope,
-            rowIndex: this.rowIndex,
+            rowIndex: this.gridCell.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
