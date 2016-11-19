@@ -402,15 +402,18 @@ ag-grid-ng2
 // this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
 // however it is not tied to color, only placement and visiblity, which is behaviour and not style,
 // thus belongs here, besides it doesn't change wih the themes
-.ag-fade-out
+.ag-value-slide-out
     opacity 1.0
     margin-right 5px
     transition opacity 3s, margin-right 3s // as value fades, it also moves to the left via the margin setting
     transition-timing-function linear
 
-.ag-fade-out-end
+.ag-value-slide-out-end
     opacity 0.0
     margin-right 10px
+
+.ag-opacity-zero
+    opacity 0.0
 
 .ag-cell-edit-input
     width 100%

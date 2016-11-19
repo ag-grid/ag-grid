@@ -227,7 +227,8 @@ export class RowRenderer {
                     null,
                     ePinnedRightContainer,
                     null,
-                    node);
+                    node,
+                    false);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             })
@@ -390,7 +391,7 @@ export class RowRenderer {
         }
 
         this.removeVirtualRows(rowsToRemove, fromIndex);
-        this.drawVirtualRows(oldRowsByNodeId);
+        this.drawVirtualRows(oldRowsByNodeId, animate);
     }
 
     // public - removes the group rows and then redraws them again
@@ -422,9 +423,9 @@ export class RowRenderer {
         });
     }
 
-    public drawVirtualRows(oldRowsByNodeId?: {[key: string]: RenderedRow}) {
+    public drawVirtualRows(oldRowsByNodeId?: {[key: string]: RenderedRow}, animate = false) {
         this.workOutFirstAndLastRowsToRender();
-        this.ensureRowsRendered(oldRowsByNodeId);
+        this.ensureRowsRendered(oldRowsByNodeId, animate);
     }
 
     private workOutFirstAndLastRowsToRender(): void {
@@ -444,8 +445,8 @@ export class RowRenderer {
                 newLast = rowCount;
             } else {
 
-                var topPixel = this.eBodyViewport.scrollTop;
-                var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
+                var topPixel = this.gridPanel.getBodyTopPixel();
+                var bottomPixel = this.gridPanel.getBodyBottomPixel();
 
                 var first = this.rowModel.getRowIndexAtPixel(topPixel);
                 var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
@@ -487,7 +488,7 @@ export class RowRenderer {
         return this.lastRenderedRow;
     }
 
-    private ensureRowsRendered(oldRenderedRowsByNodeId?: {[key: string]: RenderedRow}) {
+    private ensureRowsRendered(oldRenderedRowsByNodeId?: {[key: string]: RenderedRow}, animate = false) {
 
         // var timer = new Timer();
 
@@ -495,6 +496,7 @@ export class RowRenderer {
         var rowsToRemove = Object.keys(this.renderedRows);
 
         // add in new rows
+        var delayedCreateFunctions: Function[] = [];
         for (var rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
@@ -504,10 +506,14 @@ export class RowRenderer {
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getRow(rowIndex);
             if (node) {
-                let renderedRow = this.getOrCreateRenderedRow(node, rowIndex, oldRenderedRowsByNodeId);
+                let renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
+                renderedRow.getDelayedCreateFunctions().forEach( func => delayedCreateFunctions.push(func) );
                 this.renderedRows[rowIndex] = renderedRow;
             }
         }
+        setTimeout( ()=> {
+            delayedCreateFunctions.forEach( func => func() );
+        }, 0);
 
         // timer.print('creating template');
 
@@ -515,10 +521,15 @@ export class RowRenderer {
         this.removeVirtualRows(rowsToRemove);
 
         // and everything in our oldRenderedRowsByNodeId is an old row that is no longer used
+        var delayedDestroyFunctions: Function[] = [];
         _.iterateObject(oldRenderedRowsByNodeId, (nodeId: string, renderedRow: RenderedRow) => {
-            renderedRow.destroy(true);
+            renderedRow.destroy(animate);
+            renderedRow.getDelayedDestroyFunctions().forEach( func => delayedDestroyFunctions.push(func) );
             delete oldRenderedRowsByNodeId[nodeId];
         });
+        setTimeout( ()=> {
+            delayedDestroyFunctions.forEach( func => func() );
+        }, 400);
 
         // timer.print('removing');
 
@@ -541,8 +552,8 @@ export class RowRenderer {
         // timer.print('total');
     }
 
-    private getOrCreateRenderedRow(node: any, rowIndex: any,
-                                   oldRowsByNodeId: {[key: string]: RenderedRow}): RenderedRow {
+    private getOrCreateRenderedRow(node: any,
+                                   oldRowsByNodeId: {[key: string]: RenderedRow}, animate: boolean): RenderedRow {
 
         let renderedRow: RenderedRow;
 
@@ -557,7 +568,7 @@ export class RowRenderer {
                 this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer,
                 this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF,
                 this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF,
-                node);
+                node, animate);
 
             this.context.wireBean(renderedRow);
 

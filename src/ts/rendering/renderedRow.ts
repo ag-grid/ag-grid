@@ -58,13 +58,16 @@ export class RenderedRow {
 
     private destroyFunctions: Function[] = [];
     private delayedDestroyFunctions: Function[] = [];
-    // private putToBackFunctions: Function[] = [];
+    private delayedCreateFunctions: Function[] = [];
+    private animateDestroyFunctions: Function[] = [];
 
     private renderedRowEventService: EventService;
 
     private editingRow = false;
 
     private initialised = false;
+
+    private animateIn: boolean;
 
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
@@ -75,7 +78,8 @@ export class RenderedRow {
                 ePinnedLeftContainerDF: DocumentFragment,
                 ePinnedRightContainer: HTMLElement,
                 ePinnedRightContainerDF: DocumentFragment,
-                node: RowNode) {
+                node: RowNode,
+                animateIn: boolean) {
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
@@ -87,21 +91,30 @@ export class RenderedRow {
         this.ePinnedRightContainerDF = ePinnedRightContainerDF;
 
         this.rowNode = node;
+        this.animateIn = animateIn;
     }
 
-    private setupRowContainers(): void {
+    private setupRowContainers(animateInRowTop: boolean): void {
 
         let isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
         let isGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
 
         if (isFullWidthCell) {
-            this.setupFullWidthContainers();
+            this.setupFullWidthContainers(animateInRowTop);
         } else if (isGroupSpanningRow) {
-            this.setupFullWidthGroupContainers();
+            this.setupFullWidthGroupContainers(animateInRowTop);
         } else {
-            this.setupNormalContainers();
+            this.setupNormalContainers(animateInRowTop);
         }
+    }
+
+    public getDelayedDestroyFunctions(): Function[] {
+        return this.delayedDestroyFunctions;
+    }
+
+    public getDelayedCreateFunctions(): Function[] {
+        return this.delayedCreateFunctions;
     }
 
     private addDomData(eRowContainer: Element): void {
@@ -113,7 +126,7 @@ export class RenderedRow {
         this.destroyFunctions.push( ()=> { gridCellNoType[domDataKey] = null; } );
     }
 
-    private setupFullWidthContainers(): void {
+    private setupFullWidthContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = true;
         this.fullWidthCellRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
         this.fullWidthCellRendererParams = this.gridOptionsWrapper.getFullWidthCellRendererParams();
@@ -121,7 +134,7 @@ export class RenderedRow {
             console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
         }
 
-        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer);
+        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addMouseWheelListenerToFullWidthRow();
@@ -141,7 +154,7 @@ export class RenderedRow {
         });
     }
 
-    private setupFullWidthGroupContainers(): void {
+    private setupFullWidthGroupContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = true;
         this.fullWidthCellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
         this.fullWidthCellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
@@ -153,28 +166,30 @@ export class RenderedRow {
             }
         }
 
-        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer);
+        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addMouseWheelListenerToFullWidthRow();
         }
     }
 
-    private setupNormalContainers(): void {
+    private setupNormalContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = false;
 
-        this.eBodyRow = this.createRowContainer(this.eBodyContainerDF, this.eBodyContainer);
+        this.eBodyRow = this.createRowContainer(this.eBodyContainerDF, this.eBodyContainer, animateInRowTop);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer(this.ePinnedLeftContainerDF, this.ePinnedLeftContainer);
-            this.ePinnedRightRow = this.createRowContainer(this.ePinnedRightContainerDF, this.ePinnedRightContainer);
+            this.ePinnedLeftRow = this.createRowContainer(this.ePinnedLeftContainerDF, this.ePinnedLeftContainer, animateInRowTop);
+            this.ePinnedRightRow = this.createRowContainer(this.ePinnedRightContainerDF, this.ePinnedRightContainer, animateInRowTop);
         }
     }
 
     @PostConstruct
     public init(): void {
 
-        this.setupRowContainers();
+        var animateInRowTop = this.animateIn && _.exists(this.rowNode.oldRowTop);
+        
+        this.setupRowContainers(animateInRowTop);
 
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
@@ -194,7 +209,7 @@ export class RenderedRow {
 
         this.addRowIndexes();
         this.addRowIds();
-        this.setTop();
+        this.setupTop(animateInRowTop);
         this.setHeight();
 
         this.addRowSelectedListener();
@@ -508,24 +523,32 @@ export class RenderedRow {
         });
     }
 
-    private setTop(): void {
+    private onTopChanged(): void {
+        this.setRowTop(this.rowNode.rowTop);
+    }
+    
+    private setRowTop(pixels: number): void {
+        // need to make sure rowTop is not null, as this can happen if the node was once
+        // visible (ie parent group was expanded) but is now not visible
+        if (_.exists(pixels)) {
+            var topPx = pixels + "px";
+            this.eAllRowContainers.forEach( row => row.style.top = topPx);
+        }
+    }
+    
+    private setupTop(animateInRowTop: boolean): void {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
-        let setTopListener = () => {
-            // need to make sure rowTop is not null, as this can happen if the node was once
-            // visible (ie parent group was expanded) but is now not visible
-            if (_.exists(this.rowNode.rowTop)) {
-                var topPx = this.rowNode.rowTop + "px";
-                this.eAllRowContainers.forEach( row => row.style.top = topPx);
-            }
-        };
+        let topChangedListener = this.onTopChanged.bind(this);
+        
+        this.rowNode.addEventListener(RowNode.EVENT_TOP_CHANGED, topChangedListener);
+        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_TOP_CHANGED, topChangedListener) );
 
-        this.rowNode.addEventListener(RowNode.EVENT_TOP_CHANGED, setTopListener);
-        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_TOP_CHANGED, setTopListener) );
-
-        setTopListener();
+        if (!animateInRowTop) {
+            this.onTopChanged();
+        }
     }
-
+    
     private setHeight(): void {
         let setHeightListener = () => {
             var heightPx = this.rowNode.rowHeight + 'px';
@@ -593,7 +616,7 @@ export class RenderedRow {
         }
     }
 
-    public destroy(delayRemoval = false): void {
+    public destroy(animate = false): void {
 
         this.destroyScope();
         this.destroyFullWidthComponent();
@@ -602,9 +625,8 @@ export class RenderedRow {
         this.destroyFunctions.forEach( func => func() );
 
         var executeDelayedDestroyFunctions = () => this.delayedDestroyFunctions.forEach( func => func() );
-        if (delayRemoval) {
-            setTimeout(executeDelayedDestroyFunctions, 2000);
-            // this.putToBackFunctions.forEach( func => func() );
+        if (animate) {
+            this.animateDestroyFunctions.forEach( func => func() );
         } else {
             executeDelayedDestroyFunctions();
         }
@@ -759,7 +781,7 @@ export class RenderedRow {
         return agEvent;
     }
 
-    private createRowContainer(eParentDF: DocumentFragment, eParent: HTMLElement): HTMLElement {
+    private createRowContainer(eParentDF: DocumentFragment, eParent: HTMLElement, slideRowIn: boolean): HTMLElement {
         var eRow = document.createElement('div');
 
         this.addDomData(eRow);
@@ -772,11 +794,56 @@ export class RenderedRow {
         this.delayedDestroyFunctions.push( ()=> {
             eParent.removeChild(eRow);
         });
-        // this.putToBackFunctions.push( ()=> {
-        //     _.prepend(eParent, eRow);
-        // });
+        this.animateDestroyFunctions.push( ()=> {
+            _.addCssClass(eRow, 'ag-opacity-zero');
+            if (_.exists(this.rowNode.rowTop)) {
+                let rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
+                this.setRowTop(rowTop);
+            }
+            // _.prepend(eParent, eRow);
+        });
+
+        if (this.animateIn) {
+            this.animateRowIn(eRow, slideRowIn);
+        }
 
         return eRow;
+    }
+
+    // puts animation into the row by setting start state and then final state in another VM turn
+    // (another VM turn so the rendering engine will kick off once with start state, and then transition
+    // into the end state)
+    private animateRowIn(eRow: HTMLElement, slideRowIn: boolean): void {
+
+        if (slideRowIn) {
+            // for sliding the row in, we position the row in it's old position first
+            let rowTop = this.roundRowTopToBounds(this.rowNode.oldRowTop);
+            this.setRowTop(rowTop);
+
+            // and then update the position to it's new position
+            this.delayedCreateFunctions.push(this.onTopChanged.bind(this));
+        } else {
+            // for fading in, we first set it invisible
+            _.addCssClass(eRow, 'ag-opacity-zero');
+            // and then transition to visible
+            this.delayedCreateFunctions.push( () => _.removeCssClass(eRow, 'ag-opacity-zero') );
+        }
+    }
+
+    // for animation, we don't want to animate entry or exit to a very far away pixel,
+    // otherwise the row would move so fast, it would appear to disappear. so this method
+    // moves the row closer to the viewport if it is far away, so the row slide in / out
+    // at a speed the user can see.
+    private roundRowTopToBounds(rowTop: number): number {
+        let minPixel = this.gridPanel.getBodyTopPixel() - 100;
+        let maxPixel = this.gridPanel.getBodyBottomPixel() + 100;
+        if (rowTop < minPixel) {
+            return minPixel;
+        } else if (rowTop > maxPixel) {
+            return maxPixel;
+        } else {
+            return rowTop;
+        }
     }
 
     private onRowDblClick(event: MouseEvent): void {

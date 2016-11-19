@@ -175,6 +175,14 @@ export class GridPanel {
         this.findElements();
     }
 
+    public getBodyTopPixel(): number {
+        return this.eBodyViewport.scrollTop;
+    }
+
+    public getBodyBottomPixel(): number {
+        return this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
+    }
+
     private setScrollBarWidth(): void {
         // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
         // width and overlays (like the Safari scrollbar, but presented in Chrome). so we

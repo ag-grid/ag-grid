@@ -51,7 +51,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, Constants.STEP_PIVOT));
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants.STEP_PIVOT));
 
         this.rootNode = new RowNode();
@@ -67,6 +67,11 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     private onFilterChanged(): void {
         var animate = this.gridOptionsWrapper.isAnimateFilter();
         this.refreshModel(constants.STEP_FILTER, null, null, animate);
+    }
+
+    private onSortChanged(): void {
+        var animate = this.gridOptionsWrapper.isAnimateSort();
+        this.refreshModel(constants.STEP_SORT, null, null, animate);
     }
 
     public getType(): string {
