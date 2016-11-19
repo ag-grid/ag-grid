@@ -90,6 +90,9 @@ export class RowNode {
     public rowHeight: number;
     /** The top pixel for this row */
     public rowTop: number;
+    /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
+     * it is used so new rows can animate in from their old position. */
+    public oldRowTop: number;
 
     private selected = false;
     private eventService: EventService;
@@ -131,6 +134,11 @@ export class RowNode {
         } else {
             this.id = id;
         }
+    }
+
+    public clearRowTop(): void {
+        this.oldRowTop = this.rowTop;
+        this.setRowTop(null);
     }
 
     public setRowTop(rowTop: number): void {

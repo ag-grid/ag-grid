@@ -54,7 +54,9 @@ export interface GridOptions {
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
     autoSizePadding?: number;
-    animateRows?: boolean;
+    animateSort?: boolean;
+    animateFilter?: boolean;
+    animateRowExpand?: boolean;
     suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;
     suppressDragLeaveHidesColumns?: boolean;

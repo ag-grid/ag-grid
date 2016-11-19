@@ -42,7 +42,7 @@ export class FlattenStage implements IRowNodeStage {
     }
 
     private resetRowTops(rowNode: RowNode): void {
-        rowNode.setRowTop(null);
+        rowNode.clearRowTop();
         if (rowNode.group && rowNode.childrenAfterGroup) {
             for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
                 this.resetRowTops(rowNode.childrenAfterGroup[i])

@@ -198,7 +198,9 @@ export class GridOptionsWrapper {
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
-    public isAnimateRows() { return isTrue(this.gridOptions.animateRows); }
+    public isAnimateSort() { return isTrue(this.gridOptions.animateSort); }
+    public isAnimateFilter() { return isTrue(this.gridOptions.animateFilter); }
+    public isAnimateRowExpand() { return isTrue(this.gridOptions.animateRowExpand); }
     public isSuppressColumnMoveAnimation() { return isTrue(this.gridOptions.suppressColumnMoveAnimation); }
     public isSuppressMenuColumnPanel() { return isTrue(this.gridOptions.suppressMenuColumnPanel); }
     public isSuppressMenuFilterPanel() { return isTrue(this.gridOptions.suppressMenuFilterPanel); }

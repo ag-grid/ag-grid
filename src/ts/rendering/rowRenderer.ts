@@ -239,10 +239,10 @@ export class RowRenderer {
     }
 
     private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
-        this.refreshView(refreshEvent.fromIndex, refreshEvent.newData);
+        this.refreshView(refreshEvent.fromIndex, refreshEvent.animate);
     }
 
-    public refreshView(refreshFromIndex: number, newData: boolean): void {
+    public refreshView(refreshFromIndex: number, animate: boolean): void {
         this.logger.log('refreshView');
 
         var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
@@ -255,7 +255,7 @@ export class RowRenderer {
             this.ePinnedRightColsContainer.style.height = containerHeight + "px";
         }
 
-        this.refreshAllVirtualRows(refreshFromIndex, newData);
+        this.refreshAllVirtualRows(refreshFromIndex, animate);
         this.refreshAllFloatingRows();
 
         this.restoreFocusedCell(focusedCell);
@@ -370,13 +370,11 @@ export class RowRenderer {
         this.removeVirtualRows(rowsToRemove);
     }
 
-    private refreshAllVirtualRows(fromIndex: number, newData: boolean) {
+    private refreshAllVirtualRows(fromIndex: number, animate: boolean) {
         let rowsToRemove: string[];
         let oldRowsByNodeId: {[key: string]: RenderedRow} = {};
 
-        if (newData) {
-            rowsToRemove = Object.keys(this.renderedRows);
-        } else {
+        if (animate) {
             rowsToRemove = [];
             _.iterateObject(this.renderedRows, (index: string, renderedRow: RenderedRow)=> {
                 var nodeId = renderedRow.getRowNode().id;
@@ -387,6 +385,8 @@ export class RowRenderer {
                     rowsToRemove.push(index);
                 }
             });
+        } else {
+            rowsToRemove = Object.keys(this.renderedRows);
         }
 
         this.removeVirtualRows(rowsToRemove, fromIndex);

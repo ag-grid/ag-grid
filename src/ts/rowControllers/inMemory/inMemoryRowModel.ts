@@ -50,7 +50,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, Constants.STEP_PIVOT));
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants.STEP_FILTER));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants.STEP_SORT));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants.STEP_PIVOT));
 
@@ -62,7 +62,11 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
         }
+    }
 
+    private onFilterChanged(): void {
+        var animate = this.gridOptionsWrapper.isAnimateFilter();
+        this.refreshModel(constants.STEP_FILTER, null, null, animate);
     }
 
     public getType(): string {
@@ -77,7 +81,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    public refreshModel(step: number, fromIndex?: any, groupState?: any): void {
+    public refreshModel(step: number, fromIndex: number = null, groupState: any = null, animate = false): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -116,7 +120,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
-        let event: ModelUpdatedEvent = {fromIndex: fromIndex, newData: true};
+        let event: ModelUpdatedEvent = {fromIndex: fromIndex, animate: animate};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
 
         if (this.$scope) {
