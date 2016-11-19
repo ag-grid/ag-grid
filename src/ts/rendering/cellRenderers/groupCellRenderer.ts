@@ -249,9 +249,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     public onExpandOrContract(): void {
         this.rowNode.expanded = !this.rowNode.expanded;
-        var refreshIndex = this.getRefreshFromIndex();
 
-        this.gridApi.onGroupExpandedOrCollapsed(refreshIndex);
+        this.gridApi.onGroupExpandedOrCollapsed();
+
+        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+            this.gridApi.refreshRows([this.rowNode]);
+        }
 
         this.showExpandAndContractIcons();
 
@@ -272,17 +275,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             // it not expandable, show neither
             _.setVisible(this.eExpanded, false);
             _.setVisible(this.eContracted, false);
-        }
-    }
-
-    // if we are showing footers, then opening / closing the group also changes the group
-    // row, as the 'summaries' move to and from the header and footer. if not using footers,
-    // then we only need to refresh from this row down.
-    private getRefreshFromIndex(): number {
-        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            return this.rowIndex;
-        } else {
-            return this.rowIndex + 1;
         }
     }
 }

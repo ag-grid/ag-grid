@@ -66,12 +66,12 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     private onFilterChanged(): void {
         var animate = this.gridOptionsWrapper.isAnimateFilter();
-        this.refreshModel(constants.STEP_FILTER, null, null, animate);
+        this.refreshModel(constants.STEP_FILTER, null, animate);
     }
 
     private onSortChanged(): void {
         var animate = this.gridOptionsWrapper.isAnimateSort();
-        this.refreshModel(constants.STEP_SORT, null, null, animate);
+        this.refreshModel(constants.STEP_SORT, null, animate);
     }
 
     public getType(): string {
@@ -86,7 +86,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    public refreshModel(step: number, fromIndex: number = null, groupState: any = null, animate = false): void {
+    public refreshModel(step: number, groupState: any = null, animate = false): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -125,7 +125,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
-        let event: ModelUpdatedEvent = {fromIndex: fromIndex, animate: animate};
+        let event: ModelUpdatedEvent = {animate: animate};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
 
         if (this.$scope) {

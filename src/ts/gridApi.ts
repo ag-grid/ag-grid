@@ -176,7 +176,7 @@ export class GridApi {
     }
 
     public refreshView() {
-        this.rowRenderer.refreshView(null, true);
+        this.rowRenderer.refreshView();
     }
 
     public setFunctionsReadOnly(readOnly: boolean) {
@@ -212,9 +212,11 @@ export class GridApi {
         return this.rowModel;
     }
 
-    public onGroupExpandedOrCollapsed(refreshFromIndex?: any) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call onGroupExpandedOrCollapsed unless using normal row model') }
-        this.inMemoryRowModel.refreshModel(Constants.STEP_MAP, refreshFromIndex);
+    public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
+        if (_.missing(this.inMemoryRowModel)) { console.log('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model') }
+        if (_.exists(deprecated_refreshFromIndex)) { console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is not longer used, the grid will refresh only row nodes that are new'); }
+        let animate = this.gridOptionsWrapper.isAnimateRowExpand();
+        this.inMemoryRowModel.refreshModel(Constants.STEP_MAP, null, animate);
     }
 
     public refreshInMemoryRowModel(): any {
