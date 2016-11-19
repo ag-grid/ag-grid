@@ -131,6 +131,9 @@ suppressEnterprise: true,
     // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
+    animateFilter: true,
+    animateSort: true,
+    animateRowExpand: true,
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
