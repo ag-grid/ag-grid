@@ -49,7 +49,7 @@ var lastNames = ["Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "C
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-var dataSize = '1x22';
+var dataSize = '.1x22';
 
 var size = 'fill'; // model for size select
 var width = '100%'; // the div gets it's width and height from here
@@ -481,6 +481,8 @@ function getColCount() {
 
 function getRowCount() {
     switch (dataSize) {
+        case '.1x22':
+            return 100;
         case '1x22':
             return 1000;
         case '10x100':
@@ -535,9 +537,11 @@ function createData() {
         }
 
         for (var i = 0; i < 1000; i++) {
-            var rowItem = createRowItem(row, colCount);
-            data.push(rowItem);
-            row++;
+            if (row < rowCount) {
+                var rowItem = createRowItem(row, colCount);
+                data.push(rowItem);
+                row++;
+            }
         }
 
         eMessageText.innerHTML = ' Generating rows ' + row;
@@ -546,7 +550,6 @@ function createData() {
             clearInterval(intervalId);
             setTimeout(function () {
                 gridOptions.api.setColumnDefs(colDefs);
-                // data = data.slice(0,2);
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
                 eMessageText.innerHTML = '';

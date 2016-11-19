@@ -79,6 +79,7 @@
                                 <span style="padding-left: 20px;">Data Size:</span>
                                 <select onchange="onDataSizeChanged(this.value)"
                                         style="color: #333;">
+                                    <option value=".1x22">100 Rows, 22 Cols</option>
                                     <option value="1x22">1,000 Rows, 22 Cols</option>
                                     <option value="10x100">10,000 Rows, 100 Cols</option>
                                     <option value="100x22">100,000 Rows, 22 Cols</option>
