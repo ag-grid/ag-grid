@@ -20,7 +20,8 @@ var gridOptions = {
     enableSorting: true,
     groupSuppressAutoColumn: true,
     groupUseEntireRow: false,
-    groupIncludeFooter: true
+    groupIncludeFooter: true,
+    animateRowExpand: true
 };
 
 // setup the grid after the page has finished loading
