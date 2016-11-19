@@ -108,7 +108,6 @@ export class GroupStage implements IRowNodeStage {
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
         nextGroup.id = (this.groupIdSequence.next()*-1).toString();
-        console.log(`used id ${nextGroup.id}`);
         nextGroup.key = groupKey;
         nextGroup.expanded = this.isExpanded(expandByDefault, level);
         nextGroup.allLeafChildren = [];
