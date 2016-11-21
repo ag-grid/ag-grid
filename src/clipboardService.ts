@@ -114,7 +114,6 @@ export class ClipboardService implements IClipboardService {
         });
 
         // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshView();
         this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
 
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
