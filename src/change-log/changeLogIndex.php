@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
 
     <li>New properties: enableAnimateSort, enableAnimateFilter, enableAnimateExpand</li>
 
+    <li>Enhancement: api.getValue() now works with pivot columns</li>
+
     <h2>Version 6.4.x</h2>
 
     <h4>ag-grid-6.4.2, ag-grid-enterprise-6.4.2</h4>
