@@ -50,6 +50,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT} ));
 
+        this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT} ));
@@ -62,6 +63,11 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
         }
+    }
+
+    private onRowGroupOpened(): void {
+        let animate = this.gridOptionsWrapper.isAnimateRowExpand();
+        this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
     }
 
     private onFilterChanged(): void {

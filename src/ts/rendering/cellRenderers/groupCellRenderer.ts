@@ -237,6 +237,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
 
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
     }
 
@@ -248,18 +249,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     public onExpandOrContract(): void {
-        this.rowNode.expanded = !this.rowNode.expanded;
-
-        this.gridApi.onGroupExpandedOrCollapsed();
+        this.rowNode.setExpanded(!this.rowNode.expanded);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
             this.gridApi.refreshRows([this.rowNode]);
         }
-
-        this.showExpandAndContractIcons();
-
-        var event: any = {node: this.rowNode};
-        this.eventService.dispatchEvent(Events.EVENT_ROW_GROUP_OPENED, event)
     }
 
     private showExpandAndContractIcons(): void {

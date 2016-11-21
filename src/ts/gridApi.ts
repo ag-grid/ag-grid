@@ -214,9 +214,12 @@ export class GridApi {
 
     public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
         if (_.missing(this.inMemoryRowModel)) { console.log('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model') }
-        if (_.exists(deprecated_refreshFromIndex)) { console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is not longer used, the grid will refresh only row nodes that are new'); }
-        let animate = this.gridOptionsWrapper.isAnimateRowExpand();
-        this.inMemoryRowModel.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
+        if (_.exists(deprecated_refreshFromIndex)) { console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is not longer used, the grid will refresh all rows'); }
+        // we don't really want the user calling this if one one rowNode was expanded, instead they should be
+        // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
+        // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
+        // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
+        this.inMemoryRowModel.refreshModel({step: Constants.STEP_MAP});
     }
 
     public refreshInMemoryRowModel(): any {

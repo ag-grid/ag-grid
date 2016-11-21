@@ -21,6 +21,7 @@ export class RowNode {
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
     public static EVENT_TOP_CHANGED = 'topChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
+    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
 
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -160,6 +161,18 @@ export class RowNode {
         if (this.eventService) {
             this.eventService.dispatchEvent(RowNode.EVENT_ROW_INDEX_CHANGED);
         }
+    }
+
+    public setExpanded(expanded: boolean): void {
+        if (this.expanded === expanded) { return; }
+
+        this.expanded = expanded;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_EXPANDED_CHANGED);
+        }
+
+        var event: any = {node: this};
+        this.mainEventService.dispatchEvent(Events.EVENT_ROW_GROUP_OPENED, event)
     }
 
     private dispatchLocalEvent(eventName: string, event?: any): void {
