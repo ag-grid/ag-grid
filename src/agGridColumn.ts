@@ -44,7 +44,7 @@ export class AgGridColumn {
     }
 
     public toColDef():ColDef {
-        let colDef:ColDef = this.createColDefFromGridColumn(this);
+        let colDef:ColDef = this.createColDefFromGridColumn();
 
         if (this.hasChildColumns()) {
             (<any>colDef)["children"] = this.getChildColDefs(this.childColumns);
@@ -77,7 +77,7 @@ export class AgGridColumn {
             });
     };
 
-    private createColDefFromGridColumn(from:AgGridColumn):ColDef {
+    private createColDefFromGridColumn():ColDef {
         let colDef:ColDef = {};
         for (var prop in this) {
             (<any>colDef)[prop] = (<any>this)[prop];

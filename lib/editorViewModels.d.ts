@@ -5,7 +5,7 @@
 export interface IAureliaEditorViewModel {
     params: any;
     afterGuiAttached?(): void;
-    getGui(): HTMLElement;
+    getGui?(): HTMLElement;
     getValue(): any;
     destroy?(): void;
     isPopup?(): boolean;
@@ -28,5 +28,4 @@ export declare abstract class BaseAureliaEditor implements IAureliaEditorViewMod
     constructor();
     getValue(): any;
     isPopup(): boolean;
-    abstract getGui(): any;
 }

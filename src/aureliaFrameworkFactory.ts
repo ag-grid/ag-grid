@@ -1,4 +1,4 @@
-import {autoinject, transient, Container, ViewResources, ViewCompiler} from 'aurelia-framework';
+import {autoinject, transient, Container, ViewResources, ViewCompiler} from "aurelia-framework";
 
 import {
     ICellRenderer,
@@ -9,10 +9,9 @@ import {
     ICellRendererFunc,
     ColDef,
     GridOptions
-}   from 'ag-grid/main';
+} from "ag-grid/main";
 
 import {AureliaComponentFactory} from "./aureliaComponentFactory";
-
 
 @autoinject()
 @transient()
@@ -25,15 +24,7 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     }
 
     public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
-        // if (colDef.floatingCellRendererFramework) {
-        //     return this._componentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework.component,
-        //         this._container,
-        //         colDef.floatingCellRendererFramework.dependencies,
-        //         colDef.floatingCellRendererFramework.moduleImports
-        //     )
-        // } else {
         return this._baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
-        // }
     }
 
     public colDefCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
@@ -62,47 +53,19 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     }
 
     public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
-        // if (gridOptions.fullWidthCellRendererFramework) {
-        //     return this._componentFactory.createRendererFromComponent(gridOptions.fullWidthCellRendererFramework.component,
-        //         this._container,
-        //         gridOptions.fullWidthCellRendererFramework.dependencies,
-        //         gridOptions.fullWidthCellRendererFramework.moduleImports)
-        // } else {
         return this._baseFrameworkFactory.gridOptionsFullWidthCellRenderer(gridOptions);
-        // }
     }
 
     public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
-        // if (gridOptions.groupRowRendererFramework) {
-        //     return this._componentFactory.createRendererFromComponent(gridOptions.groupRowRendererFramework.component,
-        //         this._container,
-        //         gridOptions.groupRowRendererFramework.dependencies,
-        //         gridOptions.groupRowRendererFramework.moduleImports)
-        // } else {
         return this._baseFrameworkFactory.gridOptionsGroupRowRenderer(gridOptions);
-        // }
     }
 
     public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
-        // if (gridOptions.groupRowInnerRendererFramework) {
-        //     return this._componentFactory.createRendererFromComponent(gridOptions.groupRowInnerRendererFramework.component,
-        //         this._container,
-        //         gridOptions.groupRowInnerRendererFramework.dependencies,
-        //         gridOptions.groupRowInnerRendererFramework.moduleImports)
-        // } else {
         return this._baseFrameworkFactory.gridOptionsGroupRowInnerRenderer(gridOptions);
-        // }
     }
 
     public colDefFilter(colDef: ColDef): {new (): IFilter;} | string {
-        // if (colDef.filterFramework) {
-        //     return this._componentFactory.createFilterFromComponent(colDef.filterFramework.component,
-        //         this._container,
-        //         colDef.filterFramework.dependencies,
-        //         colDef.filterFramework.moduleImports)
-        // } else {
         return this._baseFrameworkFactory.colDefFilter(colDef);
-        // }
     }
 
     public setViewContainerRef(container: Container, viewResources: ViewResources): void {

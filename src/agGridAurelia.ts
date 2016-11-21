@@ -23,8 +23,6 @@ import {AgGridColumn} from "./agGridColumn";
 interface IPropertyChanges {
     [key: string]: any
 }
-;
-
 
 @customElement('ag-grid-aurelia')
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622

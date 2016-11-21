@@ -10,7 +10,7 @@ export declare class AgGridColumn {
     hasChildColumns(): boolean;
     toColDef(): ColDef;
     private getChildColDefs(childColumns);
-    private createColDefFromGridColumn(from);
+    private createColDefFromGridColumn();
     colId: string;
     sort: string;
     sortedAt: number;

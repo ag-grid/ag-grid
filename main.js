@@ -1,8 +1,12 @@
 
 exports.AgGridAurelia = require('./lib/agGridAurelia').AgGridAurelia;
-exports.AureliaFrameworkFactory = require('./lib/aureliaFrameworkFactory').AureliaFrameworkFactory;
-exports.AureliaComponentFactory = require('./lib/aureliaComponentFactory').AureliaComponentFactory;
 exports.AgGridColumn = require('./lib/agGridColumn').AgGridColumn;
+exports.AgCellTemplate = require('./lib/agTemplate').AgCellTemplate;
+exports.AgEditorTemplate = require('./lib/agTemplate').AgEditorTemplate;
+exports.AgFilterTemplate = require('./lib/agTemplate').AgFilterTemplate;
+exports.AureliaCellRendererComponent = require('./lib/aureliaCellRendererComponent').AureliaCellRendererComponent;
+exports.AureliaComponentFactory = require('./lib/aureliaComponentFactory').AureliaComponentFactory;
+exports.AureliaFrameworkFactory = require('./lib/aureliaFrameworkFactory').AureliaFrameworkFactory;
 exports.BaseAureliaEditor = require('./lib/editorViewModels').BaseAureliaEditor;
 
 function configure(config) {
