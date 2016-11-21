@@ -463,7 +463,14 @@ export class GridApi {
 
     public getValue(colKey: string|ColDef|Column, rowNode: RowNode): any {
         var column = this.columnController.getPrimaryColumn(colKey);
-        return this.valueService.getValue(column, rowNode);
+        if (_.missing(column)) {
+            column = this.columnController.getGridColumn(colKey);
+        }
+        if (_.missing(column)) {
+            return null;
+        } else {
+            return this.valueService.getValue(column, rowNode);
+        }
     }
 
     public addEventListener(eventType: string, listener: Function): void {
