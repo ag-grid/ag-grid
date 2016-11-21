@@ -72,9 +72,7 @@ export class AppModule {
 {
     headerName: "Square Component",
     field: "value",
-    cellRendererFramework: {
-        component: SquareComponent
-    },
+    cellRendererFramework: SquareComponent,
     editable:true,
     colId: "square",
     width: 200
