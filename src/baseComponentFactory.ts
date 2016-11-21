@@ -18,46 +18,31 @@ import {AgFilterComponent} from "./agFilterComponent";
 @Injectable()
 export class BaseComponentFactory {
     public createCellRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
-                                           viewContainerRef:ViewContainerRef,
-                                           childDependencies?:any[],
-                                           moduleImports?:any[]):{new(): ICellRenderer} {
-        console.log("Use AgGridModule.forRoot() if you wish to use dynamic components");
-        throw new MethodNotImplementedException();
-    }
-
-    public createCellRendererFromTemplate(template:string,
-                                          viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
+                                           viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
         console.log("Use AgGridModule.forRoot() if you wish to use dynamic components");
         throw new MethodNotImplementedException();
     }
 
     public createRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
-                                       viewContainerRef:ViewContainerRef,
-                                       childDependencies:any[] = [],
-                                       moduleImports:any[] = []):{new(): ICellRenderer} {
+                                       viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
         console.log("Use AgGridModule.forRoot() if you wish to use dynamic components");
         throw new MethodNotImplementedException();
     }
 
     public createRendererFromTemplate(template:string,
-                                      viewContainerRef:ViewContainerRef,
-                                      moduleImports:any[] = []):{new(): ICellRenderer} {
+                                      viewContainerRef:ViewContainerRef):{new(): ICellRenderer} {
         console.log("Use AgGridModule.forRoot() if you wish to use dynamic components");
         throw new MethodNotImplementedException();
     }
 
     public createEditorFromComponent(componentType:{ new(...args:any[]): AgEditorComponent; },
-                                     viewContainerRef:ViewContainerRef,
-                                     childDependencies:any[] = [],
-                                     moduleImports:any[] = []):{new(): ICellEditor} {
+                                     viewContainerRef:ViewContainerRef):{new(): ICellEditor} {
         console.log("Use AgGridModule.forRoot() if you wish to use dynamic components");
         throw new MethodNotImplementedException();
     }
 
     public createFilterFromComponent(componentType:{ new(...args:any[]): AgFilterComponent; },
-                                     viewContainerRef:ViewContainerRef,
-                                     childDependencies:any[] = [],
-                                     moduleImports:any[] = []):{new(): IFilter} {
+                                     viewContainerRef:ViewContainerRef):{new(): IFilter} {
         console.log("Use AgGridModule.forRoot() if you wish to use dynamic components");
         throw new MethodNotImplementedException();
     }

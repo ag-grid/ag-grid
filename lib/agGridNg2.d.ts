@@ -155,6 +155,7 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     processSecondaryColDef: any;
     processSecondaryColGroupDef: any;
     suppressRowHoverClass: any;
+    suppressTouch: any;
     /**
      * Outputs
      */

@@ -1,19 +1,13 @@
-import {Component,
-    ComponentFactory,
-    ViewContainerRef,
-    ComponentRef,
-    Injectable,
-    NgModule,
-    ComponentFactoryResolver} from '@angular/core';
-
-import {ICellRenderer,
+import {ComponentFactory, ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} from "@angular/core";
+import {
+    ICellRenderer,
     ICellEditor,
     MethodNotImplementedException,
     IDoesFilterPassParams,
     IFilter,
     IFilterParams,
-    IAfterFilterGuiAttachedParams}   from 'ag-grid/main';
-
+    IAfterFilterGuiAttachedParams
+} from "ag-grid/main";
 import {AgRendererComponent} from "./agRendererComponent";
 import {AgEditorComponent} from "./agEditorComponent";
 import {AgFrameworkComponent} from "./agFrameworkComponent";
@@ -22,71 +16,46 @@ import {BaseComponentFactory} from "./baseComponentFactory";
 
 @Injectable()
 export class Ng2ComponentFactory extends BaseComponentFactory {
-    private _factoryCache:{[key: string]: ComponentFactory<any>} = {};
+    private _factoryCache: {[key: string]: ComponentFactory<any>} = {};
 
-    constructor(private _componentFactoryResolver:ComponentFactoryResolver) {
+    constructor(private _componentFactoryResolver: ComponentFactoryResolver) {
         super();
     }
 
-    public createRendererFromComponent(componentType:{ new(...args:any[]): AgRendererComponent; },
-                                       viewContainerRef:ViewContainerRef,
-                                       childDependencies:any[] = [],
-                                       moduleImports:any[] = []):{new(): ICellRenderer} {
+    public createRendererFromComponent(componentType: { new(...args: any[]): AgRendererComponent; },
+                                       viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef,
-            (<any>componentType).name,
-            moduleImports,
-            childDependencies);
+            (<any>componentType).name);
     }
 
-    public createRendererFromTemplate(template:string,
-                                      viewContainerRef:ViewContainerRef,
-                                      moduleImports:any[] = []):{new(): ICellRenderer} {
-        let componentType:{ new(...args:any[]): AgRendererComponent; } = this.createDynamicComponentType('dynamic-component', template);
-        return this.adaptComponentToRenderer(componentType,
-            viewContainerRef,
-            template,
-            moduleImports,
-            []);
-    }
-
-    public createEditorFromComponent(componentType:{ new(...args:any[]): AgEditorComponent; },
-                                     viewContainerRef:ViewContainerRef,
-                                     childDependencies:any[] = [],
-                                     moduleImports:any[] = []):{new(): ICellEditor} {
+    public createEditorFromComponent(componentType: { new(...args: any[]): AgEditorComponent; },
+                                     viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
         return this.adaptComponentToEditor(componentType,
             viewContainerRef,
-            (<any>componentType).name,
-            moduleImports,
-            childDependencies);
+            (<any>componentType).name);
     }
 
-    public createFilterFromComponent(componentType:{ new(...args:any[]): AgFilterComponent; },
-                                     viewContainerRef:ViewContainerRef,
-                                     childDependencies:any[] = [],
-                                     moduleImports:any[] = []):{new(): IFilter} {
+    public createFilterFromComponent(componentType: { new(...args: any[]): AgFilterComponent; },
+                                     viewContainerRef: ViewContainerRef) {
         return this.adaptComponentToFilter(componentType,
             viewContainerRef,
-            (<any>componentType).name,
-            moduleImports,
-            childDependencies);
+            (<any>componentType).name);
     }
 
 
-    private adaptComponentToRenderer(componentType:{ new(...args:any[]): AgRendererComponent; },
-                                     viewContainerRef:ViewContainerRef,
-                                     name:string,
-                                     moduleImports:any[],
-                                     childDependencies:any[]):{new(): ICellRenderer} {
+    private adaptComponentToRenderer(componentType: { new(...args: any[]): AgRendererComponent; },
+                                     viewContainerRef: ViewContainerRef,
+                                     name: string): {new(): ICellRenderer} {
 
         let that = this;
         class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRenderer {
-            init(params:any):void {
+            init(params: any): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
             }
 
-            refresh(params:any):void {
+            refresh(params: any): void {
                 this._params = params;
 
                 if (this._agAwareComponent.refresh) {
@@ -96,12 +65,10 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                 }
             }
 
-            protected createComponent():ComponentRef<AgRendererComponent> {
+            protected createComponent(): ComponentRef<AgRendererComponent> {
                 return that.createComponent(componentType,
                     viewContainerRef,
-                    name,
-                    moduleImports,
-                    childDependencies);
+                    name);
             }
 
         }
@@ -109,108 +76,100 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
         return CellRenderer;
     }
 
-    private adaptComponentToEditor(componentType:{ new(...args:any[]): AgEditorComponent; },
-                                   viewContainerRef:ViewContainerRef,
-                                   name:string,
-                                   moduleImports:any[],
-                                   childDependencies:any[]):{new(): ICellEditor} {
+    private adaptComponentToEditor(componentType: { new(...args: any[]): AgEditorComponent; },
+                                   viewContainerRef: ViewContainerRef,
+                                   name: string): {new(): ICellEditor} {
 
         let that = this;
         class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditor {
 
-            init(params:any):void {
+            init(params: any): void {
                 super.init(params);
             }
 
-            getValue():any {
+            getValue(): any {
                 return this._agAwareComponent.getValue();
             }
 
-            isPopup():boolean {
+            isPopup(): boolean {
                 return this._agAwareComponent.isPopup ?
                     this._agAwareComponent.isPopup() : false;
             }
 
-            isCancelBeforeStart():boolean {
+            isCancelBeforeStart(): boolean {
                 return this._agAwareComponent.isCancelBeforeStart ?
                     this._agAwareComponent.isCancelBeforeStart() : false;
             }
 
-            isCancelAfterEnd():boolean {
+            isCancelAfterEnd(): boolean {
                 return this._agAwareComponent.isCancelAfterEnd ?
                     this._agAwareComponent.isCancelAfterEnd() : false;
             }
 
-            focusIn():void {
+            focusIn(): void {
                 if (this._agAwareComponent.focusIn) {
                     this._agAwareComponent.focusIn();
                 }
             }
 
-            focusOut():void {
+            focusOut(): void {
                 if (this._agAwareComponent.focusOut) {
                     this._agAwareComponent.focusOut();
                 }
             }
 
 
-            protected createComponent():ComponentRef<AgEditorComponent> {
+            protected createComponent(): ComponentRef<AgEditorComponent> {
                 return that.createComponent(componentType,
                     viewContainerRef,
-                    name,
-                    moduleImports,
-                    childDependencies);
+                    name);
             }
         }
 
         return CellEditor;
     }
 
-    private adaptComponentToFilter(componentType:{ new(...args:any[]): AgFilterComponent; },
-                                   viewContainerRef:ViewContainerRef,
-                                   name:string,
-                                   moduleImports:any[],
-                                   childDependencies:any[]):{new(): IFilter} {
+    private adaptComponentToFilter(componentType: { new(...args: any[]): AgFilterComponent; },
+                                   viewContainerRef: ViewContainerRef,
+                                   name: string): {new(): IFilter} {
 
         let that = this;
         class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilter {
-            init(params:IFilterParams):void {
+            init(params: IFilterParams): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
             }
 
-            isFilterActive():boolean {
+            isFilterActive(): boolean {
                 return this._agAwareComponent.isFilterActive();
             }
 
-            doesFilterPass(params:IDoesFilterPassParams):boolean {
+            doesFilterPass(params: IDoesFilterPassParams): boolean {
                 return this._agAwareComponent.doesFilterPass(params);
             }
 
-            getModel():any {
+            getModel(): any {
                 return this._agAwareComponent.getModel();
             }
 
-            setModel(model:any):void {
+            setModel(model: any): void {
                 this._agAwareComponent.setModel(model);
             }
 
-            afterGuiAttached(params:IAfterFilterGuiAttachedParams):void {
+            afterGuiAttached(params: IAfterFilterGuiAttachedParams): void {
                 if (this._agAwareComponent.afterGuiAttached) {
                     this._agAwareComponent.afterGuiAttached(params);
                 }
             }
 
-            getFrameworkComponentInstance():any {
+            getFrameworkComponentInstance(): any {
                 return this._frameworkComponentInstance;
             }
 
-            protected createComponent():ComponentRef<AgFilterComponent> {
+            protected createComponent(): ComponentRef<AgFilterComponent> {
                 return that.createComponent(componentType,
                     viewContainerRef,
-                    name,
-                    moduleImports,
-                    childDependencies);
+                    name);
             }
 
         }
@@ -219,67 +178,27 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
 
-    public createComponent<T>(componentType:{ new(...args:any[]): T; },
-                              viewContainerRef:ViewContainerRef,
-                              name:string,
-                              moduleImports:any[],
-                              childDependencies:any[]):ComponentRef<T> {
-        let factory:ComponentFactory<any> = this._factoryCache[name];
+    public createComponent<T>(componentType: { new(...args: any[]): T; },
+                              viewContainerRef: ViewContainerRef,
+                              name: string): ComponentRef<T> {
+        let factory: ComponentFactory<any> = this._factoryCache[name];
         if (!factory) {
-            // let module = this.createComponentModule(componentType, moduleImports, childDependencies);
-            // let moduleWithFactories = compiler.compileModuleAndAllComponentsSync(module);
-            //
-            // factory = moduleWithFactories.componentFactories.find((factory:ComponentFactory<T>) => factory.componentType === componentType);
             factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
             this._factoryCache[name] = factory;
         }
 
         return viewContainerRef.createComponent(factory);
     }
-
-
-    private  createComponentModule(componentType:any, moduleImports:any[], childDependencies:any[]):any {
-        @NgModule({
-            imports: moduleImports,
-            declarations: [componentType, ...childDependencies],
-            exports: []
-        })
-        class RuntimeComponentModule {
-        }
-        // a module for just this Type
-        return RuntimeComponentModule;
-    }
-
-    private createDynamicComponentType(selector:string, template:string):any {
-        @Component({selector: selector, template: template})
-        class DynamicComponent implements AgRendererComponent {
-            private params:any;
-
-            agInit(params:any):void {
-                this.params = params;
-            }
-
-            // not applicable for template components
-            getFrameworkComponentInstance():any {
-                return undefined;
-            }
-
-            // not applicable for template components
-            refresh(params:any):void {
-            }
-        }
-        return DynamicComponent;
-    }
 }
 
 abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
-    protected _params:P;
-    protected _eGui:HTMLElement;
-    protected _componentRef:ComponentRef<T>;
-    protected _agAwareComponent:T;
-    protected _frameworkComponentInstance:any;  // the users component - for accessing methods they create
+    protected _params: P;
+    protected _eGui: HTMLElement;
+    protected _componentRef: ComponentRef<T>;
+    protected _agAwareComponent: T;
+    protected _frameworkComponentInstance: any;  // the users component - for accessing methods they create
 
-    protected init(params:P):void {
+    protected init(params: P): void {
         this._params = params;
 
         this._componentRef = this.createComponent();
@@ -290,20 +209,20 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
         this._agAwareComponent.agInit(this._params);
     }
 
-    public getGui():HTMLElement {
+    public getGui(): HTMLElement {
         return this._eGui;
     }
 
-    public destroy():void {
+    public destroy(): void {
         if (this._componentRef) {
             this._componentRef.destroy();
         }
     }
 
-    public getFrameworkComponentInstance():any {
+    public getFrameworkComponentInstance(): any {
         return this._frameworkComponentInstance;
     }
 
-    protected abstract createComponent():ComponentRef<T>;
+    protected abstract createComponent(): ComponentRef<T>;
 }
 
