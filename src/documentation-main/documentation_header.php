@@ -263,6 +263,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-refresh/">Refresh</a>
                 <?php } ?>
 
+                <?php if ($key == "Animation") { ?>
+                    <span class="sidebarLinkSelected">Animation</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-animation/">Animation</a>
+                <?php } ?>
+
                 <?php if ($key == "Header Rendering") { ?>
                     <span class="sidebarLinkSelected">Header Templates<br/>&nbsp;& Rendering</span>
                 <?php } else { ?>

@@ -15,6 +15,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableSorting: true,
+    animateSort: true,
     sortingOrder: ['desc','asc',null]
 };
 

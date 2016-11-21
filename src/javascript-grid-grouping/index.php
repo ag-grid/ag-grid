@@ -94,9 +94,15 @@ include '../documentation-main/documentation_header.php';
                 to the footer on expand.
             </td>
         </tr>
+        <tr>
+            <th>animateRowExpand</th>
+            <td>
+                Set to true to enable animation of the rows after group is opened and closed.
+            </td>
+        </tr>
+
     </table>
 
-grouping 
     <table class="table">
         <tr>
             <th>Callback</th>
@@ -213,11 +219,34 @@ colDef.cellRendererParams = {
     </p>
 
 
+    <h3>Grouping API</h3>
+
+    <p>
+        To expand or contract a group via the API, you fist must get a reference to the rowNode and then call
+        <i>rowNode.setExpanded(boolean).</i> This will result in the grid getting updated and displaying the
+        correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
+        <pre>gridOptions.api.forEachNode(function(node) {
+    if (node.key==='Zimbabwe') {
+        node.setExpanded(true);
+    }
+});</pre>
+    </p>
+
+    <p>
+        Calling <i>node.setExpanded()</i> causes the grid to get redrawn. If you have many nodes you want to
+        expand, then it is best to set node.expanded=true directly, and then call
+        <i>api.onGroupExpandedOrCollapsed()</i> when finished to get the grid to redraw the grid again just once.
+    </p>
+
     <h3>Grouping Example</h3>
 
     <p>
         Below shows a simple grouping example, using one attribute to group, the entire row is used
-        (so no group column) and no aggregation function.
+        (so no group column) and no aggregation function. The example also demonstrates the following:
+        <ul>
+        <li>Animation is turned on the group expand / contract action.</li>
+        <li>The 'Toggle Zimbabwe' button uses the grid's API to open and close the group.</li>
+    </ul>
     </p>
 
     <show-example example="example1"></show-example>

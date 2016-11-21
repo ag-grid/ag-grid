@@ -14,8 +14,18 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
+    animateRowExpand: true,
     groupUseEntireRow: true
 };
+
+function onToggleZimbabwe() {
+    gridOptions.api.forEachNode(function(node) {
+        if (node.key==='Zimbabwe') {
+            var oldValue = node.expanded;
+            node.setExpanded(!oldValue);
+        }
+    });
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -31,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
+            gridOptions.api.sizeColumnsToFit();
         }
     };
 });

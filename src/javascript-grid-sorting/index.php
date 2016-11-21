@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         <a href="/javascript-grid-virtual-paging/index.php">virtual paging</a>
     </note>
 
-    <h4>Enable Sorting</h4>
+    <h3>Enable Sorting</h3>
 
     <p>
         Turn sorting on for the grid by enabling sorting in the grid options.
@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
         hold down shift while clicking the column header.
     </p>
 
-    <h4>Custom Sorting</h4>
+    <h3>Custom Sorting</h3>
 
     <p>
         Custom sorting is provided at a column level by configuring a comparator on the column definition.
@@ -44,6 +44,8 @@ include '../documentation-main/documentation_header.php';
 colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     return valueA - valueB;
 }</pre>
+
+    <h3>Example: Custom Sorting</h3>
 
     <p>
         Example below shows the following:
@@ -56,7 +58,13 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 
     <show-example example="example1"></show-example>
 
-    <h4>Sorting Order</h4>
+    <h3>Sorting Animation</h3>
+
+    <p>
+        To enable animation of the rows after sorting, set grid property <i>animateSort=true</i>.
+    </p>
+
+    <h3>Sorting Order</h3>
 
     <p>
         By default, the sorting order is as follows:
@@ -74,8 +82,10 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         preference, allowing you to defined a common default, and then tailoring per column.
     </p>
 
+    <h3>Example: Sorting Order and Animation</h3>
+
     <p>
-        The example below shows different combinations of sorting orders as follows:
+        The example below shows animation of the rows plus different combinations of sorting orders as follows:
         <ul>
         <li><b>Grid Default:</b> ascending -> descending -> no sort</li>
         <li><b>Column Athlete:</b> ascending -> descending</li>
@@ -87,7 +97,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 
     <show-example example="exampleSortingOrder"></show-example>
 
-    <h4>Sorting API</h4>
+    <h3>Sorting API</h3>
 
     <p>
         Sorting can be controlled via the Sorting API via the following methods:
@@ -109,13 +119,15 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     {colId: 'sport', sort: 'desc'}
 ]</pre>
 
+    <h3>Example: Sorting API</h3>
+
     <p>
         The example below shows the API in action.
     </p>
 
     <show-example example="sortingApi"></show-example>
 
-    <h4>Sorting Groups</h4>
+    <h3>Sorting Groups</h3>
 
     <p>
         The grid sorts columns ignoring the groups, even if the column is displaying group data. This
