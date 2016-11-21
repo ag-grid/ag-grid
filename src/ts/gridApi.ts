@@ -216,12 +216,12 @@ export class GridApi {
         if (_.missing(this.inMemoryRowModel)) { console.log('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model') }
         if (_.exists(deprecated_refreshFromIndex)) { console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is not longer used, the grid will refresh only row nodes that are new'); }
         let animate = this.gridOptionsWrapper.isAnimateRowExpand();
-        this.inMemoryRowModel.refreshModel(Constants.STEP_MAP, null, animate);
+        this.inMemoryRowModel.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
     }
 
     public refreshInMemoryRowModel(): any {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call refreshInMemoryRowModel unless using normal row model') }
-        this.inMemoryRowModel.refreshModel(Constants.STEP_EVERYTHING);
+        this.inMemoryRowModel.refreshModel({step: Constants.STEP_EVERYTHING});
     }
     
     public expandAll() {
@@ -300,7 +300,7 @@ export class GridApi {
 
     public recomputeAggregates(): void {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call recomputeAggregates unless using normal row model') }
-        this.inMemoryRowModel.refreshModel(Constants.STEP_AGGREGATE);
+        this.inMemoryRowModel.refreshModel({step: Constants.STEP_AGGREGATE});
     }
 
     public sizeColumnsToFit() {

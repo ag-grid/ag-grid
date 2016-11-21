@@ -88,8 +88,10 @@ export class Events {
 }
 
 export interface ModelUpdatedEvent {
+    /** If true, the grid will try and animate the rows to the new positions */
+    animate: boolean;
     /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
      * it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
-    animate: boolean;
+    keepRenderedRows: boolean;
 }

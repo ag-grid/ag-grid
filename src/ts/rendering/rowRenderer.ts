@@ -236,14 +236,14 @@ export class RowRenderer {
     }
 
     private onFloatingRowDataChanged(): void {
-        this.refreshView(false);
+        this.refreshView();
     }
 
     private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
-        this.refreshView(refreshEvent.animate);
+        this.refreshView(refreshEvent.keepRenderedRows, refreshEvent.animate);
     }
 
-    public refreshView(animate = false): void {
+    public refreshView(keepRenderedRows = false, animate = false): void {
         this.logger.log('refreshView');
 
         var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
@@ -256,7 +256,7 @@ export class RowRenderer {
             this.ePinnedRightColsContainer.style.height = containerHeight + "px";
         }
 
-        this.refreshAllVirtualRows(animate);
+        this.refreshAllVirtualRows(keepRenderedRows, animate);
         this.refreshAllFloatingRows();
 
         this.restoreFocusedCell(focusedCell);
@@ -371,7 +371,7 @@ export class RowRenderer {
         this.removeVirtualRows(rowsToRemove);
     }
 
-    private refreshAllVirtualRows(animate: boolean) {
+    private refreshAllVirtualRows(keepRenderedRows: boolean, animate: boolean) {
         let rowsToRemove: string[];
         let oldRowsByNodeId: {[key: string]: RenderedRow} = {};
 

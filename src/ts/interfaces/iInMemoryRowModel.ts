@@ -5,7 +5,7 @@ export interface IInMemoryRowModel extends IRowModel {
 
     /** InMemory model only. Gets the model to refresh. Provide a step for the
      * step in the pipeline you want to refresh from. */
-    refreshModel(step: number, groupState?: any, animate?: boolean): void;
+    refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean}): void;
     /** InMemory model only. If tree / group structure, returns the top level
      * nodes only. */
     getTopLevelNodes(): RowNode[];
