@@ -49,7 +49,6 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
                 private container: Container,
                 private viewResources: ViewResources) {
         this._nativeElement = element;
-
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
         ComponentUtil.EVENTS.forEach((eventName) => {
@@ -60,6 +59,12 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
     }
 
     attached(): void {
+
+
+        this._initialised = false;
+        this._destroyed = false;
+
+
         this.auFrameworkFactory.setViewContainerRef(this.container, this.viewResources);
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
