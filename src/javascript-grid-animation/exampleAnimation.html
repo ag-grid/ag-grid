@@ -4,7 +4,16 @@
     <script src="../dist/ag-grid-enterprise.js?ignore=notused36"></script>
     <script src="exampleAnimation.js"></script>
 </head>
-<body>
-    <div id="myGrid" class="ag-fresh" style="height: 100%;"></div>
+<style>
+    .blue {color: #a3b9a3}
+    .yellow {color: #e8bf6a}
+    .green {color: #a5c261}
+    .purple {color: #977582}
+</style>
+<body style="background-color: #302e2e;">
+    <div style="height: 100%; padding-top: 20px; box-sizing: border-box;">
+        <div id="myGrid" class="ag-dark" style="height: 100%;"></div>
+    </div>
+    <div style="position: absolute; top: 0px; left: 0px; padding-left: 8px; padding-top: 4px;"><span id="animationAction"></span></div>
 </body>
 </html>

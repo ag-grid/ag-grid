@@ -18,8 +18,8 @@
         $scope.source =  example.indexOf("?") === -1 ? (example + ".html") : example;
         $scope.selectedTab = 'example';
         $scope.jsfile = $attrs['jsfile'] ? $attrs['jsfile'] : example;
-        $scope.exeExtension = $scope.jsfile.endsWith(".ts") ? "" : ".js";
-        $scope.sourceLang = $scope.jsfile.endsWith(".ts") ? "TypeScript" : "Javascript";
+        $scope.exeExtension = $scope.jsfile.indexOf(".ts")>=0 ? "" : ".js";
+        $scope.sourceLang = $scope.jsfile.indexOf(".ts")>=0 ? "TypeScript" : "Javascript";
         $scope.htmlFile = $attrs['html'] ? $attrs['html'] : "./"+example+".html";
 
         if ($attrs.extraPages) {

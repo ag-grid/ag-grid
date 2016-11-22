@@ -27,71 +27,123 @@ var gridOptions = {
     }
 };
 
-// the code below executes and action every 2,000 milliseconds.
+// the code below executes an action every 2,000 milliseconds.
 // it's an interval, and each time it runs, it takes the next action
 // from the 'actions' list below
-var actionIndex = 0;
-setInterval( function() {
-    var action = actions[actionIndex];
-    action();
-    actionIndex++;
-    if (actionIndex >= actions.length) {
-        actionIndex = 0;
+function startInterval() {
+    var actionIndex = 0;
+
+    executeAfterXSeconds();
+
+    function executeAfterXSeconds() {
+        setTimeout( function() {
+            var action = actions[actionIndex];
+            action();
+            actionIndex++;
+            if (actionIndex >= actions.length) {
+                actionIndex = 0;
+            }
+            executeAfterXSeconds();
+        }, 3000);
     }
-}, 2000);
+}
+
+function setTitle(title) {
+    // var eTitle = document.querySelector('#animationAction');
+    // if (eTitle) {
+    //     eTitle.innerHTML = title;
+    // }
+}
+
+function setTitleFormatted(apiName,methodName,paramsName) {
+    var eTitle = document.querySelector('#animationAction');
+    if (eTitle) {
+        eTitle.innerHTML = '<span class="yellow">> </span> ' +
+            '<span class="blue">'+apiName+'</span>' +
+            '<span class="blue">.</span>' +
+            '<span class="yellow">'+methodName+'</span>' +
+            '<span class="blue"></span>' +
+            '<span class="blue">(</span>' +
+            '<span class="green">'+paramsName+'</span>' +
+            '<span class="blue">)</span>';
+    }
+}
 
 var actions = [
     function() {
         gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'}]);
+        setTitleFormatted("api","setSort","country");
     },
     function() {
         gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'},{colId: 'year', sort: 'asc'}]);
+        setTitleFormatted("api","setSort","country, year");
     },
     function() {
         gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'},{colId: 'year', sort: 'desc'}]);
+        setTitleFormatted("api","setSort","country, year");
     },
     function() {
         gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'}]);
+        setTitleFormatted("api","setSort","country");
     },
     function() {
         gridOptions.api.setSortModel([]);
         gridOptions.api.setFilterModel({country: ['Ireland']});
+        setTitleFormatted("api","setFilter","Ireland");
     },
     function() {
         gridOptions.api.setSortModel([{colId: 'year', sort: 'asc'}]);
+        setTitleFormatted("api","setSort","year");
     },
     function() {
         gridOptions.api.setSortModel([{colId: 'year', sort: 'desc'}]);
+        setTitleFormatted("api","setSort","year");
     },
     function() {
         gridOptions.api.setSortModel([]);
         gridOptions.api.setFilterModel({});
+        setTitleFormatted("api","clearFilterAndSort","");
     },
     function() {
         gridOptions.columnApi.setRowGroupColumns(['country','year','sport']);
         gridOptions.columnApi.setColumnVisible('athlete', false);
         gridOptions.api.sizeColumnsToFit();
+        setTitleFormatted("api","setGrouping","country, year, sport");
+    },
+    function() {
+        gridOptions.columnApi.moveColumns(['gold','silver','bronze','total'],1);
+        gridOptions.api.sizeColumnsToFit();
+        setTitleFormatted("api","moveColumns","gold, silver, bronze, total");
     },
     function() {
         var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
         topLevelNodes[2].setExpanded(true);
+        setTitleFormatted("rowNode","setExpanded","true");
     },
     function() {
         var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].setExpanded(true);
+        setTitleFormatted("rowNode","setExpanded","true");
     },
     function() {
         var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].childrenAfterSort[0].setExpanded(true);
+        setTitleFormatted("rowNode","setExpanded","true");
     },
     function() {
         var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].setExpanded(false);
+        setTitleFormatted("rowNode","setExpanded","false");
     },
     function() {
         gridOptions.columnApi.setRowGroupColumns([]);
         gridOptions.columnApi.setColumnVisible('athlete', true);
         gridOptions.api.sizeColumnsToFit();
+        setTitleFormatted("api","removeGrouping","");
+    },
+    function() {
+        gridOptions.columnApi.moveColumns(['gold','silver','bronze','total'],6);
+        setTitleFormatted("api","moveColumns","gold, silver, bronze, total");
     }
 ];
 
@@ -110,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
             gridOptions.api.sizeColumnsToFit();
+            startInterval();
         }
     };
 });

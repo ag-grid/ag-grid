@@ -215,10 +215,17 @@ include '../documentation-main/documentation_header.php';
                 headers and finally the columns at the bottom.</td>
         </tr>
         <tr>
-            <th>moveColumn(fromIndex, toIndex)</th>
-            <td>Moves a column. The column is first removed at 'fromIndex'. It is then re-inserted
-                at 'toIndex' using the new list (thus index locations will change to the right of
-                of the column after the removal).</td>
+            <th>moveColumn(colKey, toIndex)</th>
+            <td>Moves a column to toIndex. The column is first removed, then added at the 'toIndex' location, thus
+                index locations will change to the right of of the column after the removal</td>
+        </tr>
+        <tr>
+            <th>moveColumns(colKeys[], toIndex)</th>
+            <td>Same as moveColumn but works on list.</td>
+        </tr>
+        <tr>
+            <th>moveColumnByIndex(fromIndex, toIndex)</th>
+            <td>Same as moveColumn but works on index locations.</td>
         </tr>
 
         <tr>

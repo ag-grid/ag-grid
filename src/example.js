@@ -322,7 +322,7 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Country", field: "country", width: 150, editable: true,
+                headerName: "Country", field: "country", width: 150, editable: false,
                 cellRenderer: CountryCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
