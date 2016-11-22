@@ -16,6 +16,9 @@ include '../documentation-main/documentation_header.php';
 
     <li>To open / close a row node, you should now call rowNode.setExpanded(boolean)</li>
 
+    <li>Bug Fix: columnApi.setColumnAggFunct() => renamed to columnApi.setColumnAggFunc() (took out the 't' at the end, it was a typo)</li>
+    <li>Bug Fix: paste from clipboard now skips non-editable columns and continues with rest of row (before it stopped and didn't complete the row)</li>
+
     <h2>Version 6.4.x</h2>
 
     <h4>ag-grid-6.4.2, ag-grid-enterprise-6.4.2</h4>
