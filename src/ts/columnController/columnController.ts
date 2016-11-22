@@ -57,7 +57,7 @@ export class ColumnApi {
 
     public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumnByIndex(fromIndex, toIndex); }
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this._columnController.moveRowGroupColumn(fromIndex, toIndex); }
-    public setColumnAggFunct(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunc(column, aggFunc); }
+    public setColumnAggFunc(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunc(column, aggFunc); }
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
     public setPivotMode(pivotMode: boolean): void { this._columnController.setPivotMode(pivotMode); }
     public isPivotMode(): boolean { return this._columnController.isPivotMode(); }
@@ -248,6 +248,17 @@ export class ColumnController {
     private setViewportLeftAndRight(): void {
         this.viewportLeft = this.scrollPosition;
         this.viewportRight = this.totalWidth + this.scrollPosition;
+    }
+
+    // used by clipboard service, to know what columns to paste into
+    public getDisplayedColumnsStartingAt(column: Column): Column[] {
+        let currentColumn = column;
+        let result: Column[] = [];
+        while (_.exists(currentColumn)) {
+            result.push(currentColumn);
+            currentColumn = this.getDisplayedColAfter(currentColumn);
+        }
+        return result;
     }
 
     private checkDisplayedCenterColumns(): void {
