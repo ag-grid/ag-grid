@@ -5,7 +5,9 @@ import {
     ComponentAttached,
     ComponentDetached,
     children,
-    Container, ViewResources
+    Container,
+    ViewResources,
+    TaskQueue
 } from 'aurelia-framework';
 
 import {
@@ -45,6 +47,7 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
     public columns: AgGridColumn[] = [];
 
     constructor(element: Element,
+                private taskQueue: TaskQueue,
                 private auFrameworkFactory: AureliaFrameworkFactory,
                 private container: Container,
                 private viewResources: ViewResources) {
@@ -58,7 +61,14 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
         });
     }
 
-    attached(): void {
+    attached(){
+        //initialize the grid in the queue
+        //because of bug in @children
+        // https://github.com/aurelia/templating/issues/403
+        this.taskQueue.queueTask(this.initGrid.bind(this));
+    }
+
+    initGrid(): void {
 
 
         this._initialised = false;
