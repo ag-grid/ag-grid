@@ -1,7 +1,7 @@
-<section class="HomeSection HomeSection--alt HomeDemo hidden-xs">
+<section class="HomeSection HomeDemo hidden-xs">
 
     <div class="container">
-        <h4 class="text-center">Using the default look and feel, get a feature rich grid with minimal coding</h4>
+        <h4 class="text-center">Designed To Be Customised, For Creating Rich Applications</h4>
         <div class="row HomeDemo-main">
             <div class="col-md-12">
                 <div style="padding: 4px;">
@@ -20,7 +20,6 @@
             </div>
         </div>
 
-    </div>
     </div>
 
 </section>

@@ -1,4 +1,4 @@
-<section class="HomeSection HomeSection--alt HomeDemo">
+<section class="HomeSection HomeDemo">
 
     <div class="container">
         <div class="row">

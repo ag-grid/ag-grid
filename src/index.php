@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <div class="home-page-sections">
+        <div class="HomeSectionParent">
 
             <?php include 'home/intro.php'; ?>
 
@@ -79,7 +79,6 @@
             <?php include 'home/features.php'; ?>
 
         </div>
-
 
         <?php $navKey = "home"; include './includes/footer.php'; ?>
 

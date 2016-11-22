@@ -597,17 +597,7 @@ h1, h2, h3, h4, h5 {
     font-weight: normal;
 }
 
-/*
-.HomeSectionParent:nth-child(2) {
-    background-color: #f6f8fa;
-}
-*/
-
-.HomeSection--alt {
-    background-color: #f6f8fa;
-}
-
-.HomeSection--alt {
+.HomeSection:nth-child(odd) {
     background-color: #f6f8fa;
 }
 

@@ -154,10 +154,6 @@
                 return null;
             }
         },
-        icons: {
-            groupExpanded: '<i class="fa fa-minus-square-o"/>',
-            groupContracted: '<i class="fa fa-plus-square-o"/>'
-        },
         onRowClicked: rowClicked
     };
 

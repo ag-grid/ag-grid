@@ -1,7 +1,7 @@
-<section class="HomeSection HomeSection--alt HomeDemo hidden-xs">
+<section class="HomeSection HomeDemo hidden-xs">
 
     <div class="container">
-        <h4 class="text-center">Fully Controllable via Grid API</h4>
+        <h4 class="text-center">Grid API Gives Control Over Everything</h4>
         <div class="row HomeDemo-main">
             <div class="col-md-12">
                 <div style="background-color: #302e2e; border: 2px outset grey;">
@@ -14,7 +14,6 @@
             </div>
         </div>
 
-    </div>
     </div>
 
 </section>

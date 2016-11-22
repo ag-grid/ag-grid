@@ -10,11 +10,10 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version Next</h2>
 
-    <li>New properties: enableAnimateSort, enableAnimateFilter, enableAnimateExpand</li>
-
+    <li>Enhancement: Animation of Rows - now rows will animate after sort, filter and row group open / close.</li>
+    <li>Enhancement: New properties - enableAnimateSort, enableAnimateFilter, enableAnimateExpand</li>
+    <li>Enhancement: New API - rowNode.setExpanded(boolean) - To open / close a row group row.</li>
     <li>Enhancement: api.getValue() now works with pivot columns</li>
-
-    <li>To open / close a row node, you should now call rowNode.setExpanded(boolean)</li>
 
     <li>Bug Fix: columnApi.setColumnAggFunct() => renamed to columnApi.setColumnAggFunc() (took out the 't' at the end, it was a typo)</li>
     <li>Bug Fix: paste from clipboard now skips non-editable columns and continues with rest of row (before it stopped and didn't complete the row)</li>

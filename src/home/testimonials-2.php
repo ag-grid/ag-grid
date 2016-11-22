@@ -1,4 +1,4 @@
-<section class="HomeSection Testimonials HomeSection--alt">
+<section class="HomeSection Testimonials">
     <div class="container">
         <div class="row">
             <div class="col-md-2" style="padding: 20px; text-align: center;">
