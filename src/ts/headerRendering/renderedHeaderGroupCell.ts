@@ -214,13 +214,15 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     }
 
     private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
-        var eGroupIcon: any;
+        let eGroupIcon: any;
         if (this.columnGroup.isExpanded()) {
             eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
+            _.addCssClass(eGroupIcon, 'ag-header-expand-icon-expanded');
         } else {
             eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+            _.addCssClass(eGroupIcon, 'ag-header-expand-icon-collapsed');
         }
-        eGroupIcon.className = 'ag-header-expand-icon';
+        _.addCssClass(eGroupIcon, 'ag-header-expand-icon');
         eGroupCellLabel.appendChild(eGroupIcon);
 
         var expandAction = ()=> {
