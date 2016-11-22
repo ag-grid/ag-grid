@@ -122,7 +122,7 @@ export class GridApi {
             // the enterprise implement it, rather than casting to 'any' here
             (<any>this.rowModel).setViewportDatasource(viewportDatasource);
         } else {
-            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+            console.warn(`ag-Grid: you can only use a viewport datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
         }
     }
     
