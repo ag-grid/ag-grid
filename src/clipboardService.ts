@@ -142,14 +142,18 @@ export class ClipboardService implements IClipboardService {
         var updatedRowNodes: RowNode[] = [];
         var updatedColumnIds: string[] = [];
 
-        parsedData.forEach( (values: string[], index: number) => {
+        let columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
+
+        parsedData.forEach( (values: string[]) => {
             // if we have come to end of rows in grid, then skip
             if (!currentRow) { return; }
 
-            var rowNode = this.getRowNode(currentRow);
+            let rowNode = this.getRowNode(currentRow);
             updatedRowNodes.push(rowNode);
-            var column = focusedCell.column;
-            values.forEach( (value: any)=> {
+
+            values.forEach( (value: any, index: number)=> {
+                let column = columnsToPasteInto[index];
+
                 if (Utils.missing(column)) { return; }
                 if (!column.isCellEditable(rowNode)) { return; }
 
@@ -162,8 +166,6 @@ export class ClipboardService implements IClipboardService {
                 if (updatedColumnIds.indexOf(column.getId()) < 0) {
                     updatedColumnIds.push(column.getId());
                 }
-
-                column = this.columnController.getDisplayedColAfter(column);
             });
             // move to next row down for next set of values
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
