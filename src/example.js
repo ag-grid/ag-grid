@@ -13,20 +13,22 @@ var countries = [
     {country: "Spain", continent: "Europe", language: "Spanish"},
     {country: "United Kingdom", continent: "Europe", language: "English"},
     {country: "France", continent: "Europe", language: "French"},
-    {country: "Germany", continent: "Europe", language: "(other)"},
-    {country: "Sweden", continent: "Europe", language: "(other)"},
-    {country: "Norway", continent: "Europe", language: "(other)"},
-    {country: "Italy", continent: "Europe", language: "(other)"},
-    {country: "Greece", continent: "Europe", language: "(other)"},
-    {country: "Iceland", continent: "Europe", language: "(other)"},
+    {country: "Germany", continent: "Europe", language: "German"},
+    {country: "Luxembourg", continent: "Europe", language: "French"},
+    {country: "Sweden", continent: "Europe", language: "Swedish"},
+    {country: "Norway", continent: "Europe", language: "Norwegian"},
+    {country: "Italy", continent: "Europe", language: "Italian"},
+    {country: "Greece", continent: "Europe", language: "Greek"},
+    {country: "Iceland", continent: "Europe", language: "Icelandic"},
     {country: "Portugal", continent: "Europe", language: "Portuguese"},
-    {country: "Malta", continent: "Europe", language: "(other)"},
+    {country: "Malta", continent: "Europe", language: "Maltese"},
     {country: "Brazil", continent: "South America", language: "Portuguese"},
     {country: "Argentina", continent: "South America", language: "Spanish"},
     {country: "Colombia", continent: "South America", language: "Spanish"},
     {country: "Peru", continent: "South America", language: "Spanish"},
     {country: "Venezuela", continent: "South America", language: "Spanish"},
-    {country: "Uruguay", continent: "South America", language: "Spanish"}
+    {country: "Uruguay", continent: "South America", language: "Spanish"},
+    {country: "Belgium", continent: "Europe", language: "French"}
 ];
 
 var games = ["Chess", "Cross and Circle", "Daldøs", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
@@ -311,7 +313,8 @@ var defaultCols = [
                 // rowGroupIndex: 0,
                 // pivotIndex: 0,
                 cellEditorParams: {
-                    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
+                    values: ['English', 'Spanish', 'French', 'Portuguese', 'German',
+                        'Swedish','Norwegian','Italian','Greek','Icelandic','Portuguese','Maltese']
                 },
                 //pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
@@ -333,7 +336,7 @@ var defaultCols = [
                     cellRenderer: CountryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
-                        "Uruguay", "Venezuela"]
+                        "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
                 },
                 //pinned: 'left',
                 floatCell: true,
@@ -563,7 +566,9 @@ function createRowItem(row, colCount) {
     var rowItem = {};
 
     //create data for the known columns
-    var countryData = countries[row % countries.length];
+    var countriesToPickFrom = Math.floor(countries.length * ((row % 3 + 1) / 3));
+    var countryData = countries[(row*19) % countriesToPickFrom];
+    console.log(countriesToPickFrom + ' - ' + (row % countriesToPickFrom));
     rowItem.country = countryData.country;
     rowItem.continent = countryData.continent;
     rowItem.language = countryData.language;
@@ -650,6 +655,8 @@ function onFilterChanged(newFilter) {
 
 var COUNTRY_CODES = {
     Ireland: "ie",
+    Luxembourg: "lu",
+    Belgium: "be",
     Spain: "es",
     "United Kingdom": "gb",
     France: "fr",
