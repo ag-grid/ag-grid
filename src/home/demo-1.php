@@ -5,12 +5,10 @@
         <div class="row HomeDemo-main">
             <div class="col-md-12">
                 <div style="padding: 4px;">
-                    <div style="width: 40%; display: inline-block;">
+                    <div style="display: inline-block;">
                         <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
                     </div>
-                    <div style="width: 40%; display: inline-block; padding: 4px;">
-                        Example Dataset Showing <span id="rowCount"></span> rows(s)
-                    </div>
+                    <span style="float: right;"><span id="rowCount"></span> rows(s)</span>
                 </div>
                 <div style="width: 100%; height: 400px;"
                      id="bestHtml5Grid"

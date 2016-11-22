@@ -1,25 +1,3 @@
-<!--<section class="HomeSection HomeSection--alt HomeDemo hidden-xs">
-
-    <div class="container">
-        <div class="row">
-
-            <div class="HomeDemo-sub row">
-                <div class="col-md-4">
-                    <h4 class="text-right pull-right">Provide your own look and feel, create something specific
-                    for a particular report, or create a style that matches the rest of your application and brand.</h4>
-                </div>
-                <div class="col-md-8">
-                    <div id="exampleAccountGrid" class="ag-account" style="display: inline-block; padding: 4px;"></div>
-                    <span style="float: right; position: relative; top: 20px; left: -20px;"><a href="./example-account-report/">(view code)</a></span>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-</section>
--->
-
 <section class="HomeSection HomeDemo hidden-xs">
 
     <div class="container">

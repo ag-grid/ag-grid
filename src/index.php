@@ -56,79 +56,30 @@
             </div>
         </div>
 
-        <?php include 'home/intro.php'; ?>
+        <div class="home-page-sections">
 
-        <?php include 'home/demo-1.php'; ?>
+            <?php include 'home/intro.php'; ?>
 
-        <?php include 'home/intro2.php'; ?>
+            <?php include 'home/demo-1.php'; ?>
 
-        <section class="HomeSection HomeSection--alt HomeDemo">
+            <?php include 'home/intro2.php'; ?>
 
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12" style="text-align: center; padding-bottom: 20px;">
-                        <h4>'AG' Stands For AGnostic - Supporting All Major JavaScript Frameworks</h4>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2" style="text-align: center;">
-                        <img src="images/angularjs_large.png" title="Angular 1"/>
-                        <div class="framework-name">
-                            Angular 1
-                        </div>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
-                        <img src="images/angular2_large.png" title="Angular 2"/>
-                        <div class="framework-name">
-                            Angular 2
-                        </div>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
-                        <img src="images/react_large.png" title="React"/>
-                        <div class="framework-name">
-                            React
-                        </div>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
-                        <img src="images/aurelia_large.png" title="Aurelia"/>
-                        <div class="framework-name">
-                            Aurelia
-                        </div>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
-                        <img src="images/webComponents_large.png" title="Web Components"/>
-                        <div class="framework-name">
-                            Web Components
-                        </div>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
-                        <img src="images/javascript_large.png" title="Vanilla JavaScript"/>
-                        <div class="framework-name">
-                            JavaScript
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php include 'home/frameworks.php'; ?>
 
-        </section>
+            <?php include 'home/demo-3.php'; ?>
 
-        <!--
-        < ? php include 'home/themes-demo.php'; ?>
-        -->
+            <?php include 'home/testimonials-1.php'; ?>
 
-        <?php include 'home/demo-3.php'; ?>
+            <?php include 'home/demo-api.php'; ?>
 
-        <?php include 'home/testimonials-1.php'; ?>
+            <?php include 'home/testimonials-2.php'; ?>
 
-        <?php include 'home/demo-2.php'; ?>
+            <?php include 'home/demo-2.php'; ?>
 
-        <?php include 'home/testimonials-2.php'; ?>
+            <?php include 'home/features.php'; ?>
 
-        <?php include 'home/features.php'; ?>
+        </div>
 
-        <!--
-        < ? php include 'home/free_vs_enterprise.php'; ?>
-        -->
 
         <?php $navKey = "home"; include './includes/footer.php'; ?>
 
@@ -143,10 +94,11 @@
 <link inline href="javascript-grid-viewport/exampleViewport.css" rel="stylesheet">
 
 <script inline src="best-javascript-data-grid/html5grid.js"></script>
-<script inline src="example-account-report/account.js"></script>
+<!--<script inline src="example-account-report/account.js"></script>-->
 <script inline src="example-file-browser/fileBrowser.js"></script>
 <script inline src="javascript-grid-viewport/mockServer.js"></script>
 <script inline src="javascript-grid-viewport/exampleViewport.js"></script>
-<script inline src="home/example-themes.js"></script>
+<script inline src="javascript-grid-animation/exampleAnimation.js"></script>
+<!--<script inline src="home/example-themes.js"></script>-->
 
 <?php include_once("includes/analytics.php"); ?>

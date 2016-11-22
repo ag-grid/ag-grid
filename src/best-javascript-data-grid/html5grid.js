@@ -148,6 +148,8 @@
         enableRangeSelection: true,
         suppressRowClickSelection: true,
         rowHeight: 22,
+        animateSort: true,
+        animateFilter: true,
         onModelUpdated: modelUpdated,
         debug: true
     };
