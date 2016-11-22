@@ -55,7 +55,18 @@ export class ColumnApi {
     public getAllDisplayedColumns(): Column[] { return this._columnController.getAllDisplayedColumns(); }
     public getAllDisplayedVirtualColumns(): Column[] { return this._columnController.getAllDisplayedVirtualColumns(); }
 
-    public moveColumn(fromIndex: number, toIndex: number): void { this._columnController.moveColumnByIndex(fromIndex, toIndex); }
+    public moveColumn(key: string|Column|ColDef, toIndex: number): void {
+        if (typeof key === 'number') {
+            // moveColumn used to take indexes, so this is advising user who hasn't moved to new method name
+            console.log('ag-Grid: you are using moveColumn(fromIndex, toIndex) - moveColumn takes a column key and a destination index, not two indexes, to move with indexes use moveColumnByIndex(from,to) instead');
+            this._columnController.moveColumnByIndex(<number>key, toIndex);
+        } else {
+            this._columnController.moveColumn(key, toIndex);
+        }
+    }
+    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this._columnController.moveColumnByIndex(fromIndex, toIndex); }
+    public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number) { this._columnController.moveColumns(columnsToMoveKeys, toIndex); }
+
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this._columnController.moveRowGroupColumn(fromIndex, toIndex); }
     public setColumnAggFunc(column: Column, aggFunc: string): void { this._columnController.setColumnAggFunc(column, aggFunc); }
     public setColumnWidth(key: Column | string | ColDef, newWidth: number, finished: boolean = true): void { this._columnController.setColumnWidth(key, newWidth, finished); }
