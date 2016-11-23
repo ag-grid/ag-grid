@@ -375,7 +375,7 @@ export class RowRenderer {
         let rowsToRemove: string[];
         let oldRowsByNodeId: {[key: string]: RenderedRow} = {};
 
-        if (animate) {
+        if (keepRenderedRows) {
             rowsToRemove = [];
             _.iterateObject(this.renderedRows, (index: string, renderedRow: RenderedRow)=> {
                 let rowNode = renderedRow.getRowNode();
@@ -505,7 +505,7 @@ export class RowRenderer {
             var node = this.rowModel.getRow(rowIndex);
             if (node) {
                 let renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
-                renderedRow.getDelayedCreateFunctions().forEach( func => delayedCreateFunctions.push(func) );
+                _.pushAll(delayedCreateFunctions, renderedRow.getAndClearNextVMTurnFunctions());
                 this.renderedRows[rowIndex] = renderedRow;
             }
         }
@@ -522,7 +522,7 @@ export class RowRenderer {
         var delayedDestroyFunctions: Function[] = [];
         _.iterateObject(oldRenderedRowsByNodeId, (nodeId: string, renderedRow: RenderedRow) => {
             renderedRow.destroy(animate);
-            renderedRow.getDelayedDestroyFunctions().forEach( func => delayedDestroyFunctions.push(func) );
+            renderedRow.getAndClearDelayedDestroyFunctions().forEach(func => delayedDestroyFunctions.push(func) );
             delete oldRenderedRowsByNodeId[nodeId];
         });
         setTimeout( ()=> {

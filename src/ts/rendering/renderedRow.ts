@@ -56,9 +56,20 @@ export class RenderedRow {
     private ePinnedRightContainerDF: DocumentFragment;
 
     private destroyFunctions: Function[] = [];
+
+    // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
+    // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
+    // executes them all in one timeout
+    private nextVmTurnFunctions: Function[] = [];
+
+    // for animations, these functions get called 400ms after the row is cleared, called by the rowRenderer
+    // so each row isn't setting up it's own timeout
     private delayedDestroyFunctions: Function[] = [];
-    private delayedCreateFunctions: Function[] = [];
-    private animateDestroyFunctions: Function[] = [];
+
+    // these get called before the row is destroyed - they set up the DOM for the remove animation (ie they
+    // set the DOM up for the animation), then the delayedDestroyFunctions get called when the animation is
+    // complete (ie removes from the dom).
+    private startRemoveAnimationFunctions: Function[] = [];
 
     private renderedRowEventService: EventService;
 
@@ -108,12 +119,18 @@ export class RenderedRow {
         }
     }
 
-    public getDelayedDestroyFunctions(): Function[] {
-        return this.delayedDestroyFunctions;
+    // we clear so that the functions are never executed twice
+    public getAndClearDelayedDestroyFunctions(): Function[] {
+        var result = this.delayedDestroyFunctions;
+        this.delayedDestroyFunctions = [];
+        return result;
     }
 
-    public getDelayedCreateFunctions(): Function[] {
-        return this.delayedCreateFunctions;
+    // we clear so that the functions are never executed twice
+    public getAndClearNextVMTurnFunctions(): Function[] {
+        var result = this.nextVmTurnFunctions;
+        this.nextVmTurnFunctions = [];
+        return result;
     }
 
     private addDomData(eRowContainer: Element): void {
@@ -624,7 +641,7 @@ export class RenderedRow {
 
         var executeDelayedDestroyFunctions = () => this.delayedDestroyFunctions.forEach( func => func() );
         if (animate) {
-            this.animateDestroyFunctions.forEach( func => func() );
+            this.startRemoveAnimationFunctions.forEach( func => func() );
         } else {
             executeDelayedDestroyFunctions();
         }
@@ -792,7 +809,7 @@ export class RenderedRow {
         this.delayedDestroyFunctions.push( ()=> {
             eParent.removeChild(eRow);
         });
-        this.animateDestroyFunctions.push( ()=> {
+        this.startRemoveAnimationFunctions.push( ()=> {
             _.addCssClass(eRow, 'ag-opacity-zero');
             if (_.exists(this.rowNode.rowTop)) {
                 let rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
@@ -819,12 +836,12 @@ export class RenderedRow {
             this.setRowTop(rowTop);
 
             // and then update the position to it's new position
-            this.delayedCreateFunctions.push(this.onTopChanged.bind(this));
+            this.nextVmTurnFunctions.push(this.onTopChanged.bind(this));
         } else {
             // for fading in, we first set it invisible
             _.addCssClass(eRow, 'ag-opacity-zero');
             // and then transition to visible
-            this.delayedCreateFunctions.push( () => _.removeCssClass(eRow, 'ag-opacity-zero') );
+            this.nextVmTurnFunctions.push( () => _.removeCssClass(eRow, 'ag-opacity-zero') );
         }
     }
 
@@ -950,6 +967,10 @@ export class RenderedRow {
 
         classes.push('ag-row');
         classes.push('ag-row-no-focus');
+
+        if (this.gridOptionsWrapper.isAnimateRows()) {
+            classes.push('ag-row-transition');
+        }
 
         if (this.rowNode.isSelected()) {
             classes.push('ag-row-selected');

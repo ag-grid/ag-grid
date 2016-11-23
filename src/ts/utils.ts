@@ -161,6 +161,11 @@ export class Utils {
         }
     }
 
+    static pushAll(target: any[], source: any[]): void {
+        if (this.missing(source) || this.missing(target)) { return; }
+        source.forEach( func => target.push(func) );
+    }
+
     static getFunctionParameters(func: any) {
         var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
         var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);

@@ -66,17 +66,17 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private onRowGroupOpened(): void {
-        let animate = this.gridOptionsWrapper.isAnimateRowExpand();
+        let animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
     }
 
     private onFilterChanged(): void {
-        var animate = this.gridOptionsWrapper.isAnimateFilter();
+        var animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate});
     }
 
     private onSortChanged(): void {
-        var animate = this.gridOptionsWrapper.isAnimateSort();
+        var animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate});
     }
 
