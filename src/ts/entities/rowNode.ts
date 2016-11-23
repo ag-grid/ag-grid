@@ -9,7 +9,21 @@ import {ColumnController} from "../columnController/columnController";
 import {Autowired} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
+import {Utils as _} from "../utils";
 import {InMemoryRowModel} from "../rowControllers/inMemory/inMemoryRowModel";
+
+export interface SetSelectedParams {
+    // true or false, whatever you want to set selection to
+    newValue: boolean;
+    // whether to remove other selections after this selection is done
+    clearSelection?: boolean;
+    // true when action is NOT on this node, ie user clicked a group and this is the child of a group
+    tailingNodeInSequence?: boolean;
+    // gets used when user shif-selects a range
+    rangeSelect?: boolean;
+    // used in group selection, if true, filtered out children will not be selected
+    groupSelectsFiltered?: boolean;
+}
 
 export class RowNode {
 
@@ -273,12 +287,13 @@ export class RowNode {
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
-    public setSelectedParams(params: {newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean, rangeSelect?: boolean}): void {
+    public setSelectedParams(params: SetSelectedParams): number {
 
         var newValue = params.newValue === true;
         var clearSelection = params.clearSelection === true;
         var tailingNodeInSequence = params.tailingNodeInSequence === true;
         var rangeSelect = params.rangeSelect === true;
+        var groupSelectsFiltered = params.groupSelectsFiltered === true;
 
         if (this.id===undefined) {
             console.warn('ag-Grid: cannot select node until id for node is known');
@@ -312,7 +327,7 @@ export class RowNode {
         var groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 
         if (groupSelectsChildren && this.group) {
-            this.selectChildNodes(newValue);
+            this.selectChildNodes(newValue, groupSelectsFiltered);
         }
 
         // clear other nodes if not doing multi select
@@ -323,8 +338,18 @@ export class RowNode {
                 this.selectionController.clearOtherNodes(this);
             }
 
-            if (groupSelectsChildren && this.parent) {
-                this.parent.calculateSelectedFromChildrenBubbleUp();
+            if (groupSelectsFiltered) {
+                // if the group was selecting filtered, then all nodes above and or below
+                // this node could have check, unchecked or intermediate, so easiest is to
+                // recalculate selected state for all group nodes
+                this.calculatedSelectedForAllGroupNodes();
+            } else {
+                // if no selecting filtered, then everything below the group node was either
+                // selected or not selected, no intermediate, so no need to check items below
+                // this one, just the parents all the way up to the root
+                if (groupSelectsChildren && this.parent) {
+                    this.parent.calculateSelectedFromChildrenBubbleUp();
+                }
             }
 
             // this is the very end of the 'action node', so we are finished all the updates,
@@ -430,9 +455,11 @@ export class RowNode {
         }
     }
 
-    private selectChildNodes(newValue: boolean): void {
-        for (var i = 0; i<this.childrenAfterGroup.length; i++) {
-            this.childrenAfterGroup[i].setSelectedParams({
+    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): void {
+        var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
+        if (_.missing(children)) { return; }
+        for (var i = 0; i<children.length; i++) {
+            children[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
                 tailingNodeInSequence: true

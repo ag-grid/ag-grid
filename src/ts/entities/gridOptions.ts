@@ -114,6 +114,7 @@ export interface GridOptions {
 
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
+    groupSelectsFiltered?: boolean;
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
     groupSuppressRow?: boolean;

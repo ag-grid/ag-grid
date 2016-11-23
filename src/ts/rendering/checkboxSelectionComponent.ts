@@ -41,15 +41,18 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onCheckedClicked(): void {
-        this.rowNode.setSelected(false);
+        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
     }
 
     private onUncheckedClicked(event: MouseEvent): void {
-        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey});
+        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
     }
 
     private onIndeterminateClicked(event: MouseEvent): void {
-        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey});
+        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
     }
 
     public init(params: any): void {

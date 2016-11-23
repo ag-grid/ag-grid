@@ -174,10 +174,19 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private addChildCount(params: any): void {
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
-        var suppressCount = params.suppressCount;
-        if (!suppressCount && params.node.allChildrenCount >= 0) {
-            this.eChildCount.innerHTML = "(" + params.node.allChildrenCount + ")";
-        }
+        if (params.suppressCount) { return; }
+
+        let listener = ()=> {
+            if (params.node.allChildrenCount >= 0) {
+                this.eChildCount.innerHTML = `(${params.node.allChildrenCount})`;
+            } else {
+                this.eChildCount.innerHTML = '';
+            }
+        };
+
+        // filtering changes the child count, so need to cater for it
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_AFTER_FILTER_CHANGED, listener);
+        listener();
     }
 
     private getGroupName(params: any): string {
