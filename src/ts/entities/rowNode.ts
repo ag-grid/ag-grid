@@ -289,27 +289,30 @@ export class RowNode {
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams): number {
 
+        var groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+
         var newValue = params.newValue === true;
         var clearSelection = params.clearSelection === true;
         var tailingNodeInSequence = params.tailingNodeInSequence === true;
         var rangeSelect = params.rangeSelect === true;
-        var groupSelectsFiltered = params.groupSelectsFiltered === true;
+        // groupSelectsFiltered only makes sense when group selects children
+        var groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
 
         if (this.id===undefined) {
             console.warn('ag-Grid: cannot select node until id for node is known');
-            return;
+            return 0;
         }
 
         if (this.floating) {
             console.log('ag-Grid: cannot select floating rows');
-            return;
+            return 0;
         }
 
         // if we are a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
         if (this.footer) {
-            this.sibling.setSelectedParams(params);
-            return;
+            let count = this.sibling.setSelectedParams(params);
+            return count;
         }
 
         if (rangeSelect) {
@@ -317,17 +320,24 @@ export class RowNode {
             var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             var allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (rowModelNormal && newRowClicked && allowMultiSelect) {
-                this.doRowRangeSelection();
-                return;
+                return this.doRowRangeSelection();
             }
         }
 
-        this.selectThisNode(newValue);
+        let updatedCount = 0;
 
-        var groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        // when groupSelectsFiltered, then this node may end up intermediate despite
+        // trying to set it to true / false. this group will be calculated further on
+        // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
+        // here, otherwise the updatedCount would include it.
+        let skipThisNode = groupSelectsFiltered && this.group;
+        if (!skipThisNode) {
+            var thisNodeWasSelected = this.selectThisNode(newValue);
+            if (thisNodeWasSelected) { updatedCount++; }
+        }
 
         if (groupSelectsChildren && this.group) {
-            this.selectChildNodes(newValue, groupSelectsFiltered);
+            updatedCount += this.selectChildNodes(newValue, groupSelectsFiltered);
         }
 
         // clear other nodes if not doing multi select
@@ -338,35 +348,44 @@ export class RowNode {
                 this.selectionController.clearOtherNodes(this);
             }
 
-            if (groupSelectsFiltered) {
-                // if the group was selecting filtered, then all nodes above and or below
-                // this node could have check, unchecked or intermediate, so easiest is to
-                // recalculate selected state for all group nodes
-                this.calculatedSelectedForAllGroupNodes();
-            } else {
-                // if no selecting filtered, then everything below the group node was either
-                // selected or not selected, no intermediate, so no need to check items below
-                // this one, just the parents all the way up to the root
-                if (groupSelectsChildren && this.parent) {
-                    this.parent.calculateSelectedFromChildrenBubbleUp();
-                }
-            }
+            // only if we selected something, then update groups and fire events
+            if (updatedCount>0) {
 
-            // this is the very end of the 'action node', so we are finished all the updates,
-            // include any parent / child changes that this method caused
-            this.mainEventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+                // update groups
+                if (groupSelectsFiltered) {
+                    // if the group was selecting filtered, then all nodes above and or below
+                    // this node could have check, unchecked or intermediate, so easiest is to
+                    // recalculate selected state for all group nodes
+                    this.calculatedSelectedForAllGroupNodes();
+                } else {
+                    // if no selecting filtered, then everything below the group node was either
+                    // selected or not selected, no intermediate, so no need to check items below
+                    // this one, just the parents all the way up to the root
+                    if (groupSelectsChildren && this.parent) {
+                        this.parent.calculateSelectedFromChildrenBubbleUp();
+                    }
+                }
+
+                // fire events
+
+                // this is the very end of the 'action node', so we are finished all the updates,
+                // include any parent / child changes that this method caused
+                this.mainEventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+            }
 
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
                 this.selectionController.setLastSelectedNode(this);
             }
         }
+
+        return updatedCount;
     }
 
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private doRowRangeSelection(): void {
+    private doRowRangeSelection(): number {
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
 
         // if lastSelectedNode is missing, we start at the first row
@@ -375,6 +394,8 @@ export class RowNode {
         var lastRow: RowNode;
 
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+
+        let updatedCount = 0;
 
         var inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         inMemoryRowModel.forEachNodeAfterFilterAndSort( (rowNode: RowNode) => {
@@ -392,7 +413,10 @@ export class RowNode {
             if (!skipThisGroupNode) {
                 var inRange = firstRowHit && !lastRowHit;
                 var childOfLastRow = rowNode.isParentOfNode(lastRow);
-                rowNode.selectThisNode(inRange || childOfLastRow);
+                let nodeWasSelected = rowNode.selectThisNode(inRange || childOfLastRow);
+                if (nodeWasSelected) {
+                    updatedCount++;
+                }
             }
 
             if (lookingForLastRow) {
@@ -413,6 +437,8 @@ export class RowNode {
         }
 
         this.mainEventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+
+        return updatedCount;
     }
 
     private isParentOfNode(potentialParent: RowNode): boolean {
@@ -442,29 +468,33 @@ export class RowNode {
         });
     }
 
-    public selectThisNode(newValue: boolean): void {
-        if (this.selected !== newValue) {
-            this.selected = newValue;
+    public selectThisNode(newValue: boolean): boolean {
+        if (this.selected === newValue) { return false; }
 
-            if (this.eventService) {
-                this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
-            }
+        this.selected = newValue;
 
-            var event: any = {node: this};
-            this.mainEventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event)
+        if (this.eventService) {
+            this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
         }
+
+        var event: any = {node: this};
+        this.mainEventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event)
+
+        return true;
     }
 
-    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): void {
+    private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
         var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
+        let updatedCount = 0;
         if (_.missing(children)) { return; }
         for (var i = 0; i<children.length; i++) {
-            children[i].setSelectedParams({
+            updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
                 tailingNodeInSequence: true
             });
         }
+        return updatedCount;
     }
 
     public addEventListener(eventType: string, listener: Function): void {
