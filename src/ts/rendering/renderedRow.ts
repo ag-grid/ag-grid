@@ -11,7 +11,6 @@ import {Context, Autowired, PostConstruct} from "../context/context";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
-import {GridCell} from "../entities/gridCell";
 import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
