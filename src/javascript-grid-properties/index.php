@@ -48,6 +48,14 @@ include '../documentation-main/documentation_header.php';
         Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the DOM element.
     </p>
 
+    <h4>
+        <img src="/images/aurelia.png" height="20px"/>
+        Aurelia Components
+    </h4>
+    <p>
+        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the DOM element.
+    </p>
+
     <h2>List of Properties</h2>
     <table class="table">
         <tr>

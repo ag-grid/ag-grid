@@ -37,6 +37,7 @@ include '../documentation-main/documentation_header.php';
         <img src="/images/angularjs.png" height="50px"/>
         <img src="/images/angular2.png" height="50px"/>
         <img src="/images/webComponents.png" height="50px"/>
+        <img src="/images/aurelia.png" height="50px"/>
         Grid Options
     </h2>
 

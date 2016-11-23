@@ -254,8 +254,9 @@ include 'documentation_header.php';
     <a href="../best-javascript-data-grid/index.php">Javascript</a>,
     <a href="../best-react-data-grid/index.php">React</a>,
     <a href="../best-angularjs-data-grid/index.php">Angular JS</a>,
-    <a href="../best-angular-2-data-grid/index.php">Angular 2</a> or
-    <a href="../best-web-component-data-grid/index.php">Web Components</a>) and try and get a simple example working
+    <a href="../best-angular-2-data-grid/index.php">Angular 2</a>,
+    <a href="../best-web-component-data-grid/index.php">Web Components</a> or
+    <a href="../best-aurelia-data-grid/index.php">Aurelia</a>) and try and get a simple example working
     yourself (you don't need to understand the grid, just how to install it into your application).
     Then cover the <a href="../javascript-grid-interfacing-overview/index.php">Interfacing Overview</a>.
     After that, you then have the foundations of ag-Grid and can jump to whatever section of the documentation
@@ -267,11 +268,12 @@ include 'documentation_header.php';
 </h2>
 
 <p>
-    The documentation is broken in the following sections:
+    The documentation is broken down into the following sections:
 <ul>
     <li><b>The Basics: </b> Learn how to set up ag-Grid with the framework that you have chosen.</li>
     <li><b>Interfacing: </b> A quick reference guide detailing all the configuration options for ag-Grid.</li>
     <li><b>Core Features: </b> A detailed look at all the core features.</li>
+    <li><b>Row Models: </b> A detailed look at all the row models available.</li>
     <li><b>Enterprise Features: </b> A detailed look at all the enterprise features.</li>
     <li><b>Examples: </b> Some examples combining different features.</li>
     <li><b>Tutorials: </b> Some video tutorials for those who prefer YouTube videos over reading.</li>

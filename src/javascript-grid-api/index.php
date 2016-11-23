@@ -52,6 +52,15 @@ include '../documentation-main/documentation_header.php';
         use api directly on the DOM element.
     </p>
 
+    <h4>
+        <img src="/images/aurelia.png" height="20px"/>
+        Aurelia Components
+    </h4>
+    <p>
+        Use api placed inside gridOptions by the grid during initialisation. You can also
+        use api directly on the DOM element.
+    </p>
+
     <h2>List of API Functions</h2>
 
     <table class="table">

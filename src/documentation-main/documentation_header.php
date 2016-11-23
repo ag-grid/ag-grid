@@ -82,9 +82,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular JS</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular JS</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
@@ -97,6 +97,12 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</span>
                 <?php } else { ?>
                     <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</a>
+                <?php } ?>
+
+                <?php if ($key == "Getting Started Aurelia") { ?>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-aurelia-data-grid/"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
                 <?php } ?>
 
                 <?php if ($key == "Width & Height") { ?>

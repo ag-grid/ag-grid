@@ -84,6 +84,15 @@ include '../documentation-main/documentation_header.php';
         use columnApi directly on the DOM element.
     </p>
 
+    <h4>
+        <img src="/images/aurelia.png" height="20px"/>
+        Aurelia Components
+    </h4>
+    <p>
+        Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+        use columnApi directly on the DOM element.
+    </p>
+
     <h2>Column Keys</h2>
 
     <p>

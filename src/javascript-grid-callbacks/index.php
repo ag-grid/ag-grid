@@ -48,6 +48,14 @@ include '../documentation-main/documentation_header.php';
         Add callbacks to the gridOptions or set as component properties.
     </p>
 
+    <h4>
+        <img src="/images/aurelia.png" height="20px"/>
+        Aurelia Components
+    </h4>
+    <p>
+        Add callbacks to the gridOptions or set as component properties.
+    </p>
+
     <h2>List of Callbacks</h2>
 
     <table class="table">
