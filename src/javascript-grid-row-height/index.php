@@ -80,6 +80,8 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleRowHeightComplex"></show-example>
 
+<!--    <show-example example="exampleRowHeightChange"></show-example>
+-->
     <note>
         You cannot change the rowHeight of a row. Once it is set, it cannot be undone.
         If you must change the row height, then pass the data into the grid again to

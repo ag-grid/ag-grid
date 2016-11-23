@@ -143,6 +143,7 @@ suppressEnterprise: true,
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
+    groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
 //suppressContextMenu: true,
