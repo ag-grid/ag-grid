@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Version Next</h2>
 
     <li>Enhancement: Animation of Rows - now rows will animate after sort, filter and row group open / close.</li>
-    <li>Enhancement: New properties - enableAnimateSort, enableAnimateFilter, enableAnimateExpand</li>
+    <li>Enhancement: New property - animateRows</li>
     <li>Enhancement: New API - rowNode.setExpanded(boolean) - To open / close a row group row.</li>
     <li>Enhancement: api.getValue() now works with pivot columns</li>
 

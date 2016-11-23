@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>animateRowExpand</th>
+            <th>animateRows</th>
             <td>
                 Set to true to enable animation of the rows after group is opened and closed.
             </td>

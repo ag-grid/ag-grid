@@ -22,9 +22,7 @@
         enableRangeSelection: true,
         enableSorting: true,
         enableFilter: true,
-        animateSort: true,
-        animateFilter: true,
-        animateRowExpand: true,
+        animateRows: true,
         suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
         groupColumnDef: { // to get 'athlete' showing in the leaf level in this column
             cellRenderer: 'group',

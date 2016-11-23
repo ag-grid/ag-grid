@@ -46,10 +46,14 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Row animations occur after filtering, sorting and expanding / collapsing a row group.
-        Each on these animations is turned off be default. Each one is turned on separately
-        using using properties <i>animateFilter=true</i>, <i>animateSort=true</i>
-        and <i>animateRowExpand=true</i>.
+        Each on these animations is turned OFF be default. They are all turned on
+        using using the property <i>animateRows=true</i>.
     </p>
+
+    <note>
+        Column animations are on by default, row animations are off by default. This is to keep
+        with what is expected to be the most common configuration as default.
+    </note>
 
     <p>
         You do not need to know how the animations work, you just need to turn them on. However

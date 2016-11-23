@@ -21,7 +21,7 @@ var gridOptions = {
     groupSuppressAutoColumn: true,
     groupUseEntireRow: false,
     groupIncludeFooter: true,
-    animateRowExpand: true
+    animateRows: true
 };
 
 // setup the grid after the page has finished loading

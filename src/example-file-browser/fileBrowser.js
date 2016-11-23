@@ -142,9 +142,7 @@
         rowSelection: 'multiple',
         enableColResize: true,
         enableSorting: true,
-        animateFilter: true,
-        animateSort: true,
-        animateRowExpand: true,
+        animateRows: true,
         rowHeight: 20,
         getNodeChildDetails: function(file) {
             if (file.folder) {

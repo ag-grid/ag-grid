@@ -133,9 +133,7 @@ suppressEnterprise: true,
     // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
     //rowHeight: 30, // defaults to 25, can be any integer
-    animateFilter: true,
-    animateSort: true,
-    animateRowExpand: true,
+    animateRows: true,
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
@@ -325,7 +323,7 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Country", field: "country", width: 150, editable: false,
+                headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: CountryCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,

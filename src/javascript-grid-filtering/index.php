@@ -133,7 +133,7 @@ columnDefinition = {
     <h3>Filtering Animation</h3>
 
     <p>
-        To enable animation of the rows after filtering, set grid property <i>animateFilter=true</i>.
+        To enable animation of the rows after filtering, set grid property <i>animateRows=true</i>.
     </p>
 
 

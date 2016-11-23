@@ -14,7 +14,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    animateRowExpand: true,
+    animateRows: true,
     groupUseEntireRow: true
 };
 
