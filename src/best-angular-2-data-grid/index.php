@@ -55,31 +55,31 @@ include '../documentation-main/documentation_header.php';
         feature set:
     <ul>
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Angular 2 as a wrapper
-            <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-rich.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-rich.component.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/rich-grid.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/rich-grid.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>An example using markup to create a grid
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/rich-grid-declarative.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/rich-grid-declarative.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A simple example, using CellRenders created from Angular 2 Components
+        <li>A Simple Example, using CellRenders created from Angular 2 Components
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-component.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-component.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A simple example, using CellRenders created from Template Strings
-            <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-template.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-template.component.html" target="_blank" class="fa fa-external-link"> html</a>
-        </li>
-        <li>A richer example, using CellRenderers created from Angular 2 Components, with child components, and two-way binding (parent to child components events)
+        <li>A Richer Example, using CellRenderers created from Angular 2 Components, with child components, and two-way binding (parent to child components events)
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-rich.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/from-rich.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features
+        <li>A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/editor-component.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/editor-component.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Float Row Renderer Example
+        <li>A Floating Row Renderer Example
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/floating-row-renderer.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/floating-row-renderer.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Full Width Renderer Example
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/full-width-renderer.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/full-width-renderer.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>An example demonstrating Group Inner Cell Renderers
+        <li>A Group Row Inner Renderer Example
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/group-row-renderer.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/group-row-renderer.component.html" target="_blank" class="fa fa-external-link"> html</a>
+        </li>
+        <li>A Filter Example, with the filter written as a Angular 2 Component
+            <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/filter-component.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/app/filter-component.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
     </p>

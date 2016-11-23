@@ -63,6 +63,19 @@ include '../documentation-main/documentation_header.php';
         DOM elements work.
     </p>
 
+    <h4>
+        <img src="/images/aurelia.png" height="20px"/>
+        Aurelia Components
+    </h4>
+    <p>
+        Add the relevant onXXX() method to the gridOptions or register a method
+        via api.addEventListener(eventName, handler). You can also register events
+        by calling <i>domElement.addEventListener(eventName, handler)</i> or placing
+        an onXXX method directly onto the dom element - but remember the latter
+        uses lower case event name and handler name to be consistent with how other
+        DOM elements work.
+    </p>
+
     <h2>ag-Grid Events</h2>
 
     <table class="table">
