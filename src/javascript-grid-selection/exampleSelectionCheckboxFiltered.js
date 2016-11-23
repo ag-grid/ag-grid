@@ -1,17 +1,13 @@
 var columnDefs = [
+    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
+    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Age", field: "age", width: 90, aggFunc: 'sum'},
+    {headerName: "Year", field: "year", width: 90},
+    {headerName: "Date", field: "date", width: 110},
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
     {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
-    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
-    {headerName: "Age", field: "age", width: 90, aggFunc: 'sum',
-        checkboxSelection: function(params) {
-            return params.node.group === true;
-        }
-    },
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 1}
+    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'}
 ];
 
 var gridOptions = {
@@ -19,17 +15,24 @@ var gridOptions = {
     rowData: null,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
-    suppressRowClickSelection: true,
+    groupSelectsFiltered: true,
     suppressAggFuncInHeader: true,
-    groupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
+    suppressRowClickSelection: true,
+     groupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
         cellRenderer: 'group',
         cellRendererParams: {
-            checkbox: function(params) {
-                return params.node.group === true;
-            }
+            checkbox: true
         }
     }
 };
+
+function filterSwimming() {
+    gridOptions.api.setFilterModel({sport: ['Swimming']});
+}
+
+function clearFilter() {
+    gridOptions.api.setFilterModel(null);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

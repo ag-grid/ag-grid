@@ -189,9 +189,9 @@ include '../documentation-main/documentation_header.php';
                 Turn on if you want to user AngularJS in your custom column headers.</td>
         </tr>
         <tr>
-            <th>groupUseEntireRow<br/>
-                groupDefaultExpanded<br/>
-                groupSelectsChildren<br/> groupSuppressAutoColumn <br/> groupSuppressBlankHeader</th>
+            <th>groupUseEntireRow<br/> groupDefaultExpanded<br/>
+                groupSelectsChildren<br/> groupSelectsFiltered<br/>
+                groupSuppressAutoColumn <br/> groupSuppressBlankHeader</th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>

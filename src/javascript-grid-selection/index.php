@@ -78,13 +78,29 @@ include '../documentation-main/documentation_header.php';
         to have checkbox selection regardless of which column it is (you would do this by looing
         at the params and returning true if colIndex = 0).
     </p>
+
+    <h3>Group Selection</h3>
+
     <p>
-        Selecting groups can have the effect of selecting the group row, or selecting all the children
-        in the group. This is done by setting the attribute 'groupSelectsChildren' to true or false.
-        When set to <b>false</b>, then selecting the group will
-        select the group node. When set to <b>true</b>, then selecting the group will
-        either select or deselect all of the children.
+        When doing grouping, you control what selecting a group means. This is controlled with
+        the two properties <i>groupSelectsChildren</i> and <i>groupSelectsFiltered</i>.
+    <ul>
+        <li><b>groupSelectsChildren</b>: When <b>true</b>, selecting a group will have the impact of
+            selecting all it's children. The group will then display 'selected' when all children
+            are selected, 'unselected' when none are selected and 'intermediate' when children have
+            a mix of selected and unselected. When the node is selecting children, it will never appear
+            in the selected set when calling <i>api.getSelectedNodes()</i>.
+            When <b>false</b>, then the group is selectable independently
+            of the child nodes.</li> When selecting the group node independently of the children, it will
+            appear in the set when calling <i>api.getSelectedNodes()</i>.
+        <li><b>groupSelectsFiltered</b>: Gets used when <i>groupSelectsChildren=true</i>. When
+            <b>true</b> only filtered children of the group will be selected / unselected. This means
+            you can apply a filter, then try to select a group, the group will end up in the
+            intermediate state as only as subset of the children will be selected.</li>
+    </ul>
     </p>
+
+    <h4>Groups & Checkbox Selection Example 1</h4>
 
     <p>
         The example below shows checkbox selection with groups. Selecting the group has the
@@ -92,8 +108,6 @@ include '../documentation-main/documentation_header.php';
         selects the group. In this scenario the group itself will never appear in the <i>selectedRows</i>
         list.
     </p>
-
-    <h4>Checkbox Selection Example 1</h4>
 
     <p>
         The example also shows a checkbox for selection on the age column. In practice, it is not
@@ -103,7 +117,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleGroupSelection" example-height="450px"></show-example>
 
-    <h4>Checkbox Selection Example 2</h4>
+    <h4>Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
 
     <p>
         The example below is similar to the previous example except it does not put checkboxes
@@ -114,10 +128,26 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleSelectionCheckbox" example-height="450px"></show-example>
 
+    <h4>Groups & Checkbox Selection Example 3 - Only Filtered</h4>
+
     <p>
-        If you select 'group' for the 'groupCheckboxSelection', then the group will be selectable
-        as it's own entity.
+        Lastly we show an example using <i>groupSelectsFiltered=true</i>. Here, when you filter
+        the grid and select a group, only the filtered children get selected.
     </p>
+
+    <p>
+        To demonstrate, try this in the example:
+        <ol>
+        <li>Filter on swimming</li>
+        <li>Select a country</li>
+        <li>Notice that all filtered records get selected. If you remove the filter, the non filtered are not selected.</li>
+        <li>Notice that the group becomes intermediate while all it's filtered children get selected. This is because
+        the selected state of the group node is independent to the filter - so it becomes intermediate as not all of it's
+        children are selected.</li>
+    </ol>
+    </p>
+
+    <show-example example="exampleSelectionCheckboxFiltered" example-height="450px"></show-example>
 
     <h3>Selection Events</h3>
 

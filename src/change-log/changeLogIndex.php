@@ -14,6 +14,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: New property - animateRows</li>
     <li>Enhancement: New API - rowNode.setExpanded(boolean) - To open / close a row group row.</li>
     <li>Enhancement: api.getValue() now works with pivot columns</li>
+    <li>Enhancement: New property - groupSelectsFiltered, when set, if you select a group, unfiltered items do not get selected.</li>
 
     <li>Bug Fix: columnApi.setColumnAggFunct() => renamed to columnApi.setColumnAggFunc() (took out the 't' at the end, it was a typo)</li>
     <li>Bug Fix: paste from clipboard now skips non-editable columns and continues with rest of row (before it stopped and didn't complete the row)</li>

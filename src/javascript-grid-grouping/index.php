@@ -95,6 +95,14 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>groupSelectsChildren</th>
+            <td>When true, if you select a group, the the children of the group will also get selected.</td>
+        </tr>
+        <tr>
+            <th>groupSelectsFiltered</th>
+            <td>If using groupSelectsChildren, then only the children that pass the current filter will get selected.</td>
+        </tr>
+        <tr>
             <th>animateRows</th>
             <td>
                 Set to true to enable animation of the rows after group is opened and closed.
