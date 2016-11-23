@@ -53,6 +53,10 @@
     background-color: aliceblue;
 }
 
+.ag-file-browser .ag-row {
+    background-color: white;
+}
+
 .ag-file-browser .ag-body {
     background-color: #ffffff;
 }

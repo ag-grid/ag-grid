@@ -1,5 +1,9 @@
 (function() {
 
+    var eTitle;
+    var eCountdown;
+    var countDownDirection = true;
+
     var columnDefs = [
         {headerName: "Athlete", field: "athlete", width: 150},
         {headerName: "Age", field: "age", width: 90},
@@ -35,6 +39,7 @@
     function startInterval() {
         var actionIndex = 0;
 
+        resetCountdown();
         executeAfterXSeconds();
 
         function executeAfterXSeconds() {
@@ -45,6 +50,7 @@
                 if (actionIndex >= actions.length) {
                     actionIndex = 0;
                 }
+                resetCountdown();
                 executeAfterXSeconds();
             }, 3000);
         }
@@ -52,22 +58,24 @@
         setTitleFormatted(null);
     }
 
+    function resetCountdown() {
+        eCountdown.style.width = countDownDirection ? '100%' : '0%';
+        countDownDirection = !countDownDirection;
+    }
+
     function setTitleFormatted(apiName,methodName,paramsName) {
-        var eTitle = document.querySelector('#animationAction');
-        if (eTitle) {
-            var html;
-            if (apiName === null) {
-                html = '<span class="code-highlight-yellow">aggrid/:> </span>';
-            } else {
-                html = '<span class="code-highlight-yellow">aggrid/:> </span> ' +
-                    '<span class="code-highlight-blue">'+apiName+'</span>' +
-                    '<span class="code-highlight-blue">.</span>' +
-                    '<span class="code-highlight-yellow">'+methodName+'</span>' +
-                    '<span class="code-highlight-blue"></span>' +
-                    '<span class="code-highlight-blue">(</span>' +
-                    '<span class="code-highlight-green">'+paramsName+'</span>' +
-                    '<span class="code-highlight-blue">)</span>';
-            }
+        var html;
+        if (apiName === null) {
+            html = '<span class="code-highlight-yellow">aggrid/:> </span>';
+        } else {
+            html = '<span class="code-highlight-yellow">aggrid/:> </span> ' +
+                '<span class="code-highlight-blue">'+apiName+'</span>' +
+                '<span class="code-highlight-blue">.</span>' +
+                '<span class="code-highlight-yellow">'+methodName+'</span>' +
+                '<span class="code-highlight-blue"></span>' +
+                '<span class="code-highlight-blue">(</span>' +
+                '<span class="code-highlight-green">'+paramsName+'</span>' +
+                '<span class="code-highlight-blue">)</span>';
         }
         eTitle.innerHTML = html;
     }
@@ -164,7 +172,14 @@
             if (httpRequest.readyState == 4 && httpRequest.status == 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
                 gridOptions.api.setRowData(httpResult);
-                gridOptions.api.sizeColumnsToFit();
+                // when this demo is on the main page, the pages takes a moment
+                // to resize, i presume because we are using bootstrap for layout.
+                // so we wait before sizing columns
+                setTimeout( function() {
+                    gridOptions.api.sizeColumnsToFit();
+                }, 1000);
+                eTitle = document.querySelector('#animationAction');
+                eCountdown = document.querySelector('#animationCountdown');
                 startInterval();
             }
         };
