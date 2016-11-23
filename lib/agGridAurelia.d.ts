@@ -1,9 +1,10 @@
 // ag-grid-aurelia v7.0.0
-import { ComponentAttached, ComponentDetached, Container, ViewResources } from 'aurelia-framework';
+import { ComponentAttached, ComponentDetached, Container, ViewResources, TaskQueue } from 'aurelia-framework';
 import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
 import { AureliaFrameworkFactory } from "./aureliaFrameworkFactory";
 import { AgGridColumn } from "./agGridColumn";
 export declare class AgGridAurelia implements ComponentAttached, ComponentDetached {
+    private taskQueue;
     private auFrameworkFactory;
     private container;
     private viewResources;
@@ -14,8 +15,9 @@ export declare class AgGridAurelia implements ComponentAttached, ComponentDetach
     api: GridApi;
     columnApi: ColumnApi;
     columns: AgGridColumn[];
-    constructor(element: Element, auFrameworkFactory: AureliaFrameworkFactory, container: Container, viewResources: ViewResources);
+    constructor(element: Element, taskQueue: TaskQueue, auFrameworkFactory: AureliaFrameworkFactory, container: Container, viewResources: ViewResources);
     attached(): void;
+    initGrid(): void;
     /**
      * Called by Aurelia whenever a bound property changes
      */
