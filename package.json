@@ -6,7 +6,9 @@
   "typings": "./main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "ngc -p tsconfig-aot.json"
+    "build": "ngc -p tsconfig-aot.json",
+    "clean": "rimraf aot/* && rimraf lib/*",
+    "clean-build": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
@@ -48,7 +50,8 @@
     "rxjs": "5.0.0-beta.12",
     "systemjs": "0.19.39",
     "typescript": "^2.0.3",
-    "zone.js": "^0.6.26"
+    "zone.js": "^0.6.26",
+    "rimraf": "2.5.x"
   },
   "peerDependencies": {
     "ag-grid": "6.4.x"
