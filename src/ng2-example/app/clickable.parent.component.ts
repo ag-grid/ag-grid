@@ -12,14 +12,14 @@ import {AgRendererComponent} from 'ag-grid-ng2/main';
 })
 export class ClickableParentComponent implements AgRendererComponent {
     private params:any;
-    private cell:any;
+    public cell:any;
 
     agInit(params:any):void {
         this.params = params;
         this.cell = {row: params.value, col: params.colDef.headerName};
     }
 
-    clicked(cell:any):void {
+    public clicked(cell:any):void {
         console.log("Child Cell Clicked: " + JSON.stringify(cell));
     }
 }

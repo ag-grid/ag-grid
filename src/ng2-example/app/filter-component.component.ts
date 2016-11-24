@@ -1,69 +1,16 @@
-import {Component,ViewChild,ViewContainerRef} from '@angular/core';
-import {FormsModule} from "@angular/forms"
+import {Component} from '@angular/core';
 
-import {GridOptions, IFilterParams, IDoesFilterPassParams, RowNode, IAfterFilterGuiAttachedParams} from 'ag-grid/main';
-import {AgFilterComponent} from 'ag-grid-ng2/main';
+import {GridOptions} from 'ag-grid/main';
 
-@Component({
-    selector: 'filter-cell',
-    template: `
-        Filter: <input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
-    `
-})
-class PartialMatchFilterComponent implements AgFilterComponent {
-    private params:IFilterParams;
-    private valueGetter:(rowNode:RowNode) => any;
-    private text:string = '';
-
-    @ViewChild('input', {read: ViewContainerRef}) private input;
-
-    agInit(params:IFilterParams):void {
-        this.params = params;
-        this.valueGetter = params.valueGetter;
-    }
-
-    isFilterActive():boolean {
-        return this.text !== null && this.text !== undefined && this.text !== '';
-    }
-
-    doesFilterPass(params:IDoesFilterPassParams):boolean {
-        return this.text.toLowerCase()
-            .split(" ")
-            .every((filterWord) => {
-                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
-            });
-    }
-
-    getModel():any {
-        return {value: this.text};
-    }
-
-    setModel(model:any):void {
-        this.text = model.value;
-    }
-
-    afterGuiAttached(params:IAfterFilterGuiAttachedParams):void {
-        this.input.element.nativeElement.focus();
-    }
-
-    componentMethod(message:string) : void {
-        alert(`Alert from PartialMatchFilterComponent ${message}`);
-    }
-
-    onChange(newValue):void {
-        if (this.text !== newValue) {
-            this.text = newValue;
-            this.params.filterChangedCallback();
-        }
-    }
-}
+import {PartialMatchFilterComponent} from "./partial-match-filter.component";
 
 @Component({
+    moduleId: module.id,
     selector: 'ag-filter-component',
-    templateUrl: 'app/filter-component.component.html'
+    templateUrl: 'filter-component.component.html'
 })
 export class FilterComponentComponent {
-    private gridOptions:GridOptions;
+    public gridOptions: GridOptions;
 
     constructor() {
         this.gridOptions = <GridOptions>{};
@@ -74,21 +21,18 @@ export class FilterComponentComponent {
         this.gridOptions.suppressMenuMainPanel = true; // ag-enterprise only
     }
 
-    onClicked(event) :void {
+    onClicked(event): void {
         this.gridOptions.api.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
     }
 
     private createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 200},
+            {headerName: "Row", field: "row", width: 400},
             {
                 headerName: "Filter Component",
                 field: "name",
-                filterFramework: {
-                    component: PartialMatchFilterComponent,
-                    moduleImports: [FormsModule]
-                },
-                width: 198
+                filterFramework: PartialMatchFilterComponent,
+                width: 400
             }
         ];
     }
@@ -104,7 +48,11 @@ export class FilterComponentComponent {
             {"row": "Row 7", "name": "Allison Schmitt"},
             {"row": "Row 8", "name": "Natalie Coughlin"},
             {"row": "Row 9", "name": "Ian Thorpe"},
-            {"row": "Row 10", "name": "Dara Torres"}
+            {"row": "Row 10", "name": "Bob Mill"},
+            {"row": "Row 11", "name": "Willy Walsh"},
+            {"row": "Row 12", "name": "Sarah McCoy"},
+            {"row": "Row 13", "name": "Jane Jack"},
+            {"row": "Row 14", "name": "Tina Wills"}
         ];
     }
 }

@@ -700,11 +700,8 @@ class PartialMatchFilterComponent implements AgFilterComponent {
 <span class="codeComment">// then reference the Component in your colDef like this</span>
 colDef = {
 
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
-    filterFramework: {
-        component: PartialMatchFilterComponent,
-        moduleImports: [FormsModule]
-    },
+    <span class="codeComment">// we use cellRendererFramework instead of cellRenderer </span>
+    filterFramework: PartialMatchFilterComponent
 
     <span class="codeComment">// specify all the other fields as normal</span>
     headerName: 'Name',
@@ -714,21 +711,6 @@ colDef = {
 
     <p>Your Angular 2 components need to implement <code>AgFilterComponent</code>. The ag Framework expects to find the
         mandatory methods on the interface on the created component (and will call optional methods if they're present).</p>
-
-    <p>When specifying Angular 2 Components you can optionally specify Component dependencies, as well as which modules you wish to import.
-        The latter is important if your component uses built in Angular 2 components (such as ngIf, ngStyle etc).</p>
-
-    <pre>
-filterFramework: {
-    component: YourComponent,
-
-    <span class="codeComment">// dependencies are optional - these go into module.declarations</span>
-    dependencies: [YourChildComponent1, YourChildComponent2],
-
-    <span class="codeComment">// module imports are optional - these go into module.imports</span>
-    moduleImports: [CommonModule, FormsModule]
-}
-</pre>
 
     <p>
         By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
@@ -806,8 +788,9 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Angular 2 Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-    <show-example example="../ng2-example/index.html?example=filter-component" jsfile="../ng2-example/app/filter-component.component.ts" html="../ng2-example/app/filter-component.component.html"></show-example>
-
+    <show-example url="/ng2-example/filter?fromDocs"
+                  jsfile="../ng2-example/app/filter-component.component.ts"
+                  html="../ng2-example/app/filter-component.component.html"></show-example>
 
     <h2 id="aureliaFiltering">
         <img src="../images/aurelia.png" height="20px"/>

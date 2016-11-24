@@ -10,17 +10,17 @@ import RefData from './refData';
 import 'ag-grid-enterprise/main';
 
 @Component({
+    moduleId: module.id,
     selector: 'ag-rich-grid-declarative',
-    templateUrl: 'app/rich-grid-declarative.component.html',
-    styles: ['.toolbar button {margin: 2px; padding: 0px;}'],
+    templateUrl: 'rich-grid-declarative.component.html',
+    styles: ['.toolbar button {margin: 2px; padding: 0;}'],
 })
 export class RichGridDeclarativeComponent {
 
-    private gridOptions:GridOptions;
-    private showGrid:boolean;
+    public gridOptions:GridOptions;
+    public showGrid:boolean;
     private rowData:any[];
-    private columnDefs:any[];
-    private rowCount:string;
+    public rowCount:string;
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
@@ -76,26 +76,28 @@ export class RichGridDeclarativeComponent {
         this.calculateRowCount();
     }
 
-    private onQuickFilterChanged($event) {
+    public onQuickFilterChanged($event) {
         this.gridOptions.api.setQuickFilter($event.target.value);
     }
 
     private countryCellRenderer(params) {
-        var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='../images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+        var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     }
 
+    //noinspection JSUnusedLocalSymbols
     private skillsCellRenderer(params) {
         var data = params.data;
         var skills = [];
         RefData.IT_SKILLS.forEach(function (skill) {
             if (data && data.skills && data.skills[skill]) {
-                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');
     }
 
+    //noinspection JSUnusedLocalSymbols
     private percentCellRenderer(params) {
         var value = params.value;
 
@@ -122,14 +124,17 @@ export class RichGridDeclarativeComponent {
         return eOuterDiv;
     }
 
+    //noinspection JSUnusedLocalSymbols
     private getSkillFilter():any {
         return SkillFilter;
     }
 
+    //noinspection JSUnusedLocalSymbols
     private getProficiencyFilter():any {
         return ProficiencyFilter;
     }
 
+    //noinspection JSUnusedLocalSymbols
     private getCountryFilterParams():any {
         return {
             cellRenderer: this.countryCellRenderer,

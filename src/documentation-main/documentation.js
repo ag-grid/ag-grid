@@ -14,8 +14,9 @@
     });
 
     function ShowExampleController($scope, $http, $attrs) {
+        var url = $attrs["url"];
         var example = $attrs["example"];
-        $scope.source =  example.indexOf("?") === -1 ? (example + ".html") : example;
+        $scope.source =  url ? url : (example.indexOf("?") === -1 ? (example + ".html") : example);
         $scope.selectedTab = 'example';
         $scope.jsfile = $attrs['jsfile'] ? $attrs['jsfile'] : example;
         $scope.exeExtension = $scope.jsfile.indexOf(".ts")>=0 ? "" : ".js";
@@ -36,8 +37,8 @@
             });
         }
 
-        if ($attrs.exampleHeight) {
-            $scope.iframeStyle = {height: $attrs.exampleHeight};
+        if ($attrs.exampleheight) {
+            $scope.iframeStyle = {height: $attrs.exampleheight};
         } else {
             $scope.iframeStyle = {height: '500px'}
         }

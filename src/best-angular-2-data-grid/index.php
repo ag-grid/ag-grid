@@ -111,12 +111,9 @@ include '../documentation-main/documentation_header.php';
     <pre>@NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withNg2ComponentSupport(),
-    ...
+        AgGridModule.withComponents(),
+        ...
 })</pre>
-
-    <note>Note: this configuration allows for Angular 2 Components within the grid, but not AOT. If you wish to use AOT please see the
-        relevant section <a href="#aot">below</a>.</note>
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
@@ -127,54 +124,115 @@ include '../documentation-main/documentation_header.php';
 &lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" />
 </pre>
 
+    <h3>For Just in Time (JIT) Compilation</h3>
     <p>
-        You will also need to configure SystemX for ag-grid and ag-grid-component as follows:
+        You will need to configure SystemJS for ag-grid and ag-grid-component as follows:
     </p>
 
-    <pre>System.config({
+    <pre>
+System.config({
+    map: {
+        lib: 'lib',
+        // angular bundles
+        '@angular/core': 'node_modules/@angular/core/bundles/core.umd.js',
+        '@angular/common': 'node_modules/@angular/common/bundles/common.umd.js',
+        '@angular/compiler': 'node_modules/@angular/compiler/bundles/compiler.umd.js',
+        '@angular/platform-browser': 'node_modules/@angular/platform-browser/bundles/platform-browser.umd.js',
+        '@angular/platform-browser-dynamic': 'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
+        '@angular/http': 'node_modules/@angular/http/bundles/http.umd.js',
+        '@angular/router': 'node_modules/@angular/router/bundles/router.umd.js',
+        '@angular/forms': 'node_modules/@angular/forms/bundles/forms.umd.js',
+        // other libraries
+        'rxjs': 'node_modules/rxjs',
+        'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
+        // ag libraries
+        'ag-grid-ng2' : 'node_modules/ag-grid-ng2',
+        'ag-grid' : 'node_modules/ag-grid',
+        'ag-grid-enterprise' : 'node_modules/ag-grid-enterprise'
+    },
     packages: {
-        lib: {
-            format: 'register',
-            defaultExtension: 'js'
-        },
         'ag-grid-ng2': {
             defaultExtension: "js"
         },
         'ag-grid': {
             defaultExtension: "js"
+        },
+        'ag-grid-enterprise': {
+            defaultExtension: "js"
         }
-    },
-    map: {
-        'ag-grid-ng2': 'node_modules/ag-grid-ng2',
-        'ag-grid': 'node_modules/ag-grid'
+        ...other packages
     }
+}</pre>
+
+    <h3>For Ahead-of-Time (AOT) Compilation</h3>
+    <p>
+        We'll use SystemJS Builder for rollup.
+    </p>
+
+    <pre><span class="codeComment">// gulpfile</span>
+var gulp = require('gulp');
+var SystemBuilder = require('systemjs-builder');
+
+gulp.task('aot-bundle', function () {
+    var builder = new SystemBuilder();
+
+    builder.loadConfig('./aot/systemjs.config.js')
+        .then(function () {
+            return builder.buildStatic('aot/app/boot-aot.js', './aot/dist/bundle.js', {
+                encodeNames: false,
+                mangle: false,
+                minify: true,
+                rollup: true,
+                sourceMaps: true
+            });
+        })
 });</pre>
 
+    <pre><span class="codeComment">// aot systemjs config</span>
+System.config({
+        defaultJSExtensions: true,
+        map: {
+            // angular bundles
+            '@angular/core': 'node_modules/@angular/core',
+            '@angular/common': 'node_modules/@angular/common',
+            '@angular/compiler': 'node_modules/@angular/compiler/index.js',
+            '@angular/platform-browser': 'node_modules/@angular/platform-browser',
+            '@angular/forms': 'node_modules/@angular/forms',
+            '@angular/router': 'node_modules/@angular/router',
+            // other libraries
+            'rxjs': 'node_modules/rxjs',
+            // 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
+            // ag libraries
+            'ag-grid-ng2' : 'node_modules/ag-grid-ng2',
+            'ag-grid' : 'node_modules/ag-grid',
+            'ag-grid-enterprise' : 'node_modules/ag-grid-enterprise'
+        },
+        packages: {
+            '@angular/core': {
+                main: 'index.js'
+            },
+            '@angular/common': {
+                main: 'index.js'
+            },
+            '@angular/platform-browser': {
+                main: 'index.js'
+            },
+            '@angular/forms': {
+                main: 'index.js'
+            },
+            '@angular/router': {
+                main: 'index.js'
+            }
+        }
+    }
+);
+</pre>
+
     <p>
-        All the above items are specific to either Angular 2 or SystemX. The above is intended to point
+        All the above items are specific to either Angular 2, SystemJS or SystemJS Builder. The above is intended to point
         you in the right direction. If you need more information on this, please see the documentation
         for those projects.
     </p>
-
-    <h2 id="aot">Ahead of Time (AOT) Compilation</h2>
-
-    <p>AOT is an option, but if you use AOT you will be <strong>unable</strong> to use Angular 2 Components within the grid.
-        This is because of restrictions/limitations within the Angular Compiler.</p>
-
-    <p>In other words, you can either have:
-    <ul>
-        <li>Angular 2 Components within the grid, and <strong>no</strong> AOT support</li>
-        <li>AOT support, and <strong>no</strong> Angular 2 Components within the grid</li>
-    </ul></p>
-
-    <p>To enable AOT support, you need to import the following:</p>
-
-    <pre>@NgModule({
-    imports: [
-        BrowserModule,
-        AgGridModule.withAotSupport(),
-    ...
-})</pre>
 
     <h2>Configuring ag-Grid in Angular 2</h2>
 
@@ -221,6 +279,39 @@ include '../documentation-main/documentation_header.php';
         informed to redraw.
     </p>
 
+    <h3>Providing Angular 2 Components to ag-Grid</h3>
+    <p>In order for ag-Grid to be able to use your Angular 2 Components, you need to provide them in the <strong>top level</strong> module:</p>
+<pre>
+@NgModule({
+imports: [
+    BrowserModule,
+    FormsModule,
+    RouterModule.forRoot(appRoutes),
+    AgGridModule.withComponents(
+        [
+            SquareComponent,
+            CubeComponent,
+            ...other components
+</pre>
+
+    <p>You can then use these components as editors, renderers or filters. For example, to use an Angular 2 Component as a Cell Renderer, you would do the following:</p>
+<pre>
+let colDefs = [
+    {
+        headerName: "Square Component",
+        field: "value",
+        cellRendererFramework: SquareComponent,
+        editable:true,
+        colId: "square",
+        width: 175
+    },
+    ...other column definitions
+]
+</pre>
+    <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
+        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular 2 Components in ag-Grid.</p>
+
     <p>
         The example has ag-Grid configured through the template in the following ways:
     </p>
@@ -261,7 +352,10 @@ include '../documentation-main/documentation_header.php';
     <p>
         The example below shows a rich configuration of ag-Grid, with no Angular 2 Components.
     </p>
-    <show-example example="../ng2-example/index" jsfile="../ng2-example/app/rich-grid.component.ts" html="../ng2-example/app/rich-grid.component.html"></show-example>
+    <show-example url="/ng2-example/rich-grid?fromDocs"
+                  jsfile="../ng2-example/app/rich-grid.component.ts"
+                  html="../ng2-example/app/rich-grid.component.html"
+                  exampleHeight="525px"></show-example>
 
     <h2 id="ng2markup">Creating Grids with Markup</h2>
 
@@ -333,7 +427,11 @@ private getCountryFilterParams():any {
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
-    <show-example example="../ng2-example/index.html?example=rich-grid-declarative" jsfile="../ng2-example/app/rich-grid-declarative.component.ts" html="../ng2-example/app/rich-grid-declarative.component.html"></show-example>
+    <show-example
+            url="/ng2-example/rich-grid-declarative?fromDocs"
+            jsfile="../ng2-example/app/rich-grid-declarative.component.ts"
+            html="../ng2-example/app/rich-grid-declarative.component.html"
+            exampleHeight="525px"></show-example>
 
     <h2>Cell Rendering & Cell Editing using Angular 2</h2>
 
@@ -354,15 +452,6 @@ private getCountryFilterParams():any {
         the ag-grid-ng2 component, consider using plain ag-Grid Components (as explained on the pages for
         rendering etc) inside ag-Grid instead of creating Angular 2 counterparts.
     </p>
-
-<!--    <note>
-        <p>
-            We here at ag-Grid owe a debt of thanks to Neal Borelli @ Thermo Fisher Scientific who provided a fully
-            working implementation for us to use as a basis for our initial Angular 2 "dynamic cell" offering.
-            Neal's assistance was a big help in being able to get something out much faster than we would have otherwise
-            - thanks Neal!
-        </p>
-    </note>-->
 
     <h2>Known Issues</h2>
 

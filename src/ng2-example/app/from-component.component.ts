@@ -1,71 +1,17 @@
-import {Component,OnDestroy} from '@angular/core';
+import {Component} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
 import {GridOptions} from 'ag-grid/main';
+import {SquareComponent} from "./square.component";
+import {ParamsComponent} from "./params.component";
+import {CubeComponent} from "./cube.component";
 
 @Component({
-    selector: 'square-cell',
-    template: `{{valueSquared()}}`
-})
-class SquareComponent implements AgRendererComponent, OnDestroy {
-    private params:any;
-
-    agInit(params:any):void {
-        this.params = params;
-    }
-
-    private valueSquared():number {
-        return this.params.value * this.params.value;
-    }
-
-    ngOnDestroy() {
-        console.log(`Destroying SquareComponent`);
-    }
-}
-
-@Component({
-    selector: 'cube-cell',
-    template: `{{valueCubed()}}`
-})
-class CubeComponent implements AgRendererComponent {
-    private params:any;
-    private cubed:number;
-
-    // called on init
-    agInit(params:any):void {
-        this.params = params;
-        this.cubed = this.params.data.value * this.params.data.value * this.params.data.value;
-    }
-
-    // called when the cell is refreshed
-    refresh(params:any):void {
-        this.params = params;
-        this.cubed = this.params.data.value * this.params.data.value * this.params.data.value;
-    }
-
-    private valueCubed():number {
-        return this.cubed;
-    }
-}
-
-@Component({
-    selector: 'params-cell',
-    template: `Field: {{params.colDef.field}}, Value: {{params.value}}`
-})
-class ParamsComponent implements AgRendererComponent {
-    private params:any;
-
-    agInit(params:any):void {
-        this.params = params;
-    }
-}
-
-@Component({
+    moduleId: module.id,
     selector: 'ag-from-component',
-    templateUrl: 'app/from-component.component.html'
+    templateUrl: 'from-component.component.html'
 })
 export class FromComponentComponent {
-    private gridOptions:GridOptions;
+    public gridOptions:GridOptions;
 
     constructor() {
         this.gridOptions = <GridOptions>{};
@@ -83,28 +29,22 @@ export class FromComponentComponent {
             {
                 headerName: "Square Component",
                 field: "value",
-                cellRendererFramework: {
-                    component: SquareComponent
-                },
+                cellRendererFramework: SquareComponent,
                 editable:true,
                 colId: "square",
-                width: 200
+                width: 175
             },
             {
                 headerName: "Cube Component",
                 field: "value",
-                cellRendererFramework: {
-                    component: CubeComponent
-                },
+                cellRendererFramework: CubeComponent,
                 colId: "cube",
-                width: 200
+                width: 175
             },
             {
                 headerName: "Row Params Component",
                 field: "row",
-                cellRendererFramework: {
-                    component: ParamsComponent
-                },
+                cellRendererFramework: ParamsComponent,
                 width: 250
             }
         ];
