@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
         The following example shows pagination. The sorting and filtering is all done in the grid.
     </p>
 
-    <show-example example="paging"></show-example>
+    <show-example example="examplePaging"></show-example>
 
     <h4>Example - Server Side Sorting and Filtering</h4>
 
@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
         ag-Grid-Enterprise is not required for pagination)
     </p>
 
-    <show-example example="pagingServerSide"></show-example>
+    <show-example example="examplePagingServerSide"></show-example>
 
     <h4>Configuring A Bit Differently</h4>
 
