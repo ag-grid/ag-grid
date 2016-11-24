@@ -422,6 +422,14 @@ include '../documentation-main/documentation_header.php';
                 when you create it, call this method after the grid is in the dom to get it to check it's width
                 and height again (which decides what columns and rows to render).</td>
         </tr>
+        <tr>
+            <th>resetRowHeights()</th>
+            <td>Gets the grid to recalculated the row heights.</td>
+        </tr>
+        <tr>
+            <th>onRowHeightChanged()</th>
+            <td>Tells the grid a row height has changed. To be used after calling rowNode.setRowHeight(newHeight).</td>
+        </tr>
     </table>
 
     <h2>

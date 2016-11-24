@@ -39,6 +39,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'pagination',
     rowSelection: 'multiple',
+    animateRows: true,
     getRowNodeId: function(item) {
         return item.id;
     }

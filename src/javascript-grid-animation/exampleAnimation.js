@@ -153,6 +153,15 @@
         function() {
             gridOptions.columnApi.moveColumns(['gold','silver','bronze','total'],6);
             setTitleFormatted("api","moveColumns","gold, silver, bronze, total");
+        },
+        function() {
+            gridOptions.api.getModel().getRow(3).setRowHeight(100);
+            gridOptions.api.onRowHeightChanged();
+            setTitleFormatted("rowNode","setRowHeight","100");
+        },
+        function() {
+            gridOptions.api.resetRowHeights();
+            setTitleFormatted("api","resetRowHeights","");
         }
     ];
 

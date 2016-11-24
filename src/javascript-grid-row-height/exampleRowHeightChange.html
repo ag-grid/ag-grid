@@ -1,10 +1,26 @@
 <html>
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid.js?ignore=notused36"></script>
+    <script src="../dist/ag-grid-enterprise.js?ignore=notused36"></script>
     <script src="exampleRowHeightChange.js"></script>
 </head>
 <body>
-    <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    <div style="height: 100%; box-sizing: border-box; padding-top: 20px;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+    <div style="position: absolute; top: 0px; left: 0px; margin-left: 10px; margin-top: 4px;">
+        Top Level Groups:
+        <button onclick="setGroupHeight(25)">25px</button>
+        <button onclick="setGroupHeight(50)">50px</button>
+        <button onclick="setGroupHeight(100)">100px</button>
+        Swimming Leaf Rows:
+        <button onclick="setSwimmingHeight(25)">25px</button>
+        <button onclick="setSwimmingHeight(50)">50px</button>
+        <button onclick="setSwimmingHeight(100)">100px</button>
+        Zimbabwe Leaf Rows:
+        <button onclick="setZimbabweHeight(25)">25px</button>
+        <button onclick="setZimbabweHeight(50)">50px</button>
+        <button onclick="setZimbabweHeight(100)">100px</button>
+    </div>
 </body>
 </html>

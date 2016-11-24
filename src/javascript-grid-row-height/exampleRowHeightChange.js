@@ -1,7 +1,7 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date"},
     {headerName: "Sport", field: "sport"},
@@ -11,10 +11,42 @@ var columnDefs = [
     {headerName: "Total", field: "total"}
 ];
 
+var swimmingHeight = 50;
+var groupHeight = 25;
+
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null
+    rowData: null,
+    animateRows: true,
+    getRowHeight: function(params) {
+        if (params.node.group) {
+            return groupHeight;
+        } else if (params.data && params.data.sport==='Swimming') {
+            return swimmingHeight;
+        } else {
+            return 25;
+        }
+    }
 };
+
+function setSwimmingHeight(height) {
+    swimmingHeight = height;
+    gridOptions.api.resetRowHeights();
+}
+
+function setGroupHeight(height) {
+    groupHeight = height;
+    gridOptions.api.resetRowHeights();
+}
+
+function setZimbabweHeight(height) {
+    gridOptions.api.forEachNode( function(rowNode) {
+        if (rowNode.data && rowNode.data.country === 'Zimbabwe') {
+            rowNode.setRowHeight(height);
+        }
+    });
+    gridOptions.api.onRowHeightChanged();
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

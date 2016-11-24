@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Row Animations</h3>
 
     <p>
-        Row animations occur after filtering, sorting and expanding / collapsing a row group.
+        Row animations occur after filtering, sorting, resizing height and expanding / collapsing a row group.
         Each on these animations is turned OFF be default. They are all turned on
         using using the property <i>animateRows=true</i>.
     </p>
@@ -63,6 +63,7 @@ include '../documentation-main/documentation_header.php';
             <li><b>New Rows:</b> Rows that are new to the grid are placed in the new position and faded in.</li>
             <li><b>Old Rows:</b> Rows that are no longer in the grid are left in the same position and faded out.</li>
             <li><b>Moved Rows:</b> Rows that are in a new position get their position transitioned to the new position.</li>
+            <li><b>Resized Height Rows:</b> Rows that get their height change will have the height transitioned to the new height.</li>
         </ul>
         In addition to the transition animations, old rows are placed behind new rows such that moving rows are
         on top of old rows when moved (hence old rows are not fading out on top of new rows, but behind new rows).
