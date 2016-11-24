@@ -122,7 +122,6 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-
     <h3>Next Steps</h3>
 
     <p>

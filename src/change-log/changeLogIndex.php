@@ -14,6 +14,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: New property - animateRows</li>
     <li>Enhancement: New API - rowNode.setExpanded(boolean) - To open / close a row group row.</li>
     <li>Enhancement: api.getValue() now works with pivot columns</li>
+    <li>Enhancement: Row height can now be changed after the rows are initially set.</li>
     <li>Enhancement: New property - groupSelectsFiltered, when set, if you select a group, unfiltered items do not get selected.</li>
 
     <li>Bug Fix: columnApi.setColumnAggFunct() => renamed to columnApi.setColumnAggFunc() (took out the 't' at the end, it was a typo)</li>

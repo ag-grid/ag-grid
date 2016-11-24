@@ -16,8 +16,10 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        You cannot use variable row height when doing <a href="../javascript-grid-virtual-paging/">virtual paging</a>.
-        This is because virtual paging algorithm needs to work out the position of rows that are not loaded.
+        You cannot use variable row height when doing <a href="../javascript-grid-virtual-paging/">virtual paging</a>
+        or <a href="../javascript-grid-viewport/">viewport</a>.
+        This is because these row models need to work out the position of rows that are not loaded and hence need to
+        assume the row height is fixed.
     </note>
 
     <h3>rowHeight Property</h3>
@@ -80,13 +82,73 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleRowHeightComplex"></show-example>
 
-<!--    <show-example example="exampleRowHeightChange"></show-example>
--->
-    <note>
-        You cannot change the rowHeight of a row. Once it is set, it cannot be undone.
-        If you must change the row height, then pass the data into the grid again to
-        get the grid to reset the heights, eg <i>api.setRowData(sameData)</i>.
-    </note>
+    <h3>Changing Row Height</h3>
+
+    <p>
+        Setting the row height is done once for each row. Once set, the grid will not ask you
+        for the row height again. You can change the row height after it is initially set
+        using a combination of <i>api.resetRowHeights()</i>, <i>rowNode.setRowHeight()</i> and
+        <i>api.onRowHeightChanged()</i>.
+    </p>
+
+    <h4>api.resetRowHeights()</h4>
+    <p>
+        Call this API to have the grid clear all the row
+        heights and work them all out again from scratch - if you provide a <i>getRowHeight()</i>
+        callback, it will be called again for each row. The grid will then resize and
+        reposition all rows again. This is the shotgun approach.
+    </p>
+
+    <h4>rowNode.setRowHeight(height) and api.onRowHeightChanged()</h4>
+
+    <p>
+        You can call <i>rowNode.setRowHeight(height)</i> directly
+        on the rowNode to set it's height. The grid will resize the row but will NOT
+        reposition the rows (ie if you make a row shorter, a space will appear between
+        it and the next row, the next rows will not be moved up). When you have set the
+        row height (potentially on many rows) you need to call <i>api.onRowHeightChanged()</i>
+        to tell the grid to reposition the rows. It is intended that you can call
+        <i>rowNode.setRowHeight(height)</i> many times and then call <i>api.onRowHeightChanged()</i>
+        once at the end.
+    </p>
+
+    <p>
+        When calling <i>rowNode.setRowHeight(height)</i>, you can either pass in a new height
+        or null or undefined. If you pass a height, that height will be used for the row.
+        If you pass in null or undefined, the grid will then calculate the row height in the
+        usual way, either use the provided <i>rowHeight</i> property or <i>getRowHeight()</i>
+        callback.
+    </p>
+
+    <h3>Example Changing Row Height</h3>
+
+    <p>The example below changes the row height in the different ways described above.</p>
+
+    <ul>
+        <li><b>Top Level Groups:</b> The row height for the groups is changed by calling api.resetRowHeights().
+        This gets the grid to call <i>api.getRowHeight()</i> again for each row.</li>
+        <li><b>Swimming Leaf Rows:</b> Same technique is used here as above above. You will need to expand
+        a group with swimming (eg America) and the grid works out all row heights again.</li>
+        <li><b>Zimbabwe Leaf Rows:</b> The row height is set directly on the rowNode. Then the grid
+        is told to reposition all rows again via calling api.onRowHeightChanged().</li>
+    </ul>
+
+    <p>Note that this example uses ag-Grid Enterprise as it uses grouping. Setting the row
+    height is an ag-Grid free feature, we just demonstrate it against groups and normal
+    rows below.</p>
+
+    <show-example example="exampleRowHeightChange"></show-example>
+
+    <h3>Height for Floating Rows</h3>
+
+    <p>
+        Row height for floating rows works exactly as per normal rows with one difference - it
+        is not possible to dynamically change the height once set. However this is easily got around
+        by just setting the floating row data again which resets the row heights. Setting the
+        data again is not a problem for floating rows as it doesn't impact scroll position, filtering,
+        sorting or group open / closed positions as it would with normal rows if the data was reset.
+    </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
