@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.4.0
+// ag-grid-ng2 v6.4.1
 import { EventEmitter, ViewContainerRef, ElementRef, QueryList, OnInit, AfterViewInit } from '@angular/core';
 import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";

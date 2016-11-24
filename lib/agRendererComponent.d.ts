@@ -1,4 +1,4 @@
-// ag-grid-ng2 v6.4.0
+// ag-grid-ng2 v6.4.1
 import { AgFrameworkComponent } from "./agFrameworkComponent";
 export interface AgRendererComponent extends AgFrameworkComponent<any> {
     agInit(params: any): void;
