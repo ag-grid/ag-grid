@@ -49,6 +49,14 @@ define('app',["require", "exports"], function (require, exports) {
                     href: '#/full-width'
                 },
                 {
+                    route: 'group-row/:fromDocs?',
+                    name: 'group-row',
+                    nav: true,
+                    moduleId: 'components/group-row-example/group-row-example',
+                    title: 'Group Row Example',
+                    href: '#/group-row'
+                },
+                {
                     route: 'filter/:fromDocs?',
                     name: 'filter',
                     nav: true,
@@ -93,118 +101,6 @@ define('main',["require", "exports", './environment'], function (require, export
         aurelia.start().then(function () { return aurelia.setRoot(); });
     }
     exports.configure = configure;
-});
-
-define('data/refData',["require", "exports"], function (require, exports) {
-    "use strict";
-    var RefData = (function () {
-        function RefData() {
-        }
-        RefData.IT_SKILLS = ['android', 'css', 'html5', 'mac', 'windows'];
-        RefData.IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
-        RefData.firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
-            "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
-            "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
-        RefData.lastNames = ["Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
-            "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
-            "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
-            "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
-            "Keating", "Keegan", "Kingston", "Kobe"];
-        RefData.COUNTRY_CODES = {
-            Ireland: "ie",
-            Spain: "es",
-            "United Kingdom": "gb",
-            France: "fr",
-            Germany: "de",
-            Sweden: "se",
-            Italy: "it",
-            Greece: "gr",
-            Iceland: "is",
-            Portugal: "pt",
-            Malta: "mt",
-            Norway: "no",
-            Brazil: "br",
-            Argentina: "ar",
-            Colombia: "co",
-            Peru: "pe",
-            Venezuela: "ve",
-            Uruguay: "uy"
-        };
-        RefData.countries = [
-            { country: "Ireland", continent: "Europe", language: "English" },
-            { country: "Spain", continent: "Europe", language: "Spanish" },
-            { country: "United Kingdom", continent: "Europe", language: "English" },
-            { country: "France", continent: "Europe", language: "French" },
-            { country: "Germany", continent: "Europe", language: "(other)" },
-            { country: "Sweden", continent: "Europe", language: "(other)" },
-            { country: "Norway", continent: "Europe", language: "(other)" },
-            { country: "Italy", continent: "Europe", language: "(other)" },
-            { country: "Greece", continent: "Europe", language: "(other)" },
-            { country: "Iceland", continent: "Europe", language: "(other)" },
-            { country: "Portugal", continent: "Europe", language: "Portuguese" },
-            { country: "Malta", continent: "Europe", language: "(other)" },
-            { country: "Brazil", continent: "South America", language: "Portuguese" },
-            { country: "Argentina", continent: "South America", language: "Spanish" },
-            { country: "Colombia", continent: "South America", language: "Spanish" },
-            { country: "Peru", continent: "South America", language: "Spanish" },
-            { country: "Venezuela", continent: "South America", language: "Spanish" },
-            { country: "Uruguay", continent: "South America", language: "Spanish" }
-        ];
-        RefData.addresses = [
-            '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
-            '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
-            '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
-            '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
-            '2722 Hazy Turnabout, Burnt Cabins, NY, 14120-5642, US, (917) 604-6597',
-            '6686 Lazy Ledge, Two Rock, CA, 92639-3020, US, (619) 901-9911',
-            '2000 Dewy Limits, Wacahoota, NF, A4L-2V9, CA, (709) 065-3959',
-            '7710 Noble Pond Avenue, Bolivia, RI, 02931-1842, US, (401) 865-2160',
-            '3452 Sunny Vale, Pyro, ON, M8V-4Z0, CA, (519) 072-8609',
-            '4402 Dusty Cove, Many Farms, UT, 84853-8223, US, (435) 518-0673',
-            '5198 Silent Parade, Round Bottom, MD, 21542-9798, US, (301) 060-7245',
-            '8550 Shady Moor, Kitty Fork, CO, 80941-6207, US, (303) 502-3767',
-            '2131 Old Dell, Merry Midnight, AK, 99906-8842, US, (907) 369-2206',
-            '7390 Harvest Crest, Mosquito Crossing, RI, 02957-6116, US, (401) 463-6348',
-            '874 Little Point, Hot Coffee, BC, V3U-2P6, CA, (250) 706-9207',
-            '8834 Stony Pioneer Heights, Newlove, OR, 97419-8670, US, (541) 408-2213',
-            '9829 Grand Beach, Flint, UT, 84965-9900, US, (435) 700-5161',
-            '3799 Cozy Blossom Ramp, Ptarmigan, MS, 38715-0313, US, (769) 740-1526',
-            '3254 Silver Island Loop, Maunaloa, DE, 19869-3169, US, (302) 667-7671',
-            '1081 Middle Wood, Taylors Gut Landing, OR, 97266-2873, US, (541) 357-6310',
-            '1137 Umber Trail, Shacktown, NW, X3U-5Y8, CA, (867) 702-6883',
-            '9914 Hidden Bank, Wyoming, MO, 64635-9665, US, (636) 280-4192',
-            '7080 Misty Nectar Townline, Coward, AB, T9U-3N4, CA, (403) 623-2838',
-            '1184 Wishing Grounds, Vibank, NW, X7D-0V9, CA, (867) 531-2730',
-            '126 Easy Pointe, Grandview Beach, KY, 40928-9539, US, (502) 548-0956',
-            '6683 Colonial Street, Swan River, BC, V1A-9I8, CA, (778) 014-4257',
-            '960 Gentle Oak Lane, Shakopee, ND, 58618-6277, US, (701) 327-1219',
-            '6918 Cotton Pine Corner, Kenaston, IA, 52165-3975, US, (515) 906-7427',
-            '2368 Burning Woods, Ernfold, NY, 11879-9186, US, (646) 819-0355',
-            '5646 Quiet Shadow Chase, Tiger Tail, IA, 52283-5537, US, (712) 375-9225',
-            '5466 Foggy Mountain Dale, Sweet Home, MT, 59738-0251, US, (406) 881-1706',
-            '5313 Clear Willow Route, Amazon, BC, V0S-2S6, CA, (604) 340-7596',
-            '7000 Pleasant Autoroute, Spaceport City, UT, 84749-2448, US, (435) 154-3360',
-            '8359 Quaking Anchor Road, Gross, BC, V9O-0H5, CA, (250) 985-3859',
-            '5143 Amber Deer Hollow, New Deal, ND, 58446-0853, US, (701) 927-0322',
-            '6230 Jagged Bear Key, Young, AR, 72337-3811, US, (501) 805-7239',
-            '7207 Heather Vista, Devon, WY, 82520-1771, US, (307) 358-7092',
-            '9416 Red Rise Place, Spraytown, OK, 73809-4766, US, (580) 867-1973',
-            '3770 Golden Horse Diversion, Yelland, IL, 60471-1487, US, (224) 717-9349',
-            '4819 Honey Treasure Park, Alaska, NB, E1U-3I0, CA, (506) 656-9138',
-            '6187 Round Front, Land O Lakes, AK, 99873-6403, US, (907) 853-9063',
-            '9218 Crystal Highway, Pickelville, MT, 59847-9299, US, (406) 076-0024',
-            '6737 Bright Quay, Lazy Mountain, KY, 42390-4772, US, (606) 256-7288',
-            '237 Merry Campus, Twentysix, SC, 29330-4909, US, (864) 945-0157',
-            '446 Fallen Gate Rise, Petrolia, SC, 29959-9527, US, (864) 826-0553',
-            '2347 Indian Boulevard, Frisbee, VA, 23797-6458, US, (703) 656-8445',
-            '365 Emerald Grove Line, Level, NC, 28381-1514, US, (919) 976-7958',
-            '1207 Iron Extension, Klickitat, SC, 29197-8571, US, (803) 535-7888',
-            '6770 Cinder Glen, Caronport, OH, 45053-5002, US, (440) 369-4018',
-            '7619 Tawny Carrefour, Senlac, NV, 89529-9876, US, (775) 901-6433'];
-        return RefData;
-    }());
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = RefData;
 });
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -346,6 +242,158 @@ define('editors/numeric-editor',["require", "exports", "aurelia-framework", "ag-
         return NumericEditor;
     }(ag_grid_aurelia_1.BaseAureliaEditor));
     exports.NumericEditor = NumericEditor;
+});
+
+define('data/refData',["require", "exports"], function (require, exports) {
+    "use strict";
+    var RefData = (function () {
+        function RefData() {
+        }
+        RefData.IT_SKILLS = ['android', 'css', 'html5', 'mac', 'windows'];
+        RefData.IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
+        RefData.firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
+            "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
+            "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
+        RefData.lastNames = ["Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+            "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
+            "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
+            "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
+            "Keating", "Keegan", "Kingston", "Kobe"];
+        RefData.COUNTRY_CODES = {
+            Ireland: "ie",
+            Spain: "es",
+            "United Kingdom": "gb",
+            France: "fr",
+            Germany: "de",
+            Sweden: "se",
+            Italy: "it",
+            Greece: "gr",
+            Iceland: "is",
+            Portugal: "pt",
+            Malta: "mt",
+            Norway: "no",
+            Brazil: "br",
+            Argentina: "ar",
+            Colombia: "co",
+            Peru: "pe",
+            Venezuela: "ve",
+            Uruguay: "uy"
+        };
+        RefData.countries = [
+            { country: "Ireland", continent: "Europe", language: "English" },
+            { country: "Spain", continent: "Europe", language: "Spanish" },
+            { country: "United Kingdom", continent: "Europe", language: "English" },
+            { country: "France", continent: "Europe", language: "French" },
+            { country: "Germany", continent: "Europe", language: "(other)" },
+            { country: "Sweden", continent: "Europe", language: "(other)" },
+            { country: "Norway", continent: "Europe", language: "(other)" },
+            { country: "Italy", continent: "Europe", language: "(other)" },
+            { country: "Greece", continent: "Europe", language: "(other)" },
+            { country: "Iceland", continent: "Europe", language: "(other)" },
+            { country: "Portugal", continent: "Europe", language: "Portuguese" },
+            { country: "Malta", continent: "Europe", language: "(other)" },
+            { country: "Brazil", continent: "South America", language: "Portuguese" },
+            { country: "Argentina", continent: "South America", language: "Spanish" },
+            { country: "Colombia", continent: "South America", language: "Spanish" },
+            { country: "Peru", continent: "South America", language: "Spanish" },
+            { country: "Venezuela", continent: "South America", language: "Spanish" },
+            { country: "Uruguay", continent: "South America", language: "Spanish" }
+        ];
+        RefData.addresses = [
+            '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
+            '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
+            '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
+            '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
+            '2722 Hazy Turnabout, Burnt Cabins, NY, 14120-5642, US, (917) 604-6597',
+            '6686 Lazy Ledge, Two Rock, CA, 92639-3020, US, (619) 901-9911',
+            '2000 Dewy Limits, Wacahoota, NF, A4L-2V9, CA, (709) 065-3959',
+            '7710 Noble Pond Avenue, Bolivia, RI, 02931-1842, US, (401) 865-2160',
+            '3452 Sunny Vale, Pyro, ON, M8V-4Z0, CA, (519) 072-8609',
+            '4402 Dusty Cove, Many Farms, UT, 84853-8223, US, (435) 518-0673',
+            '5198 Silent Parade, Round Bottom, MD, 21542-9798, US, (301) 060-7245',
+            '8550 Shady Moor, Kitty Fork, CO, 80941-6207, US, (303) 502-3767',
+            '2131 Old Dell, Merry Midnight, AK, 99906-8842, US, (907) 369-2206',
+            '7390 Harvest Crest, Mosquito Crossing, RI, 02957-6116, US, (401) 463-6348',
+            '874 Little Point, Hot Coffee, BC, V3U-2P6, CA, (250) 706-9207',
+            '8834 Stony Pioneer Heights, Newlove, OR, 97419-8670, US, (541) 408-2213',
+            '9829 Grand Beach, Flint, UT, 84965-9900, US, (435) 700-5161',
+            '3799 Cozy Blossom Ramp, Ptarmigan, MS, 38715-0313, US, (769) 740-1526',
+            '3254 Silver Island Loop, Maunaloa, DE, 19869-3169, US, (302) 667-7671',
+            '1081 Middle Wood, Taylors Gut Landing, OR, 97266-2873, US, (541) 357-6310',
+            '1137 Umber Trail, Shacktown, NW, X3U-5Y8, CA, (867) 702-6883',
+            '9914 Hidden Bank, Wyoming, MO, 64635-9665, US, (636) 280-4192',
+            '7080 Misty Nectar Townline, Coward, AB, T9U-3N4, CA, (403) 623-2838',
+            '1184 Wishing Grounds, Vibank, NW, X7D-0V9, CA, (867) 531-2730',
+            '126 Easy Pointe, Grandview Beach, KY, 40928-9539, US, (502) 548-0956',
+            '6683 Colonial Street, Swan River, BC, V1A-9I8, CA, (778) 014-4257',
+            '960 Gentle Oak Lane, Shakopee, ND, 58618-6277, US, (701) 327-1219',
+            '6918 Cotton Pine Corner, Kenaston, IA, 52165-3975, US, (515) 906-7427',
+            '2368 Burning Woods, Ernfold, NY, 11879-9186, US, (646) 819-0355',
+            '5646 Quiet Shadow Chase, Tiger Tail, IA, 52283-5537, US, (712) 375-9225',
+            '5466 Foggy Mountain Dale, Sweet Home, MT, 59738-0251, US, (406) 881-1706',
+            '5313 Clear Willow Route, Amazon, BC, V0S-2S6, CA, (604) 340-7596',
+            '7000 Pleasant Autoroute, Spaceport City, UT, 84749-2448, US, (435) 154-3360',
+            '8359 Quaking Anchor Road, Gross, BC, V9O-0H5, CA, (250) 985-3859',
+            '5143 Amber Deer Hollow, New Deal, ND, 58446-0853, US, (701) 927-0322',
+            '6230 Jagged Bear Key, Young, AR, 72337-3811, US, (501) 805-7239',
+            '7207 Heather Vista, Devon, WY, 82520-1771, US, (307) 358-7092',
+            '9416 Red Rise Place, Spraytown, OK, 73809-4766, US, (580) 867-1973',
+            '3770 Golden Horse Diversion, Yelland, IL, 60471-1487, US, (224) 717-9349',
+            '4819 Honey Treasure Park, Alaska, NB, E1U-3I0, CA, (506) 656-9138',
+            '6187 Round Front, Land O Lakes, AK, 99873-6403, US, (907) 853-9063',
+            '9218 Crystal Highway, Pickelville, MT, 59847-9299, US, (406) 076-0024',
+            '6737 Bright Quay, Lazy Mountain, KY, 42390-4772, US, (606) 256-7288',
+            '237 Merry Campus, Twentysix, SC, 29330-4909, US, (864) 945-0157',
+            '446 Fallen Gate Rise, Petrolia, SC, 29959-9527, US, (864) 826-0553',
+            '2347 Indian Boulevard, Frisbee, VA, 23797-6458, US, (703) 656-8445',
+            '365 Emerald Grove Line, Level, NC, 28381-1514, US, (919) 976-7958',
+            '1207 Iron Extension, Klickitat, SC, 29197-8571, US, (803) 535-7888',
+            '6770 Cinder Glen, Caronport, OH, 45053-5002, US, (440) 369-4018',
+            '7619 Tawny Carrefour, Senlac, NV, 89529-9876, US, (775) 901-6433'];
+        return RefData;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = RefData;
+});
+
+define('renderers/MedalRenderer',["require", "exports"], function (require, exports) {
+    "use strict";
+    var MedalRenderer = (function () {
+        function MedalRenderer() {
+        }
+        MedalRenderer.prototype.init = function (params) {
+            this.params = params;
+            this.eGui = document.createElement('span');
+            var text = document.createTextNode(params.node.key + " Gold: " + params.data.gold + ", Silver: " + params.data.silver + ", Bronze: " + params.data.bronze);
+            this.eGui.appendChild(text);
+        };
+        MedalRenderer.prototype.getGui = function () {
+            return this.eGui;
+        };
+        return MedalRenderer;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = MedalRenderer;
+});
+
+define('renderers/NameAndAgeRenderer',["require", "exports"], function (require, exports) {
+    "use strict";
+    var NameAndAgeRenderer = (function () {
+        function NameAndAgeRenderer() {
+        }
+        NameAndAgeRenderer.prototype.init = function (params) {
+            this.params = params;
+            this.eGui = document.createElement('span');
+            var text = document.createTextNode("Name: " + params.data.name + ", Age: " + params.data.age);
+            this.eGui.appendChild(text);
+        };
+        NameAndAgeRenderer.prototype.getGui = function () {
+            return this.eGui;
+        };
+        return NameAndAgeRenderer;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = NameAndAgeRenderer;
 });
 
 define('filters/partialMatch',["require", "exports"], function (require, exports) {
@@ -562,46 +610,6 @@ define('filters/skillFilter',["require", "exports", '../data/refData'], function
     exports.default = SkillFilter;
 });
 
-define('renderers/MedalRenderer',["require", "exports"], function (require, exports) {
-    "use strict";
-    var MedalRenderer = (function () {
-        function MedalRenderer() {
-        }
-        MedalRenderer.prototype.init = function (params) {
-            this.params = params;
-            this.eGui = document.createElement('span');
-            var text = document.createTextNode(params.node.key + " Gold: " + params.data.gold + ", Silver: " + params.data.silver + ", Bronze: " + params.data.bronze);
-            this.eGui.appendChild(text);
-        };
-        MedalRenderer.prototype.getGui = function () {
-            return this.eGui;
-        };
-        return MedalRenderer;
-    }());
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = MedalRenderer;
-});
-
-define('renderers/NameAndAgeRenderer',["require", "exports"], function (require, exports) {
-    "use strict";
-    var NameAndAgeRenderer = (function () {
-        function NameAndAgeRenderer() {
-        }
-        NameAndAgeRenderer.prototype.init = function (params) {
-            this.params = params;
-            this.eGui = document.createElement('span');
-            var text = document.createTextNode("Name: " + params.data.name + ", Age: " + params.data.age);
-            this.eGui.appendChild(text);
-        };
-        NameAndAgeRenderer.prototype.getGui = function () {
-            return this.eGui;
-        };
-        return NameAndAgeRenderer;
-    }());
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = NameAndAgeRenderer;
-});
-
 define('resources/index',["require", "exports"], function (require, exports) {
     "use strict";
     function configure(config) {
@@ -632,6 +640,14 @@ define('components/editor-example/editor-example',["require", "exports", 'aureli
                 { name: "Sally", happy: "Happy", number: 20 },
                 { name: "Mary", mood: "Sad", number: 5 },
                 { name: "John", mood: "Happy", number: 15 },
+                { name: "Jack", mood: "Happy", number: 25 },
+                { name: "Sue", mood: "Sad", number: 43 },
+                { name: "Sean", mood: "Sad", number: 1335 },
+                { name: "Niall", mood: "Happy", number: 2 },
+                { name: "Alberto", mood: "Happy", number: 123 },
+                { name: "Fred", mood: "Sad", number: 532 },
+                { name: "Jenny", mood: "Happy", number: 34 },
+                { name: "Larry", mood: "Happy", number: 13 },
             ];
         };
         EditorExample = __decorate([
@@ -674,7 +690,11 @@ define('components/filter-example/filter-example',["require", "exports", "aureli
                 { "row": "Row 7", "name": "Allison Schmitt" },
                 { "row": "Row 8", "name": "Natalie Coughlin" },
                 { "row": "Row 9", "name": "Ian Thorpe" },
-                { "row": "Row 10", "name": "Dara Torres" }
+                { "row": "Row 10", "name": "Bob Mill" },
+                { "row": "Row 11", "name": "Willy Walsh" },
+                { "row": "Row 12", "name": "Sarah McCoy" },
+                { "row": "Row 13", "name": "Jane Jack" },
+                { "row": "Row 14", "name": "Tina Wills" }
             ];
         };
         FilterExample.prototype.getPartialMatchFilter = function () {
@@ -759,6 +779,19 @@ define('components/full-width-example/full-width-example',["require", "exports",
                 { name: "Sally", age: 20 },
                 { name: "Mary", age: 5 },
                 { name: "John", age: 15 },
+                { name: "Bob", age: 10 },
+                { name: "Harry", age: 3 },
+                { name: "Sally", age: 20 },
+                { name: "Mary", age: 5 },
+                { name: "John", age: 15 },
+                { name: "Jack", age: 25 },
+                { name: "Sue", age: 43 },
+                { name: "Sean", age: 44 },
+                { name: "Niall", age: 2 },
+                { name: "Alberto", age: 32 },
+                { name: "Fred", age: 53 },
+                { name: "Jenny", age: 34 },
+                { name: "Larry", age: 13 },
             ];
         };
         FloatingRowExample = __decorate([
@@ -784,10 +817,14 @@ define('components/group-row-example/group-row-example',["require", "exports", "
     "use strict";
     var GroupRowExample = (function () {
         function GroupRowExample() {
+            var _this = this;
             this.gridOptions = {};
             this.gridOptions.rowData = this.createRowData();
             this.gridOptions.groupUseEntireRow = true;
             this.gridOptions.groupRowInnerRenderer = MedalRenderer_1.default;
+            this.gridOptions.onGridReady = function () {
+                _this.gridOptions.api.sizeColumnsToFit();
+            };
         }
         GroupRowExample.prototype.createRowData = function () {
             return [
@@ -797,8 +834,39 @@ define('components/group-row-example/group-row-example',["require", "exports", "
                 { country: "United Kingdom", name: "Mary", gold: 1, silver: 1, bronze: 0 },
                 { country: "United Kingdom", name: "Tess", gold: 0, silver: 1, bronze: 1 },
                 { country: "United Kingdom", name: "John", gold: 0, silver: 2, bronze: 1 },
-                { country: "Jamaica", name: "Henry", gold: 1, silver: 1, bronze: 0 },
-                { country: "South Africa", name: "Kate", gold: 1, silver: 0, bronze: 1 },
+                { country: "Jamaica", name: "Bob", gold: 1, silver: 1, bronze: 0 },
+                { country: "Jamaica", name: "Jack", gold: 1, silver: 1, bronze: 0 },
+                { country: "Jamaica", name: "Mary", gold: 1, silver: 1, bronze: 0 },
+                { country: "South Africa", name: "Bob", gold: 1, silver: 0, bronze: 1 },
+                { country: "South Africa", name: "Jack", gold: 1, silver: 0, bronze: 1 },
+                { country: "South Africa", name: "Mary", gold: 1, silver: 0, bronze: 1 },
+                { country: "South Africa", name: "John", gold: 1, silver: 0, bronze: 1 },
+                { country: "New Zealand", name: "Bob", gold: 1, silver: 0, bronze: 0 },
+                { country: "New Zealand", name: "Jack", gold: 0, silver: 1, bronze: 1 },
+                { country: "New Zealand", name: "Sue", gold: 1, silver: 0, bronze: 1 },
+                { country: "Australia", name: "Mary", gold: 1, silver: 1, bronze: 0 },
+                { country: "Australia", name: "Tess", gold: 0, silver: 1, bronze: 1 },
+                { country: "Australia", name: "John", gold: 0, silver: 2, bronze: 1 },
+                { country: "Canada", name: "Bob", gold: 1, silver: 1, bronze: 0 },
+                { country: "Canada", name: "Jack", gold: 1, silver: 1, bronze: 0 },
+                { country: "Canada", name: "Mary", gold: 1, silver: 1, bronze: 0 },
+                { country: "Switzerland", name: "Bob", gold: 1, silver: 0, bronze: 1 },
+                { country: "Switzerland", name: "Jack", gold: 1, silver: 0, bronze: 1 },
+                { country: "Switzerland", name: "Mary", gold: 1, silver: 0, bronze: 1 },
+                { country: "Switzerland", name: "John", gold: 1, silver: 0, bronze: 1 },
+                { country: "Spain", name: "Bob", gold: 1, silver: 0, bronze: 0 },
+                { country: "Spain", name: "Jack", gold: 0, silver: 1, bronze: 1 },
+                { country: "Spain", name: "Sue", gold: 1, silver: 0, bronze: 1 },
+                { country: "Portugal", name: "Mary", gold: 1, silver: 1, bronze: 0 },
+                { country: "Portugal", name: "Tess", gold: 0, silver: 1, bronze: 1 },
+                { country: "Portugal", name: "John", gold: 0, silver: 2, bronze: 1 },
+                { country: "Zimbabwe", name: "Bob", gold: 1, silver: 1, bronze: 0 },
+                { country: "Zimbabwe", name: "Jack", gold: 1, silver: 1, bronze: 0 },
+                { country: "Zimbabwe", name: "Mary", gold: 1, silver: 1, bronze: 0 },
+                { country: "Brazil", name: "Bob", gold: 1, silver: 0, bronze: 1 },
+                { country: "Brazil", name: "Jack", gold: 1, silver: 0, bronze: 1 },
+                { country: "Brazil", name: "Mary", gold: 1, silver: 0, bronze: 1 },
+                { country: "Brazil", name: "John", gold: 1, silver: 0, bronze: 1 }
             ];
         };
         GroupRowExample = __decorate([
@@ -809,184 +877,6 @@ define('components/group-row-example/group-row-example',["require", "exports", "
         return GroupRowExample;
     }());
     exports.GroupRowExample = GroupRowExample;
-});
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-define('components/rich-grid-declarative-example/rich-grid-declarative-example',["require", "exports", 'aurelia-framework', '../../data/refData', '../../filters/skillFilter', '../../filters/proficiencyFilter', 'ag-grid-enterprise/main'], function (require, exports, aurelia_framework_1, refData_1, skillFilter_1, proficiencyFilter_1) {
-    "use strict";
-    var RichGridDeclarative = (function () {
-        function RichGridDeclarative() {
-            var _this = this;
-            this.gridOptions = {};
-            this.createRowData();
-            this.showGrid = true;
-            this.gridOptions.onGridReady = function () {
-                _this.api = _this.gridOptions.api;
-                _this.columnApi = _this.gridOptions.columnApi;
-            };
-        }
-        RichGridDeclarative.prototype.createRowData = function () {
-            var rowData = [];
-            for (var i = 0; i < 10000; i++) {
-                var countryData = refData_1.default.countries[i % refData_1.default.countries.length];
-                rowData.push({
-                    name: refData_1.default.firstNames[i % refData_1.default.firstNames.length] + ' ' + refData_1.default.lastNames[i % refData_1.default.lastNames.length],
-                    skills: {
-                        android: Math.random() < 0.4,
-                        html5: Math.random() < 0.4,
-                        mac: Math.random() < 0.4,
-                        windows: Math.random() < 0.4,
-                        css: Math.random() < 0.4
-                    },
-                    address: refData_1.default.addresses[i % refData_1.default.addresses.length],
-                    years: Math.round(Math.random() * 100),
-                    proficiency: Math.round(Math.random() * 100),
-                    country: countryData.country,
-                    continent: countryData.continent,
-                    language: countryData.language,
-                    mobile: this.createRandomPhoneNumber(),
-                    landline: this.createRandomPhoneNumber()
-                });
-            }
-            this.rowData = rowData;
-        };
-        RichGridDeclarative.prototype.calculateRowCount = function () {
-            if (this.gridOptions.api && this.rowData) {
-                var model = this.gridOptions.api.getModel();
-                var totalRows = this.rowData.length;
-                var processedRows = model.getRowCount();
-                this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
-            }
-        };
-        RichGridDeclarative.prototype.onModelUpdated = function () {
-            console.log('onModelUpdated');
-            this.calculateRowCount();
-        };
-        RichGridDeclarative.prototype.onReady = function () {
-            console.log('onReady');
-            this.calculateRowCount();
-        };
-        RichGridDeclarative.prototype.onCellClicked = function ($event) {
-            console.log('onCellClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
-        };
-        RichGridDeclarative.prototype.onCellValueChanged = function ($event) {
-            console.log('onCellValueChanged: ' + $event.oldValue + ' to ' + $event.newValue);
-        };
-        RichGridDeclarative.prototype.onCellDoubleClicked = function ($event) {
-            console.log('onCellDoubleClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
-        };
-        RichGridDeclarative.prototype.onCellContextMenu = function ($event) {
-            console.log('onCellContextMenu: ' + $event.rowIndex + ' ' + $event.colDef.field);
-        };
-        RichGridDeclarative.prototype.onCellFocused = function ($event) {
-            console.log('onCellFocused: (' + $event.rowIndex + ',' + $event.column ? $event.column.colId : '' + ')');
-        };
-        RichGridDeclarative.prototype.onRowSelected = function ($event) {
-        };
-        RichGridDeclarative.prototype.onSelectionChanged = function () {
-            console.log('selectionChanged');
-        };
-        RichGridDeclarative.prototype.onBeforeFilterChanged = function () {
-            console.log('beforeFilterChanged');
-        };
-        RichGridDeclarative.prototype.onAfterFilterChanged = function () {
-            console.log('afterFilterChanged');
-        };
-        RichGridDeclarative.prototype.onFilterModified = function () {
-            console.log('onFilterModified');
-        };
-        RichGridDeclarative.prototype.onBeforeSortChanged = function () {
-            console.log('onBeforeSortChanged');
-        };
-        RichGridDeclarative.prototype.onAfterSortChanged = function () {
-            console.log('onAfterSortChanged');
-        };
-        RichGridDeclarative.prototype.onVirtualRowRemoved = function ($event) {
-        };
-        RichGridDeclarative.prototype.onRowClicked = function ($event) {
-            console.log('onRowClicked: ' + $event.node.data.name);
-        };
-        RichGridDeclarative.prototype.onQuickFilterChanged = function ($event) {
-            this.gridOptions.api.setQuickFilter($event.target.value);
-        };
-        RichGridDeclarative.prototype.onColumnEvent = function ($event) {
-            console.log('onColumnEvent: ' + $event);
-        };
-        RichGridDeclarative.prototype.countryCellRenderer = function (params) {
-            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + refData_1.default.COUNTRY_CODES[params.value] + ".png'>";
-            return flag + " " + params.value;
-        };
-        RichGridDeclarative.prototype.skillsCellRenderer = function (params) {
-            var data = params.data;
-            var skills = [];
-            refData_1.default.IT_SKILLS.forEach(function (skill) {
-                if (data && data.skills && data.skills[skill]) {
-                    skills.push('<img src="images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
-                }
-            });
-            return skills.join(' ');
-        };
-        RichGridDeclarative.prototype.percentCellRenderer = function (params) {
-            var value = params.value;
-            var eDivPercentBar = document.createElement('div');
-            eDivPercentBar.className = 'div-percent-bar';
-            eDivPercentBar.style.width = value + '%';
-            if (value < 20) {
-                eDivPercentBar.style.backgroundColor = 'red';
-            }
-            else if (value < 60) {
-                eDivPercentBar.style.backgroundColor = '#ff9900';
-            }
-            else {
-                eDivPercentBar.style.backgroundColor = '#00A000';
-            }
-            var eValue = document.createElement('div');
-            eValue.className = 'div-percent-value';
-            eValue.innerHTML = value + '%';
-            var eOuterDiv = document.createElement('div');
-            eOuterDiv.className = 'div-outer-div';
-            eOuterDiv.appendChild(eValue);
-            eOuterDiv.appendChild(eDivPercentBar);
-            return eOuterDiv;
-        };
-        RichGridDeclarative.prototype.getSkillFilter = function () {
-            return skillFilter_1.default;
-        };
-        RichGridDeclarative.prototype.getProficiencyFilter = function () {
-            return proficiencyFilter_1.default;
-        };
-        RichGridDeclarative.prototype.getCountryFilterParams = function () {
-            return {
-                cellRenderer: this.countryCellRenderer,
-                cellHeight: 20
-            };
-        };
-        RichGridDeclarative.prototype.createRandomPhoneNumber = function () {
-            var result = '+';
-            for (var i = 0; i < 12; i++) {
-                result += Math.round(Math.random() * 10);
-                if (i === 2 || i === 5 || i === 8) {
-                    result += ' ';
-                }
-            }
-            return result;
-        };
-        RichGridDeclarative = __decorate([
-            aurelia_framework_1.autoinject(),
-            aurelia_framework_1.customElement('rich-grid-declarative'), 
-            __metadata('design:paramtypes', [])
-        ], RichGridDeclarative);
-        return RichGridDeclarative;
-    }());
-    exports.RichGridDeclarative = RichGridDeclarative;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1205,6 +1095,184 @@ define('components/rich-grid-example/rich-grid-example',["require", "exports", "
     }
 });
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('components/rich-grid-declarative-example/rich-grid-declarative-example',["require", "exports", 'aurelia-framework', '../../data/refData', '../../filters/skillFilter', '../../filters/proficiencyFilter', 'ag-grid-enterprise/main'], function (require, exports, aurelia_framework_1, refData_1, skillFilter_1, proficiencyFilter_1) {
+    "use strict";
+    var RichGridDeclarative = (function () {
+        function RichGridDeclarative() {
+            var _this = this;
+            this.gridOptions = {};
+            this.createRowData();
+            this.showGrid = true;
+            this.gridOptions.onGridReady = function () {
+                _this.api = _this.gridOptions.api;
+                _this.columnApi = _this.gridOptions.columnApi;
+            };
+        }
+        RichGridDeclarative.prototype.createRowData = function () {
+            var rowData = [];
+            for (var i = 0; i < 10000; i++) {
+                var countryData = refData_1.default.countries[i % refData_1.default.countries.length];
+                rowData.push({
+                    name: refData_1.default.firstNames[i % refData_1.default.firstNames.length] + ' ' + refData_1.default.lastNames[i % refData_1.default.lastNames.length],
+                    skills: {
+                        android: Math.random() < 0.4,
+                        html5: Math.random() < 0.4,
+                        mac: Math.random() < 0.4,
+                        windows: Math.random() < 0.4,
+                        css: Math.random() < 0.4
+                    },
+                    address: refData_1.default.addresses[i % refData_1.default.addresses.length],
+                    years: Math.round(Math.random() * 100),
+                    proficiency: Math.round(Math.random() * 100),
+                    country: countryData.country,
+                    continent: countryData.continent,
+                    language: countryData.language,
+                    mobile: this.createRandomPhoneNumber(),
+                    landline: this.createRandomPhoneNumber()
+                });
+            }
+            this.rowData = rowData;
+        };
+        RichGridDeclarative.prototype.calculateRowCount = function () {
+            if (this.gridOptions.api && this.rowData) {
+                var model = this.gridOptions.api.getModel();
+                var totalRows = this.rowData.length;
+                var processedRows = model.getRowCount();
+                this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+            }
+        };
+        RichGridDeclarative.prototype.onModelUpdated = function () {
+            console.log('onModelUpdated');
+            this.calculateRowCount();
+        };
+        RichGridDeclarative.prototype.onReady = function () {
+            console.log('onReady');
+            this.calculateRowCount();
+        };
+        RichGridDeclarative.prototype.onCellClicked = function ($event) {
+            console.log('onCellClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
+        };
+        RichGridDeclarative.prototype.onCellValueChanged = function ($event) {
+            console.log('onCellValueChanged: ' + $event.oldValue + ' to ' + $event.newValue);
+        };
+        RichGridDeclarative.prototype.onCellDoubleClicked = function ($event) {
+            console.log('onCellDoubleClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
+        };
+        RichGridDeclarative.prototype.onCellContextMenu = function ($event) {
+            console.log('onCellContextMenu: ' + $event.rowIndex + ' ' + $event.colDef.field);
+        };
+        RichGridDeclarative.prototype.onCellFocused = function ($event) {
+            console.log('onCellFocused: (' + $event.rowIndex + ',' + $event.column ? $event.column.colId : '' + ')');
+        };
+        RichGridDeclarative.prototype.onRowSelected = function ($event) {
+        };
+        RichGridDeclarative.prototype.onSelectionChanged = function () {
+            console.log('selectionChanged');
+        };
+        RichGridDeclarative.prototype.onBeforeFilterChanged = function () {
+            console.log('beforeFilterChanged');
+        };
+        RichGridDeclarative.prototype.onAfterFilterChanged = function () {
+            console.log('afterFilterChanged');
+        };
+        RichGridDeclarative.prototype.onFilterModified = function () {
+            console.log('onFilterModified');
+        };
+        RichGridDeclarative.prototype.onBeforeSortChanged = function () {
+            console.log('onBeforeSortChanged');
+        };
+        RichGridDeclarative.prototype.onAfterSortChanged = function () {
+            console.log('onAfterSortChanged');
+        };
+        RichGridDeclarative.prototype.onVirtualRowRemoved = function ($event) {
+        };
+        RichGridDeclarative.prototype.onRowClicked = function ($event) {
+            console.log('onRowClicked: ' + $event.node.data.name);
+        };
+        RichGridDeclarative.prototype.onQuickFilterChanged = function ($event) {
+            this.gridOptions.api.setQuickFilter($event.target.value);
+        };
+        RichGridDeclarative.prototype.onColumnEvent = function ($event) {
+            console.log('onColumnEvent: ' + $event);
+        };
+        RichGridDeclarative.prototype.countryCellRenderer = function (params) {
+            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + refData_1.default.COUNTRY_CODES[params.value] + ".png'>";
+            return flag + " " + params.value;
+        };
+        RichGridDeclarative.prototype.skillsCellRenderer = function (params) {
+            var data = params.data;
+            var skills = [];
+            refData_1.default.IT_SKILLS.forEach(function (skill) {
+                if (data && data.skills && data.skills[skill]) {
+                    skills.push('<img src="images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                }
+            });
+            return skills.join(' ');
+        };
+        RichGridDeclarative.prototype.percentCellRenderer = function (params) {
+            var value = params.value;
+            var eDivPercentBar = document.createElement('div');
+            eDivPercentBar.className = 'div-percent-bar';
+            eDivPercentBar.style.width = value + '%';
+            if (value < 20) {
+                eDivPercentBar.style.backgroundColor = 'red';
+            }
+            else if (value < 60) {
+                eDivPercentBar.style.backgroundColor = '#ff9900';
+            }
+            else {
+                eDivPercentBar.style.backgroundColor = '#00A000';
+            }
+            var eValue = document.createElement('div');
+            eValue.className = 'div-percent-value';
+            eValue.innerHTML = value + '%';
+            var eOuterDiv = document.createElement('div');
+            eOuterDiv.className = 'div-outer-div';
+            eOuterDiv.appendChild(eValue);
+            eOuterDiv.appendChild(eDivPercentBar);
+            return eOuterDiv;
+        };
+        RichGridDeclarative.prototype.getSkillFilter = function () {
+            return skillFilter_1.default;
+        };
+        RichGridDeclarative.prototype.getProficiencyFilter = function () {
+            return proficiencyFilter_1.default;
+        };
+        RichGridDeclarative.prototype.getCountryFilterParams = function () {
+            return {
+                cellRenderer: this.countryCellRenderer,
+                cellHeight: 20
+            };
+        };
+        RichGridDeclarative.prototype.createRandomPhoneNumber = function () {
+            var result = '+';
+            for (var i = 0; i < 12; i++) {
+                result += Math.round(Math.random() * 10);
+                if (i === 2 || i === 5 || i === 8) {
+                    result += ' ';
+                }
+            }
+            return result;
+        };
+        RichGridDeclarative = __decorate([
+            aurelia_framework_1.autoinject(),
+            aurelia_framework_1.customElement('rich-grid-declarative'), 
+            __metadata('design:paramtypes', [])
+        ], RichGridDeclarative);
+        return RichGridDeclarative;
+    }());
+    exports.RichGridDeclarative = RichGridDeclarative;
+});
+
 define('ag-grid-aurelia/lib/agGridAurelia',['require','exports','module','aurelia-framework','ag-grid/main','./aureliaFrameworkFactory'],function (require, exports, module) {// ag-grid-aurelia v7.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1220,8 +1288,9 @@ var aurelia_framework_1 = require('aurelia-framework');
 var main_1 = require('ag-grid/main');
 var aureliaFrameworkFactory_1 = require("./aureliaFrameworkFactory");
 var AgGridAurelia = (function () {
-    function AgGridAurelia(element, auFrameworkFactory, container, viewResources) {
+    function AgGridAurelia(element, taskQueue, auFrameworkFactory, container, viewResources) {
         var _this = this;
+        this.taskQueue = taskQueue;
         this.auFrameworkFactory = auFrameworkFactory;
         this.container = container;
         this.viewResources = viewResources;
@@ -1238,6 +1307,14 @@ var AgGridAurelia = (function () {
         });
     }
     AgGridAurelia.prototype.attached = function () {
+        //initialize the grid in the queue
+        //because of bug in @children
+        // https://github.com/aurelia/templating/issues/403
+        this.taskQueue.queueTask(this.initGrid.bind(this));
+    };
+    AgGridAurelia.prototype.initGrid = function () {
+        this._initialised = false;
+        this._destroyed = false;
         this.auFrameworkFactory.setViewContainerRef(this.container, this.viewResources);
         this.gridOptions = main_1.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
         this.gridParams = {
@@ -1988,7 +2065,7 @@ var AgGridAurelia = (function () {
         aurelia_framework_1.customElement('ag-grid-aurelia'),
         aurelia_framework_1.inlineView("<template><slot></slot></template>"),
         aurelia_framework_1.autoinject(), 
-        __metadata('design:paramtypes', [Element, aureliaFrameworkFactory_1.AureliaFrameworkFactory, aurelia_framework_1.Container, aurelia_framework_1.ViewResources])
+        __metadata('design:paramtypes', [Element, aurelia_framework_1.TaskQueue, aureliaFrameworkFactory_1.AureliaFrameworkFactory, aurelia_framework_1.Container, aurelia_framework_1.ViewResources])
     ], AgGridAurelia);
     return AgGridAurelia;
 }());
@@ -30035,11 +30112,11 @@ define('text!app.html', ['module'], function(module) { module.exports = "<templa
 define('text!editors/mood-editor.css', ['module'], function(module) { module.exports = ".mood {\n  border-radius: 15px;\n  border: 1px solid grey;\n  background: #e6e6e6;\n  padding: 15px;\n  text-align: center;\n  display: inline-block;\n  outline: none\n}\n\n.default {\n  padding-left: 10px;\n  padding-right: 10px;\n  border: 1px solid transparent !important;\n}\n\n.selected {\n  padding-left: 10px;\n  padding-right: 10px;\n  border: 1px solid lightgreen !important;\n}\n"; });
 define('text!editors/mood-editor.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./mood-editor.css\"></require>\n\n  <div class.bind=\"'mood'\" tabindex=\"0\" focus.bind=\"hasFocus\" keydown.trigger=\"onKeyDown($event)\">\n    <img src=\"images/smiley.png\" click.delegate=\"setHappy(true)\" class.bind=\"happy ? 'selected' : 'default'\">\n    <img src=\"images/smiley-sad.png\" click.delegate=\"setHappy(false)\" class.bind=\"!happy ? 'selected' : 'default'\">\n  </div>\n</template>\n"; });
 define('text!editors/numeric-editor.html', ['module'], function(module) { module.exports = "<template>\n  <input focus.bind=\"hasFocus\" value.bind=\"params.value\">\n</template>\n"; });
-define('text!components/editor-example/editor-example.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"../../editors/numeric-editor\"></require>\n  <require from=\"../../editors/mood-editor\"></require>\n  <div style=\"width: 500px;\">\n    <h1>Editor Example</h1>\n    <div style=\"width: 500px; height: 200px;\">\n    <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                     grid-options.bind=\"gridOptions\">\n\n      <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"198\"></ag-grid-column>\n      <ag-grid-column header-name=\"Mood\" field=\"mood\" width.bind=\"150\" editable.bind=\"true\">\n        <ag-cell-template>\n          <img width=\"20px\" if.bind=\"params.value === 'Happy'\" src=\"images/smiley.png\"/>\n          <img width=\"20px\" if.bind=\"params.value !== 'Happy'\" src=\"images/smiley-sad.png\"/>\n        </ag-cell-template>\n        <ag-editor-template>\n          <ag-mood-editor></ag-mood-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n      <ag-grid-column header-name=\"Numeric\" field=\"number\" width.bind=\"150\" editable.bind=\"true\">\n        <ag-editor-template>\n          <ag-numeric-editor></ag-numeric-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n    </ag-grid-aurelia>\n  </div>\n</template>\n"; });
-define('text!components/filter-example/filter-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 400px;\">\n    <h1>Filter Example</h1>\n    <div style=\"width: 400px; height: 300px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"200\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Filter Component\" field=\"name\" width.bind=\"198\" filter.bind=\"getPartialMatchFilter()\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
-define('text!components/floating-row-example/floating-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Floating Row Example</h1>\n      <div style=\"width: 400px; height: 200px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"200\">\n              <ag-cell-template>\n                <span style=\"font-weight: bold\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Number\" field=\"number\" width.bind=\"180\">\n              <ag-cell-template>\n                <span style=\"font-style: italic\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
-define('text!components/full-width-example/full-width-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Full Width Example</h1>\n      <div style=\"width: 400px; height: 200px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"200\">\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Age\" field=\"age\" width.bind=\"180\">\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
-define('text!components/group-row-example/group-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Group Row Example</h1>\n    <div style=\"width: 400px; height: 200px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"100\" row-group-index.bind=\"0\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"100\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Gold\" field=\"gold\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Silver\" field=\"silver\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Bronze\" field=\"bronze\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
-define('text!components/rich-grid-declarative-example/rich-grid-declarative-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Rich Grid with Declarative Markup</h1>\n    <div style=\"padding: 4px;\">\n      <div style=\"float: right;\">\n        <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n               placeholder=\"Type text to filter...\"/>\n        <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n        <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n      </div>\n      <div>\n        <b>Employees Skills and Contact Details</b>\n        ${rowCount}\n      </div>\n    </div>\n    <div style=\"clear: both;\"></div>\n\n    <div if.bind=\"showGrid\">\n\n      <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n           that marker inside the same ng-if as the grid -->\n\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n        <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n      </div>\n      <div style=\"clear: both;\"></div>\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n        <label>\n          <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n          Show Tool Panel\n        </label>\n        <button click.delegate=\"createRowData()\">Refresh Data</button>\n      </div>\n      <div style=\"clear: both;\"></div>\n\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 350px;\" class=\"ag-fresh\"\n                         context.bind=\"{vm:$this}\"\n                         grid-options.bind=\"gridOptions\"\n                         column-defs.bind=\"columnDefs\"\n                         show-tool-panel.bind=\"showToolPanel\"\n                         row-data.bind=\"rowData\"\n\n                         enable-col-resize\n                         enable-sorting\n                         enable-filter\n                         group-headers\n                         suppress-row-click-selection\n                         tool-panel-suppress-groups\n                         tool-panel-suppress-values\n                         debug\n                         row-height=\"22\"\n                         row-selection=\"multiple\"\n\n                         model-updated.call=\"onModelUpdated()\"\n                         cell-clicked.call=\"onCellClicked($event)\"\n                         cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                         cell-context-menu.call=\"onCellContextMenu($event)\"\n                         cell-value-changed.call=\"onCellValueChanged($event)\"\n                         cell-focused.call=\"onCellFocused($event)\"\n                         row-selected.call=\"onRowSelected($event)\"\n                         selection-changed.call=\"onSelectionChanged()\"\n                         before-filter-changed.call=\"onBeforeFilterChanged()\"\n                         after-filter-changed.call=\"onAfterFilterChanged()\"\n                         filter-modified.call=\"onFilterModified()\"\n                         before-sort-changed.call=\"onBeforeSortChanged()\"\n                         after-sort-changed.call=\"onAfterSortChanged()\"\n                         virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                         row-clicked.call=\"onRowClicked($event)\"\n                         grid-ready.call=\"onReady($event)\"\n\n                         column-everything-changed.call=\"onColumnEvent($event)\"\n                         column-row-group-changed.call=\"onColumnEvent($event)\"\n                         column-value-changed.call=\"onColumnEvent($event)\"\n                         column-moved.call=\"onColumnEvent($event)\"\n                         column-visible.call=\"onColumnEvent($event)\"\n                         column-group-opened.call=\"onColumnEvent($event)\"\n                         column-resized.call=\"onColumnEvent($event)\"\n                         column-pinned-count-changed.call=\"onColumnEvent($event)\">\n          <ag-grid-column header-name=\"#\" width.bind=\"30\" checkbox-selection.bind=\"true\" suppress-sorting.bind=\"true\" suppress-menu.bind=\"true\" pinned.bind=\"true\"></ag-grid-column>\n          <ag-grid-column header-name=\"Employee\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"150\" pinned.bind=\"true\"></ag-grid-column>\n            <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"150\" cell-renderer.bind=\"countryCellRenderer\" pinned.bind=\"true\" filter-params.bind=\"getCountryFilterParams()\"></ag-grid-column>\n          </ag-grid-column>\n          <ag-grid-column header-name=\"IT Skills\">\n            <ag-grid-column header-name=\"Skills\" width.bind=\"125\" suppress-sorting.bind=\"true\" cell-renderer.bind=\"skillsCellRenderer\" filter.bind=\"getSkillFilter()\"></ag-grid-column>\n            <ag-grid-column header-name=\"Proficiency\" field=\"proficiency\" width.bind=\"120\"\n                            cell-renderer.bind=\"percentCellRenderer\" filter.bind=\"getProficiencyFilter()\"></ag-grid-column>\n          </ag-grid-column>\n          <ag-grid-column header-name=\"Contact\">\n            <ag-grid-column header-name=\"Mobile\" field=\"mobile\" width.bind=\"150\" filter=\"text\"></ag-grid-column>\n            <ag-grid-column header-name=\"Land-line\" field=\"landline\" width.bind=\"150\" filter=\"text\"></ag-grid-column>\n            <ag-grid-column header-name=\"Address\" field=\"address\" width.bind=\"500\" filter=\"text\"></ag-grid-column>\n          </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!components/editor-example/editor-example.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"../../editors/numeric-editor\"></require>\n  <require from=\"../../editors/mood-editor\"></require>\n  <div style=\"width: 800px;\">\n    <h1>Editor Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n    <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                     grid-options.bind=\"gridOptions\">\n\n      <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"300\"></ag-grid-column>\n      <ag-grid-column header-name=\"Mood\" field=\"mood\" width.bind=\"250\" editable.bind=\"true\">\n        <ag-cell-template>\n          <img width=\"20px\" if.bind=\"params.value === 'Happy'\" src=\"images/smiley.png\"/>\n          <img width=\"20px\" if.bind=\"params.value !== 'Happy'\" src=\"images/smiley-sad.png\"/>\n        </ag-cell-template>\n        <ag-editor-template>\n          <ag-mood-editor></ag-mood-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n      <ag-grid-column header-name=\"Numeric\" field=\"number\" width.bind=\"249\" editable.bind=\"true\">\n        <ag-editor-template>\n          <ag-numeric-editor></ag-numeric-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n    </ag-grid-aurelia>\n  </div>\n</template>\n"; });
+define('text!components/filter-example/filter-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Filter Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Filter Component\" field=\"name\" width.bind=\"400\" filter.bind=\"getPartialMatchFilter()\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
+define('text!components/floating-row-example/floating-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Floating Row Example</h1>\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n              <ag-cell-template>\n                <span style=\"font-weight: bold\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Number\" field=\"number\" width.bind=\"399\">\n              <ag-cell-template>\n                <span style=\"font-style: italic\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!components/full-width-example/full-width-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Full Width Example</h1>\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"400\">\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Age\" field=\"age\" width.bind=\"400\">\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!components/group-row-example/group-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Group Row Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"100\" row-group-index.bind=\"0\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"100\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Gold\" field=\"gold\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Silver\" field=\"silver\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Bronze\" field=\"bronze\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/rich-grid-example/rich-grid-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Rich Grid with Pure JavaScript</h1>\n    <div style=\"padding: 4px;\">\n      <div style=\"float: right;\">\n        <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n               placeholder=\"Type text to filter...\"/>\n        <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n        <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n      </div>\n      <div>\n        <b>Employees Skills and Contact Details</b>\n        ${rowCount}\n      </div>\n    </div>\n    <div style=\"clear: both;\"></div>\n\n    <div if.bind=\"showGrid\">\n\n      <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n           that marker inside the same ng-if as the grid -->\n\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n        <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n      </div>\n      <div style=\"clear: both;\"></div>\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n        <label>\n          <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n          Show Tool Panel\n        </label>\n        <button click.delegate=\"createRowData()\">Refresh Data</button>\n      </div>\n      <div style=\"clear: both;\"></div>\n\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid class=\"ag-fresh\"\n\n                         grid-options.bind=\"gridOptions\"\n                         column-defs.bind=\"columnDefs\"\n                         show-tool-panel.bind=\"showToolPanel\"\n                         row-data.bind=\"rowData\"\n\n                         enable-col-resize\n                         enable-sorting\n                         enable-filter\n                         group-headers\n                         suppress-row-click-selection\n                         tool-panel-suppress-groups\n                         tool-panel-suppress-values\n                         debug\n                         row-height.bind=\"22\"\n                         row-selection=\"multiple\"\n\n                         model-updated.call=\"onModelUpdated()\"\n                         cell-clicked.call=\"onCellClicked($event)\"\n                         cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                         cell-context-menu.call=\"onCellContextMenu($event)\"\n                         cell-value-changed.call=\"onCellValueChanged($event)\"\n                         cell-focused.call=\"onCellFocused($event)\"\n                         row-selected.call=\"onRowSelected($event)\"\n                         selection-changed.call=\"onSelectionChanged()\"\n                         before-filter-changed.call=\"onBeforeFilterChanged()\"\n                         after-filter-changed.call=\"onAfterFilterChanged()\"\n                         filter-modified.call=\"onFilterModified()\"\n                         before-sort-changed.call=\"onBeforeSortChanged()\"\n                         after-sort-changed.call=\"onAfterSortChanged()\"\n                         virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                         row-clicked.call=\"onRowClicked($event)\"\n                         ready.call=\"onReady($event)\"\n\n                         column-everything-changed.call=\"onColumnEvent($event)\"\n                         column-row-group-changed.call=\"onColumnEvent($event)\"\n                         column-value-changed.call=\"onColumnEvent($event)\"\n                         column-moved.call=\"onColumnEvent($event)\"\n                         column-visible.call=\"onColumnEvent($event)\"\n                         column-group-opened.call=\"onColumnEvent($event)\"\n                         column-resized.call=\"onColumnEvent($event)\"\n                         column-pinned-count-changed.call=\"onColumnEvent($event)\">\n        </ag-grid-aurelia>\n      </div>\n    </div>\n\n  </div>\n</template>\n"; });
+define('text!components/rich-grid-declarative-example/rich-grid-declarative-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Rich Grid with Declarative Markup</h1>\n    <div style=\"padding: 4px;\">\n      <div style=\"float: right;\">\n        <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n               placeholder=\"Type text to filter...\"/>\n        <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n        <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n      </div>\n      <div>\n        <b>Employees Skills and Contact Details</b>\n        ${rowCount}\n      </div>\n    </div>\n    <div style=\"clear: both;\"></div>\n\n    <div if.bind=\"showGrid\">\n\n      <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n           that marker inside the same ng-if as the grid -->\n\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n        <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n      </div>\n      <div style=\"clear: both;\"></div>\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n        <label>\n          <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n          Show Tool Panel\n        </label>\n        <button click.delegate=\"createRowData()\">Refresh Data</button>\n      </div>\n      <div style=\"clear: both;\"></div>\n\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 350px;\" class=\"ag-fresh\"\n                         context.bind=\"{vm:$this}\"\n                         grid-options.bind=\"gridOptions\"\n                         column-defs.bind=\"columnDefs\"\n                         show-tool-panel.bind=\"showToolPanel\"\n                         row-data.bind=\"rowData\"\n\n                         enable-col-resize\n                         enable-sorting\n                         enable-filter\n                         group-headers\n                         suppress-row-click-selection\n                         tool-panel-suppress-groups\n                         tool-panel-suppress-values\n                         debug\n                         row-height=\"22\"\n                         row-selection=\"multiple\"\n\n                         model-updated.call=\"onModelUpdated()\"\n                         cell-clicked.call=\"onCellClicked($event)\"\n                         cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                         cell-context-menu.call=\"onCellContextMenu($event)\"\n                         cell-value-changed.call=\"onCellValueChanged($event)\"\n                         cell-focused.call=\"onCellFocused($event)\"\n                         row-selected.call=\"onRowSelected($event)\"\n                         selection-changed.call=\"onSelectionChanged()\"\n                         before-filter-changed.call=\"onBeforeFilterChanged()\"\n                         after-filter-changed.call=\"onAfterFilterChanged()\"\n                         filter-modified.call=\"onFilterModified()\"\n                         before-sort-changed.call=\"onBeforeSortChanged()\"\n                         after-sort-changed.call=\"onAfterSortChanged()\"\n                         virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                         row-clicked.call=\"onRowClicked($event)\"\n                         grid-ready.call=\"onReady($event)\"\n\n                         column-everything-changed.call=\"onColumnEvent($event)\"\n                         column-row-group-changed.call=\"onColumnEvent($event)\"\n                         column-value-changed.call=\"onColumnEvent($event)\"\n                         column-moved.call=\"onColumnEvent($event)\"\n                         column-visible.call=\"onColumnEvent($event)\"\n                         column-group-opened.call=\"onColumnEvent($event)\"\n                         column-resized.call=\"onColumnEvent($event)\"\n                         column-pinned-count-changed.call=\"onColumnEvent($event)\">\n          <ag-grid-column header-name=\"#\" width.bind=\"30\" checkbox-selection.bind=\"true\" suppress-sorting.bind=\"true\" suppress-menu.bind=\"true\" pinned.bind=\"true\"></ag-grid-column>\n          <ag-grid-column header-name=\"Employee\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"150\" pinned.bind=\"true\"></ag-grid-column>\n            <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"150\" cell-renderer.bind=\"countryCellRenderer\" pinned.bind=\"true\" filter-params.bind=\"getCountryFilterParams()\"></ag-grid-column>\n          </ag-grid-column>\n          <ag-grid-column header-name=\"IT Skills\">\n            <ag-grid-column header-name=\"Skills\" width.bind=\"125\" suppress-sorting.bind=\"true\" cell-renderer.bind=\"skillsCellRenderer\" filter.bind=\"getSkillFilter()\"></ag-grid-column>\n            <ag-grid-column header-name=\"Proficiency\" field=\"proficiency\" width.bind=\"120\"\n                            cell-renderer.bind=\"percentCellRenderer\" filter.bind=\"getProficiencyFilter()\"></ag-grid-column>\n          </ag-grid-column>\n          <ag-grid-column header-name=\"Contact\">\n            <ag-grid-column header-name=\"Mobile\" field=\"mobile\" width.bind=\"150\" filter=\"text\"></ag-grid-column>\n            <ag-grid-column header-name=\"Land-line\" field=\"landline\" width.bind=\"150\" filter=\"text\"></ag-grid-column>\n            <ag-grid-column header-name=\"Address\" field=\"address\" width.bind=\"500\" filter=\"text\"></ag-grid-column>\n          </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

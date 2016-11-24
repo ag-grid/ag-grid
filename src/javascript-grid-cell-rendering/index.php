@@ -689,7 +689,7 @@ colDef = {
                   jsfile="../aurelia-example/components/editor-example/editor-example.ts"
                   html="../aurelia-example/components/editor-example/editor-example.html"></show-example>
 
-    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Angular 2 Methods / Lifecycle</h3>
+    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Methods / Lifecycle</h3>
 
 
     <h3>Example: Rendering using regular cellRenderer Components</h3>
@@ -699,7 +699,8 @@ colDef = {
 
     <show-example example="../aurelia-example/#/richgrid-declarative/true"
               jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"
-              html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"></show-example>
+              html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
+              exampleHeight="525px"></show-example>
 
     <br/>
     <note>The full <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>
