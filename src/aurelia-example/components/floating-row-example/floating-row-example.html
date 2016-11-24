@@ -1,0 +1,21 @@
+<template>
+  <div style="width: 800px;">
+    <h1>Floating Row Example</h1>
+      <div style="width: 400px; height: 200px;">
+        <ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-fresh"
+                         grid-options.bind="gridOptions">
+            <ag-grid-column header-name="Row" field="row" width.bind="200">
+              <ag-cell-template>
+                <span style="font-weight: bold">${params.value}</span>
+              </ag-cell-template>
+            </ag-grid-column>
+            <ag-grid-column header-name="Number" field="number" width.bind="180">
+              <ag-cell-template>
+                <span style="font-style: italic">${params.value}</span>
+              </ag-cell-template>
+            </ag-grid-column>
+        </ag-grid-aurelia>
+      </div>
+    </div>
+  </div>
+</template>

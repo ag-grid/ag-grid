@@ -1,0 +1,108 @@
+<template>
+  <div style="width: 800px;">
+    <h1>Rich Grid with Declarative Markup</h1>
+    <div style="padding: 4px;">
+      <div style="float: right;">
+        <input keyup.delegate="onQuickFilterChanged($event)" type="text" id="quickFilterInput"
+               placeholder="Type text to filter..."/>
+        <button disabled.bind="!showGrid" click.delegate="showGrid=false">Destroy Grid</button>
+        <button disabled.bind="showGrid" click.delegate="showGrid=true">Create Grid</button>
+      </div>
+      <div>
+        <b>Employees Skills and Contact Details</b>
+        ${rowCount}
+      </div>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div if.bind="showGrid">
+
+      <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use
+           that marker inside the same ng-if as the grid -->
+
+      <div style="padding: 4px;" class="toolbar">
+            <span>
+                Grid API:
+                <button click.delegate="api.selectAll()">Select All</button>
+                <button click.delegate="api.deselectAll()">Clear Selection</button>
+            </span>
+        <span style="margin-left: 20px;">
+                Column API:
+                <button click.delegate="columnApi.setColumnVisible('country', false)">Hide Country Column</button>
+                <button click.delegate="columnApi.setColumnVisible('country', true)">Show Country Column</button>
+            </span>
+      </div>
+      <div style="clear: both;"></div>
+      <div style="padding: 4px;" class="toolbar">
+        <label>
+          <input type="checkbox" change.delegate="showToolPanel=$event.target.checked"/>
+          Show Tool Panel
+        </label>
+        <button click.delegate="createRowData()">Refresh Data</button>
+      </div>
+      <div style="clear: both;"></div>
+
+      <div style="width: 100%; height: 350px;">
+        <ag-grid-aurelia #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
+                         context.bind="{vm:$this}"
+                         grid-options.bind="gridOptions"
+                         column-defs.bind="columnDefs"
+                         show-tool-panel.bind="showToolPanel"
+                         row-data.bind="rowData"
+
+                         enable-col-resize
+                         enable-sorting
+                         enable-filter
+                         group-headers
+                         suppress-row-click-selection
+                         tool-panel-suppress-groups
+                         tool-panel-suppress-values
+                         debug
+                         row-height="22"
+                         row-selection="multiple"
+
+                         model-updated.call="onModelUpdated()"
+                         cell-clicked.call="onCellClicked($event)"
+                         cell-double-clicked.call="onCellDoubleClicked($event)"
+                         cell-context-menu.call="onCellContextMenu($event)"
+                         cell-value-changed.call="onCellValueChanged($event)"
+                         cell-focused.call="onCellFocused($event)"
+                         row-selected.call="onRowSelected($event)"
+                         selection-changed.call="onSelectionChanged()"
+                         before-filter-changed.call="onBeforeFilterChanged()"
+                         after-filter-changed.call="onAfterFilterChanged()"
+                         filter-modified.call="onFilterModified()"
+                         before-sort-changed.call="onBeforeSortChanged()"
+                         after-sort-changed.call="onAfterSortChanged()"
+                         virtual-row-removed.call="onVirtualRowRemoved($event)"
+                         row-clicked.call="onRowClicked($event)"
+                         grid-ready.call="onReady($event)"
+
+                         column-everything-changed.call="onColumnEvent($event)"
+                         column-row-group-changed.call="onColumnEvent($event)"
+                         column-value-changed.call="onColumnEvent($event)"
+                         column-moved.call="onColumnEvent($event)"
+                         column-visible.call="onColumnEvent($event)"
+                         column-group-opened.call="onColumnEvent($event)"
+                         column-resized.call="onColumnEvent($event)"
+                         column-pinned-count-changed.call="onColumnEvent($event)">
+          <ag-grid-column header-name="#" width.bind="30" checkbox-selection.bind="true" suppress-sorting.bind="true" suppress-menu.bind="true" pinned.bind="true"></ag-grid-column>
+          <ag-grid-column header-name="Employee">
+            <ag-grid-column header-name="Name" field="name" width.bind="150" pinned.bind="true"></ag-grid-column>
+            <ag-grid-column header-name="Country" field="country" width.bind="150" cell-renderer.bind="countryCellRenderer" pinned.bind="true" filter-params.bind="getCountryFilterParams()"></ag-grid-column>
+          </ag-grid-column>
+          <ag-grid-column header-name="IT Skills">
+            <ag-grid-column header-name="Skills" width.bind="125" suppress-sorting.bind="true" cell-renderer.bind="skillsCellRenderer" filter.bind="getSkillFilter()"></ag-grid-column>
+            <ag-grid-column header-name="Proficiency" field="proficiency" width.bind="120"
+                            cell-renderer.bind="percentCellRenderer" filter.bind="getProficiencyFilter()"></ag-grid-column>
+          </ag-grid-column>
+          <ag-grid-column header-name="Contact">
+            <ag-grid-column header-name="Mobile" field="mobile" width.bind="150" filter="text"></ag-grid-column>
+            <ag-grid-column header-name="Land-line" field="landline" width.bind="150" filter="text"></ag-grid-column>
+            <ag-grid-column header-name="Address" field="address" width.bind="500" filter="text"></ag-grid-column>
+          </ag-grid-column>
+        </ag-grid-aurelia>
+      </div>
+    </div>
+  </div>
+</template>
