@@ -23,7 +23,8 @@ export class SortController {
 
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.getSort()) {
-            column.setSortedAt(new Date().valueOf());
+            var sortedAt = Number(new Date().valueOf());
+            column.setSortedAt(sortedAt);
         } else {
             column.setSortedAt(null);
         }
