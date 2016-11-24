@@ -464,6 +464,18 @@ export class GridApi {
         this.gridCore.doLayout();
     }
 
+    public resetRowHeights() {
+        if (_.exists(this.inMemoryRowModel)) {
+            this.inMemoryRowModel.resetRowHeights();
+        }
+    }
+
+    public onRowHeightChanged() {
+        if (_.exists(this.inMemoryRowModel)) {
+            this.inMemoryRowModel.onRowHeightChanged();
+        }
+    }
+
     public getValue(colKey: string|ColDef|Column, rowNode: RowNode): any {
         var column = this.columnController.getPrimaryColumn(colKey);
         if (_.missing(column)) {

@@ -411,6 +411,15 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
     }
 
+    public onRowHeightChanged(): void {
+        this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true});
+    }
+
+    public resetRowHeights(): void {
+        this.forEachNode( (rowNode: RowNode) => rowNode.setRowHeight(null) );
+        this.onRowHeightChanged();
+    }
+
     public removeItems(rowNodes: RowNode[]): void {
         var groupState = this.getGroupState();
         var removedNodes = this.nodeManager.removeItems(rowNodes);

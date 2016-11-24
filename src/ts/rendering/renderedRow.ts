@@ -566,8 +566,13 @@ export class RenderedRow {
     
     private setHeight(): void {
         let setHeightListener = () => {
-            var heightPx = this.rowNode.rowHeight + 'px';
-            this.eAllRowContainers.forEach( row => row.style.height = heightPx);
+            // check for exists first - if the user is resetting the row height, then
+            // it will be null (or undefined) momentarily until the next time the flatten
+            // stage is called where the row will then update again with a new height
+            if (_.exists(this.rowNode.rowHeight)) {
+                var heightPx = this.rowNode.rowHeight + 'px';
+                this.eAllRowContainers.forEach( row => row.style.height = heightPx);
+            }
         };
 
         this.rowNode.addEventListener(RowNode.EVENT_HEIGHT_CHANGED, setHeightListener);
@@ -639,11 +644,13 @@ export class RenderedRow {
 
         this.destroyFunctions.forEach( func => func() );
 
-        var executeDelayedDestroyFunctions = () => this.delayedDestroyFunctions.forEach( func => func() );
         if (animate) {
             this.startRemoveAnimationFunctions.forEach( func => func() );
         } else {
-            executeDelayedDestroyFunctions();
+            // we are not animating, so execute the second stage of removal now.
+            // we call getAndClear, so that they are only called once
+            var delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
+            delayedDestroyFunctions.forEach( func => func() );
         }
 
         if (this.renderedRowEventService) {

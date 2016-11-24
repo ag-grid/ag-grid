@@ -91,8 +91,10 @@ export class FlattenStage implements IRowNodeStage {
     // duplicated method, it's also in floatingRowModel
     private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper): void {
         result.push(rowNode);
-        var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-        rowNode.setRowHeight(rowHeight);
+        if (_.missing(rowNode.rowHeight)) {
+            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+            rowNode.setRowHeight(rowHeight);
+        }
         rowNode.setRowTop(nextRowTop.value);
         rowNode.setRowIndex(result.length  - 1);
         nextRowTop.value += rowNode.rowHeight;

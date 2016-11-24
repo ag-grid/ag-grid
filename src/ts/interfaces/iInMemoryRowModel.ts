@@ -21,4 +21,8 @@ export interface IInMemoryRowModel extends IRowModel {
     expandOrCollapseAll(expand: boolean): void;
     /** InMemory model only. */
     setRowData(rows: any[], refresh: boolean, firstId?: number): void;
+    /** When the row height was changed for a row node */
+    onRowHeightChanged(): void;
+    /** When all row heights should be reset */
+    resetRowHeights(): void;
 }
