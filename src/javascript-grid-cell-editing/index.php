@@ -761,7 +761,9 @@ cellEditorFramework: {
     <p>
         Using Angular 2 Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-example example="../ng2-example/index.html?example=editor-component" jsfile="../ng2-example/app/editor-component.component.ts" html="../ng2-example/app/editor-component.component.html"></show-example>    
+    <show-example url="/ng2-example/editor-component?fromDocs"
+                  jsfile="../ng2-example/app/editor-component.component.ts"
+                  html="../ng2-example/app/editor-component.component.html"></show-example>
     
     <h2 id="aureliaCellEditing">
         <img src="../images/aurelia_large.png" style="width: 60px;"/>

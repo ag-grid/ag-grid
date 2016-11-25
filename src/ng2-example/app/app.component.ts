@@ -1,15 +1,25 @@
-import {Component} from '@angular/core';
-import {URLSearchParams} from "@angular/http";
+import {Component} from "@angular/core";
+import {Router, ActivatedRoute} from "@angular/router";
+import "rxjs/add/operator/map";
 
 @Component({
+    moduleId: module.id,
     selector: 'my-app',
-    templateUrl: 'app/app.component.html'
+    templateUrl: 'app.component.html'
 })
 export class AppComponent {
-    public example:string = 'rich-grid';
+    showNav: boolean = true;
 
-    constructor() {
-        let searchParams = new URLSearchParams(window.location.search.replace("?",""));
-        this.example = searchParams.get("example") ? searchParams.get("example") : 'rich-grid';
+    constructor(private router: Router,
+                private route: ActivatedRoute) {
+    }
+
+    ngOnInit() {
+        this.route
+            .queryParams
+            .map(params => params['fromDocs'] !== undefined || false)
+            .subscribe((fromDocs) => {
+                this.showNav = !fromDocs;
+            });
     }
 }

@@ -233,7 +233,8 @@ include '../documentation-main/documentation_header.php';
     </p>
     <show-example example="../aurelia-example/#/rich-grid/true"
                   jsfile="../aurelia-example/components/rich-grid-example/rich-grid-example.ts"
-                  html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"></show-example>
+                  html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"
+                  exampleHeight="525px"></show-example>
 
     <h2 id="ng2markup">Creating Grids with Markup</h2>
 
@@ -307,7 +308,8 @@ private getCountryFilterParams():any {
     </p>
     <show-example example="../aurelia-example/#/richgrid-declarative/true"
                   jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"
-                  html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"></show-example>
+                  html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
+                  exampleHeight="525px"></show-example>
 
     <h2>Cell Rendering & Cell Editing using Aurelia</h2>
 

@@ -31,7 +31,11 @@ export class FilterExample {
       {"row": "Row 7", "name": "Allison Schmitt"},
       {"row": "Row 8", "name": "Natalie Coughlin"},
       {"row": "Row 9", "name": "Ian Thorpe"},
-      {"row": "Row 10", "name": "Dara Torres"}
+      {"row": "Row 10", "name": "Bob Mill"},
+      {"row": "Row 11", "name": "Willy Walsh"},
+      {"row": "Row 12", "name": "Sarah McCoy"},
+      {"row": "Row 13", "name": "Jane Jack"},
+      {"row": "Row 14", "name": "Tina Wills"}
     ];
   }
 

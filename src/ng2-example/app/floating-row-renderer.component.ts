@@ -1,29 +1,16 @@
-import {Component,OnDestroy} from '@angular/core';
+import {Component} from '@angular/core';
 import {CommonModule} from "@angular/common"
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
 import {GridOptions} from 'ag-grid/main';
+import {StyledComponent} from "./styled-renderer.component";
 
 @Component({
-    selector: 'floating-cell',
-    template: `<span [ngStyle]="style">{{params.value}}</span>`
-})
-class StyledFloatingRowComponent implements AgRendererComponent {
-    private params:any;
-    private style:string;
-
-    agInit(params:any):void {
-        this.params = params;
-        this.style = this.params.style;
-    }
-}
-
-@Component({
+    moduleId: module.id,
     selector: 'ag-floating-row-renderer-component',
-    templateUrl: 'app/floating-row-renderer.component.html'
+    templateUrl: 'floating-row-renderer.component.html'
 })
 export class WithFloatingRowComponent {
-    private gridOptions:GridOptions;
+    public gridOptions: GridOptions;
 
     constructor() {
         this.gridOptions = <GridOptions>{};
@@ -42,32 +29,26 @@ export class WithFloatingRowComponent {
             {
                 headerName: "Row",
                 field: "row",
-                width: 200,
-                floatingCellRendererFramework: {
-                    component: StyledFloatingRowComponent,
-                    moduleImports: [CommonModule]
-                },
+                width: 400,
+                floatingCellRendererFramework: StyledComponent,
                 floatingCellRendererParams: {
-                    style: {'font-weight':  'bold'}
+                    style: {'font-weight': 'bold'}
                 }
             },
             {
                 headerName: "Number",
                 field: "number",
-                width: 180,
-                floatingCellRendererFramework: {
-                    component: StyledFloatingRowComponent,
-                    moduleImports: [CommonModule]
-                },
+                width: 399,
+                floatingCellRendererFramework: StyledComponent,
                 floatingCellRendererParams: {
-                    style: {'font-style':  'italic'}
+                    style: {'font-style': 'italic'}
                 }
             },
         ];
     }
 
     private createRowData() {
-        let rowData:any[] = [];
+        let rowData: any[] = [];
 
         for (var i = 0; i < 15; i++) {
             rowData.push({

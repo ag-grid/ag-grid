@@ -542,12 +542,7 @@ class NameCellRenderer extends React.Component {
     <p>
         If you are using the ag-grid-ng2 component to create the ag-Grid instance,
         then you will have the option of additionally specifying the cellRenderers
-        as Angular 2 components. You have two options that are described below:
-    <ol>
-        <li>Angular 2 Components</li>
-        <li>Angular 2 Templates</li>
-    </ol>
-    </p>
+        as Angular 2 components.
 
     <h3><img src="../images/angular2_large.png" style="width: 20px;"/> cellRenderers from Angular 2 Components</h3>
     <pre><span class="codeComment">// create your cellRenderer as a Angular 2 component</span>
@@ -572,9 +567,7 @@ colDef = {
         headerName: "Square Component",
         field: "value",
         <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
-        cellRendererFramework: {
-            component: SquareComponent,
-        },
+        cellRendererFramework: SquareComponent
 
         <span class="codeComment">// specify all the other fields as normal</span>
         editable:true,
@@ -585,21 +578,6 @@ colDef = {
 
     <p>Your Angular 2 components need to implement <code>AgRendererComponent</code>.
         The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the cell <code>params</code>.<p>
-
-    <p>When specifying Angular 2 Components you can optionally specify Component dependencies, as well as which modules you wish to import.
-        The latter is important if your component uses built in Angular 2 components (such as ngIf, ngStyle etc).</p>
-
-    <pre>
-cellRendererFramework: {
-    component: YourComponent,
-
-    <span class="codeComment">// dependencies are optional - these go into module.declarations</span>
-    dependencies: [YourChildComponent1, YourChildComponent2],
-
-    <span class="codeComment">// module imports are optional - these go into module.imports</span>
-    moduleImports: [CommonModule, FormsModule]
-}
-</pre>
 
     <p>
         By using <i>colDef.cellRendererFramework</i> (instead of <i>colDef.cellRenderer</i>) the grid
@@ -625,7 +603,7 @@ cellRendererFramework: {
     <p>
         Using Angular 2 Components in the Cell Renderers
     </p>
-    <show-example example="../ng2-example/index.html?example=from-component"
+    <show-example url="/ng2-example/from-component?fromDocs"
                   jsfile="../ng2-example/app/from-component.component.ts"
                   html="../ng2-example/app/from-component.component.html"></show-example>
 
@@ -645,29 +623,13 @@ cellRendererFramework: {
 
     <p>To receive update (for example, after an edit) you should implement the optional <code>refresh</code> method on the <code>AgRendererComponent</code> interface.</p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> cellRenderer from Angular 2 Templates</h3>
-<pre ng-non-bindable><span class="codeComment">// then reference the Component in your colDef like this</span>
-colDef = {
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
-    cellRendererFramework: {
-        template: '{{params.value | currency}}',
-        moduleImports: [CommonModule]
-    },
-    <span class="codeComment">// specify all the other fields as normal</span>
-    headerName: "Currency Pipe Template",
-    field: "value",
-    width: 200
-}
-    </pre>
-
-    <p>Note in the above configuration we specify CommonModule as an import as we're using the <code>currency</code> pipe.
-        Note too that there is no <code>dependencies</code> option for templates.</p></div>
-
     <h3>Example: Rendering using more complex Angular 2 Components</h3>
     <p>
         Using more complex Angular 2 Components in the Cell Renderers
     </p>
-    <show-example example="../ng2-example/index.html?example=from-rich-component" jsfile="../ng2-example/app/from-rich.component.ts" html="../ng2-example/app/from-rich.component.html"></show-example>
+    <show-example url="/ng2-example/from-rich-component?fromDocs"
+                  jsfile="../ng2-example/app/from-rich.component.ts"
+                  html="../ng2-example/app/from-rich.component.html"></show-example>
 
     <note>The full <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
         and so on, as well as examples on using Angular 2 Components with both CellEditors and Filters</note>
@@ -685,7 +647,7 @@ colDef = {
 
     <p>
         For examples on Aurelia cellRenderering, see the
-        <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
+        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-aurelia-example</a> on Github.</p>
     </p>
 
     <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellRenderer</h3>
@@ -727,7 +689,7 @@ colDef = {
                   jsfile="../aurelia-example/components/editor-example/editor-example.ts"
                   html="../aurelia-example/components/editor-example/editor-example.html"></show-example>
 
-    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Angular 2 Methods / Lifecycle</h3>
+    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Methods / Lifecycle</h3>
 
 
     <h3>Example: Rendering using regular cellRenderer Components</h3>
@@ -737,7 +699,8 @@ colDef = {
 
     <show-example example="../aurelia-example/#/richgrid-declarative/true"
               jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"
-              html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"></show-example>
+              html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
+              exampleHeight="525px"></show-example>
 
     <br/>
     <note>The full <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>

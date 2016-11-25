@@ -21,7 +21,7 @@ import {AgRendererComponent} from 'ag-grid-ng2/main';
     `]
 })
 export class RatioParentComponent implements AgRendererComponent {
-    private params:any = {
+    public params:any = {
         value: {top: 0.25, bottom: 0.75}
     };
 
