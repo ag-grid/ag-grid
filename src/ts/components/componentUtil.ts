@@ -51,7 +51,7 @@ export class ComponentUtil {
         'suppressMiddleClickScrolls','suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard','pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass',
-        'animateRows', 'groupSelectsFiltered'
+        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

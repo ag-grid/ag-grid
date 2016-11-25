@@ -142,7 +142,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // if we are using in memory grid grouping, then we try to look up the column that
         // we did the grouping on. however if it is not possible (happens when user provides
         // the data already grouped) then we just the current col, ie use cellrenderer of current col
-        var columnOfGroupedCol = rowGroupColumns[params.node.level];
+        var columnOfGroupedCol = rowGroupColumns[params.node.rowGroupIndex];
         if (_.missing(columnOfGroupedCol)) {
             columnOfGroupedCol = params.column;
         }

@@ -129,6 +129,7 @@ export class GridOptionsWrapper {
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
+    public isGroupRemoveSingleChildren() { return isTrue(this.gridOptions.groupRemoveSingleChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
     public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
     public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }

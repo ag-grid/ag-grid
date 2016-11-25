@@ -117,6 +117,7 @@ export interface GridOptions {
     groupSelectsFiltered?: boolean;
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
+    groupRemoveSingleChildren?: boolean;
     groupSuppressRow?: boolean;
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;

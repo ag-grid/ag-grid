@@ -53,6 +53,9 @@ export class RowNode {
     public parent: RowNode;
     /** How many levels this node is from the top */
     public level: number;
+    /** If doing in memory grouping, this is the index of the group column this cell is for.
+     * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */
+    public rowGroupIndex: number;
     /** True if this node is a group node (ie has children) */
     public group: boolean;
     /** True if this node can flower (ie can be expanded, but has no direct children) */
