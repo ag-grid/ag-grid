@@ -1,4 +1,4 @@
-// ag-grid-aurelia v7.0.0
+// ag-grid-aurelia v7.0.0-beta.0
 import { ICellRenderer } from 'ag-grid/main';
 export declare class AureliaCellRendererComponent implements ICellRenderer {
     private view;
