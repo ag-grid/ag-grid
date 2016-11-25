@@ -1,8 +1,6 @@
 import {
     GetContextMenuItemsParams,
     GetContextMenuItems,
-    SvgFactory,
-    MenuItemComponent,
     Bean,
     EventService,
     IContextMenuFactory,
@@ -11,17 +9,17 @@ import {
     PopupService,
     PostConstruct,
     Component,
-    MenuList,
     GridOptionsWrapper,
     RowNode,
     Utils,
     Column,
-    MenuItem,
+    MenuItemDef,
     GridApi
-} from "ag-grid/main";
-import {ClipboardService} from "./clipboardService";
-
-var svgFactory = SvgFactory.getInstance();
+} from "ag-grid";
+import {ClipboardService} from "../clipboardService";
+import {MenuItemComponent} from "./menuItemComponent";
+import {MenuList} from "./menuList";
+import {MenuItemMapper} from "./menuItemMapper";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {
@@ -34,7 +32,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private init(): void {
     }
 
-    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItem|string)[] {
+    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef|string)[] {
         var defaultMenuOptions: string[];
         if (Utils.exists(node)) {
             // if user clicks a cell
@@ -97,49 +95,16 @@ class ContextMenu extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
 
     private menuList: MenuList;
     private hidePopupFunc: Function;
 
-    private menuItems: (MenuItem|string)[];
+    private menuItems: (MenuItemDef|string)[];
 
-    constructor(menuItems: (MenuItem|string)[]) {
+    constructor(menuItems: (MenuItemDef|string)[]) {
         super('<div class="ag-menu"></div>');
         this.menuItems = menuItems;
-    }
-
-    private createDefaultMenuItems(): {[key: string]: MenuItem} {
-
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        var result: {[key: string]: MenuItem} = {
-            copy: {
-                name: localeTextFunc('copy','Copy'),
-                shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: svgFactory.createCopyIcon(),
-                action: ()=> this.clipboardService.copyToClipboard(false)
-            },
-            copyWithHeaders: {
-                name: localeTextFunc('copyWithHeaders','Copy with Headers'),
-                // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: svgFactory.createCopyIcon(),
-                action: ()=> this.clipboardService.copyToClipboard(true)
-            },
-            paste: {
-                name: localeTextFunc('paste','Paste'),
-                shortcut: localeTextFunc('ctrlV','Ctrl+V'),
-                disabled: true,
-                icon: svgFactory.createPasteIcon(),
-                action: ()=> this.clipboardService.pasteFromClipboard()
-            },
-            toolPanel: {
-                name: localeTextFunc('toolPanel', 'Tool Panel'),
-                checked: this.gridApi.isToolPanelShowing(),
-                action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
-            }
-        };
-
-        return result;
     }
 
     @PostConstruct
@@ -148,8 +113,9 @@ class ContextMenu extends Component {
         this.menuList = new MenuList();
         this.context.wireBean(this.menuList);
 
-        var defaultMenuItems = this.createDefaultMenuItems();
-        this.menuList.addMenuItems(this.menuItems, defaultMenuItems);
+        let menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
+
+        this.menuList.addMenuItems(menuItemsMapped);
         this.getGui().appendChild(this.menuList.getGui());
 
         this.menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));

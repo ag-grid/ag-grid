@@ -2,6 +2,11 @@ export * from './dist/lib/aggregation/aggFuncService';
 
 export * from './dist/lib/license/md5';
 
+export * from './dist/lib/menu/contextMenu';
+export * from './dist/lib/menu/enterpriseMenu';
+export * from './dist/lib/menu/menuItemComponent';
+export * from './dist/lib/menu/menuList';
+
 export * from './dist/lib/rendering/richSelect/richSelectCellEditor';
 export * from './dist/lib/rendering/richSelect/richSelectRow';
 export * from './dist/lib/rendering/virtualList';

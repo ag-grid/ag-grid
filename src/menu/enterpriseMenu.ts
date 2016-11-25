@@ -10,17 +10,17 @@ import {
     Column,
     ColumnController,
     FilterManager,
+    MenuItemDef,
     GridApi,
     TabbedLayout,
-    MenuList,
     EventService,
     TabbedItem,
-    PostConstruct,
-    MenuItemComponent,
-    MenuItem
-} from "ag-grid/main";
-import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
-import {AggFuncService} from "./aggregation/aggFuncService";
+    PostConstruct
+} from "ag-grid";
+import {ColumnSelectPanel} from "../toolPanel/columnsSelect/columnSelectPanel";
+import {MenuList} from "./menuList";
+import {MenuItemComponent} from "./menuItemComponent";
+import {MenuItemMapper} from "./menuItemMapper";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -109,8 +109,8 @@ export class EnterpriseMenu {
     @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('aggFuncService') private aggFuncService: AggFuncService;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -203,118 +203,9 @@ export class EnterpriseMenu {
         this.destroyFunctions.forEach(func => func());
     }
 
-    private createPinnedSubMenu(): MenuList {
-        var cMenuList = new MenuList();
-        this.context.wireBean(cMenuList);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        cMenuList.addItem({
-            name: localeTextFunc('pinLeft', 'Pin Left'),
-            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_LEFT),
-            checked: this.column.isPinnedLeft()
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('pinRight', 'Pin Right'),
-            action: ()=> this.columnController.setColumnPinned(this.column, Column.PINNED_RIGHT),
-            checked: this.column.isPinnedRight()
-        });
-        cMenuList.addItem({
-            name: localeTextFunc('noPin', 'No Pin'),
-            action: ()=> this.columnController.setColumnPinned(this.column, null),
-            checked: !this.column.isPinned()
-        });
-
-        return cMenuList;
-    }
-
-    private createAggregationSubMenu(): MenuList {
-        var cMenuList = new MenuList();
-        this.context.wireBean(cMenuList);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        var columnIsAlreadyAggValue = this.column.isValueActive();
-
-        var funcNames = this.aggFuncService.getFuncNames();
-
-        var columnToUse: Column;
-        if (this.column.isPrimary()) {
-            columnToUse = this.column;
-        } else {
-            columnToUse = this.column.getColDef().pivotValueColumn;
-        }
-
-        funcNames.forEach( (funcName)=> {
-            cMenuList.addItem({
-                name: localeTextFunc(funcName, funcName),
-                action: ()=> {
-                    this.columnController.setColumnAggFunc(columnToUse, funcName);
-                    this.columnController.addValueColumn(columnToUse);
-                },
-                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName
-            });
-        });
-
-        return cMenuList;
-    }
-
-    private createBuiltInMenuOptions(): {[key: string]: MenuItem} {
-
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        var builtInMenuOptions: any = {
-            pinSubMenu: {
-                name: localeTextFunc('pinColumn', 'Pin Column'),
-                icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null, svgFactory.createPinIcon),
-                childMenu: this.createPinnedSubMenu()
-            },
-            valueAggSubMenu: {
-                name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
-                childMenu: this.createAggregationSubMenu()
-            },
-            autoSizeThis: {
-                name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                action: ()=> this.columnController.autoSizeColumn(this.column)
-            },
-            autoSizeAll: {
-                name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                action: ()=> this.columnController.autoSizeAllColumns()
-            },
-            rowGroup: {
-                name: localeTextFunc('groupBy', 'Group by') + ' ' + this.column.getColDef().headerName,
-                action: ()=> this.columnController.addRowGroupColumn(this.column),
-                icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
-            },
-            rowUnGroup: {
-                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.column.getColDef().headerName,
-                action: ()=> this.columnController.removeRowGroupColumn(this.column),
-                icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
-            },
-            resetColumns: {
-                name: localeTextFunc('resetColumns', 'Reset Columns'),
-                action: ()=> this.columnController.resetColumnState()
-            },
-            expandAll: {
-                name: localeTextFunc('expandAll', 'Expand All'),
-                action: ()=> this.gridApi.expandAll()
-            },
-            contractAll: {
-                name: localeTextFunc('collapseAll', 'Collapse All'),
-                action: ()=> this.gridApi.collapseAll()
-            },
-            toolPanel: {
-                name: localeTextFunc('toolPanel', 'Tool Panel'),
-                checked: this.gridApi.isToolPanelShowing(),
-                action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
-            }
-        };
-
-        return builtInMenuOptions;
-    }
-
-    private getMenuItems(): (string|MenuItem)[] {
+    private getMenuItems(): (string|MenuItemDef)[] {
         var defaultMenuOptions = this.getDefaultMenuOptions();
-        var result: (string|MenuItem)[];
+        var result: (string|MenuItemDef)[];
 
         var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
@@ -396,9 +287,10 @@ export class EnterpriseMenu {
         this.mainMenuList = new MenuList();
         this.context.wireBean(this.mainMenuList);
 
-        var menuItems = this.getMenuItems();
-        var builtInOptions = this.createBuiltInMenuOptions();
-        this.mainMenuList.addMenuItems(menuItems, builtInOptions);
+        let menuItems = this.getMenuItems();
+        let menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
+
+        this.mainMenuList.addMenuItems(menuItemsMapped);
 
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 

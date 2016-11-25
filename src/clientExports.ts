@@ -9,10 +9,12 @@ import {StatusBar} from "./statusBar/statusBar";
 import {StatusItem} from "./statusBar/statusItem";
 import {ClipboardService} from "./clipboardService";
 import {EnterpriseBoot} from "./enterpriseBoot";
-import {EnterpriseMenu} from "./enterpriseMenu";
+import {EnterpriseMenu} from "./menu/enterpriseMenu";
+import {MenuItemComponent} from "./menu/menuItemComponent";
+import {MenuList} from "./menu/menuList";
 import {RangeController} from "./rangeController";
 import {RowGroupColumnsPanel} from "./toolPanel/columnDrop/rowGroupColumnsPanel";
-import {ContextMenuFactory} from "./contextMenu";
+import {ContextMenuFactory} from "./menu/contextMenu";
 import {ViewportRowModel} from "./viewport/viewportRowModel";
 import {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
 import {RichSelectRow} from "./rendering/richSelect/richSelectRow";
@@ -38,6 +40,10 @@ export function populateClientExports(exports: any): void {
     exports.AggFuncService = AggFuncService;
 
     exports.MD5 = MD5;
+
+    exports.EnterpriseMenu = EnterpriseMenu;
+    exports.MenuList = MenuList;
+    exports.MenuItemComponent = MenuItemComponent;
 
     exports.RichSelectCellEditor = RichSelectCellEditor;
     exports.RichSelectRow = RichSelectRow;
@@ -73,7 +79,6 @@ export function populateClientExports(exports: any): void {
     exports.ClipboardService = ClipboardService;
     exports.ContextMenuFactory = ContextMenuFactory;
     exports.EnterpriseBoot = EnterpriseBoot;
-    exports.EnterpriseMenu = EnterpriseMenu;
     exports.LicenseManager = LicenseManager;
 
     exports.PivotCompFactory = PivotCompFactory;
