@@ -10,6 +10,8 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version Next</h2>
 
+    <menu>When doing content menu, the sub menu doesn't disappear when clicked</menu>
+
     <li>Enhancement: Animation of Rows - now rows will animate after sort, filter and row group open / close.</li>
     <li>Enhancement: New property - animateRows</li>
     <li>Enhancement: New API - rowNode.setExpanded(boolean) - To open / close a row group row.</li>
