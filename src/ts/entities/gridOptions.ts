@@ -3,7 +3,6 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
-import {MenuItem} from "../widgets/menuItemComponent";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
 import {IDatasource} from "../rowControllers/iDatasource";
@@ -284,7 +283,17 @@ export interface GetContextMenuItemsParams {
 }
 
 export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): (string|MenuItem)[]
+    (params: GetContextMenuItemsParams): (string|MenuItemDef)[]
+}
+
+export interface MenuItemDef {
+    name: string;
+    disabled?: boolean;
+    shortcut?: string;
+    action?: ()=>void;
+    checked?: boolean;
+    icon?: HTMLElement|string;
+    childMenu?: (MenuItemDef|string)[];
 }
 
 export interface GetMainMenuItemsParams {
@@ -296,7 +305,7 @@ export interface GetMainMenuItemsParams {
 }
 
 export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string|MenuItem)[]
+    (params: GetMainMenuItemsParams): (string|MenuItemDef)[]
 }
 
 export interface GetRowNodeIdFunc {

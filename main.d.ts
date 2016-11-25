@@ -112,8 +112,6 @@ export * from './dist/lib/rowControllers/iDatasource';
 export * from './dist/lib/widgets/agCheckbox';
 export * from './dist/lib/widgets/component';
 export * from './dist/lib/widgets/componentAnnotations';
-export * from './dist/lib/widgets/menuItemComponent';
-export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
 export * from './dist/lib/widgets/touchListener';
 
