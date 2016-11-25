@@ -103,6 +103,10 @@ include '../documentation-main/documentation_header.php';
             <td>If using groupSelectsChildren, then only the children that pass the current filter will get selected.</td>
         </tr>
         <tr>
+            <th>groupRemoveSingleChildren</th>
+            <td>Set to true to collapse groups that only have one child.</td>
+        </tr>
+        <tr>
             <th>animateRows</th>
             <td>
                 Set to true to enable animation of the rows after group is opened and closed.
@@ -413,6 +417,27 @@ gridOptions.groupRowRendererParams: {
     </p>
 
     <show-example example="example5"></show-example>
+
+    <h3>Removing Single Children</h3>
+
+    <p>
+        If your data has groups with only one child, then it can make sense to collapse
+        these groups as there is no benefit to the user creating groups with just one child,
+        it's arguably waste of space.
+    </p>
+
+    <p>
+        To turn this feature on, set the property <i>groupRemoveSingleChildren=true</i>.
+    </p>
+
+    <p>
+        The example below shows this feature in action. To demonstrate why this feature is needed
+        you can click 'Toggle Grid' to show what the grid would be like without this setting. You
+        will see the group UK, German and Sweden have only one child so the group is not giving any extra
+        value to the data.
+    </p>
+
+    <show-example example="exampleRemoveSingleChildren"></show-example>
 
     <h3>Suppress Group Row</h3>
 

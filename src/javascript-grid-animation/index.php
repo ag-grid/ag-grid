@@ -69,6 +69,15 @@ include '../documentation-main/documentation_header.php';
         on top of old rows when moved (hence old rows are not fading out on top of new rows, but behind new rows).
     </p>
 
+    <note>
+        Depending on your data set and users, sometimes row animation looks good, sometimes it doesn't.
+        A large dataset will not look as nice as a small dataset when sorting and filtering as there will
+        be large changes in the rows displayed, sometimes always replacing all the rows. A small dataset
+        will look much nicer, especially on that fits all the data on the screen in one go, as then all rows
+        will animate to new positions. Users will also have their preference, with users in high pressure
+        situations (eg finance traders or air traffic control) may prefer no animation and focus on the data.
+    </note>
+
     <h3>Example Animation</h3>
 
     <p>
