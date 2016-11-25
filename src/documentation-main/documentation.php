@@ -15,6 +15,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">28th November 2016</div>
+        <div style="padding-top: 10px;">
+            <a href="/ag-grid-angular2-support-v7/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                ag-Grid v7: AOT & Angular 2 Components
+            </a>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">16th November 2016</div>
         <div class="news-header">ag-grid-ng2 7.0.0-beta Released</div>
         <div style="padding-top: 10px;">

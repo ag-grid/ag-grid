@@ -28,6 +28,31 @@ include('../includes/mediaHeader.php');
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="/ag-grid-angular2-support-v7/">
+                ag-Grid v7: AOT & Angular 2 Components
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            28 November 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Having worked hard to find a way to offer both full Angular 2 Components together with AOT support, we finally crack it!
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
+        <a href="../javascript-datagrid/">
+            <img src="../images/agGridDaily.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
             <a href="../javascript-datagrid/">
                 8 reasons to choose ag-Grid as your JavaScript Datagrid
             </a>
@@ -80,7 +105,7 @@ include('../includes/mediaHeader.php');
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="/ag-grid-angular2-support/">
+            <a href="/ag-grid-angular2-support-v6/">
                 Announcing ag-Grid v6 and Angular 2 Support
             </a>
         </div>
@@ -88,6 +113,7 @@ include('../includes/mediaHeader.php');
             21 September 2016
         </div>
     </div>
+
     <div style="color: #767676">
         Self Published
     </div>
