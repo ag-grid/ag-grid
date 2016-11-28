@@ -158,7 +158,7 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <h4>
-                    Core Features
+                    Free Features
                 </h4>
 
                 <?php if ($key == "Sorting") { ?>
@@ -402,7 +402,7 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <h4>
-                    Enterprise Features
+                    Pro Features
                 </h4>
 
                 <?php if ($key == "Viewport") { ?>
