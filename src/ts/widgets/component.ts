@@ -184,6 +184,9 @@ export class Component implements IEventEmitter {
     public destroy(): void {
         this.childComponents.forEach( childComponent => childComponent.destroy() );
         this.destroyFunctions.forEach( func => func() );
+        this.childComponents.length = 0;
+        this.destroyFunctions.length = 0;
+
         this.removeAnnotatedEventListeners();
     }
 

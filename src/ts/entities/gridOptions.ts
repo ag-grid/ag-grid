@@ -293,7 +293,7 @@ export interface MenuItemDef {
     action?: ()=>void;
     checked?: boolean;
     icon?: HTMLElement|string;
-    childMenu?: (MenuItemDef|string)[];
+    subMenu?: (MenuItemDef|string)[];
 }
 
 export interface GetMainMenuItemsParams {
