@@ -50,16 +50,16 @@ YOU ACKNOWLEDGE THAT THE TRIAL AND BETA SOFTWARE MIGHT PLACE WATERMARKS ON OUTPU
 
 3.OWNERSHIP
 
-This is a licence agreement and not an agreement for sale. We reserve ownership of all intellectual property rights inherent in or relating to the Software, which include, but are not limited to, all copyright, patent rights, all rights in relation to registered and unregistered trademarks (including service marks), confidential information (including trade secrets and know-how) and all rights other than those expressly granted by this Agreement. Source code for ag-Grid and ag-Grid-Enterprise will be available to You at all times. We provide You with source code to ag-Grid and ag-Grid Enterprise so that You can:
+This is a licence agreement and not an agreement for sale. We reserve ownership of all intellectual property rights inherent in or relating to the Software, which include, but are not limited to, all copyright, patent rights, all rights in relation to registered and unregistered trademarks (including service marks), confidential information (including trade secrets and know-how) and all rights other than those expressly granted by this Agreement. Source code for ag-Grid and ag-Grid-Enterprise will be available to You at all times. We provide You with source code to ag-Grid and ag-Grid-Enterprise so that You can:
 
-* Make any Changes, Modifications, Additions or Enhancements to ag-Grid or ag-Grid Enterprise for inclusion within Your Application.
+* Make any Changes, Modifications, Additions or Enhancements to ag-Grid or ag-Grid-Enterprise for inclusion within Your Application.
 * Provide Technical Support to Your Customers.
 
 While You retain all rights to any original work authored by You as part of the Modifications, We continue to own all copyright and other intellectual property rights in the Software. You must not remove, obscure or interfere with any copyright, acknowledgment, attribution, trademark, warning or disclaimer statement affixed to, incorporated in or otherwise applied in connection with the Software. ag-Grid Ltd is not obliged to provide support for Changes, Modifications, Additions or Enhancements You make to the code.
 
 4.ACTIVATION KEY
 
-Usage of ag-Grid Enterprise may be restricted via use of an Activation Key. When such is required, and activation key will be provided to You by ag-Grid Ltd upon payment of licence.
+Usage of ag-Grid-Enterprise may be restricted via use of an Activation Key. When such is required, and activation key will be provided to You by ag-Grid Ltd upon payment of licence.
 
 5.PROHIBITED USES 
 
