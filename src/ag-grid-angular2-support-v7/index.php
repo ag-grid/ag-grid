@@ -2,7 +2,7 @@
 
 $pageTitle = "Angular 2 Datagrid Support";
 $pageDescription = "ag-Grid v7 offers full Angular 2 AOT Support - a discussion on what this means for ag-Grid.";
-$pageKeyboards = "ag-Grid javascript datagrid pivot";
+$pageKeyboards = "ag-Grid javascript datagrid angular 2 aot";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -17,26 +17,23 @@ include('../includes/mediaHeader.php');
 <div class="row">
     <div class="col-md-9">
 
-        <h2>History</h2>
+        <h2>A Brief History of Time</h2>
 
-        <h4>ag-grid-ng2: v1 through to v5</h4>
         <p>
             Our first pass of Angular 2 support offered a wrapper that allowed users to use ag-Grid within an Angular 2 application, but without fully Angular 2 support.
             You could use ag-Grid fully - and it worked well! - but you could not use Angular 2 components, or use the power that Angular 2 offers within the grid (two-way binding and so on).
         </p>
 
-        <h4>ag-grid-ng2: v6</h4>
         <p>
             Our second pass of Angular 2 was a fairly big leap - we were able to offer full Angular 2 Component support. You could use it just about everywhere, as Renderers, Editors and Filters!
         </p>
         <p>
             We used the <code>RuntimeCompiler</code> in the background to dynamically compile modules & components - this was great and allowed use to offer the above, as well as being able
-            to offer support for template strings withing a cell (i.e. <code>template: '{{params.value * params.value}}'</code>). In the case of template strings we would dynamically create both a new Module as well as a new Component.
+            to offer support for template strings withing a cell.
         </p>
         <p>
             ...<strong>but</strong>, you could not use Angular 2 Components together with AOT. You had to choose one or the other.
         </p>
-        <p>You also had to supply all dependencies (Modules & child Components) at declaration time - this was necessary as we created Modules on the fly and needed to know what to use in the <code>imports</code> and <code>declarations</code>, which wasn't ideal.</p>
 
         <h2>v7 - The New World</h2>
 
@@ -99,6 +96,98 @@ let component = viewContainerRef.createComponent(factory);
     width: 250
 }
 </pre>
+
+        <h2>Show Me More!</h2>
+        <p>Lets replicate what ag-Grid does with a more concrete example.  Lets assume a user wants to use an external component (i.e. like ag-Grid) and let it do its thing, but also wants to
+        be able to supply domain specific components to this external component, for use within it.</p>
+
+        <p>First, here is our domain specific Component:</p>
+        <pre>@Component({
+    selector: 'dynamic-component',
+    template: '<span> Dynamic Component! </span>',
+})
+export class DynamicComponent {
+}</pre>
+
+        <p>It's not much more than a simple piece of text that we want displayed in our library.</p>
+
+        <p>Next, here is our library component:</p>
+        <pre>@Component({
+    selector: 'grid-component',
+    template: `
+    &lt;button (click)="addDynamicGridComponent()">Add Dynamic Grid component</button>
+    &lt;br/>
+  `
+})
+export class GridComponent {
+    @Input() componentType: any;
+
+    constructor(private viewContainerRef: ViewContainerRef,
+                private cfr: ComponentFactoryResolver) {
+    }
+
+    addDynamicGridComponent() {
+        let compFactory = this.cfr.resolveComponentFactory(this.componentType);
+        this.viewContainerRef.createComponent(compFactory);
+    }
+}</pre>
+
+        <p>In this case we have a button that when clicked on will dynamically create a supplied component type beneath it.</p>
+        <p>The key part of this component is this block:</p>
+        <pre>let compFactory = this.cfr.resolveComponentFactory(this.componentType);</pre>
+
+        <p>This will retrieve the <code>ComponentFactory</code> for the supplied component type, which we can then use to create new instances of it.</p>
+
+        <p>For this to work, we need to ensure that ensure the AOT compiler knows that it needs to create a <code>ComponentFactory</code> for the user supplied components - if we don't
+        then our code would work for Just-In-Time (JIT), but not for Ahead-Of-Time (AOT) compilation.</p>
+
+        <pre>@NgModule({
+    declarations: [
+        GridComponent
+    ],
+    exports: [
+        GridComponent
+    ]
+})
+export class GridComponentModule {
+    static withComponents(components: any[]) {
+        return {
+            ngModule: GridComponentModule,
+            providers: [
+                {provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}
+            ]
+        }
+    }
+}</pre>
+
+        <p>The key part of this module is this line:</p>
+        <pre>{provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}</pre>
+        <p>Which will add the the entries to <code>entryComponents</code>, which in turn will let the AOT compiler know to create <code>ComponentFactory</code> for the specified components.</p>
+
+        <p>Tying this together, the user code would do the following:</p>
+        <pre>@NgModule({
+    imports: [
+        BrowserModule,
+        GridComponentModule.withComponents([DynamicComponent])
+    ],
+    declarations: [AppComponent, DynamicComponent],
+    bootstrap: [AppComponent]
+})
+export class AppModule {
+}</pre>
+        <p>And the client component would look like this:</p>
+        <pre>@Component({
+    selector: 'my-app',
+    template: `<grid-component [componentType]="getComponentType()"></grid-component>
+  `
+})
+export class AppComponent {
+    getComponentType() : any {
+        return DynamicComponent;
+    }
+}</pre>
+
+        <p>You can find all the code for the above example over at <a href="https://github.com/seanlandsman/angular2-dynamic-components">GitHub</a>.</p>
 
         <h2>Benefits of using AOT</h2>
 
