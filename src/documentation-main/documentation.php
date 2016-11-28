@@ -26,6 +26,17 @@ include 'documentation_header.php';
     </div>
 
     <div class="news-box">
+        <div class="news-header">28th November 2016</div>
+        <div style="padding-top: 10px;">
+            <a href="/ag-grid-aurelia-support-v7/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                ag-Grid v7: Aurelia Support
+            </a>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">16th November 2016</div>
         <div class="news-header">ag-grid-ng2 7.0.0-beta Released</div>
         <div style="padding-top: 10px;">
