@@ -115,9 +115,12 @@ include 'includes/headerRow.php'; ?>
             </h2>
 
             <p>
-                ag-Grid free edition comes with standard features and is released under MIT. There is no warranty or support.
-                ag-Grid-Enterprise comes with a commercial license, extra enterprise features, support and maintenance. If you want
-                to use ag-Grid-Enterprise, you must purchase an ag-Grid-Enterprise license.
+                ag-Grid Free comes with standard features and is released under MIT. There is no warranty or support.
+            </p>
+            
+            <p>    
+                ag-Grid Pro comes with a commercial license, extra Pro features, support and maintenance. If you want
+                to use ag-Grid Pro, you must purchase an ag-Grid Pro license.
             </p>
         </div>
         <div class="col-md-3">
@@ -143,15 +146,15 @@ include 'includes/headerRow.php'; ?>
         <div class="col-md-12">
 
             <h2>
-                Enterprise Evaluation License
+                ag-Grid Pro Evaluation License
             </h2>
 
             <p>
-                An evaluation license for ag-Grid-Enterprise is granted to anyone wishing evaluate ag-Grid-Enterprise.
+                An evaluation license for ag-Grid Pro is granted to anyone wishing evaluate ag-Grid Pro.
                 All we ask in return is the following:
             <ul>
                 <li>
-                    You agree to use the Evaluation License only for evaluation of ag-Grid-Enterprise. You do not enter production with ag-Grid-Enterprise.
+                    You agree to use the Evaluation License only for evaluation of ag-Grid Pro. You do not enter production with ag-Grid Pro.
                 </li>
                 <li>
                     You limit your trial to two months (after that, either uninstall or purchase).
@@ -166,7 +169,7 @@ include 'includes/headerRow.php'; ?>
         <div class="col-md-12">
 
             <h2>
-                Free vs Enterprise Comparison and Pricing
+                Free vs Pro Comparison and Pricing
             </h2>
 
             <table class="theTable" style="width: 100%;">
@@ -176,7 +179,7 @@ include 'includes/headerRow.php'; ?>
                     </td>
                     <td class="gapCol"/>
                     <td class="titleCell tableHighlightCell tableCell">
-                        <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid-Enterprise</span>
+                        <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid Pro</span>
                     </td>
                 </tr>
 
@@ -204,7 +207,7 @@ include 'includes/headerRow.php'; ?>
                             per Site Developer
                         </div>
                         <div style="padding-top: 20px;">
-                            All License Perpetual
+                            All Licenses Perpetual
                         </div>
                         <div style="padding-top: 20px;">
                             OEM and SaaS Available Extras
@@ -250,7 +253,7 @@ include 'includes/headerRow.php'; ?>
                     <td class="benefitsCell tableCell">
 
                         <div class="gridFeature">
-                            Standard and Enterprise Grid Features<br/>
+                            Standard and Pro Grid Features<br/>
                             (as per documentation)
                         </div>
 
@@ -297,8 +300,8 @@ include 'includes/headerRow.php'; ?>
 
     <div class="row">
         <div class="col-md-12" style="text-align: center; padding: 40px;">
-            Still don't know which version you want? Then go for ag-Grid Enterprise, your contribution
-            back will help ag-Grid grow into the future.
+            Still don't know which version you want? Then go for ag-Grid Pro, your contribution
+         will help ag-Grid grow into the future.
         </div>
     </div>
 

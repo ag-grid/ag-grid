@@ -177,7 +177,7 @@
 
         <div class="col-md-4">
             <div>
-                <img src='images/will.png'/>
+                <img src='images/will_upd.png'/>
             </div>
             <h3>Will Halling</h3>
             <h4>UI Developer</h4>
