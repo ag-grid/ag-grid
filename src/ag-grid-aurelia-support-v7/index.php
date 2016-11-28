@@ -2,7 +2,7 @@
 
 $pageTitle = "Aurelia Datagrid Support";
 $pageDescription = "ag-Grid v7 offers Auerlia Support - a discussion on what this means for ag-Grid.";
-$pageKeyboards = "ag-Grid javascript datagrid pivot";
+$pageKeyboards = "ag-Grid javascript datagrid aurelia framework";
 
 include('../includes/mediaHeader.php');
 ?>
