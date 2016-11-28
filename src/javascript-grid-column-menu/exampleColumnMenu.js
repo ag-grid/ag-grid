@@ -30,6 +30,14 @@ function getMainMenuItems(params) {
             athleteMenuItems.push({
                 name: 'Casio Watch', action: function() {console.log('People who wear casio watches are cool');}
             });
+            athleteMenuItems.push({
+                name: 'Custom Sub Menu',
+                childMenu: [
+                    {name: 'Black', action: function() {console.log('Black was pressed');} },
+                    {name: 'White', action: function() {console.log('White was pressed');} },
+                    {name: 'Grey', action: function() {console.log('Grey was pressed');} }
+                ]
+            });
             return athleteMenuItems;
 
         // return some dummy items
