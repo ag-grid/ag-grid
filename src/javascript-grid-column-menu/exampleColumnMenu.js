@@ -32,7 +32,7 @@ function getMainMenuItems(params) {
             });
             athleteMenuItems.push({
                 name: 'Custom Sub Menu',
-                childMenu: [
+                subMenu: [
                     {name: 'Black', action: function() {console.log('Black was pressed');} },
                     {name: 'White', action: function() {console.log('White was pressed');} },
                     {name: 'Grey', action: function() {console.log('Grey was pressed');} }

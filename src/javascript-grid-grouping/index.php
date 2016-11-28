@@ -418,7 +418,7 @@ gridOptions.groupRowRendererParams: {
 
     <show-example example="example5"></show-example>
 
-    <h3>Removing Single Children</h3>
+    <h3 id="removeSingleChildren">Removing Single Children</h3>
 
     <p>
         If your data has groups with only one child, then it can make sense to collapse

@@ -65,13 +65,14 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         A MenuItem description looks as follows (items with question marks are optional):
-        <pre>MenuItem {
+        <pre>MenuItemDef {
     name: string, // name of menu item
     disabled?: boolean, // if item should be enabled / disabled
     shortcut?: string, // shortcut (just display text, saying the shortcut here does nothing)
     action?: ()=>void, // function that gets executed when item is chosen
     checked?: boolean, // set to true to provide a check beside the option
-    icon?: HTMLElement|string // the icon to display beside the icon, either a DOM element or HTML string
+    icon?: HTMLElement|string, // the icon to display beside the icon, either a DOM element or HTML string
+    subMenu?: MenuItemDef[] // if this menu is a sub menu, contains a list of sub menu item definitions
 }
 </pre>
     </p>
@@ -88,8 +89,12 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Below shows a configured context menu in action demonstrating a customised menu with a mix
-        of custom items, built in items and the separator. Notice that the first item displays the contents
-        of the cell that was clicked on.
+        of custom items. You should notice the following:
+        <ul>
+        <li>A mix of built in items and custom items are used.</li>
+        <li>The first item uses the contents of the cell to display it's value.</li>
+        <li>Country and Person are sub menu's. The country sub menu contains icons.</li>
+    </ul>
     </p>
 
     <show-example example="exampleContextMenu" example-height="450px"></show-example>

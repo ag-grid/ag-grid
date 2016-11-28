@@ -10,13 +10,14 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version Next</h2>
 
-    <menu>When doing content menu, the sub menu doesn't disappear when clicked</menu>
-
-    <li>Enhancement: Animation of Rows - now rows will animate after sort, filter and row group open / close.</li>
-    <li>Enhancement: New property - animateRows</li>
+    <li>Enhancement: New option for grouping <a href="../javascript-grid-grouping/#removeSingleChildren">
+            Remove Single Children</a>, so groups will only one child are removed.</li>
+    <li>Enhancement: Now menu's (<a href="../javascript-grid-column-menu/">column menu</a> and
+        <a href="../javascript-grid-context-menu/">context menu</a>) can have custom sub menus.</li>
+    <li>Enhancement: <a href="../javascript-grid-animation/">Animation of Rows</a> - now rows will animate after sort, filter and row group open / close.</li>
     <li>Enhancement: New API - rowNode.setExpanded(boolean) - To open / close a row group row.</li>
     <li>Enhancement: api.getValue() now works with pivot columns</li>
-    <li>Enhancement: Row height can now be changed after the rows are initially set.</li>
+    <li>Enhancement: <a href="../javascript-grid-row-height/#changingRowHeight">Row height</a> can now be changed after the rows are initially set.</li>
     <li>Enhancement: New property - groupSelectsFiltered, when set, if you select a group, unfiltered items do not get selected.</li>
 
     <li>Bug Fix: columnApi.setColumnAggFunct() => renamed to columnApi.setColumnAggFunc() (took out the 't' at the end, it was a typo)</li>

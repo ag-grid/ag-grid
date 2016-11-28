@@ -1,7 +1,7 @@
 <section class="HomeSection HomeDemo hidden-xs">
 
     <div class="container">
-        <h4 class="text-center">Designed To Be Customised, For Creating Rich Applications</h4>
+        <h4 class="text-center">Customise And Create Rich Applications</h4>
         <div class="row HomeDemo-main">
             <div class="col-md-12">
                 <div style="padding: 4px;">

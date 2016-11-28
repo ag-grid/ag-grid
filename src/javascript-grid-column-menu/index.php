@@ -64,11 +64,10 @@ include '../documentation-main/documentation_header.php';
     shortcut?: string, // shortcut (just display text, saying the shortcut here does nothing)
     action?: ()=>void, // function that gets executed when item is chosen
     checked?: boolean, // set to true to provide a check beside the option
-    icon?: HTMLElement|string // the icon to display beside the icon, either a DOM element or HTML string
+    icon?: HTMLElement|string, // the icon to display beside the icon, either a DOM element or HTML string
+    subMenu?: MenuItemDef[] // if this menu is a sub menu, contains a list of sub menu item definitions
 }
 </pre>
-
-    <note>It is not possible to customise sub menus. This is a feature that is not intended.</note>
 
     <h3>Built In Menu Items</h3>
 
@@ -106,6 +105,7 @@ include '../documentation-main/documentation_header.php';
         the callback returns something different based on the selected column as follows:
         <ul>
         <li>Athlete column appends custom items to the list of built in items.</li>
+        <li>Athlete column contains a sub menu.</li>
         <li>Age column provides custom items and adds one built in default item.</li>
         <li>Country column trims down the default items by removing values.</li>
         <li>All other columns return the default list.</li>

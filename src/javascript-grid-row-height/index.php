@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleRowHeightComplex"></show-example>
 
-    <h3>Changing Row Height</h3>
+    <h3 id="changingRowHeight">Changing Row Height</h3>
 
     <p>
         Setting the row height is done once for each row. Once set, the grid will not ask you

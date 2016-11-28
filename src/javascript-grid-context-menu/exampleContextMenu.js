@@ -17,25 +17,12 @@ var gridOptions = {
     getContextMenuItems: getContextMenuItems
 };
 
+function creatFlagImg(flag) {
+    return '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + flag + '.png"/>';
+}
+
 function getContextMenuItems(params) {
     var result = [
-        {
-            name: 'Custom Sub Menu 1',
-            childMenu: [
-                {name: 'Black', action: function() {console.log('Black was pressed');} },
-                {name: 'White', action: function() {console.log('White was pressed');} },
-                {name: 'Grey', action: function() {console.log('Grey was pressed');} }
-            ]
-        },
-        {
-            name: 'Custom Sub Menu 2',
-            childMenu: [
-                {name: 'Niall', action: function() {console.log('Niall was pressed');} },
-                {name: 'Sean', action: function() {console.log('Sean was pressed');} },
-                {name: 'John', action: function() {console.log('John was pressed');} },
-                {name: 'Alberto', action: function() {console.log('Alberto was pressed');} }
-            ]
-        },
         { // custom item
             name: 'Alert ' + params.value,
             action: function () {window.alert('Alerting about ' + params.value); }
@@ -43,6 +30,23 @@ function getContextMenuItems(params) {
         { // custom item
             name: 'Always Disabled',
             disabled: true
+        },
+        {
+            name: 'Country',
+            subMenu: [
+                {name: 'Ireland', action: function() {console.log('Ireland was pressed');}, icon: creatFlagImg('ie') },
+                {name: 'UK', action: function() {console.log('UK was pressed');}, icon: creatFlagImg('gb')  },
+                {name: 'France', action: function() {console.log('France was pressed');}, icon: creatFlagImg('fr')  }
+            ]
+        },
+        {
+            name: 'Person',
+            subMenu: [
+                {name: 'Niall', action: function() {console.log('Niall was pressed');} },
+                {name: 'Sean', action: function() {console.log('Sean was pressed');} },
+                {name: 'John', action: function() {console.log('John was pressed');} },
+                {name: 'Alberto', action: function() {console.log('Alberto was pressed');} }
+            ]
         }, // built in separator
         'separator',
         { // custom item

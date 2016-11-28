@@ -567,7 +567,6 @@ function createRowItem(row, colCount) {
     //create data for the known columns
     var countriesToPickFrom = Math.floor(countries.length * ((row % 3 + 1) / 3));
     var countryData = countries[(row*19) % countriesToPickFrom];
-    console.log(countriesToPickFrom + ' - ' + (row % countriesToPickFrom));
     rowItem.country = countryData.country;
     rowItem.continent = countryData.continent;
     rowItem.language = countryData.language;
