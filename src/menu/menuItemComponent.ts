@@ -46,7 +46,7 @@ export class MenuItemComponent extends Component {
         if (params.shortcut) {
             this.queryForHtmlElement('#eShortcut').innerHTML = params.shortcut;
         }
-        if (params.childMenu) {
+        if (params.subMenu) {
             this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
         } else {
             this.queryForHtmlElement('#ePopupPointer').innerHTML = '&nbsp;';

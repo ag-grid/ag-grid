@@ -291,7 +291,6 @@ export class EnterpriseMenu {
         let menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
 
         this.mainMenuList.addMenuItems(menuItemsMapped);
-
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {

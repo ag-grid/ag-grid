@@ -23,9 +23,8 @@ export class MenuList extends Component {
     private activeMenuItem: MenuItemComponent;
     private timerCount = 0;
 
-    private childMenuParent: MenuItemDef;
-    private showingChildMenu: MenuList;
-    private childPopupRemoveFunc: Function;
+    private removeChildFuncs: Function[] = [];
+    private subMenuParentDef: MenuItemDef;
 
     constructor() {
         super(MenuList.TEMPLATE);
@@ -34,7 +33,7 @@ export class MenuList extends Component {
 
     public clearActiveItem(): void {
         this.removeActiveItem();
-        this.removeOldChildPopup();
+        this.removeChildPopup();
     }
 
     public addMenuItems(menuItems: (MenuItemDef|string)[]): void {
@@ -59,7 +58,7 @@ export class MenuList extends Component {
         this.addDestroyFunc( ()=> cMenuItem.destroy() );
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: any) => {
-            if (menuItemDef.childMenu) {
+            if (menuItemDef.subMenu) {
                 this.showChildMenu(menuItemDef, cMenuItem);
             } else {
                 this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, event)
@@ -76,7 +75,7 @@ export class MenuList extends Component {
         }
 
         if (this.activeMenuItemParams!==menuItemParams) {
-            this.removeOldChildPopup();
+            this.removeChildPopup();
         }
 
         this.removeActiveItem();
@@ -85,7 +84,7 @@ export class MenuList extends Component {
         this.activeMenuItem = menuItem;
         _.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
 
-        if (menuItemParams.childMenu) {
+        if (menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItemParams, menuItem);
         }
     }
@@ -102,56 +101,61 @@ export class MenuList extends Component {
         var timerCountCopy = this.timerCount;
         setTimeout( ()=> {
             var shouldShow = timerCountCopy===this.timerCount;
-            var showingThisMenu = this.childMenuParent === menuItemDef;
+            var showingThisMenu = this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {
                 this.showChildMenu(menuItemDef, menuItemComp);
             }
         }, 500);
     }
 
+    public addSeparator(): void {
+        this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+    }
+
     private showChildMenu(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent): void {
-        this.removeOldChildPopup();
+        this.removeChildPopup();
 
         let childMenu = new MenuList();
         this.context.wireBean(childMenu);
-        childMenu.addMenuItems(menuItemDef.childMenu);
+        childMenu.addMenuItems(menuItemDef.subMenu);
 
         var ePopup = _.loadTemplate('<div class="ag-menu"></div>');
         ePopup.appendChild(childMenu.getGui());
 
-        this.childPopupRemoveFunc = this.popupService.addAsModalPopup(
+        var hidePopupFunc = this.popupService.addAsModalPopup(
             ePopup,
             true
         );
+
         this.popupService.positionPopupForMenu({
             eventSource: menuItemComp.getGui(),
             ePopup: ePopup
         });
 
-        this.showingChildMenu = childMenu;
-        this.childMenuParent = menuItemDef;
+        this.subMenuParentDef = menuItemDef;
+
+        var selectedListener = ()=> {
+            this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, event)
+        };
+        childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
+
+        this.removeChildFuncs.push( ()=> {
+            childMenu.clearActiveItem();
+            childMenu.destroy();
+            this.subMenuParentDef = null;
+            childMenu.removeEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
+            hidePopupFunc();
+        });
     }
 
-    public addSeparator(): void {
-        this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
-    }
-
-    private removeOldChildPopup(): void {
-        if (this.childPopupRemoveFunc) {
-            this.childPopupRemoveFunc();
-            this.childPopupRemoveFunc = null;
-        }
-        if (this.showingChildMenu) {
-            this.showingChildMenu.clearActiveItem();
-            this.showingChildMenu.destroy();
-            this.showingChildMenu = null;
-        }
-        this.childMenuParent = null;
+    private removeChildPopup(): void {
+        this.removeChildFuncs.forEach( func => func() );
+        this.removeChildFuncs = [];
     }
 
     public destroy(): void {
         // console.log('MenuList->destroy() ' + this.instance);
-        this.removeOldChildPopup();
+        this.removeChildPopup();
         super.destroy();
     }
 }

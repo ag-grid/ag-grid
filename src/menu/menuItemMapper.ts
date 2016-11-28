@@ -25,9 +25,9 @@ export class MenuItemMapper {
             } else {
                 result = menuItemOrString;
             }
-            if ((<any>result).childMenu) {
+            if ((<any>result).subMenu) {
                 var resultDef = <MenuItemDef> result;
-                resultDef.childMenu = this.mapWithStockItems(resultDef.childMenu, column);
+                resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu, column);
             }
 
             resultList.push(result);
@@ -44,7 +44,7 @@ export class MenuItemMapper {
             case 'pinSubMenu': return {
                 name: localeTextFunc('pinColumn', 'Pin Column'),
                 icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null, svgFactory.createPinIcon),
-                childMenu: ['pinLeft','pinRight','clearPinned']
+                subMenu: ['pinLeft','pinRight','clearPinned']
             };
             case 'pinLeft': return {
                 name: localeTextFunc('pinLeft', 'Pin Left'),
@@ -64,7 +64,7 @@ export class MenuItemMapper {
             case 'valueAggSubMenu': return {
                 name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                 icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
-                childMenu: this.createAggregationSubMenu(column)
+                subMenu: this.createAggregationSubMenu(column)
             };
             case 'autoSizeThis': return {
                 name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),

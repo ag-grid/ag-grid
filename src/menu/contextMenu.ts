@@ -97,9 +97,6 @@ class ContextMenu extends Component {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
 
-    private menuList: MenuList;
-    private hidePopupFunc: Function;
-
     private menuItems: (MenuItemDef|string)[];
 
     constructor(menuItems: (MenuItemDef|string)[]) {
@@ -110,24 +107,22 @@ class ContextMenu extends Component {
     @PostConstruct
     private addMenuItems(): void {
 
-        this.menuList = new MenuList();
-        this.context.wireBean(this.menuList);
+        let menuList = new MenuList();
+        this.context.wireBean(menuList);
 
         let menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 
-        this.menuList.addMenuItems(menuItemsMapped);
-        this.getGui().appendChild(this.menuList.getGui());
+        menuList.addMenuItems(menuItemsMapped);
 
-        this.menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
-    }
+        this.appendChild(menuList);
 
-    private onHidePopup(): void {
-        this.hidePopupFunc();
+        menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     }
 
     public afterGuiAttached(hidePopup: (event?: any)=>void): void {
-        this.hidePopupFunc = hidePopup;
+        this.addDestroyFunc(hidePopup);
+
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addDestroyableEventListener(this.eventService, 'bodyScroll', hidePopup);
+        this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     }
 }
