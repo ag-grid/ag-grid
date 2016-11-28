@@ -194,6 +194,10 @@ MyCellEditor.prototype.isPopup = function() {
             <td>Grid context</td>
         </tr>
         <tr>
+            <th>$scope</th>
+            <td>If compiling to Angular, is the row's child scope, otherwise null.</td>
+        </tr>
+        <tr>
             <th>onKeyDown</th>
             <td>Callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid - however you do
                 not need to call this as the grid is already listening for the events as they propagate. This is only required if
