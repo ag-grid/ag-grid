@@ -519,6 +519,7 @@ export class RenderedCell extends Component {
             cellStartedEdit: cellStartedEdit,
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
+            $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.eGridCell
