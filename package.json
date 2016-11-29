@@ -1,12 +1,14 @@
 {
   "name": "ag-grid-ng2",
-  "version": "6.4.1",
+  "version": "7.0.0-beta.5",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node_modules/.bin/ngc -p tsconfig.json && gulp"
+    "build": "ngc -p tsconfig.json",
+    "clean": "rimraf aot/* && rimraf lib/*",
+    "clean-build": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
@@ -25,18 +27,9 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "@angular/common": "2.2.x",
-    "@angular/compiler": "2.2.x",
-    "@angular/compiler-cli": "2.2.x",
-    "@angular/core": "2.2.x",
-    "@angular/forms": "2.2.x",
-    "@angular/http": "2.2.x",
-    "@angular/platform-browser": "2.2.x",
-    "@angular/platform-browser-dynamic": "2.2.x",
-    "@angular/platform-server": "2.2.x",
-    "@angular/router": "3.2.x",
-    "@angular/upgrade": "2.2.x",
-    "angular-in-memory-web-api": "0.1.15",
+    "@angular/compiler": "2.1.x || >= 2.2.3",
+    "@angular/compiler-cli": "2.1.x || >= 2.2.3",
+    "@angular/core": "2.1.x || >= 2.2.3",
 
     "@types/core-js": "^0.9.34",
     "core-js": "^2.4.1",
@@ -44,11 +37,10 @@
     "gulp-header": "1.7.0",
     "gulp-typescript": "2.14.0",
     "merge2": "0.3.6",
-    "reflect-metadata": "^0.1.8",
     "rxjs": "5.0.0-beta.12",
-    "systemjs": "0.19.39",
     "typescript": "^2.0.3",
-    "zone.js": "^0.6.26"
+    "zone.js": "^0.6.26",
+    "rimraf": "2.5.x"
   },
   "peerDependencies": {
     "ag-grid": "6.4.x"

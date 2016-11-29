@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "declaration": true,
     "target": "es5",
-    "noImplicitAny": true,
+    "module": "commonjs",
     "moduleResolution": "node",
-    "noEmitOnError": true,
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true,
+    "declaration": true,
+    "suppressImplicitAnyIndexErrors": true,
     "outDir": "lib/",
     "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-      "core-js"
+      "node_modules/@types/"
     ]
   },
   "files": [
@@ -28,5 +27,8 @@
     "./src/ng2ComponentFactory.ts",
     "./src/ng2FrameworkFactory.ts",
     "./src/agGridColumn.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "genDir": "aot"
+  }
 }
