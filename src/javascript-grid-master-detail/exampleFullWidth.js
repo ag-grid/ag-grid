@@ -66,9 +66,18 @@ var gridOptions = {
             message = 'Normal full width row at index' + params.rowIndex;
         }
 
-        var template = '<div class="'+cssClass+'"><button onclick="window.alert(\'Clicked!!\')">Click</button> '+message+'</div>';
+        var eDiv = document.createElement('div');
+        eDiv.innerHTML = '<div class="'+cssClass+'"><button>Click</button> '+message+'</div>';
 
-        return template;
+        var eButton = eDiv.querySelector('button');
+        eButton.addEventListener('click', function() {
+            alert('button clicked');
+            console.log('setting');
+            // params.node.setRowHeight(500);
+            // params.api.onRowHeightChanged();
+        } );
+
+        return eDiv;
     },
     getRowHeight: function(params) {
         // you can have normal rows and full width rows any height that you want
