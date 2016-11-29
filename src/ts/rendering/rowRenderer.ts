@@ -74,6 +74,12 @@ export class RowRenderer {
     private eFloatingBottomPinnedRightContainer: HTMLElement;
     private eFloatingBottomFullWithContainer: HTMLElement;
 
+    // we only allow one refresh at a time, otherwise the internal memory structure here
+    // will get messed up. this can happen if the user has a cellRenderer, and inside the
+    // renderer they call an API method that results in another pass of the refresh,
+    // then it will be trying to draw rows in the middle of a refresh.
+    private refreshInProgress = false;
+
     private logger: Logger;
 
     private destroyFunctions: Function[] = [];
@@ -243,8 +249,39 @@ export class RowRenderer {
         this.refreshView(refreshEvent.keepRenderedRows, refreshEvent.animate);
     }
 
+    // if the row nodes are not rendered, no index is returned
+    private getRenderedIndexsForRowNodes(rowNodes: RowNode[]): string[] {
+        var result: any = [];
+        if (_.missing(rowNodes)) { return result; }
+        _.iterateObject(this.renderedRows, (key: string, renderedRow: RenderedRow)=> {
+            var rowNode = renderedRow.getRowNode();
+            if (rowNodes.indexOf(rowNode)>=0) {
+                result.push(key);
+            }
+        });
+        return result;
+    }
+
+    public refreshRows(rowNodes: RowNode[]): void {
+        if (!rowNodes || rowNodes.length==0) {
+            return;
+        }
+
+        // we only need to be worried about rendered rows, as this method is
+        // called to whats rendered. if the row isn't rendered, we don't care
+        var indexesToRemove = this.getRenderedIndexsForRowNodes(rowNodes);
+
+        // remove the rows
+        this.removeVirtualRows(indexesToRemove);
+
+        // add draw them again
+        this.refreshView(true, false);
+    }
+
     public refreshView(keepRenderedRows = false, animate = false): void {
         this.logger.log('refreshView');
+
+        this.getLockOnRefresh();
 
         var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
 
@@ -260,6 +297,24 @@ export class RowRenderer {
         this.refreshAllFloatingRows();
 
         this.restoreFocusedCell(focusedCell);
+
+        this.releaseLockOnRefresh();
+    }
+
+    private getLockOnRefresh(): void {
+        if (this.refreshInProgress) {
+            throw 'ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. ' +
+            'Your code probably called a grid API method while the grid was in the render stage. To overcome ' +
+            'this, put the API call into a timeout, eg instead of api.refreshView(), ' +
+            'call setTimeout(function(){api.refreshView(),0}). To see what part of your code ' +
+            'that caused the refresh check this stacktrace.';
+        }
+
+        this.refreshInProgress = true;
+    }
+
+    private releaseLockOnRefresh(): void {
+        this.refreshInProgress = false;
     }
 
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
@@ -307,30 +362,6 @@ export class RowRenderer {
         renderedRow.addEventListener(eventName, callback);
     }
 
-    public refreshRows(rowNodes: RowNode[]): void {
-        if (!rowNodes || rowNodes.length==0) {
-            return;
-        }
-
-        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
-
-        // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
-        var indexesToRemove: any = [];
-        _.iterateObject(this.renderedRows, (key: string, renderedRow: RenderedRow)=> {
-            var rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode)>=0) {
-                indexesToRemove.push(key);
-            }
-        });
-        // remove the rows
-        this.removeVirtualRows(indexesToRemove);
-        // add draw them again
-        this.drawVirtualRows();
-
-        this.restoreFocusedCell(focusedCell);
-    }
-
     public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
         if (!rowNodes || rowNodes.length==0) {
             return;
@@ -343,24 +374,6 @@ export class RowRenderer {
                 renderedRow.refreshCells(colIds, animate);
             }
         });
-    }
-
-    public rowDataChanged(rows: any) {
-        // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
-        var indexesToRemove: any = [];
-        var renderedRows = this.renderedRows;
-        Object.keys(renderedRows).forEach(function (index: any) {
-            var renderedRow = renderedRows[index];
-            // see if the rendered row is in the list of rows we have to update
-            if (renderedRow.isDataInList(rows)) {
-                indexesToRemove.push(index);
-            }
-        });
-        // remove the rows
-        this.removeVirtualRows(indexesToRemove);
-        // add draw them again
-        this.drawVirtualRows();
     }
 
     @PreDestroy
@@ -421,7 +434,7 @@ export class RowRenderer {
         });
     }
 
-    public drawVirtualRows(oldRowsByNodeId?: {[key: string]: RenderedRow}, animate = false) {
+    private drawVirtualRows(oldRowsByNodeId?: {[key: string]: RenderedRow}, animate = false) {
         this.workOutFirstAndLastRowsToRender();
         this.ensureRowsRendered(oldRowsByNodeId, animate);
     }

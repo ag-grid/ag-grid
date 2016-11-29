@@ -172,7 +172,8 @@ export class GridApi {
     }
 
     public rowDataChanged(rows:any) {
-        this.rowRenderer.rowDataChanged(rows);
+        console.log('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node')
+        this.refreshView();
     }
 
     public refreshView() {
