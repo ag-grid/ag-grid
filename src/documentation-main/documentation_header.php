@@ -402,7 +402,7 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <h4>
-                    Pro Features
+                    Enterprise Features
                 </h4>
 
                 <?php if ($key == "Viewport") { ?>

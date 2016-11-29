@@ -18,7 +18,7 @@
                 <div class="col-md-4 col-sm-4 col-xs-12">
                     <h3 class="text-left">Where we are Going</h3>
                     <p class="text-left">
-                        Most of our clients are moving from established JavaScript data grids and are enjoying the breath of fresh air that ag-Grid provides. The Pro version of ag-Grid fuels the ag-Grid company. Our mission has been driven by our customers: keep doing what we are doing, building the world’s best JavaScript data grid.
+                        Most of our clients are moving from established JavaScript data grids and are enjoying the breath of fresh air that ag-Grid provides. The Enterprise version of ag-Grid fuels the ag-Grid company. Our mission has been driven by our customers: keep doing what we are doing, building the world’s best JavaScript data grid.
                     </p>
                 </div>
             </div>

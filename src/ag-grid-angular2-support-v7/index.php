@@ -20,7 +20,7 @@ include('../includes/mediaHeader.php');
         <h2>A Brief History of Time</h2>
 
         <p>
-            Our first pass of Angular 2 support offered a wrapper that allowed users to use ag-Grid within an Angular 2 application, but without fully Angular 2 support.
+            Our first pass of Angular 2 support offered a wrapper that allowed users to use ag-Grid within an Angular 2 application but without fully Angular 2 support.
             You could use ag-Grid fully - and it worked well! - but you could not use Angular 2 components, or use the power that Angular 2 offers within the grid (two-way binding and so on).
         </p>
 
@@ -28,16 +28,16 @@ include('../includes/mediaHeader.php');
             Our second pass of Angular 2 was a fairly big leap - we were able to offer full Angular 2 Component support. You could use it just about everywhere, as Renderers, Editors and Filters!
         </p>
         <p>
-            We used the <code>RuntimeCompiler</code> in the background to dynamically compile modules & components - this was great and allowed use to offer the above, as well as being able
+            We used the <code>RuntimeCompiler</code> in the background to dynamically compile modules & components - this was great and allowed us to offer the above, as well as being able
             to offer support for template strings withing a cell.
         </p>
         <p>
-            ...<strong>but</strong>, you could not use Angular 2 Components together with AOT. You had to choose one or the other.
+            ...<strong>but</strong> you could not use Angular 2 Components together with AOT. You had to choose one or the other.
         </p>
 
         <h2>v7 - The New World</h2>
 
-        <p>With v7 we drop our reliance on the <code>RuntimeCompiler</code> and move to using the <code>ComponentFactoryResolver</code> instead. We are able to do this by making use of <code>entryComponents</code> within our <code>NgModule</code>, which tells the AOT
+        <p>With v7, we drop our reliance on the <code>RuntimeCompiler</code> and move to using the <code>ComponentFactoryResolver</code> instead. We are able to do this by making use of <code>entryComponents</code> within our <code>NgModule</code>, which tells the AOT
         compiler to create a <code>ComponentFactory</code> for the Component, and registers it with the <code>ComponentFactoryResolver</code>.</p>
 
 <pre><span class="codeComment">// AgGridModule</span>
@@ -73,8 +73,8 @@ factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
 let component = viewContainerRef.createComponent(factory);
 </pre>
 
-        <p>With this new arrangement we can now offer full Angular 2 Component support, together with either AOT or JIT support.</p>
-        <p>The only downside is that we are no longer able to offer support for template strings, as we are no longer able to dynamically create new Components and Modules. On balance we feel this trade off was a worthwhile one.</p>
+        <p>With this new arrangement, we can now offer full Angular 2 Component support, together with either AOT or JIT support.</p>
+        <p>The only downside is that we are no longer able to offer support for template strings, as we are no longer able to dynamically create new Components and Modules. On balance, we feel this trade off was a worthwhile one.</p>
 
         <p>The new way of declaring Components pushes the responsiblity of <code>Module</code>'s and <code>Component</code>'s up to the user, back where it belongs. It also allows for a simplified interface to the grid - instead of:</p>
 <pre>{
@@ -98,7 +98,7 @@ let component = viewContainerRef.createComponent(factory);
 </pre>
 
         <h2>Show Me More!</h2>
-        <p>Lets replicate what ag-Grid does with a more concrete example.  Lets assume a user wants to use an external component (i.e. like ag-Grid) and let it do its thing, but also wants to
+        <p>Let's replicate what ag-Grid does with a more concrete example.  Let's assume a user wants to use an external component (i.e. ag-Grid) and let it do its thing but also wants to
         be able to supply domain specific components to this external component, for use within it.</p>
 
         <p>First, here is our domain specific Component:</p>
@@ -132,14 +132,14 @@ export class GridComponent {
     }
 }</pre>
 
-        <p>In this case we have a button that when clicked on will dynamically create a supplied component type beneath it.</p>
+        <p>In this case, we have a button that when clicked will dynamically create a supplied component type beneath it.</p>
         <p>The key part of this component is this block:</p>
         <pre>let compFactory = this.cfr.resolveComponentFactory(this.componentType);</pre>
 
         <p>This will retrieve the <code>ComponentFactory</code> for the supplied component type, which we can then use to create new instances of it.</p>
 
-        <p>For this to work, we need to ensure that ensure the AOT compiler knows that it needs to create a <code>ComponentFactory</code> for the user supplied components - if we don't
-        then our code would work for Just-In-Time (JIT), but not for Ahead-Of-Time (AOT) compilation.</p>
+        <p>For this to work, we need to ensure that the AOT compiler knows that it needs to create a <code>ComponentFactory</code> for the user supplied components. If we don't
+        then our code would work for Just-In-Time (JIT) but not for Ahead-Of-Time (AOT) compilation.</p>
 
         <pre>@NgModule({
     declarations: [
@@ -191,10 +191,10 @@ export class AppComponent {
 
         <h2>Benefits of using AOT</h2>
 
-        <p>The speed and size of the resulting application when using AOT can be significant. In our <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> project we estimate the size of the resulting application
-            went from about 3.9Mb down to 2.4Mb - a reduction of just under 40%. And this was with us not optimising for size or being particularly aggresive with rollup.</p>
+        <p>The speed and size of the resulting application when using AOT can be significant. In our <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> project, we estimate the size of the resulting application
+            went from 3.9Mb down to 2.4Mb - a reduction of just under 40%. Without optimising for size or being particularly aggressive with rollup.</p>
 
-        <p>Speed wise the loading time when using AOT is significantly more responsive on startup - this makes sense given that Angular doesn't have to compile all the code once again. Take a look at the examples project and try both the JIT and AOT versions out for yourself!</p>
+        <p>Speed-wise, the loading time when using AOT is significantly more responsive on startup - this makes sense given that Angular doesn't have to compile all the code once again. Take a look at the examples project and try both the JIT and AOT versions out for yourself!</p>
 
         <p>There's so much more you can do if you decide to combine Angular 2 Components with ag-Grid - powerful functionality, fast grid and easy configuration. What are you waiting for?!</p>
 
