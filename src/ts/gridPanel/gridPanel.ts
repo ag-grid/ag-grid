@@ -654,12 +654,12 @@ export class GridPanel {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.drawVirtualRows();
+            this.rowRenderer.drawVirtualRowsWithLock();
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var newScrollPosition = rowBottomPixel - viewportHeight;
             eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.drawVirtualRows();
+            this.rowRenderer.drawVirtualRowsWithLock();
         }
         // otherwise, row is already in view, so do nothing
     }
@@ -1214,7 +1214,7 @@ export class GridPanel {
                     that.lastTopPosition = newTopPosition;
                     that.verticallyScrollLeftPinned(newTopPosition);
                     that.verticallyScrollFullWidthCellContainer(newTopPosition);
-                    that.rowRenderer.drawVirtualRows();
+                    that.rowRenderer.drawVirtualRowsWithLock();
                 }
             }
         }
@@ -1227,7 +1227,7 @@ export class GridPanel {
                 that.verticallyScrollLeftPinned(newTopPosition);
                 that.verticallyScrollFullWidthCellContainer(newTopPosition);
                 that.verticallyScrollBody(newTopPosition);
-                that.rowRenderer.drawVirtualRows();
+                that.rowRenderer.drawVirtualRowsWithLock();
             }
         }
 

@@ -279,7 +279,7 @@ export class GridCore {
         var sizeChanged = this.eRootPanel.doLayout();
         // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
         if (sizeChanged) {
-            this.rowRenderer.drawVirtualRows();
+            this.rowRenderer.drawVirtualRowsWithLock();
             var event = {
                 clientWidth: this.eRootPanel.getGui().clientWidth,
                 clientHeight: this.eRootPanel.getGui().clientHeight

@@ -434,6 +434,16 @@ export class RowRenderer {
         });
     }
 
+    // gets called when rows don't change, but viewport does, so after:
+    // 1) size of grid changed
+    // 2) grid scrolled to new position
+    // 3) ensure index visible (which is a scroll)
+    public drawVirtualRowsWithLock() {
+        this.getLockOnRefresh();
+        this.drawVirtualRows();
+        this.releaseLockOnRefresh();
+    }
+
     private drawVirtualRows(oldRowsByNodeId?: {[key: string]: RenderedRow}, animate = false) {
         this.workOutFirstAndLastRowsToRender();
         this.ensureRowsRendered(oldRowsByNodeId, animate);
