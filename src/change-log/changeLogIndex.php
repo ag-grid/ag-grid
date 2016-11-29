@@ -10,6 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version Next</h2>
 
+    <li>Enhancement: Now when multiple ranges are selected, copy to clipboard copies all ranges, previously only first range was copied.</li>
     <li>Enhancement: New option for grouping <a href="../javascript-grid-grouping/#removeSingleChildren">
             Remove Single Children</a>, so groups will only one child are removed.</li>
     <li>Enhancement: Now menu's (<a href="../javascript-grid-column-menu/">column menu</a> and
