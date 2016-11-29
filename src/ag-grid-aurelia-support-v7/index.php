@@ -17,15 +17,15 @@ include('../includes/mediaHeader.php');
 <div class="row">
     <div class="col-md-9">
 
-        <p>We here at ag-Grid are very excited to be able to offer support for Aurelia! Aurelia is a powerful and flexible framework that makes developing applications a breeze.</p>
+        <p>Here at ag-Grid, we are very excited to be able to offer support for Aurelia! Aurelia is a powerful and flexible framework that makes developing applications a breeze.</p>
 
-        <p>We won't be documenting how to use Aurelia in ag-Grid (for details on how to do that, please take a look at the <a href="/best-aurelia-data-grid">ag-Grid Aurelia</a> documentation), but rather on how
-        we added support for Aurelia within the grid itself.</p>
+        <p>In this post, I won't be documenting how to use Aurelia in ag-Grid but rather on how
+        we added support for Aurelia within the grid itself. For details on how to use Aurelia in ag-Grid, take a look at the <a href="/best-aurelia-data-grid">ag-Grid Aurelia</a> documentation.</p>
 
         <h4>AgGridAurelia</h4>
         <p>
             Following the model used by our Angular 2 offering, we created a new Custom Component that wraps ag-Grid, passing events & properties back and forth between the Custom Component and the grid.
-            Doing this keeps ag-Grid framework agnostic, a core design principal here at ag-Grid.
+            Doing this keeps ag-Grid framework agnostic, a core design principle here at ag-Grid.
         </p>
         <p>
             <code>AgGridAurelia</code> is the main Custom Component for Aurelia - it handles all core grid events and properties, as well as initial instantiation and removal.
@@ -40,13 +40,13 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
 ...
 </pre>
         <p>
-            The grid definition (which we'll get to in a minute) constists of the parent selector (<code>ag-grid-aurelia</code>) and a number of child <code>ag-grid-column</code>'s.
+            The grid definition (which we'll get to in a minute) consists of the parent selector (<code>ag-grid-aurelia</code>) and a number of child <code>ag-grid-column</code>'s.
         </p>
 <pre>
 @children('ag-grid-column')
 public columns: AgGridColumn[] = [];
 </pre>
-        <p>During the creation and initialisation phases we dynamically create all available grid events, set all provided gridOptions, map supplied column definitions to colDefs and finally instantiate
+        <p>During the creation and initialisation phases, we dynamically create all available grid events, set all provided gridOptions, map supplied column definitions to colDefs and finally instantiate
         ag-Grid itself:</p>
 <pre><span class="codeComment">// create all available grid events</span>
 // create all the events generically. this is done generically so that
@@ -76,7 +76,7 @@ if (this.columns && this.columns.length > 0) {
 new Grid(this._nativeElement, this.gridOptions, this.gridParams);
 </pre>
 
-        <p>Note that this is an abridged version of what actually happens, for brevity's sake.</p>
+        <p>Note: this is an abridged version of what actually happens for brevity's sake.</p>
 
         <h4>Mapping Columns to Template Types</h4>
         <p>Each type of column is defined by a selector and then converted to a colDef that the grid understands. This is done in <code>AgGridColumn</code>:</p>
@@ -128,12 +128,10 @@ export class AgGridColumn {
         <p>This in turn woud be mapped to a column with a defined cellRenderer and cellEditor.</p>
 
         <p>That's pretty much it! In time - and if there's sufficient interest - we'll look at being able to create Renderers,
-        Editors and Filters from Components, in the same way that we do with Angular 2, but for now (and based on feedback we've received) this
-        declarative/markup driven definition works well.</p>
+        Editors and Filters from Components, in the same way that we do with Angular 2. Based on feedback we've received this
+        declarative/markup driven definition works well for now.</p>
 
-        <p>Give it a go - Aurelia is a fun framework to use, and now you can use with with the best Enterprise Data Grid around!</p>
-
-        <p>For a look at the examples we provide, take a look at our <a href="https://ceolter.github.io/ag-grid-aurelia-example/#/rich-grid" target="_blank" class="fa fa-external-link"> live examples site</a>. Feedback is always welcome! </p>
+        <p>Give it a go - Aurelia is a fun framework and now you can use it with the best Enterprise Data Grid around! Take a look at our <a href="https://ceolter.github.io/ag-grid-aurelia-example/#/rich-grid" target="_blank" class="fa fa-external-link"> live examples site</a>. Feedback is always welcome! </p>
         <!-- end of content -->
 
         <div style="margin-top: 20px;">

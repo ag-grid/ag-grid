@@ -119,8 +119,8 @@ include 'includes/headerRow.php'; ?>
             </p>
             
             <p>    
-                ag-Grid Pro comes with a commercial license, extra Pro features, support and maintenance. If you want
-                to use ag-Grid Pro, you must purchase an ag-Grid Pro license.
+                ag-Grid Enterprise comes with a commercial license, extra Enterprise features, support and maintenance. If you want
+                to use ag-Grid Enterprise, you must purchase an ag-Grid Enterprise license.
             </p>
         </div>
         <div class="col-md-3">
@@ -146,15 +146,15 @@ include 'includes/headerRow.php'; ?>
         <div class="col-md-12">
 
             <h2>
-                ag-Grid Pro Evaluation License
+                ag-Grid Enterprise Evaluation License
             </h2>
 
             <p>
-                An evaluation license for ag-Grid Pro is granted to anyone wishing evaluate ag-Grid Pro.
+                An evaluation license for ag-Grid Enterprise is granted to anyone wishing evaluate ag-Grid Enterprise.
                 All we ask in return is the following:
             <ul>
                 <li>
-                    You agree to use the Evaluation License only for evaluation of ag-Grid Pro. You do not enter production with ag-Grid Pro.
+                    You agree to use the Evaluation License only for evaluation of ag-Grid Enterprise. You do not enter production with ag-Grid Enterprise.
                 </li>
                 <li>
                     You limit your trial to two months (after that, either uninstall or purchase).
@@ -169,7 +169,7 @@ include 'includes/headerRow.php'; ?>
         <div class="col-md-12">
 
             <h2>
-                Free vs Pro Comparison and Pricing
+                Free vs Enterprise Comparison and Pricing
             </h2>
 
             <table class="theTable" style="width: 100%;">
@@ -179,7 +179,7 @@ include 'includes/headerRow.php'; ?>
                     </td>
                     <td class="gapCol"/>
                     <td class="titleCell tableHighlightCell tableCell">
-                        <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid Pro</span>
+                        <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid Enterprise</span>
                     </td>
                 </tr>
 
@@ -253,7 +253,7 @@ include 'includes/headerRow.php'; ?>
                     <td class="benefitsCell tableCell">
 
                         <div class="gridFeature">
-                            Standard and Pro Grid Features<br/>
+                            Standard and Enterprise Grid Features<br/>
                             (as per documentation)
                         </div>
 
@@ -300,7 +300,7 @@ include 'includes/headerRow.php'; ?>
 
     <div class="row">
         <div class="col-md-12" style="text-align: center; padding: 40px;">
-            Still don't know which version you want? Then go for ag-Grid Pro, your contribution
+            Still don't know which version you want? Then go for ag-Grid Enterprise, your contribution
          will help ag-Grid grow into the future.
         </div>
     </div>

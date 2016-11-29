@@ -45,23 +45,23 @@
 
             <p>
                 If you are only interested in the free features of ag-Grid but require support, you can
-                purchase a Pro license to access support. If you don't require support, you can
+                purchase a Enterprise license to access support. If you don't require support, you can
                 'give back' to the ag-Grid project by purchasing a token license. The donation will help ag-Grid
                 grow into the future.
             </p>
 
-            <h2>Pro Support</h2>
+            <h2>Enterprise Support</h2>
 
             <p>
-                ag-Grid Pro users have access to guaranteed support through the members only forum.
+                ag-Grid Enterprise users have access to guaranteed support through the members only forum.
                 The members forum is monitored by the ag-Grid team and the team will endeavour to progress all
                 threads within one working day. A time slot is committed each day to making sure all items
                 on the forum are progressing.
             </p>
 
             <p>
-                Feature requests and bugs raised by Pro users will be given priority and serious
-                consideration. Discussions had with Pro users will also help dictate the ag-Grid
+                Feature requests and bugs raised by Enterprise users will be given priority and serious
+                consideration. Discussions had with Enterprise users will also help dictate the ag-Grid
                 road-map.
             </p>
 

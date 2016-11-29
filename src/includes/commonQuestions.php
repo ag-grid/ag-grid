@@ -98,8 +98,8 @@
         <div class="answer">
 
             <p>
-                The perpetual nature of the Pro license means you can continue to use the version of
-                ag-Grid Pro, plus any release for one year, indefinitely. There is no requirement to
+                The perpetual nature of the Enterprise license means you can continue to use the version of
+                ag-Grid Enterprise, plus any release for one year, indefinitely. There is no requirement to
                 pay again to continue using the software. However if you wish to keep up to date with the
                 latest versions of ag-Grid after one year and continue with support, you must extend the
                 license.
