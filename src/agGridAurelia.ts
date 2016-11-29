@@ -1,5 +1,6 @@
 import {
-    bindable, autoinject,
+    bindable,
+    autoinject,
     inlineView,
     customElement,
     ComponentAttached,
@@ -8,17 +9,8 @@ import {
     Container,
     ViewResources,
     TaskQueue
-} from 'aurelia-framework';
-
-import {
-    Grid,
-    GridOptions,
-    GridApi,
-    ColumnApi,
-    GridParams,
-    ComponentUtil
-} from 'ag-grid/main';
-
+} from "aurelia-framework";
+import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "ag-grid/main";
 import {AureliaFrameworkFactory} from "./aureliaFrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 
@@ -61,7 +53,7 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
         });
     }
 
-    attached(){
+    attached() {
         //initialize the grid in the queue
         //because of bug in @children
         // https://github.com/aurelia/templating/issues/403
@@ -69,13 +61,11 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
     }
 
     initGrid(): void {
-
-
         this._initialised = false;
         this._destroyed = false;
 
-
-        this.auFrameworkFactory.setViewContainerRef(this.container, this.viewResources);
+        this.auFrameworkFactory.setContainer(this.container);
+        this.auFrameworkFactory.setViewResources(this.viewResources);
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
         this.gridParams = {

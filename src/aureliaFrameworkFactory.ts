@@ -68,8 +68,11 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
         return this._baseFrameworkFactory.colDefFilter(colDef);
     }
 
-    public setViewContainerRef(container: Container, viewResources: ViewResources): void {
+    public setContainer(container: Container): void {
         this._container = container;
+    }
+
+    public setViewResources(viewResources: ViewResources): void {
         this._viewResources = viewResources;
     }
 }
