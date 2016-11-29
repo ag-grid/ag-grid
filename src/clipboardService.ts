@@ -1,6 +1,6 @@
-
 import {
     Bean,
+    RangeSelection,
     CsvExportParams,
     ColDef,
     IClipboardService,
@@ -86,7 +86,7 @@ export class ClipboardService implements IClipboardService {
         var updatedRowNodes: RowNode[] = [];
         var updatedColumnIds: string[] = [];
 
-        this.iterateFirstActiveRange( (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+        var rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues) {
                 firstRowValues = [];
@@ -111,7 +111,9 @@ export class ClipboardService implements IClipboardService {
                     cellsToFlash[cellId] = true;
                 });
             }
-        });
+        };
+
+        this.iterateActiveRanges(true, rowCallback);
 
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
@@ -195,14 +197,20 @@ export class ClipboardService implements IClipboardService {
         }
     }
 
-    private iterateFirstActiveRange(rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
+    private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
         if (this.rangeController.isEmpty()) { return; }
 
         var rangeSelections = this.rangeController.getCellRanges();
-        // if more than one range selected, we take the first one only, we ignore the others,
-        // in Excel, it doesn't allow multiple blocks to be copied to clipboard at same time
-        var range = rangeSelections[0];
 
+        if (onlyFirst) {
+            let range = rangeSelections[0];
+            this.iterateActiveRange(range, rowCallback, columnCallback);
+        } else {
+            rangeSelections.forEach( range => this.iterateActiveRange(range, rowCallback, columnCallback) );
+        }
+    }
+
+    private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
         // get starting and ending row, remember rowEnd could be before rowStart
         var startRow = range.start.getGridRow();
         var endRow = range.end.getGridRow();
@@ -270,7 +278,7 @@ export class ClipboardService implements IClipboardService {
             data += '\r\n';
         };
 
-        this.iterateFirstActiveRange(rowCallback, columnCallback);
+        this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
