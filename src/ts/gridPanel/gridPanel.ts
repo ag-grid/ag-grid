@@ -62,7 +62,7 @@ var gridHtml =
                 '<div class="ag-pinned-right-cols-container"></div>'+
             '</div>'+
             '<div class="ag-body-viewport-wrapper">'+
-                '<div class="ag-body-viewport">'+
+                '<div tabindex="-1" class="ag-body-viewport">'+
                     '<div class="ag-body-container"></div>'+
                 '</div>'+
             '</div>'+
@@ -1209,14 +1209,30 @@ export class GridPanel {
             // that has the scroll.
             if (!that.columnController.isPinningRight()) {
                 var newTopPosition = that.eBodyViewport.scrollTop;
+                var restoreDefaultFocus = checkLostFocus();
                 if (newTopPosition !== that.lastTopPosition) {
                     that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
                     that.lastTopPosition = newTopPosition;
                     that.verticallyScrollLeftPinned(newTopPosition);
                     that.verticallyScrollFullWidthCellContainer(newTopPosition);
                     that.rowRenderer.drawVirtualRows();
+                    restoreDefaultFocus();
                 }
             }
+        }
+
+        function checkLostFocus() {
+          let lastActiveElementInside:Element;
+          if (that.eBodyViewport.contains(<HTMLElement>document.activeElement)) {
+            lastActiveElementInside = document.activeElement;
+          }
+
+          return function restoreDefaultFocus() {
+            if (lastActiveElementInside && document.activeElement === document.body) {
+              //Through the tabindex, we focus on the viewport by default when we remove a element which had the focus
+              that.eBodyViewport.focus();
+            }
+          }
         }
 
         function onPinnedRightScroll() {
