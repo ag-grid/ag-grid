@@ -36,4 +36,7 @@ export class BaseFrameworkFactory implements IFrameworkFactory {
         return gridOptions.groupRowInnerRenderer;
     }
 
+    public setTimeout(handler: any, timeout?: any): number {
+        return setTimeout(handler, timeout);
+    }
 }
