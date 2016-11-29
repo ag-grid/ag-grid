@@ -877,7 +877,14 @@ function booleanComparator(value1, value2) {
     return value1Ordinal - value2Ordinal;
 }
 
+var count = 0;
+
 function booleanCellRenderer(params) {
+    count++;
+    if (count<=1) {
+        // params.api.onRowHeightChanged();
+    }
+
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
         //this is the unicode for tick character

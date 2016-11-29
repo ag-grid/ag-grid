@@ -326,21 +326,21 @@ MyCellRenderer.prototype.destroy = function() {
     </p>
 
 <pre><code><span class="codeComment">// define cellRenderer to be reused</span>
-        var myCellRenderer = function(params) {
-        return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
-        }
+var myCellRenderer = function(params) {
+    return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
+}
 
-        <span class="codeComment">// use with a color</span>
-        colDef.cellRenderer = myCellRenderer;
-        colDef.cellRendererParams = {
-        color: 'guinnessBlack'
-        }
+<span class="codeComment">// use with a color</span>
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
+    color: 'guinnessBlack'
+}
 
-        <span class="codeComment">// use with another color</span>
-        colDef.cellRenderer = myCellRenderer;
-        colDef.cellRendererParams = {
-        color: 'irishGreen'
-        }</code></pre>
+<span class="codeComment">// use with another color</span>
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
+    color: 'irishGreen'
+}</code></pre>
 
     <h3>Provided cellRenderers</h3>
 
