@@ -298,7 +298,21 @@ export class GridOptionsWrapper {
             return Constants.LAYOUT_INTERVAL;
         }
     }
-    
+
+    private defaultIntervalRunner(
+      intervalOrTimeout: Function, period: number, action: (...args: any[]) => any
+    ) {
+      return intervalOrTimeout.apply(window, [ action, period ])
+    }
+
+    public getIntervalRunner(): Function {
+        if (typeof this.gridOptions.intervalRunner === 'function') {
+            return this.gridOptions.intervalRunner;
+        } else {
+            return this.defaultIntervalRunner;
+        }
+    }
+
     public getMinColWidth() {
         if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
