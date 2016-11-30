@@ -680,7 +680,8 @@ the grid will know the framework to use is Angular 2.
 
 <h3>Example: Rendering using Templates</h3>
 <p>
-    Using Templates in the Cell Renderers - here we're using a Template to render the Mood column.
+    Using Templates in the Cell Renderers - here we're using a Template (<code>ag-cell-template</code>) to render the Mood column depending on the underlying value
+    of the "mood" field.
 </p>
 
 <show-example example="../aurelia-example/#/editor/true"
