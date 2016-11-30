@@ -1,4 +1,4 @@
-// ag-grid-aurelia v7.0.0-beta.0
+// ag-grid-aurelia v7.0.0
 import { Container, ViewResources, ViewCompiler } from "aurelia-framework";
 import { ICellRenderer, ICellEditor, IFrameworkFactory, IFilter, ICellRendererFunc, ColDef, GridOptions } from "ag-grid/main";
 import { AureliaComponentFactory } from "./aureliaComponentFactory";
@@ -30,5 +30,7 @@ export declare class AureliaFrameworkFactory implements IFrameworkFactory {
     colDefFilter(colDef: ColDef): {
         new (): IFilter;
     } | string;
-    setViewContainerRef(container: Container, viewResources: ViewResources): void;
+    setContainer(container: Container): void;
+    setViewResources(viewResources: ViewResources): void;
+    setTimeout(handler: any, timeout?: any): number;
 }

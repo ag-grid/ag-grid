@@ -1,4 +1,4 @@
-// ag-grid-aurelia v7.0.0-beta.0
+// ag-grid-aurelia v7.0.0
 import { Container, ViewFactory } from "aurelia-framework";
 import { ICellRenderer, ICellEditor } from "ag-grid/main";
 export declare class AureliaComponentFactory {

@@ -1,4 +1,4 @@
-// ag-grid-aurelia v7.0.0-beta.0
+// ag-grid-aurelia v7.0.0
 import { ColDef, SetFilterParameters, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef } from "ag-grid/main";
 import { AgCellTemplate, AgEditorTemplate, AgFilterTemplate } from './agTemplate';
 export declare class AgGridColumn {

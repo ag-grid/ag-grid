@@ -68,7 +68,7 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
         this.auFrameworkFactory.setViewResources(this.viewResources);
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
-        this.gridParams = {
+        this.gridParams = <any>{
             globalEventListener: this.globalEventListener.bind(this),
             frameworkFactory: this.auFrameworkFactory
         };
