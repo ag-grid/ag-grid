@@ -1,30 +1,23 @@
-import { Component,
-    ComponentFactory,
-    ViewContainerRef,
-    ComponentFactoryResolver,
-    ComponentRef,
-    Type,
-    Injectable } from '@angular/core';
-
-import {ICellRenderer,
+import {ViewContainerRef, NgZone, Injectable} from "@angular/core";
+import {
+    ICellRenderer,
     ICellEditor,
-    MethodNotImplementedException,
     BaseFrameworkFactory,
     IFrameworkFactory,
     IFilter,
     ICellRendererFunc,
     ColDef,
-    GridOptions}   from 'ag-grid/main';
-
-import {Ng2ComponentFactory} from "./ng2ComponentFactory";
+    GridOptions
+} from "ag-grid/main";
 import {BaseComponentFactory} from "./baseComponentFactory";
+
 
 @Injectable()
 export class Ng2FrameworkFactory implements IFrameworkFactory {
     private _viewContainerRef:ViewContainerRef;
     private _baseFrameworkFactory:IFrameworkFactory = new BaseFrameworkFactory();    // todo - inject this
 
-    constructor(private _componentFactory:BaseComponentFactory) {
+    constructor(private _componentFactory:BaseComponentFactory, private zone: NgZone) {
     }
 
     public colDefFloatingCellRenderer(colDef:ColDef):{new(): ICellRenderer} | ICellRendererFunc | string {
@@ -116,5 +109,12 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public setViewContainerRef(viewContainerRef:ViewContainerRef):void {
         this._viewContainerRef = viewContainerRef;
+    }
+
+    public setTimeout(handler: any, timeout?: any): number {
+        return this._baseFrameworkFactory.setTimeout(handler, timeout);
+        // return this.zone.runOutsideAngular(() => {
+        //     handler.apply(window, [ () => this.zone.run(action), timeout ])
+        // }, timeout);
     }
 }
