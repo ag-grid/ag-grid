@@ -38,7 +38,7 @@ var games = ["Chess", "Cross and Circle", "Daldøs", "Downfall", "DVONN", "Fanor
     "Tâb", "Tablut", "Tantrix", "Wari", "Xiangqi (Chinese chess)", "YINSH", "ZÈRTZ", "Kalah", "Kamisado", "Liu po",
     "Lost Cities", "Mad Gab", "Master Mind", "Nine Men's Morris", "Obsession", "Othello"
 ];
-var booleanValues = [true, "true", false, "false", null, undefined, ""];
+var booleanValues = [true, "true", false, "false"];
 
 var firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
