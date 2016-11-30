@@ -69,14 +69,6 @@ export class CsvCreator {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
-            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
-            return '';
-        }
-        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
-
-        var that = this;
-        var result = '';
 
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
@@ -97,6 +89,22 @@ export class CsvCreator {
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
         var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
+        var rowModelNormal = this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL;
+
+        var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
+
+        // we can only export if it's a normal row model - unless we are exporting
+        // selected only, as this way we don't use the selected nodes rather than
+        // the row model to get the rows
+        if (!rowModelNormal && !onlySelected) {
+            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
+            return '';
+        }
+
+        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+
+        var that = this;
+        var result = '';
 
         var columnsToExport: Column[];
         if (_.existsAndNotEmpty(columnKeys)) {
@@ -126,10 +134,18 @@ export class CsvCreator {
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
         } else {
-            if (onlySelectedAllPages) {
+            // onlySelectedAllPages: user doing pagination and wants selected items from
+            // other pages, so cannot use the standard row model as it won't have rows from
+            // other pages.
+            // onlySelectedNonStandardModel: if user wants selected in non standard row model
+            // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
+            if (onlySelectedAllPages || onlySelectedNonStandardModel) {
                 var selectedNodes = this.selectionController.getSelectedNodes();
                 selectedNodes.forEach(processRow);
             } else {
+                // here is everything else - including standard row model and selected. we don't use
+                // the selection model even when just using selected, so that the result is the order
+                // of the rows appearing on the screen.
                 inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
             }
         }
