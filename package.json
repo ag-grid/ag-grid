@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "7.0.0-beta.5",
+  "version": "7.0.0",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -43,7 +43,7 @@
     "rimraf": "2.5.x"
   },
   "peerDependencies": {
-    "ag-grid": "6.4.x"
+    "ag-grid": "7.0.x"
   },
   "dependencies": {}
 }
