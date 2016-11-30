@@ -39,9 +39,7 @@ export * from './dist/lib/toolPanel/columnsSelect/renderedGroup';
 export * from './dist/lib/viewport/viewportRowModel';
 
 export * from './dist/lib/clipboardService';
-export * from './dist/lib/contextMenu';
 export * from './dist/lib/enterpriseBoot';
-export * from './dist/lib/enterpriseMenu';
 export * from './dist/lib/licenseManager';
 export * from './dist/lib/pivotCompFactory';
 export * from './dist/lib/rangeController';
