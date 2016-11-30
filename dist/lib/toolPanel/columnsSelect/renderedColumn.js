@@ -1,4 +1,5 @@
-// ag-grid-enterprise v6.4.2
+// ag-grid-enterprise v7.0.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -231,5 +232,5 @@ var RenderedColumn = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RenderedColumn.prototype, "init", null);
     return RenderedColumn;
-})(main_1.Component);
+}(main_1.Component));
 exports.RenderedColumn = RenderedColumn;

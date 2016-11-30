@@ -1,5 +1,5 @@
-// ag-grid-enterprise v6.4.2
-import { IMenuFactory, Column } from "ag-grid/main";
+// ag-grid-enterprise v7.0.0
+import { IMenuFactory, Column } from "ag-grid";
 export declare class EnterpriseMenuFactory implements IMenuFactory {
     private context;
     private popupService;
@@ -21,8 +21,8 @@ export declare class EnterpriseMenu {
     private context;
     private gridApi;
     private gridOptionsWrapper;
-    private aggFuncService;
     private eventService;
+    private menuItemMapper;
     private tabbedLayout;
     private hidePopupFunc;
     private column;
@@ -41,9 +41,6 @@ export declare class EnterpriseMenu {
     private showTabBasedOnPreviousSelection();
     private onTabItemClicked(event);
     destroy(): void;
-    private createPinnedSubMenu();
-    private createAggregationSubMenu();
-    private createBuiltInMenuOptions();
     private getMenuItems();
     private getDefaultMenuOptions();
     private createMainPanel();

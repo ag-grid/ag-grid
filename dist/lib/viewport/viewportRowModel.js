@@ -1,4 +1,5 @@
-// ag-grid-enterprise v6.4.2
+// ag-grid-enterprise v7.0.0
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -157,8 +158,9 @@ var ViewportRowModel = (function () {
     ViewportRowModel.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = new main_1.RowNode();
         this.context.wireBean(rowNode);
-        rowNode.rowHeight = this.rowHeight;
-        rowNode.rowTop = this.rowHeight * rowIndex;
+        rowNode.setRowHeight(this.rowHeight);
+        rowNode.setRowTop(this.rowHeight * rowIndex);
+        rowNode.setRowIndex(rowIndex);
         return rowNode;
     };
     ViewportRowModel.prototype.setRowCount = function (rowCount) {
@@ -209,5 +211,5 @@ var ViewportRowModel = (function () {
         __metadata('design:paramtypes', [])
     ], ViewportRowModel);
     return ViewportRowModel;
-})();
+}());
 exports.ViewportRowModel = ViewportRowModel;

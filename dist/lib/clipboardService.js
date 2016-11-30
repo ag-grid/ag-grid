@@ -1,4 +1,5 @@
-// ag-grid-enterprise v6.4.2
+// ag-grid-enterprise v7.0.0
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -35,7 +36,7 @@ var ClipboardService = (function () {
         var firstRowValues = null;
         var updatedRowNodes = [];
         var updatedColumnIds = [];
-        this.iterateFirstActiveRange(function (currentRow, rowNode, columns) {
+        var rowCallback = function (currentRow, rowNode, columns) {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues) {
                 firstRowValues = [];
@@ -61,9 +62,9 @@ var ClipboardService = (function () {
                     cellsToFlash[cellId] = true;
                 });
             }
-        });
+        };
+        this.iterateActiveRanges(true, rowCallback);
         // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshView();
         this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
         this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
@@ -89,15 +90,16 @@ var ClipboardService = (function () {
         var cellsToFlash = {};
         var updatedRowNodes = [];
         var updatedColumnIds = [];
-        parsedData.forEach(function (values, index) {
+        var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
+        parsedData.forEach(function (values) {
             // if we have come to end of rows in grid, then skip
             if (!currentRow) {
                 return;
             }
             var rowNode = _this.getRowNode(currentRow);
             updatedRowNodes.push(rowNode);
-            var column = focusedCell.column;
-            values.forEach(function (value) {
+            values.forEach(function (value, index) {
+                var column = columnsToPasteInto[index];
                 if (main_1.Utils.missing(column)) {
                     return;
                 }
@@ -111,7 +113,6 @@ var ClipboardService = (function () {
                 if (updatedColumnIds.indexOf(column.getId()) < 0) {
                     updatedColumnIds.push(column.getId());
                 }
-                column = _this.columnController.getDisplayedColAfter(column);
             });
             // move to next row down for next set of values
             currentRow = _this.cellNavigationService.getRowBelow(currentRow);
@@ -137,14 +138,21 @@ var ClipboardService = (function () {
             this.copySelectedRangeToClipboard(includeHeaders);
         }
     };
-    ClipboardService.prototype.iterateFirstActiveRange = function (rowCallback, columnCallback) {
+    ClipboardService.prototype.iterateActiveRanges = function (onlyFirst, rowCallback, columnCallback) {
+        var _this = this;
         if (this.rangeController.isEmpty()) {
             return;
         }
         var rangeSelections = this.rangeController.getCellRanges();
-        // if more than one range selected, we take the first one only, we ignore the others,
-        // in Excel, it doesn't allow multiple blocks to be copied to clipboard at same time
-        var range = rangeSelections[0];
+        if (onlyFirst) {
+            var range = rangeSelections[0];
+            this.iterateActiveRange(range, rowCallback, columnCallback);
+        }
+        else {
+            rangeSelections.forEach(function (range) { return _this.iterateActiveRange(range, rowCallback, columnCallback); });
+        }
+    };
+    ClipboardService.prototype.iterateActiveRange = function (range, rowCallback, columnCallback) {
         // get starting and ending row, remember rowEnd could be before rowStart
         var startRow = range.start.getGridRow();
         var endRow = range.end.getGridRow();
@@ -203,7 +211,7 @@ var ClipboardService = (function () {
             });
             data += '\r\n';
         };
-        this.iterateFirstActiveRange(rowCallback, columnCallback);
+        this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
         this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
@@ -403,5 +411,5 @@ var ClipboardService = (function () {
         __metadata('design:paramtypes', [])
     ], ClipboardService);
     return ClipboardService;
-})();
+}());
 exports.ClipboardService = ClipboardService;

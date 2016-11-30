@@ -1,4 +1,5 @@
-// ag-grid-enterprise v6.4.2
+// ag-grid-enterprise v7.0.0
+"use strict";
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");
 var renderedGroup_1 = require("./toolPanel/columnsSelect/renderedGroup");
@@ -10,10 +11,12 @@ var statusBar_1 = require("./statusBar/statusBar");
 var statusItem_1 = require("./statusBar/statusItem");
 var clipboardService_1 = require("./clipboardService");
 var enterpriseBoot_1 = require("./enterpriseBoot");
-var enterpriseMenu_1 = require("./enterpriseMenu");
+var enterpriseMenu_1 = require("./menu/enterpriseMenu");
+var menuItemComponent_1 = require("./menu/menuItemComponent");
+var menuList_1 = require("./menu/menuList");
 var rangeController_1 = require("./rangeController");
 var rowGroupColumnsPanel_1 = require("./toolPanel/columnDrop/rowGroupColumnsPanel");
-var contextMenu_1 = require("./contextMenu");
+var contextMenu_1 = require("./menu/contextMenu");
 var viewportRowModel_1 = require("./viewport/viewportRowModel");
 var richSelectCellEditor_1 = require("./rendering/richSelect/richSelectCellEditor");
 var richSelectRow_1 = require("./rendering/richSelect/richSelectRow");
@@ -35,6 +38,9 @@ var rowGroupCompFactory_1 = require("./rowGroupCompFactory");
 function populateClientExports(exports) {
     exports.AggFuncService = aggFuncService_1.AggFuncService;
     exports.MD5 = md5_1.MD5;
+    exports.EnterpriseMenu = enterpriseMenu_1.EnterpriseMenu;
+    exports.MenuList = menuList_1.MenuList;
+    exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
     exports.RichSelectCellEditor = richSelectCellEditor_1.RichSelectCellEditor;
     exports.RichSelectRow = richSelectRow_1.RichSelectRow;
     exports.VirtualList = virtualList_1.VirtualList;
@@ -61,7 +67,6 @@ function populateClientExports(exports) {
     exports.ClipboardService = clipboardService_1.ClipboardService;
     exports.ContextMenuFactory = contextMenu_1.ContextMenuFactory;
     exports.EnterpriseBoot = enterpriseBoot_1.EnterpriseBoot;
-    exports.EnterpriseMenu = enterpriseMenu_1.EnterpriseMenu;
     exports.LicenseManager = licenseManager_1.LicenseManager;
     exports.PivotCompFactory = pivotCompFactory_1.PivotCompFactory;
     exports.RangeController = rangeController_1.RangeController;

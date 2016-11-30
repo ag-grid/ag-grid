@@ -1,13 +1,14 @@
-// ag-grid-enterprise v6.4.2
+// ag-grid-enterprise v7.0.0
+"use strict";
 var main_1 = require("ag-grid/main");
-var enterpriseMenu_1 = require("./enterpriseMenu");
+var enterpriseMenu_1 = require("./menu/enterpriseMenu");
 var rangeController_1 = require("./rangeController");
 var clipboardService_1 = require("./clipboardService");
 var groupStage_1 = require("./rowStages/groupStage");
 var aggregationStage_1 = require("./rowStages/aggregationStage");
 var enterpriseBoot_1 = require("./enterpriseBoot");
 var statusBar_1 = require("./statusBar/statusBar");
-var contextMenu_1 = require("./contextMenu");
+var contextMenu_1 = require("./menu/contextMenu");
 var viewportRowModel_1 = require("./viewport/viewportRowModel");
 var pivotColumnsPanel_1 = require("./toolPanel/columnDrop/pivotColumnsPanel");
 var toolPanelComp_1 = require("./toolPanel/toolPanelComp");
@@ -18,8 +19,9 @@ var pivotStage_1 = require("./rowStages/pivotStage");
 var pivotColDefService_1 = require("./rowStages/pivotColDefService");
 var aggFuncService_1 = require("./aggregation/aggFuncService");
 var pivotCompFactory_1 = require("./pivotCompFactory");
+var menuItemMapper_1 = require("./menu/menuItemMapper");
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel };
 main_1.Grid.setEnterpriseBeans([toolPanelComp_1.ToolPanelComp, enterpriseMenu_1.EnterpriseMenuFactory, rowGroupCompFactory_1.RowGroupCompFactory, pivotCompFactory_1.PivotCompFactory,
     pivotColumnsPanel_1.PivotColumnsPanel, rangeController_1.RangeController, clipboardService_1.ClipboardService, pivotStage_1.PivotStage, pivotColDefService_1.PivotColDefService,
     contextMenu_1.ContextMenuFactory, groupStage_1.GroupStage, aggregationStage_1.AggregationStage, enterpriseBoot_1.EnterpriseBoot, aggFuncService_1.AggFuncService,
-    statusBar_1.StatusBar, licenseManager_1.LicenseManager, md5_1.MD5], rowModelTypes);
+    statusBar_1.StatusBar, licenseManager_1.LicenseManager, md5_1.MD5, menuItemMapper_1.MenuItemMapper], rowModelTypes);

@@ -1,4 +1,5 @@
-// ag-grid-enterprise v6.4.2
+// ag-grid-enterprise v7.0.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -166,7 +167,7 @@ var AbstractColumnDropPanel = (function (_super) {
     };
     AbstractColumnDropPanel.prototype.onDragStop = function () {
         if (this.potentialDndColumns) {
-            var success;
+            var success = void 0;
             if (this.state === AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN) {
                 this.addColumns(this.potentialDndColumns);
                 success = true;
@@ -315,5 +316,5 @@ var AbstractColumnDropPanel = (function (_super) {
     AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
     AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
     return AbstractColumnDropPanel;
-})(main_1.Component);
+}(main_1.Component));
 exports.AbstractColumnDropPanel = AbstractColumnDropPanel;
