@@ -15,34 +15,22 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">28th November 2016</div>
-        <div style="padding-top: 10px;">
-            <a href="/ag-grid-angular2-support-v7/">
-                <img src="../images/agGridDaily.png"/>
-                <br/>
-                ag-Grid v7: AOT & Angular 2 Components
-            </a>
+        <div class="news-header">30th November 2016</div>
+        <img src="../images/agGridDaily.png"/>
+        <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+            <span style="font-weight: bold; color: #800000;">ag-Grid v7 Released</span>
         </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">28th November 2016</div>
-        <div style="padding-top: 10px;">
-            <a href="/ag-grid-aurelia-support-v7/">
-                <img src="../images/agGridDaily.png"/>
-                <br/>
-                ag-Grid v7: Aurelia Support
-            </a>
-        </div>
-    </div>
-
-    <div class="news-box">
-        <div class="news-header">16th November 2016</div>
-        <div class="news-header">ag-grid-ng2 7.0.0-beta Released</div>
-        <div style="padding-top: 10px;">
-            ag-grid-ng2 7.0.0-beta released with support for AOT together with Angular 2 Components. This is a breaking change - please take a look and try it out.<br/>
-            See <a href="/angular-2-beta-release">ag-grid-ng2 7.0.0-beta</a> for more information.
-        </div>
+        <ul>
+            <li>
+                See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+            </li>
+            <li>
+                New blog entry <a href="../ag-grid-angular2-support-v7/">AOT & Angular 2 Components</a>
+            </li>
+            <li>
+                New blog entry <a href="../ag-grid-aurelia-support-v7/">Announcing Aurelia Support</a>
+            </li>
+        </ul>
     </div>
 
     <div class="news-box">
