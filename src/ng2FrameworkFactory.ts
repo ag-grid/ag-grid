@@ -1,4 +1,4 @@
-import {ViewContainerRef, NgZone, Injectable} from "@angular/core";
+import {ViewContainerRef, Injectable} from "@angular/core";
 import {
     ICellRenderer,
     ICellEditor,
@@ -11,110 +11,114 @@ import {
 } from "ag-grid/main";
 import {BaseComponentFactory} from "./baseComponentFactory";
 
-
 @Injectable()
 export class Ng2FrameworkFactory implements IFrameworkFactory {
-    private _viewContainerRef:ViewContainerRef;
-    private _baseFrameworkFactory:IFrameworkFactory = new BaseFrameworkFactory();    // todo - inject this
+    private _viewContainerRef: ViewContainerRef;
+    private _baseFrameworkFactory: IFrameworkFactory = new BaseFrameworkFactory();    // todo - inject this
 
-    constructor(private _componentFactory:BaseComponentFactory, private zone: NgZone) {
+    constructor(private _componentFactory: BaseComponentFactory) {
     }
 
-    public colDefFloatingCellRenderer(colDef:ColDef):{new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+        if(colDef.floatingCellRendererFramework && colDef.floatingCellRendererFramework.component) {
+            console.warn("colDef.floatingCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            colDef.floatingCellRendererFramework = colDef.floatingCellRendererFramework.component;
+        }
+
         if (colDef.floatingCellRendererFramework) {
-            return this._componentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework.component,
-                this._viewContainerRef,
-                colDef.floatingCellRendererFramework.dependencies,
-                colDef.floatingCellRendererFramework.moduleImports
-            )
+            return this._componentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework,
+                this._viewContainerRef)
         } else {
             return this._baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
         }
     }
 
-    public colDefCellRenderer(colDef:ColDef):{new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+        if(colDef.cellRendererFramework && colDef.cellRendererFramework.component) {
+            console.warn("colDef.cellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            colDef.cellRendererFramework = colDef.cellRendererFramework.component;
+        }
+
         if (colDef.cellRendererFramework) {
-            if (colDef.cellRendererFramework.template) {
-                return this._componentFactory.createRendererFromTemplate(colDef.cellRendererFramework.template,
-                    this._viewContainerRef,
-                    colDef.cellRendererFramework.moduleImports);
-            } else {
-                return this._componentFactory.createRendererFromComponent(colDef.cellRendererFramework.component,
-                    this._viewContainerRef,
-                    colDef.cellRendererFramework.dependencies,
-                    colDef.cellRendererFramework.moduleImports
-                )
-            }
+            return this._componentFactory.createRendererFromComponent(colDef.cellRendererFramework,
+                this._viewContainerRef)
         } else {
             return this._baseFrameworkFactory.colDefCellRenderer(colDef);
         }
     }
 
-    public colDefCellEditor(colDef:ColDef):{new(): ICellEditor} | string {
+    public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
+        if(colDef.cellEditorFramework && colDef.cellEditorFramework.component) {
+            console.warn("colDef.cellEditorFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            colDef.cellEditorFramework = colDef.cellEditorFramework.component;
+        }
+
         if (colDef.cellEditorFramework) {
-            return this._componentFactory.createEditorFromComponent(colDef.cellEditorFramework.component,
-                this._viewContainerRef,
-                colDef.cellEditorFramework.dependencies,
-                colDef.cellEditorFramework.moduleImports)
+            return this._componentFactory.createEditorFromComponent(colDef.cellEditorFramework,
+                this._viewContainerRef)
         } else {
             return this._baseFrameworkFactory.colDefCellEditor(colDef);
         }
     }
 
-    public gridOptionsFullWidthCellRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+        if(gridOptions.fullWidthCellRendererFramework && gridOptions.fullWidthCellRendererFramework.component) {
+            console.warn("gridOptions.fullWidthCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            gridOptions.fullWidthCellRendererFramework = gridOptions.fullWidthCellRendererFramework.component;
+        }
+
         if (gridOptions.fullWidthCellRendererFramework) {
-            return this._componentFactory.createRendererFromComponent(gridOptions.fullWidthCellRendererFramework.component,
-                this._viewContainerRef,
-                gridOptions.fullWidthCellRendererFramework.dependencies,
-                gridOptions.fullWidthCellRendererFramework.moduleImports)
+            return this._componentFactory.createRendererFromComponent(gridOptions.fullWidthCellRendererFramework,
+                this._viewContainerRef)
         } else {
             return this._baseFrameworkFactory.gridOptionsFullWidthCellRenderer(gridOptions);
         }
     }
 
-    public gridOptionsGroupRowRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+        if(gridOptions.groupRowRendererFramework && gridOptions.groupRowRendererFramework.component) {
+            console.warn("gridOptions.groupRowRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            gridOptions.groupRowRendererFramework = gridOptions.groupRowRendererFramework.component;
+        }
+
         if (gridOptions.groupRowRendererFramework) {
-            return this._componentFactory.createRendererFromComponent(gridOptions.groupRowRendererFramework.component,
-                this._viewContainerRef,
-                gridOptions.groupRowRendererFramework.dependencies,
-                gridOptions.groupRowRendererFramework.moduleImports)
+            return this._componentFactory.createRendererFromComponent(gridOptions.groupRowRendererFramework,
+                this._viewContainerRef)
         } else {
             return this._baseFrameworkFactory.gridOptionsGroupRowRenderer(gridOptions);
         }
     }
 
-    public gridOptionsGroupRowInnerRenderer(gridOptions:GridOptions):{new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+        if(gridOptions.groupRowInnerRendererFramework && gridOptions.groupRowInnerRendererFramework.component) {
+            console.warn("gridOptions.groupRowRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            gridOptions.groupRowInnerRendererFramework = gridOptions.groupRowInnerRendererFramework.component;
+        }
+
         if (gridOptions.groupRowInnerRendererFramework) {
-            return this._componentFactory.createRendererFromComponent(gridOptions.groupRowInnerRendererFramework.component,
-                this._viewContainerRef,
-                gridOptions.groupRowInnerRendererFramework.dependencies,
-                gridOptions.groupRowInnerRendererFramework.moduleImports)
+            return this._componentFactory.createRendererFromComponent(gridOptions.groupRowInnerRendererFramework,
+                this._viewContainerRef)
         } else {
             return this._baseFrameworkFactory.gridOptionsGroupRowInnerRenderer(gridOptions);
         }
     }
 
-    public colDefFilter(colDef:ColDef):{new (): IFilter;} | string {
+    public colDefFilter(colDef: ColDef): {new (): IFilter;} | string {
+        if(colDef.filterFramework && colDef.filterFramework.component) {
+            console.warn("colDef.filterFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            colDef.filterFramework = colDef.filterFramework.component;
+        }
+
         if (colDef.filterFramework) {
-            return this._componentFactory.createFilterFromComponent(colDef.filterFramework.component,
-                this._viewContainerRef,
-                colDef.filterFramework.dependencies,
-                colDef.filterFramework.moduleImports)
+            return this._componentFactory.createFilterFromComponent(colDef.filterFramework,
+                this._viewContainerRef)
         } else {
 
             return this._baseFrameworkFactory.colDefFilter(colDef);
         }
     }
 
-
-    public setViewContainerRef(viewContainerRef:ViewContainerRef):void {
+    public setViewContainerRef(viewContainerRef: ViewContainerRef): void {
         this._viewContainerRef = viewContainerRef;
-    }
-
-    public setTimeout(handler: any, timeout?: any): number {
-        return this._baseFrameworkFactory.setTimeout(handler, timeout);
-        // return this.zone.runOutsideAngular(() => {
-        //     handler.apply(window, [ () => this.zone.run(action), timeout ])
-        // }, timeout);
     }
 }
