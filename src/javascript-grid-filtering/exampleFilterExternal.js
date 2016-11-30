@@ -14,6 +14,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
+    animateRows: true,
     enableFilter: true,
     isExternalFilterPresent: isExternalFilterPresent,
     doesExternalFilterPass: doesExternalFilterPass

@@ -784,7 +784,7 @@ laterOnInYourApplicationSomewhere() {
 }</pre>
     </p>
 
-    <h3>Example: Filtering using Angular 2 Components</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Example: Filtering using Angular 2 Components</h3>
     <p>
         Using Angular 2 Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
@@ -891,7 +891,7 @@ getPartialMatchFilter() {
 &lt;ag-grid-column header-name="Filter Component" field="name" width.bind="198" filter.bind="getPartialMatchFilter()"></ag-grid-column>
 </pre>
 
-    <h3>Example: Filtering in an  Aurelia Project</h3>
+    <h3><img src="../images/aurelia.png" height="20px"/> Example: Filtering in an  Aurelia Project</h3>
     <p>
         Using a Filter Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>

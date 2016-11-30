@@ -151,7 +151,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <span class="codeComment">// these are bound props, so can use anything in React state or props</span>
     columnDefs={this.props.columnDefs}
-    showToolPanel]={this.state.showToolPanel}
+    showToolPanel={this.state.showToolPanel}
 
     <span class="codeComment">// this is a callback</span>
     isScrollLag={this.myIsScrollLagFunction.bind(this)}

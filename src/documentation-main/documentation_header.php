@@ -245,12 +245,6 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/">Cell Editing</a>
                 <?php } ?>
 
-                <?php if ($key == "Cell Templates") { ?>
-                    <span class="sidebarLinkSelected">Cell Templates</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-template/">Cell Templates</a>
-                <?php } ?>
-
                 <?php if ($key == "Context") { ?>
                     <span class="sidebarLinkSelected">Context</span>
                 <?php } else { ?>
