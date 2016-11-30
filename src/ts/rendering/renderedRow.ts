@@ -977,7 +977,9 @@ export class RenderedRow {
         classes.push('ag-row-no-focus');
 
         if (this.gridOptionsWrapper.isAnimateRows()) {
-            classes.push('ag-row-transition');
+            classes.push('ag-row-animation');
+        } else {
+            classes.push('ag-row-no-animation');
         }
 
         if (this.rowNode.isSelected()) {
