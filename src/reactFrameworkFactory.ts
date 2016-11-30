@@ -4,7 +4,6 @@ import {reactCellEditorFactory} from "./reactCellEditorFactory";
 import {reactFilterFactory} from "./reactFilterFactory";
 
 export class ReactFrameworkFactory implements IFrameworkFactory {
-
     private agGridReact: any;
     private baseFrameworkFactory = new BaseFrameworkFactory();
 
@@ -68,4 +67,7 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
         }
     }
 
+    setTimeout(handler: any, timeout?: any): number {
+        return this.baseFrameworkFactory.setTimeout(handler, timeout);
+    }
 }
