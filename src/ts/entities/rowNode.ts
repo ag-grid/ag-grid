@@ -62,6 +62,8 @@ export class RowNode {
     public canFlower: boolean;
     /** True if this node is a flower */
     public flower: boolean;
+    /** The child flower of this node */
+    public childFlower: RowNode;
     /** True if this node is a group and the group is the bottom level in the tree */
     public leafGroup: boolean;
     /** True if this is the first child in this group */
@@ -160,6 +162,7 @@ export class RowNode {
     }
 
     public setRowTop(rowTop: number): void {
+        if (this.rowTop === rowTop) { return; }
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);

@@ -124,16 +124,23 @@ export class FlattenStage implements IRowNodeStage {
     }
 
     private createFlowerNode(parentNode: RowNode): RowNode {
-        var flowerNode = new RowNode();
-        this.context.wireBean(flowerNode);
-        flowerNode.flower = true;
-        flowerNode.parent = parentNode;
-        if (_.exists(parentNode.id)) {
-            flowerNode.id = 'flowerNode_';
+
+        if (_.exists(parentNode.childFlower)) {
+            return parentNode.childFlower;
+        } else {
+            var flowerNode = new RowNode();
+            this.context.wireBean(flowerNode);
+            flowerNode.flower = true;
+            flowerNode.parent = parentNode;
+            if (_.exists(parentNode.id)) {
+                flowerNode.id = 'flowerNode_' + parentNode.id;
+            }
+            flowerNode.data = parentNode.data;
+            flowerNode.level = parentNode.level + 1;
+            parentNode.childFlower = flowerNode;
+            return flowerNode;
         }
-        flowerNode.data = parentNode.data;
-        flowerNode.level = parentNode.level + 1;
-        return flowerNode;
+
     }
 }
 

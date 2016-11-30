@@ -539,6 +539,7 @@ export class RenderedRow {
     }
 
     private onTopChanged(): void {
+        // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
         this.setRowTop(this.rowNode.rowTop);
     }
     
