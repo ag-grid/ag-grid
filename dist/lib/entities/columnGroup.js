@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var column_1 = require("./column");
 var eventService_1 = require("../eventService");
 var ColumnGroup = (function () {
@@ -203,5 +204,5 @@ var ColumnGroup = (function () {
     ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
     ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
     return ColumnGroup;
-})();
+}());
 exports.ColumnGroup = ColumnGroup;

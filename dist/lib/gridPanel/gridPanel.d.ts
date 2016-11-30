@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
 export declare class GridPanel {
@@ -64,6 +63,8 @@ export declare class GridPanel {
     private destroyFunctions;
     private useScrollLag;
     agWire(loggerFactory: LoggerFactory): void;
+    getBodyTopPixel(): number;
+    getBodyBottomPixel(): number;
     private setScrollBarWidth();
     private destroy();
     private onRowDataChanged();

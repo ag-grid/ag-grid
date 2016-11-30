@@ -1,13 +1,11 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnController";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { MenuItem } from "../widgets/menuItemComponent";
 import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 import { IAggFunc, ColGroupDef, ColDef } from "./colDef";
 import { IDatasource } from "../rowControllers/iDatasource";
@@ -31,6 +29,7 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    enableRtlSupport?: boolean;
     enableColResize?: boolean;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
@@ -54,6 +53,7 @@ export interface GridOptions {
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
     autoSizePadding?: number;
+    animateRows?: boolean;
     suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;
     suppressDragLeaveHidesColumns?: boolean;
@@ -105,8 +105,10 @@ export interface GridOptions {
      ****************************************************************/
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
+    groupSelectsFiltered?: boolean;
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
+    groupRemoveSingleChildren?: boolean;
     groupSuppressRow?: boolean;
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
@@ -257,7 +259,16 @@ export interface GetContextMenuItemsParams {
     context: any;
 }
 export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): (string | MenuItem)[];
+    (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
+}
+export interface MenuItemDef {
+    name: string;
+    disabled?: boolean;
+    shortcut?: string;
+    action?: () => void;
+    checked?: boolean;
+    icon?: HTMLElement | string;
+    subMenu?: (MenuItemDef | string)[];
 }
 export interface GetMainMenuItemsParams {
     column: Column;
@@ -267,7 +278,7 @@ export interface GetMainMenuItemsParams {
     defaultItems: string[];
 }
 export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string | MenuItem)[];
+    (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
 }
 export interface GetRowNodeIdFunc {
     (data: any): string;

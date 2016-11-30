@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -190,11 +191,13 @@ var RenderedHeaderGroupCell = (function () {
         var eGroupIcon;
         if (this.columnGroup.isExpanded()) {
             eGroupIcon = utils_1.Utils.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
+            utils_1.Utils.addCssClass(eGroupIcon, 'ag-header-expand-icon-expanded');
         }
         else {
             eGroupIcon = utils_1.Utils.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+            utils_1.Utils.addCssClass(eGroupIcon, 'ag-header-expand-icon-collapsed');
         }
-        eGroupIcon.className = 'ag-header-expand-icon';
+        utils_1.Utils.addCssClass(eGroupIcon, 'ag-header-expand-icon');
         eGroupCellLabel.appendChild(eGroupIcon);
         var expandAction = function () {
             var newExpandedValue = !_this.columnGroup.isExpanded();
@@ -278,5 +281,5 @@ var RenderedHeaderGroupCell = (function () {
         __metadata('design:returntype', void 0)
     ], RenderedHeaderGroupCell.prototype, "init", null);
     return RenderedHeaderGroupCell;
-})();
+}());
 exports.RenderedHeaderGroupCell = RenderedHeaderGroupCell;

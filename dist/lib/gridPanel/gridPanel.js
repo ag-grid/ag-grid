@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -114,6 +115,12 @@ var GridPanel = (function () {
         this.setScrollBarWidth();
         this.logger = loggerFactory.create('GridPanel');
         this.findElements();
+    };
+    GridPanel.prototype.getBodyTopPixel = function () {
+        return this.eBodyViewport.scrollTop;
+    };
+    GridPanel.prototype.getBodyBottomPixel = function () {
+        return this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight;
     };
     GridPanel.prototype.setScrollBarWidth = function () {
         // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
@@ -513,13 +520,13 @@ var GridPanel = (function () {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.drawVirtualRows();
+            this.rowRenderer.drawVirtualRowsWithLock();
         }
         else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var newScrollPosition = rowBottomPixel - viewportHeight;
             eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.drawVirtualRows();
+            this.rowRenderer.drawVirtualRowsWithLock();
         }
         // otherwise, row is already in view, so do nothing
     };
@@ -1014,7 +1021,7 @@ var GridPanel = (function () {
                     that.lastTopPosition = newTopPosition;
                     that.verticallyScrollLeftPinned(newTopPosition);
                     that.verticallyScrollFullWidthCellContainer(newTopPosition);
-                    that.rowRenderer.drawVirtualRows();
+                    that.rowRenderer.drawVirtualRowsWithLock();
                 }
             }
         }
@@ -1026,7 +1033,7 @@ var GridPanel = (function () {
                 that.verticallyScrollLeftPinned(newTopPosition);
                 that.verticallyScrollFullWidthCellContainer(newTopPosition);
                 that.verticallyScrollBody(newTopPosition);
-                that.rowRenderer.drawVirtualRows();
+                that.rowRenderer.drawVirtualRowsWithLock();
             }
         }
         var bodyViewportScrollListener = this.useScrollLag ? this.debounce.bind(this, onBodyViewportScroll) : onBodyViewportScroll;
@@ -1257,5 +1264,5 @@ var GridPanel = (function () {
         __metadata('design:paramtypes', [])
     ], GridPanel);
     return GridPanel;
-})();
+}());
 exports.GridPanel = GridPanel;

@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var componentUtil_1 = require("./componentUtil");
 var grid_1 = require("../grid");
 var registered = false;
@@ -30,7 +31,8 @@ function initialiseAgGridWithWebComponents() {
             }
         });
     });
-    AgileGridProto.__agGridSetProperty = function (key, value) {
+    var agGridProtoNoType = AgileGridProto;
+    agGridProtoNoType.__agGridSetProperty = function (key, value) {
         if (!this.__attributes) {
             this.__attributes = {};
         }
@@ -40,18 +42,18 @@ function initialiseAgGridWithWebComponents() {
         changeObject[key] = { currentValue: value };
         this.onChange(changeObject);
     };
-    AgileGridProto.onChange = function (changes) {
+    agGridProtoNoType.onChange = function (changes) {
         if (this._initialised) {
             componentUtil_1.ComponentUtil.processOnChange(changes, this._gridOptions, this.api, this.columnApi);
         }
     };
-    AgileGridProto.__agGridGetProperty = function (key) {
+    agGridProtoNoType.__agGridGetProperty = function (key) {
         if (!this.__attributes) {
             this.__attributes = {};
         }
         return this.__attributes[key];
     };
-    AgileGridProto.setGridOptions = function (options) {
+    agGridProtoNoType.setGridOptions = function (options) {
         var globalEventListener = this.globalEventListener.bind(this);
         this._gridOptions = componentUtil_1.ComponentUtil.copyAttributesToGridOptions(options, this);
         var gridParams = {
@@ -63,26 +65,26 @@ function initialiseAgGridWithWebComponents() {
         this._initialised = true;
     };
     // copies all the attributes into this object
-    AgileGridProto.createdCallback = function () {
+    agGridProtoNoType.createdCallback = function () {
         for (var i = 0; i < this.attributes.length; i++) {
             var attribute = this.attributes[i];
             this.setPropertyFromAttribute(attribute);
         }
     };
-    AgileGridProto.setPropertyFromAttribute = function (attribute) {
+    agGridProtoNoType.setPropertyFromAttribute = function (attribute) {
         var name = toCamelCase(attribute.nodeName);
         var value = attribute.nodeValue;
         if (componentUtil_1.ComponentUtil.ALL_PROPERTIES.indexOf(name) >= 0) {
             this[name] = value;
         }
     };
-    AgileGridProto.attachedCallback = function (params) { };
-    AgileGridProto.detachedCallback = function (params) { };
-    AgileGridProto.attributeChangedCallback = function (attributeName) {
+    agGridProtoNoType.attachedCallback = function (params) { };
+    agGridProtoNoType.detachedCallback = function (params) { };
+    agGridProtoNoType.attributeChangedCallback = function (attributeName) {
         var attribute = this.attributes[attributeName];
         this.setPropertyFromAttribute(attribute);
     };
-    AgileGridProto.globalEventListener = function (eventType, event) {
+    agGridProtoNoType.globalEventListener = function (eventType, event) {
         var eventLowerCase = eventType.toLowerCase();
         var browserEvent = new Event(eventLowerCase);
         var browserEventNoType = browserEvent;

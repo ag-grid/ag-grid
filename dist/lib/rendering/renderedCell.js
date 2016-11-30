@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -46,7 +47,7 @@ var setLeftFeature_1 = require("./features/setLeftFeature");
 var methodNotImplementedException_1 = require("../misc/methodNotImplementedException");
 var RenderedCell = (function (_super) {
     __extends(RenderedCell, _super);
-    function RenderedCell(column, node, rowIndex, scope, renderedRow) {
+    function RenderedCell(column, node, scope, renderedRow) {
         _super.call(this, '<div/>');
         this.firstRightPinned = false;
         this.lastLeftPinned = false;
@@ -55,11 +56,18 @@ var RenderedCell = (function (_super) {
         this.eGridCell = this.getGui();
         this.column = column;
         this.node = node;
-        this.rowIndex = rowIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
-        this.gridCell = new gridCell_1.GridCell(rowIndex, node.floating, column);
+        this.setupGridCell();
     }
+    RenderedCell.prototype.setupGridCell = function () {
+        var _this = this;
+        var listener = function () {
+            _this.gridCell = new gridCell_1.GridCell(_this.node.rowIndex, _this.node.floating, _this.column);
+        };
+        this.addDestroyableEventListener(this.node, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, listener);
+        listener();
+    };
     RenderedCell.prototype.getGridCell = function () {
         return this.gridCell;
     };
@@ -361,7 +369,7 @@ var RenderedCell = (function (_super) {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(key, this.gridCell.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     };
@@ -429,6 +437,7 @@ var RenderedCell = (function (_super) {
             cellStartedEdit: cellStartedEdit,
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
+            $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.eGridCell
@@ -534,7 +543,7 @@ var RenderedCell = (function (_super) {
     };
     RenderedCell.prototype.focusCell = function (forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     };
     // pass in 'true' to cancel the editing.
     RenderedCell.prototype.stopRowOrCellEdit = function (cancel) {
@@ -593,7 +602,7 @@ var RenderedCell = (function (_super) {
             node: this.node,
             data: this.node.data,
             value: this.value,
-            rowIndex: this.rowIndex,
+            rowIndex: this.gridCell.rowIndex,
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
@@ -790,7 +799,7 @@ var RenderedCell = (function (_super) {
                 data: this.node.data,
                 node: this.node,
                 colDef: colDef,
-                rowIndex: this.rowIndex,
+                rowIndex: this.gridCell.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
@@ -900,7 +909,7 @@ var RenderedCell = (function (_super) {
         var colDef = this.column.getColDef();
         var cellRenderer = this.column.getCellRenderer();
         var floatingCellRenderer = this.column.getFloatingCellRenderer();
-        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
+        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, this.value);
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
@@ -944,7 +953,7 @@ var RenderedCell = (function (_super) {
         }
     };
     RenderedCell.prototype.formatValue = function (value) {
-        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, value);
+        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, value);
     };
     RenderedCell.prototype.createRendererAndRefreshParams = function (valueFormatted, cellRendererParams) {
         var params = {
@@ -957,7 +966,7 @@ var RenderedCell = (function (_super) {
             colDef: this.column.getColDef(),
             column: this.column,
             $scope: this.scope,
-            rowIndex: this.rowIndex,
+            rowIndex: this.gridCell.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
@@ -1073,5 +1082,5 @@ var RenderedCell = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RenderedCell.prototype, "init", null);
     return RenderedCell;
-})(component_1.Component);
+}(component_1.Component));
 exports.RenderedCell = RenderedCell;

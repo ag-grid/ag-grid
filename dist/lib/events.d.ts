@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 export declare class Events {
     /** A new set of columns has been entered, everything has potentially changed. */
     static EVENT_COLUMN_EVERYTHING_CHANGED: string;
@@ -67,4 +66,12 @@ export declare class Events {
     static EVENT_ITEMS_ADDED: string;
     static EVENT_ITEMS_REMOVED: string;
     static EVENT_BODY_SCROLL: string;
+}
+export interface ModelUpdatedEvent {
+    /** If true, the grid will try and animate the rows to the new positions */
+    animate: boolean;
+    /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
+     * it's the same data but sorted or filtered, in which case this is true, and rows
+     * can animate around (eg rowNode id 24 is the same row node as last time). */
+    keepRenderedRows: boolean;
 }

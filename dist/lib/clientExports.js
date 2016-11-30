@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var grid_1 = require("./grid");
 var gridApi_1 = require("./gridApi");
 var events_1 = require("./events");
@@ -53,7 +54,6 @@ var sortStage_1 = require("./rowControllers/inMemory/sortStage");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
 var paginationController_1 = require("./rowControllers/paginationController");
 var component_1 = require("./widgets/component");
-var menuList_1 = require("./widgets/menuList");
 var cellNavigationService_1 = require("./cellNavigationService");
 var columnChangeEvent_1 = require("./columnChangeEvent");
 var constants_1 = require("./constants");
@@ -73,7 +73,6 @@ var popupService_1 = require("./widgets/popupService");
 var gridRow_1 = require("./entities/gridRow");
 var inMemoryRowModel_1 = require("./rowControllers/inMemory/inMemoryRowModel");
 var virtualPageRowModel_1 = require("./rowControllers/virtualPagination/virtualPageRowModel");
-var menuItemComponent_1 = require("./widgets/menuItemComponent");
 var animateSlideCellRenderer_1 = require("./rendering/cellRenderers/animateSlideCellRenderer");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
@@ -204,8 +203,6 @@ function populateClientExports(exports) {
     exports.AgCheckbox = agCheckbox_1.AgCheckbox;
     exports.Component = component_1.Component;
     exports.PopupService = popupService_1.PopupService;
-    exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
-    exports.MenuList = menuList_1.MenuList;
     exports.Listener = componentAnnotations_1.Listener;
     exports.QuerySelector = componentAnnotations_1.QuerySelector;
     exports.TouchListener = touchListener_1.TouchListener;

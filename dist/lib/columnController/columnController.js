@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -62,9 +63,20 @@ var ColumnApi = (function () {
     ColumnApi.prototype.getDisplayedRightColumns = function () { return this._columnController.getDisplayedRightColumns(); };
     ColumnApi.prototype.getAllDisplayedColumns = function () { return this._columnController.getAllDisplayedColumns(); };
     ColumnApi.prototype.getAllDisplayedVirtualColumns = function () { return this._columnController.getAllDisplayedVirtualColumns(); };
-    ColumnApi.prototype.moveColumn = function (fromIndex, toIndex) { this._columnController.moveColumnByIndex(fromIndex, toIndex); };
+    ColumnApi.prototype.moveColumn = function (key, toIndex) {
+        if (typeof key === 'number') {
+            // moveColumn used to take indexes, so this is advising user who hasn't moved to new method name
+            console.log('ag-Grid: you are using moveColumn(fromIndex, toIndex) - moveColumn takes a column key and a destination index, not two indexes, to move with indexes use moveColumnByIndex(from,to) instead');
+            this._columnController.moveColumnByIndex(key, toIndex);
+        }
+        else {
+            this._columnController.moveColumn(key, toIndex);
+        }
+    };
+    ColumnApi.prototype.moveColumnByIndex = function (fromIndex, toIndex) { this._columnController.moveColumnByIndex(fromIndex, toIndex); };
+    ColumnApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex) { this._columnController.moveColumns(columnsToMoveKeys, toIndex); };
     ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this._columnController.moveRowGroupColumn(fromIndex, toIndex); };
-    ColumnApi.prototype.setColumnAggFunct = function (column, aggFunc) { this._columnController.setColumnAggFunc(column, aggFunc); };
+    ColumnApi.prototype.setColumnAggFunc = function (column, aggFunc) { this._columnController.setColumnAggFunc(column, aggFunc); };
     ColumnApi.prototype.setColumnWidth = function (key, newWidth, finished) {
         if (finished === void 0) { finished = true; }
         this._columnController.setColumnWidth(key, newWidth, finished);
@@ -160,7 +172,7 @@ var ColumnApi = (function () {
         __metadata('design:paramtypes', [])
     ], ColumnApi);
     return ColumnApi;
-})();
+}());
 exports.ColumnApi = ColumnApi;
 var ColumnController = (function () {
     function ColumnController() {
@@ -194,6 +206,16 @@ var ColumnController = (function () {
     ColumnController.prototype.setViewportLeftAndRight = function () {
         this.viewportLeft = this.scrollPosition;
         this.viewportRight = this.totalWidth + this.scrollPosition;
+    };
+    // used by clipboard service, to know what columns to paste into
+    ColumnController.prototype.getDisplayedColumnsStartingAt = function (column) {
+        var currentColumn = column;
+        var result = [];
+        while (utils_1.Utils.exists(currentColumn)) {
+            result.push(currentColumn);
+            currentColumn = this.getDisplayedColAfter(currentColumn);
+        }
+        return result;
     };
     ColumnController.prototype.checkDisplayedCenterColumns = function () {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
@@ -1694,5 +1716,5 @@ var ColumnController = (function () {
         __metadata('design:paramtypes', [])
     ], ColumnController);
     return ColumnController;
-})();
+}());
 exports.ColumnController = ColumnController;

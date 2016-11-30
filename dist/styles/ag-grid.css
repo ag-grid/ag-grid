@@ -387,6 +387,20 @@ ag-grid-ng2 {
   position: relative;
   display: inline-block;
 }
+.ag-row-animation {
+  -webkit-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+  -moz-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+  -o-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+  -ms-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+}
+.ag-row-no-animation {
+  -webkit-transition: background-color 0.1s;
+  -moz-transition: background-color 0.1s;
+  -o-transition: background-color 0.1s;
+  -ms-transition: background-color 0.1s;
+  transition: background-color 0.1s;
+}
 .ag-scrolls .ag-row {
   white-space: nowrap;
   position: absolute;
@@ -426,7 +440,7 @@ ag-grid-ng2 {
   overflow: hidden;
   position: absolute;
 }
-.ag-fade-out {
+.ag-value-slide-out {
   opacity: 1;
   -ms-filter: none;
   filter: none;
@@ -442,11 +456,16 @@ ag-grid-ng2 {
   -ms-transition-timing-function: linear;
   transition-timing-function: linear;
 }
-.ag-fade-out-end {
+.ag-value-slide-out-end {
   opacity: 0;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
   margin-right: 10px;
+}
+.ag-opacity-zero {
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
 }
 .ag-cell-edit-input {
   width: 100%;

@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ICellRenderer, ICellRendererFunc } from "./cellRenderers/iCellRenderer";
 /** Class to use a cellRenderer. */
 export declare class CellRendererService {

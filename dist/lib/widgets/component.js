@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var utils_1 = require('../utils');
 var eventService_1 = require("../eventService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
@@ -170,6 +171,8 @@ var Component = (function () {
     Component.prototype.destroy = function () {
         this.childComponents.forEach(function (childComponent) { return childComponent.destroy(); });
         this.destroyFunctions.forEach(function (func) { return func(); });
+        this.childComponents.length = 0;
+        this.destroyFunctions.length = 0;
         this.removeAnnotatedEventListeners();
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
@@ -216,5 +219,5 @@ var Component = (function () {
     };
     Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
     return Component;
-})();
+}());
 exports.Component = Component;

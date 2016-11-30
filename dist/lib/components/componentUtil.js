@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var events_1 = require("../events");
 var utils_1 = require("../utils");
 var ComponentUtil = (function () {
@@ -182,7 +183,8 @@ var ComponentUtil = (function () {
         'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
-        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass'
+        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass',
+        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtlSupport'
     ];
     ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
@@ -197,7 +199,7 @@ var ComponentUtil = (function () {
         .concat(ComponentUtil.FUNCTION_PROPERTIES)
         .concat(ComponentUtil.BOOLEAN_PROPERTIES);
     return ComponentUtil;
-})();
+}());
 exports.ComponentUtil = ComponentUtil;
 utils_1.Utils.iterateObject(events_1.Events, function (key, value) {
     ComponentUtil.EVENTS.push(value);

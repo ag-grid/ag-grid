@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -36,13 +37,14 @@ var InMemoryRowModel = (function () {
     function InMemoryRowModel() {
     }
     InMemoryRowModel.prototype.init = function () {
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_EVERYTHING));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_EVERYTHING));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING }));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING }));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_PIVOT));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_FILTER_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_FILTER));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_SORT));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, constants_1.Constants.STEP_PIVOT));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_PIVOT }));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_PIVOT }));
         this.rootNode = new rowNode_1.RowNode();
         this.nodeManager = new inMemoryNodeManager_1.InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService);
         this.context.wireBean(this.rootNode);
@@ -50,18 +52,35 @@ var InMemoryRowModel = (function () {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
         }
     };
+    InMemoryRowModel.prototype.onRowGroupOpened = function () {
+        var animate = this.gridOptionsWrapper.isAnimateRows();
+        this.refreshModel({ step: constants_1.Constants.STEP_MAP, keepRenderedRows: true, animate: animate });
+    };
+    InMemoryRowModel.prototype.onFilterChanged = function () {
+        var animate = this.gridOptionsWrapper.isAnimateRows();
+        this.refreshModel({ step: constants_1.Constants.STEP_FILTER, keepRenderedRows: true, animate: animate });
+    };
+    InMemoryRowModel.prototype.onSortChanged = function () {
+        // we only act on the sort event here if the user is doing in grid sorting.
+        // we ignore it if the sorting is happening on the server side.
+        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+            return;
+        }
+        var animate = this.gridOptionsWrapper.isAnimateRows();
+        this.refreshModel({ step: constants_1.Constants.STEP_SORT, keepRenderedRows: true, animate: animate });
+    };
     InMemoryRowModel.prototype.getType = function () {
         return constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
     };
     InMemoryRowModel.prototype.onValueChanged = function () {
         if (this.columnController.isPivotActive()) {
-            this.refreshModel(constants_1.Constants.STEP_PIVOT);
+            this.refreshModel({ step: constants_1.Constants.STEP_PIVOT });
         }
         else {
-            this.refreshModel(constants_1.Constants.STEP_AGGREGATE);
+            this.refreshModel({ step: constants_1.Constants.STEP_AGGREGATE });
         }
     };
-    InMemoryRowModel.prototype.refreshModel = function (step, fromIndex, groupState) {
+    InMemoryRowModel.prototype.refreshModel = function (params) {
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
         // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
@@ -73,10 +92,10 @@ var InMemoryRowModel = (function () {
         // step get done
         // var start: number;
         // console.log('======= start =======');
-        switch (step) {
+        switch (params.step) {
             case constants_1.Constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(groupState);
+                this.doRowGrouping(params.groupState);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -96,7 +115,8 @@ var InMemoryRowModel = (function () {
                 // start = new Date().getTime();
                 this.doRowsToDisplay();
         }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, { fromIndex: fromIndex });
+        var event = { animate: params.animate, keepRenderedRows: params.keepRenderedRows };
+        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, event);
         if (this.$scope) {
             setTimeout(function () {
                 _this.$scope.$apply();
@@ -264,7 +284,7 @@ var InMemoryRowModel = (function () {
                 }
             });
         }
-        this.refreshModel(constants_1.Constants.STEP_MAP);
+        this.refreshModel({ step: constants_1.Constants.STEP_MAP });
     };
     InMemoryRowModel.prototype.doSort = function () {
         this.sortStage.execute(this.rootNode);
@@ -330,7 +350,7 @@ var InMemoryRowModel = (function () {
         // - shows 'no rows' overlay if needed
         this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_CHANGED);
         if (refresh) {
-            this.refreshModel(constants_1.Constants.STEP_EVERYTHING, null, groupState);
+            this.refreshModel({ step: constants_1.Constants.STEP_EVERYTHING, groupState: groupState });
         }
     };
     InMemoryRowModel.prototype.doRowsToDisplay = function () {
@@ -341,6 +361,13 @@ var InMemoryRowModel = (function () {
         var groupState = this.getGroupState();
         var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
         this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes, groupState);
+    };
+    InMemoryRowModel.prototype.onRowHeightChanged = function () {
+        this.refreshModel({ step: constants_1.Constants.STEP_MAP, keepRenderedRows: true });
+    };
+    InMemoryRowModel.prototype.resetRowHeights = function () {
+        this.forEachNode(function (rowNode) { return rowNode.setRowHeight(null); });
+        this.onRowHeightChanged();
     };
     InMemoryRowModel.prototype.removeItems = function (rowNodes) {
         var groupState = this.getGroupState();
@@ -354,7 +381,7 @@ var InMemoryRowModel = (function () {
     };
     InMemoryRowModel.prototype.refreshAndFireEvent = function (eventName, rowNodes, groupState) {
         if (rowNodes) {
-            this.refreshModel(constants_1.Constants.STEP_EVERYTHING, null, groupState);
+            this.refreshModel({ step: constants_1.Constants.STEP_EVERYTHING, groupState: groupState });
             this.eventService.dispatchEvent(eventName, { rowNodes: rowNodes });
         }
     };
@@ -421,5 +448,5 @@ var InMemoryRowModel = (function () {
         __metadata('design:paramtypes', [])
     ], InMemoryRowModel);
     return InMemoryRowModel;
-})();
+}());
 exports.InMemoryRowModel = InMemoryRowModel;

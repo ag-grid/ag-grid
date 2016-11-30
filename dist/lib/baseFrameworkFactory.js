@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
 var BaseFrameworkFactory = (function () {
     function BaseFrameworkFactory() {
@@ -29,6 +30,9 @@ var BaseFrameworkFactory = (function () {
     BaseFrameworkFactory.prototype.gridOptionsGroupRowInnerRenderer = function (gridOptions) {
         return gridOptions.groupRowInnerRenderer;
     };
+    BaseFrameworkFactory.prototype.setTimeout = function (handler, timeout) {
+        return setTimeout(handler, timeout);
+    };
     return BaseFrameworkFactory;
-})();
+}());
 exports.BaseFrameworkFactory = BaseFrameworkFactory;

@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var utils_1 = require('../utils');
 var CssClassApplier = (function () {
     function CssClassApplier() {
@@ -52,5 +53,5 @@ var CssClassApplier = (function () {
         }
     };
     return CssClassApplier;
-})();
+}());
 exports.CssClassApplier = CssClassApplier;

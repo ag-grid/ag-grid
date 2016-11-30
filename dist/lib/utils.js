@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 // util class, only used when debugging, for printing time to console
@@ -17,7 +18,7 @@ var Timer = (function () {
         this.timestamp = new Date().getTime();
     };
     return Timer;
-})();
+}());
 exports.Timer = Timer;
 var Utils = (function () {
     function Utils() {
@@ -148,6 +149,12 @@ var Utils = (function () {
             });
         }
     };
+    Utils.pushAll = function (target, source) {
+        if (this.missing(source) || this.missing(target)) {
+            return;
+        }
+        source.forEach(function (func) { return target.push(func); });
+    };
     Utils.getFunctionParameters = function (func) {
         var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
         var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
@@ -236,6 +243,9 @@ var Utils = (function () {
     };
     Utils.missingOrEmpty = function (value) {
         return this.missing(value) || value.length === 0;
+    };
+    Utils.missingOrEmptyObject = function (value) {
+        return this.missing(value) || Object.keys(value).length === 0;
     };
     Utils.exists = function (value) {
         if (value === null || value === undefined || value === '') {
@@ -479,6 +489,21 @@ var Utils = (function () {
             return '';
         }
     };
+    Utils.prependDC = function (parent, documentFragment) {
+        if (this.exists(parent.firstChild)) {
+            parent.insertBefore(documentFragment, parent.firstChild);
+        }
+        else {
+            parent.appendChild(documentFragment);
+        }
+    };
+    // static prepend(parent: HTMLElement, child: HTMLElement): void {
+    //     if (this.exists(parent.firstChild)) {
+    //         parent.insertBefore(child, parent.firstChild);
+    //     } else {
+    //         parent.appendChild(child);
+    //     }
+    // }
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
@@ -812,17 +837,20 @@ var Utils = (function () {
             pixelY: pY };
     };
     return Utils;
-})();
+}());
 exports.Utils = Utils;
 var NumberSequence = (function () {
-    function NumberSequence() {
-        this.nextValue = 0;
+    function NumberSequence(initValue, step) {
+        if (initValue === void 0) { initValue = 0; }
+        if (step === void 0) { step = 1; }
+        this.nextValue = initValue;
+        this.step = step;
     }
     NumberSequence.prototype.next = function () {
         var valToReturn = this.nextValue;
-        this.nextValue++;
+        this.nextValue += this.step;
         return valToReturn;
     };
     return NumberSequence;
-})();
+}());
 exports.NumberSequence = NumberSequence;

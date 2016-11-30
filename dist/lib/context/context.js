@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var utils_1 = require("../utils");
 var logger_1 = require("../logger");
 var Context = (function () {
@@ -215,7 +216,7 @@ var Context = (function () {
         this.logger.log('>> ag-Application Context shut down - component is dead');
     };
     return Context;
-})();
+}());
 exports.Context = Context;
 // taken from: http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply
 // allows calling 'apply' on a constructor

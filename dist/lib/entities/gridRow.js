@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var constants_1 = require("../constants");
 var utils_1 = require('../utils');
 var gridCell_1 = require("./gridCell");
@@ -64,5 +65,5 @@ var GridRow = (function () {
         return this.rowIndex <= otherSelection.rowIndex;
     };
     return GridRow;
-})();
+}());
 exports.GridRow = GridRow;

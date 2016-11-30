@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -49,13 +50,6 @@ var CsvCreator = (function () {
         }
     };
     CsvCreator.prototype.getDataAsCsv = function (params) {
-        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
-            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
-            return '';
-        }
-        var inMemoryRowModel = this.rowModel;
-        var that = this;
-        var result = '';
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
         var skipFooters = params && params.skipFooters;
@@ -74,6 +68,18 @@ var CsvCreator = (function () {
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
         var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
+        var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
+        var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
+        // we can only export if it's a normal row model - unless we are exporting
+        // selected only, as this way we don't use the selected nodes rather than
+        // the row model to get the rows
+        if (!rowModelNormal && !onlySelected) {
+            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
+            return '';
+        }
+        var inMemoryRowModel = this.rowModel;
+        var that = this;
+        var result = '';
         var columnsToExport;
         if (utils_1.Utils.existsAndNotEmpty(columnKeys)) {
             columnsToExport = this.columnController.getGridColumns(columnKeys);
@@ -100,11 +106,19 @@ var CsvCreator = (function () {
             inMemoryRowModel.forEachPivotNode(processRow);
         }
         else {
-            if (onlySelectedAllPages) {
+            // onlySelectedAllPages: user doing pagination and wants selected items from
+            // other pages, so cannot use the standard row model as it won't have rows from
+            // other pages.
+            // onlySelectedNonStandardModel: if user wants selected in non standard row model
+            // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
+            if (onlySelectedAllPages || onlySelectedNonStandardModel) {
                 var selectedNodes = this.selectionController.getSelectedNodes();
                 selectedNodes.forEach(processRow);
             }
             else {
+                // here is everything else - including standard row model and selected. we don't use
+                // the selection model even when just using selected, so that the result is the order
+                // of the rows appearing on the screen.
                 inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
             }
         }
@@ -252,5 +266,5 @@ var CsvCreator = (function () {
         __metadata('design:paramtypes', [])
     ], CsvCreator);
     return CsvCreator;
-})();
+}());
 exports.CsvCreator = CsvCreator;

@@ -1,13 +1,13 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { LoggerFactory } from "./logger";
 export declare class GridCore {
     private gridOptions;
     private gridOptionsWrapper;
     private paginationController;
     private rowModel;
+    private frameworkFactory;
     private columnController;
     private rowRenderer;
     private filterManager;

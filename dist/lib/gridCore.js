@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -145,7 +146,7 @@ var GridCore = (function () {
             var intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
             // if interval is negative, this stops the layout from happening
             if (intervalMillis > 0) {
-                setTimeout(function () {
+                this.frameworkFactory.setTimeout(function () {
                     _this.doLayout();
                     _this.gridPanel.periodicallyCheck();
                     _this.periodicallyDoLayout();
@@ -154,7 +155,7 @@ var GridCore = (function () {
             else {
                 // if user provided negative number, we still do the check every 5 seconds,
                 // in case the user turns the number positive again
-                setTimeout(function () {
+                this.frameworkFactory.setTimeout(function () {
                     _this.periodicallyDoLayout();
                 }, 5000);
             }
@@ -216,7 +217,7 @@ var GridCore = (function () {
         var sizeChanged = this.eRootPanel.doLayout();
         // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
         if (sizeChanged) {
-            this.rowRenderer.drawVirtualRows();
+            this.rowRenderer.drawVirtualRowsWithLock();
             var event = {
                 clientWidth: this.eRootPanel.getGui().clientWidth,
                 clientHeight: this.eRootPanel.getGui().clientHeight
@@ -240,6 +241,10 @@ var GridCore = (function () {
         context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], GridCore.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('frameworkFactory'), 
+        __metadata('design:type', Object)
+    ], GridCore.prototype, "frameworkFactory", void 0);
     __decorate([
         context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
@@ -314,5 +319,5 @@ var GridCore = (function () {
         __metadata('design:paramtypes', [logger_1.LoggerFactory])
     ], GridCore);
     return GridCore;
-})();
+}());
 exports.GridCore = GridCore;

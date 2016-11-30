@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -34,8 +35,25 @@ var FlattenStage = (function () {
         // is where the pivot values are
         var showRootNode = pivotMode && rootNode.leafGroup;
         var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
+        // set all row tops to null, then set row tops on all visible rows. if we don't
+        // do this, then the algorithm below only sets row tops, old row tops from old rows
+        // will still lie around
+        this.resetRowTops(rootNode);
         this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, pivotMode);
         return result;
+    };
+    FlattenStage.prototype.resetRowTops = function (rowNode) {
+        rowNode.clearRowTop();
+        if (rowNode.group) {
+            if (rowNode.childrenAfterGroup) {
+                for (var i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+                    this.resetRowTops(rowNode.childrenAfterGroup[i]);
+                }
+            }
+            if (rowNode.sibling) {
+                rowNode.sibling.clearRowTop();
+            }
+        }
     };
     FlattenStage.prototype.recursivelyAddToRowsToDisplay = function (rowsToFlatten, result, nextRowTop, reduce) {
         if (utils_1.Utils.missingOrEmpty(rowsToFlatten)) {
@@ -50,12 +68,14 @@ var FlattenStage = (function () {
             if (!skipGroupNode) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
             }
-            if (rowNode.group && rowNode.expanded) {
-                this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
-                // put a footer in if user is looking for it
-                if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-                    var footerNode = this.createFooterNode(rowNode);
-                    this.addRowNodeToRowsToDisplay(footerNode, result, nextRowTop);
+            if (rowNode.group) {
+                if (rowNode.expanded) {
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
+                    // put a footer in if user is looking for it
+                    if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+                        this.ensureFooterNodeExists(rowNode);
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop);
+                    }
                 }
             }
             if (rowNode.canFlower && rowNode.expanded) {
@@ -67,32 +87,54 @@ var FlattenStage = (function () {
     // duplicated method, it's also in floatingRowModel
     FlattenStage.prototype.addRowNodeToRowsToDisplay = function (rowNode, result, nextRowTop) {
         result.push(rowNode);
-        rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-        rowNode.rowTop = nextRowTop.value;
+        if (utils_1.Utils.missing(rowNode.rowHeight)) {
+            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+            rowNode.setRowHeight(rowHeight);
+        }
+        rowNode.setRowTop(nextRowTop.value);
+        rowNode.setRowIndex(result.length - 1);
         nextRowTop.value += rowNode.rowHeight;
     };
-    FlattenStage.prototype.createFooterNode = function (groupNode) {
+    FlattenStage.prototype.ensureFooterNodeExists = function (groupNode) {
+        // only create footer node once, otherwise we have daemons and
+        // the animate screws up with the daemons hanging around
+        if (utils_1.Utils.exists(groupNode.sibling)) {
+            return;
+        }
         var footerNode = new rowNode_1.RowNode();
         this.context.wireBean(footerNode);
         Object.keys(groupNode).forEach(function (key) {
             footerNode[key] = groupNode[key];
         });
         footerNode.footer = true;
+        footerNode.rowTop = null;
+        footerNode.oldRowTop = null;
+        if (utils_1.Utils.exists(footerNode.id)) {
+            footerNode.id = 'rowGroupFooter_' + footerNode.id;
+        }
         // get both header and footer to reference each other as siblings. this is never undone,
         // only overwritten. so if a group is expanded, then contracted, it will have a ghost
         // sibling - but that's fine, as we can ignore this if the header is contracted.
         footerNode.sibling = groupNode;
         groupNode.sibling = footerNode;
-        return footerNode;
     };
     FlattenStage.prototype.createFlowerNode = function (parentNode) {
-        var flowerNode = new rowNode_1.RowNode();
-        this.context.wireBean(flowerNode);
-        flowerNode.flower = true;
-        flowerNode.parent = parentNode;
-        flowerNode.data = parentNode.data;
-        flowerNode.level = parentNode.level + 1;
-        return flowerNode;
+        if (utils_1.Utils.exists(parentNode.childFlower)) {
+            return parentNode.childFlower;
+        }
+        else {
+            var flowerNode = new rowNode_1.RowNode();
+            this.context.wireBean(flowerNode);
+            flowerNode.flower = true;
+            flowerNode.parent = parentNode;
+            if (utils_1.Utils.exists(parentNode.id)) {
+                flowerNode.id = 'flowerNode_' + parentNode.id;
+            }
+            flowerNode.data = parentNode.data;
+            flowerNode.level = parentNode.level + 1;
+            parentNode.childFlower = flowerNode;
+            return flowerNode;
+        }
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'), 
@@ -119,5 +161,5 @@ var FlattenStage = (function () {
         __metadata('design:paramtypes', [])
     ], FlattenStage);
     return FlattenStage;
-})();
+}());
 exports.FlattenStage = FlattenStage;

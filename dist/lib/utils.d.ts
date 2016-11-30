@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
@@ -27,6 +26,7 @@ export declare class Utils {
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
     static filter<T>(array: T[], callback: (item: T) => boolean): T[];
     static assign(object: any, source: any): void;
+    static pushAll(target: any[], source: any[]): void;
     static getFunctionParameters(func: any): any;
     static find<T>(collection: T[], predicate: string | ((item: T) => void), value?: any): T;
     static toStrings<T>(array: T[]): string[];
@@ -38,6 +38,7 @@ export declare class Utils {
     static makeNull(value: any): any;
     static missing(value: any): boolean;
     static missingOrEmpty(value: any[] | string): boolean;
+    static missingOrEmptyObject(value: any): boolean;
     static exists(value: any): boolean;
     static existsAndNotEmpty(value: any[]): boolean;
     static removeAllChildren(node: HTMLElement): void;
@@ -67,6 +68,7 @@ export declare class Utils {
     static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
+    static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
@@ -190,5 +192,7 @@ export declare class Utils {
 }
 export declare class NumberSequence {
     private nextValue;
+    private step;
+    constructor(initValue?: number, step?: number);
     next(): number;
 }

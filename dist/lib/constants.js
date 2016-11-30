@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var Constants = (function () {
     function Constants() {
     }
@@ -40,5 +41,5 @@ var Constants = (function () {
     Constants.FLOATING_TOP = 'top';
     Constants.FLOATING_BOTTOM = 'bottom';
     return Constants;
-})();
+}());
 exports.Constants = Constants;

@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { RenderedCell } from "./renderedCell";
@@ -50,6 +49,7 @@ export declare class RowRenderer {
     private eFloatingBottomPinnedLeftContainer;
     private eFloatingBottomPinnedRightContainer;
     private eFloatingBottomFullWithContainer;
+    private refreshInProgress;
     private logger;
     private destroyFunctions;
     agWire(loggerFactory: LoggerFactory): void;
@@ -62,27 +62,31 @@ export declare class RowRenderer {
     setMainRowWidths(): void;
     refreshAllFloatingRows(): void;
     private refreshFloatingRows(renderedRows, rowNodes, ePinnedLeftContainer, ePinnedRightContainer, eBodyContainer, eFullWidthContainer);
-    refreshView(refreshEvent?: any): void;
+    private onFloatingRowDataChanged();
+    private onModelUpdated(refreshEvent);
+    private getRenderedIndexsForRowNodes(rowNodes);
+    refreshRows(rowNodes: RowNode[]): void;
+    refreshView(keepRenderedRows?: boolean, animate?: boolean): void;
+    private getLockOnRefresh();
+    private releaseLockOnRefresh();
     private restoreFocusedCell(gridCell);
     softRefreshView(): void;
     stopEditing(cancel?: boolean): void;
     forEachRenderedCell(callback: (renderedCell: RenderedCell) => void): void;
     private forEachRenderedRow(callback);
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
-    refreshRows(rowNodes: RowNode[]): void;
     refreshCells(rowNodes: RowNode[], colIds: string[], animate?: boolean): void;
-    rowDataChanged(rows: any): void;
     private destroy();
-    private refreshAllVirtualRows(fromIndex?);
+    private refreshAllVirtualRows(keepRenderedRows, animate);
     refreshGroupRows(): void;
-    private removeVirtualRow(rowsToRemove, fromIndex?);
-    private unbindVirtualRow(indexToRemove);
-    drawVirtualRows(): void;
-    workOutFirstAndLastRowsToRender(): void;
+    private removeVirtualRows(rowsToRemove);
+    drawVirtualRowsWithLock(): void;
+    private drawVirtualRows(oldRowsByNodeId?, animate?);
+    private workOutFirstAndLastRowsToRender();
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
-    private ensureRowsRendered();
-    private insertRow(node, rowIndex);
+    private ensureRowsRendered(oldRenderedRowsByNodeId?, animate?);
+    private getOrCreateRenderedRow(rowNode, oldRowsByNodeId, animate);
     getRenderedNodes(): any[];
     navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;

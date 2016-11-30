@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "../../entities/rowNode";
 import { IInMemoryRowModel } from "../../interfaces/iInMemoryRowModel";
 export declare class InMemoryRowModel implements IInMemoryRowModel {
@@ -22,9 +21,17 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private rowsToDisplay;
     private nodeManager;
     init(): void;
+    private onRowGroupOpened();
+    private onFilterChanged();
+    private onSortChanged();
     getType(): string;
     private onValueChanged();
-    refreshModel(step: number, fromIndex?: any, groupState?: any): void;
+    refreshModel(params: {
+        step: number;
+        groupState?: any;
+        keepRenderedRows?: boolean;
+        animate?: boolean;
+    }): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     setDatasource(datasource: any): void;
@@ -52,6 +59,8 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     setRowData(rowData: any[], refresh: boolean, firstId?: number): void;
     private doRowsToDisplay();
     insertItemsAtIndex(index: number, items: any[]): void;
+    onRowHeightChanged(): void;
+    resetRowHeights(): void;
     removeItems(rowNodes: RowNode[]): void;
     addItems(items: any[]): void;
     private refreshAndFireEvent(eventName, rowNodes, groupState);

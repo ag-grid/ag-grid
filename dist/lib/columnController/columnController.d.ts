@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -34,9 +33,11 @@ export declare class ColumnApi {
     getDisplayedRightColumns(): Column[];
     getAllDisplayedColumns(): Column[];
     getAllDisplayedVirtualColumns(): Column[];
-    moveColumn(fromIndex: number, toIndex: number): void;
+    moveColumn(key: string | Column | ColDef, toIndex: number): void;
+    moveColumnByIndex(fromIndex: number, toIndex: number): void;
+    moveColumns(columnsToMoveKeys: (Column | ColDef | String)[], toIndex: number): void;
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
-    setColumnAggFunct(column: Column, aggFunc: string): void;
+    setColumnAggFunc(column: Column, aggFunc: string): void;
     setColumnWidth(key: Column | string | ColDef, newWidth: number, finished?: boolean): void;
     setPivotMode(pivotMode: boolean): void;
     isPivotMode(): boolean;
@@ -128,6 +129,7 @@ export declare class ColumnController {
     private viewportRight;
     init(): void;
     private setViewportLeftAndRight();
+    getDisplayedColumnsStartingAt(column: Column): Column[];
     private checkDisplayedCenterColumns();
     setWidthAndScrollPosition(totalWidth: number, scrollPosition: number): void;
     isPivotMode(): boolean;

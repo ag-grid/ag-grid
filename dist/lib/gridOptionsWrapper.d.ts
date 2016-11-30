@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./entities/rowNode";
 import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams, GetRowNodeIdFunc } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
@@ -57,6 +56,8 @@ export declare class GridOptionsWrapper {
     isSuppressTouch(): boolean;
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;
+    isGroupSelectsFiltered(): boolean;
+    isGroupRemoveSingleChildren(): boolean;
     isGroupIncludeFooter(): boolean;
     isGroupSuppressBlankHeader(): boolean;
     isSuppressRowClickSelection(): boolean;
@@ -99,6 +100,7 @@ export declare class GridOptionsWrapper {
     getPaginationInitialRowCount(): number;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
+    isEnableRtlSupport(): boolean;
     getGroupColumnDef(): ColDef;
     isGroupSuppressRow(): boolean;
     getRowGroupPanelShow(): string;
@@ -107,7 +109,7 @@ export declare class GridOptionsWrapper {
     isAngularCompileFilters(): boolean;
     isAngularCompileHeaders(): boolean;
     isDebug(): boolean;
-    getColumnDefs(): (ColDef | ColGroupDef)[];
+    getColumnDefs(): (ColGroupDef | ColDef)[];
     getDatasource(): IDatasource;
     getViewportDatasource(): IViewportDatasource;
     isEnableSorting(): boolean;
@@ -122,6 +124,7 @@ export declare class GridOptionsWrapper {
     isEnableServerSideFilter(): boolean;
     isSuppressScrollLag(): boolean;
     isSuppressMovableColumns(): boolean;
+    isAnimateRows(): boolean;
     isSuppressColumnMoveAnimation(): boolean;
     isSuppressMenuColumnPanel(): boolean;
     isSuppressMenuFilterPanel(): boolean;

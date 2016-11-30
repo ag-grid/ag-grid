@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -29,7 +30,8 @@ var SortController = (function () {
         column.setSort(this.getNextSortDirection(column));
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.getSort()) {
-            column.setSortedAt(new Date().valueOf());
+            var sortedAt = Number(new Date().valueOf());
+            column.setSortedAt(sortedAt);
         }
         else {
             column.setSortedAt(null);
@@ -166,5 +168,5 @@ var SortController = (function () {
         __metadata('design:paramtypes', [])
     ], SortController);
     return SortController;
-})();
+}());
 exports.SortController = SortController;

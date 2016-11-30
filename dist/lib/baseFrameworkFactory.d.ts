@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ICellRenderer, ICellRendererFunc } from "./rendering/cellRenderers/iCellRenderer";
 import { ColDef } from "./entities/colDef";
 import { GridOptions } from "./entities/gridOptions";
@@ -31,4 +30,5 @@ export declare class BaseFrameworkFactory implements IFrameworkFactory {
     gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
+    setTimeout(handler: any, timeout?: any): number;
 }

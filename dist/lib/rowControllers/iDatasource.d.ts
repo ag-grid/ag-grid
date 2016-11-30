@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 /** Datasource used by both PaginationController and VirtualPageRowModel */
 export interface IDatasource {
     /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/
