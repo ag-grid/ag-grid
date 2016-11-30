@@ -1,4 +1,4 @@
-import {ViewContainerRef, Injectable} from "@angular/core";
+import {NgZone, ViewContainerRef, Injectable} from "@angular/core";
 import {
     ICellRenderer,
     ICellEditor,
@@ -16,7 +16,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
     private _viewContainerRef: ViewContainerRef;
     private _baseFrameworkFactory: IFrameworkFactory = new BaseFrameworkFactory();    // todo - inject this
 
-    constructor(private _componentFactory: BaseComponentFactory) {
+    constructor(private _componentFactory: BaseComponentFactory, private _ngZone: NgZone) {
     }
 
     public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
@@ -120,5 +120,13 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public setViewContainerRef(viewContainerRef: ViewContainerRef): void {
         this._viewContainerRef = viewContainerRef;
+    }
+
+
+    public setTimeout(handler: any, timeout?: any): number {
+        return this._baseFrameworkFactory.setTimeout(handler, timeout);
+        // return this._ngZone.runOutsideAngular(() => {
+        //     handler.apply(window, [ () => this._ngZone.run(action), timeout ])
+        // }, timeout);
     }
 }

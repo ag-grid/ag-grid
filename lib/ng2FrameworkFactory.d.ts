@@ -1,11 +1,12 @@
-import { ViewContainerRef } from "@angular/core";
+import { NgZone, ViewContainerRef } from "@angular/core";
 import { ICellRenderer, ICellEditor, IFrameworkFactory, IFilter, ICellRendererFunc, ColDef, GridOptions } from "ag-grid/main";
 import { BaseComponentFactory } from "./baseComponentFactory";
 export declare class Ng2FrameworkFactory implements IFrameworkFactory {
     private _componentFactory;
+    private _ngZone;
     private _viewContainerRef;
     private _baseFrameworkFactory;
-    constructor(_componentFactory: BaseComponentFactory);
+    constructor(_componentFactory: BaseComponentFactory, _ngZone: NgZone);
     colDefFloatingCellRenderer(colDef: ColDef): {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
@@ -28,4 +29,5 @@ export declare class Ng2FrameworkFactory implements IFrameworkFactory {
         new (): IFilter;
     } | string;
     setViewContainerRef(viewContainerRef: ViewContainerRef): void;
+    setTimeout(handler: any, timeout?: any): number;
 }

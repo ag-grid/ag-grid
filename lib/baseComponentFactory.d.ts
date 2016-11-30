@@ -1,5 +1,5 @@
-import { ViewContainerRef } from '@angular/core';
-import { ICellRenderer, ICellEditor, IFilter } from 'ag-grid/main';
+import { ViewContainerRef } from "@angular/core";
+import { ICellRenderer, ICellEditor, IFilter } from "ag-grid/main";
 import { AgRendererComponent } from "./agRendererComponent";
 import { AgEditorComponent } from "./agEditorComponent";
 import { AgFilterComponent } from "./agFilterComponent";
@@ -12,9 +12,6 @@ export declare class BaseComponentFactory {
     createRendererFromComponent(componentType: {
         new (...args: any[]): AgRendererComponent;
     }, viewContainerRef: ViewContainerRef): {
-        new (): ICellRenderer;
-    };
-    createRendererFromTemplate(template: string, viewContainerRef: ViewContainerRef): {
         new (): ICellRenderer;
     };
     createEditorFromComponent(componentType: {
