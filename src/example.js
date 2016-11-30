@@ -637,7 +637,8 @@ function onThemeChanged(newTheme) {
         gridOptions.icons.checkboxChecked = undefined;
         gridOptions.icons.checkboxIndeterminate = undefined;
     }
-    gridOptions.api.onGroupExpandedOrCollapsed();
+    gridOptions.api.resetRowHeights();
+    gridOptions.api.refreshRows();
 }
 
 var filterCount = 0;

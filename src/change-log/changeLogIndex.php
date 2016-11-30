@@ -8,9 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h2>Version Next</h2>
+    <h2>Version 7.0.x</h2>
 
-    <li>Enhancement: Now when multiple ranges are selected, copy to clipboard copies all ranges, previously only first range was copied.</li>
+    <li>Enhancement: <a href="../best-aurelia-data-grid/">Aurelia Support</a>.</li>
+    <li>Enhancement: <a href="../best-angular-2-data-grid/#aotCompilation">Full Angular 2 AOT Support</a>.</li>
     <li>Enhancement: New option for grouping <a href="../javascript-grid-grouping/#removeSingleChildren">
             Remove Single Children</a>, so groups will only one child are removed.</li>
     <li>Enhancement: Now menu's (<a href="../javascript-grid-column-menu/">column menu</a> and
@@ -19,8 +20,9 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: New API - rowNode.setExpanded(boolean) - To open / close a row group row.</li>
     <li>Enhancement: api.getValue() now works with pivot columns</li>
     <li>Enhancement: <a href="../javascript-grid-row-height/#changingRowHeight">Row height</a> can now be changed after the rows are initially set.</li>
-    <li>Enhancement: New property - groupSelectsFiltered, when set, if you select a group, unfiltered items do not get selected.</li>
+    <li>Enhancement: New property - <a href="../javascript-grid-selection/#groupSelection">groupSelectsFiltered</a>, when set, if you select a group, unfiltered items do not get selected.</li>
     <li>Enhancement: Angular 1 - Added $scope to cellEditor params.</li>
+    <li>Enhancement: Now when multiple ranges are selected, copy to clipboard copies all ranges, previously only first range was copied.</li>
 
     <li>Bug Fix: columnApi.setColumnAggFunct() => renamed to columnApi.setColumnAggFunc() (took out the 't' at the end, it was a typo)</li>
     <li>Bug Fix: paste from clipboard now skips non-editable columns and continues with rest of row (before it stopped and didn't complete the row)</li>

@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
         at the params and returning true if colIndex = 0).
     </p>
 
-    <h3>Group Selection</h3>
+    <h3 id="groupSelection">Group Selection</h3>
 
     <p>
         When doing grouping, you control what selecting a group means. This is controlled with

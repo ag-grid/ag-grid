@@ -164,7 +164,7 @@ System.config({
     }
 }</pre>
 
-    <h3>For Ahead-of-Time (AOT) Compilation</h3>
+    <h3 id="aotCompilation">For Ahead-of-Time (AOT) Compilation</h3>
     <p>
         We'll use SystemJS Builder for rollup.
     </p>
