@@ -177,7 +177,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <p>
         The gridOptions are fully available as stated above for Angular 2. However you can take
-        advantage of Angular 2's properties and events provided by ag-Grids Angular 2's Component.
+        advantage of Angular 2's properties and events provided by ag-Grids Angular 2 Component.
         This is done as follows:
     </p>
 
@@ -324,6 +324,101 @@ myGrid.columnApi.sizeColumnsToFit();
 myGrid.quickFilterText = 'sandy';
 myGrid.showToolPanel = true;
 </code></pre>
+
+    <h2>
+        <img src="/images/aurelia.png" height="50px"/>
+        Aurelia
+    </h2>
+    <p>The gridOptions are fully available as stated above for Aurelia. However you can take advantage of Aurelia's
+        properties and events provided by ag-Grids Aurelia Component. This is done as follows:</p>
+    <ul>
+        <li><b>Events:</b> All data out of the grid comes through events. These use
+            Aurelia event bindings eg <i>model-updated.call="onModelUpdated()"</i>.
+            As you interact with the grid, the different events are fixed and
+            output text to the console (open the dev tools to see the console).
+        </li>
+        <li><b>Properties:</b> All the data is provided to the grid as Aurelia
+            bindings. These are bound onto the ag-Grid properties bypassing the
+            elements attributes. The values for the bindings come from the parent
+            controller.
+        </li>
+        <li><b>Attributes:</b> When the property is just a simple string value, then
+            no binding is necessary, just the value is placed as an attribute
+            eg <i>row-height.bind="22"</i>.
+        </li>
+        <li><b>Grid API via IDs:</b> The grid in the example is created with an id
+            by marking it with <i>#agGrid</i>. This in turn turns into a variable
+            which can be used to access the grid's controller. The buttons
+            Grid API and Column API buttons use this variable to access the grids
+            API (the API's are attributes on the controller).
+        </li>
+        <li><b>Changing Properties:</b> When a property changes value, Aurelia
+            automatically passes the new value onto the grid. This is used in
+            the following locations:<br/>
+            a) The 'quickFilter' on the top right updates the quick filter of
+            the grid.
+            b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+            property of the grid.
+            c) The 'Refresh Data' generates new data for the grid and updates the
+            <i>rowData</i> property.
+        </li>
+    </ul>
+
+    <p>
+        The example has ag-Grid configured through the template in the following ways:
+    </p>
+
+    <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
+&lt;g-grid-aurelia #agGrid class="ag-fresh"
+    <span class="codeComment">// items bound to properties on the controller</span>
+    grid-options.bind="gridOptions"
+    column-defs.bind="columnDefs"
+    show-tool-panel.bind="showToolPanel"
+    row-data.bind="rowData"
+
+    <span class="codeComment">// boolean values 'turned on'</span>
+    enable-col-resize
+    enable-sorting
+    enable-filter
+    group-headers
+    suppress-row-click-selection
+    tool-panel-suppress-groups
+    tool-panel-suppress-values
+    debug
+
+    <span class="codeComment">// simple values</span>
+    row-height.bind="22"
+    row-selection="multiple"
+
+    <span class="codeComment">// event callbacks</span>
+    model-updated.call="onModelUpdated()"
+    cell-clicked.call="onCellClicked($event)"
+    cell-double-clicked.call="onCellDoubleClicked($event)"
+    cell-context-menu.call="onCellContextMenu($event)"
+    cell-value-changed.call="onCellValueChanged($event)"
+    cell-focused.call="onCellFocused($event)"
+    row-selected.call="onRowSelected($event)"
+    selection-changed.call="onSelectionChanged()"
+    before-filter-changed.call="onBeforeFilterChanged()"
+    after-filter-changed.call="onAfterFilterChanged()"
+    filter-modified.call="onFilterModified()"
+    before-sort-changed.call="onBeforeSortChanged()"
+    after-sort-changed.call="onAfterSortChanged()"
+    virtual-row-removed.call="onVirtualRowRemoved($event)"
+    row-clicked.call="onRowClicked($event)"
+    ready.call="onReady($event)"
+
+    column-everything-changed.call="onColumnEvent($event)"
+    column-row-group-changed.call="onColumnEvent($event)"
+    column-value-changed.call="onColumnEvent($event)"
+    column-moved.call="onColumnEvent($event)"
+    column-visible.call="onColumnEvent($event)"
+    column-group-opened.call="onColumnEvent($event)"
+    column-resized.call="onColumnEvent($event)"
+    column-pinned-count-changed.call="onColumnEvent($event)">
+&lt;/ag-grid-aurelia></pre>
+
+
 
     <h2>Next Steps...</h2>
 
