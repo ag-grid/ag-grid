@@ -10,7 +10,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2><img src="/images/aurelia_large.png"/>ag-Grid v7: Aurelia Support</h2>
+        <h2><img src="/images/aurelia_large.png"/> ag-Grid - The Enterprise Datagrid For Aurelia</h2>
     </div>
 </div>
 
@@ -152,8 +152,8 @@ export class AgGridColumn {
             <p>
                 <img src="/images/sean.png"/>
             </p>
-            <p>
-                About Me
+            <p style="font-weight: bold;">
+                Sean Landsman
             </p>
             <p>
                 I'm an experienced full stack technical lead with an extensive background in enterprise solutions. Over

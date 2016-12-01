@@ -33,7 +33,7 @@ include('../includes/mediaHeader.php');
             </a>
         </div>
         <div style="float: right;  color: #767676;">
-            28 November 2016
+            30th November 2016
         </div>
     </div>
     <div style="color: #767676">
@@ -53,12 +53,12 @@ include('../includes/mediaHeader.php');
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="/ag-grid-aurelia-support-v7/">
-                ag-Grid v7: Aurelia Support
+            <a href="/ag-grid-datagrid-aurelia/">
+                ag-Grid - The Enterprise Datagrid For Aurelia
             </a>
         </div>
         <div style="float: right;  color: #767676;">
-            28 November 2016
+            30th November 2016
         </div>
     </div>
     <div style="color: #767676">
