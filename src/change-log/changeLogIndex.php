@@ -12,7 +12,8 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Bug Fixes</h4>
     <ul>
-        <li>Bug Fix: For virtual pagination only, calling api.insertItemsAtIndex() messed up the row indexes, now fixed.</li>
+        <li>Bug Fix: For virtual pagination row model only, calling api.insertItemsAtIndex() messed up the row indexes, now fixed.</li>
+        <li>Bug Fix: For viewport row model only, selected row was failing when the node ID of the selected row changed.</li>
     </ul>
 
     <h2>Version 7.0.x</h2>
