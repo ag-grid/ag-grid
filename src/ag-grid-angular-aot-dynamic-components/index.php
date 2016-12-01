@@ -10,7 +10,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2><img src="/images/angular2_large.png"/>Understanding AOT and Dynamic Components in Angular 2</h2>
+        <h2><img src="/images/angular2_large.png"/> Understanding AOT and Dynamic Components in Angular 2</h2>
     </div>
 </div>
 
@@ -20,15 +20,22 @@ include('../includes/mediaHeader.php');
         <h2>Motivation</h2>
 
         <p>
-            At ag-Grid we offer a powerful and flexible datagrid - we extend and improve the datagrid by offering support for a variety of frameworks, with Angular 2 being the biggest one.
-            As a third-party library that clients can configure and extend with Angular 2, we faced certain challenges being able to support client supplied Angular 2 Components - the blog
-            entry below describes how to support Dynamic Angular 2 Components in an AOT friendly way.
+            ag-Grid is an enterprise JavaScript that works with Angular 2.
+            As ag-Grid works with many frameworks, the internals of the grid
+            had to allow using Angular 2 for rendering inside the grid despite ag-Grid not written in Angular itself.
+            This was done using Angular's Dynamic Components and we managed to do it while still supporting AOT.
+            This blog details what we learnt, how to support Angular 2 Dynamic Components in an
+            AOT friendly way.
         </p>
 
         <h2>The Setup</h2>
 
         <p>
-            In our example below we are going to develop two main Modules - one will be a Library that will display an array of dynamically created Components, and the other will be our actual Application.
+            To explain we present a simple sample application that isolates what we are trying to do.
+            In our example below we are going to develop two main Modules - one will be a Library (in our case
+            this was ag-Grid) that will display
+            an array of dynamically created Components (similar to how ag-Grid displays Angular components inside
+            the grid's cells), and the other will be our actual Application.
         </p>
 
         <p>The end result will be look like this:</p>
@@ -249,8 +256,8 @@ export class AppComponent implements OnInit {
             <p>
                 <img src="/images/sean.png"/>
             </p>
-            <p>
-                About Me
+            <p style="font-weight: bold;">
+                Sean Landsman
             </p>
             <p>
                 I'm an experienced full stack technical lead with an extensive background in enterprise solutions. Over
