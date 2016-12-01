@@ -88,6 +88,7 @@ export class VirtualPage implements IEventEmitter {
     public setRowNode(rowIndex: number, rowNode: RowNode): void {
         var localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = rowNode;
+        rowNode.setRowIndex(rowIndex);
         this.setTopOnRowNode(rowNode, rowIndex);
     }
 
