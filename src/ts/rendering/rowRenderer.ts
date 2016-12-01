@@ -250,7 +250,7 @@ export class RowRenderer {
     }
 
     // if the row nodes are not rendered, no index is returned
-    private getRenderedIndexsForRowNodes(rowNodes: RowNode[]): string[] {
+    private getRenderedIndexesForRowNodes(rowNodes: RowNode[]): string[] {
         var result: any = [];
         if (_.missing(rowNodes)) { return result; }
         _.iterateObject(this.renderedRows, (key: string, renderedRow: RenderedRow)=> {
@@ -269,7 +269,7 @@ export class RowRenderer {
 
         // we only need to be worried about rendered rows, as this method is
         // called to whats rendered. if the row isn't rendered, we don't care
-        var indexesToRemove = this.getRenderedIndexsForRowNodes(rowNodes);
+        var indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 
         // remove the rows
         this.removeVirtualRows(indexesToRemove);
@@ -682,12 +682,33 @@ export class RowRenderer {
     }
 
     public onTabKeyDown(previousRenderedCell: RenderedCell, keyboardEvent: KeyboardEvent): void {
+        let backwards = keyboardEvent.shiftKey;
+        let success = this.moveToCellAfter(previousRenderedCell, backwards);
+        if (success) {
+            keyboardEvent.preventDefault();
+        }
+    }
+
+    public navigateToNextCell(backwards: boolean): boolean {
+        var focusedCell = this.focusedCellController.getFocusedCell();
+        // if no focus, then cannot navigate
+        if (_.missing(focusedCell)) { return false; }
+        var renderedCell = this.getComponentForCell(focusedCell);
+        // if cell is not rendered, means user has scrolled away from the cell
+        if (_.missing(renderedCell)) { return false; }
+
+        var result = this.moveToCellAfter(renderedCell, backwards);
+        return result;
+    }
+
+    // returns true if moving to next cell was successful
+    private moveToCellAfter(previousRenderedCell: RenderedCell, backwards: boolean): boolean {
 
         var editing = previousRenderedCell.isEditing();
         var gridCell = previousRenderedCell.getGridCell();
 
         // find the next cell to start editing
-        var nextRenderedCell = this.moveFocusToNextCell(gridCell, keyboardEvent.shiftKey, editing);
+        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, editing);
 
         var foundCell = _.exists(nextRenderedCell);
 
@@ -705,7 +726,9 @@ export class RowRenderer {
                 nextRenderedCell.focusCell(true);
             }
 
-            keyboardEvent.preventDefault();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -742,13 +765,13 @@ export class RowRenderer {
 
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
-    private moveFocusToNextCell(gridCell: GridCell, shiftKey: boolean, startEditing: boolean): RenderedCell {
+    private findNextCellToFocusOn(gridCell: GridCell, backwards: boolean, startEditing: boolean): RenderedCell {
 
         var nextCell = gridCell;
 
         while (true) {
 
-            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
+            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
 
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
