@@ -410,6 +410,14 @@ include '../documentation-main/documentation_header.php';
             <td>Gets the grid to start editing on a particular cell.</td>
         </tr>
         <tr>
+            <th>navigateToNextCell()</th>
+            <td>Navigates the grid focus to the next cell.</td>
+        </tr>
+        <tr>
+            <th>navigateToPreviousCell()</th>
+            <td>Navigates the grid focus to the previous cell.</td>
+        </tr>
+        <tr>
             <th>checkGridSize()</th>
             <td>Gets the grid to check it's size again. This is useful if you do not have the grid in the DOM
                 when you create it, call this method after the grid is in the dom to get it to check it's width
