@@ -103,13 +103,13 @@ export class Utils {
         }
     }
 
-    static cloneObject(object: any): any {
-        var copy = <any>{};
+    static cloneObject<T>(object: T): T {
+        var copy = <T>{};
         var keys = Object.keys(object);
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
-            var value = object[key];
-            copy[key] = value;
+            var value = (<any>object)[key];
+            (<any>copy)[key] = value;
         }
         return copy;
     }

@@ -105,7 +105,8 @@ export class SelectionController {
         var groupsToRefresh: any = {};
         _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                this.selectedNodes[otherRowNode.id].setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
+                let rowNode = this.selectedNodes[otherRowNode.id];
+                rowNode.setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }
@@ -129,8 +130,34 @@ export class SelectionController {
         }
     }
 
-    public syncInRowNode(rowNode: RowNode): void {
-        if (this.selectedNodes[rowNode.id] !== undefined) {
+    public syncInRowNode(rowNode: RowNode, oldNode: RowNode): void {
+        this.syncInOldRowNode(rowNode, oldNode);
+        this.syncInNewRowNode(rowNode);
+    }
+
+    // if the id has changed for the node, then this means the rowNode
+    // is getting used for a different data item, which breaks
+    // our selectedNodes, as the node now is mapped by the old id
+    // which is inconsistent. so to keep the old node as selected,
+    // we swap in the clone (with the old id and old data). this means
+    // the oldNode is effectively a daemon we keep a reference to,
+    // so if client calls api.getSelectedNodes(), it gets the daemon
+    // in the result. when the client un-selects, the reference to the
+    // daemon is removed. the daemon, because it's an oldNode, is not
+    // used by the grid for rendering, it's a copy of what the node used
+    // to be like before the id was changed.
+    private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode): void {
+        let oldNodeHasDifferentId = _.exists(oldNode) && (rowNode.id !== oldNode.id);
+        if (oldNodeHasDifferentId) {
+            let oldNodeSelected = _.exists(this.selectedNodes[oldNode.id]);
+            if (oldNodeSelected) {
+                this.selectedNodes[oldNode.id] = oldNode;
+            }
+        }
+    }
+
+    private syncInNewRowNode(rowNode: RowNode): void {
+        if (_.exists(this.selectedNodes[rowNode.id])) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
         } else {

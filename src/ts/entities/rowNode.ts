@@ -6,7 +6,7 @@ import {ColDef} from "./colDef";
 import {Column} from "./column";
 import {ValueService} from "../valueService";
 import {ColumnController} from "../columnController/columnController";
-import {Autowired} from "../context/context";
+import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
@@ -43,6 +43,7 @@ export class RowNode {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('context') private context: Context;
 
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
@@ -113,6 +114,11 @@ export class RowNode {
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
      * it is used so new rows can animate in from their old position. */
     public oldRowTop: number;
+    /** True if this node is a daemon. This means row is not part of the model. Can happen when then
+     * the row is selected and then the user sets a different ID onto the node. The nodes is then
+     * representing a different entity, so the selection controller, if the node is selected, takes
+     * a copy where daemon=true. */
+    public daemon: boolean;
 
     private selected = false;
     private eventService: EventService;
@@ -125,15 +131,31 @@ export class RowNode {
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     }
 
+    private createDaemonNode(): RowNode {
+        let oldNode = new RowNode();
+        this.context.wireBean(oldNode);
+        // just copy the id and data, this is enough for the node to be used
+        // in the selection controller (the selection controller is the only
+        // place where daemon nodes can live).
+        oldNode.id = this.id;
+        oldNode.data = this.data;
+        oldNode.daemon = true;
+        oldNode.selected = this.selected;
+        oldNode.level = this.level;
+        return oldNode;
+    }
+
     public setDataAndId(data: any, id: string): void {
-        var oldData = this.data;
+        let oldNode = _.exists(this.id) ? this.createDaemonNode() : null;
+
+        let oldData = this.data;
         this.data = data;
 
         this.setId(id);
 
-        this.selectionController.syncInRowNode(this);
+        this.selectionController.syncInRowNode(this, oldNode);
 
-        var event = {oldData: oldData, newData: data};
+        let event = {oldData: oldData, newData: data};
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     }
 
