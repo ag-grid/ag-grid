@@ -28,7 +28,7 @@ include 'documentation_header.php';
                 New blog entry <a href="../ag-grid-angular2-support-v7/">AOT & Angular 2 Components</a>
             </li>
             <li>
-                New blog entry <a href="../ag-grid-aurelia-support-v7/">Announcing Aurelia Support</a>
+                New blog entry <a href="../ag-grid-datagrid-aurelia/">Announcing Aurelia Support</a>
             </li>
         </ul>
     </div>
