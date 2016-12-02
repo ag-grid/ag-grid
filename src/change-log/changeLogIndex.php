@@ -15,6 +15,7 @@ include '../documentation-main/documentation_header.php';
         <li>Bug Fix: For virtual pagination row model only, calling api.insertItemsAtIndex() messed up the row indexes, now fixed.</li>
         <li>Bug Fix: For viewport row model only, selected row was failing when the node ID of the selected row changed.</li>
         <li>Bug Fix: When animating the rows, the selected cell highligh was getting confused. Now stays with the same row index (so if rows move, focus goes to new row in the selected index, the index doesn't move).</li>
+        <li>Bug Fix: grid event onRowClicked was not working for fullWidth rows (inluding when fullWidth was used for grouping).</li>
     </ul>
     <h4>Enhancements</h4>
     <ul>
