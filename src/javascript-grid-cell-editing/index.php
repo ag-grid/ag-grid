@@ -317,6 +317,20 @@ colDef.cellEditorParams = {
         to be done within a cell, either return false or don't provide this method at all.
     </p>
 
+    <h3>Tab Navigation</h3>
+
+    <p>
+        While editing, if you hit tab, the editing will stop on the current cell and start on the next cell.
+        If you hold down shift+tab, the same will happen except the previous cell will start editing rather than
+        the next. This is in line with editing data in Excel.
+    </p>
+
+    <p>
+        The next and previous cells can also be navigated using the API functions <i>api.navigateToNextCell()</i>
+        and <i>api.navigateToPreviousCell()</i>. Both of these methods will return true if the navigation was
+        successful, otherwise false.
+    </p>
+
     <h3>Provided cellEditors</h3>
 
     <p>

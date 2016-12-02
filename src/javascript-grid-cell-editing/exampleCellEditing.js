@@ -133,7 +133,14 @@ function isKeyPressedNumeric(event) {
     var charCode = getCharCodeFromEvent(event);
     var charStr = String.fromCharCode(charCode);
     return isCharNumeric(charStr);
+}
 
+function onBtNextCell() {
+    gridOptions.api.navigateToNextCell();
+}
+
+function onBtPreviousCell() {
+    gridOptions.api.navigateToPreviousCell();
 }
 
 // simple function cellRenderer, just returns back the name of the country
