@@ -137,7 +137,6 @@ export interface GridOptions {
     rowDeselection?: boolean;
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
-    checkboxSelection?: (params: any)=> boolean;
     rowHeight?: number;
     headerCellTemplate?: string;
 
@@ -172,6 +171,7 @@ export interface GridOptions {
     getRowStyle?: Function;
     getRowClass?: Function;
     getRowHeight?: Function;
+    checkboxSelection?: (params: any)=> boolean;
 
     fullWidthCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
