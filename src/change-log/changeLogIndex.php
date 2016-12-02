@@ -17,6 +17,7 @@ include '../documentation-main/documentation_header.php';
         <li>Bug Fix: When animating the rows, the selected cell highligh was getting confused. Now stays with the same row index (so if rows move, focus goes to new row in the selected index, the index doesn't move).</li>
         <li>Bug Fix: grid event onRowClicked was not working for fullWidth rows (inluding when fullWidth was used for grouping).</li>
         <li>Bug Fix: count function was not working when row grouping had 2 or more columns.</li>
+        <li>Bug Fix: callbacks getBusinessKeyForNode and checkboxSelection were missing for React. in now.</li>
     </ul>
     <h4>Enhancements</h4>
     <ul>
