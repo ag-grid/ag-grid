@@ -223,7 +223,7 @@ export class RowRenderer {
         if (_.missingOrEmpty(columns)) { return; }
 
         if (rowNodes) {
-            rowNodes.forEach( (node: RowNode, rowIndex: number) => {
+            rowNodes.forEach( (node: RowNode) => {
                 var renderedRow = new RenderedRow(this.$scope,
                     this,
                     eBodyContainer,
