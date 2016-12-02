@@ -1,5 +1,4 @@
-/// <reference types="core-js" />
-import { QueryList } from '@angular/core';
+import { QueryList } from "@angular/core";
 import { ColDef, SetFilterParameters, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef } from "ag-grid/main";
 export declare class AgGridColumn {
     childColumns: QueryList<AgGridColumn>;

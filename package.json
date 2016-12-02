@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -31,7 +31,6 @@
     "@angular/compiler-cli": "2.1.x || >= 2.2.3",
     "@angular/core": "2.1.x || >= 2.2.3",
 
-    "@types/core-js": "^0.9.34",
     "core-js": "^2.4.1",
     "gulp": "^3.9.1",
     "gulp-header": "1.7.0",
