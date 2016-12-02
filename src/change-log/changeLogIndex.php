@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
     <h4>Enhancements</h4>
     <ul>
         <li>Enhancement: New api methods <i>api.tabToNextCell()</i> and <i>api.tabToPreviousCell()</i> for navigation.</li>
+        <li>Enhancement: Filter type 'not equals' now works for empty string values (they should pass the filter).</li>
     </ul>
     <ul>
         <li>Enhancement: <a href="../javascript-grid-value-getters/#headerValueGetter">headerValueGetter</a> now has an extra parameter 'location' which is on of {csv, clipboard, toolPanel, columnDrop, header}.
