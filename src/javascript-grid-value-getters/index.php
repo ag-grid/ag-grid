@@ -74,7 +74,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    <h2>Header Value Getters</h2>
+    <h2 id="headerValueGetter">Header Value Getters</h2>
 
     <p>
         Headers can also have values that change or are dependent on some extra data. For example,
@@ -83,14 +83,28 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        As with cell valueGetters, a headerValueGetter can be a function or an expression. It supports
-        the following parameters:
+        As with cell valueGetters, a headerValueGetter can be a function or an expression. It is
+    provided with the parameters:
 
         <ul>
-            <li><b>colDef</b>: maps colDef</li>
-            <li><b>ctx</b>: maps context</li>
-            <li><b>api</b>: maps api</li>
+            <li><b>column</b>: The column, or null if it's a column group.</li>
+            <li><b>columnGroup</b>: The column group, or null if it's a column.</li>
+            <li><b>location</b>: Where the name will be used, one of {csv, clipboard, toolPanel, columnDrop, header}.</li>
+            <li><b>colDef</b>: The column definition.</li>
+            <li><b>ctx</b>: Grid context.</li>
+            <li><b>api</b>: Grid API.</li>
         </ul>
+
+    The only item not normal in the parameters is as follows:<br/>
+    <ol>
+        <li>Only one of column or columnGroup will be present, depending on whether it's
+        a column or a column group.</li>
+        <li>Parameter <i>location</i> allows you to have different column names depending on
+        where the column is appearing, eg you might want to have a different name when the column
+        is in the column drop zone or the toolbar.</li>
+    </ol>
+
+    See the <a href="../javascript-grid-tool-panel/#toolPanelExample">Tool Panel Example</a> for an example of <i>headerValueGetter</i>.
 
     </p>
 

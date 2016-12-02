@@ -410,12 +410,12 @@ include '../documentation-main/documentation_header.php';
             <td>Gets the grid to start editing on a particular cell.</td>
         </tr>
         <tr>
-            <th>navigateToNextCell()</th>
-            <td>Navigates the grid focus to the next cell.</td>
+            <th>tabToNextCell()</th>
+            <td>Navigates the grid focus to the next cell, as if tabbing.</td>
         </tr>
         <tr>
-            <th>navigateToPreviousCell()</th>
-            <td>Navigates the grid focus to the previous cell.</td>
+            <th>tabToPreviousCell()</th>
+            <td>Navigates the grid focus to the previous cell, as if shift-tabbing.</td>
         </tr>
         <tr>
             <th>checkGridSize()</th>

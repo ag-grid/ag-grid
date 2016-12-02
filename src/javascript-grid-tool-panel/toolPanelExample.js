@@ -1,7 +1,7 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
     {headerName: "Age", field: "age", width: 90, enableValue: true},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true},
+    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true, headerValueGetter: countryHeaderValueGetter},
     {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
     {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
     {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true},
@@ -13,6 +13,17 @@ var columnDefs = [
         }},
     {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
 ];
+
+function countryHeaderValueGetter(params) {
+    switch (params.location) {
+        case 'csv': return 'CSV Country';
+        case 'clipboard': return 'CLIP Country';
+        case 'toolPanel': return 'TP Country';
+        case 'columnDrop': return 'CD Country';
+        case 'header': return 'Country';
+        default: return 'Should never happen!';
+    }
+}
 
 var gridOptions = {
     columnDefs: columnDefs,

@@ -96,7 +96,7 @@ include '../documentation-main/documentation_header.php';
 }</pre>
     </p>
 
-    <h3>Example</h3>
+    <h3 id="toolPanelExample">Tool Panel Example</h3>
 
     <p>
         The example below demonstrates the tool panel. Note the following:
@@ -105,6 +105,8 @@ include '../documentation-main/documentation_header.php';
                 columns cannot be grouped and the other columns cannot be aggregated (as doing
                 either of these just wouldn't make sense).</li>
             <li>The gold, silver and bronze columns have style applied using <i>toolPanelClass</i></li>
+            <li>The country column uses a headerValueGetter to give the column a slightly different
+            name when dependent on where it appears using the <i>location</i> parameter.</li>
         </ul>
     </p>
 

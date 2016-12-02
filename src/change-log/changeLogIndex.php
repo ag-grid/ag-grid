@@ -17,7 +17,11 @@ include '../documentation-main/documentation_header.php';
     </ul>
     <h4>Enhancements</h4>
     <ul>
-        <li>Enhancement: New api methods <i>api.navigateToNextCell()</i> and <i>api.navigateToPreviousCell()</i> for navigation.</li>
+        <li>Enhancement: New api methods <i>api.tabToNextCell()</i> and <i>api.tabToPreviousCell()</i> for navigation.</li>
+    </ul>
+    <ul>
+        <li>Enhancement: <a href="../javascript-grid-value-getters/#headerValueGetter">headerValueGetter</a> now has an extra parameter 'location' which is on of {csv, clipboard, toolPanel, columnDrop, header}.
+        It allows you to have a different name for the column dependent on where it is.</li>
     </ul>
 
     <h2>Version 7.0.x</h2>

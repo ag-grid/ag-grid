@@ -326,8 +326,8 @@ colDef.cellEditorParams = {
     </p>
 
     <p>
-        The next and previous cells can also be navigated using the API functions <i>api.navigateToNextCell()</i>
-        and <i>api.navigateToPreviousCell()</i>. Both of these methods will return true if the navigation was
+        The next and previous cells can also be navigated using the API functions <i>api.tabToNextCell()</i>
+        and <i>api.tabToPreviousCell()</i>. Both of these methods will return true if the navigation was
         successful, otherwise false.
     </p>
 
