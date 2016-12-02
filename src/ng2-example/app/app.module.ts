@@ -39,28 +39,27 @@ import {WithGroupRowComponent} from "./group-row-renderer.component";
 import {FilterComponentComponent} from "./filter-component.component";
 import {PartialMatchFilterComponent} from "./partial-match-filter.component";
 
-const appRoutes: Routes = [
-    {path: 'rich-grid', component: RichGridComponent, data: {title: "Rich Grid with Pure JavaScript"}},
-    {
-        path: 'rich-grid-declarative',
-        component: RichGridDeclarativeComponent,
-        data: {title: "Rich Grid with Declarative Markup"}
-    },
-    {path: 'from-component', component: FromComponentComponent, data: {title: "Using Dynamic Components"}},
-    {path: 'from-rich-component', component: FromRichComponent, data: {title: "Using Dynamic Components - Richer Example"}},
-    {path: 'editor-component', component: EditorComponent, data: {title: "Using Cell Editor Components"}},
-    {path: 'floating-row', component: WithFloatingRowComponent, data: {title: "Using Floating Row Renderers"}},
-    {path: 'full-width', component: WithFullWidthComponent, data: {title: "Using Full Width Renderers"}},
-    {path: 'group-row', component: WithGroupRowComponent, data: {title: "Using Group Row Renderers"}},
-    {path: 'filter', component: FilterComponentComponent, data: {title: "With Filters Components"}},
-    {path: '', redirectTo: 'rich-grid', pathMatch: 'full'}
-];
+// const appRoutes: Routes = [
+//     {path: 'rich-grid', component: RichGridComponent, data: {title: "Rich Grid with Pure JavaScript"}},
+//     {
+//         path: 'rich-grid-declarative',
+//         component: RichGridDeclarativeComponent,
+//         data: {title: "Rich Grid with Declarative Markup"}
+//     },
+//     {path: 'from-component', component: FromComponentComponent, data: {title: "Using Dynamic Components"}},
+//     {path: 'from-rich-component', component: FromRichComponent, data: {title: "Using Dynamic Components - Richer Example"}},
+//     {path: 'editor-component', component: EditorComponent, data: {title: "Using Cell Editor Components"}},
+//     {path: 'floating-row', component: WithFloatingRowComponent, data: {title: "Using Floating Row Renderers"}},
+//     {path: 'full-width', component: WithFullWidthComponent, data: {title: "Using Full Width Renderers"}},
+//     {path: 'group-row', component: WithGroupRowComponent, data: {title: "Using Group Row Renderers"}},
+//     {path: 'filter', component: FilterComponentComponent, data: {title: "With Filters Components"}},
+//     {path: '', redirectTo: 'rich-grid', pathMatch: 'full'}
+// ];
 
 @NgModule({
     imports: [
         BrowserModule,
         FormsModule,
-        RouterModule.forRoot(appRoutes),
         AgGridModule.withComponents(
             [
                 SquareComponent,
