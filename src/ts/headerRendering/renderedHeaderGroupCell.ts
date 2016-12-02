@@ -60,7 +60,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper, null, this.columnGroup);
 
         // this.displayName = this.columnGroup.getHeaderName();
-        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup);
+        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
         this.setupResize();
         this.addClasses();

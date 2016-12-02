@@ -215,7 +215,7 @@ export class CsvCreator {
                 context: this.gridOptionsWrapper.getContext()
             });
         } else {
-            return this.columnController.getDisplayNameForColumn(column, true);
+            return this.columnController.getDisplayNameForColumn(column, 'csv', true);
         }
     }
 

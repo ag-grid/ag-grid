@@ -562,12 +562,12 @@ export class GridApi {
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 
-    public navigateToNextCell(): boolean {
-        return this.rowRenderer.navigateToNextCell(false);
+    public tabToNextCell(): boolean {
+        return this.rowRenderer.tabToNextCell(false);
     }
 
-    public navigateToPreviousCell(): boolean {
-        return this.rowRenderer.navigateToNextCell(true);
+    public tabToPreviousCell(): boolean {
+        return this.rowRenderer.tabToNextCell(true);
     }
 
     public stopEditing(cancel: boolean = false): void {

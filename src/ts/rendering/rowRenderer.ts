@@ -689,7 +689,7 @@ export class RowRenderer {
         }
     }
 
-    public navigateToNextCell(backwards: boolean): boolean {
+    public tabToNextCell(backwards: boolean): boolean {
         var focusedCell = this.focusedCellController.getFocusedCell();
         // if no focus, then cannot navigate
         if (_.missing(focusedCell)) { return false; }
