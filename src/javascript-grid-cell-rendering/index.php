@@ -601,7 +601,7 @@ the grid will know the framework to use is Angular 2.
 <p>
     Using Angular 2 Components in the Cell Renderers
 </p>
-<show-example url="/ng2-example/from-component?fromDocs"
+<show-example example="../ng2-example/index.html?example=from-component"
               jsfile="../ng2-example/app/from-component.component.ts"
               html="../ng2-example/app/from-component.component.html"></show-example>
 
@@ -625,7 +625,7 @@ the grid will know the framework to use is Angular 2.
 <p>
     Using more complex Angular 2 Components in the Cell Renderers
 </p>
-<show-example url="/ng2-example/from-rich-component?fromDocs"
+<show-example example="../ng2-example/index.html?example=from-rich-component"
               jsfile="../ng2-example/app/from-rich.component.ts"
               html="../ng2-example/app/from-rich.component.html"></show-example>
 

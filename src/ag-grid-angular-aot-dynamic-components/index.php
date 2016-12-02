@@ -20,12 +20,10 @@ include('../includes/mediaHeader.php');
         <h2>Motivation</h2>
 
         <p>
-            ag-Grid is an enterprise JavaScript that works with Angular 2.
+            ag-Grid is an enterprise datagrid that works with Angular 2.
             As ag-Grid works with many frameworks, the internals of the grid
-            had to allow using Angular 2 for rendering inside the grid despite ag-Grid not written in Angular itself.
-            This was done using Angular's Dynamic Components and we managed to do it while still supporting AOT.
-            This blog details what we learnt, how to support Angular 2 Dynamic Components in an
-            AOT friendly way.
+            had to allow for Angular 2 rendering inside the grid despite ag-Grid not being written in Angular itself.
+            This was done using Angular 2 Dynamic Components and we managed to do it while still supporting AOT. This blog details what we learnt along the way.
         </p>
 
         <h2>The Setup</h2>

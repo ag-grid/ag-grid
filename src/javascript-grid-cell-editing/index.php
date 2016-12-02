@@ -779,7 +779,7 @@ cellEditorFramework: {
     <p>
         Using Angular 2 Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-example url="/ng2-example/editor-component?fromDocs"
+    <show-example example="../ng2-example/index.html?example=editor-component"
                   jsfile="../ng2-example/app/editor-component.component.ts"
                   html="../ng2-example/app/editor-component.component.html"></show-example>
     

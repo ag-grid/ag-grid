@@ -788,7 +788,7 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Angular 2 Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-    <show-example url="/ng2-example/filter?fromDocs"
+    <show-example example="../ng2-example/index.html?example=filter-component"
                   jsfile="../ng2-example/app/filter-component.component.ts"
                   html="../ng2-example/app/filter-component.component.html"></show-example>
 

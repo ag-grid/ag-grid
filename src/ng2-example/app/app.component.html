@@ -1,9 +1,27 @@
-<ul *ngIf="showNav" class="nav nav-pills">
-    <template ngFor let-route [ngForOf]="this.router.config">
-        <li role="presentation" routerLinkActive="active" *ngIf="route.path !== ''">
-            <a routerLink="{{'/' + route.path}}">{{route.data.title}}</a>
-        </li>
-    </template>
-</ul>
-
-<router-outlet></router-outlet>
+<div *ngIf="example=='rich-grid'">
+    <rich-grid></rich-grid>
+</div>
+<div *ngIf="example=='rich-grid-declarative'">
+    <ag-rich-grid-declarative></ag-rich-grid-declarative>
+</div>
+<div *ngIf="example=='from-component'">
+    <ag-from-component></ag-from-component>
+</div>
+<div *ngIf="example=='from-rich-component'">
+    <ag-from-rich-component></ag-from-rich-component>
+</div>
+<div *ngIf="example=='editor-component'">
+    <ag-editor-component></ag-editor-component>
+</div>
+<div *ngIf="example=='floating-row'">
+    <ag-floating-row-renderer-component></ag-floating-row-renderer-component>
+</div>
+<div *ngIf="example=='full-width'">
+    <ag-full-width-renderer-component></ag-full-width-renderer-component>
+</div>
+<div *ngIf="example=='group-row'">
+    <ag-group-row-renderer-component></ag-group-row-renderer-component>
+</div>
+<div *ngIf="example=='filter-component'">
+    <ag-filter-component></ag-filter-component>
+</div>

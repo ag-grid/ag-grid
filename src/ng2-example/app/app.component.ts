@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {Router, ActivatedRoute} from "@angular/router";
+import { URLSearchParams } from '@angular/http';
 import "rxjs/add/operator/map";
 
 @Component({
@@ -8,18 +8,9 @@ import "rxjs/add/operator/map";
     templateUrl: 'app.component.html'
 })
 export class AppComponent {
-    showNav: boolean = true;
-
-    constructor(private router: Router,
-                private route: ActivatedRoute) {
-    }
-
-    ngOnInit() {
-        this.route
-            .queryParams
-            .map(params => params['fromDocs'] !== undefined || false)
-            .subscribe((fromDocs) => {
-                this.showNav = !fromDocs;
-            });
+    example : string = 'rich-grid';
+    constructor() {
+        let params = new URLSearchParams(window.location.search.replace("?",""));
+        this.example = params.get('example') ? params.get("example") : 'rich-grid';
     }
 }
