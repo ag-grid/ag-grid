@@ -57,7 +57,7 @@ export class RenderedColumn extends Component {
     @PostConstruct
     public init(): void {
 
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eText.innerHTML = this.displayName;
 
         this.eIndent.style.width = (this.columnDept * 10) + 'px';
