@@ -71,6 +71,9 @@ export class RenderedCell extends Component {
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function;
 
+    // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
+    private cellFocused: boolean = null;
+
     private scope: any;
 
     private cellEditor: ICellEditor;
@@ -99,14 +102,22 @@ export class RenderedCell extends Component {
         this.setupGridCell();
     }
 
+    private createGridCell(): void {
+        this.gridCell = new GridCell(this.node.rowIndex, this.node.floating, this.column);
+    }
+
     private setupGridCell(): void {
         var listener = () => {
-            this.gridCell = new GridCell(this.node.rowIndex, this.node.floating, this.column);
+            // when index changes, this influences items that need the index, so we update the
+            // grid cell so they are working off the new index.
+            this.createGridCell();
+            // when the index of the row changes, ie means the cell may have lost of gained focus
+            this.checkCellFocused();
         };
 
         this.addDestroyableEventListener(this.node, RowNode.EVENT_ROW_INDEX_CHANGED, listener);
 
-        listener();
+        this.createGridCell();
     }
 
     public getGridCell(): GridCell {
@@ -303,35 +314,36 @@ export class RenderedCell extends Component {
     }
 
     private addCellFocusedListener(): void {
-        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
-        var cellFocusedLastTime: boolean = null;
-        var cellFocusedListener = (event?: any) => {
-            var cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
-            // see if we need to change the classes on this cell
-            if (cellFocused !== cellFocusedLastTime) {
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
-                cellFocusedLastTime = cellFocused;
-            }
-
-            // if this cell was just focused, see if we need to force browser focus, his can
-            // happen if focus is programmatically set.
-            if (cellFocused && event && event.forceBrowserFocus) {
-                this.eGridCell.focus();
-            }
-
-            // if another cell was focused, and we are editing, then stop editing
-            var fullRowEdit = this.gridOptionsWrapper.isFullRowEdit();
-            if (!cellFocused && !fullRowEdit && this.editingCell) {
-                this.stopRowOrCellEdit();
-            }
-        };
+        var cellFocusedListener = this.checkCellFocused.bind(this);
 
         this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         this.addDestroyFunc( ()=> {
             this.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         });
         cellFocusedListener();
+    }
+
+    private checkCellFocused(event?: any): void {
+        var cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
+
+        // see if we need to change the classes on this cell
+        if (cellFocused !== this.cellFocused) {
+            _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
+            _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
+            this.cellFocused = cellFocused;
+        }
+
+        // if this cell was just focused, see if we need to force browser focus, his can
+        // happen if focus is programmatically set.
+        if (cellFocused && event && event.forceBrowserFocus) {
+            this.eGridCell.focus();
+        }
+
+        // if another cell was focused, and we are editing, then stop editing
+        var fullRowEdit = this.gridOptionsWrapper.isFullRowEdit();
+        if (!cellFocused && !fullRowEdit && this.editingCell) {
+            this.stopRowOrCellEdit();
+        }
     }
 
     private setWidthOnCell(): void {
