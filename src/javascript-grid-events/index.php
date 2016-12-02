@@ -196,6 +196,10 @@ include '../documentation-main/documentation_header.php';
             <td>Informs when rows rendered into the DOM changes.</td>
         </tr>
         <tr>
+            <th>bodyScroll</th>
+            <td>Informs when the body is scrolled horizontally or vertically.</td>
+        </tr>
+        <tr>
             <th>dragStarted, dragStopped</th>
             <td>When column dragging starts of stops. Useful if you want to wait until after a drag
                 event before doing an action.</td>
