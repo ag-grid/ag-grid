@@ -147,7 +147,7 @@ function aggCount(input: any[]): any {
     for (var i = 0; i<length; i++) {
         let isGroupAgg = Utils.exists(input[i]) && typeof input[i].value === 'number';
         if (isGroupAgg) {
-            result += input[i].value;
+            result.value += input[i].value;
         } else {
             result.value++;
         }
