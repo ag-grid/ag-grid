@@ -54,7 +54,7 @@ export class TextFilter implements IFilter {
         }
         var value = this.filterParams.valueGetter(params.node);
         if (!value) {
-            return false;
+            return this.filterType === TextFilter.NOT_EQUALS;
         }
         var valueLowerCase = value.toString().toLowerCase();
         switch (this.filterType) {
