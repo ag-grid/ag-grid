@@ -968,8 +968,9 @@ export class GridPanel {
             this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
             this.eFloatingBottomFullWidthCellContainer = this.queryHtmlElement('.ag-floating-bottom-full-width-container');
 
-            this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
-                this.eFloatingTop, this.eFloatingBottom];
+            this.eAllCellContainers = [
+                this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+                this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer];
 
             this.addMouseWheelEventListeners();
         }
