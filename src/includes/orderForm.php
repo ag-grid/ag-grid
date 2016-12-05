@@ -21,7 +21,7 @@
     }
 </style>
 <div class="container-fluid curved-border">
-    <form action="https://bookings.britebiz.com/webToContact" method="POST" id="NB79YK" accept-charset="UTF-8" onSubmit="return validateForm();" name="NB79YK">
+    <form action="https://app.britebiz.com/webToContact" method="POST" id="NB79YK" accept-charset="UTF-8" onSubmit="return validateForm();" name="NB79YK">
         <div class="hide">
             <input type="hidden" value="NB79YK" name="form_id" id="form_id"/><input type="hidden" value="57f3c21fac73aa8" name="wtc" id="wtc"/>
             <input type="hidden" value="https://www.ag-grid.com/license-pricing.php?submitted=true" name="return_url" id="return_url"/>
@@ -117,9 +117,9 @@
         return '';
     }
     function validateEmail(fieldName) {
-        var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,20})?$/;
         if (fieldVal(fieldName) == "" || !emailReg.test(fieldVal(fieldName))) {
-            alert("Invalid Email Address!!");
+            alert("Invalid Email Address!");
             fieldFocus(fieldName);
             return false;
         } else {
