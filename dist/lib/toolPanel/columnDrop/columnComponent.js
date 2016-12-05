@@ -1,5 +1,4 @@
-// ag-grid-enterprise v7.0.1
-"use strict";
+// ag-grid-enterprise v7.0.2
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -28,7 +27,7 @@ var ColumnComponent = (function (_super) {
         this.ghost = ghost;
     }
     ColumnComponent.prototype.init = function () {
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
@@ -181,7 +180,7 @@ var ColumnComponent = (function (_super) {
         __metadata('design:returntype', void 0)
     ], ColumnComponent.prototype, "init", null);
     return ColumnComponent;
-}(main_1.Component));
+})(main_1.Component);
 exports.ColumnComponent = ColumnComponent;
 var AggItemComp = (function (_super) {
     __extends(AggItemComp, _super);
@@ -192,4 +191,4 @@ var AggItemComp = (function (_super) {
         this.addGuiEventListener('click', itemSelected);
     }
     return AggItemComp;
-}(main_1.Component));
+})(main_1.Component);

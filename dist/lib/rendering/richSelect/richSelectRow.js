@@ -1,5 +1,4 @@
-// ag-grid-enterprise v7.0.1
-"use strict";
+// ag-grid-enterprise v7.0.2
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -48,5 +47,5 @@ var RichSelectRow = (function (_super) {
         __metadata('design:type', main_1.CellRendererService)
     ], RichSelectRow.prototype, "cellRendererService", void 0);
     return RichSelectRow;
-}(main_1.Component));
+})(main_1.Component);
 exports.RichSelectRow = RichSelectRow;

@@ -1,5 +1,4 @@
-// ag-grid-enterprise v7.0.1
-"use strict";
+// ag-grid-enterprise v7.0.2
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -185,7 +184,7 @@ var ClipboardService = (function () {
                 return;
             }
             columns.forEach(function (column, index) {
-                var value = _this.columnController.getDisplayNameForColumn(column, true);
+                var value = _this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
                 if (index != 0) {
                     data += '\t';
                 }
@@ -411,5 +410,5 @@ var ClipboardService = (function () {
         __metadata('design:paramtypes', [])
     ], ClipboardService);
     return ClipboardService;
-}());
+})();
 exports.ClipboardService = ClipboardService;

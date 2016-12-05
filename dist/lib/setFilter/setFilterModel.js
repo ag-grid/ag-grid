@@ -1,5 +1,4 @@
-// ag-grid-enterprise v7.0.1
-"use strict";
+// ag-grid-enterprise v7.0.2
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
     function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting) {
@@ -227,5 +226,5 @@ var SetFilterModel = (function () {
         }
     };
     return SetFilterModel;
-}());
+})();
 exports.SetFilterModel = SetFilterModel;
