@@ -164,13 +164,13 @@ include '../documentation-main/documentation_header.php';
             <td>Returns true if pinning right, otherwise false.</td>
         </tr>
         <tr>
-            <th>getVisibleColAfter(col)</th>
+            <th>getDisplayedColAfter(col)</th>
             <td>Returns the column to the right of the provided column, taking into consideration open / closed
             column groups and visible columns. This is useful if you need to know what column is beside yours eg
                 if implementing your own cell navigation.</td>
         </tr>
         <tr>
-            <th>getVisibleColBefore(col)</th>
+            <th>getDisplayedColBefore(col)</th>
             <td>Same as getVisibleColAfter except gives col to the left.</td>
         </tr>
         <tr>

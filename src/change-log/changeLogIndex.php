@@ -10,14 +10,17 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 7.0.x</h2>
 
+    <h4>ag-grid-7.0.2, ag-grid-enterprise-7.0.2</h4>
+
     <h4>Bug Fixes</h4>
     <ul>
         <li>Bug Fix: For virtual pagination row model only, calling api.insertItemsAtIndex() messed up the row indexes, now fixed.</li>
         <li>Bug Fix: For viewport row model only, selected row was failing when the node ID of the selected row changed.</li>
-        <li>Bug Fix: When animating the rows, the selected cell highligh was getting confused. Now stays with the same row index (so if rows move, focus goes to new row in the selected index, the index doesn't move).</li>
-        <li>Bug Fix: grid event onRowClicked was not working for fullWidth rows (inluding when fullWidth was used for grouping).</li>
+        <li>Bug Fix: When animating the rows, the selected cell highlight was getting confused. Now stays with the same row index (so if rows move, focus goes to new row in the selected index, the index doesn't move).</li>
+        <li>Bug Fix: grid event onRowClicked was not working for fullWidth rows (including when fullWidth was used for grouping).</li>
         <li>Bug Fix: count function was not working when row grouping had 2 or more columns.</li>
         <li>Bug Fix: callbacks getBusinessKeyForNode and checkboxSelection were missing for React. in now.</li>
+        <li>Bug Fix: isCancelAfterEnd was getting called even if ESC was pressed, now no longer.</li>
     </ul>
     <h4>Enhancements</h4>
     <ul>

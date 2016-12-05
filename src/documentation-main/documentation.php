@@ -15,6 +15,13 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">5th December 2016</div>
+        <div>
+            v7.0.2 patch released, see <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">30th November 2016</div>
         <img src="../images/agGridDaily.png"/>
         <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
@@ -282,7 +289,7 @@ include 'documentation_header.php';
 <ul>
     <li><b>The Basics: </b> Learn how to set up ag-Grid with the framework that you have chosen.</li>
     <li><b>Interfacing: </b> A quick reference guide detailing all the configuration options for ag-Grid.</li>
-    <li><b>ag-Grid Free Features: </b> A detailed look at all the core features available in the Free and Pro versions.</li>
+    <li><b>ag-Grid Free Features: </b> A detailed look at all the core features available in the Free and Enterprise versions.</li>
     <li><b>Row Models: </b> A detailed look at all the row models available.</li>
     <li><b>Enterprise Features: </b> A detailed look at all the enterprise features.</li>
     <li><b>Examples: </b> Some examples combining different features.</li>
