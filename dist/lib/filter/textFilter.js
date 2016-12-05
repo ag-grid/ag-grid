@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -43,7 +42,17 @@ var TextFilter = (function () {
         }
         var value = this.filterParams.valueGetter(params.node);
         if (!value) {
-            return false;
+            if (this.filterType === TextFilter.NOT_EQUALS) {
+                // if there is no value, but the filter type was 'not equals',
+                // then it should pass, as a missing value is not equal whatever
+                // the user is filtering on
+                return true;
+            }
+            else {
+                // otherwise it's some type of comparison, to which empty value
+                // will always fail
+                return false;
+            }
         }
         var valueLowerCase = value.toString().toLowerCase();
         switch (this.filterType) {
@@ -172,5 +181,5 @@ var TextFilter = (function () {
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], TextFilter.prototype, "gridOptionsWrapper", void 0);
     return TextFilter;
-}());
+})();
 exports.TextFilter = TextFilter;

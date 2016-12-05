@@ -1,4 +1,4 @@
-// ag-grid v7.0.0
+// ag-grid v7.0.2
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,11 +74,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var grid_1 = __webpack_require__(2);
 	var gridApi_1 = __webpack_require__(11);
 	var events_1 = __webpack_require__(10);
@@ -315,11 +314,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var gridOptionsWrapper_1 = __webpack_require__(3);
 	var paginationController_1 = __webpack_require__(41);
 	var floatingRowModel_1 = __webpack_require__(26);
@@ -448,7 +446,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        pagination: inMemoryRowModel_1.InMemoryRowModel
 	    };
 	    return Grid;
-	}());
+	})();
 	exports.Grid = Grid;
 
 
@@ -458,11 +456,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -886,7 +883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], GridOptionsWrapper);
 	    return GridOptionsWrapper;
-	}());
+	})();
 	exports.GridOptionsWrapper = GridOptionsWrapper;
 
 
@@ -896,11 +893,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -992,7 +988,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], EventService);
 	    return EventService;
-	}());
+	})();
 	exports.EventService = EventService;
 
 
@@ -1002,11 +998,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1042,7 +1037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], LoggerFactory);
 	    return LoggerFactory;
-	}());
+	})();
 	exports.LoggerFactory = LoggerFactory;
 	var Logger = (function () {
 	    function Logger(name, logging) {
@@ -1055,7 +1050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    return Logger;
-	}());
+	})();
 	exports.Logger = Logger;
 
 
@@ -1065,11 +1060,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	var logger_1 = __webpack_require__(5);
 	var Context = (function () {
@@ -1281,7 +1275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.logger.log('>> ag-Application Context shut down - component is dead');
 	    };
 	    return Context;
-	}());
+	})();
 	exports.Context = Context;
 	// taken from: http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply
 	// allows calling 'apply' on a constructor
@@ -1382,11 +1376,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 	var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 	// util class, only used when debugging, for printing time to console
@@ -1400,7 +1393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.timestamp = new Date().getTime();
 	    };
 	    return Timer;
-	}());
+	})();
 	exports.Timer = Timer;
 	var Utils = (function () {
 	    function Utils() {
@@ -2219,7 +2212,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            pixelY: pY };
 	    };
 	    return Utils;
-	}());
+	})();
 	exports.Utils = Utils;
 	var NumberSequence = (function () {
 	    function NumberSequence(initValue, step) {
@@ -2234,7 +2227,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return valToReturn;
 	    };
 	    return NumberSequence;
-	}());
+	})();
 	exports.NumberSequence = NumberSequence;
 
 
@@ -2244,11 +2237,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var Constants = (function () {
 	    function Constants() {
 	    }
@@ -2285,7 +2277,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Constants.FLOATING_TOP = 'top';
 	    Constants.FLOATING_BOTTOM = 'bottom';
 	    return Constants;
-	}());
+	})();
 	exports.Constants = Constants;
 
 
@@ -2295,11 +2287,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var events_1 = __webpack_require__(10);
 	var utils_1 = __webpack_require__(7);
 	var ComponentUtil = (function () {
@@ -2486,7 +2477,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
 	        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
 	        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
-	        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef'];
+	        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
+	        'getBusinessKeyForNode', 'checkboxSelection'];
 	    ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
 	        .concat(ComponentUtil.OBJECT_PROPERTIES)
 	        .concat(ComponentUtil.STRING_PROPERTIES)
@@ -2494,7 +2486,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        .concat(ComponentUtil.FUNCTION_PROPERTIES)
 	        .concat(ComponentUtil.BOOLEAN_PROPERTIES);
 	    return ComponentUtil;
-	}());
+	})();
 	exports.ComponentUtil = ComponentUtil;
 	utils_1.Utils.iterateObject(events_1.Events, function (key, value) {
 	    ComponentUtil.EVENTS.push(value);
@@ -2515,11 +2507,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var Events = (function () {
 	    function Events() {
 	    }
@@ -2588,7 +2579,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Events.EVENT_ITEMS_REMOVED = 'itemsRemoved';
 	    Events.EVENT_BODY_SCROLL = 'bodyScroll';
 	    return Events;
-	}());
+	})();
 	exports.Events = Events;
 
 
@@ -2598,11 +2589,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3073,6 +3063,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var column = this.columnController.getPrimaryColumn(colKey);
 	        this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
 	    };
+	    GridApi.prototype.tabToNextCell = function () {
+	        return this.rowRenderer.tabToNextCell(false);
+	    };
+	    GridApi.prototype.tabToPreviousCell = function () {
+	        return this.rowRenderer.tabToNextCell(true);
+	    };
 	    GridApi.prototype.stopEditing = function (cancel) {
 	        if (cancel === void 0) { cancel = false; }
 	        this.rowRenderer.stopEditing(cancel);
@@ -3264,7 +3260,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], GridApi);
 	    return GridApi;
-	}());
+	})();
 	exports.GridApi = GridApi;
 
 
@@ -3274,11 +3270,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3463,7 +3458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 	        else {
-	            return this.columnController.getDisplayNameForColumn(column, true);
+	            return this.columnController.getDisplayNameForColumn(column, 'csv', true);
 	        }
 	    };
 	    CsvCreator.prototype.processCell = function (rowNode, column, value, processCellCallback) {
@@ -3540,7 +3535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], CsvCreator);
 	    return CsvCreator;
-	}());
+	})();
 	exports.CsvCreator = CsvCreator;
 
 
@@ -3550,11 +3545,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3591,8 +3585,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ColumnApi.prototype.sizeColumnsToFit = function (gridWidth) { this._columnController.sizeColumnsToFit(gridWidth); };
 	    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue, instanceId) { this._columnController.setColumnGroupOpened(group, newValue, instanceId); };
 	    ColumnApi.prototype.getColumnGroup = function (name, instanceId) { return this._columnController.getColumnGroup(name, instanceId); };
-	    ColumnApi.prototype.getDisplayNameForColumn = function (column) { return this._columnController.getDisplayNameForColumn(column); };
-	    ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup) { return this._columnController.getDisplayNameForColumnGroup(columnGroup); };
+	    ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this._columnController.getDisplayNameForColumn(column, location); };
+	    ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this._columnController.getDisplayNameForColumnGroup(columnGroup, location); };
 	    ColumnApi.prototype.getColumn = function (key) { return this._columnController.getPrimaryColumn(key); };
 	    ColumnApi.prototype.setColumnState = function (columnState) { return this._columnController.setColumnState(columnState); };
 	    ColumnApi.prototype.getColumnState = function () { return this._columnController.getColumnState(); };
@@ -3711,7 +3705,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    ColumnApi.prototype.getDisplayNameForCol = function (column) {
 	        console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
-	        return this.getDisplayNameForColumn(column);
+	        return this.getDisplayNameForColumn(column, null);
 	    };
 	    __decorate([
 	        context_1.Autowired('columnController'), 
@@ -3722,7 +3716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], ColumnApi);
 	    return ColumnApi;
-	}());
+	})();
 	exports.ColumnApi = ColumnApi;
 	var ColumnController = (function () {
 	    function ColumnController() {
@@ -4544,9 +4538,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        return null;
 	    };
-	    ColumnController.prototype.getDisplayNameForColumn = function (column, includeAggFunc) {
+	    ColumnController.prototype.getDisplayNameForColumn = function (column, location, includeAggFunc) {
 	        if (includeAggFunc === void 0) { includeAggFunc = false; }
-	        var headerName = this.getHeaderName(column.getColDef(), column, null);
+	        var headerName = this.getHeaderName(column.getColDef(), column, null, location);
 	        if (includeAggFunc) {
 	            return this.wrapHeaderNameWithAggFunc(column, headerName);
 	        }
@@ -4554,22 +4548,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return headerName;
 	        }
 	    };
-	    ColumnController.prototype.getDisplayNameForColumnGroup = function (columnGroup) {
+	    ColumnController.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) {
 	        var colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
 	        if (colGroupDef) {
-	            return this.getHeaderName(colGroupDef, null, columnGroup);
+	            return this.getHeaderName(colGroupDef, null, columnGroup, location);
 	        }
 	        else {
 	            return null;
 	        }
 	    };
-	    ColumnController.prototype.getHeaderName = function (colDef, column, columnGroup) {
+	    // location is where the column is going to appear, ie who is calling us
+	    ColumnController.prototype.getHeaderName = function (colDef, column, columnGroup, location) {
 	        var headerValueGetter = colDef.headerValueGetter;
 	        if (headerValueGetter) {
 	            var params = {
 	                colDef: colDef,
 	                column: column,
 	                columnGroup: columnGroup,
+	                location: location,
 	                api: this.gridOptionsWrapper.getApi(),
 	                context: this.gridOptionsWrapper.getContext()
 	            };
@@ -5266,7 +5262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], ColumnController);
 	    return ColumnController;
-	}());
+	})();
 	exports.ColumnController = ColumnController;
 
 
@@ -5276,11 +5272,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var column_1 = __webpack_require__(15);
 	var eventService_1 = __webpack_require__(4);
 	var ColumnGroup = (function () {
@@ -5480,7 +5475,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
 	    ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
 	    return ColumnGroup;
-	}());
+	})();
 	exports.ColumnGroup = ColumnGroup;
 
 
@@ -5490,11 +5485,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -5886,7 +5880,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], Column.prototype, "initialise", null);
 	    return Column;
-	}());
+	})();
 	exports.Column = Column;
 
 
@@ -5896,11 +5890,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6044,7 +6037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], ColumnUtils);
 	    return ColumnUtils;
-	}());
+	})();
 	exports.ColumnUtils = ColumnUtils;
 
 
@@ -6054,11 +6047,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var columnGroup_1 = __webpack_require__(14);
 	var column_1 = __webpack_require__(15);
 	var OriginalColumnGroup = (function () {
@@ -6151,7 +6143,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
 	    };
 	    return OriginalColumnGroup;
-	}());
+	})();
 	exports.OriginalColumnGroup = OriginalColumnGroup;
 
 
@@ -6161,11 +6153,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6236,7 +6227,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], ExpressionService);
 	    return ExpressionService;
-	}());
+	})();
 	exports.ExpressionService = ExpressionService;
 
 
@@ -6246,11 +6237,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6438,7 +6428,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], BalancedColumnTreeBuilder);
 	    return BalancedColumnTreeBuilder;
-	}());
+	})();
 	exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;
 
 
@@ -6448,11 +6438,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	// class returns a unique id to use for the column. it checks the existing columns, and if the requested
 	// id is already taken, it will start appending numbers until it gets a unique id.
 	// eg, if the col field is 'name', it will try ids: {name, name_1, name_2...}
@@ -6491,7 +6480,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    return ColumnKeyCreator;
-	}());
+	})();
 	exports.ColumnKeyCreator = ColumnKeyCreator;
 
 
@@ -6501,11 +6490,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6637,7 +6625,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], DisplayedGroupCreator);
 	    return DisplayedGroupCreator;
-	}());
+	})();
 	exports.DisplayedGroupCreator = DisplayedGroupCreator;
 
 
@@ -6647,11 +6635,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6770,7 +6757,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], AutoWidthCalculator);
 	    return AutoWidthCalculator;
-	}());
+	})();
 	exports.AutoWidthCalculator = AutoWidthCalculator;
 
 
@@ -6780,11 +6767,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6931,7 +6917,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 	        if (rowNodes) {
-	            rowNodes.forEach(function (node, rowIndex) {
+	            rowNodes.forEach(function (node) {
 	                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, eBodyContainer, null, eFullWidthContainer, ePinnedLeftContainer, null, ePinnedRightContainer, null, node, false);
 	                _this.context.wireBean(renderedRow);
 	                renderedRows.push(renderedRow);
@@ -6945,7 +6931,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.refreshView(refreshEvent.keepRenderedRows, refreshEvent.animate);
 	    };
 	    // if the row nodes are not rendered, no index is returned
-	    RowRenderer.prototype.getRenderedIndexsForRowNodes = function (rowNodes) {
+	    RowRenderer.prototype.getRenderedIndexesForRowNodes = function (rowNodes) {
 	        var result = [];
 	        if (utils_1.Utils.missing(rowNodes)) {
 	            return result;
@@ -6964,7 +6950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        // we only need to be worried about rendered rows, as this method is
 	        // called to whats rendered. if the row isn't rendered, we don't care
-	        var indexesToRemove = this.getRenderedIndexsForRowNodes(rowNodes);
+	        var indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 	        // remove the rows
 	        this.removeVirtualRows(indexesToRemove);
 	        // add draw them again
@@ -7307,10 +7293,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return cellComponent;
 	    };
 	    RowRenderer.prototype.onTabKeyDown = function (previousRenderedCell, keyboardEvent) {
+	        var backwards = keyboardEvent.shiftKey;
+	        var success = this.moveToCellAfter(previousRenderedCell, backwards);
+	        if (success) {
+	            keyboardEvent.preventDefault();
+	        }
+	    };
+	    RowRenderer.prototype.tabToNextCell = function (backwards) {
+	        var focusedCell = this.focusedCellController.getFocusedCell();
+	        // if no focus, then cannot navigate
+	        if (utils_1.Utils.missing(focusedCell)) {
+	            return false;
+	        }
+	        var renderedCell = this.getComponentForCell(focusedCell);
+	        // if cell is not rendered, means user has scrolled away from the cell
+	        if (utils_1.Utils.missing(renderedCell)) {
+	            return false;
+	        }
+	        var result = this.moveToCellAfter(renderedCell, backwards);
+	        return result;
+	    };
+	    // returns true if moving to next cell was successful
+	    RowRenderer.prototype.moveToCellAfter = function (previousRenderedCell, backwards) {
 	        var editing = previousRenderedCell.isEditing();
 	        var gridCell = previousRenderedCell.getGridCell();
 	        // find the next cell to start editing
-	        var nextRenderedCell = this.moveFocusToNextCell(gridCell, keyboardEvent.shiftKey, editing);
+	        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, editing);
 	        var foundCell = utils_1.Utils.exists(nextRenderedCell);
 	        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
 	        // to the normal tabbing so user can exit the grid.
@@ -7326,7 +7334,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            else {
 	                nextRenderedCell.focusCell(true);
 	            }
-	            keyboardEvent.preventDefault();
+	            return true;
+	        }
+	        else {
+	            return false;
 	        }
 	    };
 	    RowRenderer.prototype.moveEditToNextCell = function (previousRenderedCell, nextRenderedCell) {
@@ -7356,10 +7367,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    // called by the cell, when tab is pressed while editing.
 	    // @return: RenderedCell when navigation successful, otherwise null
-	    RowRenderer.prototype.moveFocusToNextCell = function (gridCell, shiftKey, startEditing) {
+	    RowRenderer.prototype.findNextCellToFocusOn = function (gridCell, backwards, startEditing) {
 	        var nextCell = gridCell;
 	        while (true) {
-	            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
+	            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
 	            // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
 	            // so bottom right cell going forwards, or top left going backwards
 	            if (!nextCell) {
@@ -7484,7 +7495,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], RowRenderer);
 	    return RowRenderer;
-	}());
+	})();
 	exports.RowRenderer = RowRenderer;
 
 
@@ -7494,11 +7505,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8302,8 +8312,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
 	            this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
 	            this.eFloatingBottomFullWidthCellContainer = this.queryHtmlElement('.ag-floating-bottom-full-width-container');
-	            this.eAllCellContainers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
-	                this.eFloatingTop, this.eFloatingBottom];
+	            this.eAllCellContainers = [
+	                this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+	                this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer];
 	            this.addMouseWheelEventListeners();
 	        }
 	    };
@@ -8758,7 +8769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], GridPanel);
 	    return GridPanel;
-	}());
+	})();
 	exports.GridPanel = GridPanel;
 
 
@@ -8768,11 +8779,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8972,7 +8982,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], MasterSlaveService);
 	    return MasterSlaveService;
-	}());
+	})();
 	exports.MasterSlaveService = MasterSlaveService;
 
 
@@ -8982,11 +8992,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9130,7 +9139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], FloatingRowModel);
 	    return FloatingRowModel;
-	}());
+	})();
 	exports.FloatingRowModel = FloatingRowModel;
 
 
@@ -9140,11 +9149,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9175,11 +9183,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var event = { oldData: oldData, newData: data };
 	        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
 	    };
+	    RowNode.prototype.createDaemonNode = function () {
+	        var oldNode = new RowNode();
+	        this.context.wireBean(oldNode);
+	        // just copy the id and data, this is enough for the node to be used
+	        // in the selection controller (the selection controller is the only
+	        // place where daemon nodes can live).
+	        oldNode.id = this.id;
+	        oldNode.data = this.data;
+	        oldNode.daemon = true;
+	        oldNode.selected = this.selected;
+	        oldNode.level = this.level;
+	        return oldNode;
+	    };
 	    RowNode.prototype.setDataAndId = function (data, id) {
+	        var oldNode = utils_1.Utils.exists(this.id) ? this.createDaemonNode() : null;
 	        var oldData = this.data;
 	        this.data = data;
 	        this.setId(id);
-	        this.selectionController.syncInRowNode(this);
+	        this.selectionController.syncInRowNode(this, oldNode);
 	        var event = { oldData: oldData, newData: data };
 	        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
 	    };
@@ -9558,8 +9580,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        context_1.Autowired('rowModel'), 
 	        __metadata('design:type', Object)
 	    ], RowNode.prototype, "rowModel", void 0);
+	    __decorate([
+	        context_1.Autowired('context'), 
+	        __metadata('design:type', context_1.Context)
+	    ], RowNode.prototype, "context", void 0);
 	    return RowNode;
-	}());
+	})();
 	exports.RowNode = RowNode;
 
 
@@ -9569,11 +9595,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9667,7 +9692,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var groupsToRefresh = {};
 	        utils_1.Utils.iterateObject(this.selectedNodes, function (key, otherRowNode) {
 	            if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-	                _this.selectedNodes[otherRowNode.id].setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
+	                var rowNode = _this.selectedNodes[otherRowNode.id];
+	                rowNode.setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
 	                if (_this.groupSelectsChildren && otherRowNode.parent) {
 	                    groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
 	                }
@@ -9690,8 +9716,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.selectedNodes[rowNode.id] = undefined;
 	        }
 	    };
-	    SelectionController.prototype.syncInRowNode = function (rowNode) {
-	        if (this.selectedNodes[rowNode.id] !== undefined) {
+	    SelectionController.prototype.syncInRowNode = function (rowNode, oldNode) {
+	        this.syncInOldRowNode(rowNode, oldNode);
+	        this.syncInNewRowNode(rowNode);
+	    };
+	    // if the id has changed for the node, then this means the rowNode
+	    // is getting used for a different data item, which breaks
+	    // our selectedNodes, as the node now is mapped by the old id
+	    // which is inconsistent. so to keep the old node as selected,
+	    // we swap in the clone (with the old id and old data). this means
+	    // the oldNode is effectively a daemon we keep a reference to,
+	    // so if client calls api.getSelectedNodes(), it gets the daemon
+	    // in the result. when the client un-selects, the reference to the
+	    // daemon is removed. the daemon, because it's an oldNode, is not
+	    // used by the grid for rendering, it's a copy of what the node used
+	    // to be like before the id was changed.
+	    SelectionController.prototype.syncInOldRowNode = function (rowNode, oldNode) {
+	        var oldNodeHasDifferentId = utils_1.Utils.exists(oldNode) && (rowNode.id !== oldNode.id);
+	        if (oldNodeHasDifferentId) {
+	            var oldNodeSelected = utils_1.Utils.exists(this.selectedNodes[oldNode.id]);
+	            if (oldNodeSelected) {
+	                this.selectedNodes[oldNode.id] = oldNode;
+	            }
+	        }
+	    };
+	    SelectionController.prototype.syncInNewRowNode = function (rowNode) {
+	        if (utils_1.Utils.exists(this.selectedNodes[rowNode.id])) {
 	            rowNode.setSelectedInitialValue(true);
 	            this.selectedNodes[rowNode.id] = rowNode;
 	        }
@@ -9823,7 +9873,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], SelectionController);
 	    return SelectionController;
-	}());
+	})();
 	exports.SelectionController = SelectionController;
 
 
@@ -9833,11 +9883,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10015,7 +10064,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], ValueService);
 	    return ValueService;
-	}());
+	})();
 	exports.ValueService = ValueService;
 
 
@@ -10025,11 +10074,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	var BorderLayout = (function () {
 	    function BorderLayout(params) {
@@ -10277,7 +10325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        '  <div class="ag-bl-overlay" id="overlay"></div>' +
 	        '</div>';
 	    return BorderLayout;
-	}());
+	})();
 	exports.BorderLayout = BorderLayout;
 
 
@@ -10287,11 +10335,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10529,7 +10576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], DragService);
 	    return DragService;
-	}());
+	})();
 	exports.DragService = DragService;
 
 
@@ -10539,11 +10586,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10706,7 +10752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], MouseEventService);
 	    return MouseEventService;
-	}());
+	})();
 	exports.MouseEventService = MouseEventService;
 
 
@@ -10716,11 +10762,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	var gridRow_1 = __webpack_require__(34);
 	var GridCell = (function () {
@@ -10739,7 +10784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.rowIndex + "." + this.floating + "." + this.column.getId();
 	    };
 	    return GridCell;
-	}());
+	})();
 	exports.GridCell = GridCell;
 
 
@@ -10749,11 +10794,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var constants_1 = __webpack_require__(8);
 	var utils_1 = __webpack_require__(7);
 	var gridCell_1 = __webpack_require__(33);
@@ -10814,7 +10858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.rowIndex <= otherSelection.rowIndex;
 	    };
 	    return GridRow;
-	}());
+	})();
 	exports.GridRow = GridRow;
 
 
@@ -10824,11 +10868,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11000,7 +11043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], FocusedCellController);
 	    return FocusedCellController;
-	}());
+	})();
 	exports.FocusedCellController = FocusedCellController;
 
 
@@ -11010,11 +11053,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11092,7 +11134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], TemplateService);
 	    return TemplateService;
-	}());
+	})();
 	exports.TemplateService = TemplateService;
 
 
@@ -11102,11 +11144,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -12041,7 +12082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], RenderedRow.prototype, "init", null);
 	    return RenderedRow;
-	}());
+	})();
 	exports.RenderedRow = RenderedRow;
 
 
@@ -12051,11 +12092,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -12100,6 +12140,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __extends(RenderedCell, _super);
 	    function RenderedCell(column, node, scope, renderedRow) {
 	        _super.call(this, '<div/>');
+	        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
+	        this.cellFocused = null;
 	        this.firstRightPinned = false;
 	        this.lastLeftPinned = false;
 	        // because we reference eGridCell everywhere in this class,
@@ -12111,13 +12153,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.renderedRow = renderedRow;
 	        this.setupGridCell();
 	    }
+	    RenderedCell.prototype.createGridCell = function () {
+	        this.gridCell = new gridCell_1.GridCell(this.node.rowIndex, this.node.floating, this.column);
+	    };
 	    RenderedCell.prototype.setupGridCell = function () {
 	        var _this = this;
 	        var listener = function () {
-	            _this.gridCell = new gridCell_1.GridCell(_this.node.rowIndex, _this.node.floating, _this.column);
+	            // when index changes, this influences items that need the index, so we update the
+	            // grid cell so they are working off the new index.
+	            _this.createGridCell();
+	            // when the index of the row changes, ie means the cell may have lost of gained focus
+	            _this.checkCellFocused();
 	        };
 	        this.addDestroyableEventListener(this.node, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, listener);
-	        listener();
+	        this.createGridCell();
 	    };
 	    RenderedCell.prototype.getGridCell = function () {
 	        return this.gridCell;
@@ -12297,32 +12346,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    RenderedCell.prototype.addCellFocusedListener = function () {
 	        var _this = this;
-	        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
-	        var cellFocusedLastTime = null;
-	        var cellFocusedListener = function (event) {
-	            var cellFocused = _this.focusedCellController.isCellFocused(_this.gridCell);
-	            // see if we need to change the classes on this cell
-	            if (cellFocused !== cellFocusedLastTime) {
-	                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-focus', cellFocused);
-	                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-no-focus', !cellFocused);
-	                cellFocusedLastTime = cellFocused;
-	            }
-	            // if this cell was just focused, see if we need to force browser focus, his can
-	            // happen if focus is programmatically set.
-	            if (cellFocused && event && event.forceBrowserFocus) {
-	                _this.eGridCell.focus();
-	            }
-	            // if another cell was focused, and we are editing, then stop editing
-	            var fullRowEdit = _this.gridOptionsWrapper.isFullRowEdit();
-	            if (!cellFocused && !fullRowEdit && _this.editingCell) {
-	                _this.stopRowOrCellEdit();
-	            }
-	        };
+	        var cellFocusedListener = this.checkCellFocused.bind(this);
 	        this.eventService.addEventListener(events_1.Events.EVENT_CELL_FOCUSED, cellFocusedListener);
 	        this.addDestroyFunc(function () {
 	            _this.eventService.removeEventListener(events_1.Events.EVENT_CELL_FOCUSED, cellFocusedListener);
 	        });
 	        cellFocusedListener();
+	    };
+	    RenderedCell.prototype.checkCellFocused = function (event) {
+	        var cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
+	        // see if we need to change the classes on this cell
+	        if (cellFocused !== this.cellFocused) {
+	            utils_1.Utils.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
+	            utils_1.Utils.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
+	            this.cellFocused = cellFocused;
+	        }
+	        // if this cell was just focused, see if we need to force browser focus, his can
+	        // happen if focus is programmatically set.
+	        if (cellFocused && event && event.forceBrowserFocus) {
+	            this.eGridCell.focus();
+	        }
+	        // if another cell was focused, and we are editing, then stop editing
+	        var fullRowEdit = this.gridOptionsWrapper.isFullRowEdit();
+	        if (!cellFocused && !fullRowEdit && this.editingCell) {
+	            this.stopRowOrCellEdit();
+	        }
 	    };
 	    RenderedCell.prototype.setWidthOnCell = function () {
 	        var _this = this;
@@ -12612,15 +12660,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 	        this.editingCell = false;
-	        // also have another option here to cancel after editing, so for example user could have a popup editor and
-	        // it is closed by user clicking outside the editor. then the editor will close automatically (with false
-	        // passed above) and we need to see if the editor wants to accept the new value.
-	        var cancelAfterEnd = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
-	        var acceptNewValue = !cancel && !cancelAfterEnd;
-	        if (acceptNewValue) {
-	            var newValue = this.cellEditor.getValue();
-	            this.valueService.setValue(this.node, this.column, newValue);
-	            this.value = this.getValue();
+	        if (!cancel) {
+	            // also have another option here to cancel after editing, so for example user could have a popup editor and
+	            // it is closed by user clicking outside the editor. then the editor will close automatically (with false
+	            // passed above) and we need to see if the editor wants to accept the new value.
+	            var userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
+	            if (!userWantsToCancel) {
+	                var newValue = this.cellEditor.getValue();
+	                this.valueService.setValue(this.node, this.column, newValue);
+	                this.value = this.getValue();
+	            }
 	        }
 	        if (this.cellEditor.destroy) {
 	            this.cellEditor.destroy();
@@ -13133,7 +13182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], RenderedCell.prototype, "init", null);
 	    return RenderedCell;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.RenderedCell = RenderedCell;
 
 
@@ -13143,11 +13192,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13269,7 +13317,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], FocusService);
 	    return FocusService;
-	}());
+	})();
 	exports.FocusService = FocusService;
 
 
@@ -13279,11 +13327,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13598,7 +13645,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [logger_1.LoggerFactory])
 	    ], GridCore);
 	    return GridCore;
-	}());
+	})();
 	exports.GridCore = GridCore;
 
 
@@ -13608,11 +13655,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13957,7 +14003,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], PaginationController);
 	    return PaginationController;
-	}());
+	})();
 	exports.PaginationController = PaginationController;
 
 
@@ -13967,11 +14013,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14135,7 +14180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], SortController);
 	    return SortController;
-	}());
+	})();
 	exports.SortController = SortController;
 
 
@@ -14145,11 +14190,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14613,7 +14657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], FilterManager);
 	    return FilterManager;
-	}());
+	})();
 	exports.FilterManager = FilterManager;
 
 
@@ -14623,11 +14667,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14848,7 +14891,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], PopupService);
 	    return PopupService;
-	}());
+	})();
 	exports.PopupService = PopupService;
 
 
@@ -14858,11 +14901,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14901,7 +14943,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        var value = this.filterParams.valueGetter(params.node);
 	        if (!value) {
-	            return false;
+	            if (this.filterType === TextFilter.NOT_EQUALS) {
+	                // if there is no value, but the filter type was 'not equals',
+	                // then it should pass, as a missing value is not equal whatever
+	                // the user is filtering on
+	                return true;
+	            }
+	            else {
+	                // otherwise it's some type of comparison, to which empty value
+	                // will always fail
+	                return false;
+	            }
 	        }
 	        var valueLowerCase = value.toString().toLowerCase();
 	        switch (this.filterType) {
@@ -15030,7 +15082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
 	    ], TextFilter.prototype, "gridOptionsWrapper", void 0);
 	    return TextFilter;
-	}());
+	})();
 	exports.TextFilter = TextFilter;
 
 
@@ -15040,11 +15092,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -15214,7 +15265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
 	    ], NumberFilter.prototype, "gridOptionsWrapper", void 0);
 	    return NumberFilter;
-	}());
+	})();
 	exports.NumberFilter = NumberFilter;
 
 
@@ -15224,11 +15275,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	var eventService_1 = __webpack_require__(4);
 	var gridOptionsWrapper_1 = __webpack_require__(3);
@@ -15443,7 +15493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
 	    return Component;
-	}());
+	})();
 	exports.Component = Component;
 
 
@@ -15453,11 +15503,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -15552,7 +15601,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], CellEditorFactory);
 	    return CellEditorFactory;
-	}());
+	})();
 	exports.CellEditorFactory = CellEditorFactory;
 
 
@@ -15562,11 +15611,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -15647,7 +15695,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    TextCellEditor.TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
 	    return TextCellEditor;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.TextCellEditor = TextCellEditor;
 
 
@@ -15657,11 +15705,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -15715,7 +15762,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.eSelect.value;
 	    };
 	    return SelectCellEditor;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.SelectCellEditor = SelectCellEditor;
 
 
@@ -15725,11 +15772,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -15796,7 +15842,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    return PopupEditorWrapper;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.PopupEditorWrapper = PopupEditorWrapper;
 
 
@@ -15806,11 +15852,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -15826,7 +15871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return true;
 	    };
 	    return PopupTextCellEditor;
-	}(textCellEditor_1.TextCellEditor));
+	})(textCellEditor_1.TextCellEditor);
 	exports.PopupTextCellEditor = PopupTextCellEditor;
 
 
@@ -15836,11 +15881,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -15856,7 +15900,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return true;
 	    };
 	    return PopupSelectCellEditor;
-	}(selectCellEditor_1.SelectCellEditor));
+	})(selectCellEditor_1.SelectCellEditor);
 	exports.PopupSelectCellEditor = PopupSelectCellEditor;
 
 
@@ -15866,11 +15910,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -15924,7 +15967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        '<div class="ag-large-textarea"></div>' +
 	        '</div>';
 	    return LargeTextCellEditor;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.LargeTextCellEditor = LargeTextCellEditor;
 
 
@@ -15934,11 +15977,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16009,7 +16051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], CellRendererFactory);
 	    return CellRendererFactory;
-	}());
+	})();
 	exports.CellRendererFactory = CellRendererFactory;
 
 
@@ -16019,11 +16061,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16097,7 +16138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        '<span class="ag-value-slide-current"></span>' +
 	        '</span>';
 	    return AnimateSlideCellRenderer;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 
 
@@ -16107,11 +16148,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16198,7 +16238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        '<span class="ag-value-change-value"></span>' +
 	        '</span>';
 	    return AnimateShowChangeCellRenderer;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
 
 
@@ -16208,11 +16248,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -16498,7 +16537,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:type', columnController_1.ColumnController)
 	    ], GroupCellRenderer.prototype, "columnController", void 0);
 	    return GroupCellRenderer;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.GroupCellRenderer = GroupCellRenderer;
 
 
@@ -16508,11 +16547,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var SVG_NS = "http://www.w3.org/2000/svg";
 	var SvgFactory = (function () {
 	    function SvgFactory() {
@@ -16716,7 +16754,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    SvgFactory.imageCache = {};
 	    return SvgFactory;
-	}());
+	})();
 	exports.SvgFactory = SvgFactory;
 	// i couldn't figure out how to not make these blurry
 	/*function createPlusMinus(plus: boolean) {
@@ -16807,11 +16845,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16906,7 +16943,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], CellRendererService);
 	    return CellRendererService;
-	}());
+	})();
 	exports.CellRendererService = CellRendererService;
 
 
@@ -16916,11 +16953,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16969,7 +17005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], ValueFormatterService);
 	    return ValueFormatterService;
-	}());
+	})();
 	exports.ValueFormatterService = ValueFormatterService;
 
 
@@ -16979,11 +17015,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -17060,7 +17095,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
 	    ], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
 	    return CheckboxSelectionComponent;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
 
 
@@ -17070,11 +17105,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	var column_1 = __webpack_require__(15);
 	var SetLeftFeature = (function () {
@@ -17108,7 +17142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    return SetLeftFeature;
-	}());
+	})();
 	exports.SetLeftFeature = SetLeftFeature;
 
 
@@ -17118,16 +17152,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var MethodNotImplementedException = (function () {
 	    function MethodNotImplementedException() {
 	    }
 	    return MethodNotImplementedException;
-	}());
+	})();
 	exports.MethodNotImplementedException = MethodNotImplementedException;
 
 
@@ -17137,11 +17170,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17351,7 +17383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], CellNavigationService);
 	    return CellNavigationService;
-	}());
+	})();
 	exports.CellNavigationService = CellNavigationService;
 
 
@@ -17361,11 +17393,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17486,7 +17517,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], HeaderRenderer);
 	    return HeaderRenderer;
-	}());
+	})();
 	exports.HeaderRenderer = HeaderRenderer;
 
 
@@ -17496,11 +17527,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17613,7 +17643,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], HeaderContainer.prototype, "init", null);
 	    return HeaderContainer;
-	}());
+	})();
 	exports.HeaderContainer = HeaderContainer;
 
 
@@ -17623,11 +17653,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17981,7 +18010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], DragAndDropService);
 	    return DragAndDropService;
-	}());
+	})();
 	exports.DragAndDropService = DragAndDropService;
 
 
@@ -17991,11 +18020,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -18132,7 +18160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], HeaderRowComp.prototype, "init", null);
 	    return HeaderRowComp;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.HeaderRowComp = HeaderRowComp;
 
 
@@ -18142,11 +18170,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18188,7 +18215,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eHeaderGroupCell = document.createElement('div');
 	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper, null, this.columnGroup);
 	        // this.displayName = this.columnGroup.getHeaderName();
-	        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup);
+	        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 	        this.setupResize();
 	        this.addClasses();
 	        this.setupLabel();
@@ -18423,7 +18450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], RenderedHeaderGroupCell.prototype, "init", null);
 	    return RenderedHeaderGroupCell;
-	}());
+	})();
 	exports.RenderedHeaderGroupCell = RenderedHeaderGroupCell;
 
 
@@ -18433,11 +18460,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18461,7 +18487,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], HorizontalDragService);
 	    return HorizontalDragService;
-	}());
+	})();
 	exports.HorizontalDragService = HorizontalDragService;
 	var DragInstance = (function () {
 	    function DragInstance(params, startEvent) {
@@ -18531,7 +18557,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eDragParent.removeEventListener('mouseleave', this.mouseLeave);
 	    };
 	    return DragInstance;
-	}());
+	})();
 
 
 /***/ },
@@ -18540,11 +18566,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	var CssClassApplier = (function () {
 	    function CssClassApplier() {
@@ -18593,7 +18618,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    return CssClassApplier;
-	}());
+	})();
 	exports.CssClassApplier = CssClassApplier;
 
 
@@ -18603,11 +18628,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var eventService_1 = __webpack_require__(4);
 	var utils_1 = __webpack_require__(7);
 	var TouchListener = (function () {
@@ -18691,7 +18715,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    TouchListener.EVENT_TAP = 'tap';
 	    TouchListener.EVENT_LONG_TAP = 'longTap';
 	    return TouchListener;
-	}());
+	})();
 	exports.TouchListener = TouchListener;
 
 
@@ -18701,11 +18725,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18750,7 +18773,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper, this.column, null);
 	        // label div
 	        var eHeaderCellLabel = this.eHeaderCell.querySelector('#agHeaderCellLabel');
-	        this.displayName = this.columnController.getDisplayNameForColumn(this.column, true);
+	        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
 	        this.setupMovingCss();
 	        this.setupTooltip();
 	        this.setupResize();
@@ -19104,7 +19127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], RenderedHeaderCell.prototype, "init", null);
 	    return RenderedHeaderCell;
-	}());
+	})();
 	exports.RenderedHeaderCell = RenderedHeaderCell;
 
 
@@ -19114,11 +19137,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19208,7 +19230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], HeaderTemplateLoader);
 	    return HeaderTemplateLoader;
-	}());
+	})();
 	exports.HeaderTemplateLoader = HeaderTemplateLoader;
 
 
@@ -19218,11 +19240,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19328,7 +19349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], BodyDropTarget.prototype, "init", null);
 	    return BodyDropTarget;
-	}());
+	})();
 	exports.BodyDropTarget = BodyDropTarget;
 
 
@@ -19338,11 +19359,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19611,7 +19631,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], MoveColumnController.prototype, "init", null);
 	    return MoveColumnController;
-	}());
+	})();
 	exports.MoveColumnController = MoveColumnController;
 
 
@@ -19621,11 +19641,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19717,7 +19736,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
 	    ], BodyDropPivotTarget.prototype, "gridOptionsWrapper", void 0);
 	    return BodyDropPivotTarget;
-	}());
+	})();
 	exports.BodyDropPivotTarget = BodyDropPivotTarget;
 
 
@@ -19727,11 +19746,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var ColumnChangeEvent = (function () {
 	    function ColumnChangeEvent(type) {
 	        this.type = type;
@@ -19812,7 +19830,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.finished;
 	    };
 	    return ColumnChangeEvent;
-	}());
+	})();
 	exports.ColumnChangeEvent = ColumnChangeEvent;
 
 
@@ -19822,11 +19840,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	// class returns unique instance id's for columns.
 	// eg, the following calls (in this order) will result in:
 	//
@@ -19856,7 +19873,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return result;
 	    };
 	    return GroupInstanceIdCreator;
-	}());
+	})();
 	exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 
 
@@ -19866,11 +19883,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	function defaultGroupComparator(valueA, valueB, nodeA, nodeB) {
 	    var nodeAIsGroup = utils_1.Utils.exists(nodeA) && nodeA.group;
@@ -19899,11 +19915,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19986,7 +20001,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], StandardMenuFactory);
 	    return StandardMenuFactory;
-	}());
+	})();
 	exports.StandardMenuFactory = StandardMenuFactory;
 
 
@@ -19996,11 +20011,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20087,7 +20101,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], FilterStage);
 	    return FilterStage;
-	}());
+	})();
 	exports.FilterStage = FilterStage;
 
 
@@ -20097,11 +20111,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20193,7 +20206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], SortStage);
 	    return SortStage;
-	}());
+	})();
 	exports.SortStage = SortStage;
 
 
@@ -20203,11 +20216,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20364,7 +20376,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], FlattenStage);
 	    return FlattenStage;
-	}());
+	})();
 	exports.FlattenStage = FlattenStage;
 
 
@@ -20374,11 +20386,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20634,7 +20645,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], VirtualPageRowModel);
 	    return VirtualPageRowModel;
-	}());
+	})();
 	exports.VirtualPageRowModel = VirtualPageRowModel;
 
 
@@ -20644,11 +20655,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20965,7 +20975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], VirtualPageCache.prototype, "init", null);
 	    return VirtualPageCache;
-	}());
+	})();
 	exports.VirtualPageCache = VirtualPageCache;
 
 
@@ -20975,11 +20985,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21041,6 +21050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    VirtualPage.prototype.setRowNode = function (rowIndex, rowNode) {
 	        var localIndex = rowIndex - this.startRow;
 	        this.rowNodes[localIndex] = rowNode;
+	        rowNode.setRowIndex(rowIndex);
 	        this.setTopOnRowNode(rowNode, rowIndex);
 	    };
 	    VirtualPage.prototype.setBlankRowNode = function (rowIndex) {
@@ -21163,7 +21173,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], VirtualPage.prototype, "init", null);
 	    return VirtualPage;
-	}());
+	})();
 	exports.VirtualPage = VirtualPage;
 
 
@@ -21173,11 +21183,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21621,7 +21630,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:paramtypes', [])
 	    ], InMemoryRowModel);
 	    return InMemoryRowModel;
-	}());
+	})();
 	exports.InMemoryRowModel = InMemoryRowModel;
 
 
@@ -21631,11 +21640,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var rowNode_1 = __webpack_require__(27);
 	var utils_1 = __webpack_require__(7);
 	var InMemoryNodeManager = (function () {
@@ -21798,7 +21806,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    InMemoryNodeManager.TOP_LEVEL = 0;
 	    return InMemoryNodeManager;
-	}());
+	})();
 	exports.InMemoryNodeManager = InMemoryNodeManager;
 
 
@@ -21808,11 +21816,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
@@ -21961,7 +21968,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        __metadata('design:returntype', void 0)
 	    ], AgCheckbox.prototype, "onClick", null);
 	    return AgCheckbox;
-	}(component_1.Component));
+	})(component_1.Component);
 	exports.AgCheckbox = AgCheckbox;
 
 
@@ -21971,11 +21978,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	function QuerySelector(selector) {
 	    return querySelectorFunc.bind(this, selector);
 	}
@@ -22034,11 +22040,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	/** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
 	var BaseFrameworkFactory = (function () {
 	    function BaseFrameworkFactory() {
@@ -22068,7 +22073,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return setTimeout(handler, timeout);
 	    };
 	    return BaseFrameworkFactory;
-	}());
+	})();
 	exports.BaseFrameworkFactory = BaseFrameworkFactory;
 
 
@@ -22078,11 +22083,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var grid_1 = __webpack_require__(2);
 	function initialiseAgGridWithAngular1(angular) {
 	    var angularModule = angular.module("agGrid", []);
@@ -22124,11 +22128,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var componentUtil_1 = __webpack_require__(9);
 	var grid_1 = __webpack_require__(2);
 	var registered = false;
@@ -22242,11 +22245,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var utils_1 = __webpack_require__(7);
 	var TabbedLayout = (function () {
 	    function TabbedLayout(params) {
@@ -22336,7 +22338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        '<div id="tabBody" class="ag-tab-body"></div>' +
 	        '</div>';
 	    return TabbedLayout;
-	}());
+	})();
 	exports.TabbedLayout = TabbedLayout;
 
 
@@ -22346,11 +22348,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v7.0.0
+	 * @version v7.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
-	"use strict";
 	var VerticalStack = (function () {
 	    function VerticalStack() {
 	        this.isLayoutPanel = true;
@@ -22381,7 +22382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    return VerticalStack;
-	}());
+	})();
 	exports.VerticalStack = VerticalStack;
 
 
@@ -22770,7 +22771,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-blue {\n  line-height: 1.4;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-blue img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-blue .ag-root {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-blue .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-blue .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-blue .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-blue .ag-cell-focus {\n  border: 2px solid #217346;\n}\n.ag-blue .ag-cell-no-focus {\n  border-right: 1px dotted #9bc2e6;\n  border-top: 2px solid transparent;\n  border-left: 2px solid transparent;\n  border-bottom: 1px dotted #9bc2e6;\n}\n.ag-blue .ag-cell-first-right-pinned {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-last-left-pinned {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-blue .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-blue .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-blue .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-blue .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-blue .ag-value-change-value {\n  background-color: transparent;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-blue .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-blue .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #9bc2e6;\n  background-color: #fff;\n}\n.ag-blue .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-blue .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-blue .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-blue .ag-rich-select-row-selected {\n  background-color: #c7c7c7;\n}\n.ag-blue .ag-large-text {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header {\n  color: #fff;\n  background: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n  font-weight: 600;\n}\n.ag-blue .ag-header-icon {\n  color: #fff;\n  stroke: none;\n  fill: #fff;\n}\n.ag-blue .ag-no-scrolls .ag-header-container {\n  background: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-blue .ag-header-group-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-blue .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-blue .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-blue .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-blue .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-blue .ag-pinned-right-header {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-menu-button:hover {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-blue .ag-row-odd {\n  background-color: #ddebf7;\n}\n.ag-blue .ag-row-even {\n  background-color: #fff;\n}\n.ag-blue .ag-row-selected {\n  background-color: #c7c7c7;\n}\n.ag-blue .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-blue .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-blue .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-blue .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-blue .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-blue .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-blue .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-blue .ag-group-cell {\n  font-style: italic;\n}\n.ag-blue .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-blue .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-blue .ag-group-value {\n  padding-right: 2px;\n}\n.ag-blue .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-blue .ag-footer-cell {\n  font-style: italic;\n}\n.ag-blue .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n}\n.ag-blue .ag-menu .ag-tab-header {\n  background-color: #5b9bd5;\n}\n.ag-blue .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-blue .ag-menu .ag-tab-selected {\n  background-color: #9bc2e6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-blue .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-blue .ag-menu-option-active {\n  background-color: #c7c7c7;\n}\n.ag-blue .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-blue .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-blue .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-blue .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-blue .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-blue .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-blue .ag-paging-panel {\n  padding: 4px;\n}\n.ag-blue .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-blue .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-blue .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: 1px solid #9bc2e6;\n  border-bottom: 1px solid #9bc2e6;\n  border-top: 1px solid #9bc2e6;\n  color: #222;\n}\n.ag-blue .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 10pt;\n  height: 22px;\n  border-bottom: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n  padding: 2px;\n}\n.ag-blue .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-blue .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-blue .ag-column-drop-cell {\n  background: #ddebf7;\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-blue .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-blue .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  border-radius: 3px;\n}\n.ag-blue .ag-column-drop-cell-button:hover {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-blue .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-blue .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-blue .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-blue .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-blue .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-blue .ag-pivot-mode {\n  border-bottom: 1px solid #9bc2e6;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-blue .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-blue .ag-select-agg-func-item:hover {\n  background-color: #c7c7c7;\n}\n", ""]);
+	exports.push([module.id, ".ag-blue {\n  line-height: 1.4;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-blue img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-blue .ag-root {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-blue .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-blue .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-blue .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-blue .ag-cell-focus {\n  border: 2px solid #217346;\n}\n.ag-blue .ag-cell-no-focus {\n  border-right: 1px dotted #9bc2e6;\n  border-top: 2px solid transparent;\n  border-left: 2px solid transparent;\n  border-bottom: 1px dotted #9bc2e6;\n}\n.ag-blue .ag-cell-first-right-pinned {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-last-left-pinned {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-blue .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-blue .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-blue .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-blue .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-blue .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-blue .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-blue .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #9bc2e6;\n  background-color: #fff;\n}\n.ag-blue .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-blue .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-blue .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-blue .ag-rich-select-row-selected {\n  background-color: #c7c7c7;\n}\n.ag-blue .ag-large-text {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header {\n  color: #fff;\n  background: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n  font-weight: 600;\n}\n.ag-blue .ag-header-icon {\n  color: #fff;\n  stroke: none;\n  fill: #fff;\n}\n.ag-blue .ag-no-scrolls .ag-header-container {\n  background: #5b9bd5;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-blue .ag-header-group-cell {\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-blue .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-blue .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-blue .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-blue .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-blue .ag-pinned-right-header {\n  border-left: 1px solid #9bc2e6;\n}\n.ag-blue .ag-header-cell-menu-button:hover {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-blue .ag-row-odd {\n  background-color: #ddebf7;\n}\n.ag-blue .ag-row-even {\n  background-color: #fff;\n}\n.ag-blue .ag-row-selected {\n  background-color: #c7c7c7;\n}\n.ag-blue .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-blue .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-blue .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-blue .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-blue .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-blue .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-blue .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-blue .ag-group-cell {\n  font-style: italic;\n}\n.ag-blue .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-blue .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-blue .ag-group-value {\n  padding-right: 2px;\n}\n.ag-blue .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-blue .ag-footer-cell {\n  font-style: italic;\n}\n.ag-blue .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n}\n.ag-blue .ag-menu .ag-tab-header {\n  background-color: #5b9bd5;\n}\n.ag-blue .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-blue .ag-menu .ag-tab-selected {\n  background-color: #9bc2e6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-blue .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-blue .ag-menu-option-active {\n  background-color: #c7c7c7;\n}\n.ag-blue .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-blue .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-blue .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-blue .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-blue .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-blue .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-blue .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-blue .ag-paging-panel {\n  padding: 4px;\n}\n.ag-blue .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-blue .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-blue .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: 1px solid #9bc2e6;\n  border-bottom: 1px solid #9bc2e6;\n  border-top: 1px solid #9bc2e6;\n  color: #222;\n}\n.ag-blue .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 10pt;\n  height: 22px;\n  border-bottom: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n  padding: 2px;\n}\n.ag-blue .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-blue .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-blue .ag-column-drop-cell {\n  background: #ddebf7;\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-blue .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-blue .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-blue .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-blue .ag-column-drop-cell-button:hover {\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-blue .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-blue .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-blue .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: 1px solid #9bc2e6;\n  border-left: 1px solid #9bc2e6;\n  border-right: 1px solid #9bc2e6;\n}\n.ag-blue .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-blue .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-blue .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-blue .ag-pivot-mode {\n  border-bottom: 1px solid #9bc2e6;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-blue .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #9bc2e6;\n}\n.ag-blue .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: 1px solid #9bc2e6;\n}\n.ag-blue .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-blue .ag-select-agg-func-item:hover {\n  background-color: #c7c7c7;\n}\n", ""]);
 
 	// exports
 
@@ -22810,7 +22811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-dark {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #ccc;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-dark img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-dark .ag-root {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(100,160,160,0.4);\n}\n.ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(100,190,190,0.4);\n}\n.ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(100,220,220,0.4);\n}\n.ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(100,250,250,0.4);\n}\n.ag-dark .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-dark .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-dark .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-dark .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-dark .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-dark .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-dark .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-cell-highlight {\n  border: 1px solid #90ee90;\n}\n.ag-dark .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-dark .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-dark .ag-value-change-delta-up {\n  color: #adff2f;\n}\n.ag-dark .ag-value-change-delta-down {\n  color: #f00;\n}\n.ag-dark .ag-value-change-value {\n  background-color: transparent;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-dark .ag-value-change-value-highlight {\n  background-color: #d2691e;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-dark .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #302e2e;\n}\n.ag-dark .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-dark .ag-rich-select-list {\n  border-top: 1px solid #555;\n}\n.ag-dark .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-dark .ag-rich-select-row-selected {\n  background-color: #4a708b;\n}\n.ag-dark .ag-large-text {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-header {\n  color: #e0e0e0;\n  background: #626262;\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-dark .ag-header-icon {\n  color: #e0e0e0;\n  stroke: none;\n  fill: #e0e0e0;\n}\n.ag-dark .ag-no-scrolls .ag-header-container {\n  background: #626262;\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-dark .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-dark .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-dark .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-dark .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-dark .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-dark .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-dark .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-body {\n  background-color: #302e2e;\n}\n.ag-dark .ag-row-odd {\n  background-color: #302e2e;\n}\n.ag-dark .ag-row-even {\n  background-color: #403e3e;\n}\n.ag-dark .ag-row-selected {\n  background-color: #4a708b;\n}\n.ag-dark .ag-floating-top .ag-row {\n  background-color: #333;\n}\n.ag-dark .ag-floating-bottom .ag-row {\n  background-color: #333;\n}\n.ag-dark .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-dark .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-dark .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-dark .ag-group-cell-entire-row {\n  background-color: #302e2e;\n  padding: 2px;\n}\n.ag-dark .ag-footer-cell-entire-row {\n  background-color: #302e2e;\n  padding: 2px;\n}\n.ag-dark .ag-group-cell {\n  font-style: italic;\n}\n.ag-dark .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-dark .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-dark .ag-group-value {\n  padding-right: 2px;\n}\n.ag-dark .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-dark .ag-footer-cell {\n  font-style: italic;\n}\n.ag-dark .ag-menu {\n  border: 1px solid #555;\n  background-color: #302e2e;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-dark .ag-menu .ag-tab-header {\n  background-color: #626262;\n}\n.ag-dark .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-dark .ag-menu .ag-tab-selected {\n  background-color: #302e2e;\n  border-right: 1px solid #555;\n  border-left: 1px solid #555;\n  border-top: 1px solid #555;\n}\n.ag-dark .ag-menu-separator {\n  border-top: 1px solid #555;\n}\n.ag-dark .ag-menu-option-active {\n  background-color: #4a708b;\n}\n.ag-dark .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-dark .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-dark .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-dark .ag-filter-header-container {\n  border-bottom: 1px solid #555;\n}\n.ag-dark .ag-filter-apply-panel {\n  border-top: 1px solid #555;\n  padding: 2px;\n}\n.ag-dark .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-dark .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-dark .ag-paging-panel {\n  padding: 4px;\n}\n.ag-dark .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-dark .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-dark .ag-tool-panel {\n  background-color: #302e2e;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #ccc;\n}\n.ag-dark .ag-status-bar {\n  color: #ccc;\n  background-color: #302e2e;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-dark .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-dark .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-dark .ag-column-drop-cell {\n  background: #403e3e;\n  color: #e0e0e0;\n  border: 1px solid #666;\n}\n.ag-dark .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-dark .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dark .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  border-radius: 3px;\n}\n.ag-dark .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-dark .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-dark .ag-column-drop {\n  background-color: #302e2e;\n}\n.ag-dark .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-dark .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-dark .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-dark .ag-pivot-mode {\n  border-bottom: 1px solid #808080;\n  padding: 4px;\n  background-color: #302e2e;\n}\n.ag-dark .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #302e2e;\n  border: 1px solid #808080;\n}\n.ag-dark .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dark .ag-select-agg-func-item:hover {\n  background-color: #4a708b;\n}\n.ag-dark ::-webkit-scrollbar {\n  width: 12px;\n  height: 12px;\n  background: #302e2e;\n}\n.ag-dark ::-webkit-scrollbar-thumb {\n  background-color: #626262;\n}\n.ag-dark ::-webkit-scrollbar-corner {\n  background: #302e2e;\n}\n.ag-dark select {\n  background-color: #302e2e;\n  color: #ccc;\n}\n.ag-dark input {\n  background-color: #302e2e;\n  color: #ccc;\n}\n", ""]);
+	exports.push([module.id, ".ag-dark {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #ccc;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-dark img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-dark .ag-root {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(100,160,160,0.4);\n}\n.ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(100,190,190,0.4);\n}\n.ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(100,220,220,0.4);\n}\n.ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(100,250,250,0.4);\n}\n.ag-dark .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-dark .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-dark .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-dark .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-dark .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-dark .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-dark .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-cell-highlight {\n  border: 1px solid #90ee90;\n}\n.ag-dark .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-dark .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-dark .ag-value-change-delta-up {\n  color: #adff2f;\n}\n.ag-dark .ag-value-change-delta-down {\n  color: #f00;\n}\n.ag-dark .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-dark .ag-value-change-value-highlight {\n  background-color: #d2691e;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-dark .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #302e2e;\n}\n.ag-dark .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-dark .ag-rich-select-list {\n  border-top: 1px solid #555;\n}\n.ag-dark .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-dark .ag-rich-select-row-selected {\n  background-color: #4a708b;\n}\n.ag-dark .ag-large-text {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-header {\n  color: #e0e0e0;\n  background: #626262;\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-dark .ag-header-icon {\n  color: #e0e0e0;\n  stroke: none;\n  fill: #e0e0e0;\n}\n.ag-dark .ag-no-scrolls .ag-header-container {\n  background: #626262;\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-dark .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-dark .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-dark .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-dark .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-dark .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-dark .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-dark .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-dark .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-body {\n  background-color: #302e2e;\n}\n.ag-dark .ag-row-odd {\n  background-color: #302e2e;\n}\n.ag-dark .ag-row-even {\n  background-color: #403e3e;\n}\n.ag-dark .ag-row-selected {\n  background-color: #4a708b;\n}\n.ag-dark .ag-floating-top .ag-row {\n  background-color: #333;\n}\n.ag-dark .ag-floating-bottom .ag-row {\n  background-color: #333;\n}\n.ag-dark .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-dark .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-dark .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-dark .ag-group-cell-entire-row {\n  background-color: #302e2e;\n  padding: 2px;\n}\n.ag-dark .ag-footer-cell-entire-row {\n  background-color: #302e2e;\n  padding: 2px;\n}\n.ag-dark .ag-group-cell {\n  font-style: italic;\n}\n.ag-dark .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-dark .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-dark .ag-group-value {\n  padding-right: 2px;\n}\n.ag-dark .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-dark .ag-footer-cell {\n  font-style: italic;\n}\n.ag-dark .ag-menu {\n  border: 1px solid #555;\n  background-color: #302e2e;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-dark .ag-menu .ag-tab-header {\n  background-color: #626262;\n}\n.ag-dark .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-dark .ag-menu .ag-tab-selected {\n  background-color: #302e2e;\n  border-right: 1px solid #555;\n  border-left: 1px solid #555;\n  border-top: 1px solid #555;\n}\n.ag-dark .ag-menu-separator {\n  border-top: 1px solid #555;\n}\n.ag-dark .ag-menu-option-active {\n  background-color: #4a708b;\n}\n.ag-dark .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-dark .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-dark .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-dark .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-dark .ag-filter-header-container {\n  border-bottom: 1px solid #555;\n}\n.ag-dark .ag-filter-apply-panel {\n  border-top: 1px solid #555;\n  padding: 2px;\n}\n.ag-dark .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-dark .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-dark .ag-paging-panel {\n  padding: 4px;\n}\n.ag-dark .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-dark .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-dark .ag-tool-panel {\n  background-color: #302e2e;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #ccc;\n}\n.ag-dark .ag-status-bar {\n  color: #ccc;\n  background-color: #302e2e;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-dark .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-dark .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-dark .ag-column-drop-cell {\n  background: #403e3e;\n  color: #e0e0e0;\n  border: 1px solid #666;\n}\n.ag-dark .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-dark .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dark .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-dark .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-dark .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-dark .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-dark .ag-column-drop {\n  background-color: #302e2e;\n}\n.ag-dark .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-dark .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-dark .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-dark .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-dark .ag-pivot-mode {\n  border-bottom: 1px solid #808080;\n  padding: 4px;\n  background-color: #302e2e;\n}\n.ag-dark .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #808080;\n}\n.ag-dark .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #302e2e;\n  border: 1px solid #808080;\n}\n.ag-dark .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dark .ag-select-agg-func-item:hover {\n  background-color: #4a708b;\n}\n.ag-dark ::-webkit-scrollbar {\n  width: 12px;\n  height: 12px;\n  background: #302e2e;\n}\n.ag-dark ::-webkit-scrollbar-thumb {\n  background-color: #626262;\n}\n.ag-dark ::-webkit-scrollbar-corner {\n  background: #302e2e;\n}\n.ag-dark select {\n  background-color: #302e2e;\n  color: #ccc;\n}\n.ag-dark input {\n  background-color: #302e2e;\n  color: #ccc;\n}\n", ""]);
 
 	// exports
 
@@ -22850,7 +22851,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-fresh img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-fresh .ag-root {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-fresh .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-fresh .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-fresh .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-fresh .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-fresh .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-fresh .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-fresh .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-fresh .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-fresh .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-fresh .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-fresh .ag-value-change-value {\n  background-color: transparent;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-fresh .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #fff;\n}\n.ag-fresh .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-large-text {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-header {\n  color: #000;\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-fresh .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-fresh .ag-no-scrolls .ag-header-container {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-fresh .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-fresh .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-fresh .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-fresh .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-fresh .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-fresh .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-even {\n  background-color: #fff;\n}\n.ag-fresh .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-fresh .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-fresh .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-fresh .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-fresh .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-group-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-fresh .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-fresh .ag-group-value {\n  padding-right: 2px;\n}\n.ag-fresh .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-fresh .ag-footer-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-fresh .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-fresh .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-fresh .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-fresh .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-fresh .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-fresh .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-fresh .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-fresh .ag-paging-panel {\n  padding: 4px;\n}\n.ag-fresh .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-fresh .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-fresh .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #222;\n}\n.ag-fresh .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-fresh .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-fresh .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-fresh .ag-column-drop-cell {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  border-radius: 3px;\n}\n.ag-fresh .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-fresh .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-fresh .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-fresh .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-fresh .ag-pivot-mode {\n  border-bottom: 1px solid #808080;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n", ""]);
+	exports.push([module.id, ".ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-fresh img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-fresh .ag-root {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-fresh .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-fresh .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-fresh .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-fresh .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-fresh .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-fresh .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-fresh .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-fresh .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-fresh .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-fresh .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-fresh .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-fresh .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #fff;\n}\n.ag-fresh .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-large-text {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-header {\n  color: #000;\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-fresh .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-fresh .ag-no-scrolls .ag-header-container {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-fresh .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-fresh .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-fresh .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-fresh .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-fresh .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-fresh .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-even {\n  background-color: #fff;\n}\n.ag-fresh .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-fresh .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-fresh .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-fresh .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-fresh .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-group-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-fresh .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-fresh .ag-group-value {\n  padding-right: 2px;\n}\n.ag-fresh .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-fresh .ag-footer-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-fresh .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-fresh .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-fresh .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-fresh .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-fresh .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-fresh .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-fresh .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-fresh .ag-paging-panel {\n  padding: 4px;\n}\n.ag-fresh .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-fresh .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-fresh .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: 1px solid #808080;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #222;\n}\n.ag-fresh .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-fresh .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-fresh .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-fresh .ag-column-drop-cell {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-fresh .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-fresh .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-fresh .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-fresh .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-fresh .ag-pivot-mode {\n  border-bottom: 1px solid #808080;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n", ""]);
 
 	// exports
 
@@ -22890,7 +22891,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-material {\n  line-height: 1.4;\n  font-family: Roboto;\n  font-size: 14px;\n  color: #666;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-material img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-material .ag-root {\n  border: none;\n}\n.ag-material .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-material .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-material .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-material .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-material .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-material .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-material .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-material .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-material .ag-cell-focus {\n  border: 1px solid #d3d3d3;\n}\n.ag-material .ag-cell-no-focus {\n  border-right: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-material .ag-cell-first-right-pinned {\n  border-left: none;\n}\n.ag-material .ag-cell-last-left-pinned {\n  border-right: none;\n}\n.ag-material .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-material .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-material .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-material .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-material .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-material .ag-value-change-value {\n  background-color: transparent;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-material .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-material .ag-rich-select {\n  font-size: 14px;\n  border: none;\n  background-color: #fff;\n}\n.ag-material .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-material .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-material .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-material .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-material .ag-large-text {\n  border: none;\n}\n.ag-material .ag-header {\n  color: #666;\n  background: none;\n  border-bottom: none;\n  font-weight: bold;\n}\n.ag-material .ag-header-icon {\n  color: #666;\n  stroke: none;\n  fill: #666;\n}\n.ag-material .ag-no-scrolls .ag-header-container {\n  background: none;\n  border-bottom: none;\n}\n.ag-material .ag-header-cell {\n  border-right: none;\n}\n.ag-material .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-material .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-material .ag-header-group-cell {\n  border-right: none;\n}\n.ag-material .ag-header-group-cell-with-group {\n  border-bottom: none;\n}\n.ag-material .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-material .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-material .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-material .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-material .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-material .ag-pinned-right-header {\n  border-left: none;\n}\n.ag-material .ag-header-cell-menu-button:hover {\n  border: none;\n}\n.ag-material .ag-body {\n  background-color: #fff;\n}\n.ag-material .ag-row-odd {\n  background-color: #fff;\n}\n.ag-material .ag-row-even {\n  background-color: #fff;\n}\n.ag-material .ag-row-selected {\n  background-color: #f5f5f5;\n}\n.ag-material .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-material .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-material .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-material .ag-overlay-loading-center {\n  background-color: #fff;\n  border: none;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-material .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: none;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-material .ag-group-cell-entire-row {\n  background-color: #fff;\n  padding: 2px;\n}\n.ag-material .ag-footer-cell-entire-row {\n  background-color: #fff;\n  padding: 2px;\n}\n.ag-material .ag-group-cell {\n  font-style: italic;\n}\n.ag-material .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-material .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-material .ag-group-value {\n  padding-right: 2px;\n}\n.ag-material .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-material .ag-footer-cell {\n  font-style: italic;\n}\n.ag-material .ag-menu {\n  border: 1px solid #808080;\n  background-color: #fff;\n  cursor: default;\n  font-family: Roboto;\n  font-size: 14px;\n}\n.ag-material .ag-menu .ag-tab-header {\n  background-color: #f6f6f6;\n}\n.ag-material .ag-menu .ag-tab {\n  padding: 6px 16px 6px 16px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-material .ag-menu .ag-tab-selected {\n  background-color: #fff;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n}\n.ag-material .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-material .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-material .ag-menu-option-icon {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-text {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-shortcut {\n  padding: 10px 6px 10px 20px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-popup-pointer {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-material .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-material .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-material .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-material .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-material .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-material .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-material .ag-paging-panel {\n  padding: 4px;\n}\n.ag-material .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-material .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-material .ag-tool-panel {\n  background-color: #fff;\n  border-right: none;\n  border-bottom: none;\n  border-top: none;\n  color: #666;\n}\n.ag-material .ag-status-bar {\n  color: #666;\n  background-color: #fff;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: none;\n  border-left: none;\n  border-right: none;\n  padding: 2px;\n}\n.ag-material .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-material .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-material .ag-column-drop-cell {\n  background: none;\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-material .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-material .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-material .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  border-radius: 3px;\n}\n.ag-material .ag-column-drop-cell-button:hover {\n  border: none;\n}\n.ag-material .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-material .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-material .ag-column-drop {\n  background-color: #fff;\n}\n.ag-material .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: none;\n  border-left: none;\n  border-right: none;\n}\n.ag-material .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-material .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: none;\n}\n.ag-material .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-material .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-material .ag-pivot-mode {\n  border-bottom: none;\n  padding: 4px;\n  background-color: #fff;\n}\n.ag-material .ag-tool-panel .ag-column-select-panel {\n  border-bottom: none;\n}\n.ag-material .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: none;\n}\n.ag-material .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-material .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n.ag-material .ag-row-hover {\n  background-color: #eee !important;\n}\n.ag-material .ag-cell-not-inline-editing {\n  padding-top: 15px;\n}\n.ag-material .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-material .ag-header-cell-label {\n  text-align: left;\n}\n.ag-material .ag-header {\n  border-bottom: 1px solid #808080;\n}\n.ag-material .ag-selection-checkbox {\n  padding-right: 12px;\n  padding-left: 12px;\n}\n", ""]);
+	exports.push([module.id, ".ag-material {\n  line-height: 1.4;\n  font-family: Roboto;\n  font-size: 14px;\n  color: #666;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-material img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-material .ag-root {\n  border: none;\n}\n.ag-material .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-material .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-material .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-material .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-material .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-material .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-material .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-material .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-material .ag-cell-focus {\n  border: 1px solid #d3d3d3;\n}\n.ag-material .ag-cell-no-focus {\n  border-right: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-material .ag-cell-first-right-pinned {\n  border-left: none;\n}\n.ag-material .ag-cell-last-left-pinned {\n  border-right: none;\n}\n.ag-material .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-material .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-material .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-material .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-material .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-material .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-material .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-material .ag-rich-select {\n  font-size: 14px;\n  border: none;\n  background-color: #fff;\n}\n.ag-material .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-material .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-material .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-material .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-material .ag-large-text {\n  border: none;\n}\n.ag-material .ag-header {\n  color: #666;\n  background: none;\n  border-bottom: none;\n  font-weight: bold;\n}\n.ag-material .ag-header-icon {\n  color: #666;\n  stroke: none;\n  fill: #666;\n}\n.ag-material .ag-no-scrolls .ag-header-container {\n  background: none;\n  border-bottom: none;\n}\n.ag-material .ag-header-cell {\n  border-right: none;\n}\n.ag-material .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-material .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-material .ag-header-group-cell {\n  border-right: none;\n}\n.ag-material .ag-header-group-cell-with-group {\n  border-bottom: none;\n}\n.ag-material .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-material .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-material .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-material .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-material .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-material .ag-pinned-right-header {\n  border-left: none;\n}\n.ag-material .ag-header-cell-menu-button:hover {\n  border: none;\n}\n.ag-material .ag-body {\n  background-color: #fff;\n}\n.ag-material .ag-row-odd {\n  background-color: #fff;\n}\n.ag-material .ag-row-even {\n  background-color: #fff;\n}\n.ag-material .ag-row-selected {\n  background-color: #f5f5f5;\n}\n.ag-material .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-material .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-material .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-material .ag-overlay-loading-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-material .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-material .ag-group-cell-entire-row {\n  background-color: #fff;\n  padding: 2px;\n}\n.ag-material .ag-footer-cell-entire-row {\n  background-color: #fff;\n  padding: 2px;\n}\n.ag-material .ag-group-cell {\n  font-style: italic;\n}\n.ag-material .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-material .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-material .ag-group-value {\n  padding-right: 2px;\n}\n.ag-material .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-material .ag-footer-cell {\n  font-style: italic;\n}\n.ag-material .ag-menu {\n  border: 1px solid #808080;\n  background-color: #fff;\n  cursor: default;\n  font-family: Roboto;\n  font-size: 14px;\n}\n.ag-material .ag-menu .ag-tab-header {\n  background-color: #f6f6f6;\n}\n.ag-material .ag-menu .ag-tab {\n  padding: 6px 16px 6px 16px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-material .ag-menu .ag-tab-selected {\n  background-color: #fff;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n}\n.ag-material .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-material .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-material .ag-menu-option-icon {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-text {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-shortcut {\n  padding: 10px 6px 10px 20px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-popup-pointer {\n  padding: 10px 6px 10px 6px;\n  vertical-align: middle;\n}\n.ag-material .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-material .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-material .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-material .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-material .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-material .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-material .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-material .ag-paging-panel {\n  padding: 4px;\n}\n.ag-material .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-material .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-material .ag-tool-panel {\n  background-color: #fff;\n  border-right: none;\n  border-bottom: none;\n  border-top: none;\n  color: #666;\n}\n.ag-material .ag-status-bar {\n  color: #666;\n  background-color: #fff;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: none;\n  border-left: none;\n  border-right: none;\n  padding: 2px;\n}\n.ag-material .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-material .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-material .ag-column-drop-cell {\n  background: none;\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-material .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-material .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-material .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-material .ag-column-drop-cell-button:hover {\n  border: none;\n}\n.ag-material .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-material .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-material .ag-column-drop {\n  background-color: #fff;\n}\n.ag-material .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: none;\n  border-left: none;\n  border-right: none;\n}\n.ag-material .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-material .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: none;\n}\n.ag-material .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-material .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-material .ag-pivot-mode {\n  border-bottom: none;\n  padding: 4px;\n  background-color: #fff;\n}\n.ag-material .ag-tool-panel .ag-column-select-panel {\n  border-bottom: none;\n}\n.ag-material .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: none;\n}\n.ag-material .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-material .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n.ag-material .ag-row-hover {\n  background-color: #eee !important;\n}\n.ag-material .ag-cell-not-inline-editing {\n  padding-top: 15px;\n}\n.ag-material .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-material .ag-header-cell-label {\n  text-align: left;\n}\n.ag-material .ag-header {\n  border-bottom: 1px solid #808080;\n}\n.ag-material .ag-selection-checkbox {\n  padding-right: 12px;\n  padding-left: 12px;\n}\n", ""]);
 
 	// exports
 
@@ -22930,7 +22931,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-bootstrap {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #000;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-bootstrap img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-bootstrap .ag-root {\n  border: none;\n}\n.ag-bootstrap .ag-cell-not-inline-editing {\n  padding: 4px;\n}\n.ag-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-bootstrap .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-bootstrap .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-bootstrap .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-bootstrap .ag-cell-focus {\n  border: 2px solid #217346;\n}\n.ag-bootstrap .ag-cell-no-focus {\n  border-right: none;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-bootstrap .ag-cell-first-right-pinned {\n  border-left: none;\n}\n.ag-bootstrap .ag-cell-last-left-pinned {\n  border-right: none;\n}\n.ag-bootstrap .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-bootstrap .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-bootstrap .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-bootstrap .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-bootstrap .ag-value-change-value {\n  background-color: transparent;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-bootstrap .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-bootstrap .ag-rich-select {\n  font-size: 14px;\n  border: none;\n  background-color: #fff;\n}\n.ag-bootstrap .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-bootstrap .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-bootstrap .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-bootstrap .ag-large-text {\n  border: none;\n}\n.ag-bootstrap .ag-header {\n  color: #000;\n  background: none;\n  border-bottom: none;\n  font-weight: 600;\n}\n.ag-bootstrap .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-bootstrap .ag-no-scrolls .ag-header-container {\n  background: none;\n  border-bottom: none;\n}\n.ag-bootstrap .ag-header-cell {\n  border-right: none;\n}\n.ag-bootstrap .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-bootstrap .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-bootstrap .ag-header-group-cell {\n  border-right: none;\n}\n.ag-bootstrap .ag-header-group-cell-with-group {\n  border-bottom: none;\n}\n.ag-bootstrap .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-bootstrap .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-bootstrap .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-bootstrap .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-bootstrap .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-bootstrap .ag-pinned-right-header {\n  border-left: none;\n}\n.ag-bootstrap .ag-header-cell-menu-button:hover {\n  border: none;\n}\n.ag-bootstrap .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-row-even {\n  background-color: #fff;\n}\n.ag-bootstrap .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-bootstrap .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-bootstrap .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-bootstrap .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-bootstrap .ag-overlay-loading-center {\n  background-color: #fff;\n  border: none;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-bootstrap .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: none;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-bootstrap .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 4px;\n}\n.ag-bootstrap .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 4px;\n}\n.ag-bootstrap .ag-group-cell {\n  font-style: italic;\n}\n.ag-bootstrap .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-group-value {\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-footer-cell {\n  font-style: italic;\n}\n.ag-bootstrap .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-bootstrap .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-bootstrap .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-bootstrap .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-bootstrap .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-bootstrap .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-bootstrap .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-bootstrap .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-bootstrap .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-bootstrap .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-paging-panel {\n  padding: 4px;\n}\n.ag-bootstrap .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-bootstrap .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-bootstrap .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: none;\n  border-bottom: none;\n  border-top: none;\n  color: #000;\n}\n.ag-bootstrap .ag-status-bar {\n  color: #000;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: none;\n  border-left: none;\n  border-right: none;\n  padding: 2px;\n}\n.ag-bootstrap .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-bootstrap .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-bootstrap .ag-column-drop-cell {\n  background: none;\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-bootstrap .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-bootstrap .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  border-radius: 3px;\n}\n.ag-bootstrap .ag-column-drop-cell-button:hover {\n  border: none;\n}\n.ag-bootstrap .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-bootstrap .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: none;\n  border-left: none;\n  border-right: none;\n}\n.ag-bootstrap .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-bootstrap .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: none;\n}\n.ag-bootstrap .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-bootstrap .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-bootstrap .ag-pivot-mode {\n  border-bottom: none;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-tool-panel .ag-column-select-panel {\n  border-bottom: none;\n}\n.ag-bootstrap .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: none;\n}\n.ag-bootstrap .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n", ""]);
+	exports.push([module.id, ".ag-bootstrap {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #000;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-bootstrap img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-bootstrap .ag-root {\n  border: none;\n}\n.ag-bootstrap .ag-cell-not-inline-editing {\n  padding: 4px;\n}\n.ag-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-bootstrap .ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-bootstrap .ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-bootstrap .ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-bootstrap .ag-cell-focus {\n  border: 2px solid #217346;\n}\n.ag-bootstrap .ag-cell-no-focus {\n  border-right: none;\n  border-top: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-bootstrap .ag-cell-first-right-pinned {\n  border-left: none;\n}\n.ag-bootstrap .ag-cell-last-left-pinned {\n  border-right: none;\n}\n.ag-bootstrap .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-bootstrap .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-bootstrap .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-bootstrap .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-bootstrap .ag-value-change-value {\n  background-color: transparent;\n  -webkit-border-radius: 1px;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-bootstrap .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-bootstrap .ag-rich-select {\n  font-size: 14px;\n  border: none;\n  background-color: #fff;\n}\n.ag-bootstrap .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-bootstrap .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-bootstrap .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-bootstrap .ag-large-text {\n  border: none;\n}\n.ag-bootstrap .ag-header {\n  color: #000;\n  background: none;\n  border-bottom: none;\n  font-weight: 600;\n}\n.ag-bootstrap .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-bootstrap .ag-no-scrolls .ag-header-container {\n  background: none;\n  border-bottom: none;\n}\n.ag-bootstrap .ag-header-cell {\n  border-right: none;\n}\n.ag-bootstrap .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-bootstrap .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-bootstrap .ag-header-group-cell {\n  border-right: none;\n}\n.ag-bootstrap .ag-header-group-cell-with-group {\n  border-bottom: none;\n}\n.ag-bootstrap .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-bootstrap .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-bootstrap .ag-header-group-cell-label {\n  padding: 4px;\n  padding-left: 10px;\n}\n.ag-bootstrap .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-bootstrap .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  border: 1px solid transparent;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-bootstrap .ag-pinned-right-header {\n  border-left: none;\n}\n.ag-bootstrap .ag-header-cell-menu-button:hover {\n  border: none;\n}\n.ag-bootstrap .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-row-even {\n  background-color: #fff;\n}\n.ag-bootstrap .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-bootstrap .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-bootstrap .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-bootstrap .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-bootstrap .ag-overlay-loading-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-bootstrap .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: none;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-bootstrap .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 4px;\n}\n.ag-bootstrap .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 4px;\n}\n.ag-bootstrap .ag-group-cell {\n  font-style: italic;\n}\n.ag-bootstrap .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-group-value {\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-footer-cell {\n  font-style: italic;\n}\n.ag-bootstrap .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-bootstrap .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-bootstrap .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-bootstrap .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-bootstrap .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 20px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-bootstrap .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-bootstrap .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-bootstrap .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-bootstrap .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-bootstrap .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-bootstrap .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-bootstrap .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-paging-panel {\n  padding: 4px;\n}\n.ag-bootstrap .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-bootstrap .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-bootstrap .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-right: none;\n  border-bottom: none;\n  border-top: none;\n  color: #000;\n}\n.ag-bootstrap .ag-status-bar {\n  color: #000;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: none;\n  border-left: none;\n  border-right: none;\n  padding: 2px;\n}\n.ag-bootstrap .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-bootstrap .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-bootstrap .ag-column-drop-cell {\n  background: none;\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-bootstrap .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-bootstrap .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  -webkit-border-radius: 3px;\n  border-radius: 3px;\n}\n.ag-bootstrap .ag-column-drop-cell-button:hover {\n  border: none;\n}\n.ag-bootstrap .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-bootstrap .ag-column-drop-icon {\n  padding-right: 4px;\n}\n.ag-bootstrap .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-column-drop-horizontal {\n  padding: 4px 4px 4px 4px;\n  border-top: none;\n  border-left: none;\n  border-right: none;\n}\n.ag-bootstrap .ag-column-drop-horizontal .ag-column-drop-cell {\n  padding: 2px;\n}\n.ag-bootstrap .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: none;\n}\n.ag-bootstrap .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-bootstrap .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-bootstrap .ag-pivot-mode {\n  border-bottom: none;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-bootstrap .ag-tool-panel .ag-column-select-panel {\n  border-bottom: none;\n}\n.ag-bootstrap .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: none;\n}\n.ag-bootstrap .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-bootstrap .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n", ""]);
 
 	// exports
 

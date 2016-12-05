@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./colDef";
@@ -26,6 +26,7 @@ export declare class RowNode {
     private columnController;
     private valueService;
     private rowModel;
+    private context;
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     id: string;
@@ -93,9 +94,15 @@ export declare class RowNode {
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
      * it is used so new rows can animate in from their old position. */
     oldRowTop: number;
+    /** True if this node is a daemon. This means row is not part of the model. Can happen when then
+     * the row is selected and then the user sets a different ID onto the node. The nodes is then
+     * representing a different entity, so the selection controller, if the node is selected, takes
+     * a copy where daemon=true. */
+    daemon: boolean;
     private selected;
     private eventService;
     setData(data: any): void;
+    private createDaemonNode();
     setDataAndId(data: any, id: string): void;
     setId(id: string): void;
     clearRowTop(): void;

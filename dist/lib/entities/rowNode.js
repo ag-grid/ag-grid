@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -35,11 +34,25 @@ var RowNode = (function () {
         var event = { oldData: oldData, newData: data };
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     };
+    RowNode.prototype.createDaemonNode = function () {
+        var oldNode = new RowNode();
+        this.context.wireBean(oldNode);
+        // just copy the id and data, this is enough for the node to be used
+        // in the selection controller (the selection controller is the only
+        // place where daemon nodes can live).
+        oldNode.id = this.id;
+        oldNode.data = this.data;
+        oldNode.daemon = true;
+        oldNode.selected = this.selected;
+        oldNode.level = this.level;
+        return oldNode;
+    };
     RowNode.prototype.setDataAndId = function (data, id) {
+        var oldNode = utils_1.Utils.exists(this.id) ? this.createDaemonNode() : null;
         var oldData = this.data;
         this.data = data;
         this.setId(id);
-        this.selectionController.syncInRowNode(this);
+        this.selectionController.syncInRowNode(this, oldNode);
         var event = { oldData: oldData, newData: data };
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     };
@@ -418,6 +431,10 @@ var RowNode = (function () {
         context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], RowNode.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
+    ], RowNode.prototype, "context", void 0);
     return RowNode;
-}());
+})();
 exports.RowNode = RowNode;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -125,7 +125,6 @@ export interface GridOptions {
     rowDeselection?: boolean;
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
-    checkboxSelection?: (params: any) => boolean;
     rowHeight?: number;
     headerCellTemplate?: string;
     /****************************************************************
@@ -157,6 +156,7 @@ export interface GridOptions {
     getRowStyle?: Function;
     getRowClass?: Function;
     getRowHeight?: Function;
+    checkboxSelection?: (params: any) => boolean;
     fullWidthCellRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;

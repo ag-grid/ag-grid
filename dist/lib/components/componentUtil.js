@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var events_1 = require("../events");
 var utils_1 = require("../utils");
 var ComponentUtil = (function () {
@@ -191,7 +190,8 @@ var ComponentUtil = (function () {
         'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
         'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
-        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef'];
+        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
+        'getBusinessKeyForNode', 'checkboxSelection'];
     ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)
         .concat(ComponentUtil.STRING_PROPERTIES)
@@ -199,7 +199,7 @@ var ComponentUtil = (function () {
         .concat(ComponentUtil.FUNCTION_PROPERTIES)
         .concat(ComponentUtil.BOOLEAN_PROPERTIES);
     return ComponentUtil;
-}());
+})();
 exports.ComponentUtil = ComponentUtil;
 utils_1.Utils.iterateObject(events_1.Events, function (key, value) {
     ComponentUtil.EVENTS.push(value);

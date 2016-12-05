@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var rowNode_1 = require("../../entities/rowNode");
 var utils_1 = require("../../utils");
 var InMemoryNodeManager = (function () {
@@ -167,5 +166,5 @@ var InMemoryNodeManager = (function () {
     };
     InMemoryNodeManager.TOP_LEVEL = 0;
     return InMemoryNodeManager;
-}());
+})();
 exports.InMemoryNodeManager = InMemoryNodeManager;

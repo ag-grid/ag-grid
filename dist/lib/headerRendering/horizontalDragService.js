@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -28,7 +27,7 @@ var HorizontalDragService = (function () {
         __metadata('design:paramtypes', [])
     ], HorizontalDragService);
     return HorizontalDragService;
-}());
+})();
 exports.HorizontalDragService = HorizontalDragService;
 var DragInstance = (function () {
     function DragInstance(params, startEvent) {
@@ -98,4 +97,4 @@ var DragInstance = (function () {
         this.eDragParent.removeEventListener('mouseleave', this.mouseLeave);
     };
     return DragInstance;
-}());
+})();
