@@ -674,17 +674,16 @@ export class RenderedCell extends Component {
 
         this.editingCell = false;
 
-        // also have another option here to cancel after editing, so for example user could have a popup editor and
-        // it is closed by user clicking outside the editor. then the editor will close automatically (with false
-        // passed above) and we need to see if the editor wants to accept the new value.
-        var cancelAfterEnd = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
-
-        var acceptNewValue = !cancel && !cancelAfterEnd;
-
-        if (acceptNewValue) {
-            var newValue = this.cellEditor.getValue();
-            this.valueService.setValue(this.node, this.column, newValue);
-            this.value = this.getValue();
+        if (!cancel) {
+            // also have another option here to cancel after editing, so for example user could have a popup editor and
+            // it is closed by user clicking outside the editor. then the editor will close automatically (with false
+            // passed above) and we need to see if the editor wants to accept the new value.
+            var userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
+            if (!userWantsToCancel) {
+                var newValue = this.cellEditor.getValue();
+                this.valueService.setValue(this.node, this.column, newValue);
+                this.value = this.getValue();
+            }
         }
 
         if (this.cellEditor.destroy) {
