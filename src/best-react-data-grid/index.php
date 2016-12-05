@@ -90,7 +90,7 @@ include '../documentation-main/documentation_header.php';
         <pre><code>import {AgGridReact} from 'ag-grid-react';</code></pre>
         After the import you can then reference the component inside your JSX definitions.
         See the <i>render()</i> function in MyApp.jsx, it has AgGridReact defined as
-        follows:
+        follows (Make sure that you set the height for the parent element of `<AgGridReact />`):
     <pre><code>&lt;AgGridReact
 
     <span class="codeComment">// listen for events with React callbacks</span>
