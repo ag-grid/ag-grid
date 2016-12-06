@@ -6,10 +6,12 @@ ag-grid-ng2
     display inline-block
 
 .ag-rtl
-    text-align right
+    //text-align right
+    direction rtl
 
 .ag-ltr
-    text-align left
+    //text-align left
+    direction ltr
 
 .ag-select-agg-func-popup
     position absolute
@@ -563,8 +565,13 @@ ag-grid-ng2
     display inline-block
 
 .ag-column-select-column
-    margin-left 14px
     white-space nowrap
+
+.ag-ltr .ag-column-select-column
+    margin-left 14px
+
+.ag-rtl .ag-column-select-column
+    margin-right 14px
 
 .ag-column-select-column-group
     white-space nowrap

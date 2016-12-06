@@ -12,20 +12,12 @@ export class AgCheckbox extends Component {
 
     public static EVENT_CHANGED = 'change';
 
-    private static TEMPLATE_LTR =
+    private static TEMPLATE =
         '<span class="ag-checkbox">' +
         '  <span class="ag-checkbox-checked"></span>' +
         '  <span class="ag-checkbox-unchecked"></span>' +
         '  <span class="ag-checkbox-indeterminate"></span>' +
         '  <span class="ag-checkbox-label"></span>' +
-        '</span>';
-
-    private static TEMPLATE_RTL =
-        '<span class="ag-checkbox">' +
-        '  <span class="ag-checkbox-label"></span>' +
-        '  <span class="ag-checkbox-checked"></span>' +
-        '  <span class="ag-checkbox-unchecked"></span>' +
-        '  <span class="ag-checkbox-indeterminate"></span>' +
         '</span>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -45,9 +37,7 @@ export class AgCheckbox extends Component {
 
     @PostConstruct
     private init(): void {
-        let rtlSupport = this.gridOptionsWrapper.isEnableRtlSupport();
-        let template = rtlSupport ? AgCheckbox.TEMPLATE_RTL : AgCheckbox.TEMPLATE_LTR;
-        this.setTemplate(template);
+        this.setTemplate(AgCheckbox.TEMPLATE);
 
         this.loadIcons();
         this.updateIcons();

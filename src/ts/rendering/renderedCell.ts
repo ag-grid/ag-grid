@@ -975,15 +975,8 @@ export class RenderedCell extends Component {
             this.eSpanWithValue = document.createElement('span');
             _.addCssClass(this.eSpanWithValue, 'ag-cell-value');
 
-            if (this.gridOptionsWrapper.isEnableRtlSupport()) {
-                // if doing RTL, we add value first, then checkbox
-                this.eCellWrapper.appendChild(this.eSpanWithValue);
-                this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
-            } else {
-                // if doing normal, we add checkbox, then value
-                this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
-                this.eCellWrapper.appendChild(this.eSpanWithValue);
-            }
+            this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
+            this.eCellWrapper.appendChild(this.eSpanWithValue);
 
             this.eParentOfValue = this.eSpanWithValue;
         } else {
