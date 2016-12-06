@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { CsvExportParams } from "./csvCreator";
@@ -144,6 +144,8 @@ export declare class GridApi {
     copySelectedRangeDown(): void;
     showColumnMenuAfterButtonClick(colKey: string | Column | ColDef, buttonElement: HTMLElement): void;
     showColumnMenuAfterMouseClick(colKey: string | Column | ColDef, mouseEvent: MouseEvent | Touch): void;
+    tabToNextCell(): boolean;
+    tabToPreviousCell(): boolean;
     stopEditing(cancel?: boolean): void;
     startEditingCell(params: StartEditingCellParams): void;
     addAggFunc(key: string, aggFunc: IAggFunc): void;

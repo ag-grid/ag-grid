@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -20,7 +20,7 @@ export declare class Utils {
     }): T[];
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
     static iterateObject(object: any, callback: (key: string, value: any) => void): void;
-    static cloneObject(object: any): any;
+    static cloneObject<T>(object: T): T;
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult): TResult[];
     static mapObject<TResult>(object: any, callback: (item: any) => TResult): TResult[];
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;

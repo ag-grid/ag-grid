@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -39,6 +39,7 @@ export declare class RenderedCell extends Component {
     private editingCell;
     private cellEditorInPopup;
     private hideEditorPopup;
+    private cellFocused;
     private scope;
     private cellEditor;
     private cellRenderer;
@@ -48,6 +49,7 @@ export declare class RenderedCell extends Component {
     private firstRightPinned;
     private lastLeftPinned;
     constructor(column: Column, node: RowNode, scope: any, renderedRow: RenderedRow);
+    private createGridCell();
     private setupGridCell();
     getGridCell(): GridCell;
     setFocusInOnEditor(): void;
@@ -67,6 +69,7 @@ export declare class RenderedCell extends Component {
     private animateCellWithHighlight();
     private animateCell(cssName);
     private addCellFocusedListener();
+    private checkCellFocused(event?);
     private setWidthOnCell();
     init(): void;
     private addDomData();

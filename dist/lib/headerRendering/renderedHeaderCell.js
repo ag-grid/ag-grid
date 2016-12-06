@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -49,7 +48,7 @@ var RenderedHeaderCell = (function () {
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper, this.column, null);
         // label div
         var eHeaderCellLabel = this.eHeaderCell.querySelector('#agHeaderCellLabel');
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, true);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
@@ -403,5 +402,5 @@ var RenderedHeaderCell = (function () {
         __metadata('design:returntype', void 0)
     ], RenderedHeaderCell.prototype, "init", null);
     return RenderedHeaderCell;
-}());
+})();
 exports.RenderedHeaderCell = RenderedHeaderCell;

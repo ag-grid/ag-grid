@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var paginationController_1 = require("./rowControllers/paginationController");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
@@ -133,5 +132,5 @@ var Grid = (function () {
         pagination: inMemoryRowModel_1.InMemoryRowModel
     };
     return Grid;
-}());
+})();
 exports.Grid = Grid;

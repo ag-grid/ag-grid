@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -64,7 +64,7 @@ export declare class RowRenderer {
     private refreshFloatingRows(renderedRows, rowNodes, ePinnedLeftContainer, ePinnedRightContainer, eBodyContainer, eFullWidthContainer);
     private onFloatingRowDataChanged();
     private onModelUpdated(refreshEvent);
-    private getRenderedIndexsForRowNodes(rowNodes);
+    private getRenderedIndexesForRowNodes(rowNodes);
     refreshRows(rowNodes: RowNode[]): void;
     refreshView(keepRenderedRows?: boolean, animate?: boolean): void;
     private getLockOnRefresh();
@@ -92,7 +92,9 @@ export declare class RowRenderer {
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell(gridCell);
     onTabKeyDown(previousRenderedCell: RenderedCell, keyboardEvent: KeyboardEvent): void;
+    tabToNextCell(backwards: boolean): boolean;
+    private moveToCellAfter(previousRenderedCell, backwards);
     private moveEditToNextCell(previousRenderedCell, nextRenderedCell);
     private moveEditToNextRow(previousRenderedCell, nextRenderedCell);
-    private moveFocusToNextCell(gridCell, shiftKey, startEditing);
+    private findNextCellToFocusOn(gridCell, backwards, startEditing);
 }

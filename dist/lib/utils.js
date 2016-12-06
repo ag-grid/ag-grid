@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 // util class, only used when debugging, for printing time to console
@@ -18,7 +17,7 @@ var Timer = (function () {
         this.timestamp = new Date().getTime();
     };
     return Timer;
-}());
+})();
 exports.Timer = Timer;
 var Utils = (function () {
     function Utils() {
@@ -837,7 +836,7 @@ var Utils = (function () {
             pixelY: pY };
     };
     return Utils;
-}());
+})();
 exports.Utils = Utils;
 var NumberSequence = (function () {
     function NumberSequence(initValue, step) {
@@ -852,5 +851,5 @@ var NumberSequence = (function () {
         return valToReturn;
     };
     return NumberSequence;
-}());
+})();
 exports.NumberSequence = NumberSequence;

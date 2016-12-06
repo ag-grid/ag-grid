@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var columnGroup_1 = require("./columnGroup");
 var column_1 = require("./column");
 var OriginalColumnGroup = (function () {
@@ -97,5 +96,5 @@ var OriginalColumnGroup = (function () {
         this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
     };
     return OriginalColumnGroup;
-}());
+})();
 exports.OriginalColumnGroup = OriginalColumnGroup;

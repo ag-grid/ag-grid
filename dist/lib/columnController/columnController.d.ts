@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -11,8 +11,8 @@ export declare class ColumnApi {
     sizeColumnsToFit(gridWidth: any): void;
     setColumnGroupOpened(group: ColumnGroup | string, newValue: boolean, instanceId?: number): void;
     getColumnGroup(name: string, instanceId?: number): ColumnGroup;
-    getDisplayNameForColumn(column: Column): string;
-    getDisplayNameForColumnGroup(columnGroup: ColumnGroup): string;
+    getDisplayNameForColumn(column: Column, location: string): string;
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
     getColumn(key: any): Column;
     setColumnState(columnState: any): boolean;
     getColumnState(): any[];
@@ -218,9 +218,9 @@ export declare class ColumnController {
     getPrimaryColumn(key: string | ColDef | Column): Column;
     getGridColumn(key: string | ColDef | Column): Column;
     private getColumn(key, columnList);
-    getDisplayNameForColumn(column: Column, includeAggFunc?: boolean): string;
-    getDisplayNameForColumnGroup(columnGroup: ColumnGroup): string;
-    private getHeaderName(colDef, column, columnGroup);
+    getDisplayNameForColumn(column: Column, location: string, includeAggFunc?: boolean): string;
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
+    private getHeaderName(colDef, column, columnGroup, location);
     private wrapHeaderNameWithAggFunc(column, headerName);
     getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[]): void;

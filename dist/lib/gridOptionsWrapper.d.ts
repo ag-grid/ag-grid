@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.0
+// Type definitions for ag-grid v7.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -109,7 +109,7 @@ export declare class GridOptionsWrapper {
     isAngularCompileFilters(): boolean;
     isAngularCompileHeaders(): boolean;
     isDebug(): boolean;
-    getColumnDefs(): (ColGroupDef | ColDef)[];
+    getColumnDefs(): (ColDef | ColGroupDef)[];
     getDatasource(): IDatasource;
     getViewportDatasource(): IViewportDatasource;
     isEnableSorting(): boolean;

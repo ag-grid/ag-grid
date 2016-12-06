@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -151,7 +150,7 @@ var RowRenderer = (function () {
             return;
         }
         if (rowNodes) {
-            rowNodes.forEach(function (node, rowIndex) {
+            rowNodes.forEach(function (node) {
                 var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, eBodyContainer, null, eFullWidthContainer, ePinnedLeftContainer, null, ePinnedRightContainer, null, node, false);
                 _this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
@@ -165,7 +164,7 @@ var RowRenderer = (function () {
         this.refreshView(refreshEvent.keepRenderedRows, refreshEvent.animate);
     };
     // if the row nodes are not rendered, no index is returned
-    RowRenderer.prototype.getRenderedIndexsForRowNodes = function (rowNodes) {
+    RowRenderer.prototype.getRenderedIndexesForRowNodes = function (rowNodes) {
         var result = [];
         if (utils_1.Utils.missing(rowNodes)) {
             return result;
@@ -184,7 +183,7 @@ var RowRenderer = (function () {
         }
         // we only need to be worried about rendered rows, as this method is
         // called to whats rendered. if the row isn't rendered, we don't care
-        var indexesToRemove = this.getRenderedIndexsForRowNodes(rowNodes);
+        var indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
         // remove the rows
         this.removeVirtualRows(indexesToRemove);
         // add draw them again
@@ -527,10 +526,32 @@ var RowRenderer = (function () {
         return cellComponent;
     };
     RowRenderer.prototype.onTabKeyDown = function (previousRenderedCell, keyboardEvent) {
+        var backwards = keyboardEvent.shiftKey;
+        var success = this.moveToCellAfter(previousRenderedCell, backwards);
+        if (success) {
+            keyboardEvent.preventDefault();
+        }
+    };
+    RowRenderer.prototype.tabToNextCell = function (backwards) {
+        var focusedCell = this.focusedCellController.getFocusedCell();
+        // if no focus, then cannot navigate
+        if (utils_1.Utils.missing(focusedCell)) {
+            return false;
+        }
+        var renderedCell = this.getComponentForCell(focusedCell);
+        // if cell is not rendered, means user has scrolled away from the cell
+        if (utils_1.Utils.missing(renderedCell)) {
+            return false;
+        }
+        var result = this.moveToCellAfter(renderedCell, backwards);
+        return result;
+    };
+    // returns true if moving to next cell was successful
+    RowRenderer.prototype.moveToCellAfter = function (previousRenderedCell, backwards) {
         var editing = previousRenderedCell.isEditing();
         var gridCell = previousRenderedCell.getGridCell();
         // find the next cell to start editing
-        var nextRenderedCell = this.moveFocusToNextCell(gridCell, keyboardEvent.shiftKey, editing);
+        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, editing);
         var foundCell = utils_1.Utils.exists(nextRenderedCell);
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
@@ -546,7 +567,10 @@ var RowRenderer = (function () {
             else {
                 nextRenderedCell.focusCell(true);
             }
-            keyboardEvent.preventDefault();
+            return true;
+        }
+        else {
+            return false;
         }
     };
     RowRenderer.prototype.moveEditToNextCell = function (previousRenderedCell, nextRenderedCell) {
@@ -576,10 +600,10 @@ var RowRenderer = (function () {
     };
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
-    RowRenderer.prototype.moveFocusToNextCell = function (gridCell, shiftKey, startEditing) {
+    RowRenderer.prototype.findNextCellToFocusOn = function (gridCell, backwards, startEditing) {
         var nextCell = gridCell;
         while (true) {
-            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
+            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) {
@@ -704,5 +728,5 @@ var RowRenderer = (function () {
         __metadata('design:paramtypes', [])
     ], RowRenderer);
     return RowRenderer;
-}());
+})();
 exports.RowRenderer = RowRenderer;

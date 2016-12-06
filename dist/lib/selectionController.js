@@ -1,10 +1,9 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.0
+ * @version v7.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -98,7 +97,8 @@ var SelectionController = (function () {
         var groupsToRefresh = {};
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                _this.selectedNodes[otherRowNode.id].setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
+                var rowNode = _this.selectedNodes[otherRowNode.id];
+                rowNode.setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
                 if (_this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }
@@ -121,8 +121,32 @@ var SelectionController = (function () {
             this.selectedNodes[rowNode.id] = undefined;
         }
     };
-    SelectionController.prototype.syncInRowNode = function (rowNode) {
-        if (this.selectedNodes[rowNode.id] !== undefined) {
+    SelectionController.prototype.syncInRowNode = function (rowNode, oldNode) {
+        this.syncInOldRowNode(rowNode, oldNode);
+        this.syncInNewRowNode(rowNode);
+    };
+    // if the id has changed for the node, then this means the rowNode
+    // is getting used for a different data item, which breaks
+    // our selectedNodes, as the node now is mapped by the old id
+    // which is inconsistent. so to keep the old node as selected,
+    // we swap in the clone (with the old id and old data). this means
+    // the oldNode is effectively a daemon we keep a reference to,
+    // so if client calls api.getSelectedNodes(), it gets the daemon
+    // in the result. when the client un-selects, the reference to the
+    // daemon is removed. the daemon, because it's an oldNode, is not
+    // used by the grid for rendering, it's a copy of what the node used
+    // to be like before the id was changed.
+    SelectionController.prototype.syncInOldRowNode = function (rowNode, oldNode) {
+        var oldNodeHasDifferentId = utils_1.Utils.exists(oldNode) && (rowNode.id !== oldNode.id);
+        if (oldNodeHasDifferentId) {
+            var oldNodeSelected = utils_1.Utils.exists(this.selectedNodes[oldNode.id]);
+            if (oldNodeSelected) {
+                this.selectedNodes[oldNode.id] = oldNode;
+            }
+        }
+    };
+    SelectionController.prototype.syncInNewRowNode = function (rowNode) {
+        if (utils_1.Utils.exists(this.selectedNodes[rowNode.id])) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
         }
@@ -254,5 +278,5 @@ var SelectionController = (function () {
         __metadata('design:paramtypes', [])
     ], SelectionController);
     return SelectionController;
-}());
+})();
 exports.SelectionController = SelectionController;
