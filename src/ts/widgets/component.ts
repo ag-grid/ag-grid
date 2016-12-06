@@ -70,6 +70,9 @@ export class Component implements IEventEmitter {
         this.wireQuerySelectors();
     }
 
+    public attributesSet(): void {
+    }
+
     private wireQuerySelectors(): void {
         var metaData = (<any>this).__agComponentMetaData;
         if (!metaData || !metaData.querySelectors) { return; }

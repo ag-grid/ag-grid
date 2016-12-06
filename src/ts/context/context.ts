@@ -84,8 +84,9 @@ export class Context {
         var key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             var newComponent = <Component> new this.componentsMappedByName[key];
-            this.copyAttributesFromNode(element, newComponent.getGui());
             this.wireBean(newComponent);
+            this.copyAttributesFromNode(element, newComponent.getGui());
+            newComponent.attributesSet();
             return newComponent;
         } else {
             return null;

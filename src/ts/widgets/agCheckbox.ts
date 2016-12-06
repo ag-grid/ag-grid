@@ -12,12 +12,20 @@ export class AgCheckbox extends Component {
 
     public static EVENT_CHANGED = 'change';
 
-    private static TEMPLATE =
+    private static TEMPLATE_LTR =
         '<span class="ag-checkbox">' +
         '  <span class="ag-checkbox-checked"></span>' +
         '  <span class="ag-checkbox-unchecked"></span>' +
         '  <span class="ag-checkbox-indeterminate"></span>' +
         '  <span class="ag-checkbox-label"></span>' +
+        '</span>';
+
+    private static TEMPLATE_RTL =
+        '<span class="ag-checkbox">' +
+        '  <span class="ag-checkbox-label"></span>' +
+        '  <span class="ag-checkbox-checked"></span>' +
+        '  <span class="ag-checkbox-unchecked"></span>' +
+        '  <span class="ag-checkbox-indeterminate"></span>' +
         '</span>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -32,15 +40,21 @@ export class AgCheckbox extends Component {
     private passive = false;
 
     constructor() {
-        super(AgCheckbox.TEMPLATE);
+        super();
     }
 
     @PostConstruct
     private init(): void {
+        let rtlSupport = this.gridOptionsWrapper.isEnableRtlSupport();
+        let template = rtlSupport ? AgCheckbox.TEMPLATE_RTL : AgCheckbox.TEMPLATE_LTR;
+        this.setTemplate(template);
 
         this.loadIcons();
         this.updateIcons();
-        
+    }
+
+    public attributesSet(): void {
+        super.attributesSet();
         var label = this.getAttribute('label');
         if (label) {
             this.eLabel.innerText = label;

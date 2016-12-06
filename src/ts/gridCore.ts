@@ -109,8 +109,17 @@ export class GridCore {
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
+        this.addRtlSupport();
 
         this.logger.log('ready');
+    }
+
+    private addRtlSupport(): void {
+        if (this.gridOptionsWrapper.isEnableRtlSupport()) {
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-rtl');
+        } else {
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-ltr');
+        }
     }
 
     private createNorthPanel(): HTMLElement {
