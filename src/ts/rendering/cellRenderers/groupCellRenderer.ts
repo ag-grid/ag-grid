@@ -87,7 +87,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             } else if (!node.isExpandable() || reducedLeafNode) {
                 paddingPx += 10;
             }
-            this.getGui().style.paddingLeft = paddingPx + 'px';
+
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                // if doing rtl, padding is on the right
+                this.getGui().style.paddingRight = paddingPx + 'px';
+            } else {
+                // otherwise it is on the left
+                this.getGui().style.paddingLeft = paddingPx + 'px';
+            }
         }
     }
 

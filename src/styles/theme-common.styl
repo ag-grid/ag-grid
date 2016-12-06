@@ -148,9 +148,17 @@ todo
 
   .ag-header-group-cell-label
     padding 4px
+
+  .ag-ltr .ag-header-group-cell-label
     padding-left 10px
 
-  .ag-header-group-text
+  .ag-rtl .ag-header-group-cell-label
+    padding-right 10px
+
+  .ag-rtl .ag-header-group-text
+    margin-left 2px
+
+  .ag-ltr .ag-header-group-text
     margin-right 2px
 
   .ag-header-cell-menu-button
@@ -214,17 +222,32 @@ todo
   .ag-group-cell
     font-style italic
 
-  .ag-group-expanded
+  .ag-ltr .ag-group-expanded
     padding-right 4px
 
-  .ag-group-contracted
+  .ag-rtl .ag-group-expanded
+    padding-left 4px
+
+  .ag-ltr .ag-group-contracted
     padding-right 4px
 
-  .ag-group-value
+  .ag-rtl .ag-group-contracted
+    padding-left 4px
+
+  .ag-ltr .ag-group-value
     padding-right 2px
 
-  .ag-group-checkbox
+  .ag-rtl .ag-group-value
+    padding-left 2px
+
+  .ag-ltr .ag-group-checkbox
     padding-right 2px
+
+  .ag-rtl .ag-group-checkbox
+    padding-left 2px
+
+  .ag-group-child-count
+    display inline-block
 
   .ag-footer-cell
     font-style italic
