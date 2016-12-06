@@ -21,18 +21,11 @@ import {
 
 export class RenderedColumn extends Component {
 
-    private static TEMPLATE_LTR =
+    private static TEMPLATE =
         '<div class="ag-column-select-column">' +
         '  <span class="ag-column-select-indent"></span>' +
         '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '  <span class="ag-column-select-label"></span>' +
-        '</div>';
-
-    private static TEMPLATE_RTL =
-        '<div class="ag-column-select-column">' +
-        '  <span class="ag-column-select-label"></span>' +
-        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-        '  <span class="ag-column-select-indent"></span>' +
         '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -64,9 +57,7 @@ export class RenderedColumn extends Component {
     @PostConstruct
     public init(): void {
 
-        let rtlSupport = this.gridOptionsWrapper.isEnableRtlSupport();
-        let template = rtlSupport ? RenderedColumn.TEMPLATE_RTL : RenderedColumn.TEMPLATE_LTR;
-        this.setTemplate(template);
+        this.setTemplate(RenderedColumn.TEMPLATE);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eText.innerHTML = this.displayName;

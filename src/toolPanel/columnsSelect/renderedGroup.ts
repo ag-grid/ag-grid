@@ -25,7 +25,7 @@ var svgFactory = SvgFactory.getInstance();
 
 export class RenderedGroup extends Component {
 
-    private static TEMPLATE_LTR =
+    private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
         '  <span id="eIndent" class="ag-column-select-indent"></span>' +
         '  <span id="eColumnGroupIcons" class="ag-column-group-icons">' +
@@ -36,19 +36,6 @@ export class RenderedGroup extends Component {
         '    <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '    <span id="eText" class="ag-column-select-column-group-label"></span>' +
         '  </span>' +
-        '</div>';
-
-    private static TEMPLATE_RTL =
-        '<div class="ag-column-select-column-group">' +
-        '  <span id="eCheckboxAndText">' +
-        '    <span id="eText" class="ag-column-select-column-group-label"></span>' +
-        '    <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-        '  </span>' +
-        '  <span id="eColumnGroupIcons" class="ag-column-group-icons">' +
-        '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
-        '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
-        '  </span>' +
-        '  <span id="eIndent" class="ag-column-select-indent"></span>' +
         '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -85,9 +72,7 @@ export class RenderedGroup extends Component {
 
     @PostConstruct
     public init(): void {
-        let rtlSupport = this.gridOptionsWrapper.isEnableRtlSupport();
-        let template = rtlSupport ? RenderedGroup.TEMPLATE_RTL : RenderedGroup.TEMPLATE_LTR;
-        this.setTemplate(template);
+        this.setTemplate(RenderedGroup.TEMPLATE);
 
         this.instantiate(this.context);
 
