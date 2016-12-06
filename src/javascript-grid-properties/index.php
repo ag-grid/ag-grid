@@ -308,6 +308,11 @@ include '../documentation-main/documentation_header.php';
                 which requires no cyclic dependencies) then set this to true.</td>
         </tr>
         <tr>
+            <th>suppressDragLeaveHidesColumns</th>
+            <td>If true, when you drag a column out of the grid (eg to the group zone) the column is not
+                hidden.</td>
+        </tr>
+        <tr>
             <th>headerCellTemplate</th>
             <td>String for HTML header template to use.</td>
         </tr>

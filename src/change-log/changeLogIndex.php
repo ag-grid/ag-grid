@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h2>Version 7.1.x</h2>
+
+    <li>Enhancement: RTL support.</li>
+
     <h2>Version 7.0.x</h2>
 
     <h4>ag-grid-7.0.2, ag-grid-enterprise-7.0.2</h4>
