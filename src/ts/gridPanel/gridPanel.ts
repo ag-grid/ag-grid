@@ -1317,10 +1317,16 @@ export class GridPanel {
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
-        var bodyLeftPosition = this.eBodyViewport.scrollLeft;
-        this.eHeaderContainer.style.left = -bodyLeftPosition + 'px';
-        this.eFloatingBottomContainer.style.left = -bodyLeftPosition + 'px';
-        this.eFloatingTopContainer.style.left = -bodyLeftPosition + 'px';
+        let offset: number;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
+            offset = _.getScrollLeft(this.eBodyViewport, true);
+        } else {
+            offset = -this.eBodyViewport.scrollLeft;
+        }
+        this.eHeaderContainer.style.left = offset + 'px';
+        this.eFloatingBottomContainer.style.left = offset + 'px';
+        this.eFloatingTopContainer.style.left = offset + 'px';
     }
 
     private verticallyScrollLeftPinned(bodyTopPosition: any): void {

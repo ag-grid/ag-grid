@@ -1608,14 +1608,29 @@ export class ColumnController {
     private setLeftValuesOfColumns(): void {
         // go through each list of displayed columns
         var allColumns = this.primaryColumns.slice(0);
+
+        // let totalColumnWidth = this.getWidthOfColsInList()
+        let doingRtl = this.gridOptionsWrapper.isEnableRtl();
+
         [this.displayedLeftColumns,this.displayedRightColumns,this.displayedCenterColumns].forEach( columns => {
-            var left = 0;
-            columns.forEach( column => {
-                column.setLeft(left);
-                left += column.getActualWidth();
-                _.removeFromArray(allColumns, column);
-            });
+            if (doingRtl) {
+                // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
+                let left = this.getWidthOfColsInList(columns);
+                columns.forEach( column => {
+                    left -= column.getActualWidth();
+                    column.setLeft(left);
+                });
+            } else {
+                // otherwise normal LTR, we start at zero
+                let left = 0;
+                columns.forEach( column => {
+                    column.setLeft(left);
+                    left += column.getActualWidth();
+                });
+            }
+            _.removeAllFromArray(allColumns, columns);
         });
+
         // items left in allColumns are columns not displayed, so remove the left position. this is
         // important for the rows, as if a col is made visible, then taken out, then made visible again,
         // we don't want the animation of the cell floating in from the old position, whatever that was.

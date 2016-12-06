@@ -5,7 +5,7 @@ import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {ColumnGroup} from "../entities/columnGroup";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
-import {Bean} from "../context/context";
+import {Bean, Context} from "../context/context";
 import {Qualifier} from "../context/context";
 import {Autowired} from "../context/context";
 
@@ -14,6 +14,7 @@ import {Autowired} from "../context/context";
 export class DisplayedGroupCreator {
 
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('context') private context: Context;
 
     public createDisplayedGroups(sortedVisibleColumns: Column[],
                                  balancedColumnTree: OriginalColumnGroupChild[],
@@ -39,6 +40,7 @@ export class DisplayedGroupCreator {
                     var groupId = originalGroup.getGroupId();
                     var instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
                     var newGroup = new ColumnGroup(originalGroup, groupId, instanceId);
+                    this.context.wireBean(newGroup);
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
                     if (i==0) {

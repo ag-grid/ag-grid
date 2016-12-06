@@ -72,7 +72,7 @@ export class GridCore {
         let westPanel: HTMLElement;
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
-            if (this.gridOptionsWrapper.isEnableRtlSupport()) {
+            if (this.gridOptionsWrapper.isEnableRtl()) {
                 westPanel = this.toolPanel.getGui();
             } else {
                 eastPanel = this.toolPanel.getGui();
@@ -120,7 +120,7 @@ export class GridCore {
     }
 
     private addRtlSupport(): void {
-        if (this.gridOptionsWrapper.isEnableRtlSupport()) {
+        if (this.gridOptionsWrapper.isEnableRtl()) {
             _.addCssClass(this.eRootPanel.getGui(), 'ag-rtl');
         } else {
             _.addCssClass(this.eRootPanel.getGui(), 'ag-ltr');

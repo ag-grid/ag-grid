@@ -26,6 +26,7 @@ export class Utils {
     private static isSafari: boolean;
     private static isIE: boolean;
     private static isEdge: boolean;
+    private static isChrome: boolean;
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -91,6 +92,20 @@ export class Utils {
             }
             return currentObject;
         }
+    }
+
+    static getScrollLeft(element: HTMLElement, rtl: boolean): number {
+        var scrollLeft = element.scrollLeft;
+        if (rtl) {
+            // Absolute value - gets IE and FF to return the same values
+            var scrollLeft = Math.abs(scrollLeft);
+
+            // Get Chrome and Safari to return the same value as well
+            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+                scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
+            }
+        }
+        return scrollLeft;
     }
 
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
@@ -420,6 +435,14 @@ export class Utils {
         }
     }
 
+    static removeAllFromArray<T>(array: T[], toRemove: T[]) {
+        toRemove.forEach( item => {
+            if (array.indexOf(item) >= 0) {
+                array.splice(array.indexOf(item), 1);
+            }
+        });
+    }
+
     static insertIntoArray<T>(array: T[], object: T, toIndex: number) {
         array.splice(toIndex, 0, object);
     }
@@ -656,6 +679,14 @@ export class Utils {
             this.isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
         }
         return this.isSafari;
+    }
+
+    static isBrowserChrome(): boolean {
+        if (this.isChrome===undefined) {
+            let anyWindow = <any> window;
+            this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+        }
+        return this.isChrome;
     }
 
     // srcElement is only available in IE. In all other browsers it is target

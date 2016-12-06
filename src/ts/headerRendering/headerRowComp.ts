@@ -74,10 +74,21 @@ export class HeaderRowComp extends Component {
 
         this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
+        this.setWidth();
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this) );
+    }
+
+    private onColumnResized(): void {
+        this.setWidth();
+    }
+
+    private setWidth(): void {
+        var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
+        this.getGui().style.width = mainRowWidth;
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -90,6 +101,7 @@ export class HeaderRowComp extends Component {
             this.removeAndDestroyChildComponents(idsOfAllChildren);
         }
         this.onVirtualColumnsChanged();
+        this.setWidth();
     }
     
     private onVirtualColumnsChanged(): void {
@@ -97,6 +109,10 @@ export class HeaderRowComp extends Component {
         var currentChildIds = Object.keys(this.headerElements);
 
         var nodesAtDept = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.dept);
+
+        if (_.missing(this.pinned) && this.dept===1) {
+            let i = 1;
+        }
 
         nodesAtDept.forEach( (child: ColumnGroupChild) => {
             var idOfChild = child.getUniqueId();
