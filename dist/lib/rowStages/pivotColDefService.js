@@ -1,5 +1,4 @@
-// ag-grid-enterprise v7.0.1
-"use strict";
+// ag-grid-enterprise v7.0.2
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -122,5 +121,5 @@ var PivotColDefService = (function () {
         __metadata('design:paramtypes', [])
     ], PivotColDefService);
     return PivotColDefService;
-}());
+})();
 exports.PivotColDefService = PivotColDefService;

@@ -1,5 +1,4 @@
-// ag-grid-enterprise v7.0.1
-"use strict";
+// ag-grid-enterprise v7.0.2
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -86,7 +85,7 @@ var AggFuncService = (function () {
         __metadata('design:paramtypes', [])
     ], AggFuncService);
     return AggFuncService;
-}());
+})();
 exports.AggFuncService = AggFuncService;
 function aggSum(input) {
     var result = null;
@@ -160,7 +159,7 @@ function aggCount(input) {
     for (var i = 0; i < length; i++) {
         var isGroupAgg = main_1.Utils.exists(input[i]) && typeof input[i].value === 'number';
         if (isGroupAgg) {
-            result += input[i].value;
+            result.value += input[i].value;
         }
         else {
             result.value++;
