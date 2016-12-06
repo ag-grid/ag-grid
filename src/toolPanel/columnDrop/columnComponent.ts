@@ -25,10 +25,16 @@ export class ColumnComponent extends Component {
 
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
-    private static TEMPLATE =
+    private static TEMPLATE_LTR =
        `<span class="ag-column-drop-cell">
           <span class="ag-column-drop-cell-text"></span>
           <span class="ag-column-drop-cell-button">&#10006;</span>
+        </span>`;
+
+    private static TEMPLATE_RTL =
+       `<span class="ag-column-drop-cell">
+          <span class="ag-column-drop-cell-button">&#10006;</span>
+          <span class="ag-column-drop-cell-text"></span>
         </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
@@ -52,7 +58,7 @@ export class ColumnComponent extends Component {
     private popupShowing = false;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, valueColumn: boolean) {
-        super(ColumnComponent.TEMPLATE);
+        super();
         this.valueColumn = valueColumn;
         this.column = column;
         this.dragSourceDropTarget = dragSourceDropTarget;
@@ -61,6 +67,10 @@ export class ColumnComponent extends Component {
 
     @PostConstruct
     public init(): void {
+        let rtlSupport = this.gridOptionsWrapper.isEnableRtlSupport();
+        let template = rtlSupport ? ColumnComponent.TEMPLATE_RTL : ColumnComponent.TEMPLATE_LTR;
+        this.setTemplate(template);
+
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
