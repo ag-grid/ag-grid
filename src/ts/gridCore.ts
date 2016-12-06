@@ -66,20 +66,25 @@ export class GridCore {
     @PostConstruct
     public init(): void {
 
-        // and the last bean, done in it's own section, as it's optional
-        var toolPanelGui: HTMLElement;
-
         var eSouthPanel = this.createSouthPanel();
 
+        let eastPanel: HTMLElement;
+        let westPanel: HTMLElement;
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
-            toolPanelGui = this.toolPanel.getGui();
+            // if we are doing RTL, then the tool panel appears on the left
+            if (this.gridOptionsWrapper.isEnableRtlSupport()) {
+                westPanel = this.toolPanel.getGui();
+            } else {
+                eastPanel = this.toolPanel.getGui();
+            }
         }
 
         var createTopPanelGui = this.createNorthPanel();
 
         this.eRootPanel = new BorderLayout({
             center: this.gridPanel.getLayout(),
-            east: toolPanelGui,
+            east: eastPanel,
+            west: westPanel,
             north: createTopPanelGui,
             south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
