@@ -1,10 +1,10 @@
-import {SvgFactory, MenuItemDef, Utils as _, PopupService, Component, Autowired} from "ag-grid";
+import {GridOptionsWrapper, PostConstruct, SvgFactory, MenuItemDef, Utils as _, Component, Autowired} from "ag-grid";
 
 var svgFactory = SvgFactory.getInstance();
 
 export class MenuItemComponent extends Component {
 
-    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // private instance = Math.random();
 
@@ -22,18 +22,19 @@ export class MenuItemComponent extends Component {
 
     constructor(params: MenuItemDef) {
         super(MenuItemComponent.TEMPLATE);
-
-        // console.log('MenuItemComponent->constructor() ' + this.instance);
-
         this.params = params;
+    }
 
-        if (params.checked) {
+    @PostConstruct
+    private init() {
+
+        if (this.params.checked) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&#10004;';
-        } else if (params.icon) {
-            if (_.isNodeOrElement(params.icon)) {
-                this.queryForHtmlElement('#eIcon').appendChild(<HTMLElement> params.icon);
-            } else if (typeof params.icon === 'string') {
-                this.queryForHtmlElement('#eIcon').innerHTML = <string> params.icon;
+        } else if (this.params.icon) {
+            if (_.isNodeOrElement(this.params.icon)) {
+                this.queryForHtmlElement('#eIcon').appendChild(<HTMLElement> this.params.icon);
+            } else if (typeof this.params.icon === 'string') {
+                this.queryForHtmlElement('#eIcon').innerHTML = <string> this.params.icon;
             } else {
                 console.log('ag-Grid: menu item icon must be DOM node or string');
             }
@@ -43,17 +44,23 @@ export class MenuItemComponent extends Component {
             // it out.
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
-        if (params.shortcut) {
-            this.queryForHtmlElement('#eShortcut').innerHTML = params.shortcut;
+        if (this.params.shortcut) {
+            this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
         }
-        if (params.subMenu) {
-            this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
+        if (this.params.subMenu) {
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                // for RTL, we show arrow going left
+                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowLeftSvg());
+            } else {
+                // for normal, we show arrow going right
+                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
+            }
         } else {
             this.queryForHtmlElement('#ePopupPointer').innerHTML = '&nbsp;';
         }
-        this.queryForHtmlElement('#eName').innerHTML = params.name;
+        this.queryForHtmlElement('#eName').innerHTML = this.params.name;
 
-        if (params.disabled) {
+        if (this.params.disabled) {
             _.addCssClass(this.getGui(), 'ag-menu-option-disabled');
         } else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
