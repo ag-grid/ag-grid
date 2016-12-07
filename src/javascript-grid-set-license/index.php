@@ -26,7 +26,13 @@ include '../documentation-main/documentation_header.php';
         <pre>agGrid.LicenseManager.setLicenseKey("your license key");</pre>
 
         CommonJS:
-        <pre>var enterprise = require("ag-grid-enterprise");<br/>enterprise.LicenseManager.setLicenseKey("your license key");</pre>
+        <pre>var enterprise = require("ag-grid-enterprise");
+enterprise.LicenseManager.setLicenseKey("your license key");</pre>
+
+        ECMA 6:
+        <pre>import {LicenseManager} from "ag-grid-enterprise/main";
+LicenseManager.setLicenseKey("your license key");</pre>
+
     </p>
 
     <note>
