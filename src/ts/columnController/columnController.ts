@@ -242,8 +242,10 @@ export class ColumnController {
     private pivotMode = false;
 
     // for horizontal visualisation of columns
-    private totalWidth: number;
+    private scrollWidth: number;
     private scrollPosition: number;
+
+    private bodyWidth = -1; // when we don't know, this is -1
 
     private viewportLeft: number;
     private viewportRight: number;
@@ -257,8 +259,13 @@ export class ColumnController {
     }
 
     private setViewportLeftAndRight(): void {
-        this.viewportLeft = this.scrollPosition;
-        this.viewportRight = this.totalWidth + this.scrollPosition;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            this.viewportLeft = this.bodyWidth - this.scrollPosition - this.scrollWidth;
+            this.viewportRight = this.bodyWidth - this.scrollPosition;
+        } else {
+            this.viewportLeft = this.scrollPosition;
+            this.viewportRight = this.scrollWidth + this.scrollPosition;
+        }
     }
 
     // used by clipboard service, to know what columns to paste into
@@ -284,9 +291,9 @@ export class ColumnController {
         }
     }
 
-    public setWidthAndScrollPosition(totalWidth: number, scrollPosition: number): void {
-        if (totalWidth!==this.totalWidth || scrollPosition!==this.scrollPosition) {
-            this.totalWidth = totalWidth;
+    public setWidthAndScrollPosition(scrollWidth: number, scrollPosition: number): void {
+        if (scrollWidth!==this.scrollWidth || scrollPosition!==this.scrollPosition) {
+            this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;
             this.setViewportLeftAndRight();
             if (this.ready) {
@@ -667,6 +674,8 @@ export class ColumnController {
             this.setLeftValues();
         }
 
+        this.calculateBodyWidth();
+
         // check for change first, to avoid unnecessary firing of events
         // however we always fire 'finished' events. this is important
         // when groups are resized, as if the group is changing slowly,
@@ -784,8 +793,12 @@ export class ColumnController {
     // + rowController -> setting main row widths (when inserting and resizing)
     // need to cache this
     public getBodyContainerWidth(): number {
-        var result = this.getWidthOfColsInList(this.displayedCenterColumns);
-        return result;
+        return this.bodyWidth;
+    }
+
+    private calculateBodyWidth(): void {
+        this.bodyWidth = this.getWidthOfColsInList(this.displayedCenterColumns);
+        this.setViewportLeftAndRight();
     }
 
     // + rowController
@@ -1345,6 +1358,8 @@ export class ColumnController {
         this.copyDownGridColumns();
 
         this.updateDisplayedColumns();
+        this.checkDisplayedCenterColumns();
+
         this.ready = true;
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
@@ -1395,6 +1410,7 @@ export class ColumnController {
         groupToUse.setExpanded(newValue);
         this.gridPanel.turnOnAnimationForABit();
         this.updateGroupsAndDisplayedColumns();
+        this.calculateBodyWidth();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
     }
@@ -1580,6 +1596,7 @@ export class ColumnController {
         this.updateGroups();
         this.updateDisplayedColumnsFromTrees();
         this.updateVirtualSets();
+        this.calculateBodyWidth();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
         var event = new ColumnChangeEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, event);

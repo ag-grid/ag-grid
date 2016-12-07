@@ -1275,9 +1275,12 @@ export class GridPanel {
 
     private setLeftAndRightBounds(): void {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
-        var scrollPosition = this.eBodyViewport.scrollLeft;
-        var totalWidth = this.eBody.offsetWidth;
-        this.columnController.setWidthAndScrollPosition(totalWidth, scrollPosition);
+        // let scrollPosition = this.getBodyViewportScrollLeft();
+        // let totalWidth = this.eBody.offsetWidth;
+        let scrollWidth = this.eBodyViewport.clientWidth;
+        let scrollPosition = this.getBodyViewportScrollLeft();
+
+        this.columnController.setWidthAndScrollPosition(scrollWidth, scrollPosition);
     }
 
     private isUseScrollLag(): boolean {
@@ -1316,14 +1319,19 @@ export class GridPanel {
         }
     }
 
-    public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
-        let offset: number;
+    private getBodyViewportScrollLeft(): number {
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-            offset = _.getScrollLeft(this.eBodyViewport, true);
+            return _.getScrollLeft(this.eBodyViewport, true);
         } else {
-            offset = -this.eBodyViewport.scrollLeft;
+            return this.eBodyViewport.scrollLeft;
         }
+    }
+
+    public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
+        let scrollLeft = this.getBodyViewportScrollLeft();
+        let offset = this.gridOptionsWrapper.isEnableRtl() ? scrollLeft : -scrollLeft;
+
         this.eHeaderContainer.style.left = offset + 'px';
         this.eFloatingBottomContainer.style.left = offset + 'px';
         this.eFloatingTopContainer.style.left = offset + 'px';
