@@ -398,7 +398,7 @@ export class GridOptionsWrapper {
         var rowHeight = this.gridOptions.rowHeight;
         if (_.missing(rowHeight)) {
             return DEFAULT_ROW_HEIGHT;
-        } else if (typeof this.gridOptions.rowHeight === 'number') {
+        } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
             console.warn('ag-Grid row height must be a number if not using standard row model');
@@ -418,10 +418,14 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             return this.gridOptions.getRowHeight(params);
-        } else if (typeof this.gridOptions.rowHeight === 'number') {
+        } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
             return DEFAULT_ROW_HEIGHT;
         }
+    }
+
+    private isNumeric(value) {
+        return !isNaN(value) && typeof value === 'number';
     }
 }
