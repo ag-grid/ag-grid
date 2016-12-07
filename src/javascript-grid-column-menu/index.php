@@ -114,6 +114,13 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleColumnMenu" example-height="450px"></show-example>
 
+    <h3>Overriding Column Menu Width</h3>
+    <p>You can override the menu width by overriding the corresponding CSS:</p>
+
+    <pre>.ag-set-filter-list {
+    width: 500px !important;
+}</pre>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

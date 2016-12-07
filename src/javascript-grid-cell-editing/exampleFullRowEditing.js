@@ -19,6 +19,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     editType: 'fullRow',
+    rowSelection: "single",
     onCellValueChanged: function(event) {
         console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
     },
