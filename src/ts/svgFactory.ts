@@ -94,6 +94,10 @@ export class SvgFactory {
         return createPolygonSvg("0,0 6,3 0,6", 6);
     }
 
+    public createSmallArrowLeftSvg() {
+        return createPolygonSvg("6,0 0,3 6,6", 6);
+    }
+
     public createSmallArrowDownSvg() {
         return createPolygonSvg("0,0 3,6 6,0", 6);
     }

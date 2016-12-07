@@ -51,7 +51,7 @@ export class BodyDropTarget implements DropTarget {
     @PostConstruct
     private init(): void {
 
-        this.moveColumnController = new MoveColumnController(this.pinned);
+        this.moveColumnController = new MoveColumnController(this.pinned, this.eContainer);
         this.context.wireBean(this.moveColumnController);
 
         this.bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
