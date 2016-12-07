@@ -1166,14 +1166,6 @@ export class GridPanel {
         return newScrollPosition - oldScrollPosition;
     }
 
-    public getHorizontalScrollPosition(): number {
-        if (this.forPrint) {
-            return 0;
-        } else {
-            return this.eBodyViewport.scrollLeft;
-        }
-    }
-
     public turnOnAnimationForABit(): void {
         if (this.gridOptionsWrapper.isSuppressColumnMoveAnimation()) {
             return;
@@ -1319,7 +1311,9 @@ export class GridPanel {
         }
     }
 
-    private getBodyViewportScrollLeft(): number {
+    public getBodyViewportScrollLeft(): number {
+        if (this.forPrint) { return 0; }
+
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
             return _.getScrollLeft(this.eBodyViewport, true);

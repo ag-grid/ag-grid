@@ -149,7 +149,7 @@ export class MouseEventService {
                 break;
             default:
                 var centerRect = this.gridPanel.getBodyViewportClientRect();
-                var centerScroll = this.gridPanel.getHorizontalScrollPosition();
+                var centerScroll = this.gridPanel.getBodyViewportScrollLeft();
                 containerX = centerRect.left - centerScroll;
         }
         var result = mouseEvent.clientX - containerX;

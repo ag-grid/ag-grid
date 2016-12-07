@@ -31,8 +31,11 @@ export class MoveColumnController {
     // the 'hold and pin' functionality
     private failedMoveAttempts: number;
 
-    public constructor(pinned: string) {
+    private eContainer: HTMLElement;
+
+    public constructor(pinned: string, eContainer: HTMLElement) {
         this.pinned = pinned;
+        this.eContainer = eContainer;
         this.centerContainer = !_.exists(pinned);
     }
 
@@ -42,7 +45,7 @@ export class MoveColumnController {
     }
 
     public getIconName(): string {
-        return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;;
+        return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
@@ -66,12 +69,22 @@ export class MoveColumnController {
         this.ensureIntervalCleared();
     }
 
-    private adjustXForScroll(draggingEvent: DraggingEvent): number {
-        if (this.centerContainer) {
-            return draggingEvent.x + this.gridPanel.getHorizontalScrollPosition();
-        } else {
-            return draggingEvent.x;
+    private normaliseX(x: number): number {
+
+        // flip the coordinate if doing RTL
+        let flipHorizontallyForRtl = this.gridOptionsWrapper.isEnableRtl();
+        if (flipHorizontallyForRtl) {
+            let clientWidth = this.eContainer.clientWidth;
+            x = clientWidth - x;
         }
+
+        // adjust for scroll only if centre container (the pinned containers dont scroll)
+        let adjustForScroll = this.centerContainer;
+        if (adjustForScroll) {
+            x += this.gridPanel.getBodyViewportScrollLeft();
+        }
+
+        return x;
     }
 
     private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, hDirection: HDirection, xAdjustedForScroll: number) {
@@ -86,11 +99,16 @@ export class MoveColumnController {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            var firstVisiblePixel = this.gridPanel.getHorizontalScrollPosition();
+            var firstVisiblePixel = this.gridPanel.getBodyViewportScrollLeft();
             var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
 
-            this.needToMoveLeft = xAdjustedForScroll < (firstVisiblePixel + 50);
-            this.needToMoveRight = xAdjustedForScroll > (lastVisiblePixel - 50);
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
+                this.needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
+            } else {
+                this.needToMoveLeft = xAdjustedForScroll < (firstVisiblePixel + 50);
+                this.needToMoveRight = xAdjustedForScroll > (lastVisiblePixel - 50);
+            }
 
             if (this.needToMoveLeft || this.needToMoveRight) {
                 this.ensureIntervalStarted();
@@ -109,20 +127,34 @@ export class MoveColumnController {
             return;
         }
 
-        var xAdjustedForScroll = this.adjustXForScroll(draggingEvent);
+        let xNormalised = this.normaliseX(draggingEvent.x);
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
         // each time a column is dragged in.
         if (!fromEnter) {
-            this.checkCenterForScrolling(xAdjustedForScroll);
+            this.checkCenterForScrolling(xNormalised);
         }
 
+        let hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
+
         var columnsToMove = draggingEvent.dragSource.dragItem;
-        this.attemptMoveColumns(columnsToMove, draggingEvent.hDirection, xAdjustedForScroll, fromEnter);
+        this.attemptMoveColumns(columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     }
 
-    private attemptMoveColumns(allMovingColumns: Column[], hDirection: HDirection, xAdjustedForScroll: number, fromEnter: boolean): void {
+    private normaliseDirection(hDirection: HDirection): HDirection {
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            switch (hDirection) {
+                case HDirection.Left: return HDirection.Right;
+                case HDirection.Right: return HDirection.Left;
+                default: console.error(`ag-Grid: Unknown direction ${hDirection}`);
+            }
+        } else {
+            return hDirection;
+        }
+    }
+
+    private attemptMoveColumns(allMovingColumns: Column[], hDirection: HDirection, xAdjusted: number, fromEnter: boolean): void {
         var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
         var gridColumns = this.columnController.getAllGridColumns();
 
@@ -140,7 +172,7 @@ export class MoveColumnController {
             dragColumn = displayedMovingColumns[displayedMovingColumns.length-1];
         }
 
-        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjustedForScroll);
+        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjusted);
         var oldIndex = gridColumns.indexOf(dragColumn);
 
         // the two check below stop an error when the user grabs a group my a middle column, then
