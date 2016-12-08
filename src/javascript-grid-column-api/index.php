@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
         to build your own column management GUI (instead of what's provided in the tool panel).
     </p>
 
-    <pre><code>gridOptions.columnApi.hideColumn('country', true);</code></pre>
+    <pre><code>gridOptions.columnApi.setColumnVisible('country', false);</code></pre>
 
     <note>
         It is important to NEVER update the details of a column directly (I'm talking about a Column,
