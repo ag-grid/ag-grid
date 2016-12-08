@@ -71,7 +71,6 @@ export class RangeController implements IRangeController {
         };
         this.cellRanges = [];
         this.cellRanges.push(newRange);
-        console.log(`setRangeToCell this.activeRange = null`);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
     }
@@ -133,7 +132,6 @@ export class RangeController implements IRangeController {
         if (Utils.missing(this.cellRanges)) {
             return;
         }
-        console.log(`clearSelection this.activeRange = null`);
         this.activeRange = null;
         this.cellRanges = null;
         this.dispatchChangedEvent(true, false);
@@ -282,10 +280,10 @@ export class RangeController implements IRangeController {
     }
 
     private updateSelectedColumns(columnFrom: Column, columnTo: Column): Column[] {
-        var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
+        var allColumns = this.columnController.getAllDisplayedColumns();
 
-        var fromIndex = allDisplayedColumns.indexOf(columnFrom);
-        var toIndex = allDisplayedColumns.indexOf(columnTo);
+        var fromIndex = allColumns.indexOf(columnFrom);
+        var toIndex = allColumns.indexOf(columnTo);
 
         if (fromIndex < 0) {
             console.log('ag-Grid: column ' + columnFrom.getId() + ' is not visible');
@@ -301,7 +299,7 @@ export class RangeController implements IRangeController {
 
         var columns: Column[] = [];
         for (var i = firstIndex; i<=lastIndex; i++) {
-            columns.push(allDisplayedColumns[i]);
+            columns.push(allColumns[i]);
         }
 
         return columns;
