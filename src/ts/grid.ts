@@ -71,7 +71,8 @@ export class Grid {
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
         virtual: VirtualPageRowModel,
-        pagination: InMemoryRowModel
+        pagination: InMemoryRowModel,
+        normal: InMemoryRowModel
     };
 
     public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {

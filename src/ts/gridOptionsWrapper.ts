@@ -425,7 +425,7 @@ export class GridOptionsWrapper {
         }
     }
 
-    private isNumeric(value) {
+    private isNumeric(value:any) {
         return !isNaN(value) && typeof value === 'number';
     }
 }
