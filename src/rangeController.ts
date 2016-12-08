@@ -71,6 +71,7 @@ export class RangeController implements IRangeController {
         };
         this.cellRanges = [];
         this.cellRanges.push(newRange);
+        console.log(`setRangeToCell this.activeRange = null`);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
     }
@@ -132,6 +133,7 @@ export class RangeController implements IRangeController {
         if (Utils.missing(this.cellRanges)) {
             return;
         }
+        console.log(`clearSelection this.activeRange = null`);
         this.activeRange = null;
         this.cellRanges = null;
         this.dispatchChangedEvent(true, false);
@@ -200,7 +202,8 @@ export class RangeController implements IRangeController {
             this.cellRanges = [];
         }
 
-        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+        var cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
+
         if (Utils.missing(cell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
             // (which them means onDragging and onDragStop do nothing)
@@ -255,7 +258,7 @@ export class RangeController implements IRangeController {
 
         this.lastMouseEvent = mouseEvent;
 
-        var cell = this.mouseEventService.getCellForMouseEvent(mouseEvent);
+        var cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
         if (Utils.missing(cell)) {
             return;
         }
