@@ -385,22 +385,6 @@ export class GridPanel {
         this.destroyFunctions.push( ()=> this.eBodyViewport.removeEventListener('contextmenu', listener) );
     }
 
-    private getCellForEvent(event: MouseEvent | KeyboardEvent): RenderedCell {
-
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var sourceElement = _.getTarget(event);
-
-        while (sourceElement) {
-            var domData = (<any>sourceElement)[domDataKey];
-            if (domData && domData.renderedCell) {
-                return <RenderedCell> domData.renderedCell;
-            }
-            sourceElement = sourceElement.parentElement;
-        }
-
-        return null;
-    }
-
     private getRowForEvent(event: MouseEvent | KeyboardEvent): RenderedRow {
 
         var domDataKey = this.gridOptionsWrapper.getDomDataKey();
@@ -418,7 +402,7 @@ export class GridPanel {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        var renderedCell = this.getCellForEvent(keyboardEvent);
+        var renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
         if (renderedCell) {
             switch (eventName) {
                 case 'keydown':
@@ -432,7 +416,7 @@ export class GridPanel {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        var renderedCell = this.getCellForEvent(mouseEvent);
+        var renderedCell = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
         if (renderedCell) {
             renderedCell.onMouseEvent(eventName, mouseEvent);
         }
@@ -476,7 +460,7 @@ export class GridPanel {
                 // if the cell the event came from is editing, then we do not
                 // want to do the default shortcut keys, otherwise the editor
                 // (eg a text field) would not be able to do the normal cut/copy/paste
-                let renderedCell = this.getCellForEvent(event);
+                let renderedCell = this.mouseEventService.getRenderedCellForEvent(event);
                 if (renderedCell && renderedCell.isEditing()) {
                     return;
                 }
@@ -1309,6 +1293,15 @@ export class GridPanel {
                 }
             }, 50);
         }
+    }
+
+    // returns the max scroll left value by comparing the scroll width with the total width
+    public getBodyViewportMaxScrollLeft(): number {
+        let result = this.eBodyViewport.scrollWidth - this.eBodyViewport.clientWidth;
+        if (this.isBodyVerticalScrollShowing()) {
+            result -= _.getScrollbarWidth();
+        }
+        return result;
     }
 
     public getBodyViewportScrollLeft(): number {
