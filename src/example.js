@@ -455,8 +455,6 @@ months.forEach(function (month) {
     })
 });
 
-//gridOptions.columnDefs = createCols();
-
 function filterDoubleClicked(event) {
     setInterval(function () {
         gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
