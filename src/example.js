@@ -132,8 +132,8 @@ suppressEnterprise: true,
     // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
-    //rowHeight: 30, // defaults to 25, can be any integer
-    enableRtl: true,
+//     rowHeight: 30, // defaults to 25, can be any integer
+//     enableRtl: true,
     animateRows: true,
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
@@ -146,7 +146,7 @@ suppressEnterprise: true,
     groupSelectsChildren: true, // one of [true, false]
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-    suppressColumnVirtualisation: true,
+    // suppressColumnVirtualisation: true,
 //suppressContextMenu: true,
 //suppressFieldDotNotation: true,
     groupColumnDef: groupColumn,
