@@ -938,7 +938,7 @@ export class ColumnController {
         this.eventService.dispatchEvent(event.getType(), event);
     }
 
-    public getDisplayedColBefore(col: any): Column {
+    public getDisplayedColBefore(col: Column): Column {
         var allDisplayedColumns = this.getAllDisplayedColumns();
         var oldIndex = allDisplayedColumns.indexOf(col);
         if (oldIndex > 0) {
@@ -1606,14 +1606,39 @@ export class ColumnController {
         this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
         this.addToDisplayedColumns(this.displayedCentreColumnTree, this.displayedCenterColumns);
         this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
+        this.setupAllDisplayedColumns();
+        this.setLeftValues();
+    }
 
+    private setupAllDisplayedColumns(): void {
+
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            this.allDisplayedColumns = this.displayedRightColumns
+                .concat(this.displayedCenterColumns)
+                .concat(this.displayedLeftColumns);
+        } else {
+            this.allDisplayedColumns = this.displayedLeftColumns
+                .concat(this.displayedCenterColumns)
+                .concat(this.displayedRightColumns);
+        }
+        /*
         // order we add the arrays together is important, so the result
         // has the columns left to right, as they appear on the screen.
         this.allDisplayedColumns = this.displayedLeftColumns
             .concat(this.displayedCenterColumns)
             .concat(this.displayedRightColumns);
 
-        this.setLeftValues();
+        // if we are not RTL, then the order of the displayed columns on the screen
+        // is different. this is important when doing range selections and cell navigation
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // so for RTL, we start on the right and go to the left
+            this.allDisplayedColumnsLaidOut = this.displayedRightColumns
+                .concat(this.displayedCenterColumns)
+                .concat(this.displayedLeftColumns);
+        } else {
+            // for normal RTL, the order of the cols is the same order as on screen
+            this.allDisplayedColumnsLaidOut = this.allDisplayedColumns;
+        }*/
     }
 
     // sets the left pixel position of each column
