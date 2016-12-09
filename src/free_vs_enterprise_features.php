@@ -59,10 +59,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-sorting/">Sorting</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -70,10 +70,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-filtering/">Filtering</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -81,10 +81,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-selection/">Selection</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -92,10 +92,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-resizing/">Resizing</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -103,10 +103,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-pinning/">Pinning</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -114,10 +114,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-grouping-headers/">Grouping Columns</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -125,10 +125,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-tree/">Tree Data</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -136,10 +136,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-row-height/">Row Height</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -147,10 +147,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-floating/">Floating Rows</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -158,10 +158,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-value-getters/">Value Getters</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -169,10 +169,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-cell-expressions/">Cell Expressions</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -180,10 +180,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-cell-styling/">Cell Styling</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -191,10 +191,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/">Cell Rendering</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -202,10 +202,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-cell-editing/">Cell Editing</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -213,10 +213,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-context/">Context</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -224,10 +224,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-insert-remove/">Insert & Remove</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -235,10 +235,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-refresh/">Refresh</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -246,10 +246,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-animation/">Animation</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -257,10 +257,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-header-rendering/">Header Templates<br/>&nbsp;& Rendering</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -268,10 +268,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-keyboard-navigation/">Keyboard Navigation</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -279,10 +279,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-internationalisation/">Internationalisation</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -290,10 +290,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-master-detail/">Full Width Rows<br/>&nbsp;& Master Detail</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -301,10 +301,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-master-slave/">Master / Slave</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -312,10 +312,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-touch/">Touch</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -323,10 +323,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-model/">Row Model</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -334,10 +334,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-export/">Data Export</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -345,10 +345,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-styling/">Layout & Styling</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -356,10 +356,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php">&nbsp;  Fresh Theme</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -367,10 +367,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-themes/blue-theme.php">&nbsp;  Blue Theme</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -378,10 +378,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-themes/dark-theme.php">&nbsp;  Dark Theme</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -389,10 +389,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-themes/material-theme.php">&nbsp;  Material Theme</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -400,10 +400,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php">&nbsp;  Bootstrap Theme</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -411,10 +411,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-icons/">Icons</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -422,10 +422,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-overlays/">Overlays</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -433,10 +433,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-for-print/">For Print</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                 </tr>
                 <tr>
@@ -444,10 +444,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-viewport/">Viewport</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -455,10 +455,10 @@
                          <a href="<?php print($rootFolder) ?>javascript-grid-data-functions/">Data Functions</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -466,10 +466,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-grouping/">&nbsp; Grouping Rows</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -477,10 +477,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-aggregation/">&nbsp; Aggregation</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -488,10 +488,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-pivoting/">&nbsp; Pivoting</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -499,10 +499,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-tool-panel/">Tool Panel</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -510,10 +510,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-clipboard/">Clipboard</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -521,10 +521,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-column-menu/">Column Menu</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                       <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -532,10 +532,10 @@
                         <a href="<?php print($rootFolder) ?>javascript-grid-context-menu/">Context Menu</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -543,10 +543,10 @@
                 <a href="<?php print($rootFolder) ?>javascript-grid-range-selection/">Range Selection</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -554,10 +554,10 @@
                 <a href="<?php print($rootFolder) ?>javascript-grid-status-bar/">Status Bar</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -565,10 +565,10 @@
                 <a href="<?php print($rootFolder) ?>javascript-grid-set-filtering/">Set Filtering</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
                 <tr>
@@ -576,9 +576,9 @@
                 <a href="<?php print($rootFolder) ?>javascript-grid-set-license/">Set License Key</a>
                     </td>
                     <td>
-                        &#10004;
+                        <font color="green"> &#10004;
                     </td>
                     <td>
-                        &#10007;
+                        <font color="red"> &#10007;
                     </td>
                 </tr>
