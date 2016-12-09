@@ -15,6 +15,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">8th December 2016</div>
+        <div style="padding-top: 10px;">
+            <a href="../ag-grid-angular-aot-dynamic-components/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                Understanding AOT and Dynamic Components in Angular 2
+            </a>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">5th December 2016</div>
         <div>
             v7.0.2 patch released, see <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.

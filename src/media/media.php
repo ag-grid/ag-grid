@@ -21,6 +21,31 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-angular-aot-dynamic-components/">
+            <img src="../images/agGridDaily.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="/ag-grid-angular-aot-dynamic-components/">
+                Understanding AOT and Dynamic Components in Angular 2
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            8th December 2016
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Expanding on our previous blog entry, we go into detail on understanding how do use Dynamic Angular 2 Components with AOT.
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../javascript-datagrid/">
             <img src="../images/agGridDaily.png" style="width: 225px;"/>
         </a>
