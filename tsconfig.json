@@ -10,8 +10,8 @@
     "noImplicitAny": true,
     "declaration": true,
     "suppressImplicitAnyIndexErrors": true,
-    "outDir": "lib/",
-    "lib": ["dom","es6"],
+    "outDir": "dist/",
+    "lib": ["dom","es2015"],
     "sourceRoot": "src"
   },
   "exclude": [

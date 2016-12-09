@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "ngc -p tsconfig.json",
-    "clean": "rimraf aot/* && rimraf lib/*",
+    "clean": "rimraf aot/* && rimraf dist/*",
     "clean-build": "npm run clean && npm run build"
   },
   "repository": {
@@ -27,22 +27,20 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "@angular/compiler": "2.1.x || >= 2.2.3",
-    "@angular/compiler-cli": "2.1.x || >= 2.2.3",
-    "@angular/core": "2.1.x || >= 2.2.3",
-
-    "core-js": "^2.4.1",
     "gulp": "^3.9.1",
     "gulp-header": "1.7.0",
     "gulp-typescript": "2.14.0",
     "merge2": "0.3.6",
-    "rxjs": "5.0.0-beta.12",
-    "typescript": "^2.0.3",
-    "zone.js": "^0.6.26",
+    "typescript": "2.0.3",
     "rimraf": "2.5.x"
   },
   "peerDependencies": {
-    "ag-grid": "7.0.x"
-  },
-  "dependencies": {}
+    "ag-grid": "7.0.x",
+    "@angular/compiler": "2.1.x",
+    "@angular/compiler-cli": "2.1.x",
+    "@angular/core": "2.1.x",
+    "rxjs": "5.0.0-beta.12",
+    "zone.js":"^0.6.x",
+    "core-js": "^2.4.1"
+  }
 }

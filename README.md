@@ -7,8 +7,9 @@ Building
 ==============
 
 To build:
-- npm install
 - npm install gulp -g
-- npm install ag-grid
+- npm install npm-install-peers -g
+- npm install
+- npm-install-peers
 
-- npm run build
+- npm run clean-build
