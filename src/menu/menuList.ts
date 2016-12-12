@@ -134,7 +134,7 @@ export class MenuList extends Component {
 
         this.subMenuParentDef = menuItemDef;
 
-        var selectedListener = ()=> {
+        var selectedListener = (event: any)=> {
             this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, event)
         };
         childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
