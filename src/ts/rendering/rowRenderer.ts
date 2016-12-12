@@ -53,10 +53,6 @@ export class RowRenderer {
     private renderedTopFloatingRows: RenderedRow[] = [];
     private renderedBottomFloatingRows: RenderedRow[] = [];
 
-    private eAllBodyContainers: HTMLElement[];
-    private eAllPinnedLeftContainers: HTMLElement[];
-    private eAllPinnedRightContainers: HTMLElement[];
-
     private eFullWidthContainer: HTMLElement;
     private eBodyContainer: HTMLElement;
     private eBodyContainerDF: DocumentFragment;
@@ -85,8 +81,7 @@ export class RowRenderer {
     private destroyFunctions: Function[] = [];
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = this.loggerFactory.create('RowRenderer');
-        this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
+        this.logger = loggerFactory.create('RowRenderer');
     }
 
     private setupDocumentFragments(): void {
@@ -105,29 +100,18 @@ export class RowRenderer {
         this.getContainersFromGridPanel();
         this.setupDocumentFragments();
 
-        var columnListener = this.onColumnEvent.bind(this);
-        var modelUpdatedListener = this.onModelUpdated.bind(this);
-        var floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
+        let modelUpdatedListener = this.onModelUpdated.bind(this);
+        let floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
 
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-        
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
 
         this.destroyFunctions.push( () => {
-            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-
             this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
             this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
         });
 
         this.refreshView();
-    }
-
-    public onColumnEvent(event: ColumnChangeEvent): void {
-        this.setMainRowWidths();
     }
 
     public getContainersFromGridPanel(): void {
@@ -147,21 +131,6 @@ export class RowRenderer {
         this.eFloatingBottomFullWithContainer = this.gridPanel.getFloatingBottomFullWidthCellContainer();
 
         this.eBodyViewport = this.gridPanel.getBodyViewport();
-
-        this.eAllBodyContainers = [this.eBodyContainer, this.eFloatingBottomContainer,
-            this.eFloatingTopContainer];
-        this.eAllPinnedLeftContainers = [
-            this.ePinnedLeftColsContainer,
-            this.eFloatingBottomPinnedLeftContainer,
-            this.eFloatingTopPinnedLeftContainer];
-        this.eAllPinnedRightContainers = [
-            this.ePinnedRightColsContainer,
-            this.eFloatingBottomPinnedRightContainer,
-            this.eFloatingTopPinnedRightContainer];
-    }
-
-    public setRowModel(rowModel: any) {
-        this.rowModel = rowModel;
     }
 
     public getAllCellsForColumn(column: Column): HTMLElement[] {
@@ -179,17 +148,6 @@ export class RowRenderer {
         }
 
         return eCells;
-    }
-
-    public setMainRowWidths() {
-        var mainRowWidth = this.columnController.getBodyContainerWidth() + "px";
-
-        this.eAllBodyContainers.forEach( function(container: HTMLElement) {
-            var unpinnedRows: [any] = (<any>container).querySelectorAll(".ag-row");
-            for (var i = 0; i < unpinnedRows.length; i++) {
-                unpinnedRows[i].style.width = mainRowWidth;
-            }
-        });
     }
 
     public refreshAllFloatingRows(): void {

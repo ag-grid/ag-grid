@@ -87,7 +87,7 @@ export class HeaderRowComp extends Component {
     }
 
     private setWidth(): void {
-        var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
+        var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
         this.getGui().style.width = mainRowWidth;
     }
 
@@ -109,10 +109,6 @@ export class HeaderRowComp extends Component {
         var currentChildIds = Object.keys(this.headerElements);
 
         var nodesAtDept = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.dept);
-
-        if (_.missing(this.pinned) && this.dept===1) {
-            let i = 1;
-        }
 
         nodesAtDept.forEach( (child: ColumnGroupChild) => {
             var idOfChild = child.getUniqueId();

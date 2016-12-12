@@ -81,10 +81,20 @@ export class Events {
     public static EVENT_DRAG_STARTED = 'dragStarted';
     public static EVENT_DRAG_STOPPED = 'dragStopped';
 
+    public static EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
+    public static EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
+
+    public static EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
+    public static EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
+
     public static EVENT_ITEMS_ADDED = 'itemsAdded';
     public static EVENT_ITEMS_REMOVED = 'itemsRemoved';
 
     public static EVENT_BODY_SCROLL = 'bodyScroll';
+
+    // not documented, as it's experimental, don't want people with dependencies on this
+    public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
+
 }
 
 export interface ModelUpdatedEvent {

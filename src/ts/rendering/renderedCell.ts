@@ -600,6 +600,7 @@ export class RenderedCell extends Component {
 
         this.cellEditor = cellEditor;
         this.editingCell = true;
+
         this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
         this.setInlineEditingClass();
 
@@ -612,6 +613,8 @@ export class RenderedCell extends Component {
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
+
+        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STARTED, this.createParams());
 
         return true;
     }
@@ -712,6 +715,8 @@ export class RenderedCell extends Component {
         this.setInlineEditingClass();
 
         this.refreshCell();
+
+        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
     }
 
     private createParams(): any {
@@ -720,6 +725,7 @@ export class RenderedCell extends Component {
             data: this.node.data,
             value: this.value,
             rowIndex: this.gridCell.rowIndex,
+            column: this.column,
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),

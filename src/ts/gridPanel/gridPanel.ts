@@ -170,7 +170,7 @@ export class GridPanel {
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.setScrollBarWidth();
+        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.logger = loggerFactory.create('GridPanel');
         this.findElements();
     }
@@ -183,23 +183,16 @@ export class GridPanel {
         return this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
     }
 
-    private setScrollBarWidth(): void {
-        // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
-        // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
-        // allow the user to provide the scroll width before we work it out.
-        let scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        if (typeof scrollWidth !== 'number' || scrollWidth < 0) {
-            scrollWidth = _.getScrollbarWidth();
-        }
-        this.scrollWidth = scrollWidth;
-    }
-
     @PreDestroy
     private destroy() {
         this.destroyFunctions.forEach(func => func());
     }
 
     private onRowDataChanged(): void {
+        this.showOrHideOverlay();
+    }
+
+    private showOrHideOverlay(): void {
         if (this.rowModel.isEmpty() && !this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
             this.showNoRowsOverlay();
         } else {
@@ -228,10 +221,10 @@ export class GridPanel {
             name: 'eGridPanel'
         });
 
-        this.layout.addSizeChangeListener(this.sizeHeaderAndBody.bind(this));
+        this.layout.addSizeChangeListener(this.setBodyAndHeaderHeights.bind(this));
+        this.layout.addSizeChangeListener(this.setLeftAndRightBounds.bind(this));
 
         this.addScrollListener();
-        this.setLeftAndRightBounds();
 
         if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
             this.eBodyViewport.style.overflowX = 'hidden';
@@ -241,9 +234,8 @@ export class GridPanel {
             this.showLoadingOverlay();
         }
 
-        this.setWidthsOfContainers();
-        this.showPinnedColContainersIfNeeded();
-        this.sizeHeaderAndBody();
+        this.setPinnedContainersVisible();
+        this.setBodyAndHeaderHeights();
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
         this.addMouseEvents();
@@ -253,6 +245,8 @@ export class GridPanel {
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
+
+        this.onDisplayedColumnsWidthChanged();
     }
 
     private addAngularApplyCheck(): void {
@@ -294,12 +288,12 @@ export class GridPanel {
     private addEventListeners(): void {
 
         let displayedColumnsChangedListener = this.onDisplayedColumnsChanged.bind(this);
-        let columnResizedListener = this.onColumnResized.bind(this);
-        let sizeHeaderAndBodyListener = this.sizeHeaderAndBody.bind(this);
+        let displayedColumnsWidthChanged = this.onDisplayedColumnsWidthChanged.bind(this);
+        let sizeHeaderAndBodyListener = this.setBodyAndHeaderHeights.bind(this);
         let rowDataChangedListener = this.onRowDataChanged.bind(this);
 
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnResizedListener);
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, displayedColumnsWidthChanged);
 
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
         this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
@@ -310,7 +304,7 @@ export class GridPanel {
 
         this.destroyFunctions.push( ()=> {
             this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
-            this.eventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnResizedListener);
+            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, displayedColumnsWidthChanged);
             this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
             this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
             this.eventService.removeEventListener(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
@@ -1031,20 +1025,18 @@ export class GridPanel {
         return false;
     }
 
-    public onColumnResized(): void {
-        this.setWidthsOfContainers();
+    public onDisplayedColumnsChanged(): void {
+        this.setPinnedContainersVisible();
+        this.setBodyAndHeaderHeights();
+        this.setLeftAndRightBounds();
     }
 
-    public onDisplayedColumnsChanged(): void {
+    private onDisplayedColumnsWidthChanged(): void {
         this.setWidthsOfContainers();
-        this.showPinnedColContainersIfNeeded();
-        this.sizeHeaderAndBody();
+        this.setLeftAndRightBounds();
     }
 
     private setWidthsOfContainers(): void {
-        this.logger.log('setWidthsOfContainers()');
-        this.showPinnedColContainersIfNeeded();
-
         var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
         this.eBodyContainer.style.width = mainRowWidth;
 
@@ -1069,14 +1061,14 @@ export class GridPanel {
         this.eBodyViewportWrapper.style.marginRight = pinnedRightWidth;
     }
 
-    private showPinnedColContainersIfNeeded() {
+    private setPinnedContainersVisible() {
         // no need to do this if not using scrolls
         if (this.forPrint) {
             return;
         }
 
-        //some browsers had layout issues with the blank divs, so if blank,
-        //we don't display them
+        // some browsers had layout issues with the blank divs, so if blank,
+        // we don't display them
         if (this.columnController.isPinningLeft()) {
             this.ePinnedLeftHeader.style.display = 'inline-block';
             this.ePinnedLeftColsViewport.style.display = 'inline';
@@ -1096,14 +1088,13 @@ export class GridPanel {
         }
     }
 
-    public sizeHeaderAndBody(): void {
+    // init, layoutChanged, floatingDataChanged, headerHeightChanged
+    public setBodyAndHeaderHeights(): void {
         if (this.forPrint) {
             // if doing 'for print', then the header and footers are laid
             // out naturally by the browser. it whatever size that's needed to fit.
             return;
         }
-
-        this.setLeftAndRightBounds();
 
         var heightOfContainer = this.layout.getCentreHeight();
         if (!heightOfContainer) {
@@ -1249,14 +1240,16 @@ export class GridPanel {
         this.destroyFunctions.push( ()=> this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, listener) );
     }
 
+    // this gets called whenever a change in the viewport, so we can inform column controller it has to work
+    // out the virtual columns again. gets called from following locations:
+    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
     private setLeftAndRightBounds(): void {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
-        // let scrollPosition = this.getBodyViewportScrollLeft();
-        // let totalWidth = this.eBody.offsetWidth;
+
         let scrollWidth = this.eBodyViewport.clientWidth;
         let scrollPosition = this.getBodyViewportScrollLeft();
 
-        this.columnController.setWidthAndScrollPosition(scrollWidth, scrollPosition);
+        this.columnController.setVirtualViewportPosition(scrollWidth, scrollPosition);
     }
 
     private isUseScrollLag(): boolean {
@@ -1293,15 +1286,6 @@ export class GridPanel {
                 }
             }, 50);
         }
-    }
-
-    // returns the max scroll left value by comparing the scroll width with the total width
-    public getBodyViewportMaxScrollLeft(): number {
-        let result = this.eBodyViewport.scrollWidth - this.eBodyViewport.clientWidth;
-        if (this.isBodyVerticalScrollShowing()) {
-            result -= _.getScrollbarWidth();
-        }
-        return result;
     }
 
     public getBodyViewportScrollLeft(): number {

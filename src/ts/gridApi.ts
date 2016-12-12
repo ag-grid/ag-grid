@@ -659,7 +659,7 @@ export class GridApi {
     }
 
     public checkGridSize(): void {
-        this.gridPanel.sizeHeaderAndBody();
+        this.gridPanel.setBodyAndHeaderHeights();
     }
 
     /*

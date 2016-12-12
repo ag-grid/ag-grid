@@ -245,7 +245,9 @@ export class ColumnController {
     private scrollWidth: number;
     private scrollPosition: number;
 
-    private bodyWidth = -1; // when we don't know, this is -1
+    private bodyWidth = 0;
+    private leftWidth = 0;
+    private rightWidth = 0;
 
     private viewportLeft: number;
     private viewportRight: number;
@@ -258,7 +260,7 @@ export class ColumnController {
         }
     }
 
-    private setViewportLeftAndRight(): void {
+    private setVirtualViewportLeftAndRight(): void {
         if (this.gridOptionsWrapper.isEnableRtl()) {
             this.viewportLeft = this.bodyWidth - this.scrollPosition - this.scrollWidth;
             this.viewportRight = this.bodyWidth - this.scrollPosition;
@@ -279,7 +281,10 @@ export class ColumnController {
         return result;
     }
 
-    private checkDisplayedCenterColumns(): void {
+    // checks what columns are currently displayed due to column virtualisation. fires an event
+    // if the list of columns has changed.
+    // + setColumnWidth(), setWidthAndScrollPosition(), setColumnDefs(), sizeColumnsToFit()
+    private checkDisplayedVirtualColumns(): void {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
         if (_.exists(this.displayedCenterColumns)) {
             var hashBefore = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
@@ -291,13 +296,13 @@ export class ColumnController {
         }
     }
 
-    public setWidthAndScrollPosition(scrollWidth: number, scrollPosition: number): void {
+    public setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void {
         if (scrollWidth!==this.scrollWidth || scrollPosition!==this.scrollPosition) {
             this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;
-            this.setViewportLeftAndRight();
+            this.setVirtualViewportLeftAndRight();
             if (this.ready) {
-                this.checkDisplayedCenterColumns();
+                this.checkDisplayedVirtualColumns();
             }
         }
     }
@@ -424,6 +429,7 @@ export class ColumnController {
         }
     }
 
+    // + columnSelectPanel
     public getPrimaryColumnTree(): OriginalColumnGroupChild[] {
         return this.primaryBalancedTree;
     }
@@ -674,7 +680,8 @@ export class ColumnController {
             this.setLeftValues();
         }
 
-        this.calculateBodyWidth();
+        this.updateBodyWidths();
+        this.checkDisplayedVirtualColumns();
 
         // check for change first, to avoid unnecessary firing of events
         // however we always fire 'finished' events. this is important
@@ -685,7 +692,6 @@ export class ColumnController {
             var event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         }
-        this.checkDisplayedCenterColumns();
     }
 
     public setColumnAggFunc(column: Column, aggFunc: string): void {
@@ -796,9 +802,30 @@ export class ColumnController {
         return this.bodyWidth;
     }
 
-    private calculateBodyWidth(): void {
-        this.bodyWidth = this.getWidthOfColsInList(this.displayedCenterColumns);
-        this.setViewportLeftAndRight();
+    public getContainerWidth(pinned: string): number {
+        switch (pinned) {
+            case Column.PINNED_LEFT: return this.leftWidth;
+            case Column.PINNED_RIGHT: return this.rightWidth;
+            default: return this.bodyWidth;
+        }
+    }
+
+    // after setColumnWidth or updateGroupsAndDisplayedColumns
+    private updateBodyWidths(): void {
+        let newBodyWidth = this.getWidthOfColsInList(this.displayedCenterColumns);
+        let newLeftWidth = this.getWidthOfColsInList(this.displayedLeftColumns);
+        let newRightWidth = this.getWidthOfColsInList(this.displayedRightColumns);
+
+        let atLeastOneChanged = this.bodyWidth !== newBodyWidth || this.leftWidth !== newLeftWidth || this.rightWidth !== newRightWidth;
+
+        if (atLeastOneChanged) {
+            this.bodyWidth = newBodyWidth;
+            this.leftWidth = newLeftWidth;
+            this.rightWidth = newRightWidth;
+            // when this fires, it is picked up by the gridPanel, which ends up in
+            // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportLeftAndRight()
+            this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED);
+        }
     }
 
     // + rowController
@@ -1358,11 +1385,11 @@ export class ColumnController {
         this.copyDownGridColumns();
 
         this.updateDisplayedColumns();
-        this.checkDisplayedCenterColumns();
+        this.checkDisplayedVirtualColumns();
 
         this.ready = true;
-        var event = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+        var everythingChangedEvent = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
+        this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, everythingChangedEvent);
         this.eventService.dispatchEvent(Events.EVENT_NEW_COLUMNS_LOADED);
     }
 
@@ -1410,7 +1437,6 @@ export class ColumnController {
         groupToUse.setExpanded(newValue);
         this.gridPanel.turnOnAnimationForABit();
         this.updateGroupsAndDisplayedColumns();
-        this.calculateBodyWidth();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
     }
@@ -1596,7 +1622,7 @@ export class ColumnController {
         this.updateGroups();
         this.updateDisplayedColumnsFromTrees();
         this.updateVirtualSets();
-        this.calculateBodyWidth();
+        this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
         var event = new ColumnChangeEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, event);
@@ -1621,24 +1647,6 @@ export class ColumnController {
                 .concat(this.displayedCenterColumns)
                 .concat(this.displayedRightColumns);
         }
-        /*
-        // order we add the arrays together is important, so the result
-        // has the columns left to right, as they appear on the screen.
-        this.allDisplayedColumns = this.displayedLeftColumns
-            .concat(this.displayedCenterColumns)
-            .concat(this.displayedRightColumns);
-
-        // if we are not RTL, then the order of the displayed columns on the screen
-        // is different. this is important when doing range selections and cell navigation
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            // so for RTL, we start on the right and go to the left
-            this.allDisplayedColumnsLaidOut = this.displayedRightColumns
-                .concat(this.displayedCenterColumns)
-                .concat(this.displayedLeftColumns);
-        } else {
-            // for normal RTL, the order of the cols is the same order as on screen
-            this.allDisplayedColumnsLaidOut = this.allDisplayedColumns;
-        }*/
     }
 
     // sets the left pixel position of each column
@@ -1829,14 +1837,14 @@ export class ColumnController {
         var finishedResizing = false;
         while (!finishedResizing) {
             finishedResizing = true;
-            var availablePixels = gridWidth - getTotalWidth(colsToNotSpread);
+            var availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
                 colsToSpread.forEach( (column: Column) => {
                     column.setMinimum();
                 });
             } else {
-                var scale = availablePixels / getTotalWidth(colsToSpread);
+                var scale = availablePixels / this.getWidthOfColsInList(colsToSpread);
                 // we set the pixels for the last col based on what's left, as otherwise
                 // we could be a pixel or two short or extra because of rounding errors.
                 var pixelsForLastCol = availablePixels;
@@ -1866,6 +1874,7 @@ export class ColumnController {
         }
 
         this.setLeftValues();
+        this.checkDisplayedVirtualColumns();
 
         // widths set, refresh the gui
         colsToFireEventFor.forEach( (column: Column) => {
@@ -1873,19 +1882,9 @@ export class ColumnController {
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         });
 
-        this.checkDisplayedCenterColumns();
-
         function moveToNotSpread(column: Column) {
             _.removeFromArray(colsToSpread, column);
             colsToNotSpread.push(column);
-        }
-
-        function getTotalWidth(columns: Column[]): number {
-            var result = 0;
-            for (var i = 0; i<columns.length; i++) {
-                result += columns[i].getActualWidth();
-            }
-            return result;
         }
     }
 

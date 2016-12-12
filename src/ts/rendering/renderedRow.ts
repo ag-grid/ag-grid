@@ -260,7 +260,6 @@ export class RenderedRow {
             renderedCell.stopEditing(cancel);
         });
         if (this.editingRow) {
-            this.setEditingRow(false);
             if (!cancel) {
                 var event = {
                     node: this.rowNode,
@@ -270,6 +269,7 @@ export class RenderedRow {
                 };
                 this.mainEventService.dispatchEvent(Events.EVENT_ROW_VALUE_CHANGED, event);
             }
+            this.setEditingRow(false);
         }
     }
 
@@ -291,6 +291,8 @@ export class RenderedRow {
     private setEditingRow(value: boolean): void {
         this.editingRow = value;
         this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-editing', value) );
+        let event = value ? Events.EVENT_ROW_EDITING_STARTED : Events.EVENT_ROW_EDITING_STOPPED;
+        this.mainEventService.dispatchEvent(event, {node: this.rowNode});
     }
 
     // because data can change, especially in virtual pagination and viewport row models, need to allow setting

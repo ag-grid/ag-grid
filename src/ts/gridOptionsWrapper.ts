@@ -155,7 +155,6 @@ export class GridOptionsWrapper {
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
-    public getScrollbarWidth() { return this.gridOptions.scrollbarWidth; }
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
     public getFullWidthCellRendererParams() { return this.gridOptions.fullWidthCellRendererParams; }
@@ -332,6 +331,17 @@ export class GridOptionsWrapper {
         } else {
             return Constants.ROW_BUFFER_SIZE;
         }
+    }
+
+    // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
+    // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
+    // allow the user to provide the scroll width before we work it out.
+    public getScrollbarWidth() {
+        let scrollbarWidth = this.gridOptions.scrollbarWidth;
+        if (typeof scrollbarWidth !== 'number' || scrollbarWidth < 0) {
+            scrollbarWidth = _.getScrollbarWidth();
+        }
+        return scrollbarWidth;
     }
 
     private checkForDeprecated() {
