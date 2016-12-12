@@ -122,10 +122,11 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
         this._viewContainerRef = viewContainerRef;
     }
 
-    public setTimeout(handler: any, timeout?: any): number {
-        return this._baseFrameworkFactory.setTimeout(handler, timeout);
-        // return this._ngZone.runOutsideAngular(() => {
-        //     handler();
-        // }, timeout);
+    public setTimeout(action: any, timeout?: any): void {
+        this._ngZone.runOutsideAngular(() => {
+            setTimeout(() => {
+                this._ngZone.run(action);
+            }, timeout);
+        });
     }
 }
