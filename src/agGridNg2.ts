@@ -8,19 +8,9 @@ import {
     ElementRef,
     ContentChildren,
     QueryList,
-    OnInit,
     AfterViewInit
-} from '@angular/core';
-
-import {
-    Grid,
-    GridOptions,
-    GridApi,
-    ColumnApi,
-    GridParams,
-    ComponentUtil
-} from 'ag-grid/main';
-
+} from "@angular/core";
+import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "ag-grid/main";
 import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 
@@ -30,7 +20,7 @@ import {AgGridColumn} from "./agGridColumn";
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridNg2 implements OnInit, AfterViewInit {
+export class AgGridNg2 implements AfterViewInit {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -71,10 +61,6 @@ export class AgGridNg2 implements OnInit, AfterViewInit {
                 }
             })
         }
-    }
-
-    // this gets called after the directive is initialised
-    public ngOnInit(): void {
     }
 
     ngAfterViewInit(): void {
@@ -122,7 +108,7 @@ export class AgGridNg2 implements OnInit, AfterViewInit {
             return;
         }
         // generically look up the eventType
-        var emitter = <EventEmitter<any>> (<any>this)[eventType];
+        let emitter = <EventEmitter<any>> (<any>this)[eventType];
         if (emitter) {
             emitter.emit(event);
         } else {
@@ -269,6 +255,8 @@ export class AgGridNg2 implements OnInit, AfterViewInit {
     @Input() public animateRows: any = undefined;
     @Input() public groupSelectsFiltered: any = undefined;
     @Input() public groupRemoveSingleChildren: any = undefined;
+    @Input() public getBusinessKeyForNode: any = undefined;
+    @Input() public checkboxSelection: any = undefined;
 
     /**
      * Outputs
@@ -304,7 +292,7 @@ export class AgGridNg2 implements OnInit, AfterViewInit {
     @Output() public cellClicked: EventEmitter<any>;
     @Output() public cellDoubleClicked: EventEmitter<any>;
     @Output() public cellContextMenu: EventEmitter<any>;
-    @Output() public cellValueChanged:EventEmitter<any>;
+    @Output() public cellValueChanged: EventEmitter<any>;
     @Output() public cellFocused: EventEmitter<any>;
     @Output() public rowSelected: EventEmitter<any>;
     @Output() public selectionChanged: EventEmitter<any>;
