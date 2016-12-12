@@ -751,8 +751,8 @@ export class RenderedCell extends Component {
 
     public isCellEditable() {
 
-        // never allow editing of groups
-        if (this.node.group) {
+        // check whether node is group and group editing is allowed
+        if (this.node.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
             return false;
         }
 

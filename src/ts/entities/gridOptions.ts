@@ -45,6 +45,7 @@ export interface GridOptions {
     maxColWidth?: number;
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
+    enableGroupEdit?: boolean;
     debug?: boolean;
     icons?: any; // should be typed
     angularCompileRows?: boolean;
