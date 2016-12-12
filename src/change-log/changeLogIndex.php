@@ -12,6 +12,10 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement: RTL support.</li>
 
+    <li>Enhancement: new events: rowEditingStarted, rowEditingStopped, cellEditingStarted, cellEditingStopped.</li>
+
+    <li>Bug Fix: Sub menu was not working in Firefox, now fixed.</li>
+
     <h2>Version 7.0.x</h2>
 
     <h4>ag-grid-7.0.2, ag-grid-enterprise-7.0.2</h4>

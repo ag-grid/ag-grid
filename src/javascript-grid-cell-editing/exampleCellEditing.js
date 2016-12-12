@@ -19,9 +19,15 @@ var students = [
 ];
 
 // double the array twice, make more data!
-students.forEach( function(item) {students.push(item); } );
-students.forEach( function(item) {students.push(item); } );
-students.forEach( function(item) {students.push(item); } );
+students.forEach(function (item) {
+    students.push(item);
+});
+students.forEach(function (item) {
+    students.push(item);
+});
+students.forEach(function (item) {
+    students.push(item);
+});
 
 var columnDefs = [
     {headerName: "First Name", field: "first_name", width: 100, editable: true},
@@ -86,8 +92,20 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: students,
-    onGridReady: function(params) {
+    onGridReady: function (params) {
         params.api.sizeColumnsToFit();
+    },
+    onRowEditingStarted: function (event) {
+        console.log('never called - not doing row editing');
+    },
+    onRowEditingStopped: function (event) {
+        console.log('never called - not doing row editing');
+    },
+    onCellEditingStarted: function (event) {
+        console.log('cellEditingStarted');
+    },
+    onCellEditingStopped: function (event) {
+        console.log('cellEditingStopped');
     }
 };
 

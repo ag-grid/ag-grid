@@ -436,6 +436,18 @@ colDef.cellEditorParams = {
         Takes no parameters and stops the current editing. If not editing, then does nothing.
     </p>
 
+    <h3>Start / Stop Editing Events</h3>
+
+    <p>
+        The following events are fired as editing starts and stops:
+        <ul>
+        <li><b>cellEditingStarted: </b> editing has started on a cell.</li>
+        <li><b>cellEditingStopped: </b> editing has stopped on a row.</li>
+        <li><b>rowEditingStarted: </b> editing has started on a row. Only for full row editing.</li>
+        <li><b>rowEditingStopped: </b> editing has stopped on a row. Only for full row editing.</li>
+    </ul>
+    </p>
+
     <h3>Cell Editing Example</h3>
 
     <p>The example below illustrates:

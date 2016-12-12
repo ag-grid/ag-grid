@@ -316,7 +316,7 @@ var defaultCols = [
                     values: ['English', 'Spanish', 'French', 'Portuguese', 'German',
                         'Swedish','Norwegian','Italian','Greek','Icelandic','Portuguese','Maltese']
                 },
-                //pinned: 'left',
+                // pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {newRowsAction: 'keep'},
                 icons: {
@@ -338,7 +338,7 @@ var defaultCols = [
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
                 },
-                //pinned: 'left',
+                // pinned: 'left',
                 floatCell: true,
                 filterParams: {
                     cellRenderer: CountryCellRenderer,
@@ -363,7 +363,7 @@ var defaultCols = [
         },
         enableRowGroup: true,
         enablePivot: true,
-        //pinned: 'right',
+        // pinned: 'right',
         // rowGroupIndex: 1,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -372,7 +372,7 @@ var defaultCols = [
     },
     {
         headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
-        //pinned: 'right',
+        // pinned: 'right',
         // rowGroupIndex: 2,
         // pivotIndex: 1,
         enableRowGroup: true,
