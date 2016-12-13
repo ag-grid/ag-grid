@@ -26,21 +26,38 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                                        viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef,
-            (<any>componentType).name);
+            this.getHashForComponentType(componentType));
     }
+
+    private getHashForComponentType(componentType: { new(...args: any[]): AgRendererComponent; }) : string {
+        return this.hashCode((<any>componentType).toString())
+    }
+
+
+    // taken from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+    private hashCode(value: string) : string{
+        var hash: number = 0, i: number, chr: number, len: number;
+        if (value.length === 0) return hash.toString();
+        for (i = 0, len = value.length; i < len; i++) {
+            chr = value.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash.toString();
+    };
 
     public createEditorFromComponent(componentType: { new(...args: any[]): AgEditorComponent; },
                                      viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
         return this.adaptComponentToEditor(componentType,
             viewContainerRef,
-            (<any>componentType).name);
+            this.getHashForComponentType(componentType));
     }
 
     public createFilterFromComponent(componentType: { new(...args: any[]): AgFilterComponent; },
                                      viewContainerRef: ViewContainerRef) {
         return this.adaptComponentToFilter(componentType,
             viewContainerRef,
-            (<any>componentType).name);
+            this.getHashForComponentType(componentType));
     }
 
 
