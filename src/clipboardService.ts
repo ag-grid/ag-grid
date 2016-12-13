@@ -184,16 +184,19 @@ export class ClipboardService implements IClipboardService {
     public copyToClipboard(includeHeaders = false): void {
         this.logger.log(`copyToClipboard: includeHeaders = ${includeHeaders}`);
 
-        var selectedRowsToCopy = !this.selectionController.isEmpty()
+        let selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
         // default is copy range if exists, otherwise rows
         if (this.rangeController.isMoreThanOneCell()) {
             this.copySelectedRangeToClipboard(includeHeaders);
         } else if (selectedRowsToCopy) {
+            // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
-        } else if (!this.rangeController.isEmpty()) {
-            this.copySelectedRangeToClipboard(includeHeaders);
+        } else {
+            // then lastly, if no range or no row selection,
+            // then copy the focused cell
+            this.copyFocusedCellToClipboard();
         }
     }
 
@@ -280,6 +283,29 @@ export class ClipboardService implements IClipboardService {
 
         this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
+        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+    }
+
+    private copyFocusedCellToClipboard(): void {
+        let focusedCell = this.focusedCellController.getFocusedCell();
+        if (Utils.missing(focusedCell)) { return; }
+
+        let currentRow = focusedCell.getGridRow();
+        var rowNode = this.getRowNode(currentRow);
+        let column = focusedCell.column;
+        var value = this.valueService.getValue(column, rowNode);
+
+        let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
+        if (Utils.exists(processedValue)) {
+            var data = value.toString();
+            this.copyDataToClipboard(data);
+        } else {
+            this.copyDataToClipboard('');
+        }
+
+        let cellId = focusedCell.createId();
+        let cellsToFlash = {};
+        cellsToFlash[cellId] = true;
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
 
