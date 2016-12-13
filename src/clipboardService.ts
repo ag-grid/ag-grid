@@ -305,7 +305,7 @@ export class ClipboardService implements IClipboardService {
 
         let cellId = focusedCell.createId();
         let cellsToFlash = {};
-        cellsToFlash[cellId] = true;
+        (<any>cellsToFlash)[cellId] = true;
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
     }
 
