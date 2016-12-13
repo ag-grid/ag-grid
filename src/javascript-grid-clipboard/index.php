@@ -73,9 +73,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        If you copy multiple ranges in range selection (my holding down ctrl), then only the first
-        selection will be copied into the clipboard. This was influenced by Excel, where if you try
-        to copy multiple ranges, it gives an error message saying multiple ranges cannot be copied.
+        You can copy multiple ranges in range selection by holding down ctrl to select multiple
+        ranges and then copy.
     </note>
 
     <h3>Safari Support</h3>

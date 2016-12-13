@@ -15,6 +15,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: new events: rowEditingStarted, rowEditingStopped, cellEditingStarted, cellEditingStopped.</li>
 
     <li>Bug Fix: Sub menu was not working in Firefox, now fixed.</li>
+    <li>Bug Fix: Copy to clipboard was not copying focused cell then range selection was turned off.</li>
 
     <h2>Version 7.0.x</h2>
 

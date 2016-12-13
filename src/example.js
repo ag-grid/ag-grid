@@ -139,8 +139,8 @@ suppressEnterprise: true,
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
     enableStatusBar: true,
-    enableRangeSelection: true,
-    rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
+    // enableRangeSelection: true,
+    // rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
