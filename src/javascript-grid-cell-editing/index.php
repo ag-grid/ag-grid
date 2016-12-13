@@ -254,7 +254,9 @@ colDef.cellEditorParams = {
             If this happens then params.charPress will contain the character that started the edit. The default editor
             places this character into the edit field so that the user experience is they are typing into the cell.</li>
         <li><b>Mouse Double Click</b>: If the mouse is double clicked. There is a grid property <i>singleClickEdit</i>
-            that will allow single click to start editing instead of double click.</li>
+            that will allow single click to start editing instead of double click. Another property <i>suppressClickEdit</i>
+            will prevent both single click and double click from starting the edit - use this if you want to have
+            your own way of starting editing only, such as clicking a button in your custom cellRenderer.</li>
         <li><b>api.startEditingCell()</b>: If you call startEditingCell() on the grid API</li>
     </ul>
     </p>
@@ -504,7 +506,7 @@ colDef.cellEditorParams = {
         of the cell.
     </p>
 
-    <h4>Full Row Edit Example</h4>
+    <h4 id="fullRowEditExample">Full Row Edit Example</h4>
 
     <p>
         The example below shows full row editing. In addition to standard full row editing,
@@ -540,6 +542,35 @@ colDef.cellEditorParams = {
     </p>
 
     <show-example example="exampleFullRowEditing"></show-example>
+
+    <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
+
+    <h4>
+        Double Click Editing
+    </h4>
+    <p>
+        The default is for the grid to enter editing when you double click on a cell.
+    </p>
+    <h4>
+        Single Click Editing
+    </h4>
+    <p>
+        To change the default so that a single click starts editing, set the property <i>singleClickEdit=true</i>.
+        This is useful when you want a cell to enter edit mode as soon as you click on it, similar to the experience
+        you get when inside Excel.
+    </p>
+    <h4>
+        No Click Editing
+    </h4>
+    <p>
+        To change the default so that neither single or double click starts editing, set the property
+        <i>suppressClickEdit=true</i>. This is useful when you want to start the editing in another way,
+        such as including a button in your cellRenderer.
+    </p>
+
+    <h3>Single Click and No Click Example</h3>
+
+    <show-example example="exampleSingleClickEditing"></show-example>
 
     <h2 id="reactCellEditing">
         <img src="../images/react_large.png" style="width: 60px;"/>
