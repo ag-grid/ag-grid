@@ -165,6 +165,7 @@ export class GridOptionsWrapper {
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
+    public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
     public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 

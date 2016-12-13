@@ -801,7 +801,9 @@ export class RenderedCell extends Component {
             colDef.onCellDoubleClicked(agEvent);
         }
 
-        if (!this.gridOptionsWrapper.isSingleClickEdit()) {
+        let editOnDoubleClick = !this.gridOptionsWrapper.isSingleClickEdit()
+            && !this.gridOptionsWrapper.isSuppressClickEdit();
+        if (editOnDoubleClick) {
             this.startRowOrCellEdit();
         }
     }
@@ -837,7 +839,9 @@ export class RenderedCell extends Component {
             colDef.onCellClicked(agEvent);
         }
 
-        if (this.gridOptionsWrapper.isSingleClickEdit()) {
+        let editOnSingleClick = this.gridOptionsWrapper.isSingleClickEdit()
+            && !this.gridOptionsWrapper.isSuppressClickEdit();
+        if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
 
