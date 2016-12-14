@@ -445,6 +445,10 @@ export class GridApi {
         return this.focusedCellController.getFocusedCell();
     }
 
+    public clearFocusedCell(): void {
+        return this.focusedCellController.clearFocusedCell();
+    }
+
     public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating?: string) {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     }
