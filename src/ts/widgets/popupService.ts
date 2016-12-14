@@ -155,7 +155,7 @@ export class PopupService {
 
         function checkVerticalOverflow(): void {
             var minHeight: number;
-            if (params.ePopup.clientWidth>0) {
+            if (params.ePopup.clientHeight > 0) {
                 minHeight = params.ePopup.clientHeight;
             } else {
                 minHeight = 200;
