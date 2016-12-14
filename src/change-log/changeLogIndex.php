@@ -14,6 +14,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement: new events: rowEditingStarted, rowEditingStopped, cellEditingStarted, cellEditingStopped.</li>
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#singleClickEditing"><i>suppressClickEdit</i></a>.</li>
+    <li>Enhancement: added api.clearFocusedCell()</li>
 
     <li>Bug Fix: Sub menu was not working in Firefox, now fixed.</li>
     <li>Bug Fix: Copy to clipboard was not copying focused cell then range selection was turned off.</li>

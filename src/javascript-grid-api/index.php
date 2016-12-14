@@ -306,6 +306,10 @@ include '../documentation-main/documentation_header.php';
             <td>Sets the focus to the specified cell. Set floating to null, 'top', or 'bottom'.</td>
         </tr>
         <tr>
+            <th>clearFocusedCell()</th>
+            <td>Clears the focused cell.</td>
+        </tr>
+        <tr>
             <th>showToolPanel(show)</th>
             <td>Shows (or hides) the tool panel.</td>
         </tr>
