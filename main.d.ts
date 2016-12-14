@@ -33,6 +33,7 @@ export * from './dist/lib/filter/textAndNumberFilterParameters';
 export * from './dist/lib/filter/textFilter';
 
 export * from './dist/lib/gridPanel/gridPanel';
+export * from './dist/lib/gridPanel/scrollVisibleService';
 export * from './dist/lib/gridPanel/mouseEventService';
 
 export * from './dist/lib/headerRendering/bodyDropPivotTarget';

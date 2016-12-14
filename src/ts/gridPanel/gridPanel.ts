@@ -647,16 +647,16 @@ export class GridPanel {
         return this.eBodyViewport.clientWidth;
     }
 
-    public isHorizontalScrollShowing(): boolean {
+    private isHorizontalScrollShowing(): boolean {
         var result = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
         return result;
     }
 
-    public isVerticalScrollShowing(): boolean {
+    private isVerticalScrollShowing(): boolean {
         if (this.columnController.isPinningRight()) {
-            return _.isScrollShowing(this.ePinnedRightColsViewport);
+            return _.isHorizontalScrollShowing(this.ePinnedRightColsViewport);
         } else {
-            return _.isScrollShowing(this.eBodyViewport);
+            return _.isHorizontalScrollShowing(this.eBodyViewport);
         }
     }
 
@@ -664,7 +664,7 @@ export class GridPanel {
         if (this.columnController.isPinningRight()) {
             return false;
         } else {
-            return _.isScrollShowing(this.eBodyViewport);
+            return _.isHorizontalScrollShowing(this.eBodyViewport);
         }
     }
 
@@ -673,6 +673,23 @@ export class GridPanel {
         if (this.forPrint) { return; }
         this.setBottomPaddingOnPinnedRight();
         this.setMarginOnFullWidthCellContainer();
+        this.setScrollShowing();
+    }
+
+    private setScrollShowing(): void {
+
+        // let bodyScrollVisible = _.isScrollShowing();
+        // let hPinnedLeft = _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
+        // let hPinnedRight = _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
+        // let hPinnedBody = _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
+
+        // var bodyVerticalScrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+        // if (this.columnController.isPinningRight()) {
+        //     // return _.isScrollShowing(this.ePinnedRightColsViewport);
+        // } else {
+        //     // return _.isScrollShowing(this.eBodyViewport);
+        // }
+
     }
 
     // the pinned container needs extra space at the bottom, some blank space, otherwise when

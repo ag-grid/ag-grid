@@ -47,6 +47,7 @@ import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {AgCheckbox} from "./widgets/agCheckbox";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
+import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
 
 export interface GridParams {
     // used by Web Components
@@ -121,7 +122,7 @@ export class Grid {
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
-                CellEditorFactory, CellRendererService, ValueFormatterService],
+                CellEditorFactory, CellRendererService, ValueFormatterService, ScrollVisibleService],
             components: [{componentName: 'AgCheckbox', theClass: AgCheckbox}],
             debug: !!gridOptions.debug
         });

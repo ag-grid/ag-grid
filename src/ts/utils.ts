@@ -614,8 +614,12 @@ export class Utils {
         });
     }
 
-    static isScrollShowing(element: HTMLElement): boolean {
-        return element.clientHeight < element.scrollHeight
+    static isHorizontalScrollShowing(element: HTMLElement): boolean {
+        return element.clientHeight < element.scrollHeight;
+    }
+
+    static isVerticalScrollShowing(element: HTMLElement): boolean {
+        return element.clientWidth < element.scrollWidth;
     }
 
     static getScrollbarWidth() {

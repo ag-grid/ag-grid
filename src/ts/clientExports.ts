@@ -102,6 +102,7 @@ import {VirtualPage} from "./rowControllers/virtualPagination/virtualPage";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
 import {TouchListener} from "./widgets/touchListener";
+import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
 
 export function populateClientExports(exports: any): void {
 
@@ -151,6 +152,7 @@ export function populateClientExports(exports: any): void {
 
     // gridPanel
     exports.GridPanel = GridPanel;
+    exports.ScrollVisibleService = ScrollVisibleService;
     exports.MouseEventService = MouseEventService;
 
     // headerRendering
