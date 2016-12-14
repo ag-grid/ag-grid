@@ -11,8 +11,7 @@
     "declaration": true,
     "suppressImplicitAnyIndexErrors": true,
     "outDir": "dist/",
-    "lib": ["dom","es2015"],
-    "sourceRoot": "src"
+    "lib": ["dom","es2015"]
   },
   "exclude": [
     "node_modules",
