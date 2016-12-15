@@ -666,7 +666,7 @@ export class GridPanel extends BeanStub {
             vPinnedRight: false
         };
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.enableRtl) {
             if (this.columnController.isPinningLeft()) {
                 params.vPinnedLeft = this.forPrint ? false : _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
             } else {
@@ -1244,7 +1244,7 @@ export class GridPanel extends BeanStub {
         // suppressScroll -> stops scrolling when pinned panel was moved - which can only happen when use is navigating
         //     in the pinned container, as the pinned col should never scroll. so we rollback the scroll on the pinned.
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.enableRtl) {
             let pinnedScrollListener = this.useScrollLag ? this.debounce.bind(this, onPinnedLeftScroll) : onPinnedLeftScroll;
             this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', pinnedScrollListener);
 
@@ -1264,10 +1264,9 @@ export class GridPanel extends BeanStub {
     // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),
     // if RTL, we hide body scroll if pinning left (as scroll is in left pinned)
     private isBodyVerticalScrollActive(): boolean {
-        let enableRtl = this.gridOptionsWrapper.isEnableRtl();
         let pinningRight = this.columnController.isPinningRight();
         let pinningLeft = this.columnController.isPinningLeft();
-        let centerHasScroll = enableRtl ? !pinningLeft : !pinningRight;
+        let centerHasScroll = this.enableRtl ? !pinningLeft : !pinningRight;
         return centerHasScroll;
     }
 
@@ -1336,7 +1335,7 @@ export class GridPanel extends BeanStub {
     public getBodyViewportScrollLeft(): number {
         if (this.forPrint) { return 0; }
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
+        if (this.enableRtl) {
             // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
             return _.getScrollLeft(this.eBodyViewport, true);
         } else {
@@ -1346,7 +1345,7 @@ export class GridPanel extends BeanStub {
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
         let scrollLeft = this.getBodyViewportScrollLeft();
-        let offset = this.gridOptionsWrapper.isEnableRtl() ? scrollLeft : -scrollLeft;
+        let offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
         this.eHeaderContainer.style.left = offset + 'px';
         this.eFloatingBottomContainer.style.left = offset + 'px';

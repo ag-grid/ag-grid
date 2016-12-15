@@ -349,8 +349,16 @@ export class ColumnController {
     }
 
     private setFirstRightAndLastLeftPinned(): void {
-        var lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
-        var firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
+        let lastLeft: Column;
+        let firstRight: Column;
+
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[0] : null;
+            firstRight = this.displayedRightColumns ? this.displayedRightColumns[this.displayedRightColumns.length - 1] : null;
+        } else {
+            lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
+            firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
+        }
 
         this.gridColumns.forEach( (column: Column) => {
             column.setLastLeftPinned(column === lastLeft);

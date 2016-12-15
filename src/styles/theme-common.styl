@@ -52,15 +52,26 @@ todo
     border ag-cell-focused-border
 
   .ag-cell-no-focus
-    border-right ag-cell-no-focus-border-right
     border-top ag-cell-no-focus-border-top
-    border-left ag-cell-no-focus-border-left
     border-bottom ag-cell-no-focus-border-bottom
 
-  .ag-cell-first-right-pinned
+  .ag-ltr .ag-cell-no-focus
+    border-right ag-cell-ltr-no-focus-border-right
+    border-left ag-cell-ltr-no-focus-border-left
+
+  .ag-rtl .ag-cell-no-focus
+    border-right ag-cell-rtl-no-focus-border-right
+    border-left ag-cell-rtl-no-focus-border-left
+
+  // we use rtl and ltr below, even though it's the same style, so it propertly
+  .ag-rtl .ag-cell-first-right-pinned
+    border-left ag-border-1
+  .ag-ltr .ag-cell-first-right-pinned
     border-left ag-border-1
 
-  .ag-cell-last-left-pinned
+  .ag-rtl .ag-cell-last-left-pinned
+    border-right ag-border-1
+  .ag-ltr .ag-cell-last-left-pinned
     border-right ag-border-1
 
   // this needs to be after the other cell items, so the boarder gets preference
