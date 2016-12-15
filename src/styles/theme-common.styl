@@ -136,8 +136,11 @@ todo
     background ag-header-background-1
     border-bottom ag-border-1
 
-  .ag-header-cell
+  .ag-ltr .ag-header-cell
     border-right ag-border-1
+
+  .ag-rtl .ag-header-cell
+    border-left ag-border-1
 
   .ag-header-cell-moving .ag-header-cell-label
     opacity 0.5
@@ -145,8 +148,11 @@ todo
   .ag-header-cell-moving
     background-color rgb(190,190,190);
 
-  .ag-header-group-cell
+  .ag-ltr .ag-header-group-cell
     border-right ag-border-1
+
+  .ag-rtl .ag-header-group-cell
+    border-left ag-border-1
 
   .ag-header-group-cell-with-group
     border-bottom ag-border-1
@@ -180,8 +186,11 @@ todo
     box-sizing content-box /* When using bootstrap, box-sizing was set to 'border-box' */
     line-height 0px /* normal line height, a space was appearing below the menu button */
 
-  .ag-pinned-right-header
+  .ag-ltr .ag-pinned-right-header
     border-left ag-border-1
+
+  .ag-rtl .ag-pinned-left-header
+    border-right ag-border-1
 
   .ag-header-cell-menu-button:hover
     border ag-border-1
