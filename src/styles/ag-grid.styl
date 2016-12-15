@@ -293,7 +293,6 @@ ag-grid-ng2
 
 .ag-pinned-left-cols-viewport
     float left
-    overflow hidden
 
 .ag-pinned-left-cols-container
     display inline-block
@@ -301,6 +300,20 @@ ag-grid-ng2
 
 .ag-pinned-right-cols-viewport
     float right
+
+// for LTR, we show scrolls on the right pinned only
+.ag-ltr .ag-pinned-right-cols-viewport
+    overflow-x hidden
+    overflow-y auto
+
+.ag-ltr .ag-pinned-left-cols-viewport
+    overflow hidden
+
+// for RTL, other way around, we show scrolls on left only
+.ag-rtl .ag-pinned-right-cols-viewport
+    overflow hidden
+
+.ag-rtl .ag-pinned-left-cols-viewport
     overflow-x hidden
     overflow-y auto
 

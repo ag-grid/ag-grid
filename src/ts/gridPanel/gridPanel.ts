@@ -1117,25 +1117,19 @@ export class GridPanel {
             return;
         }
 
-        // some browsers had layout issues with the blank divs, so if blank,
-        // we don't display them
-        if (this.columnController.isPinningLeft()) {
-            this.ePinnedLeftHeader.style.display = 'inline-block';
-            this.ePinnedLeftColsViewport.style.display = 'inline';
-        } else {
-            this.ePinnedLeftHeader.style.display = 'none';
-            this.ePinnedLeftColsViewport.style.display = 'none';
-        }
+        let showLeftPinned = this.columnController.isPinningLeft();
+        this.ePinnedLeftHeader.style.display = showLeftPinned ? 'inline-block' : 'none';
+        this.ePinnedLeftColsViewport.style.display = showLeftPinned ? 'inline' : 'none';
 
-        if (this.columnController.isPinningRight()) {
-            this.ePinnedRightHeader.style.display = 'inline-block';
-            this.ePinnedRightColsViewport.style.display = 'inline';
-            this.eBodyViewport.style.overflowY = 'hidden';
-        } else {
-            this.ePinnedRightHeader.style.display = 'none';
-            this.ePinnedRightColsViewport.style.display = 'none';
-            this.eBodyViewport.style.overflowY = 'auto';
-        }
+        let showRightPinned = this.columnController.isPinningRight();
+        this.ePinnedRightHeader.style.display = showRightPinned ? 'inline-block' : 'none';
+        this.ePinnedRightColsViewport.style.display = showRightPinned ? 'inline' : 'none';
+
+        // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),
+        // if RTL, we hide body scroll if pinning left (as scroll is in left pinned)
+        let enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        let yBodyScroll = enableRtl ? !showLeftPinned : !showRightPinned;
+        this.eBodyViewport.style.overflowY = yBodyScroll ? 'auto' : 'hidden';
     }
 
     // init, layoutChanged, floatingDataChanged, headerHeightChanged
