@@ -1,4 +1,4 @@
-ag-Grid Aurelia Component  ALPHA RELEASE!!!
+ag-Grid Aurelia Component
 ==============
 
 This project contains the Aurelia Component for use with ag-Grid.
@@ -6,7 +6,9 @@ This project contains the Aurelia Component for use with ag-Grid.
 Usage
 ==============
 
-in your main entry.
+Please refer to www.ag-grid.com for full documentation on ag-Grid and Aurelia integration. Also take a look a the provided examples at https://github.com/ceolter/ag-grid-aurelia-example.
+
+In your main entry.
 ```
 aurelia.use
     .standardConfiguration()
@@ -37,8 +39,6 @@ export class MyGridPage {
 
 
 ```
-
-
 In your view template.  Here we are adding columns using markup. ColumnDefs can be added from your view model if you wish.
 ```
 <template>
@@ -61,8 +61,6 @@ In your view template.  Here we are adding columns using markup. ColumnDefs can 
 
 </template>
 ```
-
-
 
 Building
 ==============
