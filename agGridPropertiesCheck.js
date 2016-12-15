@@ -23,6 +23,8 @@ if(missingProperties.length || missingEvents.length) {
     console.error("*************************** BUILD FAILED ***************************");
     missingProperties.concat(missingEvents).forEach((message) => console.error(message));
     console.error("*************************** BUILD FAILED ***************************");
+
+    throw("Build Properties Check Failed");
 } else {
     console.info("*************************** BUILD OK ***************************");
 }

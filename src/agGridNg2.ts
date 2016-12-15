@@ -246,7 +246,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public groupRemoveSingleChildren: any = undefined;
     @Input() public getBusinessKeyForNode: any = undefined;
     @Input() public checkboxSelection: any = undefined;
-    @Input() public enableRtlSupport: any = undefined;
+    @Input() public enableRtl: any = undefined;
+    @Input() public suppressClickEdit: any = undefined;
 
     /**
      * Outputs
@@ -307,5 +308,11 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public columnValueChangeRequest: EventEmitter<any>;
     @Output() public rowValueChanged: EventEmitter<any>;
     @Output() public bodyScroll: EventEmitter<any>;
+    @Output() public rowEditingStarted: EventEmitter<any>;
+    @Output() public rowEditingStopped: EventEmitter<any>;
+    @Output() public cellEditingStarted: EventEmitter<any>;
+    @Output() public cellEditingStopped: EventEmitter<any>;
+    @Output() public displayedColumnsWidthChanged: EventEmitter<any>;
+    @Output() public scrollVisibilityChanged: EventEmitter<any>;
 }
 
