@@ -1,38 +1,84 @@
-import {Bean} from "../context/context";
-import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {Bean, Autowired} from "../context/context";
+import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
+import {Events} from "../events";
+import {ColumnController} from "../columnController/columnController";
+
+export interface SetScrollsVisibleParams {
+    vBody: boolean;
+    hBody: boolean;
+    vPinnedLeft: boolean;
+    vPinnedRight: boolean;
+}
 
 @Bean('scrollVisibleService')
-export class ScrollVisibleService implements IEventEmitter {
+export class ScrollVisibleService {
 
-    private static EVENT_CHANGED = 'changed';
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('columnController') private columnController: ColumnController;
 
-    private localEventService: EventService = new EventService();
+    private vBody: boolean;
+    private hBody: boolean;
 
-    private bodyScrollVisible = false;
-    private pinnedLeftScrollVisible = false;
-    private pinnedRightScrollVisible = false;
+    private vPinnedLeft: boolean;
+    private vPinnedRight: boolean;
 
-    public addEventListener(key: string, listener: Function): void {
-        this.localEventService.addEventListener(key, listener);
-    }
+    public setScrollsVisible(params: SetScrollsVisibleParams): void {
 
-    public removeEventListener(key: string, listener: Function): void {
-        this.localEventService.removeEventListener(key, listener);
-    }
-
-    public setVisible(bodyScrollVisible: boolean, pinnedLeftScrollVisible: boolean, pinnedRightScrollVisible: boolean): void {
-
-        let atLeastOneDifferent = this.bodyScrollVisible !== bodyScrollVisible
-            || this.pinnedLeftScrollVisible !== pinnedLeftScrollVisible
-            || this.pinnedRightScrollVisible !== pinnedRightScrollVisible;
+        let atLeastOneDifferent =
+            this.vBody !== params.vBody
+            || this.hBody !== params.hBody
+            || this.vPinnedLeft !== params.vPinnedLeft
+            || this.vPinnedRight !== params.vPinnedRight;
 
         if (atLeastOneDifferent) {
-            this.bodyScrollVisible = bodyScrollVisible;
-            this.pinnedLeftScrollVisible = pinnedLeftScrollVisible;
-            this.pinnedRightScrollVisible = pinnedRightScrollVisible;
+            this.vBody = params.vBody;
+            this.hBody = params.hBody;
+            this.vPinnedLeft = params.vPinnedLeft;
+            this.vPinnedRight = params.vPinnedRight;
+
+            this.eventService.dispatchEvent(Events.EVENT_SCROLL_VISIBILITY_CHANGED);
         }
+
     }
 
+    public isVBodyShowing(): boolean {
+        return this.vBody;
+    }
 
+    public isHBodyShowing(): boolean {
+        return this.hBody;
+    }
+
+    public isVPinnedLeftShowing(): boolean {
+        return this.vPinnedLeft;
+    }
+
+    public isVPinnedRightShowing(): boolean {
+        return this.vPinnedRight;
+    }
+
+    public getPinnedLeftWidth(): number {
+        return this.columnController.getPinnedLeftContainerWidth();
+    }
+
+    public getPinnedLeftWithScrollWidth(): number {
+        var result = this.getPinnedLeftWidth();
+        if (this.vPinnedLeft) {
+            result += _.getScrollbarWidth();
+        }
+        return result;
+    }
+
+    public getPinnedRightWidth(): number {
+        return this.columnController.getPinnedRightContainerWidth();
+    }
+
+    public getPinnedRightWithScrollWidth(): number {
+        var result = this.getPinnedRightWidth();
+        if (this.vPinnedRight) {
+            result += _.getScrollbarWidth();
+        }
+        return result;
+    }
 }

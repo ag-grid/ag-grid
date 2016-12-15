@@ -19,8 +19,8 @@ import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {RenderedCell} from "../rendering/renderedCell";
 import {RenderedRow} from "../rendering/renderedRow";
+import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -112,6 +112,7 @@ export class GridPanel {
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('$scope') private $scope: any;
+    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
 
     private layout: BorderLayout;
@@ -291,9 +292,11 @@ export class GridPanel {
         let displayedColumnsWidthChanged = this.onDisplayedColumnsWidthChanged.bind(this);
         let sizeHeaderAndBodyListener = this.setBodyAndHeaderHeights.bind(this);
         let rowDataChangedListener = this.onRowDataChanged.bind(this);
+        let scrollVisibilityChangedListener= this.onScrollVisibilityChanged.bind(this);
 
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, displayedColumnsWidthChanged);
+        this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, scrollVisibilityChangedListener);
 
         this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
         this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
@@ -305,6 +308,7 @@ export class GridPanel {
         this.destroyFunctions.push( ()=> {
             this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
             this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, displayedColumnsWidthChanged);
+            this.eventService.removeEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, scrollVisibilityChangedListener);
             this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
             this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
             this.eventService.removeEventListener(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
@@ -678,18 +682,30 @@ export class GridPanel {
 
     private setScrollShowing(): void {
 
-        // let bodyScrollVisible = _.isScrollShowing();
-        // let hPinnedLeft = _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
-        // let hPinnedRight = _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
-        // let hPinnedBody = _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
+        let params: SetScrollsVisibleParams = {
+            vBody: false,
+            hBody: false,
+            vPinnedLeft: false,
+            vPinnedRight: false
+        };
 
-        // var bodyVerticalScrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
-        // if (this.columnController.isPinningRight()) {
-        //     // return _.isScrollShowing(this.ePinnedRightColsViewport);
-        // } else {
-        //     // return _.isScrollShowing(this.eBodyViewport);
-        // }
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            if (this.columnController.isPinningLeft()) {
+                params.vPinnedLeft = this.forPrint ? false : _.isVerticalScrollShowing(this.ePinnedLeftColsViewport);
+            } else {
+                params.vBody = _.isVerticalScrollShowing(this.eBodyViewport);
+            }
+        } else {
+            if (this.columnController.isPinningRight()) {
+                params.vPinnedRight = this.forPrint ? false : _.isVerticalScrollShowing(this.ePinnedRightColsViewport);
+            } else {
+                params.vBody = _.isVerticalScrollShowing(this.eBodyViewport);
+            }
+        }
 
+        params.hBody = _.isHorizontalScrollShowing(this.eBodyViewport);
+
+        this.scrollVisibleService.setScrollsVisible(params);
     }
 
     // the pinned container needs extra space at the bottom, some blank space, otherwise when
@@ -1053,6 +1069,10 @@ export class GridPanel {
         this.setLeftAndRightBounds();
     }
 
+    private onScrollVisibilityChanged(): void {
+        this.setWidthsOfContainers();
+    }
+
     private setWidthsOfContainers(): void {
         var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
         this.eBodyContainer.style.width = mainRowWidth;
@@ -1065,13 +1085,26 @@ export class GridPanel {
         this.eFloatingBottomContainer.style.width = mainRowWidth;
         this.eFloatingTopContainer.style.width = mainRowWidth;
 
-        var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth() + 'px';
+        this.setPinnedLeftWidth();
+        this.setPinnedRightWidth();
+    }
+
+    private setPinnedLeftWidth(): void {
+        var pinnedLeftWidth = this.scrollVisibleService.getPinnedLeftWidth() + 'px';
+        var pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth() + 'px';
+
+        this.ePinnedLeftColsViewport.style.width = pinnedLeftWidthWithScroll;
         this.ePinnedLeftColsContainer.style.width = pinnedLeftWidth;
         this.ePinnedLeftFloatingBottom.style.width = pinnedLeftWidth;
         this.ePinnedLeftFloatingTop.style.width = pinnedLeftWidth;
         this.eBodyViewportWrapper.style.marginLeft = pinnedLeftWidth;
+    }
 
-        var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth() + 'px';
+    private setPinnedRightWidth(): void {
+        var pinnedRightWidth = this.scrollVisibleService.getPinnedRightWidth() + 'px';
+        var pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth() + 'px';
+
+        this.ePinnedRightColsViewport.style.width = pinnedRightWidthWithScroll;
         this.ePinnedRightColsContainer.style.width = pinnedRightWidth;
         this.ePinnedRightFloatingBottom.style.width = pinnedRightWidth;
         this.ePinnedRightFloatingTop.style.width = pinnedRightWidth;
@@ -1144,6 +1177,10 @@ export class GridPanel {
 
         this.ePinnedLeftColsViewport.style.height = heightOfCentreRows + 'px';
         this.ePinnedRightColsViewport.style.height = heightOfCentreRows + 'px';
+    }
+
+    private asdf(): void {
+
     }
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {

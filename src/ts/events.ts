@@ -95,6 +95,7 @@ export class Events {
     // not documented, as it's experimental, don't want people with dependencies on this
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
 
+    public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
 }
 
 export interface ModelUpdatedEvent {

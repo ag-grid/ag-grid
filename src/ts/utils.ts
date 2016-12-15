@@ -615,11 +615,11 @@ export class Utils {
     }
 
     static isHorizontalScrollShowing(element: HTMLElement): boolean {
-        return element.clientHeight < element.scrollHeight;
+        return element.clientWidth < element.scrollWidth;
     }
 
     static isVerticalScrollShowing(element: HTMLElement): boolean {
-        return element.clientWidth < element.scrollWidth;
+        return element.clientHeight < element.scrollHeight;
     }
 
     static getScrollbarWidth() {
