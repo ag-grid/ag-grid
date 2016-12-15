@@ -119,9 +119,6 @@ export class GridPanel extends BeanStub {
     private layout: BorderLayout;
     private logger: Logger;
 
-    private forPrint: boolean;
-    private scrollWidth: number;
-
     private requestAnimationFrameExists = typeof requestAnimationFrame === 'function';
     private scrollLagCounter = 0;
     private scrollLagTicking = false;
@@ -165,13 +162,19 @@ export class GridPanel extends BeanStub {
 
     private animationThreadCount = 0;
 
+    // properties we use a lot, so keep reference
     private useScrollLag: boolean;
+    private enableRtl: boolean;
+    private forPrint: boolean;
+    private scrollWidth: number;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('GridPanel');
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        this.logger = loggerFactory.create('GridPanel');
+        this.useScrollLag = this.isUseScrollLag();
+        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.findElements();
     }
 
@@ -183,6 +186,7 @@ export class GridPanel extends BeanStub {
         return this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
     }
 
+    // we override this, as the base class is missing the annotation
     @PreDestroy
     public destroy() {
         super.destroy();
@@ -209,7 +213,6 @@ export class GridPanel extends BeanStub {
 
         this.addEventListeners();
         this.addDragListeners();
-        this.useScrollLag = this.isUseScrollLag();
 
         this.layout = new BorderLayout({
             overlays: {
@@ -963,16 +966,18 @@ export class GridPanel extends BeanStub {
 
     private addMouseWheelEventListeners(): void {
 
-        var genericListener = this.genericMouseWheelListener.bind(this);
-        var centerListener = this.centerMouseWheelListener.bind(this);
+        // IE9, Chrome, Safari, Opera use 'mousewheel', Firefox uses 'DOMMouseScroll'
 
-        // IE9, Chrome, Safari, Opera
-        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'mousewheel', genericListener);
-        this.addDestroyableEventListener(this.eBodyViewport, 'mousewheel', centerListener);
+        this.addDestroyableEventListener(this.eBodyViewport, 'mousewheel', this.centerMouseWheelListener.bind(this));
+        this.addDestroyableEventListener(this.eBodyViewport, 'DOMMouseScroll', this.centerMouseWheelListener.bind(this));
 
-        // Firefox
-        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'DOMMouseScroll', genericListener);
-        this.addDestroyableEventListener(this.eBodyViewport, 'DOMMouseScroll', centerListener);
+        if (this.enableRtl) {
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'mousewheel', this.genericMouseWheelListener.bind(this));
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'DOMMouseScroll', this.genericMouseWheelListener.bind(this));
+        } else {
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'mousewheel', this.genericMouseWheelListener.bind(this));
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'DOMMouseScroll', this.genericMouseWheelListener.bind(this));
+        }
     }
 
     public getHeaderViewport(): HTMLElement {
@@ -980,23 +985,28 @@ export class GridPanel extends BeanStub {
     }
 
     private centerMouseWheelListener(event: any): boolean {
-        // we are only interested in mimicking the mouse wheel if we are pinning on the right,
-        // as if we are not pinning on the right, then we have scrollbars in the center body, and
-        // as such we just use the default browser wheel behaviour.
-        if (this.columnController.isPinningRight()) {
-            return this.generalMouseWheelListener(event, this.ePinnedRightColsViewport);
+        // we are only interested in mimicking the mouse wheel if we are not scrolling on the middle,
+        // otherwise the body has scrolls and the mouse wheel works for free
+        let bodyVScrollShowing = this.isBodyVerticalScrollActive();
+
+        if (!bodyVScrollShowing) {
+            let targetPanel = this.enableRtl ? this.ePinnedLeftColsViewport : this.ePinnedRightColsViewport;
+            return this.generalMouseWheelListener(event, targetPanel);
         }
     }
 
     // used for listening to mouse wheel events on 1) left pinned and also the 2) fullWidthCell components.
     // the fullWidthCell listener is added in renderedRow, hence public.
     public genericMouseWheelListener(event: any): boolean {
-        var targetPanel: HTMLElement;
-        if (this.columnController.isPinningRight()) {
-            targetPanel = this.ePinnedRightColsViewport;
-        } else {
+        let targetPanel: HTMLElement;
+
+        let bodyVScrollActive = this.isBodyVerticalScrollActive();
+        if (bodyVScrollActive) {
             targetPanel = this.eBodyViewport;
+        } else {
+            targetPanel = this.enableRtl ? this.ePinnedLeftColsViewport : this.ePinnedRightColsViewport;
         }
+
         return this.generalMouseWheelListener(event, targetPanel);
     }
 
@@ -1093,11 +1103,8 @@ export class GridPanel extends BeanStub {
         this.ePinnedRightHeader.style.display = showRightPinned ? 'inline-block' : 'none';
         this.ePinnedRightColsViewport.style.display = showRightPinned ? 'inline' : 'none';
 
-        // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),
-        // if RTL, we hide body scroll if pinning left (as scroll is in left pinned)
-        let enableRtl = this.gridOptionsWrapper.isEnableRtl();
-        let yBodyScroll = enableRtl ? !showLeftPinned : !showRightPinned;
-        this.eBodyViewport.style.overflowY = yBodyScroll ? 'auto' : 'hidden';
+        let bodyVScrollActive = this.isBodyVerticalScrollActive();
+        this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
     }
 
     // init, layoutChanged, floatingDataChanged, headerHeightChanged
@@ -1184,18 +1191,18 @@ export class GridPanel extends BeanStub {
             }
 
             // only do the vertical bit if the body has the vertical scrollbar (ie not pinning)
-            let enableRtl = that.gridOptionsWrapper.isEnableRtl();
-            let pinningRight = that.columnController.isPinningRight();
-            let pinningLeft = that.columnController.isPinningLeft();
-            let centerHasScroll = enableRtl ? !pinningLeft : !pinningRight;
+            let bodyVScrollActive = that.isBodyVerticalScrollActive();
 
-            if (centerHasScroll) {
+            if (bodyVScrollActive) {
                 var newTopPosition = that.eBodyViewport.scrollTop;
                 if (newTopPosition !== that.lastTopPosition) {
                     that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
                     that.lastTopPosition = newTopPosition;
+
                     that.verticallyScrollLeftPinned(newTopPosition);
+                    that.verticallyScrollRightPinned(newTopPosition);
                     that.verticallyScrollFullWidthCellContainer(newTopPosition);
+
                     that.rowRenderer.drawVirtualRowsWithLock();
                 }
             }
@@ -1206,9 +1213,11 @@ export class GridPanel extends BeanStub {
             if (newTopPosition !== that.lastTopPosition) {
                 that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
                 that.lastTopPosition = newTopPosition;
+
                 that.verticallyScrollLeftPinned(newTopPosition);
                 that.verticallyScrollFullWidthCellContainer(newTopPosition);
                 that.verticallyScrollBody(newTopPosition);
+
                 that.rowRenderer.drawVirtualRowsWithLock();
             }
         }
@@ -1218,9 +1227,11 @@ export class GridPanel extends BeanStub {
             if (newTopPosition !== that.lastTopPosition) {
                 that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
                 that.lastTopPosition = newTopPosition;
+
                 that.verticallyScrollRightPinned(newTopPosition);
                 that.verticallyScrollFullWidthCellContainer(newTopPosition);
                 that.verticallyScrollBody(newTopPosition);
+
                 that.rowRenderer.drawVirtualRowsWithLock();
             }
         }
@@ -1248,6 +1259,16 @@ export class GridPanel extends BeanStub {
         }
 
         this.addIEPinFix(onPinnedRightScroll);
+    }
+
+    // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),
+    // if RTL, we hide body scroll if pinning left (as scroll is in left pinned)
+    private isBodyVerticalScrollActive(): boolean {
+        let enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        let pinningRight = this.columnController.isPinningRight();
+        let pinningLeft = this.columnController.isPinningLeft();
+        let centerHasScroll = enableRtl ? !pinningLeft : !pinningRight;
+        return centerHasScroll;
     }
 
     // this bit is a fix / hack for IE due to this:
