@@ -23,9 +23,6 @@ export class MyGridPage {
     constructor() {
         this.gridOptions = <GridOptions>{};
         this.gridOptions.rowData = [{id: 1, name: 'Shane'}, {id: 2, name: 'Sean'}];
-
-        //so we can reference the viewModel in the templates
-        this.gridOptions.context = {vm:this};
     }
 
     public onGridReady(){
@@ -52,7 +49,7 @@ In your view template.  Here we are adding columns using markup. ColumnDefs can 
         <ag-grid-column header-name="My Group Column">
           <ag-grid-column header-name="Id" field="id">
               <ag-cell-template>
-                <button md-button class="btn accent"  click.delegate="params.context.vm.onIdClicked(params.data)">${params.value}</button>
+                <button md-button class="btn accent"  click.delegate="params.context.onIdClicked(params.data)">${params.value}</button>
               </ag-cell-template>
           </ag-grid-column>
           <ag-grid-column header-name="Name" field="name" >
