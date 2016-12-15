@@ -411,6 +411,12 @@ if (strcmp($version , 'latest') == 0) {
                     Enterprise Features
                 </h4>
 
+                <?php if ($key == "Excel Export") { ?>
+                    <span class="sidebarLinkSelected">Excel Export</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/">Excel</a>
+                <?php } ?>
+
                 <?php if ($key == "Viewport") { ?>
                     <span class="sidebarLinkSelected">Viewport</span>
                 <?php } else { ?>
