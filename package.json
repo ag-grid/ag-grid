@@ -6,7 +6,8 @@
   "typings": "./main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "ngc -p tsconfig.json",
+    "verify-properties":"node agGridPropertiesCheck.js",
+    "build": "ngc -p tsconfig.json && npm run verify-properties",
     "clean": "rimraf aot/* && rimraf dist/*",
     "clean-build": "npm run clean && npm run build"
   },

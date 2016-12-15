@@ -53,19 +53,8 @@ export class AgGridNg2 implements AfterViewInit {
         });
     }
 
-    private validateSuppliedProperties() {
-        if (this.gridOptions.debug) {
-            ComponentUtil.ALL_PROPERTIES.forEach((property) => {
-                if (!this.hasOwnProperty(property)) {
-                    console.warn(`Grid property ${property} does not exist on AgGridNg2`);
-                }
-            })
-        }
-    }
-
     ngAfterViewInit(): void {
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
-        this.validateSuppliedProperties();
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -257,6 +246,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public groupRemoveSingleChildren: any = undefined;
     @Input() public getBusinessKeyForNode: any = undefined;
     @Input() public checkboxSelection: any = undefined;
+    @Input() public enableRtlSupport: any = undefined;
 
     /**
      * Outputs
@@ -312,5 +302,10 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public dragStopped: EventEmitter<any>;
     @Output() public itemsAdded: EventEmitter<any>;
     @Output() public itemsRemoved: EventEmitter<any>;
+    @Output() public columnRowGroupChangeRequest: EventEmitter<any>;
+    @Output() public columnPivotChangeRequest: EventEmitter<any>;
+    @Output() public columnValueChangeRequest: EventEmitter<any>;
+    @Output() public rowValueChanged: EventEmitter<any>;
+    @Output() public bodyScroll: EventEmitter<any>;
 }
 
