@@ -9,6 +9,7 @@ export * from './dist/lib/components/agGridNg1';
 export * from './dist/lib/components/agGridWebComponent';
 export * from './dist/lib/components/componentUtil';
 
+export * from './dist/lib/context/beanStub';
 export * from './dist/lib/context/context';
 
 export * from './dist/lib/dragAndDrop/dragAndDropService';

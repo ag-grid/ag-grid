@@ -21,6 +21,7 @@ import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {RenderedRow} from "../rendering/renderedRow";
 import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
+import {BeanStub} from "../context/beanStub";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -95,7 +96,7 @@ var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LO
 var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
 @Bean('gridPanel')
-export class GridPanel {
+export class GridPanel extends BeanStub {
 
     @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -164,8 +165,6 @@ export class GridPanel {
 
     private animationThreadCount = 0;
 
-    private destroyFunctions: Function[] = [];
-
     private useScrollLag: boolean;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -185,8 +184,8 @@ export class GridPanel {
     }
 
     @PreDestroy
-    private destroy() {
-        this.destroyFunctions.forEach(func => func());
+    public destroy() {
+        super.destroy();
     }
 
     private onRowDataChanged(): void {
@@ -266,13 +265,8 @@ export class GridPanel {
 
         // these are the events we need to do an apply after - these are the ones that can end up
         // with columns added or removed
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.eventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
-
-        this.destroyFunctions.push( ()=> {
-            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-            this.eventService.removeEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
-        });
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
@@ -288,33 +282,15 @@ export class GridPanel {
 
     private addEventListeners(): void {
 
-        let displayedColumnsChangedListener = this.onDisplayedColumnsChanged.bind(this);
-        let displayedColumnsWidthChanged = this.onDisplayedColumnsWidthChanged.bind(this);
-        let sizeHeaderAndBodyListener = this.setBodyAndHeaderHeights.bind(this);
-        let rowDataChangedListener = this.onRowDataChanged.bind(this);
-        let scrollVisibilityChangedListener= this.onScrollVisibilityChanged.bind(this);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_REMOVED, this.onRowDataChanged.bind(this));
 
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, displayedColumnsWidthChanged);
-        this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, scrollVisibilityChangedListener);
-
-        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
-
-        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
-        this.eventService.addEventListener(Events.EVENT_ITEMS_ADDED, rowDataChangedListener);
-        this.eventService.addEventListener(Events.EVENT_ITEMS_REMOVED, rowDataChangedListener);
-
-        this.destroyFunctions.push( ()=> {
-            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, displayedColumnsChangedListener);
-            this.eventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, displayedColumnsWidthChanged);
-            this.eventService.removeEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, scrollVisibilityChangedListener);
-            this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, sizeHeaderAndBodyListener);
-            this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_HEADER_HEIGHT, sizeHeaderAndBodyListener);
-            this.eventService.removeEventListener(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedListener);
-            this.eventService.removeEventListener(Events.EVENT_ITEMS_ADDED, rowDataChangedListener);
-            this.eventService.removeEventListener(Events.EVENT_ITEMS_REMOVED, rowDataChangedListener);
-        });
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
     }
 
     private addDragListeners(): void {
@@ -338,7 +314,7 @@ export class GridPanel {
 
             this.dragService.addDragSource(params);
 
-            this.destroyFunctions.push( ()=> this.dragService.removeDragSource(params) );
+            this.addDestroyFunc( ()=> this.dragService.removeDragSource(params) );
         });
     }
 
@@ -348,7 +324,7 @@ export class GridPanel {
             var listener = this.processMouseEvent.bind(this, eventName);
             this.eAllCellContainers.forEach( container => {
                 container.addEventListener(eventName, listener);
-                this.destroyFunctions.push( ()=> container.removeEventListener(eventName, listener) );
+                this.addDestroyFunc( ()=> container.removeEventListener(eventName, listener) );
             });
         });
     }
@@ -358,8 +334,7 @@ export class GridPanel {
         eventNames.forEach( eventName => {
             var listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach( container => {
-                container.addEventListener(eventName, listener);
-                this.destroyFunctions.push( ()=> container.removeEventListener(eventName, listener) );
+                this.addDestroyableEventListener(container, eventName, listener);
             });
         });
     }
@@ -379,8 +354,7 @@ export class GridPanel {
             }
         };
 
-        this.eBodyViewport.addEventListener('contextmenu', listener);
-        this.destroyFunctions.push( ()=> this.eBodyViewport.removeEventListener('contextmenu', listener) );
+        this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener)
     }
 
     private getRowForEvent(event: MouseEvent | KeyboardEvent): RenderedRow {
@@ -993,18 +967,12 @@ export class GridPanel {
         var centerListener = this.centerMouseWheelListener.bind(this);
 
         // IE9, Chrome, Safari, Opera
-        this.ePinnedLeftColsViewport.addEventListener('mousewheel', genericListener);
-        this.eBodyViewport.addEventListener('mousewheel', centerListener);
-        // Firefox
-        this.ePinnedLeftColsViewport.addEventListener('DOMMouseScroll', genericListener);
-        this.eBodyViewport.addEventListener('DOMMouseScroll', centerListener);
+        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'mousewheel', genericListener);
+        this.addDestroyableEventListener(this.eBodyViewport, 'mousewheel', centerListener);
 
-        this.destroyFunctions.push( ()=> {
-            this.ePinnedLeftColsViewport.removeEventListener('mousewheel', genericListener);
-            this.eBodyViewport.removeEventListener('mousewheel', centerListener);
-            this.ePinnedLeftColsViewport.removeEventListener('DOMMouseScroll', genericListener);
-            this.eBodyViewport.removeEventListener('DOMMouseScroll', centerListener);
-        });
+        // Firefox
+        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'DOMMouseScroll', genericListener);
+        this.addDestroyableEventListener(this.eBodyViewport, 'DOMMouseScroll', centerListener);
     }
 
     public getHeaderViewport(): HTMLElement {
@@ -1159,8 +1127,6 @@ export class GridPanel {
 
         var heightOfCentreRows = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
 
-        // this.eBody.style.paddingTop = paddingTop + 'px';
-        // this.eBody.style.paddingBottom = floatingBottomHeight + 'px';
         this.eBody.style.top = paddingTop + 'px';
         this.eBody.style.height = heightOfCentreRows + 'px';
 
@@ -1171,10 +1137,6 @@ export class GridPanel {
 
         this.ePinnedLeftColsViewport.style.height = heightOfCentreRows + 'px';
         this.ePinnedRightColsViewport.style.height = heightOfCentreRows + 'px';
-    }
-
-    private asdf(): void {
-
     }
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {
@@ -1221,9 +1183,13 @@ export class GridPanel {
                 that.setLeftAndRightBounds();
             }
 
-            // if we are pinning to the right, then it's the right pinned container
-            // that has the scroll.
-            if (!that.columnController.isPinningRight()) {
+            // only do the vertical bit if the body has the vertical scrollbar (ie not pinning)
+            let enableRtl = that.gridOptionsWrapper.isEnableRtl();
+            let pinningRight = that.columnController.isPinningRight();
+            let pinningLeft = that.columnController.isPinningLeft();
+            let centerHasScroll = enableRtl ? !pinningLeft : !pinningRight;
+
+            if (centerHasScroll) {
                 var newTopPosition = that.eBodyViewport.scrollTop;
                 if (newTopPosition !== that.lastTopPosition) {
                     that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
@@ -1247,28 +1213,39 @@ export class GridPanel {
             }
         }
 
-        var bodyViewportScrollListener = this.useScrollLag ? this.debounce.bind(this,onBodyViewportScroll) : onBodyViewportScroll;
-        var pinnedRightScrollListener = this.useScrollLag ? this.debounce.bind(this,onPinnedRightScroll) : onPinnedRightScroll;
+        function onPinnedLeftScroll() {
+            var newTopPosition = that.ePinnedLeftColsViewport.scrollTop;
+            if (newTopPosition !== that.lastTopPosition) {
+                that.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
+                that.lastTopPosition = newTopPosition;
+                that.verticallyScrollRightPinned(newTopPosition);
+                that.verticallyScrollFullWidthCellContainer(newTopPosition);
+                that.verticallyScrollBody(newTopPosition);
+                that.rowRenderer.drawVirtualRowsWithLock();
+            }
+        }
 
-        this.eBodyViewport.addEventListener('scroll', bodyViewportScrollListener);
-        this.ePinnedRightColsViewport.addEventListener('scroll', pinnedRightScrollListener);
+        var bodyViewportScrollListener = this.useScrollLag ? this.debounce.bind(this, onBodyViewportScroll) : onBodyViewportScroll;
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', bodyViewportScrollListener);
 
-        this.destroyFunctions.push( () => {
-            this.eBodyViewport.removeEventListener('scroll', bodyViewportScrollListener);
-            this.ePinnedRightColsViewport.removeEventListener('scroll', pinnedRightScrollListener);
-        });
+        // below we add two things:
+        // pinnedScrollListener -> when pinned panel with scrollbar gets scrolled, it updates body and other pinned
+        // suppressScroll -> stops scrolling when pinned panel was moved - which can only happen when use is navigating
+        //     in the pinned container, as the pinned col should never scroll. so we rollback the scroll on the pinned.
 
-        // this means the pinned panel was moved, which can only
-        // happen when the user is navigating in the pinned container
-        // as the pinned col should never scroll. so we rollback
-        // the scroll on the pinned.
-        var pinnedLeftColsViewportScrollListener = () => {
-            this.ePinnedLeftColsViewport.scrollTop = 0;
-        };
-        this.ePinnedLeftColsViewport.addEventListener('scroll', pinnedLeftColsViewportScrollListener);
-        this.destroyFunctions.push( () => {
-            this.ePinnedLeftColsViewport.removeEventListener('scroll', pinnedLeftColsViewportScrollListener);
-        });
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            let pinnedScrollListener = this.useScrollLag ? this.debounce.bind(this, onPinnedLeftScroll) : onPinnedLeftScroll;
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', pinnedScrollListener);
+
+            let suppressScroll = () => this.ePinnedRightColsViewport.scrollTop = 0;
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', suppressScroll);
+        } else {
+            let pinnedScrollListener = this.useScrollLag ? this.debounce.bind(this, onPinnedRightScroll) : onPinnedRightScroll;
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', pinnedScrollListener);
+
+            let suppressScroll = () => this.ePinnedLeftColsViewport.scrollTop = 0;
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressScroll);
+        }
 
         this.addIEPinFix(onPinnedRightScroll);
     }
@@ -1284,8 +1261,7 @@ export class GridPanel {
                 }, 0);
             }
         };
-        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener);
-        this.destroyFunctions.push( ()=> this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, listener) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, listener);
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
@@ -1360,6 +1336,10 @@ export class GridPanel {
         this.ePinnedLeftColsContainer.style.top = -bodyTopPosition + 'px';
     }
 
+    private verticallyScrollRightPinned(bodyTopPosition: any): void {
+        this.ePinnedRightColsContainer.style.top = -bodyTopPosition + 'px';
+    }
+
     private verticallyScrollFullWidthCellContainer(bodyTopPosition: any): void {
         this.eFullWidthCellContainer.style.top = -bodyTopPosition + 'px';
     }
@@ -1368,7 +1348,15 @@ export class GridPanel {
         this.eBodyViewport.scrollTop = position;
     }
 
-    public getVerticalScrollPosition(): number {
+    public addScrollEventListener(listener: ()=>void): void {
+        this.eBodyViewport.addEventListener('scroll', listener);
+    }
+
+    public removeScrollEventListener(listener: ()=>void): void {
+        this.eBodyViewport.removeEventListener('scroll', listener);
+    }
+
+/*    public getVerticalScrollPosition(): number {
         if (this.forPrint) {
             return 0;
         } else {
@@ -1407,12 +1395,5 @@ export class GridPanel {
     public getPinnedRightColsViewportClientRect(): ClientRect {
         return this.ePinnedRightColsViewport.getBoundingClientRect();
     }
-
-    public addScrollEventListener(listener: ()=>void): void {
-        this.eBodyViewport.addEventListener('scroll', listener);
-    }
-
-    public removeScrollEventListener(listener: ()=>void): void {
-        this.eBodyViewport.removeEventListener('scroll', listener);
-    }
+*/
 }

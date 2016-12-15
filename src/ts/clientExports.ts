@@ -103,6 +103,7 @@ import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
 import {TouchListener} from "./widgets/touchListener";
 import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
+import {BeanStub} from "./context/beanStub";
 
 export function populateClientExports(exports: any): void {
 
@@ -120,6 +121,7 @@ export function populateClientExports(exports: any): void {
     exports.initialiseAgGridWithWebComponents = initialiseAgGridWithWebComponents;
 
     // context
+    exports.BeanStub = BeanStub;
     exports.Context = Context;
     exports.Autowired = Autowired;
     exports.PostConstruct = PostConstruct;

@@ -6,6 +6,7 @@ import {FloatingRowModel} from "./rowControllers/floatingRowModel";
 import {Utils as _} from "./utils";
 import {GridRow} from "./entities/gridRow";
 import {GridCell} from "./entities/gridCell";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
 
 @Bean('cellNavigationService')
 export class CellNavigationService {
@@ -13,13 +14,24 @@ export class CellNavigationService {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell {
         switch (key) {
             case Constants.KEY_UP : return this.getCellAbove(lastCellToFocus);
             case Constants.KEY_DOWN : return this.getCellBelow(lastCellToFocus);
-            case Constants.KEY_RIGHT : return this.getCellToRight(lastCellToFocus);
-            case Constants.KEY_LEFT : return this.getCellToLeft(lastCellToFocus);
+            case Constants.KEY_RIGHT :
+                if (this.gridOptionsWrapper.isEnableRtl()) {
+                    return this.getCellToLeft(lastCellToFocus);
+                } else {
+                    return this.getCellToRight(lastCellToFocus);
+                }
+            case Constants.KEY_LEFT :
+                if (this.gridOptionsWrapper.isEnableRtl()) {
+                    return this.getCellToRight(lastCellToFocus);
+                } else {
+                    return this.getCellToLeft(lastCellToFocus);
+                }
             default : console.log('ag-Grid: unknown key for navigation ' + key);
         }
     }
