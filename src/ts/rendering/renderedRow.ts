@@ -178,8 +178,8 @@ export class RenderedRow {
         if (!this.fullWidthCellRenderer) {
             this.fullWidthCellRenderer = CellRendererFactory.GROUP;
             this.fullWidthCellRendererParams = {
-                innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
-            }
+                innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
+            };
         }
 
         this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
