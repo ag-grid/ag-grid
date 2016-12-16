@@ -12,6 +12,9 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement: RTL support.</li>
 
+    <li>Enhancement: Resize on pinned right (or pinned left when doing RTL) now have resize on other end of
+        column, so column resize behaves more naturally.</li>
+
     <li>Enhancement: new events: rowEditingStarted, rowEditingStopped, cellEditingStarted, cellEditingStopped.</li>
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#singleClickEditing"><i>suppressClickEdit</i></a>.</li>
     <li>Enhancement: added api.clearFocusedCell()</li>
