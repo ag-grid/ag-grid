@@ -113,7 +113,7 @@ suppressEnterprise: true,
 // rowBuffer: 0,
 //columnDefs: [],
 //singleClickEdit: true,
-suppressClickEdit: true,
+// suppressClickEdit: true,
 //rowData: [
 //    {name: 'Niall'},
 //    {name: 'Eamon'},
