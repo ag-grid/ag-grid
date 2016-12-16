@@ -37,6 +37,9 @@ export abstract class AbstractColumnDropPanel extends Component {
     private static STATE_NEW_COLUMNS_IN = 'newColumnsIn';
     private static STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
 
+    private static CHAR_LEFT_ARROW = '&#8592;';
+    private static CHAR_RIGHT_ARROW = '&#8594;';
+
     private state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
 
     private logger: Logger;
@@ -402,8 +405,12 @@ export abstract class AbstractColumnDropPanel extends Component {
     private addArrowToGui(): void {
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
+            // for RTL it's a left arrow, otherwise it's a right arrow
+            let enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
+            let charCode = enableRtl ?
+                AbstractColumnDropPanel.CHAR_LEFT_ARROW : AbstractColumnDropPanel.CHAR_RIGHT_ARROW;
             var eArrow = document.createElement('span');
-            eArrow.innerHTML = '&#8594;';
+            eArrow.innerHTML = charCode;
             this.getGui().appendChild(eArrow);
         }
     }
