@@ -420,8 +420,13 @@ ag-grid-ng2
         display block
 
     .ag-column-drop-cell-button
-        float right
         line-height 16px
+
+.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button
+    float right
+
+.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button
+    float left
 
 .ag-column-drop-horizontal
     white-space: nowrap;
