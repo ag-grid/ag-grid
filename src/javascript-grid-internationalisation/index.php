@@ -99,6 +99,7 @@ include '../documentation-main/documentation_header.php';
 
         <span class="codeComment">// standard menu</span>
         copy: 'laCopy',
+        copyWithHeaders: 'laCopy Wit hHeaders',
         ctrlC: 'ctrl n C',
         paste: 'laPaste',
         ctrlV: 'ctrl n C'
