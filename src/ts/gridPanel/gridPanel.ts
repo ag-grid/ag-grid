@@ -22,6 +22,7 @@ import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {RenderedRow} from "../rendering/renderedRow";
 import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
 import {BeanStub} from "../context/beanStub";
+import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -115,6 +116,7 @@ export class GridPanel extends BeanStub {
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
 
     private layout: BorderLayout;
     private logger: Logger;

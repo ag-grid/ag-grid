@@ -249,6 +249,8 @@ export class ColumnController {
     private leftWidth = 0;
     private rightWidth = 0;
 
+    private bodyWidthDirty = true;
+
     private viewportLeft: number;
     private viewportRight: number;
 
@@ -297,9 +299,13 @@ export class ColumnController {
     }
 
     public setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void {
-        if (scrollWidth!==this.scrollWidth || scrollPosition!==this.scrollPosition) {
+        if (scrollWidth!==this.scrollWidth || scrollPosition!==this.scrollPosition || this.bodyWidthDirty) {
             this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;
+            // we need to call setVirtualViewportLeftAndRight() at least once after the body width changes,
+            // as the viewport can stay the same, but in RTL, if body width changes, we need to work out the
+            // virtual columns again
+            this.bodyWidthDirty = true;
             this.setVirtualViewportLeftAndRight();
             if (this.ready) {
                 this.checkDisplayedVirtualColumns();
@@ -824,6 +830,10 @@ export class ColumnController {
         let newLeftWidth = this.getWidthOfColsInList(this.displayedLeftColumns);
         let newRightWidth = this.getWidthOfColsInList(this.displayedRightColumns);
 
+        // this is used by virtual col calculation, for RTL only, as a change to body width can impact displayed
+        // columns, due to RTL inverting the y coordinates
+        this.bodyWidthDirty = this.bodyWidth !== newBodyWidth;
+
         let atLeastOneChanged = this.bodyWidth !== newBodyWidth || this.leftWidth !== newLeftWidth || this.rightWidth !== newRightWidth;
 
         if (atLeastOneChanged) {
@@ -831,7 +841,7 @@ export class ColumnController {
             this.leftWidth = newLeftWidth;
             this.rightWidth = newRightWidth;
             // when this fires, it is picked up by the gridPanel, which ends up in
-            // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportLeftAndRight()
+            // gridPanel calling setWidthAndScrollPosition(), which in turn calls setVirtualViewportPosition()
             this.eventService.dispatchEvent(Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED);
         }
     }
