@@ -35,6 +35,19 @@ LicenseManager.setLicenseKey("your license key");</pre>
 
     </p>
 
+    <note>For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows:
+    <pre>
+export function configure(aurelia: Aurelia) {
+  aurelia.use
+    .standardConfiguration()
+    .plugin('ag-grid-aurelia')
+    .feature('resources');
+
+  // enterprise uncomment and set licence key here
+  // LicenseManager.setLicenseKey('LICENSE KEY');
+
+  ...rest of function</pre></note>
+
     <note>
         If you are distributing your product and including ag-Grid Enterprise, we realise that your license key will be
         visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
