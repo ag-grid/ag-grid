@@ -1453,7 +1453,12 @@ export class ColumnController {
         if (!groupToUse) { return; }
         this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
         groupToUse.setExpanded(newValue);
-        this.gridPanel.turnOnAnimationForABit();
+        // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
+        // the animation moves all the row the the right rather than to the left (ie it's the static
+        // columns that actually get their coordinates updated)
+        if (!this.gridOptionsWrapper.isEnableRtl()) {
+            this.gridPanel.turnOnAnimationForABit();
+        }
         this.updateGroupsAndDisplayedColumns();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
