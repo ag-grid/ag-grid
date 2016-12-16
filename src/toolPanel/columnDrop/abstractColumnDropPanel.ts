@@ -146,18 +146,16 @@ export abstract class AbstractColumnDropPanel extends Component {
         let newIndex = 0;
         let mouseEvent = draggingEvent.event;
 
+        let enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
+        let goingLeft = draggingEvent.hDirection===HDirection.Left;
+        let mouseX = mouseEvent.clientX;
+
         this.childColumnComponents.forEach( childColumn => {
             let rect = childColumn.getGui().getBoundingClientRect();
-            if (draggingEvent.hDirection===HDirection.Left) {
-                let horizontalFit = mouseEvent.clientX >= rect.right;
-                if (horizontalFit) {
-                    newIndex++;
-                }
-            } else {
-                let horizontalFit = mouseEvent.clientX >= rect.left;
-                if (horizontalFit) {
-                    newIndex++;
-                }
+            let rectX = goingLeft ? rect.right : rect.left;
+            let horizontalFit = enableRtl ? (mouseX <= rectX) : (mouseX >= rectX);
+            if (horizontalFit) {
+                newIndex++;
             }
         });
 
