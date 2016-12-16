@@ -151,8 +151,19 @@ ag-grid-ng2
 .ag-header-cell-resize
     height 100%
     width 4px
-    float right
     cursor col-resize
+
+.ag-ltr .ag-header-cell-resize
+    float right
+
+.ag-ltr .ag-pinned-right-header .ag-header-cell-resize
+    float left
+
+.ag-rtl .ag-header-cell-resize
+    float left
+
+.ag-rtl .ag-pinned-left-header .ag-header-cell-resize
+    float right
 
 .ag-header-expand-icon
     padding-left 4px

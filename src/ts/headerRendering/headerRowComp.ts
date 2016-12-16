@@ -137,9 +137,9 @@ export class HeaderRowComp extends Component {
     private createHeaderElement(columnGroupChild:ColumnGroupChild):IRenderedHeaderElement {
         var result:IRenderedHeaderElement;
         if (columnGroupChild instanceof ColumnGroup) {
-            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget);
+            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         } else {
-            result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget);
+            result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         }
         this.context.wireBean(result);
         return result;

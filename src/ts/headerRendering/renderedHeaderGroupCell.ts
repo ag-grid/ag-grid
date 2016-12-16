@@ -35,11 +35,13 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     private eRoot: HTMLElement;
 
     private displayName: string;
+    private pinned: string;
 
-    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget) {
+    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
         this.columnGroup = columnGroup;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
+        this.pinned = pinned;
     }
 
     public getGui(): HTMLElement {
@@ -252,9 +254,29 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         });
     }
 
+    // optionally inverts the drag, depending on pinned and RTL
+    // note - this method is duplicated in RenderedHeaderCell - should refactor out?
+    private normaliseDragChange(dragChange: number): number {
+        let result = dragChange;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, dragging left makes the col bigger, except when pinning left
+            if (this.pinned !== Column.PINNED_LEFT) {
+                result *= -1;
+            }
+        } else {
+            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+            if (this.pinned === Column.PINNED_RIGHT) {
+                result *= -1;
+            }
+        }
+        return result;
+    }
+
     public onDragging(dragChange: any, finished: boolean): void {
 
-        var newWidth = this.groupWidthStart + dragChange;
+        let dragChangeNormalised = this.normaliseDragChange(dragChange);
+        let newWidth = this.groupWidthStart + dragChangeNormalised;
+
         var minWidth = this.columnGroup.getMinWidth();
         if (newWidth < minWidth) {
             newWidth = minWidth;

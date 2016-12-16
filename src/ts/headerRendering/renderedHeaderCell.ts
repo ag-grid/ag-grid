@@ -46,10 +46,13 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     // of 'if / else' mapping to things that got created.
     private destroyFunctions: (()=>void)[] = [];
 
-    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget) {
+    private pinned: string;
+
+    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
         this.column = column;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
+        this.pinned = pinned;
     }
 
     public getColumn(): Column {
@@ -393,8 +396,27 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         this.startWidth = this.column.getActualWidth();
     }
 
+    // optionally inverts the drag, depending on pinned and RTL
+    // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
+    private normaliseDragChange(dragChange: number): number {
+        let result = dragChange;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, dragging left makes the col bigger, except when pinning left
+            if (this.pinned !== Column.PINNED_LEFT) {
+                result *= -1;
+            }
+        } else {
+            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+            if (this.pinned === Column.PINNED_RIGHT) {
+                result *= -1;
+            }
+        }
+        return result;
+    }
+
     public onDragging(dragChange: number, finished: boolean): void {
-        var newWidth = this.startWidth + dragChange;
+        let dragChangeNormalised = this.normaliseDragChange(dragChange);
+        let newWidth = this.startWidth + dragChangeNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, finished);
     }
 
