@@ -34,7 +34,7 @@ var AgGridModule = (function () {
                 },] },
     ];
     /** @nocollapse */
-    AgGridModule.ctorParameters = [];
+    AgGridModule.ctorParameters = function () { return []; };
     return AgGridModule;
 }());
 exports.AgGridModule = AgGridModule;

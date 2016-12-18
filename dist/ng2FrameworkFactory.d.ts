@@ -29,5 +29,5 @@ export declare class Ng2FrameworkFactory implements IFrameworkFactory {
         new (): IFilter;
     } | string;
     setViewContainerRef(viewContainerRef: ViewContainerRef): void;
-    setTimeout(handler: any, timeout?: any): number;
+    setTimeout(action: any, timeout?: any): void;
 }

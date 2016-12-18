@@ -95,20 +95,22 @@ var Ng2FrameworkFactory = (function () {
     Ng2FrameworkFactory.prototype.setViewContainerRef = function (viewContainerRef) {
         this._viewContainerRef = viewContainerRef;
     };
-    Ng2FrameworkFactory.prototype.setTimeout = function (handler, timeout) {
-        return this._baseFrameworkFactory.setTimeout(handler, timeout);
-        // return this._ngZone.runOutsideAngular(() => {
-        //     handler();
-        // }, timeout);
+    Ng2FrameworkFactory.prototype.setTimeout = function (action, timeout) {
+        var _this = this;
+        this._ngZone.runOutsideAngular(function () {
+            setTimeout(function () {
+                _this._ngZone.run(action);
+            }, timeout);
+        });
     };
     Ng2FrameworkFactory.decorators = [
         { type: core_1.Injectable },
     ];
     /** @nocollapse */
-    Ng2FrameworkFactory.ctorParameters = [
+    Ng2FrameworkFactory.ctorParameters = function () { return [
         { type: baseComponentFactory_1.BaseComponentFactory, },
         { type: core_1.NgZone, },
-    ];
+    ]; };
     return Ng2FrameworkFactory;
 }());
 exports.Ng2FrameworkFactory = Ng2FrameworkFactory;

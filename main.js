@@ -1,7 +1,11 @@
-exports.AgGridModule = require('./dist/aggrid.module').AgGridModule;
-exports.AgGridNg2 = require('./dist/agGridNg2').AgGridNg2;
-exports.Ng2FrameworkFactory = require('./dist/ng2FrameworkFactory').Ng2FrameworkFactory;
-exports.BaseComponentFactory = require('./dist/baseComponentFactory').BaseComponentFactory;
-exports.Ng2ComponentFactory = require('./dist/ng2ComponentFactory').Ng2ComponentFactory;
-exports.AgGridColumn = require('./dist/agGridColumn').AgGridColumn;
-
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+__export(require('./dist/aggrid.module'));
+__export(require('./dist/agGridColumn'));
+__export(require('./dist/agGridNg2'));
+__export(require('./dist/baseComponentFactory'));
+__export(require('./dist/ng2ComponentFactory'));
+__export(require('./dist/ng2FrameworkFactory'));
+//# sourceMappingURL=main.js.map

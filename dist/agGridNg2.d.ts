@@ -1,8 +1,8 @@
-import { EventEmitter, ViewContainerRef, ElementRef, QueryList, OnInit, AfterViewInit } from '@angular/core';
-import { GridOptions, GridApi, ColumnApi } from 'ag-grid/main';
+import { EventEmitter, ViewContainerRef, ElementRef, QueryList, AfterViewInit } from "@angular/core";
+import { GridOptions, GridApi, ColumnApi } from "ag-grid/main";
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
 import { AgGridColumn } from "./agGridColumn";
-export declare class AgGridNg2 implements OnInit, AfterViewInit {
+export declare class AgGridNg2 implements AfterViewInit {
     private viewContainerRef;
     private ng2FrameworkFactory;
     private _nativeElement;
@@ -14,8 +14,6 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     columns: QueryList<AgGridColumn>;
     constructor(elementDef: ElementRef, viewContainerRef: ViewContainerRef, ng2FrameworkFactory: Ng2FrameworkFactory);
     private createComponentEvents();
-    private validateSuppliedProperties();
-    ngOnInit(): void;
     ngAfterViewInit(): void;
     ngOnChanges(changes: any): void;
     ngOnDestroy(): void;
@@ -159,6 +157,11 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     animateRows: any;
     groupSelectsFiltered: any;
     groupRemoveSingleChildren: any;
+    getBusinessKeyForNode: any;
+    checkboxSelection: any;
+    enableRtl: any;
+    suppressClickEdit: any;
+    enableRtlSupport: any;
     /**
      * Outputs
      */
@@ -213,4 +216,15 @@ export declare class AgGridNg2 implements OnInit, AfterViewInit {
     dragStopped: EventEmitter<any>;
     itemsAdded: EventEmitter<any>;
     itemsRemoved: EventEmitter<any>;
+    columnRowGroupChangeRequest: EventEmitter<any>;
+    columnPivotChangeRequest: EventEmitter<any>;
+    columnValueChangeRequest: EventEmitter<any>;
+    rowValueChanged: EventEmitter<any>;
+    bodyScroll: EventEmitter<any>;
+    rowEditingStarted: EventEmitter<any>;
+    rowEditingStopped: EventEmitter<any>;
+    cellEditingStarted: EventEmitter<any>;
+    cellEditingStopped: EventEmitter<any>;
+    displayedColumnsWidthChanged: EventEmitter<any>;
+    scrollVisibilityChanged: EventEmitter<any>;
 }

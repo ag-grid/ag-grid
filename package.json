@@ -3,12 +3,14 @@
   "version": "7.0.1",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
-  "typings": "./main.d.ts",
+  "typings": "main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "verify-properties": "node agGridPropertiesCheck.js",
-    "build": "ngc -p tsconfig.json && npm run verify-properties",
-    "clean": "rimraf aot/* && rimraf dist/*",
+    "build": "ngc -p tsconfig-src.json && npm run clean-src && ngc -p tsconfig-main.json",
+    "clean-src":"rimraf src/*.d.ts src/*.js*",
+    "clean-main":"rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts",
+    "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main",
     "clean-build": "npm run clean && npm run build",
     "release": "npm run clean-build && gulp"
   },
@@ -38,10 +40,10 @@
   },
   "peerDependencies": {
     "ag-grid": "7.0.x",
-    "@angular/compiler": "2.1.x",
-    "@angular/compiler-cli": "2.1.x",
-    "@angular/core": "2.1.x",
-    "rxjs": "5.0.0-beta.12",
+    "@angular/compiler": "^2.1.x",
+    "@angular/compiler-cli": "^2.1.x",
+    "@angular/core": "^2.1.x",
+    "rxjs": "^5.0.0-beta.12",
     "zone.js": "^0.6.x",
     "core-js": "^2.4.1"
   }

@@ -15,13 +15,29 @@ var Ng2ComponentFactory = (function (_super) {
         this._factoryCache = {};
     }
     Ng2ComponentFactory.prototype.createRendererFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToRenderer(componentType, viewContainerRef, componentType.name);
+        return this.adaptComponentToRenderer(componentType, viewContainerRef, this.getHashForComponentType(componentType));
     };
+    Ng2ComponentFactory.prototype.getHashForComponentType = function (componentType) {
+        return this.hashCode(componentType.toString());
+    };
+    // taken from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+    Ng2ComponentFactory.prototype.hashCode = function (value) {
+        var hash = 0, i, chr, len;
+        if (value.length === 0)
+            return hash.toString();
+        for (i = 0, len = value.length; i < len; i++) {
+            chr = value.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash.toString();
+    };
+    ;
     Ng2ComponentFactory.prototype.createEditorFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToEditor(componentType, viewContainerRef, componentType.name);
+        return this.adaptComponentToEditor(componentType, viewContainerRef, this.getHashForComponentType(componentType));
     };
     Ng2ComponentFactory.prototype.createFilterFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToFilter(componentType, viewContainerRef, componentType.name);
+        return this.adaptComponentToFilter(componentType, viewContainerRef, this.getHashForComponentType(componentType));
     };
     Ng2ComponentFactory.prototype.adaptComponentToRenderer = function (componentType, viewContainerRef, name) {
         var that = this;
@@ -142,9 +158,9 @@ var Ng2ComponentFactory = (function (_super) {
         { type: core_1.Injectable },
     ];
     /** @nocollapse */
-    Ng2ComponentFactory.ctorParameters = [
+    Ng2ComponentFactory.ctorParameters = function () { return [
         { type: core_1.ComponentFactoryResolver, },
-    ];
+    ]; };
     return Ng2ComponentFactory;
 }(baseComponentFactory_1.BaseComponentFactory));
 exports.Ng2ComponentFactory = Ng2ComponentFactory;

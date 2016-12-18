@@ -248,6 +248,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public checkboxSelection: any = undefined;
     @Input() public enableRtl: any = undefined;
     @Input() public suppressClickEdit: any = undefined;
+    @Input() public enableRtlSupport: any = undefined;
 
     /**
      * Outputs

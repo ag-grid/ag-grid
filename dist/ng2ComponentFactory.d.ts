@@ -13,6 +13,8 @@ export declare class Ng2ComponentFactory extends BaseComponentFactory {
     }, viewContainerRef: ViewContainerRef): {
         new (): ICellRenderer;
     };
+    private getHashForComponentType(componentType);
+    private hashCode(value);
     createEditorFromComponent(componentType: {
         new (...args: any[]): AgEditorComponent;
     }, viewContainerRef: ViewContainerRef): {
