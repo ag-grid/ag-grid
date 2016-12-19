@@ -105,6 +105,10 @@ export class GridCore {
             this.addWindowResizeListener();
         }
 
+        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
+        // which doLayout indirectly depends on
+        this.addRtlSupport();
+
         this.doLayout();
 
         this.finished = false;
@@ -114,7 +118,6 @@ export class GridCore {
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
-        this.addRtlSupport();
 
         this.logger.log('ready');
     }
