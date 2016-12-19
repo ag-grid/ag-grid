@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Pivoting only makes sense when mixed with aggregation. If you turn a column into a pivot column, you must have
-        at least one aggregation active for the configuration to make sense. For example, if pivoting by country, you
+        at least one aggregation (value) active for the configuration to make sense. For example, if pivoting by country, you
         must provide something you are measuring such as 'gold medals per country'.
     </p>
 
@@ -32,17 +32,12 @@ include '../documentation-main/documentation_header.php';
     <p>Pivot mode is required to be turned on for pivoting to work. When the grid is in pivot mode, the following
     will happen:</p>
     <ul>
-        <li>Only columns with Group, Pivot or Aggregation active will be included in the grid.</li>
+        <li>Only columns with Group, Pivot or Value active will be included in the grid.</li>
         <li>Only aggregated rows will be shown, the lowest level rowData will not be displayed.</li>
     </ul>
 
     <p>
         If pivot mode is off, then adding or removing pivot columns will have not effect.
-    </p>
-
-    <p>
-        When in pivot mode, it is not possible to move columns inside the grid. This is because the order of
-        the columns is defined by the columns you are using for the pivot.
     </p>
 
     <h2>Example - Simple Pivot</h2>
@@ -54,7 +49,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Columns Date and Sport, although defined as columns, are not displayed in the grid as they have no group,
-        pivot or aggregation associated with them.
+        pivot or value associated with them.
     </p>
 
     <show-example example="examplePivot"></show-example>
@@ -64,7 +59,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         It is possible to have pivot mode turned on even though there is no pivot active on the grid.
         In this scenario, the grid will display the data as normal but will strip out columns that
-        have no grouping or aggregation active.
+        have no grouping or value active.
     </p>
 
     <p>

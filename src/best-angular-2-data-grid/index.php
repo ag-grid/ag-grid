@@ -111,7 +111,7 @@ include '../documentation-main/documentation_header.php';
     <pre>@NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withComponents(),
+        AgGridModule.withComponents([...optional Angular 2 Components to be used in the grid....]]),
         ...
 })</pre>
 
