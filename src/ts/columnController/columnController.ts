@@ -266,6 +266,7 @@ export class ColumnController {
         if (this.gridOptionsWrapper.isEnableRtl()) {
             this.viewportLeft = this.bodyWidth - this.scrollPosition - this.scrollWidth;
             this.viewportRight = this.bodyWidth - this.scrollPosition;
+            console.log(`viewportLeft = ${this.viewportLeft}, viewportRight = ${this.viewportRight}`);
         } else {
             this.viewportLeft = this.scrollPosition;
             this.viewportRight = this.scrollWidth + this.scrollPosition;
@@ -285,7 +286,7 @@ export class ColumnController {
 
     // checks what columns are currently displayed due to column virtualisation. fires an event
     // if the list of columns has changed.
-    // + setColumnWidth(), setWidthAndScrollPosition(), setColumnDefs(), sizeColumnsToFit()
+    // + setColumnWidth(), setVirtualViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     private checkDisplayedVirtualColumns(): void {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
         if (_.exists(this.displayedCenterColumns)) {
@@ -299,6 +300,7 @@ export class ColumnController {
     }
 
     public setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void {
+        console.log(`scrollWidth = ${scrollWidth}, scrollPosition = ${scrollPosition}`);
         if (scrollWidth!==this.scrollWidth || scrollPosition!==this.scrollPosition || this.bodyWidthDirty) {
             this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;
@@ -1897,7 +1899,7 @@ export class ColumnController {
         }
 
         this.setLeftValues();
-        this.checkDisplayedVirtualColumns();
+        this.updateBodyWidths();
 
         // widths set, refresh the gui
         colsToFireEventFor.forEach( (column: Column) => {

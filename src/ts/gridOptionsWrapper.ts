@@ -178,8 +178,8 @@ export class GridOptionsWrapper {
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public isEnableRtl() {
-        return true;
-        // return isTrue(this.gridOptions.enableRtl);
+        // return true;
+        return isTrue(this.gridOptions.enableRtl);
     }
     public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }
     public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
