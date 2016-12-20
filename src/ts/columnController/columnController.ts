@@ -266,7 +266,6 @@ export class ColumnController {
         if (this.gridOptionsWrapper.isEnableRtl()) {
             this.viewportLeft = this.bodyWidth - this.scrollPosition - this.scrollWidth;
             this.viewportRight = this.bodyWidth - this.scrollPosition;
-            console.log(`viewportLeft = ${this.viewportLeft}, viewportRight = ${this.viewportRight}`);
         } else {
             this.viewportLeft = this.scrollPosition;
             this.viewportRight = this.scrollWidth + this.scrollPosition;
@@ -300,7 +299,6 @@ export class ColumnController {
     }
 
     public setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void {
-        console.log(`scrollWidth = ${scrollWidth}, scrollPosition = ${scrollPosition}`);
         if (scrollWidth!==this.scrollWidth || scrollPosition!==this.scrollPosition || this.bodyWidthDirty) {
             this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;

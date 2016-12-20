@@ -1055,6 +1055,14 @@ export class GridPanel extends BeanStub {
     private onDisplayedColumnsWidthChanged(): void {
         this.setWidthsOfContainers();
         this.setLeftAndRightBounds();
+        if (this.enableRtl) {
+            // because RTL is all backwards, a change in the width of the row
+            // can cause a change in the scroll position, without a scroll event,
+            // because the scroll position in RTL is a function that depends on
+            // the width. to be convinced of this, take out this line, enable RTL,
+            // scroll all the way to the left and then resize a column
+            this.horizontallyScrollHeaderCenterAndFloatingCenter();
+        }
     }
 
     private onScrollVisibilityChanged(): void {
