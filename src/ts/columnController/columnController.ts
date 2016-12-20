@@ -1274,7 +1274,7 @@ export class ColumnController {
         if (headerValueGetter) {
             var params = {
                 colDef: colDef,
-                column: column,
+                 column: column,
                 columnGroup: columnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
