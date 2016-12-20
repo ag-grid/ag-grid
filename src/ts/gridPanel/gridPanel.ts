@@ -631,15 +631,15 @@ export class GridPanel extends BeanStub {
     }
 
     private isHorizontalScrollShowing(): boolean {
-        var result = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+        var result = _.isHorizontalScrollShowing(this.eBodyViewport);
         return result;
     }
 
     private isVerticalScrollShowing(): boolean {
         if (this.columnController.isPinningRight()) {
-            return _.isHorizontalScrollShowing(this.ePinnedRightColsViewport);
+            return _.isVerticalScrollShowing(this.ePinnedRightColsViewport);
         } else {
-            return _.isHorizontalScrollShowing(this.eBodyViewport);
+            return _.isVerticalScrollShowing(this.eBodyViewport);
         }
     }
 
@@ -710,10 +710,18 @@ export class GridPanel extends BeanStub {
         // fullWidthCell panel isn't covering the scrollbars. originally i tried to do this using
         // margin, but the overflow was not getting clipped and going into the margin,
         // so used border instead. dunno why it works, trial and error found the solution.
-        if (this.isVerticalScrollShowing()) {
-            this.eFullWidthCellViewport.style.borderRight = this.scrollWidth + 'px solid transparent';
+        if (this.enableRtl) {
+            if (this.isVerticalScrollShowing()) {
+                this.eFullWidthCellViewport.style.borderLeft = this.scrollWidth + 'px solid transparent';
+            } else {
+                this.eFullWidthCellViewport.style.borderLeft = '';
+            }
         } else {
-            this.eFullWidthCellViewport.style.borderRight = '';
+            if (this.isVerticalScrollShowing()) {
+                this.eFullWidthCellViewport.style.borderRight = this.scrollWidth + 'px solid transparent';
+            } else {
+                this.eFullWidthCellViewport.style.borderRight = '';
+            }
         }
         if (this.isHorizontalScrollShowing()) {
             this.eFullWidthCellViewport.style.borderBottom = this.scrollWidth + 'px solid transparent';
@@ -1074,10 +1082,12 @@ export class GridPanel extends BeanStub {
         var pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth() + 'px';
 
         this.ePinnedLeftColsViewport.style.width = pinnedLeftWidthWithScroll;
+        this.eBodyViewportWrapper.style.marginLeft = pinnedLeftWidthWithScroll;
+
+        this.ePinnedLeftFloatingBottom.style.width = pinnedLeftWidthWithScroll;
+        this.ePinnedLeftFloatingTop.style.width = pinnedLeftWidthWithScroll;
+
         this.ePinnedLeftColsContainer.style.width = pinnedLeftWidth;
-        this.ePinnedLeftFloatingBottom.style.width = pinnedLeftWidth;
-        this.ePinnedLeftFloatingTop.style.width = pinnedLeftWidth;
-        this.eBodyViewportWrapper.style.marginLeft = pinnedLeftWidth;
     }
 
     private setPinnedRightWidth(): void {
@@ -1085,10 +1095,12 @@ export class GridPanel extends BeanStub {
         var pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth() + 'px';
 
         this.ePinnedRightColsViewport.style.width = pinnedRightWidthWithScroll;
+        this.eBodyViewportWrapper.style.marginRight = pinnedRightWidthWithScroll;
+
+        this.ePinnedRightFloatingBottom.style.width = pinnedRightWidthWithScroll;
+        this.ePinnedRightFloatingTop.style.width = pinnedRightWidthWithScroll;
+
         this.ePinnedRightColsContainer.style.width = pinnedRightWidth;
-        this.ePinnedRightFloatingBottom.style.width = pinnedRightWidth;
-        this.ePinnedRightFloatingTop.style.width = pinnedRightWidth;
-        this.eBodyViewportWrapper.style.marginRight = pinnedRightWidth;
     }
 
     private setPinnedContainersVisible() {
