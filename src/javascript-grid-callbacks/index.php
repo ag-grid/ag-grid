@@ -169,6 +169,11 @@ include '../documentation-main/documentation_header.php';
                 and want to block non-numbers from getting into the grid.</td>
         </tr>
         <tr>
+            <th>sendToClipboard(params)</th>
+            <td>Allows you to get the data that would otherwise go to the clipboard. To be used when you want
+                to control the 'copy to clipboard' operation yourself.</td>
+        </tr>
+        <tr>
             <th>processSecondaryColDef(colDef)</th>
             <td>Callback to be used with pivoting, to allow changing the second column definition.</td>
         </tr>
