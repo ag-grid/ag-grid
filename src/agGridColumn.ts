@@ -12,6 +12,7 @@ import {
     IAggFunc,
     ColGroupDef
 } from "ag-grid/main";
+import {GetQuickFilterTextParams} from "../../ag-grid/dist/lib/entities/colDef";
 
 @Component({
     selector: 'ag-grid-column',
@@ -54,6 +55,19 @@ export class AgGridColumn {
     };
 
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
+    @Input() public headerName: string;
+    @Input() public columnGroupShow: string;
+    @Input() public headerClass: string | string[] | ((params: any) => string | string[]);
+    @Input() public toolPanelClass: string | string[] | ((params: any) => string | string[]);
+    @Input() public headerValueGetter: string | Function;
+    @Input() public pivotKeys: string[];
+    @Input() public suppressToolPanel: boolean;
+
+    @Input() public children: (ColDef | ColGroupDef)[];
+    @Input() public groupId: string;
+    @Input() public openByDefault: boolean;
+    @Input() public marryChildren: boolean;
+
     @Input() public colId: string;
     @Input() public sort: string;
     @Input() public sortedAt: number;
@@ -107,6 +121,7 @@ export class AgGridColumn {
     @Input() public enablePivot: boolean;
     @Input() public enableValue: boolean;
     @Input() public editable: boolean | IsColumnFunc;
+    @Input() public getQuickFilterText : (params: GetQuickFilterTextParams) => string;
     @Input() public suppressNavigable: boolean | IsColumnFunc;
     @Input() public newValueHandler: Function;
     @Input() public volatile: boolean;
@@ -126,13 +141,4 @@ export class AgGridColumn {
         [key: string]: string;
     };
     @Input() public enableCellChangeFlash: boolean;
-
-    @Input() public headerName: string;
-    @Input() public columnGroupShow: string;
-    @Input() public headerClass: string | string[] | ((params: any) => string | string[]);
-    @Input() public children: (ColDef | ColGroupDef)[];
-    @Input() public groupId: string;
-    @Input() public openByDefault: boolean;
-    @Input() public marryChildren: boolean;
-
 }
