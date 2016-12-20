@@ -354,12 +354,18 @@ export class ClipboardService implements IClipboardService {
     }
 
     private copyDataToClipboard(data: string): void {
-        this.executeOnTempElement( (element: HTMLTextAreaElement)=> {
-            element.value = data;
-            element.select();
-            element.focus();
-            return document.execCommand('copy');
-        });
+        let userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
+        if (Utils.exists(userProvidedFunc)) {
+            let params = {data: data};
+            userProvidedFunc(params);
+        } else {
+            this.executeOnTempElement( (element: HTMLTextAreaElement)=> {
+                element.value = data;
+                element.select();
+                element.focus();
+                return document.execCommand('copy');
+            });
+        }
     }
 
     private executeOnTempElement(
