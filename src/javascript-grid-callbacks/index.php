@@ -137,6 +137,14 @@ include '../documentation-main/documentation_header.php';
             <th>doesDataFlower(dataItem)</th>
             <td>Tells the grid if this row should flower.</td>
         </tr>
+        <tr>
+            <th>navigateToNextCell(params)</th>
+            <td>Allows overriding the default behaviour for when user hits navigation (arrow) key.</td>
+        </tr>
+        <tr>
+            <th>tabToNextCell(params)</th>
+            <td>Allows overriding the default behaviour for when user hits tab key.</td>
+        </tr>
     </table>
 
     <p>
