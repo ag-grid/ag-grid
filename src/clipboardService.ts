@@ -1,6 +1,7 @@
 import {
     Bean,
     RangeSelection,
+    GridCellDef,
     CsvExportParams,
     ColDef,
     IClipboardService,
@@ -107,7 +108,8 @@ export class ClipboardService implements IClipboardService {
                     var firstRowValue = firstRowValues[index];
                     this.valueService.setValue(rowNode, column, firstRowValue);
 
-                    var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                    let gridCellDef = <GridCellDef> {rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column};
+                    var cellId = new GridCell(gridCellDef).createId();
                     cellsToFlash[cellId] = true;
                 });
             }
@@ -162,7 +164,8 @@ export class ClipboardService implements IClipboardService {
                 let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
 
                 this.valueService.setValue(rowNode, column, processedValue);
-                var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                let gridCellDef = <GridCellDef> {rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column};
+                var cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
 
                 if (updatedColumnIds.indexOf(column.getId()) < 0) {
@@ -275,7 +278,8 @@ export class ClipboardService implements IClipboardService {
                 if (Utils.exists(processedValue)) {
                     data += processedValue;
                 }
-                var cellId = new GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                let gridCellDef = <GridCellDef> {rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column};
+                var cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
             data += '\r\n';
