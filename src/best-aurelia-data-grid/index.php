@@ -40,25 +40,25 @@ include '../documentation-main/documentation_header.php';
         feature set:
     <ul>
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Aurelia as a wrapper
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>An example using markup to create a grid
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Cell Editor Example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Floating Row Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Full Width Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Group Row Inner Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Filter Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
     </p>
