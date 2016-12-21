@@ -19,6 +19,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#singleClickEditing"><i>suppressClickEdit</i></a>.</li>
     <li>Enhancement: added api.clearFocusedCell()</li>
     <li>Enhancement: added <a href="../javascript-grid-clipboard/#sendToClipboard"><i>sendToClipboard</i></a></li>
+    <li>Enhancement: added <a href="../javascript-grid-keyboard-navigation/#customNavigation">custom keyboard navigation</a></li>
 
     <li>Bug Fix: Sub menu was not working in Firefox, now fixed.</li>
     <li>Bug Fix: Copy to clipboard was not copying focused cell then range selection was turned off.</li>
