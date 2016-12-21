@@ -21,7 +21,7 @@ import {SortController} from "./sortController";
 import {PaginationController} from "./rowControllers/paginationController";
 import {FocusedCellController} from "./focusedCellController";
 import {IRangeController, RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController";
-import {GridCell} from "./entities/gridCell";
+import {GridCell, GridCellDef} from "./entities/gridCell";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
@@ -580,7 +580,8 @@ export class GridApi {
 
     public startEditingCell(params: StartEditingCellParams): void {
         var column = this.columnController.getGridColumn(params.colKey);
-        var gridCell = new GridCell(params.rowIndex, null, column);
+        let gridCellDef = <GridCellDef> {rowIndex: params.rowIndex, floating: null, column: column};
+        var gridCell = new GridCell(gridCellDef);
         this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
     }
 

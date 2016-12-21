@@ -61,7 +61,7 @@ export class FocusService {
         }
 
         if (_.exists(column) && _.exists(row)) {
-            var gridCell = new GridCell(row, floating, column);
+            var gridCell = new GridCell({rowIndex: row, floating: floating, column: column});
             return gridCell;
         } else {
             return null;

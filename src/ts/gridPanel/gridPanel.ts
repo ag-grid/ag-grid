@@ -671,7 +671,6 @@ export class GridPanel extends BeanStub {
         this.setBottomPaddingOnPinnedRight();
         this.setMarginOnFullWidthCellContainer();
         this.setScrollShowing();
-        console.log(`this.eBodyViewport.scrollTop = ${this.eBodyViewport.scrollTop}`);
     }
 
     private setScrollShowing(): void {

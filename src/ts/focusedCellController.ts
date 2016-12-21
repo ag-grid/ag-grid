@@ -86,7 +86,7 @@ export class FocusedCellController {
         }
 
         if (_.exists(column) && _.exists(row)) {
-            var gridCell = new GridCell(row, floating, column);
+            var gridCell = new GridCell({rowIndex: row, floating: floating, column: column});
             return gridCell;
         } else {
             return null;
@@ -127,7 +127,9 @@ export class FocusedCellController {
         }
 
         var column = _.makeNull(this.columnController.getGridColumn(colKey));
-        this.focusedCell = new GridCell(rowIndex, _.makeNull(floating), column);
+        this.focusedCell = new GridCell({rowIndex: rowIndex,
+                                        floating: _.makeNull(floating),
+                                        column: column});
 
         this.onCellFocused(forceBrowserFocus);
     }

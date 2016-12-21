@@ -22,6 +22,7 @@ import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
+import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOptions";
 
 @Bean('rowRenderer')
 export class RowRenderer {
@@ -566,9 +567,10 @@ export class RowRenderer {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string) {
+    public navigateToNextCell(key: number, rowIndex: number, column: Column, floating: string) {
 
-        var nextCell = new GridCell(rowIndex, floating, column);
+        let previousCell = new GridCell({rowIndex: rowIndex, floating: floating, column: column});
+        let nextCell = previousCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
@@ -586,6 +588,22 @@ export class RowRenderer {
                 }
             } else {
                 break;
+            }
+        }
+
+        // allow user to override what cell to go to next
+        var userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
+        if (_.exists(userFunc)) {
+            let params = <NavigateToNextCellParams> {
+                key: key,
+                previousCellDef: previousCell,
+                nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+            };
+            let nextCellDef = userFunc(params);
+            if (_.exists(nextCellDef)) {
+                nextCell = new GridCell(nextCellDef);
+            } else {
+                nextCell = null;
             }
         }
 
@@ -609,7 +627,8 @@ export class RowRenderer {
 
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
         if (this.rangeController) {
-            this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+            let gridCell = new GridCell({rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column});
+            this.rangeController.setRangeToCell(gridCell);
         }
     }
 
@@ -732,6 +751,23 @@ export class RowRenderer {
 
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
 
+            // allow user to override what cell to go to next
+            var userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
+            if (_.exists(userFunc)) {
+                let params = <TabToNextCellParams> {
+                    backwards: backwards,
+                    editing: startEditing,
+                    previousCellDef: gridCell.getGridCellDef(),
+                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+                };
+                let nextCellDef = userFunc(params);
+                if (_.exists(nextCellDef)) {
+                    nextCell = new GridCell(nextCellDef);
+                } else {
+                    nextCell = null;
+                }
+            }
+
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) {
@@ -765,7 +801,8 @@ export class RowRenderer {
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
-                this.rangeController.setRangeToCell(new GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+                let gridCell = new GridCell({rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column});
+                this.rangeController.setRangeToCell(gridCell);
             }
 
             // we successfully tabbed onto a grid cell, so return true

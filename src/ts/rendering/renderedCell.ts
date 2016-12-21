@@ -16,7 +16,7 @@ import {GridApi} from "../gridApi";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {IRangeController} from "../interfaces/iRangeController";
-import {GridCell} from "../entities/gridCell";
+import {GridCell, GridCellDef} from "../entities/gridCell";
 import {FocusService} from "../misc/focusService";
 import {ICellEditor, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditorFactory";
@@ -103,7 +103,12 @@ export class RenderedCell extends Component {
     }
 
     private createGridCell(): void {
-        this.gridCell = new GridCell(this.node.rowIndex, this.node.floating, this.column);
+        let gridCellDef = <GridCellDef> {
+            rowIndex: this.node.rowIndex,
+            floating: this.node.floating,
+            column: this.column
+        };
+        this.gridCell = new GridCell(gridCellDef);
     }
 
     private setupGridCell(): void {

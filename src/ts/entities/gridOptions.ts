@@ -6,6 +6,7 @@ import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
 import {IDatasource} from "../rowControllers/iDatasource";
+import {GridCellDef} from "./gridCell";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -174,8 +175,8 @@ export interface GridOptions {
     getRowHeight?: Function;
     checkboxSelection?: (params: any)=> boolean;
     sendToClipboard?: (params: any)=>void;
-    // navigateToNextCell?: (params: any)=>void;
-    // tabToNextCell?: (params: any)=>void;
+    navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
+    tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
 
     fullWidthCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
@@ -347,4 +348,17 @@ export interface ProcessHeaderForExportParams {
     api: GridApi,
     columnApi: ColumnApi,
     context: any
+}
+
+export interface NavigateToNextCellParams {
+    key: number;
+    previousCellDef: GridCellDef;
+    nextCellDef: GridCellDef;
+}
+
+export interface TabToNextCellParams {
+    backwards: boolean;
+    editing: boolean;
+    previousCellDef: GridCellDef;
+    nextCellDef: GridCellDef;
 }
