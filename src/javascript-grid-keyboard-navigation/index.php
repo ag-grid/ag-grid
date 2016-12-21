@@ -142,7 +142,11 @@ include '../documentation-main/documentation_header.php';
     column: Column;
 }</pre>
 
-    <p>The functions take a GridCellDef for current and next cells, as well as returning a GridCellDef object.</p>
+    <p>
+        The functions take a GridCellDef for current and next cells, as well as returning a GridCellDef object.
+        The returned GridCellDef will be the one the grid puts focus on next. Return the provided <i>nextCellDef</i>
+        to stick with the grid default behaviour. Return null/undefined to skip the navigation.
+    </p>
 
     <h4>Example Customer Navigation</h4>
 
