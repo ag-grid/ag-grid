@@ -860,8 +860,9 @@ export class RenderedRow {
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
     private roundRowTopToBounds(rowTop: number): number {
-        let minPixel = this.gridPanel.getBodyTopPixel() - 100;
-        let maxPixel = this.gridPanel.getBodyBottomPixel() + 100;
+        let range = this.gridPanel.getVerticalPixelRange();
+        let minPixel = range.top - 100;
+        let maxPixel = range.bottom + 100;
         if (rowTop < minPixel) {
             return minPixel;
         } else if (rowTop > maxPixel) {

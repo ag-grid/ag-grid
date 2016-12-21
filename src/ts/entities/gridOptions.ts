@@ -174,6 +174,8 @@ export interface GridOptions {
     getRowHeight?: Function;
     checkboxSelection?: (params: any)=> boolean;
     sendToClipboard?: (params: any)=>void;
+    // navigateToNextCell?: (params: any)=>void;
+    // tabToNextCell?: (params: any)=>void;
 
     fullWidthCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;

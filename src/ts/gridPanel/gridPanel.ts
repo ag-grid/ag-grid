@@ -180,12 +180,26 @@ export class GridPanel extends BeanStub {
         this.findElements();
     }
 
-    public getBodyTopPixel(): number {
-        return this.eBodyViewport.scrollTop;
-    }
-
-    public getBodyBottomPixel(): number {
-        return this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
+    public getVerticalPixelRange(): any {
+        let container: HTMLElement;
+        if (this.enableRtl) {
+            if (this.columnController.isPinningLeft()) {
+                container = this.ePinnedLeftColsViewport;
+            } else {
+                container = this.eBodyViewport;
+            }
+        } else {
+            if (this.columnController.isPinningRight()) {
+                container = this.ePinnedRightColsViewport;
+            } else {
+                container = this.eBodyViewport;
+            }
+        }
+        let result = {
+            top: container.scrollTop,
+            bottom: container.scrollTop + container.offsetHeight
+        };
+        return result;
     }
 
     // we override this, as the base class is missing the annotation
@@ -657,6 +671,7 @@ export class GridPanel extends BeanStub {
         this.setBottomPaddingOnPinnedRight();
         this.setMarginOnFullWidthCellContainer();
         this.setScrollShowing();
+        console.log(`this.eBodyViewport.scrollTop = ${this.eBodyViewport.scrollTop}`);
     }
 
     private setScrollShowing(): void {
@@ -1280,7 +1295,7 @@ export class GridPanel extends BeanStub {
             this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressScroll);
         }
 
-        this.addIEPinFix(onPinnedRightScroll);
+        this.addIEPinFix(onPinnedRightScroll, onPinnedLeftScroll);
     }
 
     // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),
@@ -1295,11 +1310,15 @@ export class GridPanel extends BeanStub {
     // this bit is a fix / hack for IE due to this:
     // https://www.ag-grid.com/forum/showthread.php?tid=4303
     // it gets the left panel to reposition itself after a model change
-    private addIEPinFix(onPinnedRightScroll: Function): void {
+    private addIEPinFix(onPinnedRightScroll: Function, onPinnedLeftScroll: Function): void {
         var listener = () => {
             if (this.columnController.isPinningRight()) {
                 setTimeout( ()=> {
-                    onPinnedRightScroll();
+                    if (this.enableRtl) {
+                        onPinnedLeftScroll();
+                    } else {
+                        onPinnedRightScroll();
+                    }
                 }, 0);
             }
         };
@@ -1397,45 +1416,4 @@ export class GridPanel extends BeanStub {
     public removeScrollEventListener(listener: ()=>void): void {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
-
-/*    public getVerticalScrollPosition(): number {
-        if (this.forPrint) {
-            return 0;
-        } else {
-            return this.eBodyViewport.scrollTop;
-        }
-    }
-
-    public getBodyViewportClientRect(): ClientRect {
-        if (this.forPrint) {
-            return this.eBodyContainer.getBoundingClientRect();
-        } else {
-            return this.eBodyViewport.getBoundingClientRect();
-        }
-    }
-
-    public getFloatingTopClientRect(): ClientRect {
-        if (this.forPrint) {
-            return this.eFloatingTopContainer.getBoundingClientRect();
-        } else {
-            return this.eFloatingTop.getBoundingClientRect();
-        }
-    }
-
-    public getFloatingBottomClientRect(): ClientRect {
-        if (this.forPrint) {
-            return this.eFloatingBottomContainer.getBoundingClientRect();
-        } else {
-            return this.eFloatingBottom.getBoundingClientRect();
-        }
-    }
-
-    public getPinnedLeftColsViewportClientRect(): ClientRect {
-        return this.ePinnedLeftColsViewport.getBoundingClientRect();
-    }
-
-    public getPinnedRightColsViewportClientRect(): ClientRect {
-        return this.ePinnedRightColsViewport.getBoundingClientRect();
-    }
-*/
 }

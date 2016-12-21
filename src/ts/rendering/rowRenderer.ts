@@ -424,8 +424,9 @@ export class RowRenderer {
                 newLast = rowCount;
             } else {
 
-                var topPixel = this.gridPanel.getBodyTopPixel();
-                var bottomPixel = this.gridPanel.getBodyBottomPixel();
+                let bodyVRange = this.gridPanel.getVerticalPixelRange();
+                var topPixel = bodyVRange.top;
+                var bottomPixel = bodyVRange.bottom;
 
                 var first = this.rowModel.getRowIndexAtPixel(topPixel);
                 var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
