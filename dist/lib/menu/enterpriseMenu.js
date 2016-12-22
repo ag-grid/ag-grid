@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -77,7 +78,7 @@ var EnterpriseMenuFactory = (function () {
         __metadata('design:paramtypes', [])
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
-})();
+}());
 exports.EnterpriseMenuFactory = EnterpriseMenuFactory;
 var EnterpriseMenu = (function () {
     function EnterpriseMenu(column, initialSelection) {
@@ -309,5 +310,5 @@ var EnterpriseMenu = (function () {
         __metadata('design:returntype', void 0)
     ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
-})();
+}());
 exports.EnterpriseMenu = EnterpriseMenu;

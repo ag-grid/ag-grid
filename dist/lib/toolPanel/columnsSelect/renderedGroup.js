@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -18,7 +19,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var RenderedGroup = (function (_super) {
     __extends(RenderedGroup, _super);
     function RenderedGroup(columnGroup, columnDept, expandedCallback, allowDragging) {
-        _super.call(this, RenderedGroup.TEMPLATE);
+        _super.call(this);
         this.expanded = true;
         this.processingColumnStateChange = false;
         this.columnGroup = columnGroup;
@@ -27,6 +28,7 @@ var RenderedGroup = (function (_super) {
         this.allowDragging = allowDragging;
     }
     RenderedGroup.prototype.init = function () {
+        this.setTemplate(RenderedGroup.TEMPLATE);
         this.instantiate(this.context);
         var eText = this.queryForHtmlElement('#eText');
         this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
@@ -256,5 +258,5 @@ var RenderedGroup = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RenderedGroup.prototype, "init", null);
     return RenderedGroup;
-})(main_1.Component);
+}(main_1.Component));
 exports.RenderedGroup = RenderedGroup;

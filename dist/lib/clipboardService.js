@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -57,7 +58,8 @@ var ClipboardService = (function () {
                     }
                     var firstRowValue = firstRowValues[index];
                     _this.valueService.setValue(rowNode, column, firstRowValue);
-                    var cellId = new main_1.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                    var gridCellDef = { rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column };
+                    var cellId = new main_1.GridCell(gridCellDef).createId();
                     cellsToFlash[cellId] = true;
                 });
             }
@@ -107,7 +109,8 @@ var ClipboardService = (function () {
                 }
                 var processedValue = _this.processRangeCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
                 _this.valueService.setValue(rowNode, column, processedValue);
-                var cellId = new main_1.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                var gridCellDef = { rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column };
+                var cellId = new main_1.GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
                 if (updatedColumnIds.indexOf(column.getId()) < 0) {
                     updatedColumnIds.push(column.getId());
@@ -131,10 +134,13 @@ var ClipboardService = (function () {
             this.copySelectedRangeToClipboard(includeHeaders);
         }
         else if (selectedRowsToCopy) {
+            // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
         }
-        else if (!this.rangeController.isEmpty()) {
-            this.copySelectedRangeToClipboard(includeHeaders);
+        else {
+            // then lastly, if no range or no row selection,
+            // then copy the focused cell
+            this.copyFocusedCellToClipboard();
         }
     };
     ClipboardService.prototype.iterateActiveRanges = function (onlyFirst, rowCallback, columnCallback) {
@@ -205,13 +211,36 @@ var ClipboardService = (function () {
                 if (main_1.Utils.exists(processedValue)) {
                     data += processedValue;
                 }
-                var cellId = new main_1.GridCell(currentRow.rowIndex, currentRow.floating, column).createId();
+                var gridCellDef = { rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column };
+                var cellId = new main_1.GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
             data += '\r\n';
         };
         this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
+        this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+    };
+    ClipboardService.prototype.copyFocusedCellToClipboard = function () {
+        var focusedCell = this.focusedCellController.getFocusedCell();
+        if (main_1.Utils.missing(focusedCell)) {
+            return;
+        }
+        var currentRow = focusedCell.getGridRow();
+        var rowNode = this.getRowNode(currentRow);
+        var column = focusedCell.column;
+        var value = this.valueService.getValue(column, rowNode);
+        var processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
+        if (main_1.Utils.exists(processedValue)) {
+            var data = value.toString();
+            this.copyDataToClipboard(data);
+        }
+        else {
+            this.copyDataToClipboard('');
+        }
+        var cellId = focusedCell.createId();
+        var cellsToFlash = {};
+        cellsToFlash[cellId] = true;
         this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
     };
     ClipboardService.prototype.processRangeCell = function (rowNode, column, value, func) {
@@ -254,12 +283,19 @@ var ClipboardService = (function () {
         this.copyDataToClipboard(data);
     };
     ClipboardService.prototype.copyDataToClipboard = function (data) {
-        this.executeOnTempElement(function (element) {
-            element.value = data;
-            element.select();
-            element.focus();
-            return document.execCommand('copy');
-        });
+        var userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
+        if (main_1.Utils.exists(userProvidedFunc)) {
+            var params = { data: data };
+            userProvidedFunc(params);
+        }
+        else {
+            this.executeOnTempElement(function (element) {
+                element.value = data;
+                element.select();
+                element.focus();
+                return document.execCommand('copy');
+            });
+        }
     };
     ClipboardService.prototype.executeOnTempElement = function (callbackNow, callbackAfter) {
         var eTempInput = document.createElement('textarea');
@@ -410,5 +446,5 @@ var ClipboardService = (function () {
         __metadata('design:paramtypes', [])
     ], ClipboardService);
     return ClipboardService;
-})();
+}());
 exports.ClipboardService = ClipboardService;

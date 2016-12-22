@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -177,5 +178,5 @@ var StatusBar = (function (_super) {
         __metadata('design:paramtypes', [])
     ], StatusBar);
     return StatusBar;
-})(main_1.Component);
+}(main_1.Component));
 exports.StatusBar = StatusBar;
