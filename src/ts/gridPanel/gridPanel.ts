@@ -628,14 +628,7 @@ export class GridPanel extends BeanStub {
         var viewportScrolledPastRow = vRangeTop > rowTopPixel;
         var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
 
-        let eViewportToScroll: HTMLElement;
-        if (this.enableRtl && this.columnController.isPinningLeft()) {
-            eViewportToScroll = this.ePinnedLeftColsViewport;
-        } else if (!this.enableRtl && this.columnController.isPinningRight()) {
-            eViewportToScroll = this.ePinnedRightColsViewport;
-        } else {
-            eViewportToScroll = this.eBodyViewport;
-        }
+        let eViewportToScroll = this.getPrimaryScrollViewport();
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
@@ -649,6 +642,16 @@ export class GridPanel extends BeanStub {
             this.rowRenderer.drawVirtualRowsWithLock();
         }
         // otherwise, row is already in view, so do nothing
+    }
+
+    private getPrimaryScrollViewport(): HTMLElement {
+        if (this.enableRtl && this.columnController.isPinningLeft()) {
+            return this.ePinnedLeftColsViewport;
+        } else if (!this.enableRtl && this.columnController.isPinningRight()) {
+            return this.ePinnedRightColsViewport;
+        } else {
+            return this.eBodyViewport;
+        }
     }
 
     // + moveColumnController
@@ -1075,7 +1078,7 @@ export class GridPanel extends BeanStub {
         }
         // vertical scroll
         else {
-            var newTopPosition = this.eBodyViewport.scrollTop + wheelEvent.pixelY;
+            var newTopPosition = targetPanel.scrollTop + wheelEvent.pixelY;
             targetPanel.scrollTop = newTopPosition;
         }
 
@@ -1155,22 +1158,62 @@ export class GridPanel extends BeanStub {
         this.ePinnedRightColsContainer.style.width = pinnedRightWidth;
     }
 
+    private pinningRight: boolean;
+    private pinningLeft: boolean;
+
     private setPinnedContainersVisible() {
         // no need to do this if not using scrolls
         if (this.forPrint) {
             return;
         }
 
+        let changeDetected = false;
+
         let showLeftPinned = this.columnController.isPinningLeft();
-        this.ePinnedLeftHeader.style.display = showLeftPinned ? 'inline-block' : 'none';
-        this.ePinnedLeftColsViewport.style.display = showLeftPinned ? 'inline' : 'none';
+        if (showLeftPinned !== this.pinningLeft) {
+            this.pinningLeft = showLeftPinned;
+            this.ePinnedLeftHeader.style.display = showLeftPinned ? 'inline-block' : 'none';
+            this.ePinnedLeftColsViewport.style.display = showLeftPinned ? 'inline' : 'none';
+            changeDetected = true;
+        }
 
         let showRightPinned = this.columnController.isPinningRight();
-        this.ePinnedRightHeader.style.display = showRightPinned ? 'inline-block' : 'none';
-        this.ePinnedRightColsViewport.style.display = showRightPinned ? 'inline' : 'none';
+        if (showRightPinned !== this.pinningRight) {
+            this.pinningRight = showRightPinned;
+            this.ePinnedRightHeader.style.display = showRightPinned ? 'inline-block' : 'none';
+            this.ePinnedRightColsViewport.style.display = showRightPinned ? 'inline' : 'none';
+            changeDetected = true;
+        }
 
-        let bodyVScrollActive = this.isBodyVerticalScrollActive();
-        this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
+        if (changeDetected) {
+            let bodyVScrollActive = this.isBodyVerticalScrollActive();
+            this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
+
+            // if we are v scrolling, then one of these will have the scroll position
+            let scrollTop = Math.max(
+                this.eBodyViewport.scrollTop,
+                this.ePinnedLeftColsViewport.scrollTop,
+                this.ePinnedRightColsViewport.scrollTop);
+
+            // the body either uses it's scroll (when scrolling) or it's style.top
+            // (when following the scroll of a pinned section), so we need to set it
+            // back when changing from one to the other
+            if (bodyVScrollActive) {
+                this.eBodyContainer.style.top = '0px';
+            } else {
+                this.eBodyViewport.scrollTop = 0;
+            }
+
+            // when changing the primary scroll viewport, we copy over the scroll position,
+            // eg if body was getting scrolled and we were at position 100px, then we start
+            // pinning and pinned viewport is now the primary, we need to set it to 100px
+            let primaryScrollViewport = this.getPrimaryScrollViewport();
+            primaryScrollViewport.scrollTop = scrollTop;
+            // this adjusts the scroll position of all the faking panels. they should already
+            // be correct except body which has potentially just turned to be fake.
+            this.fakeVerticalScroll(scrollTop);
+        }
+
     }
 
     // init, layoutChanged, floatingDataChanged, headerHeightChanged
@@ -1414,13 +1457,15 @@ export class GridPanel extends BeanStub {
         this.eFloatingTopContainer.style.left = offset + 'px';
     }
 
+    // we say fake scroll as only one panel (left, right or body) has scrolls,
+    // the other panels mimic the scroll by getting it's top position updated.
     private fakeVerticalScroll(position: number): void {
         if (this.enableRtl) {
             // RTL
             // if pinning left, then body scroll is faking
             let pinningLeft = this.columnController.isPinningLeft();
             if (pinningLeft) {
-                this.eBodyViewport.scrollTop = position;
+                this.eBodyContainer.style.top = -position + 'px';
             }
             // right is always faking
             this.ePinnedRightColsContainer.style.top = -position + 'px';
@@ -1429,7 +1474,7 @@ export class GridPanel extends BeanStub {
             // if pinning right, then body scroll is faking
             let pinningRight = this.columnController.isPinningRight();
             if (pinningRight) {
-                this.eBodyViewport.scrollTop = position;
+                this.eBodyContainer.style.top = -position + 'px';
             }
             // left is always faking
             this.ePinnedLeftColsContainer.style.top = -position + 'px';
