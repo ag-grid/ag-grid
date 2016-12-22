@@ -29,10 +29,24 @@
             })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
         </script>
 
+        <style>
+            label { font-weight: normal !important; }
+            .blue { background-color: darkblue; color: lightblue; }
 
-<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
--->
+            .ag-fresh .good-score { background-color: rgba(0,200,0,0.4) }
+            .ag-blue .good-score { background-color: rgba(0,200,0,0.4) }
+            .ag-dark .good-score { background-color: rgba(0,100,0,0.4) }
+
+            .ag-fresh .bad-score { background-color: rgba(200,0,0,0.4) }
+            .ag-blue .bad-score { background-color: rgba(200,0,0,0.4) }
+            .ag-dark .bad-score { background-color: rgba(100,0,0,0.4) }
+
+        </style>
+
+
+        <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        -->
 <!--        <script src="./bootstrap/jquery.min.js"></script>
         <script src="./bootstrap/bootstrap.min.js"></script>
 -->
