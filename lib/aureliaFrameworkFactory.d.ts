@@ -1,4 +1,4 @@
-// ag-grid-aurelia v7.0.0
+// ag-grid-aurelia v7.1.0
 import { Container, ViewResources, ViewCompiler } from "aurelia-framework";
 import { ICellRenderer, ICellEditor, IFrameworkFactory, IFilter, ICellRendererFunc, ColDef, GridOptions } from "ag-grid/main";
 import { AureliaComponentFactory } from "./aureliaComponentFactory";
@@ -32,5 +32,5 @@ export declare class AureliaFrameworkFactory implements IFrameworkFactory {
     } | string;
     setContainer(container: Container): void;
     setViewResources(viewResources: ViewResources): void;
-    setTimeout(handler: any, timeout?: any): number;
+    setTimeout(action: any, timeout?: any): void;
 }

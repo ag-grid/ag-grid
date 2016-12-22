@@ -76,7 +76,7 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
         this._viewResources = viewResources;
     }
 
-    setTimeout(handler: any, timeout?: any): number {
-        return this._baseFrameworkFactory.setTimeout(handler, timeout);
+    setTimeout(action: any, timeout?: any): void {
+        this._baseFrameworkFactory.setTimeout(action, timeout);
     }
 }
