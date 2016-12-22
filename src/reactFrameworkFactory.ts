@@ -68,6 +68,6 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
     }
 
     setTimeout(action: any, timeout?: any): void {
-        return this.baseFrameworkFactory.setTimeout(action, timeout);
+        this.baseFrameworkFactory.setTimeout(action, timeout);
     }
 }
