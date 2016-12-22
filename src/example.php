@@ -17,19 +17,17 @@
 
         <link rel="stylesheet" href="./style.css">
 
-        <style>
-            label { font-weight: normal !important; }
-            .blue { background-color: darkblue; color: lightblue; }
-
-            .ag-fresh .good-score { background-color: rgba(0,200,0,0.4) }
-            .ag-blue .good-score { background-color: rgba(0,200,0,0.4) }
-            .ag-dark .good-score { background-color: rgba(0,100,0,0.4) }
-
-            .ag-fresh .bad-score { background-color: rgba(200,0,0,0.4) }
-            .ag-blue .bad-score { background-color: rgba(200,0,0,0.4) }
-            .ag-dark .bad-score { background-color: rgba(100,0,0,0.4) }
-
-        </style>
+<!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
+        <script>
+            (function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:372643,hjsv:5};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+            })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+        </script>
 
 
 <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -47,17 +45,17 @@
 
         <script src="example.js"></script>
 
+        <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
         <script>
             (function(h,o,t,j,a,r){
                 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                h._hjSettings={hjid:344028,hjsv:5};
+                h._hjSettings={hjid:372643,hjsv:5};
                 a=o.getElementsByTagName('head')[0];
                 r=o.createElement('script');r.async=1;
                 r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
                 a.appendChild(r);
             })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
         </script>
-
 
     </head>
 
