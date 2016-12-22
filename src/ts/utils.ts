@@ -27,6 +27,7 @@ export class Utils {
     private static isIE: boolean;
     private static isEdge: boolean;
     private static isChrome: boolean;
+    private static isFirefox: boolean;
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -97,8 +98,8 @@ export class Utils {
     static getScrollLeft(element: HTMLElement, rtl: boolean): number {
         var scrollLeft = element.scrollLeft;
         if (rtl) {
-            // Absolute value - gets IE and FF to return the same values
-            var scrollLeft = Math.abs(scrollLeft);
+            // Absolute value - for FF that reports RTL scrolls in negative numbers
+            scrollLeft = Math.abs(scrollLeft);
 
             // Get Chrome and Safari to return the same value as well
             if (this.isBrowserSafari() || this.isBrowserChrome()) {
@@ -106,6 +107,20 @@ export class Utils {
             }
         }
         return scrollLeft;
+    }
+
+    static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
+        if (rtl) {
+            // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
+            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+                value = element.scrollWidth - element.clientWidth - value;
+            }
+            // Firefox uses negative numbers when doing RTL scrolling
+            if (this.isBrowserFirefox()) {
+                value *= -1;
+            }
+        }
+        element.scrollLeft = value;
     }
 
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
@@ -691,6 +706,14 @@ export class Utils {
             this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
         }
         return this.isChrome;
+    }
+
+    static isBrowserFirefox(): boolean {
+        if (this.isFirefox===undefined) {
+            let anyWindow = <any> window;
+            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';;
+        }
+        return this.isFirefox;
     }
 
     // srcElement is only available in IE. In all other browsers it is target
