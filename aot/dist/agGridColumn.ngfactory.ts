@@ -5,7 +5,7 @@
  */
  /* tslint:disable */
 
-import * as import0 from '../../src/agGridColumn';
+import * as import0 from '../../dist/agGridColumn';
 import * as import1 from '@angular/core/src/change_detection/change_detection_util';
 import * as import2 from '@angular/core/src/linker/view';
 import * as import3 from '@angular/core/src/linker/view_utils';

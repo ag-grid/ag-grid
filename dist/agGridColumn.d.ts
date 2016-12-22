@@ -1,17 +1,28 @@
 import { QueryList } from "@angular/core";
 import { ColDef, SetFilterParameters, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef } from "ag-grid/main";
+import { GetQuickFilterTextParams } from "../../ag-grid/dist/lib/entities/colDef";
 export declare class AgGridColumn {
     childColumns: QueryList<AgGridColumn>;
     hasChildColumns(): boolean;
     toColDef(): ColDef;
     private getChildColDefs(childColumns);
     private createColDefFromGridColumn(from);
+    headerName: string;
+    columnGroupShow: string;
+    headerClass: string | string[] | ((params: any) => string | string[]);
+    toolPanelClass: string | string[] | ((params: any) => string | string[]);
+    headerValueGetter: string | Function;
+    pivotKeys: string[];
+    suppressToolPanel: boolean;
+    children: (ColDef | ColGroupDef)[];
+    groupId: string;
+    openByDefault: boolean;
+    marryChildren: boolean;
     colId: string;
     sort: string;
     sortedAt: number;
     sortingOrder: string[];
     field: string;
-    headerValueGetter: string | Function;
     hide: boolean;
     pinned: boolean | string;
     tooltipField: string;
@@ -59,6 +70,7 @@ export declare class AgGridColumn {
     enablePivot: boolean;
     enableValue: boolean;
     editable: boolean | IsColumnFunc;
+    getQuickFilterText: (params: GetQuickFilterTextParams) => string;
     suppressNavigable: boolean | IsColumnFunc;
     newValueHandler: Function;
     volatile: boolean;
@@ -78,11 +90,4 @@ export declare class AgGridColumn {
         [key: string]: string;
     };
     enableCellChangeFlash: boolean;
-    headerName: string;
-    columnGroupShow: string;
-    headerClass: string | string[] | ((params: any) => string | string[]);
-    children: (ColDef | ColGroupDef)[];
-    groupId: string;
-    openByDefault: boolean;
-    marryChildren: boolean;
 }
