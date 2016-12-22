@@ -94,18 +94,37 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular JS</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular JS</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular 2</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular 2+</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular 2</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular 2+</a>
                 <?php } ?>
 
-                <?php if ($key == "Getting Started Web Components") { ?>
+<!--
+                < ?php /*if ($key == "Angular CLI") { */?>
+                    <span class="sidebarLinkSelected" style="padding-left: 40px">Angular CLI</span>
+                < ?php /*} else { */?>
+                    <a class="sidebarLink" href="< ?php /*print($rootFolder) */?>ag-grid-angular-angularcli/" style="padding-left: 40px">Angular CLI</a>
+                < ?php /*} */?>
+
+                < ?php /*if ($key == "Angular Webpack") { */?>
+                    <span class="sidebarLinkSelected" style="padding-left: 40px">Webpack</span>
+                < ?php /*} else { */?>
+                    <a class="sidebarLink" href="< ?php /*print($rootFolder) */?>ag-grid-angular-webpack/" style="padding-left: 40px">Webpack</a>
+                < ?php /*} */?>
+
+                < ?php /*if ($key == "Angular SystemJS") { */?>
+                    <span class="sidebarLinkSelected" style="padding-left: 40px">SystemJS</span>
+                < ?php /*} else { */?>
+                    <a class="sidebarLink" href="< ?php /*print($rootFolder) */?>ag-grid-angular-systemjs/" style="padding-left: 40px">SystemJS</a>
+                < ?php /*} */?>
+
+-->                <?php if ($key == "Getting Started Web Components") { ?>
                     <span class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</span>
                 <?php } else { ?>
                     <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</a>
