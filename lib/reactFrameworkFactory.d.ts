@@ -1,4 +1,4 @@
-// ag-grid-react v7.0.0
+// ag-grid-react v7.1.0
 import { IFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, GridOptions, ICellEditor } from 'ag-grid';
 export declare class ReactFrameworkFactory implements IFrameworkFactory {
     private agGridReact;
@@ -25,5 +25,5 @@ export declare class ReactFrameworkFactory implements IFrameworkFactory {
     gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
-    setTimeout(handler: any, timeout?: any): number;
+    setTimeout(action: any, timeout?: any): void;
 }
