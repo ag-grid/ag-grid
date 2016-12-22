@@ -20,12 +20,62 @@ include '../documentation-main/documentation_header.php';
         want to use it.
     </p>
 
-    <h4>Creating the AngularJS Module</h4>
+    <h3>Pull in the ag-Grid Dependencies</h3>
+    <p>You'll need to ensure you refer to the ag-grid library correctly - this can be done in a number of ways, but
+        but you'll need to ensure you refer to either the ag-grid or the ag-grid-enterprise
+    dependency, depending on which feature set you're using (i.e. if you're using any Enterprise features you'll need ag-grid-enterprise)</p>
+    <p>As an example we'll use NPM to manage our dependencies, and then refer to the dependencies in our HTML file:</p>
+    <h5>Using ag-Grid</h5>
+    <pre><span class="codeComment">// package.json</span>
+"dependencies": {
+    "ag-grid": "7.1.x",
+}
+
+<span class="codeComment">// index.html</span>
+&lt;html>
+&lt;head>
+    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
+    &lt;script src="&lt;your script>.js">&lt;/script>
+&lt;/head>
+</pre>
+    <h5>Using ag-Grid-Enterprise</h5>
+    <pre><span class="codeComment">// package.json</span>
+"dependencies": {
+    "ag-grid-enterprise": "7.1.x",
+}
+
+<span class="codeComment">// index.html</span>
+&lt;html>
+&lt;head>
+    &lt;script src="node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.js">&lt;/script>
+    &lt;script src="&lt;your script>.js">&lt;/script>
+&lt;/head>
+</pre>
+    <p>In either of the above examples we're using the full JS dependency which includes styles & themes - you can optionally chose to use the version without styles included (<code>.noStyle.js</code>).
+    If you do this, you'll need to refer to the styles & themes separately, as below:</p>
+<pre>
+<span class="codeComment">// index.html</span>
+&lt;html>
+&lt;head>
+    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
+    &lt;script src="node_modules/ag-grid/dist/styles/ag-grid.css">&lt;/script>
+    &lt;script src="node_modules/ag-grid/dist/styles/theme-fresh.css">&lt;/script>
+    &lt;script src="&lt;your script>.js">&lt;/script>
+&lt;/head>
+</pre>
+</p>
+    <h3>Creating the AngularJS Module</h3>
     Include ag-Grid as a dependency of your module like this:
     <p/>
-    <pre><code>// get ag-Grid to create an Angular module and register the ag-Grid directive
+    <pre>
+<span class="codeComment">// if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else</span>
+<span class="codeComment">// not necessary if you're just using ag-Grid</span>
+agGrid.LicenseManager.setLicenseKey("your license key goes here");
+
+<span class="codeComment">// get ag-Grid to create an Angular module and register the ag-Grid directive</span>
 agGrid.initialiseAgGridWithAngular1(angular);
-// create your module with ag-Grid as a dependency
+
+<span class="codeComment">// create your module with ag-Grid as a dependency</span>
 var module = angular.module("example", ["agGrid"]);</code></pre>
 
     <h4>ag-Grid Div</h4>
