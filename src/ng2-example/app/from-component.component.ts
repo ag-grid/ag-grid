@@ -4,6 +4,7 @@ import {GridOptions} from 'ag-grid/main';
 import {SquareComponent} from "./square.component";
 import {ParamsComponent} from "./params.component";
 import {CubeComponent} from "./cube.component";
+import {CurrencyComponent} from "./currency.component";
 
 @Component({
     moduleId: module.id,
@@ -25,29 +26,42 @@ export class FromComponentComponent {
 
     private createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 200},
+            {headerName: "Row", field: "row", width: 140},
             {
-                headerName: "Square Component",
+                headerName: "Square",
                 field: "value",
                 cellRendererFramework: SquareComponent,
                 editable:true,
                 colId: "square",
-                width: 175
+                width: 125
             },
             {
-                headerName: "Cube Component",
+                headerName: "Cube",
                 field: "value",
                 cellRendererFramework: CubeComponent,
                 colId: "cube",
-                width: 175
+                width: 125
             },
             {
-                headerName: "Row Params Component",
+                headerName: "Row Params",
                 field: "row",
                 cellRendererFramework: ParamsComponent,
-                width: 250
+                colId: "params",
+                width: 245
+            },
+            {
+                headerName: "Currency (Pipe)",
+                field: "currency",
+                cellRendererFramework: CurrencyComponent,
+                colId: "params",
+                width: 150
             }
         ];
+    }
+
+    public refreshRowData() {
+        let rowData = this.createRowData();
+        this.gridOptions.api.setRowData(rowData);
     }
 
     private createRowData() {
@@ -56,7 +70,8 @@ export class FromComponentComponent {
         for (var i = 0; i < 15; i++) {
             rowData.push({
                 row: "Row " + i,
-                value: i
+                value: i,
+                currency: i + Number(Math.random().toFixed(2))
             });
         }
 

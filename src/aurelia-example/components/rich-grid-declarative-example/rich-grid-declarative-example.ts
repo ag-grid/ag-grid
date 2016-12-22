@@ -22,6 +22,8 @@ export class RichGridDeclarative {
   constructor() {
     // we pass an empty gridOptions in, so we can grab the api out
     this.gridOptions = <GridOptions>{};
+
+    let that = this;
     this.createRowData();
     this.showGrid = true;
 
@@ -29,7 +31,6 @@ export class RichGridDeclarative {
       this.api = this.gridOptions.api;
       this.columnApi = this.gridOptions.columnApi;
     }
-
   }
 
   private createRowData() {
@@ -148,6 +149,9 @@ export class RichGridDeclarative {
     console.log('onColumnEvent: ' + $event);
   }
 
+  public onIdClicked(row){
+    console.log('id clicked ' + row.id);
+  }
 
   private countryCellRenderer(params) {
     var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";

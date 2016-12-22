@@ -15,6 +15,8 @@ import {FromComponentComponent} from "./from-component.component";
 import {SquareComponent} from "./square.component";
 import {ParamsComponent} from "./params.component";
 import {CubeComponent} from "./cube.component";
+import {CurrencyComponent} from "./currency.component";
+
 // from rich component
 import {FromRichComponent} from "./from-rich.component";
 import {ClickableModule} from "./clickable.module";
@@ -60,11 +62,13 @@ import {PartialMatchFilterComponent} from "./partial-match-filter.component";
     imports: [
         BrowserModule,
         FormsModule,
+        // RouterModule.forRoot(appRoutes),
         AgGridModule.withComponents(
             [
                 SquareComponent,
                 CubeComponent,
                 ParamsComponent,
+                CurrencyComponent,
                 RatioParentComponent,
                 ClickableParentComponent,
                 NumericEditorComponent,
@@ -86,6 +90,7 @@ import {PartialMatchFilterComponent} from "./partial-match-filter.component";
         SquareComponent,
         CubeComponent,
         ParamsComponent,
+        CurrencyComponent,
         FromRichComponent,
         EditorComponent,
         NumericEditorComponent,

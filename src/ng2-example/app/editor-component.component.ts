@@ -41,9 +41,9 @@ export class EditorComponent {
 
     private createRowData() {
         return [
-            {name: "Bob", happy: "Happy", number: 10},
-            {name: "Harry", happy: "Sad", number: 3},
-            {name: "Sally", happy: "Happy", number: 20},
+            {name: "Bob", mood: "Happy", number: 10},
+            {name: "Harry", mood: "Sad", number: 3},
+            {name: "Sally", mood: "Happy", number: 20},
             {name: "Mary", mood: "Sad", number: 5},
             {name: "John", mood: "Happy", number: 15},
             {name: "Jack", mood: "Happy", number: 25},
