@@ -361,6 +361,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php">&nbsp;  Bootstrap Theme</a>
                 <?php } ?>
 
+                <?php if ($key == "RTL") { ?>
+                    <span class="sidebarLinkSelected">RTL</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-rtl/">RTL</a>
+                <?php } ?>
+
                 <?php if ($key == "Icons") { ?>
                     <span class="sidebarLinkSelected">Icons</span>
                 <?php } else { ?>
