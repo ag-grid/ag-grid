@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -9,6 +9,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 import { IAggFunc, ColGroupDef, ColDef } from "./colDef";
 import { IDatasource } from "../rowControllers/iDatasource";
+import { GridCellDef } from "./gridCell";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -29,7 +30,7 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
-    enableRtlSupport?: boolean;
+    enableRtl?: boolean;
     enableColResize?: boolean;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
@@ -44,6 +45,7 @@ export interface GridOptions {
     maxColWidth?: number;
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
+    suppressClickEdit?: boolean;
     debug?: boolean;
     icons?: any;
     angularCompileRows?: boolean;
@@ -157,6 +159,9 @@ export interface GridOptions {
     getRowClass?: Function;
     getRowHeight?: Function;
     checkboxSelection?: (params: any) => boolean;
+    sendToClipboard?: (params: any) => void;
+    navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;
+    tabToNextCell?: (params: TabToNextCellParams) => GridCellDef;
     fullWidthCellRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
@@ -213,6 +218,10 @@ export interface GridOptions {
     onCellContextMenu?(event?: any): void;
     onCellValueChanged?(event?: any): void;
     onRowValueChanged?(event?: any): void;
+    onRowEditingStarted?(event?: any): void;
+    onRowEditingStopped?(event?: any): void;
+    onCellEditingStarted?(event?: any): void;
+    onCellEditingStopped?(event?: any): void;
     onCellFocused?(event?: any): void;
     onRowSelected?(event?: any): void;
     onSelectionChanged?(event?: any): void;
@@ -307,4 +316,15 @@ export interface ProcessHeaderForExportParams {
     api: GridApi;
     columnApi: ColumnApi;
     context: any;
+}
+export interface NavigateToNextCellParams {
+    key: number;
+    previousCellDef: GridCellDef;
+    nextCellDef: GridCellDef;
+}
+export interface TabToNextCellParams {
+    backwards: boolean;
+    editing: boolean;
+    previousCellDef: GridCellDef;
+    nextCellDef: GridCellDef;
 }

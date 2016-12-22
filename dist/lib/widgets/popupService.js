@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,6 +18,7 @@ var utils_1 = require("../utils");
 var constants_1 = require("../constants");
 var context_1 = require("../context/context");
 var gridCore_1 = require("../gridCore");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var PopupService = (function () {
     function PopupService() {
     }
@@ -27,26 +29,42 @@ var PopupService = (function () {
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
         var parentRect = this.getPopupParent().getBoundingClientRect();
-        var x = sourceRect.right - parentRect.left - 2;
         var y = sourceRect.top - parentRect.top;
-        var minWidth;
-        if (params.ePopup.clientWidth > 0) {
-            minWidth = params.ePopup.clientWidth;
-        }
-        else {
-            minWidth = 200;
-        }
+        var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
-        if (x > maxX) {
-            // try putting menu to the left
-            x = sourceRect.left - parentRect.left - minWidth;
+        // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
+        // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
+        // we try place it first to the left, and then if not to the right.
+        var x;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, try left first
+            x = xLeftPosition();
+            if (x < 0) {
+                x = xRightPosition();
+            }
+            if (x > maxX) {
+                x = 0;
+            }
         }
-        if (x < 0) {
-            x = 0;
+        else {
+            // for LTR, try right first
+            x = xRightPosition();
+            if (x > maxX) {
+                x = xLeftPosition();
+            }
+            if (x < 0) {
+                x = 0;
+            }
         }
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
+        function xRightPosition() {
+            return sourceRect.right - parentRect.left - 2;
+        }
+        function xLeftPosition() {
+            return sourceRect.left - parentRect.left - minWidth;
+        }
     };
     PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
         var parentRect = this.getPopupParent().getBoundingClientRect();
@@ -122,7 +140,7 @@ var PopupService = (function () {
         }
         function checkVerticalOverflow() {
             var minHeight;
-            if (params.ePopup.clientWidth > 0) {
+            if (params.ePopup.clientHeight > 0) {
                 minHeight = params.ePopup.clientHeight;
             }
             else {
@@ -219,10 +237,14 @@ var PopupService = (function () {
         context_1.Autowired('gridCore'), 
         __metadata('design:type', gridCore_1.GridCore)
     ], PopupService.prototype, "gridCore", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], PopupService.prototype, "gridOptionsWrapper", void 0);
     PopupService = __decorate([
         context_1.Bean('popupService'), 
         __metadata('design:paramtypes', [])
     ], PopupService);
     return PopupService;
-})();
+}());
 exports.PopupService = PopupService;

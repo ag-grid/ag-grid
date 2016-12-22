@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var events_1 = require("../events");
 var utils_1 = require("../utils");
 var ComponentUtil = (function () {
@@ -183,7 +184,7 @@ var ComponentUtil = (function () {
         'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass',
-        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtlSupport'
+        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit'
     ];
     ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
@@ -191,7 +192,7 @@ var ComponentUtil = (function () {
         'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
-        'getBusinessKeyForNode', 'checkboxSelection'];
+        'getBusinessKeyForNode', 'checkboxSelection', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell'];
     ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)
         .concat(ComponentUtil.STRING_PROPERTIES)
@@ -199,7 +200,7 @@ var ComponentUtil = (function () {
         .concat(ComponentUtil.FUNCTION_PROPERTIES)
         .concat(ComponentUtil.BOOLEAN_PROPERTIES);
     return ComponentUtil;
-})();
+}());
 exports.ComponentUtil = ComponentUtil;
 utils_1.Utils.iterateObject(events_1.Events, function (key, value) {
     ComponentUtil.EVENTS.push(value);

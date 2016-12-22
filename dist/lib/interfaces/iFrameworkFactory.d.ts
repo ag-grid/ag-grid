@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "../entities/colDef";
@@ -30,5 +30,5 @@ export interface IFrameworkFactory {
     } | ICellRendererFunc | string;
     /** Because Angular 2 uses Zones, you should not use setTimout(). So to get around this, we allow the framework
      * to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */
-    setTimeout(handler: any, timeout?: any): number;
+    setTimeout(action: any, timeout?: any): void;
 }

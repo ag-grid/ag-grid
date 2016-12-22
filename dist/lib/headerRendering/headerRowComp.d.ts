@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../widgets/component";
@@ -21,6 +21,8 @@ export declare class HeaderRowComp extends Component {
     private removeAndDestroyChildComponents(idsToDestroy);
     private onRowHeightChanged();
     private init();
+    private onColumnResized();
+    private setWidth();
     private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged();
     private createHeaderElement(columnGroupChild);

@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -40,6 +41,7 @@ var DisplayedGroupCreator = (function () {
                     var groupId = originalGroup.getGroupId();
                     var instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
                     var newGroup = new columnGroup_1.ColumnGroup(originalGroup, groupId, instanceId);
+                    _this.context.wireBean(newGroup);
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
                     if (i == 0) {
@@ -130,10 +132,14 @@ var DisplayedGroupCreator = (function () {
         context_2.Autowired('columnUtils'), 
         __metadata('design:type', columnUtils_1.ColumnUtils)
     ], DisplayedGroupCreator.prototype, "columnUtils", void 0);
+    __decorate([
+        context_2.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
+    ], DisplayedGroupCreator.prototype, "context", void 0);
     DisplayedGroupCreator = __decorate([
         context_1.Bean('displayedGroupCreator'), 
         __metadata('design:paramtypes', [])
     ], DisplayedGroupCreator);
     return DisplayedGroupCreator;
-})();
+}());
 exports.DisplayedGroupCreator = DisplayedGroupCreator;

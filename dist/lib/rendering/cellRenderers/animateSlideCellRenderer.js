@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -77,5 +78,5 @@ var AnimateSlideCellRenderer = (function (_super) {
         '<span class="ag-value-slide-current"></span>' +
         '</span>';
     return AnimateSlideCellRenderer;
-})(component_1.Component);
+}(component_1.Component));
 exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;

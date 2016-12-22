@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var SVG_NS = "http://www.w3.org/2000/svg";
 var SvgFactory = (function () {
     function SvgFactory() {
@@ -74,6 +75,9 @@ var SvgFactory = (function () {
     };
     SvgFactory.prototype.createSmallArrowRightSvg = function () {
         return createPolygonSvg("0,0 6,3 0,6", 6);
+    };
+    SvgFactory.prototype.createSmallArrowLeftSvg = function () {
+        return createPolygonSvg("6,0 0,3 6,6", 6);
     };
     SvgFactory.prototype.createSmallArrowDownSvg = function () {
         return createPolygonSvg("0,0 3,6 6,0", 6);
@@ -207,7 +211,7 @@ var SvgFactory = (function () {
     };
     SvgFactory.imageCache = {};
     return SvgFactory;
-})();
+}());
 exports.SvgFactory = SvgFactory;
 // i couldn't figure out how to not make these blurry
 /*function createPlusMinus(plus: boolean) {

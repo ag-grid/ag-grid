@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -368,6 +369,9 @@ var GridApi = (function () {
     GridApi.prototype.getFocusedCell = function () {
         return this.focusedCellController.getFocusedCell();
     };
+    GridApi.prototype.clearFocusedCell = function () {
+        return this.focusedCellController.clearFocusedCell();
+    };
     GridApi.prototype.setFocusedCell = function (rowIndex, colKey, floating) {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     };
@@ -486,7 +490,8 @@ var GridApi = (function () {
     };
     GridApi.prototype.startEditingCell = function (params) {
         var column = this.columnController.getGridColumn(params.colKey);
-        var gridCell = new gridCell_1.GridCell(params.rowIndex, null, column);
+        var gridCellDef = { rowIndex: params.rowIndex, floating: null, column: column };
+        var gridCell = new gridCell_1.GridCell(gridCellDef);
         this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
     };
     GridApi.prototype.addAggFunc = function (key, aggFunc) {
@@ -562,7 +567,7 @@ var GridApi = (function () {
         }
     };
     GridApi.prototype.checkGridSize = function () {
-        this.gridPanel.sizeHeaderAndBody();
+        this.gridPanel.setBodyAndHeaderHeights();
     };
     __decorate([
         context_1.Autowired('csvCreator'), 
@@ -671,5 +676,5 @@ var GridApi = (function () {
         __metadata('design:paramtypes', [])
     ], GridApi);
     return GridApi;
-})();
+}());
 exports.GridApi = GridApi;

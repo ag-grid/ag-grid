@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -25,7 +25,8 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     private dragSourceDropTarget;
     private displayName;
     private destroyFunctions;
-    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget);
+    private pinned;
+    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string);
     getColumn(): Column;
     init(): void;
     private setupTooltip();
@@ -45,6 +46,7 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     private useRenderer(headerNameValue, headerCellRenderer, eText);
     setupSort(eHeaderCellLabel: HTMLElement): void;
     onDragStart(): void;
+    private normaliseDragChange(dragChange);
     onDragging(dragChange: number, finished: boolean): void;
     onIndividualColumnResized(column: Column): void;
 }

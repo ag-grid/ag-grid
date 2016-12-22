@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -122,7 +123,7 @@ var RenderedRow = (function () {
         if (!this.fullWidthCellRenderer) {
             this.fullWidthCellRenderer = cellRendererFactory_1.CellRendererFactory.GROUP;
             this.fullWidthCellRendererParams = {
-                innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer(),
+                innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
             };
         }
         this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
@@ -185,7 +186,6 @@ var RenderedRow = (function () {
             renderedCell.stopEditing(cancel);
         });
         if (this.editingRow) {
-            this.setEditingRow(false);
             if (!cancel) {
                 var event = {
                     node: this.rowNode,
@@ -195,6 +195,7 @@ var RenderedRow = (function () {
                 };
                 this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_VALUE_CHANGED, event);
             }
+            this.setEditingRow(false);
         }
     };
     RenderedRow.prototype.startRowEditing = function (keyPress, charPress, sourceRenderedCell) {
@@ -219,6 +220,8 @@ var RenderedRow = (function () {
     RenderedRow.prototype.setEditingRow = function (value) {
         this.editingRow = value;
         this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-editing', value); });
+        var event = value ? events_1.Events.EVENT_ROW_EDITING_STARTED : events_1.Events.EVENT_ROW_EDITING_STOPPED;
+        this.mainEventService.dispatchEvent(event, { node: this.rowNode });
     };
     // because data can change, especially in virtual pagination and viewport row models, need to allow setting
     // styles and classes after the data has changed
@@ -730,8 +733,9 @@ var RenderedRow = (function () {
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
     RenderedRow.prototype.roundRowTopToBounds = function (rowTop) {
-        var minPixel = this.gridPanel.getBodyTopPixel() - 100;
-        var maxPixel = this.gridPanel.getBodyBottomPixel() + 100;
+        var range = this.gridPanel.getVerticalPixelRange();
+        var minPixel = range.top - 100;
+        var maxPixel = range.bottom + 100;
         if (rowTop < minPixel) {
             return minPixel;
         }
@@ -938,5 +942,5 @@ var RenderedRow = (function () {
         __metadata('design:returntype', void 0)
     ], RenderedRow.prototype, "init", null);
     return RenderedRow;
-})();
+}());
 exports.RenderedRow = RenderedRow;

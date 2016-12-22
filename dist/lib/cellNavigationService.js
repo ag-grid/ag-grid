@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20,6 +21,7 @@ var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
 var utils_1 = require("./utils");
 var gridRow_1 = require("./entities/gridRow");
 var gridCell_1 = require("./entities/gridCell");
+var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var CellNavigationService = (function () {
     function CellNavigationService() {
     }
@@ -27,8 +29,20 @@ var CellNavigationService = (function () {
         switch (key) {
             case constants_1.Constants.KEY_UP: return this.getCellAbove(lastCellToFocus);
             case constants_1.Constants.KEY_DOWN: return this.getCellBelow(lastCellToFocus);
-            case constants_1.Constants.KEY_RIGHT: return this.getCellToRight(lastCellToFocus);
-            case constants_1.Constants.KEY_LEFT: return this.getCellToLeft(lastCellToFocus);
+            case constants_1.Constants.KEY_RIGHT:
+                if (this.gridOptionsWrapper.isEnableRtl()) {
+                    return this.getCellToLeft(lastCellToFocus);
+                }
+                else {
+                    return this.getCellToRight(lastCellToFocus);
+                }
+            case constants_1.Constants.KEY_LEFT:
+                if (this.gridOptionsWrapper.isEnableRtl()) {
+                    return this.getCellToRight(lastCellToFocus);
+                }
+                else {
+                    return this.getCellToLeft(lastCellToFocus);
+                }
             default: console.log('ag-Grid: unknown key for navigation ' + key);
         }
     };
@@ -38,7 +52,8 @@ var CellNavigationService = (function () {
             return null;
         }
         else {
-            return new gridCell_1.GridCell(lastCell.rowIndex, lastCell.floating, colToLeft);
+            var gridCellDef = { rowIndex: lastCell.rowIndex, column: colToLeft, floating: lastCell.floating };
+            return new gridCell_1.GridCell(gridCellDef);
         }
     };
     CellNavigationService.prototype.getCellToRight = function (lastCell) {
@@ -48,7 +63,8 @@ var CellNavigationService = (function () {
             return null;
         }
         else {
-            return new gridCell_1.GridCell(lastCell.rowIndex, lastCell.floating, colToRight);
+            var gridCellDef = { rowIndex: lastCell.rowIndex, column: colToRight, floating: lastCell.floating };
+            return new gridCell_1.GridCell(gridCellDef);
         }
     };
     CellNavigationService.prototype.getRowBelow = function (lastRow) {
@@ -84,7 +100,8 @@ var CellNavigationService = (function () {
     CellNavigationService.prototype.getCellBelow = function (lastCell) {
         var rowBelow = this.getRowBelow(lastCell.getGridRow());
         if (rowBelow) {
-            return new gridCell_1.GridCell(rowBelow.rowIndex, rowBelow.floating, lastCell.column);
+            var gridCellDef = { rowIndex: rowBelow.rowIndex, column: lastCell.column, floating: rowBelow.floating };
+            return new gridCell_1.GridCell(gridCellDef);
         }
         else {
             return null;
@@ -138,7 +155,8 @@ var CellNavigationService = (function () {
     CellNavigationService.prototype.getCellAbove = function (lastCell) {
         var rowAbove = this.getRowAbove(lastCell.getGridRow());
         if (rowAbove) {
-            return new gridCell_1.GridCell(rowAbove.rowIndex, rowAbove.floating, lastCell.column);
+            var gridCellDef = { rowIndex: rowAbove.rowIndex, column: lastCell.column, floating: rowAbove.floating };
+            return new gridCell_1.GridCell(gridCellDef);
         }
         else {
             return null;
@@ -176,7 +194,8 @@ var CellNavigationService = (function () {
             newRowIndex = rowBelow.rowIndex;
             newFloating = rowBelow.floating;
         }
-        return new gridCell_1.GridCell(newRowIndex, newFloating, newColumn);
+        var gridCellDef = { rowIndex: newRowIndex, column: newColumn, floating: newFloating };
+        return new gridCell_1.GridCell(gridCellDef);
     };
     CellNavigationService.prototype.getNextTabbedCellBackwards = function (gridCell) {
         var displayedColumns = this.columnController.getAllDisplayedColumns();
@@ -194,7 +213,8 @@ var CellNavigationService = (function () {
             newRowIndex = rowAbove.rowIndex;
             newFloating = rowAbove.floating;
         }
-        return new gridCell_1.GridCell(newRowIndex, newFloating, newColumn);
+        var gridCellDef = { rowIndex: newRowIndex, column: newColumn, floating: newFloating };
+        return new gridCell_1.GridCell(gridCellDef);
     };
     __decorate([
         context_1.Autowired('columnController'), 
@@ -208,10 +228,14 @@ var CellNavigationService = (function () {
         context_1.Autowired('floatingRowModel'), 
         __metadata('design:type', floatingRowModel_1.FloatingRowModel)
     ], CellNavigationService.prototype, "floatingRowModel", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], CellNavigationService.prototype, "gridOptionsWrapper", void 0);
     CellNavigationService = __decorate([
         context_1.Bean('cellNavigationService'), 
         __metadata('design:paramtypes', [])
     ], CellNavigationService);
     return CellNavigationService;
-})();
+}());
 exports.CellNavigationService = CellNavigationService;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { LoggerFactory } from "./logger";
@@ -32,6 +32,7 @@ export declare class GridCore {
     private destroyFunctions;
     constructor(loggerFactory: LoggerFactory);
     init(): void;
+    private addRtlSupport();
     private createNorthPanel();
     private onDropPanelVisible();
     getRootGui(): HTMLElement;

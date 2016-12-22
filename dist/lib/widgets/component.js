@@ -1,15 +1,21 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var utils_1 = require('../utils');
-var eventService_1 = require("../eventService");
-var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var Component = (function () {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var utils_1 = require("../utils");
+var beanStub_1 = require("../context/beanStub");
+var Component = (function (_super) {
+    __extends(Component, _super);
     function Component(template) {
-        this.destroyFunctions = [];
+        _super.call(this);
         this.childComponents = [];
         this.annotatedEventListeners = [];
         this.visible = true;
@@ -57,6 +63,8 @@ var Component = (function () {
         this.eGui.__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
+    };
+    Component.prototype.attributesSet = function () {
     };
     Component.prototype.wireQuerySelectors = function () {
         var _this = this;
@@ -115,26 +123,6 @@ var Component = (function () {
         });
         this.annotatedEventListeners = null;
     };
-    Component.prototype.addEventListener = function (eventType, listener) {
-        if (!this.localEventService) {
-            this.localEventService = new eventService_1.EventService();
-        }
-        this.localEventService.addEventListener(eventType, listener);
-    };
-    Component.prototype.removeEventListener = function (eventType, listener) {
-        if (this.localEventService) {
-            this.localEventService.removeEventListener(eventType, listener);
-        }
-    };
-    Component.prototype.dispatchEventAsync = function (eventType, event) {
-        var _this = this;
-        setTimeout(function () { return _this.dispatchEvent(eventType, event); }, 0);
-    };
-    Component.prototype.dispatchEvent = function (eventType, event) {
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(eventType, event);
-        }
-    };
     Component.prototype.getGui = function () {
         return this.eGui;
     };
@@ -168,41 +156,15 @@ var Component = (function () {
         utils_1.Utils.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     };
     Component.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
         this.childComponents.forEach(function (childComponent) { return childComponent.destroy(); });
-        this.destroyFunctions.forEach(function (func) { return func(); });
         this.childComponents.length = 0;
-        this.destroyFunctions.length = 0;
         this.removeAnnotatedEventListeners();
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
         var _this = this;
         this.getGui().addEventListener(event, listener);
-        this.destroyFunctions.push(function () { return _this.getGui().removeEventListener(event, listener); });
-    };
-    Component.prototype.addDestroyableEventListener = function (eElement, event, listener) {
-        if (eElement instanceof HTMLElement) {
-            eElement.addEventListener(event, listener);
-        }
-        else if (eElement instanceof gridOptionsWrapper_1.GridOptionsWrapper) {
-            eElement.addEventListener(event, listener);
-        }
-        else {
-            eElement.addEventListener(event, listener);
-        }
-        this.destroyFunctions.push(function () {
-            if (eElement instanceof HTMLElement) {
-                eElement.removeEventListener(event, listener);
-            }
-            else if (eElement instanceof gridOptionsWrapper_1.GridOptionsWrapper) {
-                eElement.removeEventListener(event, listener);
-            }
-            else {
-                eElement.removeEventListener(event, listener);
-            }
-        });
-    };
-    Component.prototype.addDestroyFunc = function (func) {
-        this.destroyFunctions.push(func);
+        this.addDestroyFunc(function () { return _this.getGui().removeEventListener(event, listener); });
     };
     Component.prototype.addCssClass = function (className) {
         utils_1.Utils.addCssClass(this.getGui(), className);
@@ -218,5 +180,5 @@ var Component = (function () {
     };
     Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
     return Component;
-})();
+}(beanStub_1.BeanStub));
 exports.Component = Component;

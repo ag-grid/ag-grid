@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -74,7 +75,14 @@ var GroupCellRenderer = (function (_super) {
             else if (!node.isExpandable() || reducedLeafNode) {
                 paddingPx += 10;
             }
-            this.getGui().style.paddingLeft = paddingPx + 'px';
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                // if doing rtl, padding is on the right
+                this.getGui().style.paddingRight = paddingPx + 'px';
+            }
+            else {
+                // otherwise it is on the left
+                this.getGui().style.paddingLeft = paddingPx + 'px';
+            }
         }
     };
     GroupCellRenderer.prototype.addValueElement = function (params) {
@@ -289,5 +297,5 @@ var GroupCellRenderer = (function (_super) {
         __metadata('design:type', columnController_1.ColumnController)
     ], GroupCellRenderer.prototype, "columnController", void 0);
     return GroupCellRenderer;
-})(component_1.Component);
+}(component_1.Component));
 exports.GroupCellRenderer = GroupCellRenderer;

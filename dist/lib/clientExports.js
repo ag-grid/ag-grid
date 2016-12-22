@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var grid_1 = require("./grid");
 var gridApi_1 = require("./gridApi");
 var events_1 = require("./events");
@@ -100,6 +101,8 @@ var virtualPage_1 = require("./rowControllers/virtualPagination/virtualPage");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
 var methodNotImplementedException_1 = require("./misc/methodNotImplementedException");
 var touchListener_1 = require("./widgets/touchListener");
+var scrollVisibleService_1 = require("./gridPanel/scrollVisibleService");
+var beanStub_1 = require("./context/beanStub");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -113,6 +116,7 @@ function populateClientExports(exports) {
     exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
     exports.initialiseAgGridWithWebComponents = agGridWebComponent_1.initialiseAgGridWithWebComponents;
     // context
+    exports.BeanStub = beanStub_1.BeanStub;
     exports.Context = context_1.Context;
     exports.Autowired = context_1.Autowired;
     exports.PostConstruct = context_1.PostConstruct;
@@ -141,6 +145,7 @@ function populateClientExports(exports) {
     exports.TextFilter = textFilter_1.TextFilter;
     // gridPanel
     exports.GridPanel = gridPanel_1.GridPanel;
+    exports.ScrollVisibleService = scrollVisibleService_1.ScrollVisibleService;
     exports.MouseEventService = mouseEventService_1.MouseEventService;
     // headerRendering
     exports.BodyDropPivotTarget = bodyDropPivotTarget_1.BodyDropPivotTarget;

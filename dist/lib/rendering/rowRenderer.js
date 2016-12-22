@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -49,8 +50,7 @@ var RowRenderer = (function () {
         this.destroyFunctions = [];
     }
     RowRenderer.prototype.agWire = function (loggerFactory) {
-        this.logger = this.loggerFactory.create('RowRenderer');
-        this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
+        this.logger = loggerFactory.create('RowRenderer');
     };
     RowRenderer.prototype.setupDocumentFragments = function () {
         var usingDocumentFragments = !!document.createDocumentFragment;
@@ -66,23 +66,15 @@ var RowRenderer = (function () {
         var _this = this;
         this.getContainersFromGridPanel();
         this.setupDocumentFragments();
-        var columnListener = this.onColumnEvent.bind(this);
         var modelUpdatedListener = this.onModelUpdated.bind(this);
         var floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
-        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
         this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
         this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
         this.destroyFunctions.push(function () {
-            _this.eventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
             _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
             _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
         });
         this.refreshView();
-    };
-    RowRenderer.prototype.onColumnEvent = function (event) {
-        this.setMainRowWidths();
     };
     RowRenderer.prototype.getContainersFromGridPanel = function () {
         this.eFullWidthContainer = this.gridPanel.getFullWidthCellContainer();
@@ -98,19 +90,6 @@ var RowRenderer = (function () {
         this.eFloatingBottomPinnedRightContainer = this.gridPanel.getPinnedRightFloatingBottom();
         this.eFloatingBottomFullWithContainer = this.gridPanel.getFloatingBottomFullWidthCellContainer();
         this.eBodyViewport = this.gridPanel.getBodyViewport();
-        this.eAllBodyContainers = [this.eBodyContainer, this.eFloatingBottomContainer,
-            this.eFloatingTopContainer];
-        this.eAllPinnedLeftContainers = [
-            this.ePinnedLeftColsContainer,
-            this.eFloatingBottomPinnedLeftContainer,
-            this.eFloatingTopPinnedLeftContainer];
-        this.eAllPinnedRightContainers = [
-            this.ePinnedRightColsContainer,
-            this.eFloatingBottomPinnedRightContainer,
-            this.eFloatingTopPinnedRightContainer];
-    };
-    RowRenderer.prototype.setRowModel = function (rowModel) {
-        this.rowModel = rowModel;
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
         var eCells = [];
@@ -124,15 +103,6 @@ var RowRenderer = (function () {
             }
         }
         return eCells;
-    };
-    RowRenderer.prototype.setMainRowWidths = function () {
-        var mainRowWidth = this.columnController.getBodyContainerWidth() + "px";
-        this.eAllBodyContainers.forEach(function (container) {
-            var unpinnedRows = container.querySelectorAll(".ag-row");
-            for (var i = 0; i < unpinnedRows.length; i++) {
-                unpinnedRows[i].style.width = mainRowWidth;
-            }
-        });
     };
     RowRenderer.prototype.refreshAllFloatingRows = function () {
         this.refreshFloatingRows(this.renderedTopFloatingRows, this.floatingRowModel.getFloatingTopRowData(), this.eFloatingTopPinnedLeftContainer, this.eFloatingTopPinnedRightContainer, this.eFloatingTopContainer, this.eFloatingTopFullWidthContainer);
@@ -355,8 +325,9 @@ var RowRenderer = (function () {
                 newLast = rowCount;
             }
             else {
-                var topPixel = this.gridPanel.getBodyTopPixel();
-                var bottomPixel = this.gridPanel.getBodyBottomPixel();
+                var bodyVRange = this.gridPanel.getVerticalPixelRange();
+                var topPixel = bodyVRange.top;
+                var bottomPixel = bodyVRange.bottom;
                 var first = this.rowModel.getRowIndexAtPixel(topPixel);
                 var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
                 //add in buffer
@@ -465,7 +436,8 @@ var RowRenderer = (function () {
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
     RowRenderer.prototype.navigateToNextCell = function (key, rowIndex, column, floating) {
-        var nextCell = new gridCell_1.GridCell(rowIndex, floating, column);
+        var previousCell = new gridCell_1.GridCell({ rowIndex: rowIndex, floating: floating, column: column });
+        var nextCell = previousCell;
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
@@ -481,6 +453,22 @@ var RowRenderer = (function () {
             }
             else {
                 break;
+            }
+        }
+        // allow user to override what cell to go to next
+        var userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
+        if (utils_1.Utils.exists(userFunc)) {
+            var params = {
+                key: key,
+                previousCellDef: previousCell,
+                nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+            };
+            var nextCellDef = userFunc(params);
+            if (utils_1.Utils.exists(nextCellDef)) {
+                nextCell = new gridCell_1.GridCell(nextCellDef);
+            }
+            else {
+                nextCell = null;
             }
         }
         // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
@@ -499,7 +487,8 @@ var RowRenderer = (function () {
         this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
         if (this.rangeController) {
-            this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+            var gridCell = new gridCell_1.GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
+            this.rangeController.setRangeToCell(gridCell);
         }
     };
     RowRenderer.prototype.startEditingCell = function (gridCell, keyPress, charPress) {
@@ -604,6 +593,23 @@ var RowRenderer = (function () {
         var nextCell = gridCell;
         while (true) {
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
+            // allow user to override what cell to go to next
+            var userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
+            if (utils_1.Utils.exists(userFunc)) {
+                var params = {
+                    backwards: backwards,
+                    editing: startEditing,
+                    previousCellDef: gridCell.getGridCellDef(),
+                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+                };
+                var nextCellDef = userFunc(params);
+                if (utils_1.Utils.exists(nextCellDef)) {
+                    nextCell = new gridCell_1.GridCell(nextCellDef);
+                }
+                else {
+                    nextCell = null;
+                }
+            }
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) {
@@ -631,7 +637,8 @@ var RowRenderer = (function () {
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
-                this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+                var gridCell_2 = new gridCell_1.GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
+                this.rangeController.setRangeToCell(gridCell_2);
             }
             // we successfully tabbed onto a grid cell, so return true
             return nextRenderedCell;
@@ -728,5 +735,5 @@ var RowRenderer = (function () {
         __metadata('design:paramtypes', [])
     ], RowRenderer);
     return RowRenderer;
-})();
+}());
 exports.RowRenderer = RowRenderer;

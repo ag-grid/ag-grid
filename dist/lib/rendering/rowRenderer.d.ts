@@ -1,11 +1,10 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { RenderedCell } from "./renderedCell";
 import { LoggerFactory } from "../logger";
-import { ColumnChangeEvent } from "../columnChangeEvent";
 import { GridCell } from "../entities/gridCell";
 export declare class RowRenderer {
     private columnController;
@@ -30,9 +29,6 @@ export declare class RowRenderer {
     private renderedRows;
     private renderedTopFloatingRows;
     private renderedBottomFloatingRows;
-    private eAllBodyContainers;
-    private eAllPinnedLeftContainers;
-    private eAllPinnedRightContainers;
     private eFullWidthContainer;
     private eBodyContainer;
     private eBodyContainerDF;
@@ -55,11 +51,8 @@ export declare class RowRenderer {
     agWire(loggerFactory: LoggerFactory): void;
     private setupDocumentFragments();
     init(): void;
-    onColumnEvent(event: ColumnChangeEvent): void;
     getContainersFromGridPanel(): void;
-    setRowModel(rowModel: any): void;
     getAllCellsForColumn(column: Column): HTMLElement[];
-    setMainRowWidths(): void;
     refreshAllFloatingRows(): void;
     private refreshFloatingRows(renderedRows, rowNodes, ePinnedLeftContainer, ePinnedRightContainer, eBodyContainer, eFullWidthContainer);
     private onFloatingRowDataChanged();
@@ -88,7 +81,7 @@ export declare class RowRenderer {
     private ensureRowsRendered(oldRenderedRowsByNodeId?, animate?);
     private getOrCreateRenderedRow(rowNode, oldRowsByNodeId, animate);
     getRenderedNodes(): any[];
-    navigateToNextCell(key: any, rowIndex: number, column: Column, floating: string): void;
+    navigateToNextCell(key: number, rowIndex: number, column: Column, floating: string): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell(gridCell);
     onTabKeyDown(previousRenderedCell: RenderedCell, keyboardEvent: KeyboardEvent): void;

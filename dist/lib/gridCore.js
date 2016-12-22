@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -27,6 +28,7 @@ var logger_1 = require("./logger");
 var constants_1 = require("./constants");
 var popupService_1 = require("./widgets/popupService");
 var events_1 = require("./events");
+var utils_1 = require("./utils");
 var borderLayout_1 = require("./layout/borderLayout");
 var context_1 = require("./context/context");
 var focusedCellController_1 = require("./focusedCellController");
@@ -38,16 +40,23 @@ var GridCore = (function () {
     }
     GridCore.prototype.init = function () {
         var _this = this;
-        // and the last bean, done in it's own section, as it's optional
-        var toolPanelGui;
         var eSouthPanel = this.createSouthPanel();
+        var eastPanel;
+        var westPanel;
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
-            toolPanelGui = this.toolPanel.getGui();
+            // if we are doing RTL, then the tool panel appears on the left
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                westPanel = this.toolPanel.getGui();
+            }
+            else {
+                eastPanel = this.toolPanel.getGui();
+            }
         }
         var createTopPanelGui = this.createNorthPanel();
         this.eRootPanel = new borderLayout_1.BorderLayout({
             center: this.gridPanel.getLayout(),
-            east: toolPanelGui,
+            east: eastPanel,
+            west: westPanel,
             north: createTopPanelGui,
             south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
@@ -63,6 +72,9 @@ var GridCore = (function () {
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addWindowResizeListener();
         }
+        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
+        // which doLayout indirectly depends on
+        this.addRtlSupport();
         this.doLayout();
         this.finished = false;
         this.periodicallyDoLayout();
@@ -70,6 +82,14 @@ var GridCore = (function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
         this.onRowGroupChanged();
         this.logger.log('ready');
+    };
+    GridCore.prototype.addRtlSupport = function () {
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-rtl');
+        }
+        else {
+            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-ltr');
+        }
     };
     GridCore.prototype.createNorthPanel = function () {
         var _this = this;
@@ -318,5 +338,5 @@ var GridCore = (function () {
         __metadata('design:paramtypes', [logger_1.LoggerFactory])
     ], GridCore);
     return GridCore;
-})();
+}());
 exports.GridCore = GridCore;

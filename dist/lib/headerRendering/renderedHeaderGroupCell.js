@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.0.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -27,11 +28,12 @@ var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var touchListener_1 = require("../widgets/touchListener");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var RenderedHeaderGroupCell = (function () {
-    function RenderedHeaderGroupCell(columnGroup, eRoot, dragSourceDropTarget) {
+    function RenderedHeaderGroupCell(columnGroup, eRoot, dragSourceDropTarget, pinned) {
         this.destroyFunctions = [];
         this.columnGroup = columnGroup;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
+        this.pinned = pinned;
     }
     RenderedHeaderGroupCell.prototype.getGui = function () {
         return this.eHeaderGroupCell;
@@ -221,9 +223,28 @@ var RenderedHeaderGroupCell = (function () {
             _this.childrenWidthStarts.push(column.getActualWidth());
         });
     };
+    // optionally inverts the drag, depending on pinned and RTL
+    // note - this method is duplicated in RenderedHeaderCell - should refactor out?
+    RenderedHeaderGroupCell.prototype.normaliseDragChange = function (dragChange) {
+        var result = dragChange;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, dragging left makes the col bigger, except when pinning left
+            if (this.pinned !== column_1.Column.PINNED_LEFT) {
+                result *= -1;
+            }
+        }
+        else {
+            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+            if (this.pinned === column_1.Column.PINNED_RIGHT) {
+                result *= -1;
+            }
+        }
+        return result;
+    };
     RenderedHeaderGroupCell.prototype.onDragging = function (dragChange, finished) {
         var _this = this;
-        var newWidth = this.groupWidthStart + dragChange;
+        var dragChangeNormalised = this.normaliseDragChange(dragChange);
+        var newWidth = this.groupWidthStart + dragChangeNormalised;
         var minWidth = this.columnGroup.getMinWidth();
         if (newWidth < minWidth) {
             newWidth = minWidth;
@@ -280,5 +301,5 @@ var RenderedHeaderGroupCell = (function () {
         __metadata('design:returntype', void 0)
     ], RenderedHeaderGroupCell.prototype, "init", null);
     return RenderedHeaderGroupCell;
-})();
+}());
 exports.RenderedHeaderGroupCell = RenderedHeaderGroupCell;

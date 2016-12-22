@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { CsvExportParams } from "./csvCreator";
@@ -121,6 +121,7 @@ export declare class GridApi {
     setFilterModel(model: any): void;
     getFilterModel(): any;
     getFocusedCell(): GridCell;
+    clearFocusedCell(): void;
     setFocusedCell(rowIndex: number, colKey: Column | ColDef | string, floating?: string): void;
     setHeaderHeight(headerHeight: number): void;
     showToolPanel(show: any): void;

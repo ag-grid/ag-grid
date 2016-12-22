@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -20,7 +20,8 @@ export declare class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     private destroyFunctions;
     private eRoot;
     private displayName;
-    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget);
+    private pinned;
+    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string);
     getGui(): HTMLElement;
     onIndividualColumnResized(column: Column): void;
     init(): void;
@@ -34,5 +35,6 @@ export declare class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     destroy(): void;
     private addGroupExpandIcon(eGroupCellLabel);
     onDragStart(): void;
+    private normaliseDragChange(dragChange);
     onDragging(dragChange: any, finished: boolean): void;
 }

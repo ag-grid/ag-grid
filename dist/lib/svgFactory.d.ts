@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class SvgFactory {
@@ -14,6 +14,7 @@ export declare class SvgFactory {
     createArrowDownSvg(): HTMLElement;
     createArrowRightSvg(): HTMLElement;
     createSmallArrowRightSvg(): HTMLElement;
+    createSmallArrowLeftSvg(): HTMLElement;
     createSmallArrowDownSvg(): HTMLElement;
     createArrowUpDownSvg(): HTMLElement;
     private static getFromCacheOrCreate(key, data);

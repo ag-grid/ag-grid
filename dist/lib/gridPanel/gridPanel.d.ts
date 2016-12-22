@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v7.0.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
-export declare class GridPanel {
+import { BeanStub } from "../context/beanStub";
+export declare class GridPanel extends BeanStub {
     private masterSlaveService;
     private gridOptionsWrapper;
     private columnController;
@@ -19,11 +20,11 @@ export declare class GridPanel {
     private mouseEventService;
     private focusedCellController;
     private $scope;
+    private scrollVisibleService;
     private contextMenuFactory;
+    private frameworkFactory;
     private layout;
     private logger;
-    private forPrint;
-    private scrollWidth;
     private requestAnimationFrameExists;
     private scrollLagCounter;
     private scrollLagTicking;
@@ -60,14 +61,15 @@ export declare class GridPanel {
     private lastLeftPosition;
     private lastTopPosition;
     private animationThreadCount;
-    private destroyFunctions;
     private useScrollLag;
+    private enableRtl;
+    private forPrint;
+    private scrollWidth;
     agWire(loggerFactory: LoggerFactory): void;
-    getBodyTopPixel(): number;
-    getBodyBottomPixel(): number;
-    private setScrollBarWidth();
-    private destroy();
+    getVerticalPixelRange(): any;
+    destroy(): void;
     private onRowDataChanged();
+    private showOrHideOverlay();
     getLayout(): BorderLayout;
     private init();
     private addAngularApplyCheck();
@@ -77,7 +79,6 @@ export declare class GridPanel {
     private addMouseEvents();
     private addKeyboardEvents();
     private addBodyViewportListener();
-    private getCellForEvent(event);
     private getRowForEvent(event);
     private processKeyboardEvent(eventName, keyboardEvent);
     private processMouseEvent(eventName, mouseEvent);
@@ -98,11 +99,13 @@ export declare class GridPanel {
     private createLoadingOverlayTemplate();
     private createNoRowsOverlayTemplate();
     ensureIndexVisible(index: any): void;
+    private getPrimaryScrollViewport();
     getCenterWidth(): number;
-    isHorizontalScrollShowing(): boolean;
-    isVerticalScrollShowing(): boolean;
+    private isHorizontalScrollShowing();
+    private isVerticalScrollShowing();
     private isBodyVerticalScrollShowing();
     periodicallyCheck(): void;
+    private setScrollShowing();
     private setBottomPaddingOnPinnedRight();
     private setMarginOnFullWidthCellContainer();
     ensureColumnVisible(key: any): void;
@@ -133,30 +136,33 @@ export declare class GridPanel {
     private centerMouseWheelListener(event);
     genericMouseWheelListener(event: any): boolean;
     private generalMouseWheelListener(event, targetPanel);
-    onColumnResized(): void;
     onDisplayedColumnsChanged(): void;
+    private onDisplayedColumnsWidthChanged();
+    private onScrollVisibilityChanged();
     private setWidthsOfContainers();
-    private showPinnedColContainersIfNeeded();
-    sizeHeaderAndBody(): void;
+    private setPinnedLeftWidth();
+    private setPinnedRightWidth();
+    private pinningRight;
+    private pinningLeft;
+    private setPinnedContainersVisible();
+    setBodyAndHeaderHeights(): void;
     setHorizontalScrollPosition(hScrollPosition: number): void;
     scrollHorizontally(pixels: number): number;
-    getHorizontalScrollPosition(): number;
     turnOnAnimationForABit(): void;
     private addScrollListener();
-    private addIEPinFix(onPinnedRightScroll);
+    private onBodyScroll();
+    private onBodyHorizontalScroll();
+    private onBodyVerticalScroll();
+    private onVerticalScroll(sourceElement);
+    private isBodyVerticalScrollActive();
+    private addIEPinFix(onPinnedRightScroll, onPinnedLeftScroll);
     private setLeftAndRightBounds();
     private isUseScrollLag();
     private debounce(callback);
+    getBodyViewportScrollLeft(): number;
+    setBodyViewportScrollLeft(value: number): void;
     horizontallyScrollHeaderCenterAndFloatingCenter(): void;
-    private verticallyScrollLeftPinned(bodyTopPosition);
-    private verticallyScrollFullWidthCellContainer(bodyTopPosition);
-    private verticallyScrollBody(position);
-    getVerticalScrollPosition(): number;
-    getBodyViewportClientRect(): ClientRect;
-    getFloatingTopClientRect(): ClientRect;
-    getFloatingBottomClientRect(): ClientRect;
-    getPinnedLeftColsViewportClientRect(): ClientRect;
-    getPinnedRightColsViewportClientRect(): ClientRect;
+    private fakeVerticalScroll(position);
     addScrollEventListener(listener: () => void): void;
     removeScrollEventListener(listener: () => void): void;
 }
