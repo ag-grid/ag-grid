@@ -73,7 +73,6 @@ export class AgGridColumn {
     @Input() public sortedAt: number;
     @Input() public sortingOrder: string[];
     @Input() public field: string;
-    @Input() public headerValueGetter: string | Function;
     @Input() public hide: boolean;
     @Input() public pinned: boolean | string;
     @Input() public tooltipField: string;
