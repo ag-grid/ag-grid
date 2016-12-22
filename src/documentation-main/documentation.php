@@ -19,6 +19,7 @@ include 'documentation_header.php';
         <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
             <span style="font-weight: bold;">ag-Grid v7.1 Released</span>
         </div>
+        <img style="float: right;" src="http://www.uidownload.com/files/244/823/644/christmas-snowman-icon.png"/>
         <div>
             v7.1 brings <a href="../javascript-grid-rtl/">RTL</a> support along with
             many other smaller changes and bug fixes. See
@@ -249,6 +250,15 @@ include 'documentation_header.php';
         <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
         <!--End mc_embed_signup-->
 
+    </div>
+</div>
+
+<div class="backgroundGradient" style="margin-top: 10px;">
+    <div style="float: left;">
+        <img width="50px" src="http://www.uidownload.com/files/244/823/644/christmas-snowman-icon.png"/>
+    </div>
+    <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">Merry Christmas Everyone, See you in 2017!</div>
     </div>
 </div>
 
