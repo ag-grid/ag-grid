@@ -6,15 +6,12 @@ import { AgFilterComponent } from "./agFilterComponent";
 import { BaseComponentFactory } from "./baseComponentFactory";
 export declare class Ng2ComponentFactory extends BaseComponentFactory {
     private _componentFactoryResolver;
-    private _factoryCache;
     constructor(_componentFactoryResolver: ComponentFactoryResolver);
     createRendererFromComponent(componentType: {
         new (...args: any[]): AgRendererComponent;
     }, viewContainerRef: ViewContainerRef): {
         new (): ICellRenderer;
     };
-    private getHashForComponentType(componentType);
-    private hashCode(value);
     createEditorFromComponent(componentType: {
         new (...args: any[]): AgEditorComponent;
     }, viewContainerRef: ViewContainerRef): {
@@ -23,10 +20,10 @@ export declare class Ng2ComponentFactory extends BaseComponentFactory {
     createFilterFromComponent(componentType: {
         new (...args: any[]): AgFilterComponent;
     }, viewContainerRef: ViewContainerRef): new () => IFilter;
-    private adaptComponentToRenderer(componentType, viewContainerRef, name);
-    private adaptComponentToEditor(componentType, viewContainerRef, name);
-    private adaptComponentToFilter(componentType, viewContainerRef, name);
+    private adaptComponentToRenderer(componentType, viewContainerRef);
+    private adaptComponentToEditor(componentType, viewContainerRef);
+    private adaptComponentToFilter(componentType, viewContainerRef);
     createComponent<T>(componentType: {
         new (...args: any[]): T;
-    }, viewContainerRef: ViewContainerRef, name: string): ComponentRef<T>;
+    }, viewContainerRef: ViewContainerRef): ComponentRef<T>;
 }

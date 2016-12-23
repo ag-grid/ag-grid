@@ -1,4 +1,4 @@
-import {ComponentFactory, ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} from "@angular/core";
+import {ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} from "@angular/core";
 import {
     ICellRenderer,
     ICellEditor,
@@ -16,7 +16,6 @@ import {BaseComponentFactory} from "./baseComponentFactory";
 
 @Injectable()
 export class Ng2ComponentFactory extends BaseComponentFactory {
-    private _factoryCache: {[key: string]: ComponentFactory<any>} = {};
 
     constructor(private _componentFactoryResolver: ComponentFactoryResolver) {
         super();
@@ -25,45 +24,24 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     public createRendererFromComponent(componentType: { new(...args: any[]): AgRendererComponent; },
                                        viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
         return this.adaptComponentToRenderer(componentType,
-            viewContainerRef,
-            this.getHashForComponentType(componentType));
+            viewContainerRef);
     }
-
-    private getHashForComponentType(componentType: { new(...args: any[]): AgRendererComponent; }) : string {
-        return this.hashCode((<any>componentType).toString())
-    }
-
-
-    // taken from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-    private hashCode(value: string) : string{
-        var hash: number = 0, i: number, chr: number, len: number;
-        if (value.length === 0) return hash.toString();
-        for (i = 0, len = value.length; i < len; i++) {
-            chr = value.charCodeAt(i);
-            hash = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
-        }
-        return hash.toString();
-    };
 
     public createEditorFromComponent(componentType: { new(...args: any[]): AgEditorComponent; },
                                      viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
         return this.adaptComponentToEditor(componentType,
-            viewContainerRef,
-            this.getHashForComponentType(componentType));
+            viewContainerRef);
     }
 
     public createFilterFromComponent(componentType: { new(...args: any[]): AgFilterComponent; },
                                      viewContainerRef: ViewContainerRef) {
         return this.adaptComponentToFilter(componentType,
-            viewContainerRef,
-            this.getHashForComponentType(componentType));
+            viewContainerRef);
     }
 
 
     private adaptComponentToRenderer(componentType: { new(...args: any[]): AgRendererComponent; },
-                                     viewContainerRef: ViewContainerRef,
-                                     name: string): {new(): ICellRenderer} {
+                                     viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
 
         let that = this;
         class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRenderer {
@@ -84,8 +62,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
             protected createComponent(): ComponentRef<AgRendererComponent> {
                 return that.createComponent(componentType,
-                    viewContainerRef,
-                    name);
+                    viewContainerRef);
             }
 
         }
@@ -94,8 +71,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     private adaptComponentToEditor(componentType: { new(...args: any[]): AgEditorComponent; },
-                                   viewContainerRef: ViewContainerRef,
-                                   name: string): {new(): ICellEditor} {
+                                   viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
 
         let that = this;
         class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditor {
@@ -138,8 +114,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
             protected createComponent(): ComponentRef<AgEditorComponent> {
                 return that.createComponent(componentType,
-                    viewContainerRef,
-                    name);
+                    viewContainerRef);
             }
         }
 
@@ -147,8 +122,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     private adaptComponentToFilter(componentType: { new(...args: any[]): AgFilterComponent; },
-                                   viewContainerRef: ViewContainerRef,
-                                   name: string): {new(): IFilter} {
+                                   viewContainerRef: ViewContainerRef): {new(): IFilter} {
 
         let that = this;
         class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilter {
@@ -185,8 +159,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
             protected createComponent(): ComponentRef<AgFilterComponent> {
                 return that.createComponent(componentType,
-                    viewContainerRef,
-                    name);
+                    viewContainerRef);
             }
 
         }
@@ -196,14 +169,11 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
 
     public createComponent<T>(componentType: { new(...args: any[]): T; },
-                              viewContainerRef: ViewContainerRef,
-                              name: string): ComponentRef<T> {
-        let factory: ComponentFactory<any> = this._factoryCache[name];
-        if (!factory) {
-            factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
-            this._factoryCache[name] = factory;
-        }
-
+                              viewContainerRef: ViewContainerRef): ComponentRef<T> {
+        // used to cache the factory, but this a) caused issues when used with either weback/angularcli with --prod
+        // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
+        // caching the factory here yields no performance benefits
+        let factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
         return viewContainerRef.createComponent(factory);
     }
 }

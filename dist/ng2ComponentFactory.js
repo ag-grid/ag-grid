@@ -12,34 +12,17 @@ var Ng2ComponentFactory = (function (_super) {
     function Ng2ComponentFactory(_componentFactoryResolver) {
         _super.call(this);
         this._componentFactoryResolver = _componentFactoryResolver;
-        this._factoryCache = {};
     }
     Ng2ComponentFactory.prototype.createRendererFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToRenderer(componentType, viewContainerRef, this.getHashForComponentType(componentType));
+        return this.adaptComponentToRenderer(componentType, viewContainerRef);
     };
-    Ng2ComponentFactory.prototype.getHashForComponentType = function (componentType) {
-        return this.hashCode(componentType.toString());
-    };
-    // taken from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-    Ng2ComponentFactory.prototype.hashCode = function (value) {
-        var hash = 0, i, chr, len;
-        if (value.length === 0)
-            return hash.toString();
-        for (i = 0, len = value.length; i < len; i++) {
-            chr = value.charCodeAt(i);
-            hash = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
-        }
-        return hash.toString();
-    };
-    ;
     Ng2ComponentFactory.prototype.createEditorFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToEditor(componentType, viewContainerRef, this.getHashForComponentType(componentType));
+        return this.adaptComponentToEditor(componentType, viewContainerRef);
     };
     Ng2ComponentFactory.prototype.createFilterFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToFilter(componentType, viewContainerRef, this.getHashForComponentType(componentType));
+        return this.adaptComponentToFilter(componentType, viewContainerRef);
     };
-    Ng2ComponentFactory.prototype.adaptComponentToRenderer = function (componentType, viewContainerRef, name) {
+    Ng2ComponentFactory.prototype.adaptComponentToRenderer = function (componentType, viewContainerRef) {
         var that = this;
         var CellRenderer = (function (_super) {
             __extends(CellRenderer, _super);
@@ -60,13 +43,13 @@ var Ng2ComponentFactory = (function (_super) {
                 }
             };
             CellRenderer.prototype.createComponent = function () {
-                return that.createComponent(componentType, viewContainerRef, name);
+                return that.createComponent(componentType, viewContainerRef);
             };
             return CellRenderer;
         }(BaseGuiComponent));
         return CellRenderer;
     };
-    Ng2ComponentFactory.prototype.adaptComponentToEditor = function (componentType, viewContainerRef, name) {
+    Ng2ComponentFactory.prototype.adaptComponentToEditor = function (componentType, viewContainerRef) {
         var that = this;
         var CellEditor = (function (_super) {
             __extends(CellEditor, _super);
@@ -102,13 +85,13 @@ var Ng2ComponentFactory = (function (_super) {
                 }
             };
             CellEditor.prototype.createComponent = function () {
-                return that.createComponent(componentType, viewContainerRef, name);
+                return that.createComponent(componentType, viewContainerRef);
             };
             return CellEditor;
         }(BaseGuiComponent));
         return CellEditor;
     };
-    Ng2ComponentFactory.prototype.adaptComponentToFilter = function (componentType, viewContainerRef, name) {
+    Ng2ComponentFactory.prototype.adaptComponentToFilter = function (componentType, viewContainerRef) {
         var that = this;
         var Filter = (function (_super) {
             __extends(Filter, _super);
@@ -140,18 +123,17 @@ var Ng2ComponentFactory = (function (_super) {
                 return this._frameworkComponentInstance;
             };
             Filter.prototype.createComponent = function () {
-                return that.createComponent(componentType, viewContainerRef, name);
+                return that.createComponent(componentType, viewContainerRef);
             };
             return Filter;
         }(BaseGuiComponent));
         return Filter;
     };
-    Ng2ComponentFactory.prototype.createComponent = function (componentType, viewContainerRef, name) {
-        var factory = this._factoryCache[name];
-        if (!factory) {
-            factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
-            this._factoryCache[name] = factory;
-        }
+    Ng2ComponentFactory.prototype.createComponent = function (componentType, viewContainerRef) {
+        // used to cache the factory, but this a) caused issues when used with either weback/angularcli with --prod
+        // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
+        // caching the factory here yields no performance benefits
+        var factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
         return viewContainerRef.createComponent(factory);
     };
     Ng2ComponentFactory.decorators = [
