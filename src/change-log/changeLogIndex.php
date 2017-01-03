@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h2>Version NEXT</h2>
+
+    <li>Enhancement: richSelect cell editor now works with empty strings.</li>
+
     <h2>Version 7.1.x</h2>
 
     <li>Enhancement: <a href="../javascript-grid-rtl/">RTL support</a>, so now you can support languages that go
