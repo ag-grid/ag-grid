@@ -70,11 +70,11 @@
             </p>
             <p>
                 In the beginning we were new to <a href="https://angularjs.org/">AngularJS</a>, so we decided to use
-                <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a>. We found the basic interface into <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> nice and simple,
+                <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a>. We found the basic interface into <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> nice and simple,
                 an <a href="https://angularjs.org/">AngularJS</a> directive that took a list of columns and a list
                 of rows. However we also needed to have checkbox selection and grouping,
-                and found to get these items from <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> required using plugins,
-                looking at <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> source code and hacking around. These we could
+                and found to get these items from <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> required using plugins,
+                looking at <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> source code and hacking around. These we could
                 live with (ie our users don't care about these things) but found frustrating
                 as developers. Once our tables started to grow in size beyond 20 columns and
                 once we introduced pinned columns, the grid gave the user experience
@@ -94,8 +94,8 @@
                 with a branch) and it wasn't written with <a href="https://angularjs.org/">AngularJS</a> in mind.
             </p>
             <p>
-                I realised in 2014 that <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> was been rewritten, that <a href="http://ui-grid.info/">ui-grid</a> was
-                going to be the new <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a> and solve the performance problems.
+                I realised in 2014 that <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> was been rewritten, that <a href="http://ui-grid.info/">ui-grid</a> was
+                going to be the new <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> and solve the performance problems.
                 So I kept a close eye on <a href="http://ui-grid.info/">ui-grid</a> and was excited in late in 2014 when
                 I could download a release candidate of <a href="http://ui-grid.info/">ui-grid</a>. Finally I could say
                 goodbye to <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> and move back into the pure-<a href="https://angularjs.org/">AngularJS</a> world...
@@ -189,7 +189,7 @@
                 so I came up with a list of all the things I wanted in a grid. My list was
                 as follows (otherwise known as requirements):
                 <ul>
-                    <li><a href="https://angularjs.org/">AngularJS</a> Interface</li> - Influenced by <a href="http://angular-ui.github.io/ng-grid/">ng-grid</a>. I wanted it to be simple to
+                    <li><a href="https://angularjs.org/">AngularJS</a> Interface</li> - Influenced by <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a>. I wanted it to be simple to
                     pop in a list of rows and columns and off you go. The default settings
                     would cater for everything else.
                     <li>Customisable Cell Editors and Renderers</li> - Influenced by Java Swings JTable.

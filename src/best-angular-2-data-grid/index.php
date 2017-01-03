@@ -17,20 +17,6 @@ include '../documentation-main/documentation_header.php';
         will all tie in with the Angular 2 ecosystem. This will make your Angular 2 coding easier.
     </p>
 
-<!--    <note>
-        <p>
-            When using Angular 2, you must use the CommonJS distribution of Angular 2 and ag-Grid. That means the
-            already bundled ag-Grid and Angular 2 UMD will not work (if you don't know what this means or what these
-            are, then don't worry, you will be none the wiser).
-        </p>
-        <p>If you MUST use the UMD version of Angular 2, then use the plain Javascript version of ag-Grid.</p>
-    </note>
-
-
-    <note>ag-Gird v6.x adds many Angular 2 related improvements to the ag-Grid offering - this includes easier configuration,
-        better renderer definition and cell editor support.
-    </note>
--->
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
         for feedback or issue reporting around ag-Grid's support for Angular 2.</note>
 
@@ -117,122 +103,12 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
-        your html page, or as part of creating your bundle if bundling. Teh following
+        your html page, or as part of creating your bundle if bundling. The following
         shows referencing the css from your web page:
     </p>
     <pre>&lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" />
 &lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" />
 </pre>
-
-    <h3>For Just in Time (JIT) Compilation</h3>
-    <p>
-        You will need to configure SystemJS for ag-grid and ag-grid-component as follows:
-    </p>
-
-    <pre>
-System.config({
-    map: {
-        lib: 'lib',
-        // angular bundles
-        '@angular/core': 'node_modules/@angular/core/bundles/core.umd.js',
-        '@angular/common': 'node_modules/@angular/common/bundles/common.umd.js',
-        '@angular/compiler': 'node_modules/@angular/compiler/bundles/compiler.umd.js',
-        '@angular/platform-browser': 'node_modules/@angular/platform-browser/bundles/platform-browser.umd.js',
-        '@angular/platform-browser-dynamic': 'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
-        '@angular/http': 'node_modules/@angular/http/bundles/http.umd.js',
-        '@angular/router': 'node_modules/@angular/router/bundles/router.umd.js',
-        '@angular/forms': 'node_modules/@angular/forms/bundles/forms.umd.js',
-        // other libraries
-        'rxjs': 'node_modules/rxjs',
-        'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
-        // ag libraries
-        'ag-grid-ng2' : 'node_modules/ag-grid-ng2',
-        'ag-grid' : 'node_modules/ag-grid',
-        'ag-grid-enterprise' : 'node_modules/ag-grid-enterprise'
-    },
-    packages: {
-        'ag-grid-ng2': {
-            defaultExtension: "js"
-        },
-        'ag-grid': {
-            defaultExtension: "js"
-        },
-        'ag-grid-enterprise': {
-            defaultExtension: "js"
-        }
-        ...other packages
-    }
-}</pre>
-
-    <h3 id="aotCompilation">For Ahead-of-Time (AOT) Compilation</h3>
-    <p>
-        We'll use SystemJS Builder for rollup.
-    </p>
-
-    <pre><span class="codeComment">// gulpfile</span>
-var gulp = require('gulp');
-var SystemBuilder = require('systemjs-builder');
-
-gulp.task('aot-bundle', function () {
-    var builder = new SystemBuilder();
-
-    builder.loadConfig('./aot/systemjs.config.js')
-        .then(function () {
-            return builder.buildStatic('aot/app/boot-aot.js', './aot/dist/bundle.js', {
-                encodeNames: false,
-                mangle: false,
-                minify: true,
-                rollup: true,
-                sourceMaps: true
-            });
-        })
-});</pre>
-
-    <pre><span class="codeComment">// aot systemjs config</span>
-System.config({
-        defaultJSExtensions: true,
-        map: {
-            // angular bundles
-            '@angular/core': 'node_modules/@angular/core',
-            '@angular/common': 'node_modules/@angular/common',
-            '@angular/compiler': 'node_modules/@angular/compiler/index.js',
-            '@angular/platform-browser': 'node_modules/@angular/platform-browser',
-            '@angular/forms': 'node_modules/@angular/forms',
-            '@angular/router': 'node_modules/@angular/router',
-            // other libraries
-            'rxjs': 'node_modules/rxjs',
-            // 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
-            // ag libraries
-            'ag-grid-ng2' : 'node_modules/ag-grid-ng2',
-            'ag-grid' : 'node_modules/ag-grid',
-            'ag-grid-enterprise' : 'node_modules/ag-grid-enterprise'
-        },
-        packages: {
-            '@angular/core': {
-                main: 'index.js'
-            },
-            '@angular/common': {
-                main: 'index.js'
-            },
-            '@angular/platform-browser': {
-                main: 'index.js'
-            },
-            '@angular/forms': {
-                main: 'index.js'
-            },
-            '@angular/router': {
-                main: 'index.js'
-            }
-        }
-    }
-);
-</pre>
-
-    <p>
-        All the above items are specific to either Angular 2, SystemJS or SystemJS Builder. The above is intended to point
-        you in the right direction. If you need more information on this, please see the documentation
-        for those projects.
-    </p>
 
     <h2>Configuring ag-Grid in Angular 2</h2>
 
@@ -348,6 +224,24 @@ let colDefs = [
         and custom filtering.
     </p>
 
+    <h3>Building & Building</h3>
+    <p>There are many ways to build and/or bundle an Angular 2 Application. We provide 3 full working examples using
+        either SystemJS, Webpack or Angular-CLI as part of the <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub.</p>
+    <p>We document the main parts of these tools here, but please refer to the examples for more detail.</p>
+
+    <ul>
+        <li>
+            <a href="/ag-grid-angular-angularcli"> Angular CLI</a>
+        </li>
+        <li>
+            <a href="/ag-grid-angular-webpack"> Webpack</a>
+        </li>
+        <li>
+            <a href="/ag-grid-angular-systemjs"> SystemJS</a>
+        </li>
+    </ul>
+
+    <h2>ag-Grid Angular 2 Examples</h2>
     <h3>Example: Rich Grid without Components</h3>
     <p>
         The example below shows a rich configuration of ag-Grid, with no Angular 2 Components.

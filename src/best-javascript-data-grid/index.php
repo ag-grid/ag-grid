@@ -15,6 +15,50 @@ include '../documentation-main/documentation_header.php';
         the ag-Grid library into the global scope of the browser) or using a package manager
         to access the CommonJS version of the grid.
     </p>
+    <h3>Pull in the ag-Grid Dependencies</h3>
+    <p>You'll need to ensure you refer to the ag-grid library correctly - this can be done in a number of ways, but
+        but you'll need to ensure you refer to either the ag-grid or the ag-grid-enterprise
+        dependency, depending on which feature set you're using (i.e. if you're using any Enterprise features you'll need ag-grid-enterprise)</p>
+    <p>As an example we'll use NPM to manage our dependencies, and then refer to the dependencies in our HTML file:</p>
+    <h5>Using ag-Grid</h5>
+    <pre><span class="codeComment">// package.json</span>
+"dependencies": {
+    "ag-grid": "7.1.x",
+}
+
+<span class="codeComment">// index.html</span>
+&lt;html>
+&lt;head>
+    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
+    &lt;script src="&lt;your script>.js">&lt;/script>
+&lt;/head>
+</pre>
+    <h5>Using ag-Grid-Enterprise</h5>
+    <pre><span class="codeComment">// package.json</span>
+"dependencies": {
+    "ag-grid-enterprise": "7.1.x",
+}
+
+<span class="codeComment">// index.html</span>
+&lt;html>
+&lt;head>
+    &lt;script src="node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.js">&lt;/script>
+    &lt;script src="&lt;your script>.js">&lt;/script>
+&lt;/head>
+</pre>
+    <p>In either of the above examples we're using the full JS dependency which includes styles & themes - you can optionally chose to use the version without styles included (<code>.noStyle.js</code>).
+        If you do this, you'll need to refer to the styles & themes separately, as below:</p>
+    <pre>
+<span class="codeComment">// index.html</span>
+&lt;html>
+&lt;head>
+    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
+    &lt;script src="node_modules/ag-grid/dist/styles/ag-grid.css">&lt;/script>
+    &lt;script src="node_modules/ag-grid/dist/styles/theme-fresh.css">&lt;/script>
+    &lt;script src="&lt;your script>.js">&lt;/script>
+&lt;/head>
+</pre>
+    </p>
 
     <h3>Using Bundled ag-Grid and Pure Javascript</h3>
 

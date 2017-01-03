@@ -101,6 +101,22 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleClipboard" example-height="450px"></show-example>
 
+    <h3 id="sendToClipboard">Controlling Clipboard Copy</h3>
+
+    <p>
+        If you want to do the copy to clipboard yourself (ie not use the grids clipboard interaction)
+        then implement the callback <i>sendToClipboard(params)</i>. Use this if you are in a non-standard
+        web container that has a bespoke API for interacting with the clipboard. The callback gets the
+        data to go into the clipboard, it's your job to call the bespoke API.
+    </p>
+
+    <p>
+        The example below shows using <i>sendToClipboard(params)</i>, but rather than using the clipboard,
+        demonstrates the callback by just printing the data to the console.
+    </p>
+
+    <show-example example="exampleClipboardCustom" example-height="450px"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

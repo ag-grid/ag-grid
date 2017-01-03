@@ -10,18 +10,19 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 7.1.x</h2>
 
-    <li>Enhancement: RTL support.</li>
-
-    <li>Enhancement: Resize on pinned right (or pinned left when doing RTL) now have resize on other end of
-        column, so column resize behaves more naturally.</li>
-
+    <li>Enhancement: <a href="../javascript-grid-rtl/">RTL support</a>, so now you can support languages that go
+        from right to left.</li>
     <li>Enhancement: new events: rowEditingStarted, rowEditingStopped, cellEditingStarted, cellEditingStopped.</li>
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#singleClickEditing"><i>suppressClickEdit</i></a>.</li>
     <li>Enhancement: added api.clearFocusedCell()</li>
+    <li>Enhancement: added <a href="../javascript-grid-clipboard/#sendToClipboard"><i>sendToClipboard</i></a></li>
+    <li>Enhancement: added <a href="../javascript-grid-keyboard-navigation/#customNavigation">custom keyboard navigation</a></li>
 
     <li>Bug Fix: Sub menu was not working in Firefox, now fixed.</li>
     <li>Bug Fix: Copy to clipboard was not copying focused cell then range selection was turned off.</li>
     <li>Bug Fix: Pinned right header used to be mis-aligned by the scroll width. Now it's aligned.</li>
+
+    <li>Documentation: Angular 2 Examples Project now has examples for both SystemJS & SystemJS-Builder, Webpack and Angular-CLI</li>
 
     <h2>Version 7.0.x</h2>
 

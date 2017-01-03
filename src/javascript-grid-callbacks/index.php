@@ -137,6 +137,14 @@ include '../documentation-main/documentation_header.php';
             <th>doesDataFlower(dataItem)</th>
             <td>Tells the grid if this row should flower.</td>
         </tr>
+        <tr>
+            <th>navigateToNextCell(params)</th>
+            <td>Allows overriding the default behaviour for when user hits navigation (arrow) key.</td>
+        </tr>
+        <tr>
+            <th>tabToNextCell(params)</th>
+            <td>Allows overriding the default behaviour for when user hits tab key.</td>
+        </tr>
     </table>
 
     <p>
@@ -167,6 +175,11 @@ include '../documentation-main/documentation_header.php';
             <th>processCellFromClipboard(params)</th>
             <td>Allows you to process cells from the clipboard. Handy if you have for example number fields,
                 and want to block non-numbers from getting into the grid.</td>
+        </tr>
+        <tr>
+            <th>sendToClipboard(params)</th>
+            <td>Allows you to get the data that would otherwise go to the clipboard. To be used when you want
+                to control the 'copy to clipboard' operation yourself.</td>
         </tr>
         <tr>
             <th>processSecondaryColDef(colDef)</th>

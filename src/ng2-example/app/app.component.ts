@@ -1,6 +1,5 @@
 import {Component} from "@angular/core";
 import { URLSearchParams } from '@angular/http';
-import "rxjs/add/operator/map";
 
 @Component({
     moduleId: module.id,
