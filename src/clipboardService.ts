@@ -352,7 +352,7 @@ export class ClipboardService implements IClipboardService {
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
         };
 
-        var data = this.csvCreator.getDataAsCsv(params);
+        let data = this.csvCreator.exportDataAsCsv(params);
 
         this.copyDataToClipboard(data);
     }
