@@ -15,6 +15,10 @@ var gridOptions = {
     columnDefs: columnDefs,
     // we don't want the grid putting in 'sum' in the headers for us
     suppressAggFuncInHeader: true,
+    defaultColDef: {
+        // NEW PIECE - add headerValueGetter
+        headerValueGetter: function() { return 'bar'; }
+    },
 
     // this is a callback that gets called on each column definition
     processSecondaryColDef: function(colDef) {

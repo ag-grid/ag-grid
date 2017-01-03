@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The following CSS classes are added to the grid when RTL is on and off:
         <ul>
-        <li><b>ag-rtl</b>: Added when RTL is ON. It sets the style <i>'direction=ltr'</i>.</li>
+        <li><b>ag-rtl</b>: Added when RTL is ON. It sets the style <i>'direction=rtl'</i>.</li>
         <li><b>ag-ltr</b>: Added when RTL is OFF. It sets the style <i>'direction=ltr'</i>.</li>
     </ul>
         You can see these classes by inspecting the DOM of ag-Grid. A lot of the layout of the grid
