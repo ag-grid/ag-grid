@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Version NEXT</h2>
 
     <li>Enhancement: richSelect cell editor now works with empty strings.</li>
+    <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
 
     <h2>Version 7.1.x</h2>
 
