@@ -17,25 +17,42 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <h3>Setting the License Key</h3>
-    <p>The License Key is set via a static method - there are no server side checks involved.</p>
-
-    <p>You can set the License Key via the following mechanisms, prior to initialising ag-Grid Enterprise:</p>
-
     <p>
-        JavaScript:
-        <pre>agGrid.LicenseManager.setLicenseKey("your license key");</pre>
-
-        CommonJS:
-        <pre>var enterprise = require("ag-grid-enterprise");
-enterprise.LicenseManager.setLicenseKey("your license key");</pre>
-
-        ECMA 6:
-        <pre>import {LicenseManager} from "ag-grid-enterprise/main";
-LicenseManager.setLicenseKey("your license key");</pre>
-
+        Set the license key via the JavaScript method as described below.
+        ag-Grid checks the license key without making any network calls.
+        The license key is set once for the grid library. You do not need to set the license key for each instance of
+        ag-Grid that you create. You must set the license key before you create an instance of ag-Grid.
     </p>
 
-    <note>For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows:
+    <h4>JavaScript</h4>
+
+    <p>
+        Use this if you are using the Webpack bundled version of ag-Grid (eg you are using <i>ag-grid-enterprise.js</i>).
+    </p>
+    <pre>agGrid.LicenseManager.setLicenseKey("your license key");</pre>
+
+    <h4>CommonJS</h4>
+    <p>Use this if you are using CommonJS to load ag-Grid.</p>
+    <pre>var enterprise = require("ag-grid-enterprise");
+enterprise.LicenseManager.setLicenseKey("your license key");</pre>
+
+    <h4>ECMA 6</h4>
+    <p>Use this if you are using ECMA 6 imports to load ag-Grid.</p>
+    <pre>import {LicenseManager} from "ag-grid-enterprise/main";
+LicenseManager.setLicenseKey("your license key");</pre>
+
+    <h3>Do Not Mix Loading Mechanisms</h3>
+
+    <p>
+        If you mix the methods above (eg you using CommonJS is you applicaion, but use JavaScript approach
+        above to set license key) then it will not work. This is because the ag-Grid library will be loaded twice,
+        one will have the license key and the other will be used in your applicaiton without the license key.
+    </p>
+
+    <h3>Note on Aurelia</h3>
+
+    <p>
+        For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows:
     <pre>
 export function configure(aurelia: Aurelia) {
   aurelia.use
@@ -46,7 +63,7 @@ export function configure(aurelia: Aurelia) {
   // enterprise uncomment and set licence key here
   // LicenseManager.setLicenseKey('LICENSE KEY');
 
-  ...rest of function</pre></note>
+  ...rest of function</pre>
 
     <note>
         If you are distributing your product and including ag-Grid Enterprise, we realise that your license key will be
