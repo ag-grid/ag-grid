@@ -26,6 +26,9 @@ export class RichSelectRow extends Component {
             // not using innerHTML to prevent injection of HTML
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
             this.getGui().textContent = value.toString();
+        } else {
+            // putting in blank, so if missing, at least the user can click on it
+            this.getGui().innerHTML = '&nbsp;';
         }
     }
 
