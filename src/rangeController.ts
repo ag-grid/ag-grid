@@ -3,6 +3,7 @@ import {
     Bean,
     IRangeController,
     Autowired,
+    GridCellDef,
     LoggerFactory,
     GridPanel,
     IRowModel,
@@ -64,9 +65,11 @@ export class RangeController implements IRangeController {
         var columns = this.updateSelectedColumns(cell.column, cell.column);
         if (!columns) { return; }
 
+        let gridCellDef = <GridCellDef> {rowIndex: cell.rowIndex, floating: cell.floating, column: cell.column};
+
         var newRange = {
-            start: new GridCell(cell.rowIndex, cell.floating, cell.column),
-            end: new GridCell(cell.rowIndex, cell.floating, cell.column),
+            start: new GridCell(gridCellDef),
+            end: new GridCell(gridCellDef),
             columns: columns
         };
         this.cellRanges = [];
@@ -92,9 +95,12 @@ export class RangeController implements IRangeController {
         var columns = this.updateSelectedColumns(columnStart, columnEnd);
         if (!columns) { return; }
 
+        let startGridCellDef = <GridCellDef> {column: columnStart, rowIndex: rangeSelection.rowStart, floating: rangeSelection.floatingStart};
+        let endGridCellDef = <GridCellDef> {column: columnEnd, rowIndex: rangeSelection.rowEnd, floating: rangeSelection.floatingEnd};
+
         var newRange = <RangeSelection> {
-            start: new GridCell(rangeSelection.rowStart, rangeSelection.floatingStart, columnStart),
-            end: new GridCell(rangeSelection.rowEnd, rangeSelection.floatingEnd, columnEnd),
+            start: new GridCell(startGridCellDef),
+            end: new GridCell(endGridCellDef),
             columns: columns
         };
         if (!this.cellRanges) {
@@ -220,9 +226,11 @@ export class RangeController implements IRangeController {
 
     private createNewActiveRange(cell: GridCell): void {
 
+        let gridCellDef = <GridCellDef> {column: cell.column, rowIndex: cell.rowIndex, floating: cell.floating};
+
         this.activeRange = {
-            start: new GridCell(cell.rowIndex, cell.floating, cell.column),
-            end: new GridCell(cell.rowIndex, cell.floating, cell.column),
+            start: new GridCell(gridCellDef),
+            end: new GridCell(gridCellDef),
             columns: [cell.column]
         };
 

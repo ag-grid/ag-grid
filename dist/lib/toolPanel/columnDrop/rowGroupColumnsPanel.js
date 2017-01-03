@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -97,5 +98,5 @@ var RowGroupColumnsPanel = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RowGroupColumnsPanel.prototype, "passBeansUp", null);
     return RowGroupColumnsPanel;
-})(abstractColumnDropPanel_1.AbstractColumnDropPanel);
+}(abstractColumnDropPanel_1.AbstractColumnDropPanel));
 exports.RowGroupColumnsPanel = RowGroupColumnsPanel;

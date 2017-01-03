@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -19,17 +20,18 @@ var MenuItemComponent = (function (_super) {
     __extends(MenuItemComponent, _super);
     function MenuItemComponent(params) {
         _super.call(this, MenuItemComponent.TEMPLATE);
-        // console.log('MenuItemComponent->constructor() ' + this.instance);
         this.params = params;
-        if (params.checked) {
+    }
+    MenuItemComponent.prototype.init = function () {
+        if (this.params.checked) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&#10004;';
         }
-        else if (params.icon) {
-            if (ag_grid_1.Utils.isNodeOrElement(params.icon)) {
-                this.queryForHtmlElement('#eIcon').appendChild(params.icon);
+        else if (this.params.icon) {
+            if (ag_grid_1.Utils.isNodeOrElement(this.params.icon)) {
+                this.queryForHtmlElement('#eIcon').appendChild(this.params.icon);
             }
-            else if (typeof params.icon === 'string') {
-                this.queryForHtmlElement('#eIcon').innerHTML = params.icon;
+            else if (typeof this.params.icon === 'string') {
+                this.queryForHtmlElement('#eIcon').innerHTML = this.params.icon;
             }
             else {
                 console.log('ag-Grid: menu item icon must be DOM node or string');
@@ -41,23 +43,30 @@ var MenuItemComponent = (function (_super) {
             // it out.
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
-        if (params.shortcut) {
-            this.queryForHtmlElement('#eShortcut').innerHTML = params.shortcut;
+        if (this.params.shortcut) {
+            this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
         }
-        if (params.subMenu) {
-            this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
+        if (this.params.subMenu) {
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                // for RTL, we show arrow going left
+                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowLeftSvg());
+            }
+            else {
+                // for normal, we show arrow going right
+                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
+            }
         }
         else {
             this.queryForHtmlElement('#ePopupPointer').innerHTML = '&nbsp;';
         }
-        this.queryForHtmlElement('#eName').innerHTML = params.name;
-        if (params.disabled) {
+        this.queryForHtmlElement('#eName').innerHTML = this.params.name;
+        if (this.params.disabled) {
             ag_grid_1.Utils.addCssClass(this.getGui(), 'ag-menu-option-disabled');
         }
         else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
-    }
+    };
     MenuItemComponent.prototype.onOptionSelected = function () {
         this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, this.params);
         if (this.params.action) {
@@ -77,9 +86,15 @@ var MenuItemComponent = (function (_super) {
         '</div>';
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
     __decorate([
-        ag_grid_1.Autowired('popupService'), 
-        __metadata('design:type', ag_grid_1.PopupService)
-    ], MenuItemComponent.prototype, "popupService", void 0);
+        ag_grid_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
+    ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.PostConstruct, 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', []), 
+        __metadata('design:returntype', void 0)
+    ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
-})(ag_grid_1.Component);
+}(ag_grid_1.Component));
 exports.MenuItemComponent = MenuItemComponent;

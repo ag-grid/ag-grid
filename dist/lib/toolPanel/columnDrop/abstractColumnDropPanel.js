@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -78,19 +79,15 @@ var AbstractColumnDropPanel = (function (_super) {
         }
         var newIndex = 0;
         var mouseEvent = draggingEvent.event;
+        var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
+        var goingLeft = draggingEvent.hDirection === main_1.HDirection.Left;
+        var mouseX = mouseEvent.clientX;
         this.childColumnComponents.forEach(function (childColumn) {
             var rect = childColumn.getGui().getBoundingClientRect();
-            if (draggingEvent.hDirection === main_1.HDirection.Left) {
-                var horizontalFit = mouseEvent.clientX >= rect.right;
-                if (horizontalFit) {
-                    newIndex++;
-                }
-            }
-            else {
-                var horizontalFit = mouseEvent.clientX >= rect.left;
-                if (horizontalFit) {
-                    newIndex++;
-                }
+            var rectX = goingLeft ? rect.right : rect.left;
+            var horizontalFit = enableRtl ? (mouseX <= rectX) : (mouseX >= rectX);
+            if (horizontalFit) {
+                newIndex++;
             }
         });
         return newIndex;
@@ -166,7 +163,7 @@ var AbstractColumnDropPanel = (function (_super) {
     };
     AbstractColumnDropPanel.prototype.onDragStop = function () {
         if (this.potentialDndColumns) {
-            var success;
+            var success = void 0;
             if (this.state === AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN) {
                 this.addColumns(this.potentialDndColumns);
                 success = true;
@@ -306,14 +303,20 @@ var AbstractColumnDropPanel = (function (_super) {
     AbstractColumnDropPanel.prototype.addArrowToGui = function () {
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
+            // for RTL it's a left arrow, otherwise it's a right arrow
+            var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
+            var charCode = enableRtl ?
+                AbstractColumnDropPanel.CHAR_LEFT_ARROW : AbstractColumnDropPanel.CHAR_RIGHT_ARROW;
             var eArrow = document.createElement('span');
-            eArrow.innerHTML = '&#8594;';
+            eArrow.innerHTML = charCode;
             this.getGui().appendChild(eArrow);
         }
     };
     AbstractColumnDropPanel.STATE_NOT_DRAGGING = 'notDragging';
     AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
     AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
+    AbstractColumnDropPanel.CHAR_LEFT_ARROW = '&#8592;';
+    AbstractColumnDropPanel.CHAR_RIGHT_ARROW = '&#8594;';
     return AbstractColumnDropPanel;
-})(main_1.Component);
+}(main_1.Component));
 exports.AbstractColumnDropPanel = AbstractColumnDropPanel;

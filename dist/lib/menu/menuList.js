@@ -1,4 +1,5 @@
-// ag-grid-enterprise v7.0.2
+// ag-grid-enterprise v7.1.0
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -112,7 +113,7 @@ var MenuList = (function (_super) {
             ePopup: ePopup
         });
         this.subMenuParentDef = menuItemDef;
-        var selectedListener = function () {
+        var selectedListener = function (event) {
             _this.dispatchEvent(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, event);
         };
         childMenu.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
@@ -150,5 +151,5 @@ var MenuList = (function (_super) {
         __metadata('design:type', ag_grid_1.PopupService)
     ], MenuList.prototype, "popupService", void 0);
     return MenuList;
-})(ag_grid_1.Component);
+}(ag_grid_1.Component));
 exports.MenuList = MenuList;
