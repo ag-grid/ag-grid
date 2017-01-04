@@ -341,8 +341,13 @@ export class EnterpriseMenu {
         this.hidePopupFunc = params.hidePopup;
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.eventService.addEventListener('bodyScroll', params.hidePopup);
-        this.destroyFunctions.push( ()=> this.eventService.removeEventListener('bodyScroll', params.hidePopup) );
+        var onBodyScroll = (event: any) => {
+            if (event.direction==='horizontal') {
+                params.hidePopup();
+            }
+        };
+        this.eventService.addEventListener('bodyScroll', onBodyScroll);
+        this.destroyFunctions.push( ()=> this.eventService.removeEventListener('bodyScroll', onBodyScroll) );
     }
 
     public getGui(): HTMLElement {
