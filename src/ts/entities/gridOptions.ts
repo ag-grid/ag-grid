@@ -259,7 +259,7 @@ export interface GridOptions {
     onDragStarted?(event?: any): void;
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
-    onItemsRemove?(event?: any): void;
+    onItemsRemoved?(event?: any): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
