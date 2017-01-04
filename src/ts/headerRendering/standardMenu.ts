@@ -45,6 +45,7 @@ export class StandardMenuFactory implements IMenuFactory {
         var hidePopup: (event?: any)=>void;
 
         var bodyScrollListener = (event: any) => {
+            // if h scroll, popup is no longer over the column
             if (event.direction==='horizontal') {
                 hidePopup();
             }
