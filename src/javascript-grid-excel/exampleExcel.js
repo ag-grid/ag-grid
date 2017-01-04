@@ -2,7 +2,9 @@ var columnDefs = [{
     headerName: 'Group1',
     children: [
         {headerName: "Athlete", field: "athlete", width: 150},
-        {headerName: "Age", field: "age", width: 90},
+        {headerName: "Age", field: "age", width: 90, cellClassRules:{
+            lessThan23IsGreen: function(params) { return params.value < 23}
+        }},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 120},
         {headerName: "Year", field: "year", width: 90},
@@ -32,7 +34,112 @@ var gridOptions = {
     enableSorting: true,
     rowSelection: 'multiple',
     floatingTopRowData: [floatingTopRow],
-    floatingBottomRowData: [floatingBottomRow]
+    floatingBottomRowData: [floatingBottomRow],
+    defaultColDef: {
+
+    },
+    excelStyles: [
+        {
+            id: "header",
+            name: "header",
+            alignment: {
+                horizontal: 'Left', vertical: 'Bottom'
+            },
+            borders: {
+                borderBottom: {
+                    color: "#808080", lineStyle: 'Continuous', weight: 1
+                },
+                borderLeft: {
+                    color: "#808080", lineStyle: 'Continuous', weight: 1
+                },
+                borderRight: {
+                    color: "#808080", lineStyle: 'Continuous', weight: 1
+                },
+                borderTop: {
+                    color: "#808080", lineStyle: 'Continuous', weight: 1
+                }
+            },
+            font: { color: "#000000"},
+            interior: {
+                color: "#8C8C8C", pattern: 'Solid'
+            }
+        },
+        {
+            id: "bodyOdd",
+            name: "bodyOdd",
+            alignment: {
+                horizontal: 'Left', vertical: 'Bottom'
+            },
+            borders: {
+                borderBottom: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderLeft: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderRight: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderTop: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                }
+            },
+            font: { color: "#000000"},
+            interior: {
+                color: "#ACACAC", pattern: 'Solid'
+            }
+        },
+        {
+            id: "bodyEven",
+            name: "bodyEven",
+            alignment: {
+                horizontal: 'Left', vertical: 'Bottom'
+            },
+            borders: {
+                borderBottom: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderLeft: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderRight: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderTop: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                }
+            },
+            font: { color: "#000000"},
+            interior: {
+                color: "#FFFFFF", pattern: 'Solid'
+            }
+        },
+        {
+            id: "lessThan23IsGreen",
+            name: "lessThan23IsGreen",
+            alignment: {
+                horizontal: 'Left', vertical: 'Bottom'
+            },
+            borders: {
+                borderBottom: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderLeft: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderRight: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderTop: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                }
+            },
+            font: { color: "#000000"},
+            interior: {
+                color: "#ff2fe9", pattern: 'Solid'
+            }
+        }
+    ]
 };
 
 function getBooleanValue(cssSelector) {
