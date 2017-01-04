@@ -1331,7 +1331,7 @@ export class GridPanel extends BeanStub {
     private onBodyHorizontalScroll(): void {
         var newLeftPosition = this.eBodyViewport.scrollLeft;
         if (newLeftPosition !== this.lastLeftPosition) {
-            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
+            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'horizontal'});
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
             this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
@@ -1350,7 +1350,7 @@ export class GridPanel extends BeanStub {
     private onVerticalScroll(sourceElement: HTMLElement): void {
         var newTopPosition = sourceElement.scrollTop;
         if (newTopPosition !== this.lastTopPosition) {
-            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL);
+            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'vertical'});
             this.lastTopPosition = newTopPosition;
 
             this.fakeVerticalScroll(newTopPosition);
