@@ -15,6 +15,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
     <li>Bugfix: Column menu was disappearing while doing vertical scroll. Now it only disappears for horizontal scroll.
         This impacted when filtering changed the v scroll position (eg if everything filtered, scroll set back to top)</li>
+    <li>Bugfix: api.isAyFilterPresent() was returning true after api.setRowData() was called with new data and newRowsAction was not 'keep'.</li>
 
     <h2>Version 7.1.x</h2>
 
