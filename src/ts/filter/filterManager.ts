@@ -108,7 +108,7 @@ export class FilterManager {
     }
 
     // returns true if any advanced filter (ie not quick filter) active
-    private isAdvancedFilterPresent() {
+    public isAdvancedFilterPresent() {
         return this.advancedFilterPresent;
     }
 
@@ -121,7 +121,7 @@ export class FilterManager {
             }
         });
 
-        return atLeastOneActive;
+        this.advancedFilterPresent = atLeastOneActive;
     }
 
     private updateFilterFlagInColumns(): void {
