@@ -108,7 +108,11 @@ export class FilterManager {
     }
 
     // returns true if any advanced filter (ie not quick filter) active
-    public isAdvancedFilterPresent() {
+    private isAdvancedFilterPresent() {
+        return this.advancedFilterPresent;
+    }
+
+    private setAdvancedFilterPresent() {
         var atLeastOneActive = false;
 
         _.iterateObject(this.allFilters, function (key, filterWrapper) {
@@ -197,7 +201,7 @@ export class FilterManager {
     public onFilterChanged(): void {
         this.eventService.dispatchEvent(Events.EVENT_BEFORE_FILTER_CHANGED);
 
-        this.advancedFilterPresent = this.isAdvancedFilterPresent();
+        this.setAdvancedFilterPresent();
         this.updateFilterFlagInColumns();
         this.checkExternalFilter();
 
@@ -285,6 +289,7 @@ export class FilterManager {
             }
         });
         this.updateFilterFlagInColumns();
+        this.setAdvancedFilterPresent();
     }
 
     private createValueGetter(column: Column) {
