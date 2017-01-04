@@ -194,7 +194,9 @@ var masterGridOptions = {
     rowData: rowData,
     enableSorting: true,
     enableColResize: true,
-    enableFilter: true,
+    // we cannot filter on the groups, as filters work on the child nodes, and in this example
+    // the child nodes are not aggregations of the parent.
+    suppressMenuFilterPanel: true,
     isFullWidthCell: function(rowNode) {
         return rowNode.level === 1;
     },
