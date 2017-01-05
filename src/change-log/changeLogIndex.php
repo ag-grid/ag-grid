@@ -19,13 +19,6 @@ emmm
     <li>Bugfix: horizontal scroll was sometimes not possible when no rows, now it is (so you can access column menu on RHS even if no rows).</li>
     <li>Bugfix: classes ag-row-group-expanded and ag-row-group-contracted were not getting applied as group expanded and contracted.</li>
 
-    <h4>ag-grid-ng2-7.1.2</h4>
-    <h4>Bug Fixes</h4>
-    <ul>
-        <li>Bug Fix: TypeScript was incorrectly trying to compile main.ts (when under node_modules) - exclude main.ts from npm publish for now</li>
-        <li>Bug Fix: Unpin versions for Angular and Zone to be more flexible</li>
-    </ul>
-
     <h2>Version 7.1.x</h2>
 
     <li>Enhancement: <a href="../javascript-grid-rtl/">RTL support</a>, so now you can support languages that go
@@ -41,6 +34,13 @@ emmm
     <li>Bug Fix: Pinned right header used to be mis-aligned by the scroll width. Now it's aligned.</li>
 
     <li>Documentation: Angular 2 Examples Project now has examples for both SystemJS & SystemJS-Builder, Webpack and Angular-CLI</li>
+
+    <h4>ag-grid-ng2-7.1.2</h4>
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>Bug Fix: TypeScript was incorrectly trying to compile main.ts (when under node_modules) - exclude main.ts from npm publish for now</li>
+        <li>Bug Fix: Unpin versions for Angular and Zone to be more flexible</li>
+    </ul>
 
     <h2>Version 7.0.x</h2>
 
