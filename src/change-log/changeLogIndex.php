@@ -17,6 +17,7 @@ emmm
         This impacted when filtering changed the v scroll position (eg if everything filtered, scroll set back to top)</li>
     <li>Bugfix: api.isAyFilterPresent() was returning true after api.setRowData() was called with new data and newRowsAction was not 'keep'.</li>
     <li>Bugfix: horizontal scroll was sometimes not possible when no rows, now it is (so you can access column menu on RHS even if no rows).</li>
+    <li>Bugfix: classes ag-row-group-expanded and ag-row-group-contracted were not getting applied as group expanded and contracted.</li>
 
     <h2>Version 7.1.x</h2>
 
