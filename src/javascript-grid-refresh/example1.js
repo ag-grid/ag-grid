@@ -84,7 +84,6 @@
     var gridOptions = {
         columnDefs: columnDefs,
         rowData: data,
-        groupHeaders: true,
         rowSelection: 'single',
         enableSorting: true,
         onCellValueChanged: cellValueChangedFunction,

@@ -33,7 +33,6 @@ var columnDefs = [
 // this is the grid options for the top grid
 var gridOptionsTop = {
     columnDefs: columnDefs,
-    groupHeaders: true,
     rowData: null,
     enableColResize: true,
     debug: true,
@@ -43,7 +42,6 @@ var gridOptionsTop = {
 // this is the grid options for the bottom grid
 var gridOptionsBottom = {
     columnDefs: columnDefs,
-    groupHeaders: true,
     rowData: null,
     enableColResize: true,
     debug: true,

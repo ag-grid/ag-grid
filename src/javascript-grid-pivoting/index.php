@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        If pivot mode is off, then adding or removing pivot columns will have not effect.
+        If pivot mode is off, then adding or removing pivot columns will have no effect.
     </p>
 
     <h2>Example - Simple Pivot</h2>

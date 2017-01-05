@@ -193,7 +193,7 @@ include 'includes/headerRow.php'; ?>
                     <td class="titlePrice tableCell">
                         <div>
                             <span style="font-size: 20px; font-weight: bold;">
-                                £350
+                                £495
                             </span>
                             per Application Developer
                         </div>
@@ -202,7 +202,7 @@ include 'includes/headerRow.php'; ?>
                         </div>
                         <div>
                             <span style="font-size: 20px; font-weight: bold;">
-                                £600
+                                £795
                             </span>
                             per Site Developer
                         </div>

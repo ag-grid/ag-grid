@@ -59,7 +59,6 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// PROPERTIES - simple boolean / string / number properties</span>
     enableColResize: true,
-    groupHeaders: false,
     rowHeight: 22,
     rowSelection: 'single',
 
