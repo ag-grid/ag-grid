@@ -78,8 +78,8 @@ include '../documentation-main/documentation_header.php';
         contains the Angular 2 component.
         <pre>"dependencies": {
     ...
-    "ag-grid": "6.2.x",
-    "ag-grid-ng2": "6.2.x"
+    "ag-grid": "7.1.x",
+    "ag-grid-ng2": "7.1.x"
 }</pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
@@ -106,8 +106,8 @@ include '../documentation-main/documentation_header.php';
         your html page, or as part of creating your bundle if bundling. The following
         shows referencing the css from your web page:
     </p>
-    <pre>&lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" />
-&lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" />
+    <pre>&lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" />
+&lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
 </pre>
 
     <h2>Configuring ag-Grid in Angular 2</h2>
