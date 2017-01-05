@@ -9,13 +9,15 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <h2>Version NEXT</h2>
-
+emmm
     <li>Enhancement: richSelect cell editor now works with empty strings.</li>
     <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
     <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
     <li>Bugfix: Column menu was disappearing while doing vertical scroll. Now it only disappears for horizontal scroll.
         This impacted when filtering changed the v scroll position (eg if everything filtered, scroll set back to top)</li>
     <li>Bugfix: api.isAyFilterPresent() was returning true after api.setRowData() was called with new data and newRowsAction was not 'keep'.</li>
+    <li>Bugfix: horizontal scroll was sometimes not possible when no rows, now it is (so you can access column menu on RHS even if no rows).</li>
+    <li>Bugfix: classes ag-row-group-expanded and ag-row-group-contracted were not getting applied as group expanded and contracted.</li>
 
     <h4>ag-grid-ng2-7.1.2</h4>
     <h4>Bug Fixes</h4>
