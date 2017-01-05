@@ -427,8 +427,15 @@ export class RenderedCell extends Component {
     }
 
     private onPopupEditorClosed(): void {
+        // we only call stopEditing if we are editing, as
+        // it's possible the popup called 'stop editing'
+        // before this, eg if 'enter key' was pressed on
+        // the editor.
+
         if (this.editingCell) {
-            this.stopRowOrCellEdit(true);
+            // note: this only happens when use clicks outside of the grid. if use clicks on another
+            // cell, then the editing will have already stopped on this cell
+            this.stopRowOrCellEdit();
 
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
@@ -641,13 +648,7 @@ export class RenderedCell extends Component {
             true,
             // callback for when popup disappears
             ()=> {
-                // we only call stopEditing if we are editing, as
-                // it's possible the popup called 'stop editing'
-                // before this, eg if 'enter key' was pressed on
-                // the editor
-                if (this.editingCell) {
-                    this.onPopupEditorClosed();
-                }
+                this.onPopupEditorClosed();
             }
         );
 
