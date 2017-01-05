@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <h2>Version NEXT</h2>
-emmm
+
     <li>Enhancement: richSelect cell editor now works with empty strings.</li>
     <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
     <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
@@ -18,6 +18,7 @@ emmm
     <li>Bugfix: api.isAyFilterPresent() was returning true after api.setRowData() was called with new data and newRowsAction was not 'keep'.</li>
     <li>Bugfix: horizontal scroll was sometimes not possible when no rows, now it is (so you can access column menu on RHS even if no rows).</li>
     <li>Bugfix: classes ag-row-group-expanded and ag-row-group-contracted were not getting applied as group expanded and contracted.</li>
+    <li>Bugfix: if doing popup editing, and you click outside the grid, the edit is lost, which is different to click on another cell, where the edit is kept. Now they are in sync, clicking outside the pop always keeps the edit.</li>
 
     <h2>Version 7.1.x</h2>
 
