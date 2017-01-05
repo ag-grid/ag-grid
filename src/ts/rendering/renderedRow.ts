@@ -15,8 +15,9 @@ import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
+import {BeanStub} from "../context/beanStub";
 
-export class RenderedRow {
+export class RenderedRow extends BeanStub {
 
     public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
 
@@ -55,8 +56,6 @@ export class RenderedRow {
     private ePinnedRightContainer: HTMLElement;
     private ePinnedRightContainerDF: DocumentFragment;
 
-    private destroyFunctions: Function[] = [];
-
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
     // executes them all in one timeout
@@ -90,6 +89,7 @@ export class RenderedRow {
                 ePinnedRightContainerDF: DocumentFragment,
                 node: RowNode,
                 animateIn: boolean) {
+        super();
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
         this.eBodyContainer = eBodyContainer;
@@ -139,7 +139,7 @@ export class RenderedRow {
         gridCellNoType[domDataKey] = {
             renderedRow: this
         };
-        this.destroyFunctions.push( ()=> { gridCellNoType[domDataKey] = null; } );
+        this.addDestroyFunc( ()=> { gridCellNoType[domDataKey] = null; } );
     }
 
     private setupFullWidthContainers(animateInRowTop: boolean): void {
@@ -160,14 +160,9 @@ export class RenderedRow {
     private addMouseWheelListenerToFullWidthRow(): void {
         var mouseWheelListener = this.gridPanel.genericMouseWheelListener.bind(this.gridPanel);
         // IE9, Chrome, Safari, Opera
-        this.eFullWidthRow.addEventListener('mousewheel', mouseWheelListener);
+        this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
         // Firefox
-        this.eFullWidthRow.addEventListener('DOMMouseScroll', mouseWheelListener);
-
-        this.destroyFunctions.push( ()=> {
-            this.eFullWidthRow.removeEventListener('mousewheel', mouseWheelListener);
-            this.eFullWidthRow.removeEventListener('DOMMouseScroll', mouseWheelListener);
-        });
+        this.addDestroyableEventListener(this.eFullWidthRow, 'DOMMouseScroll', mouseWheelListener);
     }
 
     private setupFullWidthGroupContainers(animateInRowTop: boolean): void {
@@ -299,13 +294,13 @@ export class RenderedRow {
     // because data can change, especially in virtual pagination and viewport row models, need to allow setting
     // styles and classes after the data has changed
     private addDataChangedListener(): void {
+
         var dataChangedListener = ()=> {
             this.addStyleFromRowStyleFunc();
             this.addClassesFromRowClass();
         };
 
-        this.rowNode.addEventListener(RowNode.EVENT_DATA_CHANGED, dataChangedListener);
-        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_DATA_CHANGED, dataChangedListener) );
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, dataChangedListener);
     }
 
     private angular1Compile(element: Element): void {
@@ -319,17 +314,10 @@ export class RenderedRow {
         var virtualListener = this.onVirtualColumnsChanged.bind(this);
         var gridColumnsChangedListener = this.onGridColumnsChanged.bind(this);
 
-        this.mainEventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-        this.mainEventService.addEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
-        this.mainEventService.addEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-        this.mainEventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
-
-        this.destroyFunctions.push( () => {
-            this.mainEventService.removeEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-            this.mainEventService.removeEventListener(Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
-            this.mainEventService.removeEventListener(Events.EVENT_COLUMN_RESIZED, columnListener);
-            this.mainEventService.removeEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
-        });
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_COLUMN_RESIZED, columnListener);
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
     }
 
     private onDisplayedColumnsChanged(event: ColumnChangeEvent): void {
@@ -445,11 +433,7 @@ export class RenderedRow {
     }
 
     private addRowSelectedListener(): void {
-        var rowSelectedListener = this.onRowSelected.bind(this);
-        this.rowNode.addEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
-        this.destroyFunctions.push(()=> {
-            this.rowNode.removeEventListener(RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
-        });
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -471,25 +455,15 @@ export class RenderedRow {
         var onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
         
         this.eAllRowContainers.forEach( eRow => {
-            eRow.addEventListener('mouseenter', onGuiMouseEnter);
-            eRow.addEventListener('mouseleave', onGuiMouseLeave);
+            this.addDestroyableEventListener(eRow, 'mouseenter', onGuiMouseEnter);
+            this.addDestroyableEventListener(eRow, 'mouseleave', onGuiMouseLeave);
         });
 
         var onNodeMouseEnter = this.addHoverClass.bind(this, true);
         var onNodeMouseLeave = this.addHoverClass.bind(this, false);
 
-        this.rowNode.addEventListener(RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
-        this.rowNode.addEventListener(RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
-
-        this.destroyFunctions.push( ()=> {
-            this.eAllRowContainers.forEach( eRow => {
-                eRow.removeEventListener('mouseenter', onGuiMouseEnter);
-                eRow.removeEventListener('mouseleave', onGuiMouseLeave);
-            });
-
-            this.rowNode.removeEventListener(RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
-            this.rowNode.removeEventListener(RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
-        });
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
     }
     
     private addHoverClass(hover: boolean): void {
@@ -510,10 +484,8 @@ export class RenderedRow {
                 this.stopEditing(false);
             }
         };
-        this.mainEventService.addEventListener(Events.EVENT_CELL_FOCUSED, rowFocusedListener);
-        this.destroyFunctions.push(()=> {
-            this.mainEventService.removeEventListener(Events.EVENT_CELL_FOCUSED, rowFocusedListener);
-        });
+
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_CELL_FOCUSED, rowFocusedListener);
         rowFocusedListener();
     }
 
@@ -535,10 +507,7 @@ export class RenderedRow {
             // as a result. this is what happens when selected rows are loaded in virtual pagination.
             this.onRowSelected();
         };
-        this.rowNode.addEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
-        this.destroyFunctions.push(()=> {
-            this.rowNode.removeEventListener(RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
-        });
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
     }
 
     private onTopChanged(): void {
@@ -559,9 +528,8 @@ export class RenderedRow {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         let topChangedListener = this.onTopChanged.bind(this);
-        
-        this.rowNode.addEventListener(RowNode.EVENT_TOP_CHANGED, topChangedListener);
-        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_TOP_CHANGED, topChangedListener) );
+
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, topChangedListener);
 
         if (!animateInRowTop) {
             this.onTopChanged();
@@ -579,8 +547,7 @@ export class RenderedRow {
             }
         };
 
-        this.rowNode.addEventListener(RowNode.EVENT_HEIGHT_CHANGED, setHeightListener);
-        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_HEIGHT_CHANGED, setHeightListener) );
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, setHeightListener);
 
         setHeightListener();
     }
@@ -602,8 +569,7 @@ export class RenderedRow {
             } );
         };
 
-        this.rowNode.addEventListener(RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener);
-        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener);
 
         rowIndexListener();
     }
@@ -641,12 +607,15 @@ export class RenderedRow {
     }
 
     public destroy(animate = false): void {
+        super.destroy();
+
+        // why do we have this method? shouldn't everything below be added as a destroy func beside
+        // the corresponding create logic?
 
         this.destroyScope();
         this.destroyFullWidthComponent();
         this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
 
-        this.destroyFunctions.forEach( func => func() );
 
         if (animate) {
             this.startRemoveAnimationFunctions.forEach( func => func() );
@@ -737,7 +706,7 @@ export class RenderedRow {
             var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
 
             if (cellComponent && cellComponent.destroy) {
-                this.destroyFunctions.push( () => cellComponent.destroy() );
+                this.addDestroyFunc( () => cellComponent.destroy() );
             }
         }
 
@@ -1026,8 +995,7 @@ export class RenderedRow {
             this.eAllRowContainers.forEach( row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded));
         };
 
-        this.rowNode.addEventListener(RowNode.EVENT_EXPANDED_CHANGED, listener);
-        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_EXPANDED_CHANGED, listener));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, listener);
     }
 
     private addClassesFromRowClass() {
