@@ -17,6 +17,13 @@ include '../documentation-main/documentation_header.php';
         This impacted when filtering changed the v scroll position (eg if everything filtered, scroll set back to top)</li>
     <li>Bugfix: api.isAyFilterPresent() was returning true after api.setRowData() was called with new data and newRowsAction was not 'keep'.</li>
 
+    <h4>ag-grid-ng2-7.1.2</h4>
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>Bug Fix: TypeScript was incorrectly trying to compile main.ts (when under node_modules) - exclude main.ts from npm publish for now</li>
+        <li>Bug Fix: Unpin versions for Angular and Zone to be more flexible</li>
+    </ul>
+
     <h2>Version 7.1.x</h2>
 
     <li>Enhancement: <a href="../javascript-grid-rtl/">RTL support</a>, so now you can support languages that go
