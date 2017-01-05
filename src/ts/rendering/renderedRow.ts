@@ -216,6 +216,7 @@ export class RenderedRow {
         }
 
         this.addGridClasses();
+        this.addExpandedAndContractedClasses();
 
         this.addStyleFromRowStyle();
         this.addStyleFromRowStyleFunc();
@@ -994,13 +995,6 @@ export class RenderedRow {
             // if a group, put the level of the group in
             classes.push('ag-row-level-' + this.rowNode.level);
 
-            if (!this.rowNode.footer && this.rowNode.expanded) {
-                classes.push('ag-row-group-expanded');
-            }
-            if (!this.rowNode.footer && !this.rowNode.expanded) {
-                // opposite of expanded is contracted according to the internet.
-                classes.push('ag-row-group-contracted');
-            }
             if (this.rowNode.footer) {
                 classes.push('ag-row-footer');
             }
@@ -1020,6 +1014,20 @@ export class RenderedRow {
         classes.forEach( (classStr: string) => {
             this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
         });
+    }
+
+    private addExpandedAndContractedClasses(): void {
+        let isGroupNode = this.rowNode.group && !this.rowNode.footer;
+        if (!isGroupNode) { return; }
+
+        let listener = () => {
+            let expanded = this.rowNode.expanded;
+            this.eAllRowContainers.forEach( row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded));
+            this.eAllRowContainers.forEach( row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded));
+        };
+
+        this.rowNode.addEventListener(RowNode.EVENT_EXPANDED_CHANGED, listener);
+        this.destroyFunctions.push( ()=> this.rowNode.removeEventListener(RowNode.EVENT_EXPANDED_CHANGED, listener));
     }
 
     private addClassesFromRowClass() {
