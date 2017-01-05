@@ -1,0 +1,28 @@
+{
+  "name": "ag-grid-vue",
+  "version": "8.0.0",
+  "description": "ag-Grid Vue Component",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ceolter/ag-grid-vue.git"
+  },
+  "keywords": [
+    "grid",
+    "data",
+    "table",
+    "vue"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceolter/ag-grid-vue/issues"
+  },
+  "homepage": "https://github.com/ceolter/ag-grid-vue#readme",
+  "dependencies": {
+    "ag-grid": "^7.1.0"
+  }
+}
