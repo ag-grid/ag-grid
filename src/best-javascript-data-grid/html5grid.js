@@ -144,7 +144,6 @@
         enableColResize: true,
         enableSorting: true,
         enableFilter: true,
-        groupHeaders: true,
         enableRangeSelection: true,
         suppressRowClickSelection: true,
         rowHeight: 22,

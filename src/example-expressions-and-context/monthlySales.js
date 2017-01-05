@@ -63,7 +63,6 @@ var gridOptions = {
     enableColResize: true,
     enableSorting: true,
     enableFilter: true,
-    groupHeaders: true,
     rowHeight: 22,
     onModelUpdated: modelUpdated,
     groupSelectsChildren: true,
