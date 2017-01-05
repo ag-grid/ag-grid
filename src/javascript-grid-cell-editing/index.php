@@ -543,6 +543,26 @@ colDef.cellEditorParams = {
 
     <show-example example="exampleFullRowEditing"></show-example>
 
+    <h2 id="groupEditing">Group Editing</h2>
+
+    <p>
+        By default, the grid does not let you edit group rows. This is to cater for the scenario where groups
+        are aggregations of the children (ie a group rows values could be the sum of the children, so editing
+        the group doesn't make sense).
+    </p>
+
+    <p>
+        In other scenarios, editing groups does make sense. For example if implementing a file explorer,
+        editing a folder name or owner does make sense in isolation to the contained files. Thus to cater
+        for this, you can enable editing of groups with the property <i>enableGroupEdit=true</i>.
+    </p>
+
+    <p>
+        The example below shows using <i>enableGroupEdit=true</i> along with tree data to allow editing of group data.
+    </p>
+
+    <show-example example="exampleEditingGroups"></show-example>
+
     <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 
     <h4>

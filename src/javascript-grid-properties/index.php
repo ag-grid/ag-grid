@@ -274,6 +274,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow editable cells to start editing with a single click.</td>
         </tr>
         <tr>
+            <th>enableGroupEdit</th>
+            <td>Set to true to allow editing of the group rows.</td>
+        </tr>
+        <tr>
             <th>editType</th>
             <td>Set to 'fullRow' to enable full row editing. Otherwise leave blank to edit one
                 cell at a time.</td>
