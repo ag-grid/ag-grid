@@ -36,6 +36,13 @@ include '../documentation-main/documentation_header.php';
 
     <li>Documentation: Angular 2 Examples Project now has examples for both SystemJS & SystemJS-Builder, Webpack and Angular-CLI</li>
 
+    <h4>ag-grid-ng2-7.1.2</h4>
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>Bug Fix: TypeScript was incorrectly trying to compile main.ts (when under node_modules) - exclude main.ts from npm publish for now</li>
+        <li>Bug Fix: Unpin versions for Angular and Zone to be more flexible</li>
+    </ul>
+
     <h2>Version 7.0.x</h2>
 
     <h4>ag-grid-7.0.2, ag-grid-enterprise-7.0.2</h4>
