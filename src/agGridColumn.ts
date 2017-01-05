@@ -10,9 +10,9 @@ import {
     RowNode,
     IsColumnFunc,
     IAggFunc,
-    ColGroupDef
+    ColGroupDef,
+    GetQuickFilterTextParams
 } from "ag-grid/main";
-import {GetQuickFilterTextParams} from "../../ag-grid/dist/lib/entities/colDef";
 
 @Component({
     selector: 'ag-grid-column',
@@ -120,7 +120,7 @@ export class AgGridColumn {
     @Input() public enablePivot: boolean;
     @Input() public enableValue: boolean;
     @Input() public editable: boolean | IsColumnFunc;
-    @Input() public getQuickFilterText : (params: GetQuickFilterTextParams) => string;
+    @Input() public getQuickFilterText: (params: GetQuickFilterTextParams) => string;
     @Input() public suppressNavigable: boolean | IsColumnFunc;
     @Input() public newValueHandler: Function;
     @Input() public volatile: boolean;

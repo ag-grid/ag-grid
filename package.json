@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "7.1.1",
+  "version": "7.1.2",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -40,11 +40,11 @@
   },
   "peerDependencies": {
     "ag-grid": "7.1.x",
-    "@angular/compiler": "^2.1.x",
-    "@angular/compiler-cli": "^2.1.x",
-    "@angular/core": "^2.1.x",
-    "rxjs": "^5.0.0-beta.12",
-    "zone.js": "^0.6.x",
+    "@angular/compiler": ">=2.1.x",
+    "@angular/compiler-cli": ">=2.1.x",
+    "@angular/core": ">=2.1.x",
+    "rxjs": ">=5.0.0-beta.12",
+    "zone.js": ">=0.6.x",
     "core-js": "^2.4.1"
   }
 }
