@@ -3,11 +3,12 @@ var columnDefs = [{
     children: [
         {headerName: "Athlete", field: "athlete", width: 150},
         {headerName: "Age", field: "age", width: 90, cellClassRules:{
-            lessThan23IsGreen: function(params) { return params.value < 23}
+            lessThan23IsGreen: function(params) { return params.value < 23},
+            lessThan20IsBlue: function(params) { return params.value < 20}
         }},
         {headerName: "Country", field: "country", width: 120},
-        {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 120},
-        {headerName: "Year", field: "year", width: 90},
+        {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75},
+        {headerName: "Year", field: "year", width: 75}
     ]
 }, {
     headerName: 'Group2',
@@ -118,7 +119,7 @@ var gridOptions = {
             id: "lessThan23IsGreen",
             name: "lessThan23IsGreen",
             alignment: {
-                horizontal: 'Left', vertical: 'Bottom'
+                horizontal: 'Right', vertical: 'Bottom'
             },
             borders: {
                 borderBottom: {
@@ -134,11 +135,37 @@ var gridOptions = {
                     color: "#000000", lineStyle: 'Continuous', weight: 1
                 }
             },
-            font: { color: "#000000"},
+            font: { color: "#e0ffc1"},
             interior: {
-                color: "#ff2fe9", pattern: 'Solid'
+                color: "#008000", pattern: 'Solid'
+            }
+        },
+        {
+            id: "lessThan20IsBlue",
+            name: "lessThan20IsBlue",
+            alignment: {
+                horizontal: 'Right', vertical: 'Bottom'
+            },
+            borders: {
+                borderBottom: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderLeft: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderRight: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderTop: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                }
+            },
+            font: { color: "#FFFFFF"},
+            interior: {
+                color: "#00008B", pattern: 'Solid'
             }
         }
+
     ]
 };
 
