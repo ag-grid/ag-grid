@@ -144,7 +144,8 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         var row = Math.floor(mouseY / this.virtualList.getRowHeight());
         var value = this.params.values[row];
 
-        if (Utils.exists(value)) {
+        // not using utils.exist() as want empty string test to pass
+        if (value!==null && value!==undefined) {
             this.setSelectedValue(value);
         }
     }

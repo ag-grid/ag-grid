@@ -301,7 +301,7 @@ export class ClipboardService implements IClipboardService {
 
         let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
         if (Utils.exists(processedValue)) {
-            var data = value.toString();
+            var data = processedValue.toString();
             this.copyDataToClipboard(data);
         } else {
             this.copyDataToClipboard('');
