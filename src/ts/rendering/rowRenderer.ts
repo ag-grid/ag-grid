@@ -246,6 +246,11 @@ export class RowRenderer {
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
+            // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
+            // we still want the scroll to be present, otherwise there would be no way to access the columns
+            // on the RHS - and if that was where the filter was that cause no rows to be presented, there
+            // is no way to remove the filter.
+            if (containerHeight===0) { containerHeight = 1; }
             this.eBodyContainer.style.height = containerHeight + "px";
             this.eFullWidthContainer.style.height = containerHeight + "px";
             this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
