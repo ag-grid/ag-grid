@@ -13,6 +13,7 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {IFilter, IFilterParams, IDoesFilterPassParams} from "../interfaces/iFilter";
 import {GetQuickFilterTextParams} from "../entities/colDef";
+import {DateFilter} from "./dateFilter";
 
 @Bean('filterManager')
 export class FilterManager {
@@ -37,7 +38,8 @@ export class FilterManager {
 
     private availableFilters: {[key: string]: any} = {
         'text': TextFilter,
-        'number': NumberFilter
+        'number': NumberFilter,
+        'date': DateFilter
     };
 
     @PostConstruct

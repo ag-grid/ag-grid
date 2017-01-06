@@ -48,6 +48,7 @@ import {AgCheckbox} from "./widgets/agCheckbox";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
+import {ButtonPanel} from "./filter/dateFilter";
 
 export interface GridParams {
     // used by Web Components
@@ -123,7 +124,10 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, ScrollVisibleService],
-            components: [{componentName: 'AgCheckbox', theClass: AgCheckbox}],
+            components: [
+                {componentName: 'AgCheckbox', theClass: AgCheckbox},
+                {componentName: 'ButtonPanel', theClass: ButtonPanel},
+            ],
             debug: !!gridOptions.debug
         });
 
