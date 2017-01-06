@@ -2,28 +2,22 @@
 import {ColumnGroupChild} from "../../entities/columnGroupChild";
 import {Utils as _} from "../../utils";
 import {Column} from "../../entities/column";
+import {BeanStub} from "../../context/beanStub";
 
-export class SetLeftFeature {
+export class SetLeftFeature extends BeanStub {
 
     private columnOrGroup: ColumnGroupChild;
     private eCell: HTMLElement;
 
-    private destroyFunctions: (()=>void)[] = [];
-    
     constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement) {
+        super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
         this.init();
     }
     
     private init(): void {
-        var listener = this.onLeftChanged.bind(this);
-
-        this.columnOrGroup.addEventListener(Column.EVENT_LEFT_CHANGED, listener);
-        this.destroyFunctions.push( () => {
-            this.columnOrGroup.removeEventListener(Column.EVENT_LEFT_CHANGED, listener);
-        });
-
+        this.addDestroyableEventListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.onLeftChanged();
     }
 
@@ -34,12 +28,6 @@ export class SetLeftFeature {
         } else {
             this.eCell.style.left = '';
         }
-    }
-
-    public destroy(): void {
-        this.destroyFunctions.forEach( (func)=> {
-            func();
-        });
     }
 
 }

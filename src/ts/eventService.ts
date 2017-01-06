@@ -15,6 +15,8 @@ export class EventService implements IEventEmitter {
 
     private logger: Logger;
 
+    // this is an old idea niall had, should really take it out, was to do with ordering who gets to process
+    // events first, to give model and service objects preference over the view
     private static PRIORITY = '-P1';
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory,
