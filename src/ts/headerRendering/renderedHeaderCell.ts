@@ -113,8 +113,9 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
                 this.useRenderer(this.displayName, headerCellRenderer, eText);
             } else {
                 // no renderer, default text render
-                eText.className = 'ag-header-cell-text';
                 eText.innerHTML = this.displayName;
+                // i don't remember why this is here, take it out???
+                _.addCssClass(eText, 'ag-header-cell-text');
             }
         }
     }
