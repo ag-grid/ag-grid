@@ -62,6 +62,7 @@ export interface ICellEditorParams {
     charPress: string;
     column: Column;
     node: RowNode;
+    rowIndex: number,
     api: GridApi;
     columnApi: ColumnApi;
     cellStartedEdit: boolean;
