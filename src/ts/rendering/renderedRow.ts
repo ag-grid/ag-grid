@@ -470,23 +470,25 @@ export class RenderedRow extends BeanStub {
         this.eAllRowContainers.forEach( eRow => _.addOrRemoveCssClass(eRow, 'ag-row-hover', hover) );
     }
 
+    private rowFocusedLastTime: boolean;
+
+    private setRowFocusClasses(): void {
+        var rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);
+        if (rowFocused !== this.rowFocusedLastTime) {
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
+            this.rowFocusedLastTime = rowFocused;
+        }
+
+        if (!rowFocused && this.editingRow) {
+            this.stopEditing(false);
+        }
+    }
+
     private addCellFocusedListener(): void {
-        var rowFocusedLastTime: boolean = null;
-        var rowFocusedListener = () => {
-            var rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);
-            if (rowFocused !== rowFocusedLastTime) {
-                this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
-                this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
-                rowFocusedLastTime = rowFocused;
-            }
-
-            if (!rowFocused && this.editingRow) {
-                this.stopEditing(false);
-            }
-        };
-
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_CELL_FOCUSED, rowFocusedListener);
-        rowFocusedListener();
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
+        this.setRowFocusClasses();
     }
 
     public forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
