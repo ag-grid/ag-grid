@@ -695,7 +695,11 @@ export class Utils {
 
     static isBrowserSafari(): boolean {
         if (this.isSafari===undefined) {
-            this.isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
+            let anyWindow = <any> window;
+            // taken from https://github.com/ceolter/ag-grid/issues/550
+            this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
+                || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })
+                (!anyWindow.safari || anyWindow.safari.pushNotification);
         }
         return this.isSafari;
     }
