@@ -538,6 +538,7 @@ export class RenderedCell extends Component {
             keyPress: keyPress,
             charPress: charPress,
             column: this.column,
+            rowIndex: this.gridCell.rowIndex,
             node: this.node,
             api: this.gridOptionsWrapper.getApi(),
             cellStartedEdit: cellStartedEdit,
