@@ -20,6 +20,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: horizontal scroll was sometimes not possible when no rows, now it is (so you can access column menu on RHS even if no rows).</li>
     <li>Bugfix: classes ag-row-group-expanded and ag-row-group-contracted were not getting applied as group expanded and contracted.</li>
     <li>Bugfix: if doing popup editing, and you click outside the grid, the edit is lost, which is different to click on another cell, where the edit is kept. Now they are in sync, clicking outside the pop always keeps the edit.</li>
+    <li>Bugfix: headerCellTemplate had classes in agText element removed. Now they are left alone.</li>
 
     <h2>Version 7.1.x</h2>
 
