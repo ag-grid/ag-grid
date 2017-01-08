@@ -40,7 +40,6 @@
             .ag-fresh .bad-score { background-color: rgba(200,0,0,0.4) }
             .ag-blue .bad-score { background-color: rgba(200,0,0,0.4) }
             .ag-dark .bad-score { background-color: rgba(100,0,0,0.4) }
-
         </style>
 
 
