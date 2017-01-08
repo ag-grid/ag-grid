@@ -344,9 +344,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Data Export") { ?>
-                    <span class="sidebarLinkSelected">Data Export</span>
+                    <span class="sidebarLinkSelected">CSV Export</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">Data Export</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">CSV Export</a>
                 <?php } ?>
 
                 <?php if ($key == "Styling") { ?>

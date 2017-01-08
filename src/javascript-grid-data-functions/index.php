@@ -9,6 +9,9 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h2>Data Functions</h2>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        Data Functions are available in ag-Grid Enterprise.
 
     <p>
         Data functions in ag-Grid are <b>row grouping</b>, <b>pivoting</b> and <b>value (aggregation)</b>. All of these
