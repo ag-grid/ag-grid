@@ -89,16 +89,6 @@ include '../documentation-main/documentation_header.php';
         is set, the grid will know to use the RTL varient of all the calculations.
     </p>
 
-    <h2>Known Issues</h2>
-
-    <h4>For Print</h4>
-
-    <p>
-        We are working on getting RTL working with the 'for print' functionality. Due to demand from
-        ag-Grid customers, we decided to release the core RTL before Christmas. We will come back and
-        fix 'for print' to work with RTL first thing in 2017.
-    </p>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
