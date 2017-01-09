@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
     Below provides two examples:
     </p>
     <ul>
-        <li>Example 1 - shows a simple Excel expot without any styling.</li>
+        <li>Example 1 - shows a simple Excel export without any styling.</li>
         <li>Example 2 - shows a more complex example including styling.</li>
     </ul>
 
@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
 
-        The exmaple below demonstrates exporting the data without any styling. Note that the grid has CSS Class Rules
+        The example below demonstrates exporting the data without any styling. Note that the grid has CSS Class Rules
         for changing the background color of some cells. The Excel export does not replicate the HTML styling. How
         to get similar formatting in your Excel is explained in the second example.
     </p>
@@ -142,32 +142,32 @@ include '../documentation-main/documentation_header.php';
     simplify the configuration the excel export reuses the <a href ="/javascript-grid-cell-styling/">cellClassRules</a>. Whatever resultant class is applicable to the cell then is
     expected to be provided as an Excel Style to the excelStyles property in the <a href="/javascript-grid-properties/">gridOptions</a>.
 
-    <h3>Excel Style Definition</h3>
+    <h4>Excel Style Definition</h4>
 
     <p>
-    An excel style object has the following <b>mandatory</b> properties:
+    An excel style object has the following properties:
     </p>
 
     <ul>
-        <li>id: The id of the style, this has to be a unique string and has to match the name of the style from the cellClassRules</li>
-        <li>name: Same as id</li>
-        <li>alignment: Composed of:<ul>
+        <li>id: Mandatory. The id of the style, this has to be a unique string and has to match the name of the style from the cellClassRules</li>
+        <li>name: Mandatory. Same as id</li>
+        <li>alignment: Optional. But if specified, both the vertical and horizontal alignment are mandatory:<ul>
                 <li>vertical: String one of Top/Bottom</li>
                 <li>horizontal: String one of Left/Right</li>
             </ul>
         </li>
-        <li>borders: The following 4 properties are objects explained below in the Excel Border section <ul>
+        <li>borders: Optional. But if specified, all  the 4 borders must be specified, the structure of an Excel border object is explained in the nest section: <ul>
                 <li>borderBottom</li>
                 <li>borderLeft</li>
                 <li>borderTop</li>
                 <li>borderRight</li>
             </ul>
         </li>
-        <li>font <ul>
+        <li>font: Optional. But if specified the color must be declared: <ul>
                 <li>color. A color in hexadecimal format</li>
             </ul>
         </li>
-        <li>interior
+        <li>interior: Optional. But if specified, the color and pattern must be declared:
             <ul>
                 <li>color. A color in hexadecimal format</li>
                 <li>pattern. One of the following strings: None, Solid, Gray75, Gray50, Gray25, Gray125, Gray0625, HorzStripe, VertStripe, ReverseDiagStripe, DiagStripe, DiagCross, ThickDiagCross, ThinHorzStripe, ThinVertStripe, ThinReverseDiagStripe, ThinDiagStripe, ThinHorzCross, and ThinDiagCross</li>
@@ -177,7 +177,7 @@ include '../documentation-main/documentation_header.php';
 
 
     <h4>Excel borders</h4>
-    The borderBottom, borderLeft, borderTop, borderRight properties are objects composed of:
+    The borderBottom, borderLeft, borderTop, borderRight properties are objects composed of the following mandatory properties:
 
     <ul>
         <li>lineStyle: One of the following strings: None, Continuous, Dash, Dot, DashDot, DashDotDot, SlantDashDot, and Double</li>
@@ -185,6 +185,8 @@ include '../documentation-main/documentation_header.php';
         <li>color. A color in hexadecimal format</b></li>
     </ul>
 
+
+    <h4>Excel Style Definition Example</h4>
     <pre>
 var columnDefs = {
     ...,
@@ -239,7 +241,7 @@ var gridOptions = {
 
     </pre>
 
-    <h3>Resolving Excel Styles</h3>
+    <h4>Resolving Excel Styles</h4>
 
     <p>
         The cellClassRules are executed on each cell to decide what styles to apply. Normally these styles map to CSS
@@ -248,13 +250,51 @@ var gridOptions = {
         are merged by the browser when multiple classes are applied).
     </p>
 
-    <h4>
-        Example 2 - Export With Styles
-    </h4>
     <p>
-        This example uses the same grid is the same as the previous example where the age column has a CSS rule
-        to color green when age < 23 adn blue when age < 20. The example then makes use of Excel styles to
-        achieve the saem in the Excel export.
+        Headers are a special case, headers are exported to excel as normal rows, so in order to allow you to style them
+        you can provide an ExcelStyle with id and name "header". If you do so, the headers
+        will have that style applied to them when exported. You can see this is the second example below in this page.
+    </p>
+
+    <h4>Dealing With Errors In Excel</h4>
+
+    <p>
+        If you get an error when opening the Excel file, the most likely reason is that there is an error in the definition of the styles.
+        If that is the case, since the generated xls file is a plain XML text file, we recommend you to edit the contents manually
+        and see if any of the styles specified have any error according to the <a href="https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx">
+        Microsoft specification for the Excel XML format</a>.
+    </p>
+
+    <p>
+        Some of the most likely errors you can encounter when exporting to excel are:
+        <ul>
+            <li>Not specifying all the attributes of an Excel Style property. IE. If you specify the interior for an
+                Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet</li>
+            <li>Using invalid characters in attributes, we recommend you not to use special characters.</li>
+            <li>Not specifying the style associated to a cell, if a cell has an style that is not passed as part of the
+                grid options, Excel won't fail opening the spreadsheet but the column won't be formatted.</li>
+            <li>Specifying an invalid enumerated property. It is also important to realise that Excel is case sensitive,
+            so Solid is a valid pattern, but SOLID or solid are not</li>
+        </ul>
+    </p>
+
+    <h3>
+        Example 2 - Export With Styles
+    </h3>
+    <p>
+        This example illustrates the following features from the Excel export.
+        <ul>
+            <li>Cells with only one style will be exported to Excel, as you can see in the Country and Gold columns</li>
+            <li>Styles can be combined it a similar fashion than CSS, this can be seen in the column age where athletes l
+                ess than 20 years old get two styles applied (greenBackground and redFont)</li>
+            <li>A default columnDef containing cellClassRules can be specified and it will be exported to Excel.
+                You can see this is in the styling of the oddRows of the grid (boldBorders)</li>
+            <li>Its possible to export borders as specified in the gold column (boldBorders)</li>
+            <li>If a cell has an style but there isn't an associated Excel Style defined, the style for that cell won't
+                get exported. This is the case in this example of the year column which has the style notInExcel, but since
+                it hasn't been specified in the gridOptions, the column then gets exported without formatting.</li>
+            <li>Note that there is an Excel Style with name and id header that gets automatically applied when exported</li>
+        </ul>
     </p>
 
     <show-example example="exampleExcelStyles"></show-example>

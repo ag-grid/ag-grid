@@ -4,12 +4,12 @@
     <script src="../dist/ag-grid-enterprise.js?ignore=notused37"></script>
     <script src="exampleExcel.js"></script>
     <style>
-        .lessThan23IsGreen{
+        .greenBackground{
             background-color: #008000;
             color: #e0ffc1;
         }
 
-        .lessThan20IsBlue{
+        .blueBackground{
             background-color: #00008B;
             color: white;
         }
@@ -51,22 +51,6 @@
         </span>
         <span style="display: inline-block;">
             <label style="margin-right: 20px;">
-                <input type="checkbox" id="customHeader"/>
-                Custom Header
-            </label>
-            <br/>
-            <label style="margin-right: 20px;">
-                <input type="checkbox" id="customFooter"/>
-                Custom Footer
-            </label>
-            <br/>
-            <label style="margin-right: 20px;">
-                <input type="checkbox" id="allColumns"/>
-                All Columns
-            </label>
-        </span>
-        <span style="display: inline-block;">
-            <label style="margin-right: 20px;">
                 <input type="checkbox" id="onlySelected"/>
                 Only Selected
             </label>
@@ -101,6 +85,11 @@
             <label style="margin-right: 20px;">
                 <input type="checkbox" id="useSpecificColumns"/>
                 Specify Columns
+            </label>
+            <br />
+            <label style="margin-right: 20px;">
+                <input type="checkbox" id="allColumns"/>
+                All Columns
             </label>
         </span>
     </div>
