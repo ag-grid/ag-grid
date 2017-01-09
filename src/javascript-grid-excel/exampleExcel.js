@@ -55,8 +55,7 @@ function onBtExport() {
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
         suppressQuotes: getBooleanValue('#suppressQuotes'),
-        fileName: document.querySelector('#fileName').value,
-        columnSeparator: document.querySelector('#columnSeparator').value
+        fileName: document.querySelector('#fileName').value
     };
 
     if (getBooleanValue('#useCellCallback')) {
@@ -77,13 +76,6 @@ function onBtExport() {
         params.processHeaderCallback  = function(params) {
             return params.column.getColDef().headerName.toUpperCase();
         };
-    }
-
-    if (getBooleanValue('#customHeader')) {
-        params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';
-    }
-    if (getBooleanValue('#customFooter')) {
-        params.customFooter = '[[[ This ia s sample custom footer - maybe a summary line here?? ]]]\n';
     }
 
     gridOptions.api.exportExcel(params);
