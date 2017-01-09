@@ -183,6 +183,30 @@ export class Utils {
         return result;
     }
 
+
+    static mergeDeep(object: any, source: any): void {
+        if (this.exists(source)) {
+            this.iterateObject(source, function(key: string, value: any) {
+                let currentValue: any = object[key];
+                let target: any = source[key];
+
+                if (currentValue == null){
+                    object[key] = value;
+                }
+
+                if (typeof currentValue === 'object'){
+                    if (target){
+                        this.mergeDeep (object[key], target)
+                    }
+                }
+
+                if (target){
+                    object[key] = target;
+                }
+            });
+        }
+    }
+
     static assign(object: any, source: any): void {
         if (this.exists(source)) {
             this.iterateObject(source, function(key: string, value: any) {
@@ -788,6 +812,10 @@ export class Utils {
                 }
             });
         }
+    }
+
+    static isNumeric (value:any): boolean {
+        return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
     // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
