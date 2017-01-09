@@ -24,11 +24,11 @@ var EnterpriseBoot = (function () {
     EnterpriseBoot.RICH_SELECT = 'richSelect';
     __decorate([
         main_1.Autowired('filterManager'), 
-        __metadata('design:type', main_1.FilterManager)
+        __metadata('design:type', (typeof (_a = typeof main_1.FilterManager !== 'undefined' && main_1.FilterManager) === 'function' && _a) || Object)
     ], EnterpriseBoot.prototype, "filterManager", void 0);
     __decorate([
         main_1.Autowired('cellEditorFactory'), 
-        __metadata('design:type', main_1.CellEditorFactory)
+        __metadata('design:type', (typeof (_b = typeof main_1.CellEditorFactory !== 'undefined' && main_1.CellEditorFactory) === 'function' && _b) || Object)
     ], EnterpriseBoot.prototype, "cellEditorFactory", void 0);
     __decorate([
         main_1.Autowired('licenseManager'), 
@@ -45,5 +45,6 @@ var EnterpriseBoot = (function () {
         __metadata('design:paramtypes', [])
     ], EnterpriseBoot);
     return EnterpriseBoot;
+    var _a, _b;
 }());
 exports.EnterpriseBoot = EnterpriseBoot;

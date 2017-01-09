@@ -118,11 +118,11 @@ var PivotStage = (function () {
     };
     __decorate([
         main_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
+        __metadata('design:type', (typeof (_a = typeof main_1.IRowModel !== 'undefined' && main_1.IRowModel) === 'function' && _a) || Object)
     ], PivotStage.prototype, "rowModel", void 0);
     __decorate([
         main_1.Autowired('valueService'), 
-        __metadata('design:type', main_1.ValueService)
+        __metadata('design:type', (typeof (_b = typeof main_1.ValueService !== 'undefined' && main_1.ValueService) === 'function' && _b) || Object)
     ], PivotStage.prototype, "valueService", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -130,7 +130,7 @@ var PivotStage = (function () {
     ], PivotStage.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_c = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _c) || Object)
     ], PivotStage.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('pivotColDefService'), 
@@ -141,5 +141,6 @@ var PivotStage = (function () {
         __metadata('design:paramtypes', [])
     ], PivotStage);
     return PivotStage;
+    var _a, _b, _c;
 }());
 exports.PivotStage = PivotStage;

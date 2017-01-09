@@ -192,7 +192,7 @@ var RenderedColumn = (function (_super) {
         '</div>';
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_a = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _a) || Object)
     ], RenderedColumn.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -200,19 +200,19 @@ var RenderedColumn = (function (_super) {
     ], RenderedColumn.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_b = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _b) || Object)
     ], RenderedColumn.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
+        __metadata('design:type', (typeof (_c = typeof main_1.DragAndDropService !== 'undefined' && main_1.DragAndDropService) === 'function' && _c) || Object)
     ], RenderedColumn.prototype, "dragAndDropService", void 0);
     __decorate([
         main_1.Autowired('gridPanel'), 
-        __metadata('design:type', main_1.GridPanel)
+        __metadata('design:type', (typeof (_d = typeof main_1.GridPanel !== 'undefined' && main_1.GridPanel) === 'function' && _d) || Object)
     ], RenderedColumn.prototype, "gridPanel", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_e = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _e) || Object)
     ], RenderedColumn.prototype, "context", void 0);
     __decorate([
         main_1.QuerySelector('.ag-column-select-label'), 
@@ -224,7 +224,7 @@ var RenderedColumn = (function (_super) {
     ], RenderedColumn.prototype, "eIndent", void 0);
     __decorate([
         main_1.QuerySelector('.ag-column-select-checkbox'), 
-        __metadata('design:type', main_1.AgCheckbox)
+        __metadata('design:type', (typeof (_f = typeof main_1.AgCheckbox !== 'undefined' && main_1.AgCheckbox) === 'function' && _f) || Object)
     ], RenderedColumn.prototype, "cbSelect", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -233,5 +233,6 @@ var RenderedColumn = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RenderedColumn.prototype, "init", null);
     return RenderedColumn;
+    var _a, _b, _c, _d, _e, _f;
 }(main_1.Component));
 exports.RenderedColumn = RenderedColumn;

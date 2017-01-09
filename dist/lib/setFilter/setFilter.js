@@ -226,11 +226,11 @@ var SetFilter = (function (_super) {
     };
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_a = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _a) || Object)
     ], SetFilter.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_b = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _b) || Object)
     ], SetFilter.prototype, "context", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -239,6 +239,7 @@ var SetFilter = (function (_super) {
         __metadata('design:returntype', void 0)
     ], SetFilter.prototype, "postConstruct", null);
     return SetFilter;
+    var _a, _b;
 }(main_1.Component));
 exports.SetFilter = SetFilter;
 var ModelWrapper = (function () {

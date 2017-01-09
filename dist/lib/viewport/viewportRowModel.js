@@ -156,7 +156,7 @@ var ViewportRowModel = (function () {
         });
     };
     ViewportRowModel.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = new main_1.RowNode();
+        var rowNode = new RowNode();
         this.context.wireBean(rowNode);
         rowNode.setRowHeight(this.rowHeight);
         rowNode.setRowTop(this.rowHeight * rowIndex);
@@ -180,19 +180,19 @@ var ViewportRowModel = (function () {
     };
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_a = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _a) || Object)
     ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_b = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _b) || Object)
     ], ViewportRowModel.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('selectionController'), 
-        __metadata('design:type', main_1.SelectionController)
+        __metadata('design:type', (typeof (_c = typeof main_1.SelectionController !== 'undefined' && main_1.SelectionController) === 'function' && _c) || Object)
     ], ViewportRowModel.prototype, "selectionController", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_d = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _d) || Object)
     ], ViewportRowModel.prototype, "context", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -211,5 +211,6 @@ var ViewportRowModel = (function () {
         __metadata('design:paramtypes', [])
     ], ViewportRowModel);
     return ViewportRowModel;
+    var _a, _b, _c, _d;
 }());
 exports.ViewportRowModel = ViewportRowModel;

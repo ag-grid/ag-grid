@@ -21,12 +21,13 @@ var RowGroupCompFactory = (function () {
     };
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_a = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _a) || Object)
     ], RowGroupCompFactory.prototype, "context", void 0);
     RowGroupCompFactory = __decorate([
         main_1.Bean('rowGroupCompFactory'), 
         __metadata('design:paramtypes', [])
     ], RowGroupCompFactory);
     return RowGroupCompFactory;
+    var _a;
 }());
 exports.RowGroupCompFactory = RowGroupCompFactory;

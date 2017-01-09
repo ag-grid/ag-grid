@@ -137,7 +137,7 @@ var ColumnComponent = (function (_super) {
     ColumnComponent.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
     __decorate([
         main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
+        __metadata('design:type', (typeof (_a = typeof main_1.DragAndDropService !== 'undefined' && main_1.DragAndDropService) === 'function' && _a) || Object)
     ], ColumnComponent.prototype, "dragAndDropService", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -145,15 +145,15 @@ var ColumnComponent = (function (_super) {
     ], ColumnComponent.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('gridPanel'), 
-        __metadata('design:type', main_1.GridPanel)
+        __metadata('design:type', (typeof (_b = typeof main_1.GridPanel !== 'undefined' && main_1.GridPanel) === 'function' && _b) || Object)
     ], ColumnComponent.prototype, "gridPanel", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_c = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _c) || Object)
     ], ColumnComponent.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('popupService'), 
-        __metadata('design:type', main_1.PopupService)
+        __metadata('design:type', (typeof (_d = typeof main_1.PopupService !== 'undefined' && main_1.PopupService) === 'function' && _d) || Object)
     ], ColumnComponent.prototype, "popupService", void 0);
     __decorate([
         main_1.Autowired('aggFuncService'), 
@@ -161,11 +161,11 @@ var ColumnComponent = (function (_super) {
     ], ColumnComponent.prototype, "aggFuncService", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_e = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _e) || Object)
     ], ColumnComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_f = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _f) || Object)
     ], ColumnComponent.prototype, "eventService", void 0);
     __decorate([
         main_1.QuerySelector('.ag-column-drop-cell-text'), 
@@ -182,6 +182,7 @@ var ColumnComponent = (function (_super) {
         __metadata('design:returntype', void 0)
     ], ColumnComponent.prototype, "init", null);
     return ColumnComponent;
+    var _a, _b, _c, _d, _e, _f;
 }(main_1.Component));
 exports.ColumnComponent = ColumnComponent;
 var AggItemComp = (function (_super) {

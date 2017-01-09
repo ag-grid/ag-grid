@@ -118,11 +118,11 @@ var ColumnSelectPanel = (function (_super) {
     ], ColumnSelectPanel.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_a = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _a) || Object)
     ], ColumnSelectPanel.prototype, "globalEventService", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_b = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _b) || Object)
     ], ColumnSelectPanel.prototype, "context", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -131,5 +131,6 @@ var ColumnSelectPanel = (function (_super) {
         __metadata('design:returntype', void 0)
     ], ColumnSelectPanel.prototype, "init", null);
     return ColumnSelectPanel;
+    var _a, _b;
 }(main_1.Component));
 exports.ColumnSelectPanel = ColumnSelectPanel;

@@ -97,11 +97,6 @@ var MenuItemMapper = (function () {
                 name: localeTextFunc('collapseAll', 'Collapse All'),
                 action: function () { return _this.gridApi.collapseAll(); }
             };
-            case 'toolPanel': return {
-                name: localeTextFunc('toolPanel', 'Tool Panel'),
-                checked: this.gridApi.isToolPanelShowing(),
-                action: function () { return _this.gridApi.showToolPanel(!_this.gridApi.isToolPanelShowing()); }
-            };
             case 'copy': return {
                 name: localeTextFunc('copy', 'Copy'),
                 shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -159,15 +154,15 @@ var MenuItemMapper = (function () {
     };
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_a = typeof ag_grid_1.GridOptionsWrapper !== 'undefined' && ag_grid_1.GridOptionsWrapper) === 'function' && _a) || Object)
     ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         ag_grid_1.Autowired('columnController'), 
-        __metadata('design:type', ag_grid_1.ColumnController)
+        __metadata('design:type', (typeof (_b = typeof ag_grid_1.ColumnController !== 'undefined' && ag_grid_1.ColumnController) === 'function' && _b) || Object)
     ], MenuItemMapper.prototype, "columnController", void 0);
     __decorate([
         ag_grid_1.Autowired('gridApi'), 
-        __metadata('design:type', ag_grid_1.GridApi)
+        __metadata('design:type', (typeof (_c = typeof ag_grid_1.GridApi !== 'undefined' && ag_grid_1.GridApi) === 'function' && _c) || Object)
     ], MenuItemMapper.prototype, "gridApi", void 0);
     __decorate([
         ag_grid_1.Autowired('clipboardService'), 
@@ -182,5 +177,6 @@ var MenuItemMapper = (function () {
         __metadata('design:paramtypes', [])
     ], MenuItemMapper);
     return MenuItemMapper;
+    var _a, _b, _c;
 }());
 exports.MenuItemMapper = MenuItemMapper;

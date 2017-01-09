@@ -87,7 +87,7 @@ var MenuItemComponent = (function (_super) {
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_a = typeof ag_grid_1.GridOptionsWrapper !== 'undefined' && ag_grid_1.GridOptionsWrapper) === 'function' && _a) || Object)
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         ag_grid_1.PostConstruct, 
@@ -96,5 +96,6 @@ var MenuItemComponent = (function (_super) {
         __metadata('design:returntype', void 0)
     ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
+    var _a;
 }(ag_grid_1.Component));
 exports.MenuItemComponent = MenuItemComponent;

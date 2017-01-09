@@ -73,7 +73,7 @@ var AggFuncService = (function () {
     AggFuncService.AGG_AVG = 'avg';
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_a = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _a) || Object)
     ], AggFuncService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -86,6 +86,7 @@ var AggFuncService = (function () {
         __metadata('design:paramtypes', [])
     ], AggFuncService);
     return AggFuncService;
+    var _a;
 }());
 exports.AggFuncService = AggFuncService;
 function aggSum(input) {

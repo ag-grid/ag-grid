@@ -144,12 +144,13 @@ var MenuList = (function (_super) {
         '</div>';
     __decorate([
         ag_grid_1.Autowired('context'), 
-        __metadata('design:type', ag_grid_1.Context)
+        __metadata('design:type', (typeof (_a = typeof ag_grid_1.Context !== 'undefined' && ag_grid_1.Context) === 'function' && _a) || Object)
     ], MenuList.prototype, "context", void 0);
     __decorate([
         ag_grid_1.Autowired('popupService'), 
-        __metadata('design:type', ag_grid_1.PopupService)
+        __metadata('design:type', (typeof (_b = typeof ag_grid_1.PopupService !== 'undefined' && ag_grid_1.PopupService) === 'function' && _b) || Object)
     ], MenuList.prototype, "popupService", void 0);
     return MenuList;
+    var _a, _b;
 }(ag_grid_1.Component));
 exports.MenuList = MenuList;

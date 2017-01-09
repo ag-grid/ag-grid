@@ -73,23 +73,23 @@ var ValuesColumnPanel = (function (_super) {
     ], ValuesColumnPanel.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_a = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _a) || Object)
     ], ValuesColumnPanel.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_b = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _b) || Object)
     ], ValuesColumnPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_c = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _c) || Object)
     ], ValuesColumnPanel.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('loggerFactory'), 
-        __metadata('design:type', main_1.LoggerFactory)
+        __metadata('design:type', (typeof (_d = typeof main_1.LoggerFactory !== 'undefined' && main_1.LoggerFactory) === 'function' && _d) || Object)
     ], ValuesColumnPanel.prototype, "loggerFactory", void 0);
     __decorate([
         main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
+        __metadata('design:type', (typeof (_e = typeof main_1.DragAndDropService !== 'undefined' && main_1.DragAndDropService) === 'function' && _e) || Object)
     ], ValuesColumnPanel.prototype, "dragAndDropService", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -98,5 +98,6 @@ var ValuesColumnPanel = (function (_super) {
         __metadata('design:returntype', void 0)
     ], ValuesColumnPanel.prototype, "passBeansUp", null);
     return ValuesColumnPanel;
+    var _a, _b, _c, _d, _e;
 }(abstractColumnDropPanel_1.AbstractColumnDropPanel));
 exports.ValuesColumnPanel = ValuesColumnPanel;

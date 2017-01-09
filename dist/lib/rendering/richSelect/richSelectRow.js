@@ -36,6 +36,10 @@ var RichSelectRow = (function (_super) {
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
             this.getGui().textContent = value.toString();
         }
+        else {
+            // putting in blank, so if missing, at least the user can click on it
+            this.getGui().innerHTML = '&nbsp;';
+        }
     };
     RichSelectRow.prototype.populateWithRenderer = function (value) {
         var childComponent = this.cellRendererService.useCellRenderer(this.cellRenderer, this.getGui(), { value: value });
@@ -45,8 +49,9 @@ var RichSelectRow = (function (_super) {
     };
     __decorate([
         main_1.Autowired('cellRendererService'), 
-        __metadata('design:type', main_1.CellRendererService)
+        __metadata('design:type', (typeof (_a = typeof main_1.CellRendererService !== 'undefined' && main_1.CellRendererService) === 'function' && _a) || Object)
     ], RichSelectRow.prototype, "cellRendererService", void 0);
     return RichSelectRow;
+    var _a;
 }(main_1.Component));
 exports.RichSelectRow = RichSelectRow;

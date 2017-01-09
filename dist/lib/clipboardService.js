@@ -232,7 +232,7 @@ var ClipboardService = (function () {
         var value = this.valueService.getValue(column, rowNode);
         var processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
         if (main_1.Utils.exists(processedValue)) {
-            var data = value.toString();
+            var data = processedValue.toString();
             this.copyDataToClipboard(data);
         }
         else {
@@ -381,15 +381,15 @@ var ClipboardService = (function () {
     };
     __decorate([
         main_1.Autowired('csvCreator'), 
-        __metadata('design:type', main_1.CsvCreator)
+        __metadata('design:type', (typeof (_a = typeof main_1.CsvCreator !== 'undefined' && main_1.CsvCreator) === 'function' && _a) || Object)
     ], ClipboardService.prototype, "csvCreator", void 0);
     __decorate([
         main_1.Autowired('loggerFactory'), 
-        __metadata('design:type', main_1.LoggerFactory)
+        __metadata('design:type', (typeof (_b = typeof main_1.LoggerFactory !== 'undefined' && main_1.LoggerFactory) === 'function' && _b) || Object)
     ], ClipboardService.prototype, "loggerFactory", void 0);
     __decorate([
         main_1.Autowired('selectionController'), 
-        __metadata('design:type', main_1.SelectionController)
+        __metadata('design:type', (typeof (_c = typeof main_1.SelectionController !== 'undefined' && main_1.SelectionController) === 'function' && _c) || Object)
     ], ClipboardService.prototype, "selectionController", void 0);
     __decorate([
         main_1.Autowired('rangeController'), 
@@ -397,23 +397,23 @@ var ClipboardService = (function () {
     ], ClipboardService.prototype, "rangeController", void 0);
     __decorate([
         main_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
+        __metadata('design:type', (typeof (_d = typeof main_1.IRowModel !== 'undefined' && main_1.IRowModel) === 'function' && _d) || Object)
     ], ClipboardService.prototype, "rowModel", void 0);
     __decorate([
         main_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', main_1.FloatingRowModel)
+        __metadata('design:type', (typeof (_e = typeof main_1.FloatingRowModel !== 'undefined' && main_1.FloatingRowModel) === 'function' && _e) || Object)
     ], ClipboardService.prototype, "floatingRowModel", void 0);
     __decorate([
         main_1.Autowired('valueService'), 
-        __metadata('design:type', main_1.ValueService)
+        __metadata('design:type', (typeof (_f = typeof main_1.ValueService !== 'undefined' && main_1.ValueService) === 'function' && _f) || Object)
     ], ClipboardService.prototype, "valueService", void 0);
     __decorate([
         main_1.Autowired('focusedCellController'), 
-        __metadata('design:type', main_1.FocusedCellController)
+        __metadata('design:type', (typeof (_g = typeof main_1.FocusedCellController !== 'undefined' && main_1.FocusedCellController) === 'function' && _g) || Object)
     ], ClipboardService.prototype, "focusedCellController", void 0);
     __decorate([
         main_1.Autowired('rowRenderer'), 
-        __metadata('design:type', main_1.RowRenderer)
+        __metadata('design:type', (typeof (_h = typeof main_1.RowRenderer !== 'undefined' && main_1.RowRenderer) === 'function' && _h) || Object)
     ], ClipboardService.prototype, "rowRenderer", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -421,19 +421,19 @@ var ClipboardService = (function () {
     ], ClipboardService.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_j = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _j) || Object)
     ], ClipboardService.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('cellNavigationService'), 
-        __metadata('design:type', main_1.CellNavigationService)
+        __metadata('design:type', (typeof (_k = typeof main_1.CellNavigationService !== 'undefined' && main_1.CellNavigationService) === 'function' && _k) || Object)
     ], ClipboardService.prototype, "cellNavigationService", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_l = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _l) || Object)
     ], ClipboardService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('gridCore'), 
-        __metadata('design:type', main_1.GridCore)
+        __metadata('design:type', (typeof (_m = typeof main_1.GridCore !== 'undefined' && main_1.GridCore) === 'function' && _m) || Object)
     ], ClipboardService.prototype, "gridCore", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -446,5 +446,6 @@ var ClipboardService = (function () {
         __metadata('design:paramtypes', [])
     ], ClipboardService);
     return ClipboardService;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
 }());
 exports.ClipboardService = ClipboardService;

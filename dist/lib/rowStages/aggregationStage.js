@@ -163,7 +163,7 @@ var AggregationStage = (function () {
     };
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_a = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _a) || Object)
     ], AggregationStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -171,7 +171,7 @@ var AggregationStage = (function () {
     ], AggregationStage.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('valueService'), 
-        __metadata('design:type', main_1.ValueService)
+        __metadata('design:type', (typeof (_b = typeof main_1.ValueService !== 'undefined' && main_1.ValueService) === 'function' && _b) || Object)
     ], AggregationStage.prototype, "valueService", void 0);
     __decorate([
         main_1.Autowired('pivotStage'), 
@@ -186,5 +186,6 @@ var AggregationStage = (function () {
         __metadata('design:paramtypes', [])
     ], AggregationStage);
     return AggregationStage;
+    var _a, _b;
 }());
 exports.AggregationStage = AggregationStage;

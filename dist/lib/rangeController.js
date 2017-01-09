@@ -242,19 +242,19 @@ var RangeController = (function () {
     };
     __decorate([
         main_1.Autowired('loggerFactory'), 
-        __metadata('design:type', main_1.LoggerFactory)
+        __metadata('design:type', (typeof (_a = typeof main_1.LoggerFactory !== 'undefined' && main_1.LoggerFactory) === 'function' && _a) || Object)
     ], RangeController.prototype, "loggerFactory", void 0);
     __decorate([
         main_1.Autowired('gridPanel'), 
-        __metadata('design:type', main_1.GridPanel)
+        __metadata('design:type', (typeof (_b = typeof main_1.GridPanel !== 'undefined' && main_1.GridPanel) === 'function' && _b) || Object)
     ], RangeController.prototype, "gridPanel", void 0);
     __decorate([
         main_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
+        __metadata('design:type', (typeof (_c = typeof main_1.IRowModel !== 'undefined' && main_1.IRowModel) === 'function' && _c) || Object)
     ], RangeController.prototype, "rowModel", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
+        __metadata('design:type', (typeof (_d = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _d) || Object)
     ], RangeController.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -262,19 +262,19 @@ var RangeController = (function () {
     ], RangeController.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('rowRenderer'), 
-        __metadata('design:type', main_1.RowRenderer)
+        __metadata('design:type', (typeof (_e = typeof main_1.RowRenderer !== 'undefined' && main_1.RowRenderer) === 'function' && _e) || Object)
     ], RangeController.prototype, "rowRenderer", void 0);
     __decorate([
         main_1.Autowired('focusedCellController'), 
-        __metadata('design:type', main_1.FocusedCellController)
+        __metadata('design:type', (typeof (_f = typeof main_1.FocusedCellController !== 'undefined' && main_1.FocusedCellController) === 'function' && _f) || Object)
     ], RangeController.prototype, "focusedCellController", void 0);
     __decorate([
         main_1.Autowired('mouseEventService'), 
-        __metadata('design:type', main_1.MouseEventService)
+        __metadata('design:type', (typeof (_g = typeof main_1.MouseEventService !== 'undefined' && main_1.MouseEventService) === 'function' && _g) || Object)
     ], RangeController.prototype, "mouseEventService", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_h = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _h) || Object)
     ], RangeController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -287,5 +287,6 @@ var RangeController = (function () {
         __metadata('design:paramtypes', [])
     ], RangeController);
     return RangeController;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
 }());
 exports.RangeController = RangeController;

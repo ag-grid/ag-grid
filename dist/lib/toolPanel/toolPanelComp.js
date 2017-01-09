@@ -59,16 +59,17 @@ var ToolPanelComp = (function (_super) {
     ToolPanelComp.TEMPLATE = '<div class="ag-tool-panel"></div>';
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
+        __metadata('design:type', (typeof (_a = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _a) || Object)
     ], ToolPanelComp.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
+        __metadata('design:type', (typeof (_b = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _b) || Object)
     ], ToolPanelComp.prototype, "gridOptionsWrapper", void 0);
     ToolPanelComp = __decorate([
         main_1.Bean('toolPanel'), 
         __metadata('design:paramtypes', [])
     ], ToolPanelComp);
     return ToolPanelComp;
+    var _a, _b;
 }(main_1.Component));
 exports.ToolPanelComp = ToolPanelComp;
