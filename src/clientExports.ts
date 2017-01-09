@@ -33,6 +33,8 @@ import {ColumnComponent} from "./toolPanel/columnDrop/columnComponent";
 import {ValuesColumnPanel} from "./toolPanel/columnDrop/valueColumnsPanel";
 import {PivotCompFactory} from "./pivotCompFactory";
 import {RowGroupCompFactory} from "./rowGroupCompFactory";
+import {ExcelCreator} from "./excelCreator";
+import {ExcelXmlFactory} from "./excelXmlFactory";
 
 
 export function populateClientExports(exports: any): void {
@@ -82,6 +84,8 @@ export function populateClientExports(exports: any): void {
     exports.LicenseManager = LicenseManager;
 
     exports.PivotCompFactory = PivotCompFactory;
+    exports.ExcelCreator = ExcelCreator;
+    exports.ExcelXmlFactory = ExcelXmlFactory;
     exports.RangeController = RangeController;
     exports.RowGroupCompFactory = RowGroupCompFactory;
 
