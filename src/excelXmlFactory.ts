@@ -66,26 +66,75 @@ export class ExcelXmlFactory {
 
     private styleXmlElement (style:ExcelStyle):XmlElement{
         var borders: XmlElement[] = [];
-        [
-            style.borders.borderBottom,
-            style.borders.borderLeft,
-            style.borders.borderRight,
-            style.borders.borderTop
-        ].forEach((it: ExcelBorder, index: number) => {
-            var current = index == 0 ? "Bottom" : index == 1 ? "Left" : index == 2 ? "Right" : "Top";
-            borders.push({
-                name: "Border",
+        if (style.borders){
+            [
+                style.borders.borderBottom,
+                style.borders.borderLeft,
+                style.borders.borderRight,
+                style.borders.borderTop
+            ].forEach((it: ExcelBorder, index: number) => {
+                var current = index == 0 ? "Bottom" : index == 1 ? "Left" : index == 2 ? "Right" : "Top";
+                borders.push({
+                    name: "Border",
+                    properties: {
+                        prefix: "ss:",
+                        prefixedMap: {
+                            Position: current,
+                            LineStyle: it.lineStyle,
+                            Weight: it.weight,
+                            Color: it.color
+                        }
+                    }
+                })
+            });
+        }
+
+        var children:XmlElement[] = [];
+
+        if (style.alignment){
+            children.push({
+                name: "Alignment",
                 properties: {
                     prefix: "ss:",
                     prefixedMap: {
-                        Position: current,
-                        LineStyle: it.lineStyle,
-                        Weight: it.weight,
-                        Color: it.color
+                        Vertical: style.alignment.vertical,
+                        Horizontal: style.alignment.horizontal
                     }
                 }
             })
-        });
+        }
+
+        if (style.borders){
+            children.push({
+                name: "Borders",
+                children: borders
+            });
+        }
+
+        if (style.font){
+            children.push({
+                name: "Font",
+                properties: {
+                    prefix: "ss:",
+                    prefixedMap: {
+                        Color: style.font.color
+                    }
+                }
+            })
+        }
+
+        if (style.interior){
+            children.push({
+                name: "Interior",
+                properties: {
+                    prefix: "ss:",
+                    prefixedMap: {
+                        Color: style.interior.color,
+                        Pattern: style.interior.pattern
+                    }
+                }
+            })
+        }
 
         return {
             name: "Style",
@@ -96,36 +145,7 @@ export class ExcelXmlFactory {
                     Name: style.name
                 },
             },
-            children: [{
-                name: "Alignment",
-                properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Vertical: style.alignment.vertical,
-                        Horizontal: style.alignment.horizontal
-                    }
-                }
-            }, {
-                name: "Borders",
-                children: borders
-            }, {
-                name: "Font",
-                properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Color: style.font.color
-                    }
-                }
-            }, {
-                name: "Interior",
-                properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Color: style.interior.color,
-                        Pattern: style.interior.pattern
-                    }
-                }
-            }]
+            children: children
 
         }
     }
@@ -296,12 +316,12 @@ export enum ExcelDataType {
 }
 
 export interface ExcelStyle {
-    id: string
-    name: string
-    alignment: ExcelAlignment
-    borders: ExcelBorders
-    font: ExcelFont
-    interior: ExcelInterior
+    id?: string
+    name?: string
+    alignment?: ExcelAlignment
+    borders?: ExcelBorders
+    font?: ExcelFont
+    interior?: ExcelInterior
 }
 
 export interface ExcelAlignment {

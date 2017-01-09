@@ -28,8 +28,17 @@ import {CsvExportParams} from 'ag-grid/main';
 import {StylingService} from 'ag-grid/main';
 
 
+export interface ExcelMixedStyle {
+    key: string,
+    excelID: string,
+    result: ExcelStyle
+}
+
 export class ExcelGridSerializingSession extends BaseGridSerializingSession {
     private styleIds:string[];
+    private mixedStyles:{[key:string]: ExcelMixedStyle} = {};
+    private mixedStyleCounter:number = 0;
+    private excelStyles: ExcelStyle[];
 
     constructor (
         columnController: ColumnController,
@@ -38,17 +47,18 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         processCellCallback:(params: ProcessCellForExportParams)=>string,
         processHeaderCallback:(params: ProcessHeaderForExportParams)=>string,
         private excelXmlFactory:ExcelXmlFactory,
-        private excelStyles:ExcelStyle[],
-        private styleLinker:(rowType: RowType, rowIndex:number, colIndex:number, value:string, column:Column, node:RowNode)=> string
+        baseExcelStyles:ExcelStyle[],
+        private styleLinker:(rowType: RowType, rowIndex:number, colIndex:number, value:string, column:Column, node:RowNode)=> string[]
     ){
         super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback);
-        if (!excelStyles) {
+        if (!baseExcelStyles) {
             this.styleIds = [];
         }else{
-            this.styleIds = excelStyles.map((it:ExcelStyle)=>{
+            this.styleIds = baseExcelStyles.map((it:ExcelStyle)=>{
                 return it.id
             });
         }
+        this.excelStyles = baseExcelStyles.slice();
     }
     private rows:ExcelRow[] = [];
 
@@ -63,7 +73,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
 
     public prepare(columnsToExport: Column[]): void {
         this.cols = Utils.map(columnsToExport, (it: Column)=>{
-            it.getColDef().cellStyle
+            it.getColDef().cellStyle;
             return {
                 width: it.getColDef().width
             }
@@ -78,8 +88,8 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         });
         return {
              onColumn: (header: string, index: number, span:number)=>{
-                 var styleId:string = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
-                 currentCells.push(that.createMergedCell(styleId, ExcelDataType.String, header, span));
+                 var styleIds:string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
+                 currentCells.push(that.createMergedCell(styleIds.length > 0 ? styleIds[0] : null, ExcelDataType.String, header, span));
              }
         };
     }
@@ -106,8 +116,8 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         let that = this;
         return (column: Column, index: number, node?:RowNode) => {
             let nameForCol = this.extractHeaderValue(column);
-            var styleId:string = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, null);
-            currentCells.push(this.createCell(styleId, ExcelDataType.String, nameForCol))
+            let styleIds:string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, null);
+            currentCells.push(this.createCell(styleIds.length > 0 ? styleIds[0] : null, ExcelDataType.String, nameForCol))
         }
     }
 
@@ -126,9 +136,44 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         var that = this;
         return (column: Column, index: number, node?:RowNode) => {
             var valueForCell = this.extractRowCellValue(column, index, node);
-            var styleId:string = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
+            let styleIds:string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
+            let excelStyleId: string = null;
+            if (styleIds && styleIds.length == 1){
+                excelStyleId = styleIds [0];
+            } else if (styleIds && styleIds.length > 1){
+                let key: string = styleIds.join("-");
+                if (! this.mixedStyles[key]){
+                    this.addNewMixedStyle (styleIds);
+                }
+                excelStyleId = this.mixedStyles[key].excelID;
+            }
             let type: ExcelDataType = Utils.isNumeric(valueForCell) ? ExcelDataType.Number : ExcelDataType.String;
-            currentCells.push(that.createCell(styleId, type, valueForCell))}
+            currentCells.push(that.createCell(excelStyleId, type, valueForCell))}
+    }
+
+    addNewMixedStyle (styleIds:string[]):void{
+        this.mixedStyleCounter += 1;
+        let excelId = 'mixedStyle' + this.mixedStyleCounter;
+        var resultantStyle: ExcelStyle = {};
+
+        styleIds.forEach((styleId:string)=>{
+            this.excelStyles.forEach((excelStyle:ExcelStyle)=>{
+                if (excelStyle.id === styleId){
+                    Utils.mergeDeep (resultantStyle, excelStyle);
+                }
+            });
+        });
+
+        resultantStyle['id'] = excelId;
+        resultantStyle['name'] = excelId;
+        let key: string = styleIds.join("-");
+        this.mixedStyles[key] = {
+            excelID: excelId,
+            key: key,
+            result: resultantStyle
+        };
+        this.excelStyles.push(resultantStyle)
+        this.styleIds.push(excelId);
     }
 
     private styleExists (styleId:string):boolean{
@@ -203,9 +248,13 @@ export class ExcelCreator implements IExcelCreator{
         );
     }
 
-    private styleLinker (rowType: RowType, rowIndex:number, colIndex:number, value:string, column:Column, node:RowNode): string{
-        if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) return "header";
+    private styleLinker (rowType: RowType, rowIndex:number, colIndex:number, value:string, column:Column, node:RowNode): string[]{
+        if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) return ["header"];
         if (!this.gridOptions.excelStyles || this.gridOptions.excelStyles.length === 0) return null;
+
+        var styleIds : string[] = this.gridOptions.excelStyles.map((it:ExcelStyle)=>{
+            return it.id
+        });
 
         var applicableStyles:string [] = [];
         this.stylingService.processCellClassRules(
@@ -220,18 +269,15 @@ export class ExcelCreator implements IExcelCreator{
                 context: this.gridOptionsWrapper.getContext()
             },
             (className:string)=>{
-                applicableStyles.push(className);
+                if (styleIds.indexOf(className) > -1){
+                    applicableStyles.push(className);
+                }
             }
         );
 
-        var lastStyle:string = null;
-        this.gridOptions.excelStyles.forEach((it:ExcelStyle)=>{
-            if (applicableStyles.indexOf(it.name) > -1){
-                lastStyle = it.name;
-            }
+        return applicableStyles.sort((left:string, right:string):number=>{
+            return (styleIds.indexOf(left) < styleIds.indexOf(right)) ? -1: 1;
         });
-
-        return lastStyle;
     }
 
 
