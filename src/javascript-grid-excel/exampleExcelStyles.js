@@ -3,25 +3,30 @@ var columnDefs = [{
     children: [
         {headerName: "Athlete", field: "athlete", width: 150},
         {headerName: "Age", field: "age", width: 90, cellClassRules:{
-            lessThan23IsGreen: function(params) { return params.value < 23},
-            lessThan20IsBlue: function(params) { return params.value < 20}
+            greenBackground: function(params) { return params.value < 23},
+            redFont: function(params) { return params.value < 20}
         }},
-        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Country", field: "country", width: 120, cellClassRules: {
+            redFont: function(params) { return params.value === 'United States' }
+        }},
         {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75},
-        {headerName: "Year", field: "year", width: 75}
+        {headerName: "Year", field: "year", width: 75, cellClassRules:{
+            notInExcel: function(params) { return true}
+        }}
     ]
 }, {
     headerName: 'Group2',
     children: [
         {headerName: "Date", field: "date", width: 110},
         {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100},
+        {headerName: "Gold", field: "gold", width: 100, cellClassRules:{
+            boldBorders: function(params) { return params.value > 2}
+        }},
         {headerName: "Silver", field: "silver", width: 100},
         {headerName: "Bronze", field: "bronze", width: 100},
         {headerName: "Total", field: "total", width: 100}
     ]
 }];
-
 
 var floatingTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,
     date: '01-08-2020', sport: 'Floating Top Sport', gold: 22, silver: 33, bronze: 44, total: 55};
@@ -31,12 +36,61 @@ var floatingBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country:
 
 var gridOptions = {
     columnDefs: columnDefs,
+    groupHeaders: true,
     enableFilter: true,
     enableSorting: true,
-    showToolPanel: true,
     rowSelection: 'multiple',
     floatingTopRowData: [floatingTopRow],
-    floatingBottomRowData: [floatingBottomRow]
+    floatingBottomRowData: [floatingBottomRow],
+    defaultColDef: {
+        cellClassRules: {
+            darkGreyBackground: function(params) { return params.rowIndex % 2 == 0 }
+        }
+    },
+    excelStyles: [
+        {
+            id: "greenBackground",
+            name: "greenBackground",
+            interior: {
+                color: "#90ee90", pattern: 'Solid'
+            }
+        },
+        {
+            id: "redFont",
+            name: "redFont",
+            font: { color: "#ff0000" }
+        },{
+            id: 'darkGreyBackground',
+            name: 'darkGreyBackground',
+            interior: {
+                color: "#888888", pattern: 'Solid'
+            }
+        },{
+            id:'boldBorders',
+            name:'boldBorders',
+            borders: {
+                borderBottom: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 3
+                },
+                borderLeft: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 3
+                },
+                borderRight: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 3
+                },
+                borderTop: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 3
+                }
+            }
+        },{
+            id:'header',
+            name: 'header',
+            interior: {
+                color: "#CCCCCC", pattern: 'Solid'
+            }
+        }
+
+    ]
 };
 
 function getBooleanValue(cssSelector) {
@@ -52,9 +106,7 @@ function onBtExport() {
         skipFloatingBottom: getBooleanValue('#skipFloatingBottom'),
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
-        suppressQuotes: getBooleanValue('#suppressQuotes'),
-        fileName: document.querySelector('#fileName').value,
-        columnSeparator: document.querySelector('#columnSeparator').value
+        fileName: document.querySelector('#fileName').value
     };
 
     if (getBooleanValue('#useCellCallback')) {
@@ -77,14 +129,8 @@ function onBtExport() {
         };
     }
 
-    if (getBooleanValue('#customHeader')) {
-        params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';
-    }
-    if (getBooleanValue('#customFooter')) {
-        params.customFooter = '[[[ This ia s sample custom footer - maybe a summary line here?? ]]]\n';
-    }
 
-    gridOptions.api.exportDataAsCsv(params);
+    gridOptions.api.exportExcel(params);
 }
 
 // setup the grid after the page has finished loading
