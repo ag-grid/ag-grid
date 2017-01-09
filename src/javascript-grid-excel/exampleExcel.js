@@ -3,8 +3,8 @@ var columnDefs = [{
     children: [
         {headerName: "Athlete", field: "athlete", width: 150},
         {headerName: "Age", field: "age", width: 90, cellClassRules:{
-            lessThan23IsGreen: function(params) { return params.value < 23},
-            lessThan20IsBlue: function(params) { return params.value < 20}
+            greenBackground: function(params) { return params.value < 23},
+            blueBackground: function(params) { return params.value < 20}
         }},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75},
