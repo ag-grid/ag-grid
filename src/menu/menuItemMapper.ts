@@ -96,11 +96,6 @@ export class MenuItemMapper {
                 name: localeTextFunc('collapseAll', 'Collapse All'),
                 action: ()=> this.gridApi.collapseAll()
             };
-            case 'toolPanel': return {
-                name: localeTextFunc('toolPanel', 'Tool Panel'),
-                checked: this.gridApi.isToolPanelShowing(),
-                action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
-            };
             case 'copy': return {
                 name: localeTextFunc('copy','Copy'),
                 shortcut: localeTextFunc('ctrlC','Ctrl+C'),
