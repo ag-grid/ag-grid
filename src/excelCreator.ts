@@ -24,7 +24,7 @@ import {RowNode} from 'ag-grid/main';
 import {Utils} from 'ag-grid/main';
 import {GridOptionsWrapper} from 'ag-grid/main';
 import {ProcessCellForExportParams, ProcessHeaderForExportParams, GridOptions} from 'ag-grid/main';
-import {CsvExportParams} from 'ag-grid/main';
+import {ExportParams} from 'ag-grid/main';
 import {StylingService} from 'ag-grid/main';
 
 
@@ -81,7 +81,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         });
     }
 
-    onNewHeaderGroupingRow(): RowSpanningAccumulator {
+    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
         var currentCells:ExcelCell[] = [];
         let that = this;
         this.rows.push({
@@ -217,7 +217,7 @@ export class ExcelCreator implements IExcelCreator{
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('stylingService') private stylingService: StylingService;
 
-    public exportDataAsExcel(params?: CsvExportParams): void {
+    public exportDataAsExcel(params?: ExportParams): void {
         let fileNamePresent = params && params.fileName && params.fileName.length !== 0;
         let fileName = fileNamePresent ? params.fileName : 'export.xls';
 
@@ -233,7 +233,7 @@ export class ExcelCreator implements IExcelCreator{
         );
     }
 
-    public getDataAsExcelXml(params?: CsvExportParams): string{
+    public getDataAsExcelXml(params?: ExportParams): string{
         return this.gridSerializer.serialize(
             new ExcelGridSerializingSession(
                 this.columnController,
