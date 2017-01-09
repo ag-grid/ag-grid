@@ -293,7 +293,7 @@ var gridOptions = {
             <li>If a cell has an style but there isn't an associated Excel Style defined, the style for that cell won't
                 get exported. This is the case in this example of the year column which has the style notInExcel, but since
                 it hasn't been specified in the gridOptions, the column then gets exported without formatting.</li>
-            <li>Note that there is an Excel Style with name and id header that gets automatically applied when exported</li>
+            <li>Note that there is an Excel Style with name and id header that gets automatically applied to the ag-grid headers when exported to Excel</li>
         </ul>
     </p>
 
