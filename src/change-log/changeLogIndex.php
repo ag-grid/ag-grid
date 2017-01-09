@@ -12,6 +12,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement: richSelect cell editor now works with empty strings.</li>
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#groupEditing"><i>enableGroupEdit</i></a>, Set to true to allow editing of the group rows.</li>
+    <li>Enhancement: RTL verified to work with For Print.</li>
     <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
     <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
     <li>Bugfix: Column menu was disappearing while doing vertical scroll. Now it only disappears for horizontal scroll.
