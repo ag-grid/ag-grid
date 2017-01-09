@@ -53,12 +53,13 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback);
         if (!baseExcelStyles) {
             this.styleIds = [];
+            this.excelStyles = [];
         }else{
             this.styleIds = baseExcelStyles.map((it:ExcelStyle)=>{
                 return it.id
             });
+            this.excelStyles = baseExcelStyles.slice();
         }
-        this.excelStyles = baseExcelStyles.slice();
     }
     private rows:ExcelRow[] = [];
 
