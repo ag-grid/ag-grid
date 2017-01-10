@@ -72,7 +72,7 @@
 
     </head>
 
-    <body class="no-user-select" style="height: 100%; margin: 0px; padding: 0px;">
+    <body style="height: 100%; margin: 0px; padding: 0px;">
 
         <!-- The table div -->
         <div style="padding-top: 98px; height: 100%; width: 100%;">
