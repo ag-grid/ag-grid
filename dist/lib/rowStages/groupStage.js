@@ -108,7 +108,7 @@ var GroupStage = (function () {
         return result;
     };
     GroupStage.prototype.createGroup = function (groupColumn, groupKey, parent, expandByDefault, level, includeParents) {
-        var nextGroup = new RowNode();
+        var nextGroup = new main_1.RowNode();
         this.context.wireBean(nextGroup);
         nextGroup.group = true;
         nextGroup.field = groupColumn.getColDef().field;
@@ -133,11 +133,11 @@ var GroupStage = (function () {
     };
     __decorate([
         main_1.Autowired('selectionController'), 
-        __metadata('design:type', (typeof (_a = typeof main_1.SelectionController !== 'undefined' && main_1.SelectionController) === 'function' && _a) || Object)
+        __metadata('design:type', main_1.SelectionController)
     ], GroupStage.prototype, "selectionController", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_b = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _b) || Object)
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], GroupStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -145,21 +145,20 @@ var GroupStage = (function () {
     ], GroupStage.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('valueService'), 
-        __metadata('design:type', (typeof (_c = typeof main_1.ValueService !== 'undefined' && main_1.ValueService) === 'function' && _c) || Object)
+        __metadata('design:type', main_1.ValueService)
     ], GroupStage.prototype, "valueService", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', (typeof (_d = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _d) || Object)
+        __metadata('design:type', main_1.EventService)
     ], GroupStage.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_e = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _e) || Object)
+        __metadata('design:type', main_1.Context)
     ], GroupStage.prototype, "context", void 0);
     GroupStage = __decorate([
         main_1.Bean('groupStage'), 
         __metadata('design:paramtypes', [])
     ], GroupStage);
     return GroupStage;
-    var _a, _b, _c, _d, _e;
 }());
 exports.GroupStage = GroupStage;

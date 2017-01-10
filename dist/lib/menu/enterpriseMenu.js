@@ -63,22 +63,21 @@ var EnterpriseMenuFactory = (function () {
     };
     __decorate([
         ag_grid_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_a = typeof ag_grid_1.Context !== 'undefined' && ag_grid_1.Context) === 'function' && _a) || Object)
+        __metadata('design:type', ag_grid_1.Context)
     ], EnterpriseMenuFactory.prototype, "context", void 0);
     __decorate([
         ag_grid_1.Autowired('popupService'), 
-        __metadata('design:type', (typeof (_b = typeof ag_grid_1.PopupService !== 'undefined' && ag_grid_1.PopupService) === 'function' && _b) || Object)
+        __metadata('design:type', ag_grid_1.PopupService)
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_c = typeof ag_grid_1.GridOptionsWrapper !== 'undefined' && ag_grid_1.GridOptionsWrapper) === 'function' && _c) || Object)
+        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
     ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
     EnterpriseMenuFactory = __decorate([
         ag_grid_1.Bean('menuFactory'), 
         __metadata('design:paramtypes', [])
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
-    var _a, _b, _c;
 }());
 exports.EnterpriseMenuFactory = EnterpriseMenuFactory;
 var EnterpriseMenu = (function () {
@@ -265,14 +264,8 @@ var EnterpriseMenu = (function () {
         this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        var onBodyScroll = function (event) {
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
-                params.hidePopup();
-            }
-        };
-        this.eventService.addEventListener('bodyScroll', onBodyScroll);
-        this.destroyFunctions.push(function () { return _this.eventService.removeEventListener('bodyScroll', onBodyScroll); });
+        this.eventService.addEventListener('bodyScroll', params.hidePopup);
+        this.destroyFunctions.push(function () { return _this.eventService.removeEventListener('bodyScroll', params.hidePopup); });
     };
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
@@ -284,27 +277,27 @@ var EnterpriseMenu = (function () {
     EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
     __decorate([
         ag_grid_1.Autowired('columnController'), 
-        __metadata('design:type', (typeof (_a = typeof ag_grid_1.ColumnController !== 'undefined' && ag_grid_1.ColumnController) === 'function' && _a) || Object)
+        __metadata('design:type', ag_grid_1.ColumnController)
     ], EnterpriseMenu.prototype, "columnController", void 0);
     __decorate([
         ag_grid_1.Autowired('filterManager'), 
-        __metadata('design:type', (typeof (_b = typeof ag_grid_1.FilterManager !== 'undefined' && ag_grid_1.FilterManager) === 'function' && _b) || Object)
+        __metadata('design:type', ag_grid_1.FilterManager)
     ], EnterpriseMenu.prototype, "filterManager", void 0);
     __decorate([
         ag_grid_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_c = typeof ag_grid_1.Context !== 'undefined' && ag_grid_1.Context) === 'function' && _c) || Object)
+        __metadata('design:type', ag_grid_1.Context)
     ], EnterpriseMenu.prototype, "context", void 0);
     __decorate([
         ag_grid_1.Autowired('gridApi'), 
-        __metadata('design:type', (typeof (_d = typeof ag_grid_1.GridApi !== 'undefined' && ag_grid_1.GridApi) === 'function' && _d) || Object)
+        __metadata('design:type', ag_grid_1.GridApi)
     ], EnterpriseMenu.prototype, "gridApi", void 0);
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_e = typeof ag_grid_1.GridOptionsWrapper !== 'undefined' && ag_grid_1.GridOptionsWrapper) === 'function' && _e) || Object)
+        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         ag_grid_1.Autowired('eventService'), 
-        __metadata('design:type', (typeof (_f = typeof ag_grid_1.EventService !== 'undefined' && ag_grid_1.EventService) === 'function' && _f) || Object)
+        __metadata('design:type', ag_grid_1.EventService)
     ], EnterpriseMenu.prototype, "eventService", void 0);
     __decorate([
         ag_grid_1.Autowired('menuItemMapper'), 
@@ -317,6 +310,5 @@ var EnterpriseMenu = (function () {
         __metadata('design:returntype', void 0)
     ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
-    var _a, _b, _c, _d, _e, _f;
 }());
 exports.EnterpriseMenu = EnterpriseMenu;

@@ -73,23 +73,23 @@ var RowGroupColumnsPanel = (function (_super) {
     ], RowGroupColumnsPanel.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', (typeof (_a = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _a) || Object)
+        __metadata('design:type', main_1.EventService)
     ], RowGroupColumnsPanel.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_b = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _b) || Object)
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], RowGroupColumnsPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_c = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _c) || Object)
+        __metadata('design:type', main_1.Context)
     ], RowGroupColumnsPanel.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('loggerFactory'), 
-        __metadata('design:type', (typeof (_d = typeof main_1.LoggerFactory !== 'undefined' && main_1.LoggerFactory) === 'function' && _d) || Object)
+        __metadata('design:type', main_1.LoggerFactory)
     ], RowGroupColumnsPanel.prototype, "loggerFactory", void 0);
     __decorate([
         main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', (typeof (_e = typeof main_1.DragAndDropService !== 'undefined' && main_1.DragAndDropService) === 'function' && _e) || Object)
+        __metadata('design:type', main_1.DragAndDropService)
     ], RowGroupColumnsPanel.prototype, "dragAndDropService", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -98,6 +98,5 @@ var RowGroupColumnsPanel = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RowGroupColumnsPanel.prototype, "passBeansUp", null);
     return RowGroupColumnsPanel;
-    var _a, _b, _c, _d, _e;
 }(abstractColumnDropPanel_1.AbstractColumnDropPanel));
 exports.RowGroupColumnsPanel = RowGroupColumnsPanel;

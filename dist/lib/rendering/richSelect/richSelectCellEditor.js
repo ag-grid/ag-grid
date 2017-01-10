@@ -110,8 +110,7 @@ var RichSelectCellEditor = (function (_super) {
         var mouseY = mouseEvent.clientY - rect.top + scrollTop;
         var row = Math.floor(mouseY / this.virtualList.getRowHeight());
         var value = this.params.values[row];
-        // not using utils.exist() as want empty string test to pass
-        if (value !== null && value !== undefined) {
+        if (main_1.Utils.exists(value)) {
             this.setSelectedValue(value);
         }
     };
@@ -148,13 +147,12 @@ var RichSelectCellEditor = (function (_super) {
         '</div>';
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_a = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _a) || Object)
+        __metadata('design:type', main_1.Context)
     ], RichSelectCellEditor.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('cellRendererService'), 
-        __metadata('design:type', (typeof (_b = typeof main_1.CellRendererService !== 'undefined' && main_1.CellRendererService) === 'function' && _b) || Object)
+        __metadata('design:type', main_1.CellRendererService)
     ], RichSelectCellEditor.prototype, "cellRendererService", void 0);
     return RichSelectCellEditor;
-    var _a, _b;
 }(main_1.Component));
 exports.RichSelectCellEditor = RichSelectCellEditor;

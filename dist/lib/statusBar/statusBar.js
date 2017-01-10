@@ -137,7 +137,7 @@ var StatusBar = (function (_super) {
         '</div>';
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', (typeof (_a = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _a) || Object)
+        __metadata('design:type', main_1.EventService)
     ], StatusBar.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('rangeController'), 
@@ -145,27 +145,27 @@ var StatusBar = (function (_super) {
     ], StatusBar.prototype, "rangeController", void 0);
     __decorate([
         main_1.Autowired('valueService'), 
-        __metadata('design:type', (typeof (_b = typeof main_1.ValueService !== 'undefined' && main_1.ValueService) === 'function' && _b) || Object)
+        __metadata('design:type', main_1.ValueService)
     ], StatusBar.prototype, "valueService", void 0);
     __decorate([
         main_1.Autowired('cellNavigationService'), 
-        __metadata('design:type', (typeof (_c = typeof main_1.CellNavigationService !== 'undefined' && main_1.CellNavigationService) === 'function' && _c) || Object)
+        __metadata('design:type', main_1.CellNavigationService)
     ], StatusBar.prototype, "cellNavigationService", void 0);
     __decorate([
         main_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', (typeof (_d = typeof main_1.FloatingRowModel !== 'undefined' && main_1.FloatingRowModel) === 'function' && _d) || Object)
+        __metadata('design:type', main_1.FloatingRowModel)
     ], StatusBar.prototype, "floatingRowModel", void 0);
     __decorate([
         main_1.Autowired('rowModel'), 
-        __metadata('design:type', (typeof (_e = typeof main_1.IRowModel !== 'undefined' && main_1.IRowModel) === 'function' && _e) || Object)
+        __metadata('design:type', Object)
     ], StatusBar.prototype, "rowModel", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_f = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _f) || Object)
+        __metadata('design:type', main_1.Context)
     ], StatusBar.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_g = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _g) || Object)
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], StatusBar.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -178,6 +178,5 @@ var StatusBar = (function (_super) {
         __metadata('design:paramtypes', [])
     ], StatusBar);
     return StatusBar;
-    var _a, _b, _c, _d, _e, _f, _g;
 }(main_1.Component));
 exports.StatusBar = StatusBar;

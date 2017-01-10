@@ -225,7 +225,7 @@ var RenderedGroup = (function (_super) {
         '</div>';
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_a = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _a) || Object)
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], RenderedGroup.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired('columnController'), 
@@ -233,23 +233,23 @@ var RenderedGroup = (function (_super) {
     ], RenderedGroup.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('gridPanel'), 
-        __metadata('design:type', (typeof (_b = typeof main_1.GridPanel !== 'undefined' && main_1.GridPanel) === 'function' && _b) || Object)
+        __metadata('design:type', main_1.GridPanel)
     ], RenderedGroup.prototype, "gridPanel", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_c = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _c) || Object)
+        __metadata('design:type', main_1.Context)
     ], RenderedGroup.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', (typeof (_d = typeof main_1.DragAndDropService !== 'undefined' && main_1.DragAndDropService) === 'function' && _d) || Object)
+        __metadata('design:type', main_1.DragAndDropService)
     ], RenderedGroup.prototype, "dragAndDropService", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', (typeof (_e = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _e) || Object)
+        __metadata('design:type', main_1.EventService)
     ], RenderedGroup.prototype, "eventService", void 0);
     __decorate([
         main_1.QuerySelector('.ag-column-select-checkbox'), 
-        __metadata('design:type', (typeof (_f = typeof main_1.AgCheckbox !== 'undefined' && main_1.AgCheckbox) === 'function' && _f) || Object)
+        __metadata('design:type', main_1.AgCheckbox)
     ], RenderedGroup.prototype, "cbSelect", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -258,6 +258,5 @@ var RenderedGroup = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RenderedGroup.prototype, "init", null);
     return RenderedGroup;
-    var _a, _b, _c, _d, _e, _f;
 }(main_1.Component));
 exports.RenderedGroup = RenderedGroup;

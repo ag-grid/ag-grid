@@ -71,15 +71,15 @@ var ContextMenuFactory = (function () {
     };
     __decorate([
         ag_grid_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_a = typeof ag_grid_1.Context !== 'undefined' && ag_grid_1.Context) === 'function' && _a) || Object)
+        __metadata('design:type', ag_grid_1.Context)
     ], ContextMenuFactory.prototype, "context", void 0);
     __decorate([
         ag_grid_1.Autowired('popupService'), 
-        __metadata('design:type', (typeof (_b = typeof ag_grid_1.PopupService !== 'undefined' && ag_grid_1.PopupService) === 'function' && _b) || Object)
+        __metadata('design:type', ag_grid_1.PopupService)
     ], ContextMenuFactory.prototype, "popupService", void 0);
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_c = typeof ag_grid_1.GridOptionsWrapper !== 'undefined' && ag_grid_1.GridOptionsWrapper) === 'function' && _c) || Object)
+        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         ag_grid_1.PostConstruct, 
@@ -92,7 +92,6 @@ var ContextMenuFactory = (function () {
         __metadata('design:paramtypes', [])
     ], ContextMenuFactory);
     return ContextMenuFactory;
-    var _a, _b, _c;
 }());
 exports.ContextMenuFactory = ContextMenuFactory;
 var ContextMenu = (function (_super) {
@@ -116,7 +115,7 @@ var ContextMenu = (function (_super) {
     };
     __decorate([
         ag_grid_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_a = typeof ag_grid_1.Context !== 'undefined' && ag_grid_1.Context) === 'function' && _a) || Object)
+        __metadata('design:type', ag_grid_1.Context)
     ], ContextMenu.prototype, "context", void 0);
     __decorate([
         ag_grid_1.Autowired('clipboardService'), 
@@ -124,15 +123,15 @@ var ContextMenu = (function (_super) {
     ], ContextMenu.prototype, "clipboardService", void 0);
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_b = typeof ag_grid_1.GridOptionsWrapper !== 'undefined' && ag_grid_1.GridOptionsWrapper) === 'function' && _b) || Object)
+        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
     ], ContextMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         ag_grid_1.Autowired('gridApi'), 
-        __metadata('design:type', (typeof (_c = typeof ag_grid_1.GridApi !== 'undefined' && ag_grid_1.GridApi) === 'function' && _c) || Object)
+        __metadata('design:type', ag_grid_1.GridApi)
     ], ContextMenu.prototype, "gridApi", void 0);
     __decorate([
         ag_grid_1.Autowired('eventService'), 
-        __metadata('design:type', (typeof (_d = typeof ag_grid_1.EventService !== 'undefined' && ag_grid_1.EventService) === 'function' && _d) || Object)
+        __metadata('design:type', ag_grid_1.EventService)
     ], ContextMenu.prototype, "eventService", void 0);
     __decorate([
         ag_grid_1.Autowired('menuItemMapper'), 
@@ -145,5 +144,4 @@ var ContextMenu = (function (_super) {
         __metadata('design:returntype', void 0)
     ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
-    var _a, _b, _c, _d;
 }(ag_grid_1.Component));

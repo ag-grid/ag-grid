@@ -48,19 +48,19 @@ var PivotModePanel = (function (_super) {
     ], PivotModePanel.prototype, "columnController", void 0);
     __decorate([
         main_1.Autowired('eventService'), 
-        __metadata('design:type', (typeof (_a = typeof main_1.EventService !== 'undefined' && main_1.EventService) === 'function' && _a) || Object)
+        __metadata('design:type', main_1.EventService)
     ], PivotModePanel.prototype, "eventService", void 0);
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_b = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _b) || Object)
+        __metadata('design:type', main_1.Context)
     ], PivotModePanel.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', (typeof (_c = typeof main_1.GridOptionsWrapper !== 'undefined' && main_1.GridOptionsWrapper) === 'function' && _c) || Object)
+        __metadata('design:type', main_1.GridOptionsWrapper)
     ], PivotModePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.QuerySelector('.ag-pivot-mode-select'), 
-        __metadata('design:type', (typeof (_d = typeof main_1.AgCheckbox !== 'undefined' && main_1.AgCheckbox) === 'function' && _d) || Object)
+        __metadata('design:type', main_1.AgCheckbox)
     ], PivotModePanel.prototype, "cbPivotMode", void 0);
     __decorate([
         main_1.PostConstruct, 
@@ -69,6 +69,5 @@ var PivotModePanel = (function (_super) {
         __metadata('design:returntype', void 0)
     ], PivotModePanel.prototype, "init", null);
     return PivotModePanel;
-    var _a, _b, _c, _d;
 }(main_1.Component));
 exports.PivotModePanel = PivotModePanel;

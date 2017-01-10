@@ -21,13 +21,12 @@ var PivotCompFactory = (function () {
     };
     __decorate([
         main_1.Autowired('context'), 
-        __metadata('design:type', (typeof (_a = typeof main_1.Context !== 'undefined' && main_1.Context) === 'function' && _a) || Object)
+        __metadata('design:type', main_1.Context)
     ], PivotCompFactory.prototype, "context", void 0);
     PivotCompFactory = __decorate([
         main_1.Bean('pivotCompFactory'), 
         __metadata('design:paramtypes', [])
     ], PivotCompFactory);
     return PivotCompFactory;
-    var _a;
 }());
 exports.PivotCompFactory = PivotCompFactory;
