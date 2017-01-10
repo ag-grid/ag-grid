@@ -296,6 +296,20 @@ export class GridOptionsWrapper {
         }
     }
 
+    public getDocument(): Document {
+        // if user is providing document, we use the users one,
+        // otherwise we use the document on the global namespace.
+        let result: Document;
+        if (_.exists(this.gridOptions.getDocument)) {
+            result = this.gridOptions.getDocument();
+        }
+        if (_.exists(result)) {
+            return result;
+        } else {
+            return document;
+        }
+    }
+
     public getLayoutInterval(): number {
         if (typeof this.gridOptions.layoutInterval === 'number') {
             return this.gridOptions.layoutInterval;
