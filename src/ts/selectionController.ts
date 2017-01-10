@@ -101,12 +101,13 @@ export class SelectionController {
         return this.selectedNodes[id];
     }
 
-    public clearOtherNodes(rowNodeToKeepSelected: RowNode): void {
+    public clearOtherNodes(rowNodeToKeepSelected: RowNode): number {
         var groupsToRefresh: any = {};
+        let updatedCount = 0;
         _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 let rowNode = this.selectedNodes[otherRowNode.id];
-                rowNode.setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
+                updatedCount += rowNode.setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }
@@ -115,6 +116,7 @@ export class SelectionController {
         _.iterateObject(groupsToRefresh, (key: string, group: RowNode) => {
             group.calculateSelectedFromChildren();
         });
+        return updatedCount;
     }
 
     private onRowSelected(event: any): void {
