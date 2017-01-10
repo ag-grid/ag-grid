@@ -16,6 +16,7 @@ import {CellRendererFactory} from "./cellRendererFactory";
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
+import {RowContainerComponent} from "./rowContainerComponent";
 
 export class RenderedRow extends BeanStub {
 
@@ -48,13 +49,11 @@ export class RenderedRow extends BeanStub {
 
     private parentScope: any;
     private rowRenderer: RowRenderer;
-    private eBodyContainer: HTMLElement;
-    private eBodyContainerDF: DocumentFragment;
-    private eFullWidthContainer: HTMLElement;
-    private ePinnedLeftContainer: HTMLElement;
-    private ePinnedLeftContainerDF: DocumentFragment;
-    private ePinnedRightContainer: HTMLElement;
-    private ePinnedRightContainerDF: DocumentFragment;
+
+    private bodyContainerComp: RowContainerComponent;
+    private fullWidthContainerComp: RowContainerComponent;
+    private pinnedLeftContainerComp: RowContainerComponent;
+    private pinnedRightContainerComp: RowContainerComponent;
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
@@ -80,25 +79,20 @@ export class RenderedRow extends BeanStub {
 
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
-                eBodyContainer: HTMLElement,
-                eBodyContainerDF: DocumentFragment,
-                eFullWidthContainer: HTMLElement,
-                ePinnedLeftContainer: HTMLElement,
-                ePinnedLeftContainerDF: DocumentFragment,
-                ePinnedRightContainer: HTMLElement,
-                ePinnedRightContainerDF: DocumentFragment,
+                bodyContainerComp: RowContainerComponent,
+                fullWidthContainerComp: RowContainerComponent,
+                pinnedLeftContainerComp: RowContainerComponent,
+                pinnedRightContainerComp: RowContainerComponent,
                 node: RowNode,
                 animateIn: boolean) {
         super();
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
-        this.eBodyContainer = eBodyContainer;
-        this.eBodyContainerDF = eBodyContainerDF;
-        this.eFullWidthContainer = eFullWidthContainer;
-        this.ePinnedLeftContainer = ePinnedLeftContainer;
-        this.ePinnedLeftContainerDF = ePinnedLeftContainerDF;
-        this.ePinnedRightContainer = ePinnedRightContainer;
-        this.ePinnedRightContainerDF = ePinnedRightContainerDF;
+
+        this.bodyContainerComp = bodyContainerComp;
+        this.fullWidthContainerComp = fullWidthContainerComp;
+        this.pinnedLeftContainerComp = pinnedLeftContainerComp;
+        this.pinnedRightContainerComp = pinnedRightContainerComp;
 
         this.rowNode = node;
         this.animateIn = animateIn;
@@ -150,7 +144,7 @@ export class RenderedRow extends BeanStub {
             console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
         }
 
-        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
+        this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addMouseWheelListenerToFullWidthRow();
@@ -177,7 +171,7 @@ export class RenderedRow extends BeanStub {
             };
         }
 
-        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
+        this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addMouseWheelListenerToFullWidthRow();
@@ -187,11 +181,11 @@ export class RenderedRow extends BeanStub {
     private setupNormalContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = false;
 
-        this.eBodyRow = this.createRowContainer(this.eBodyContainerDF, this.eBodyContainer, animateInRowTop);
+        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer(this.ePinnedLeftContainerDF, this.ePinnedLeftContainer, animateInRowTop);
-            this.ePinnedRightRow = this.createRowContainer(this.ePinnedRightContainerDF, this.ePinnedRightContainer, animateInRowTop);
+            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
+            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
         }
     }
 
@@ -778,18 +772,17 @@ export class RenderedRow extends BeanStub {
         return agEvent;
     }
 
-    private createRowContainer(eParentDF: DocumentFragment, eParent: HTMLElement, slideRowIn: boolean): HTMLElement {
+    private createRowContainer(rowContainerComp: RowContainerComponent, slideRowIn: boolean): HTMLElement {
         var eRow = document.createElement('div');
 
         this.addDomData(eRow);
 
-        var eTarget = eParentDF ? eParentDF : eParent;
-        eTarget.appendChild(eRow);
+        rowContainerComp.appendRowElement(eRow);
 
         this.eAllRowContainers.push(eRow);
 
         this.delayedDestroyFunctions.push( ()=> {
-            eParent.removeChild(eRow);
+            rowContainerComp.removeRowElement(eRow);
         });
         this.startRemoveAnimationFunctions.push( ()=> {
             _.addCssClass(eRow, 'ag-opacity-zero');
