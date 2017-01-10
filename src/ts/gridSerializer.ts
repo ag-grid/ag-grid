@@ -231,7 +231,7 @@ export class GridSerializer {
             let groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
             let displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups (
                 columnsToExport,
-                this.columnController.gridBalancedTree,
+                this.columnController.getGridBalancedTree(),
                 groupInstanceIdCreator
             );
             if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {

@@ -204,7 +204,7 @@ export class ColumnController {
     private secondaryColumnsPresent = false;
 
     // these are all columns that are available to the grid for rendering after pivot
-    public gridBalancedTree: OriginalColumnGroupChild[];
+    private gridBalancedTree: OriginalColumnGroupChild[];
     private gridColumns: Column[];
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
@@ -2005,5 +2005,9 @@ export class ColumnController {
             result += columnList[i].getActualWidth();
         }
         return result;
+    }
+
+    public getGridBalancedTree():OriginalColumnGroupChild[]{
+        return this.gridBalancedTree
     }
 }
