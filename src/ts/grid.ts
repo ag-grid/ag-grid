@@ -48,6 +48,10 @@ import {AgCheckbox} from "./widgets/agCheckbox";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
+import {Downloader} from "./downloader";
+import {XmlFactory} from "./xmlFactory";
+import {GridSerializer} from "./gridSerializer";
+import {StylingService} from "./styling/stylingService";
 import {ButtonPanel} from "./filter/dateFilter";
 
 export interface GridParams {
@@ -117,13 +121,13 @@ export class Grid {
             beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, RowRenderer,
-                HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator,
-                TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
+                HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
+                GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, GridApi,
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
-                CellEditorFactory, CellRendererService, ValueFormatterService, ScrollVisibleService],
+                CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox},
                 {componentName: 'ButtonPanel', theClass: ButtonPanel},

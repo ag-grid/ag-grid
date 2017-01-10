@@ -1,4 +1,4 @@
-import {CsvCreator, CsvExportParams} from "./csvCreator";
+import {CsvCreator} from "./csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
@@ -32,6 +32,8 @@ import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilter} from "./interfaces/iFilter";
+import {CsvExportParams} from "./exportParams";
+import {IExcelCreator} from "./interfaces/iExcelCreator";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -44,6 +46,7 @@ export interface StartEditingCellParams {
 export class GridApi {
 
     @Autowired('csvCreator') private csvCreator: CsvCreator;
+    @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
@@ -103,6 +106,16 @@ export class GridApi {
 
     public exportDataAsCsv(params?: CsvExportParams): void {
         this.csvCreator.exportDataAsCsv(params)
+    }
+
+    public getDataAsExcel(params?: CsvExportParams): string {
+        if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
+        return this.excelCreator.getDataAsExcelXml(params);
+    }
+
+    public exportExcel(params?: CsvExportParams): void {
+        if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
+        this.excelCreator.exportDataAsExcel(params)
     }
 
     public setDatasource(datasource:any) {

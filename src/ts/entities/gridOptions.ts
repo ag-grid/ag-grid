@@ -14,7 +14,7 @@ import {GridCellDef} from "./gridCell";
 export interface GridOptions {
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. PLEASE!*
      ****************************************************************/
 
     // set once in init, can never change
@@ -95,9 +95,11 @@ export interface GridOptions {
     paginationPageSize?: number;
     editType?: string;
     suppressTouch?: boolean;
+    //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
+    excelStyles?: any[];
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*
      ****************************************************************/
 
     // just set once
@@ -112,7 +114,7 @@ export interface GridOptions {
     defaultColDef?: ColDef;
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
      ****************************************************************/
 
     groupSuppressAutoColumn?: boolean;
@@ -127,7 +129,7 @@ export interface GridOptions {
     groupColumnDef?: ColDef;
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. YOU'VE BEEN WARNED*
      ****************************************************************/
 
     // changeable, but no immediate impact

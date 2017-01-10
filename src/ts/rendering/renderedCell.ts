@@ -1,4 +1,4 @@
-import {Utils as _} from "../utils";
+import {Utils as _, Utils} from "../utils";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
@@ -29,6 +29,7 @@ import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
 import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
+import {StylingService} from "../styling/stylingService";
 
 export class RenderedCell extends Component {
 
@@ -52,6 +53,7 @@ export class RenderedCell extends Component {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('stylingService') private stylingService: StylingService;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
@@ -943,39 +945,6 @@ export class RenderedCell extends Component {
         }
     }
 
-    private addClassesFromRules() {
-        var colDef = this.column.getColDef();
-        var classRules = colDef.cellClassRules;
-        if (typeof classRules === 'object' && classRules !== null) {
-
-            var params = {
-                value: this.value,
-                data: this.node.data,
-                node: this.node,
-                colDef: colDef,
-                rowIndex: this.gridCell.rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
-
-            var classNames = Object.keys(classRules);
-            for (var i = 0; i < classNames.length; i++) {
-                var className = classNames[i];
-                var rule = classRules[className];
-                var resultOfRule: any;
-                if (typeof rule === 'string') {
-                    resultOfRule = this.expressionService.evaluate(rule, params);
-                } else if (typeof rule === 'function') {
-                    resultOfRule = rule(params);
-                }
-                if (resultOfRule) {
-                    _.addCssClass(this.eGridCell, className);
-                } else {
-                    _.removeCssClass(this.eGridCell, className);
-                }
-            }
-        }
-    }
 
     private createParentOfValue() {
         if (this.checkboxSelection) {
@@ -1070,6 +1039,27 @@ export class RenderedCell extends Component {
                 that.$compile(that.eGridCell)(that.scope);
             }
         }
+    }
+
+    private addClassesFromRules() :void{
+        this.stylingService.processCellClassRules(
+            this.column.getColDef(),
+            {
+                value: this.value,
+                data: this.node.data,
+                node: this.node,
+                colDef: this.column.getColDef(),
+                rowIndex: this.gridCell.rowIndex,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext()
+            },
+            (className:string)=>{
+                _.addCssClass(this.eGridCell, className);
+            },
+            (className:string)=>{
+                _.removeCssClass(this.eGridCell, className);
+            }
+        );
     }
 
     private putDataIntoCell() {
