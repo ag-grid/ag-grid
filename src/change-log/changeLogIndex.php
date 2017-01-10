@@ -27,6 +27,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: headerCellTemplate had classes in agText element removed. Now they are left alone.</li>
     <li>Bugfix: rowIndex was missing from cellEditor params</li>
     <li>Bugfix: CSS class ag-row-focus class was not getting applied to right row when rows were ordered or filtered</li>
+    <li>Bugfix: event selectionChanged was not getting fired when you had more than one row selected, then just clicked one row (all other rows get deselected).</li>
 
     <h2>Version 7.1.x</h2>
 
