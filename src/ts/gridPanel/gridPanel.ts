@@ -24,6 +24,7 @@ import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleServ
 import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
+import {RowContainerComponent} from "../rendering/rowContainerComponent";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -97,6 +98,21 @@ var mainOverlayTemplate =
 var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
 var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
+export interface RowContainerComponents {
+    fullWidth: RowContainerComponent;
+    body: RowContainerComponent;
+    pinnedLeft: RowContainerComponent;
+    pinnedRight: RowContainerComponent;
+    floatingTop: RowContainerComponent;
+    floatingTopPinnedLeft: RowContainerComponent;
+    floatingTopPinnedRight: RowContainerComponent;
+    floatingTopFullWidth: RowContainerComponent;
+    floatingBottom: RowContainerComponent;
+    floatingBottomPinnedLeft: RowContainerComponent;
+    floatingBottomPinnedRight: RowContainerComponent;
+    floatingBottomFullWith: RowContainerComponent;
+}
+
 @Bean('gridPanel')
 export class GridPanel extends BeanStub {
 
@@ -129,19 +145,23 @@ export class GridPanel extends BeanStub {
     private eBodyViewport: HTMLElement;
     private eRoot: HTMLElement;
     private eBody: HTMLElement;
+
+    private rowContainerComponents: RowContainerComponents;
+
     private eBodyContainer: HTMLElement;
     private ePinnedLeftColsContainer: HTMLElement;
     private ePinnedRightColsContainer: HTMLElement;
     private eFullWidthCellViewport: HTMLElement;
     private eFullWidthCellContainer: HTMLElement;
+    private ePinnedLeftColsViewport: HTMLElement;
+    private ePinnedRightColsViewport: HTMLElement;
+    private eBodyViewportWrapper: HTMLElement;
+
     private eHeaderContainer: HTMLElement;
     private eHeaderOverlay: HTMLElement;
     private ePinnedLeftHeader: HTMLElement;
     private ePinnedRightHeader: HTMLElement;
     private eHeader: HTMLElement;
-    private eBodyViewportWrapper: HTMLElement;
-    private ePinnedLeftColsViewport: HTMLElement;
-    private ePinnedRightColsViewport: HTMLElement;
     private eHeaderViewport: HTMLElement;
 
     private eFloatingTop: HTMLElement;
@@ -170,6 +190,10 @@ export class GridPanel extends BeanStub {
     private enableRtl: boolean;
     private forPrint: boolean;
     private scrollWidth: number;
+
+    // used to track if pinned panels are showing, so we can turn them off if not
+    private pinningRight: boolean;
+    private pinningLeft: boolean;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('GridPanel');
@@ -535,30 +559,6 @@ export class GridPanel extends BeanStub {
         event.preventDefault();
         return false;
     }
-    
-    public getPinnedLeftFloatingTop(): HTMLElement {
-        return this.ePinnedLeftFloatingTop;
-    }
-
-    public getPinnedRightFloatingTop(): HTMLElement {
-        return this.ePinnedRightFloatingTop;
-    }
-
-    public getFloatingTopContainer(): HTMLElement {
-        return this.eFloatingTopContainer;
-    }
-
-    public getPinnedLeftFloatingBottom(): HTMLElement {
-        return this.ePinnedLeftFloatingBottom;
-    }
-
-    public getPinnedRightFloatingBottom(): HTMLElement {
-        return this.ePinnedRightFloatingBottom;
-    }
-
-    public getFloatingBottomContainer(): HTMLElement {
-        return this.eFloatingBottomContainer;
-    }
 
     private createOverlayTemplate(name: string, defaultTemplate: string, userProvidedTemplate: string): string {
 
@@ -880,18 +880,6 @@ export class GridPanel extends BeanStub {
         return this.eBodyContainer;
     }
 
-    public getFullWidthCellContainer(): HTMLElement {
-        return this.eFullWidthCellContainer;
-    }
-
-    public getFloatingTopFullWidthCellContainer(): HTMLElement {
-        return this.eFloatingTopFullWidthCellContainer;
-    }
-
-    public getFloatingBottomFullWidthCellContainer(): HTMLElement {
-        return this.eFloatingBottomFullWidthCellContainer;
-    }
-
     public getDropTargetBodyContainers(): HTMLElement[] {
         if (this.forPrint) {
             return [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
@@ -904,21 +892,12 @@ export class GridPanel extends BeanStub {
         return this.eBodyViewport;
     }
 
-    public getPinnedLeftColsContainer(): HTMLElement {
-        return this.ePinnedLeftColsContainer;
-    }
-
-
     public getDropTargetLeftContainers(): HTMLElement[] {
         if (this.forPrint) {
             return [];
         } else {
             return [this.ePinnedLeftColsViewport, this.ePinnedLeftFloatingBottom, this.ePinnedLeftFloatingTop];
         }
-    }
-
-    public getPinnedRightColsContainer(): HTMLElement {
-        return this.ePinnedRightColsContainer;
     }
 
     public getDropTargetPinnedRightContainers(): HTMLElement[] {
@@ -974,12 +953,30 @@ export class GridPanel extends BeanStub {
 
             this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
 
+            let containers = {
+                body: new RowContainerComponent( {eContainer: this.eBodyContainer, useDocumentFragment: true} ),
+                fullWidth: <RowContainerComponent> null,
+                pinnedLeft: <RowContainerComponent> null,
+                pinnedRight: <RowContainerComponent> null,
+
+                floatingTop: new RowContainerComponent( {eContainer: this.eFloatingTop} ),
+                floatingTopPinnedLeft: <RowContainerComponent> null,
+                floatingTopPinnedRight: <RowContainerComponent> null,
+                floatingTopFullWidth: <RowContainerComponent> null,
+
+                floatingBottom: new RowContainerComponent( {eContainer: this.eFloatingBottom} ),
+                floatingBottomPinnedLeft: <RowContainerComponent> null,
+                floatingBottomPinnedRight: <RowContainerComponent> null,
+                floatingBottomFullWith: <RowContainerComponent> null
+            };
+            this.rowContainerComponents = containers;
+
             // when doing forPrint, we don't have any fullWidth containers, instead we add directly to the main
             // containers. this works in forPrint only as there are no pinned columns (no need for fullWidth to
             // span pinned columns) and the rows are already the full width of the grid (the reason for fullWidth)
-            this.eFullWidthCellContainer = this.eBodyContainer;
-            this.eFloatingBottomFullWidthCellContainer = this.eFloatingBottomContainer;
-            this.eFloatingTopFullWidthCellContainer = this.eFloatingTopContainer;
+            containers.fullWidth = containers.body;
+            containers.floatingBottomFullWith = containers.floatingBottom;
+            containers.floatingTopFullWidth = containers.floatingTop;
 
         } else {
             this.eBody = this.queryHtmlElement('.ag-body');
@@ -1017,8 +1014,29 @@ export class GridPanel extends BeanStub {
                 this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
                 this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer];
 
+            this.rowContainerComponents = {
+                body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, useDocumentFragment: true}),
+                fullWidth: new RowContainerComponent({eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport}),
+                pinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport, useDocumentFragment: true}),
+                pinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport, useDocumentFragment: true}),
+
+                floatingTop: new RowContainerComponent({eContainer: this.eFloatingTopContainer}),
+                floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftFloatingTop}),
+                floatingTopPinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightFloatingTop}),
+                floatingTopFullWidth: new RowContainerComponent({eContainer: this.eFloatingTopFullWidthCellContainer, hideWhenNoChildren: true}),
+
+                floatingBottom: new RowContainerComponent({eContainer: this.eFloatingBottomContainer}),
+                floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftFloatingBottom}),
+                floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightFloatingBottom}),
+                floatingBottomFullWith: new RowContainerComponent({eContainer: this.eFloatingBottomFullWidthCellContainer, hideWhenNoChildren: true}),
+            };
+
             this.addMouseWheelEventListeners();
         }
+    }
+
+    public getRowContainers(): RowContainerComponents {
+        return this.rowContainerComponents;
     }
 
     private addMouseWheelEventListeners(): void {
@@ -1157,9 +1175,6 @@ export class GridPanel extends BeanStub {
 
         this.ePinnedRightColsContainer.style.width = pinnedRightWidth;
     }
-
-    private pinningRight: boolean;
-    private pinningLeft: boolean;
 
     private setPinnedContainersVisible() {
         // no need to do this if not using scrolls

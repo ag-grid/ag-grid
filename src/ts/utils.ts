@@ -667,16 +667,8 @@ export class Utils {
         return pressedKey === keyToCheck;
     }
 
-    static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string) {
-        if (visible) {
-            if (this.exists(visibleStyle)) {
-                element.style.display = visibleStyle;
-            } else {
-                element.style.display = 'inline';
-            }
-        } else {
-            element.style.display = 'none';
-        }
+    static setVisible(element: HTMLElement, visible: boolean) {
+        this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
     }
 
     static isBrowserIE(): boolean {
