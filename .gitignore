@@ -1,7 +1,7 @@
 node_modules/
 bower_components/
 web-root/
-src/ts/**/*.js
+src/*/*.js
 
 .gitignore
 
