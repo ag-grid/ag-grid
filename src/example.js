@@ -146,7 +146,7 @@ suppressEnterprise: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     // groupSelectsFiltered: true,
-    suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
+    // suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
 //suppressContextMenu: true,
 //suppressFieldDotNotation: true,
@@ -622,7 +622,7 @@ function rowSelected(event) {
 // the node id's are assigned from 0 upwards)
     if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
-        console.log("Callback rowSelected: " + valueToPrint);
+        console.log("Callback rowSelected: " + valueToPrint + " - " + event.node.isSelected());
     }
 }
 
