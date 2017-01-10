@@ -180,6 +180,7 @@ export interface GridOptions {
     sendToClipboard?: (params: any)=>void;
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
+    getDocument?: ()=> Document;
 
     fullWidthCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;

@@ -373,7 +373,7 @@ export class RowNode {
         if (actionWasOnThisNode) {
 
             if (newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti())) {
-                this.selectionController.clearOtherNodes(this);
+                updatedCount += this.selectionController.clearOtherNodes(this);
             }
 
             // only if we selected something, then update groups and fire events

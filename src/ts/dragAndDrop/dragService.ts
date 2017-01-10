@@ -31,14 +31,11 @@ export class DragService {
 
     private dragEndFunctions: Function[] = [];
 
-    private eBody: HTMLElement;
-
     private dragSources: DragSourceAndListener[] = [];
 
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('DragService');
-        this.eBody = <HTMLElement> document.querySelector('body');
     }
 
     @PreDestroy
@@ -69,8 +66,10 @@ export class DragService {
     }
 
     private setNoSelectToBody(noSelect: boolean): void {
-        if (_.exists(this.eBody)) {
-            _.addOrRemoveCssClass(this.eBody, 'ag-body-no-select', noSelect);
+        let usrDocument = this.gridOptionsWrapper.getDocument();
+        let eBody = <HTMLElement> usrDocument.querySelector('body');
+        if (_.exists(eBody)) {
+            _.addOrRemoveCssClass(eBody, 'ag-body-no-select', noSelect);
         }
     }
 
@@ -140,14 +139,17 @@ export class DragService {
         this.mouseEventLastTime = mouseEvent;
         this.mouseStartEvent = mouseEvent;
 
+        let usrDocument = this.gridOptionsWrapper.getDocument();
+
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in mouseup handling.
-        document.addEventListener('mousemove', this.onMouseMoveListener);
-        document.addEventListener('mouseup', this.onMouseUpListener);
+
+        usrDocument.addEventListener('mousemove', this.onMouseMoveListener);
+        usrDocument.addEventListener('mouseup', this.onMouseUpListener);
 
         this.dragEndFunctions.push( ()=> {
-            document.removeEventListener('mousemove', this.onMouseMoveListener);
-            document.removeEventListener('mouseup', this.onMouseUpListener);
+            usrDocument.removeEventListener('mousemove', this.onMouseMoveListener);
+            usrDocument.removeEventListener('mouseup', this.onMouseUpListener);
         });
 
         // see if we want to start dragging straight away

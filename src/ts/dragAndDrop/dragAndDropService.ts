@@ -93,8 +93,8 @@ export class DragAndDropService {
     private dragging: boolean;
 
     private eGhost: HTMLElement;
+    private eGhostParent: HTMLElement;
     private eGhostIcon: HTMLElement;
-    private eBody: HTMLElement;
 
     private dropTargets: DropTarget[] = [];
     private lastDropTarget: DropTarget;
@@ -126,10 +126,6 @@ export class DragAndDropService {
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
-        this.eBody = <HTMLElement> document.querySelector('body');
-        if (!this.eBody) {
-            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
-        }
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
@@ -321,8 +317,10 @@ export class DragAndDropService {
         // horizontally, place cursor just right of icon
         var left = event.pageX - 30;
 
-        var windowScrollY = window.pageYOffset || document.documentElement.scrollTop;
-        var windowScrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        let usrDocument = this.gridOptionsWrapper.getDocument();
+
+        var windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
+        var windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
 
         // check ghost is not positioned outside of the browser
         if (browserWidth>0) {
@@ -347,8 +345,8 @@ export class DragAndDropService {
     }
 
     private removeGhost(): void {
-        if (this.eGhost) {
-            this.eBody.removeChild(this.eGhost);
+        if (this.eGhost && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eGhost);
         }
         this.eGhost = null;
     }
@@ -366,7 +364,15 @@ export class DragAndDropService {
 
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
-        this.eBody.appendChild(this.eGhost);
+
+        let usrDocument = this.gridOptionsWrapper.getDocument();
+        this.eGhostParent = <HTMLElement> usrDocument.querySelector('body');
+        if (!this.eGhostParent) {
+            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
+        } else {
+            this.eGhostParent.appendChild(this.eGhost);
+        }
+
     }
 
     public setGhostIcon(iconName: string, shake = false): void {
