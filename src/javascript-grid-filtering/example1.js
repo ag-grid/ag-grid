@@ -3,7 +3,7 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
+    {headerName: "Date", field: "date", width: 110, filter: 'date'},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
