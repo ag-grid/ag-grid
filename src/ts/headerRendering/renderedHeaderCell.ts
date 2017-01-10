@@ -14,8 +14,9 @@ import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../dra
 import {SortController} from "../sortController";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 import {TouchListener} from "../widgets/touchListener";
+import {Component} from "../widgets/component";
 
-export class RenderedHeaderCell implements IRenderedHeaderElement {
+export class RenderedHeaderCell extends Component {
 
     @Autowired('context') private context: Context;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -30,7 +31,6 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('$scope') private $scope: any;
 
-    private eHeaderCell: HTMLElement;
     private eRoot: HTMLElement;
 
     private column: Column;
@@ -41,14 +41,16 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
     private displayName: string;
 
-    // for better structured code, anything we need to do when this column gets destroyed,
-    // we put a function in here. otherwise we would have a big destroy function with lots
-    // of 'if / else' mapping to things that got created.
-    private destroyFunctions: (()=>void)[] = [];
+    private eFilterIcon: HTMLElement;
+
+    private eSortAsc: HTMLElement;
+    private eSortDesc: HTMLElement;
+    private eSortNone: HTMLElement;
 
     private pinned: string;
 
     constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
+        super();
         this.column = column;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
@@ -61,15 +63,16 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     
     @PostConstruct
     public init(): void {
-        this.eHeaderCell = this.headerTemplateLoader.createHeaderElement(this.column);
-        _.addCssClass(this.eHeaderCell, 'ag-header-cell');
+        let eGui = this.headerTemplateLoader.createHeaderElement(this.column);
+        this.setGui(eGui);
+        _.addCssClass(eGui, 'ag-header-cell');
 
         this.createScope();
         this.addAttributes();
-        CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper, this.column, null);
+        CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), eGui, this.gridOptionsWrapper, this.column, null);
 
         // label div
-        var eHeaderCellLabel = <HTMLElement> this.eHeaderCell.querySelector('#agHeaderCellLabel');
+        var eHeaderCellLabel = <HTMLElement> eGui.querySelector('#agHeaderCellLabel');
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
 
@@ -84,8 +87,8 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         this.setupText();
         this.setupWidth();
 
-        var setLeftFeature = new SetLeftFeature(this.column, this.eHeaderCell);
-        this.destroyFunctions.push(setLeftFeature.destroy.bind(setLeftFeature));
+        var setLeftFeature = new SetLeftFeature(this.column, eGui);
+        this.addDestroyFunc( ()=> setLeftFeature.destroy() );
     }
 
     private setupTooltip(): void {
@@ -93,7 +96,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.eHeaderCell.title = colDef.headerTooltip;
+            this.getGui().title = colDef.headerTooltip;
         }
     }
 
@@ -107,7 +110,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
         }
 
-        var eText = <HTMLElement> this.eHeaderCell.querySelector('#agText');
+        var eText = this.queryForHtmlElement('#agText');
         if (eText) {
             if (headerCellRenderer) {
                 this.useRenderer(this.displayName, headerCellRenderer, eText);
@@ -121,47 +124,30 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     }
 
     private setupFilterIcon(): void {
-        var eFilterIcon = <HTMLElement> this.eHeaderCell.querySelector('#agFilter');
+        this.eFilterIcon = this.queryForHtmlElement('#agFilter');
 
-        if (!eFilterIcon) {
+        if (!this.eFilterIcon) {
             return;
         }
 
-        var filterChangedListener = () => {
-            var filterPresent = this.column.isFilterActive();
-            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-filtered', filterPresent);
-            _.addOrRemoveCssClass(eFilterIcon, 'ag-hidden', !filterPresent);
-        };
+        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
 
-        this.column.addEventListener(Column.EVENT_FILTER_CHANGED, filterChangedListener);
-        this.destroyFunctions.push( () => {
-            this.column.removeEventListener(Column.EVENT_FILTER_CHANGED, filterChangedListener);
-        });
+        this.onFilterChanged();
+    }
 
-        filterChangedListener();
+    private onFilterChanged(): void {
+        var filterPresent = this.column.isFilterActive();
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+        _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
     }
 
     private setupWidth(): void {
-        var widthChangedListener = () => {
-            this.eHeaderCell.style.width = this.column.getActualWidth() + 'px';
-        };
-
-        this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-        this.destroyFunctions.push( () => {
-            this.column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-        });
-
-        widthChangedListener();
+        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
+        this.onColumnWidthChanged();
     }
 
-    public getGui(): HTMLElement {
-        return this.eHeaderCell;
-    }
-
-    public destroy(): void {
-        this.destroyFunctions.forEach( (func)=> {
-            func();
-        });
+    private onColumnWidthChanged(): void {
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 
     private createScope(): void {
@@ -171,18 +157,18 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             this.childScope.colDefWrapper = this.column;
             this.childScope.context = this.gridOptionsWrapper.getContext();
 
-            this.destroyFunctions.push( ()=> {
+            this.addDestroyFunc( ()=> {
                 this.childScope.$destroy();
             });
         }
     }
 
     private addAttributes(): void {
-        this.eHeaderCell.setAttribute("colId", this.column.getColId());
+        this.getGui().setAttribute("colId", this.column.getColId());
     }
 
     private setupMenu(): void {
-        var eMenu = <HTMLElement> this.eHeaderCell.querySelector('#agMenu');
+        var eMenu = this.queryForHtmlElement('#agMenu');
 
         // if no menu provided in template, do nothing
         if (!eMenu) {
@@ -200,10 +186,10 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
             eMenu.style.opacity = '0';
-            this.eHeaderCell.addEventListener('mouseover', function () {
+            this.addGuiEventListener('mouseover', function () {
                 eMenu.style.opacity = '1';
             });
-            this.eHeaderCell.addEventListener('mouseout', function () {
+            this.addGuiEventListener('mouseout', function () {
                 eMenu.style.opacity = '0';
             });
         }
@@ -217,29 +203,25 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
     }
 
     private setupMovingCss(): void {
-        // this function adds or removes the moving css, based on if the col is moving
-        var addMovingCssFunc = ()=> {
-            if (this.column.isMoving()) {
-                _.addCssClass(this.eHeaderCell, 'ag-header-cell-moving');
-            } else {
-                _.removeCssClass(this.eHeaderCell, 'ag-header-cell-moving');
-            }
-        };
-        // call it now once, so the col is set up correctly
-        addMovingCssFunc();
-        // then call it every time we are informed of a moving state change in the col
-        this.column.addEventListener(Column.EVENT_MOVING_CHANGED, addMovingCssFunc);
-        // finally we remove the listener when this cell is no longer rendered
-        this.destroyFunctions.push(()=> {
-            this.column.removeEventListener(Column.EVENT_MOVING_CHANGED, addMovingCssFunc);
-        });
+        this.addDestroyableEventListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+        this.onColumnMovingChanged();
+    }
+
+    private onColumnMovingChanged(): void {
+        // this function adds or removes the moving css, based on if the col is moving.
+        // this is what makes the header go dark when it is been moved (gives impression to
+        // user that the column was picked up).
+        if (this.column.isMoving()) {
+            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
+        } else {
+            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
     }
 
     private setupMove(eHeaderCellLabel: HTMLElement): void {
         var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
                             || this.column.getColDef().suppressMovable
                             || this.gridOptionsWrapper.isForPrint();
-                            // || this.columnController.isPivotMode();
 
         if (suppressMove) { return; }
 
@@ -252,7 +234,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource, true);
-            this.destroyFunctions.push( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+            this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
         }
     }
 
@@ -261,26 +243,22 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
         let touchListener = new TouchListener(this.getGui());
-        let tapListener = (touch: Touch)=> {
+        let tapListener = ()=> {
             this.sortController.progressSort(this.column, false);
         };
         let longTapListener = (touch: Touch)=> {
             this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.column, touch);
         };
 
-        touchListener.addEventListener(TouchListener.EVENT_TAP, tapListener);
-        touchListener.addEventListener(TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
 
-        this.destroyFunctions.push( ()=> {
-            touchListener.removeEventListener(TouchListener.EVENT_TAP, tapListener);
-            touchListener.removeEventListener(TouchListener.EVENT_LONG_TAP, longTapListener);
-            touchListener.destroy();
-        });
+        this.addDestroyFunc( ()=> touchListener.destroy() );
     }
 
     private setupResize(): void {
         var colDef = this.column.getColDef();
-        var eResize = this.eHeaderCell.querySelector('#agResizeBar');
+        var eResize = this.queryForHtmlElement('#agResizeBar');
 
         // if no eResize in template, do nothing
         if (!eResize) {
@@ -304,7 +282,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
         var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
-            eResize.addEventListener('dblclick', () => {
+            this.addDestroyableEventListener(eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column);
             });
         }
@@ -318,7 +296,7 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
             context: this.gridOptionsWrapper.getContext(),
             value: headerNameValue,
             api: this.gridOptionsWrapper.getApi(),
-            eHeaderCell: this.eHeaderCell
+            eHeaderCell: this.getGui()
         };
         var cellRendererResult = headerCellRenderer(cellRendererParams);
         var childToAppend: any;
@@ -342,15 +320,16 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
 
     public setupSort(eHeaderCellLabel: HTMLElement): void {
         var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+        let eGui = this.getGui();
         if (!enableSorting) {
-            _.removeFromParent(this.eHeaderCell.querySelector('#agSortAsc'));
-            _.removeFromParent(this.eHeaderCell.querySelector('#agSortDesc'));
-            _.removeFromParent(this.eHeaderCell.querySelector('#agNoSort'));
+            _.removeFromParent(eGui.querySelector('#agSortAsc'));
+            _.removeFromParent(eGui.querySelector('#agSortDesc'));
+            _.removeFromParent(eGui.querySelector('#agNoSort'));
             return;
         }
 
         // add sortable class for styling
-        _.addCssClass(this.eHeaderCell, 'ag-header-cell-sortable');
+        _.addCssClass(eGui, 'ag-header-cell-sortable');
 
         // add the event on the header, so when clicked, we do sorting
         if (eHeaderCellLabel) {
@@ -360,37 +339,32 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         }
 
         // add listener for sort changing, and update the icons accordingly
-        var eSortAsc = <HTMLElement> this.eHeaderCell.querySelector('#agSortAsc');
-        var eSortDesc = <HTMLElement> this.eHeaderCell.querySelector('#agSortDesc');
-        var eSortNone = <HTMLElement> this.eHeaderCell.querySelector('#agNoSort');
+        this.eSortAsc = this.queryForHtmlElement('#agSortAsc');
+        this.eSortDesc = this.queryForHtmlElement('#agSortDesc');
+        this.eSortNone = this.queryForHtmlElement('#agNoSort');
 
-        var sortChangedListener = () => {
+        this.addDestroyableEventListener(this.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.onSortChanged();
+    }
 
-            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-asc', this.column.isSortAscending());
-            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-desc', this.column.isSortDescending());
-            _.addOrRemoveCssClass(this.eHeaderCell, 'ag-header-cell-sorted-none', this.column.isSortNone());
+    private onSortChanged(): void {
 
-            if (eSortAsc) {
-                _.addOrRemoveCssClass(eSortAsc, 'ag-hidden', !this.column.isSortAscending());
-            }
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.column.isSortNone());
 
-            if (eSortDesc) {
-                _.addOrRemoveCssClass(eSortDesc, 'ag-hidden', !this.column.isSortDescending());
-            }
+        if (this.eSortAsc) {
+            _.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.column.isSortAscending());
+        }
 
-            if (eSortNone) {
-                var alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
-                _.addOrRemoveCssClass(eSortNone, 'ag-hidden', alwaysHideNoSort || !this.column.isSortNone());
-            }
+        if (this.eSortDesc) {
+            _.addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.column.isSortDescending());
+        }
 
-        };
-
-        this.column.addEventListener(Column.EVENT_SORT_CHANGED, sortChangedListener);
-        this.destroyFunctions.push( () => {
-            this.column.removeEventListener(Column.EVENT_SORT_CHANGED, sortChangedListener);
-        });
-
-        sortChangedListener();
+        if (this.eSortNone) {
+            var alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
+            _.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.column.isSortNone());
+        }
     }
 
     public onDragStart(): void {
@@ -420,14 +394,5 @@ export class RenderedHeaderCell implements IRenderedHeaderElement {
         let newWidth = this.startWidth + dragChangeNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, finished);
     }
-
-    public onIndividualColumnResized(column: Column) {
-        if (this.column !== column) {
-            return;
-        }
-        var newWidthPx = column.getActualWidth() + "px";
-        this.eHeaderCell.style.width = newWidthPx;
-    }
-
 
 }

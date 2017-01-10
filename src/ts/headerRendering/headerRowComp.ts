@@ -120,7 +120,8 @@ export class HeaderRowComp extends Component {
             }
 
             // skip groups that have no displayed children. this can happen when the group is broken,
-            // and this section happens to have nothing to display for the open / closed state
+            // and this section happens to have nothing to display for the open / closed state.
+            // (PS niall note - i can't remember what i meant by the above exactly, what's a broken group???)
             if (child instanceof ColumnGroup && (<ColumnGroup>child).getDisplayedChildren().length === 0) {
                 return;
             }

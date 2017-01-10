@@ -122,6 +122,12 @@ export class Component extends BeanStub {
         return this.eGui;
     }
 
+    // this method is for older code, that wants to provide the gui element,
+    // it is not intended for this to be in ag-Stack
+    protected setGui(eGui: HTMLElement): void {
+        this.eGui = eGui;
+    }
+
     protected queryForHtmlElement(cssSelector: string): HTMLElement {
         return <HTMLElement> this.eGui.querySelector(cssSelector);
     }
