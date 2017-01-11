@@ -245,7 +245,23 @@ suppressEnterprise: true,
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    getContextMenuItems: getContextMenuItems
+    getContextMenuItems: getContextMenuItems,
+    excelStyles: [
+        {
+            id: 'good-score',
+            name: 'bla',
+            interior: {
+                color: "#94e494", pattern: 'Solid'
+            }
+        },
+        {
+            id: 'bad-score',
+            name: 'bla2',
+            interior: {
+                color: "#e49494", pattern: 'Solid'
+            }
+        }
+    ]
 };
 
 function getContextMenuItems(params) {

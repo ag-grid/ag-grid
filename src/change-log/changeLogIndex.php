@@ -10,12 +10,14 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version NEXT</h2>
 
+    <li>Enhancement: <a href="../javascript-grid-excel">Excel Export</a>.</li>
     <li>Enhancement: richSelect cell editor now works with empty strings.</li>
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#groupEditing"><i>enableGroupEdit</i></a>, Set to true to allow editing of the group rows.</li>
     <li>Enhancement: RTL verified to work with For Print.</li>
     <li>Enhancement: New API <i>getDocument()</i> for overriding what document is used. Currently used by Drag and Drop (may extend to other places
     in the future). Use this when you want the grid to use a different document than the one available
     on the global scope. This can happen if docking out components (something which Electron supports).</li>
+    <li>Enhancement: Context menu now has CSV Export and Excel Export.</li>
     <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
     <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
     <li>Bugfix: Column menu was disappearing while doing vertical scroll. Now it only disappears for horizontal scroll.
