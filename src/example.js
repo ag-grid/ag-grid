@@ -249,16 +249,23 @@ suppressEnterprise: true,
     excelStyles: [
         {
             id: 'good-score',
-            name: 'bla',
+            name: 'good-score',
             interior: {
                 color: "#94e494", pattern: 'Solid'
             }
         },
         {
             id: 'bad-score',
-            name: 'bla2',
+            name: 'bad-score',
             interior: {
                 color: "#e49494", pattern: 'Solid'
+            }
+        },
+        {
+            id:'header',
+            name: 'header',
+            interior: {
+                color: "#CCCCCC", pattern: 'Solid'
             }
         }
     ]
