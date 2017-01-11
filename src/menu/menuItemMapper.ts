@@ -120,6 +120,18 @@ export class MenuItemMapper {
                 checked: this.gridApi.isToolPanelShowing(),
                 action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
             };
+            case 'export': return {
+                name: localeTextFunc('export', 'Export'),
+                subMenu: ['csvExport','excelExport']
+            };
+            case 'csvExport': return {
+                name: localeTextFunc('csvExport', 'CSV Export'),
+                action: ()=> this.gridApi.exportDataAsCsv({})
+            };
+            case 'excelExport': return {
+                name: localeTextFunc('excelExport', 'Excel Export'),
+                action: ()=> this.gridApi.exportDataAsExcel({})
+            };
             case 'separator': return 'separator';
             default:
                 console.log(`ag-Grid: unknown menu item type ${key}`);
