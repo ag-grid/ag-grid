@@ -11,9 +11,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Data Export</h2>
 
     <note>
-        If you are looking to export your data using the Excel native XML format and benefit from the ability to export styles, column widths... check our enterprise feature
-        <a href="/javascript-grid-excel/">Excel export</a>
-
+        If you are looking to export your data formatted for Excel use the ag-Grid Enterprise feature
+        <a href="/javascript-grid-excel/">Excel Export</a>.
     </note>
 
     <p>
