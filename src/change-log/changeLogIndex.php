@@ -30,6 +30,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: rowIndex was missing from cellEditor params</li>
     <li>Bugfix: CSS class ag-row-focus class was not getting applied to right row when rows were ordered or filtered</li>
     <li>Bugfix: event selectionChanged was not getting fired when you had more than one row selected, then just clicked one row (all other rows get deselected).</li>
+    <li>Bugfix: api.sizeColumnsToFit() was incorrectly working out the vertical scroll value - meant it was out by the scroll width sometimes in it's calculations.</li>
 
     <h2>Version 7.1.x</h2>
 
