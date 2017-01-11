@@ -15,6 +15,7 @@ import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
+import {Column} from "../../entities/column";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -61,10 +62,37 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.rowIndex = params.rowIndex;
         this.gridApi = params.api;
 
+        if (this.isLeaveCellBlank(params)) { return; }
+
         this.addExpandAndContract(params.eGridCell);
         this.addCheckboxIfNeeded(params);
         this.addValueElement(params);
         this.addPadding(params);
+    }
+
+    // if we are doing embedded full width rows, we only show the renderer when
+    // in the body, or if pinning in the pinned section, or if pinning and RTL,
+    // in the right section. otherwise we would have the cell repeated in each section.
+    private isLeaveCellBlank(params: any): boolean {
+        if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+            let pinnedLeftCell = params.pinned === Column.PINNED_LEFT;
+            let pinnedRightCell = params.pinned === Column.PINNED_RIGHT;
+            let bodyCell = !pinnedLeftCell && !pinnedRightCell;
+
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                if (this.columnController.isPinningLeft()) {
+                    return !pinnedRightCell;
+                } else {
+                    return !bodyCell;
+                }
+            } else {
+                if (this.columnController.isPinningLeft()) {
+                    return !pinnedLeftCell;
+                } else {
+                    return !bodyCell;
+                }
+            }
+        }
     }
 
     private addPadding(params: any): void {

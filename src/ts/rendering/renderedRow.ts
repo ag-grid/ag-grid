@@ -34,10 +34,18 @@ export class RenderedRow extends BeanStub {
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
     private eBodyRow: HTMLElement;
+
     private eFullWidthRow: HTMLElement;
+    private eFullWidthRowBody: HTMLElement;
+    private eFullWidthRowLeft: HTMLElement;
+    private eFullWidthRowRight: HTMLElement;
+
     private eAllRowContainers: HTMLElement[] = [];
 
     private fullWidthRowComponent: ICellRenderer;
+    private fullWidthRowComponentBody: ICellRenderer;
+    private fullWidthRowComponentLeft: ICellRenderer;
+    private fullWidthRowComponentRight: ICellRenderer;
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
@@ -54,6 +62,9 @@ export class RenderedRow extends BeanStub {
     private fullWidthContainerComp: RowContainerComponent;
     private pinnedLeftContainerComp: RowContainerComponent;
     private pinnedRightContainerComp: RowContainerComponent;
+
+    private fullWidthPinnedLeftLastTime: boolean;
+    private fullWidthPinnedRightLastTime: boolean;
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
@@ -113,6 +124,30 @@ export class RenderedRow extends BeanStub {
         }
     }
 
+/*    private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
+        var eRow: HTMLElement = document.createElement('span');
+        // padding means we are on the right hand side of a pinned table, ie
+        // in the main body.
+        if (!padding) {
+
+            var params = this.createFullWidthParams(eRow, null);
+
+            var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
+
+            if (cellComponent && cellComponent.destroy) {
+                this.addDestroyFunc( () => cellComponent.destroy() );
+            }
+        }
+
+        if (this.rowNode.footer) {
+            _.addCssClass(eRow, 'ag-footer-cell-entire-row');
+        } else {
+            _.addCssClass(eRow, 'ag-group-cell-entire-row');
+        }
+
+        return eRow;
+    }*/
+
     // we clear so that the functions are never executed twice
     public getAndClearDelayedDestroyFunctions(): Function[] {
         var result = this.delayedDestroyFunctions;
@@ -144,11 +179,7 @@ export class RenderedRow extends BeanStub {
             console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
         }
 
-        this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
-
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.addMouseWheelListenerToFullWidthRow();
-        }
+        this.createFullWidthRow(animateInRowTop);
     }
 
     private addMouseWheelListenerToFullWidthRow(): void {
@@ -171,10 +202,28 @@ export class RenderedRow extends BeanStub {
             };
         }
 
-        this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
+        this.createFullWidthRow(animateInRowTop);
+    }
 
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.addMouseWheelListenerToFullWidthRow();
+    private createFullWidthRow(animateInRowTop: boolean): void {
+        let embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
+
+        if (embedFullWidthRows) {
+
+            // if embedding the full width, it gets added to the body, left and right
+            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
+            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
+            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
+
+        } else {
+
+            // otherwise we add to the fullWidth container as normal
+            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
+
+            // and fake the mouse wheel for the fullWidth container
+            if (!this.gridOptionsWrapper.isForPrint()) {
+                this.addMouseWheelListenerToFullWidthRow();
+            }
         }
     }
 
@@ -314,12 +363,19 @@ export class RenderedRow extends BeanStub {
         this.addDestroyableEventListener(this.mainEventService, Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
     }
 
-    private onDisplayedColumnsChanged(event: ColumnChangeEvent): void {
+    private onDisplayedColumnsChanged(): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (this.fullWidthRow) {
-            var columnPinned = event.getType() === Events.EVENT_COLUMN_PINNED;
-            if (columnPinned) {
-                this.refreshFullWidthComponent();
+            if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+                let leftMismatch = this.fullWidthPinnedLeftLastTime !== this.columnController.isPinningLeft();
+                let rightMismatch = this.fullWidthPinnedRightLastTime !== this.columnController.isPinningRight();
+                // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
+                // embedded, as what appears in each section depends on whether we are pinned or not
+                if (leftMismatch || rightMismatch) {
+                    this.refreshFullWidthComponent();
+                }
+            } else {
+                // otherwise nothing, the floating fullWidth containers are not impacted by column changes
             }
         } else {
             this.refreshCellsIntoRow();
@@ -637,10 +693,6 @@ export class RenderedRow extends BeanStub {
         }
     }
 
-    public isDataInList(rows: any[]): boolean {
-        return rows.indexOf(this.rowNode.data) >= 0;
-    }
-
     public isGroup(): boolean {
         return this.rowNode.group === true;
     }
@@ -651,9 +703,38 @@ export class RenderedRow extends BeanStub {
     }
 
     private createFullWidthComponent(): void {
-        var params = this.createFullWidthParams(this.eFullWidthRow);
-        this.fullWidthRowComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, this.eFullWidthRow, params);
-        this.angular1Compile(this.eFullWidthRow);
+
+        this.fullWidthPinnedLeftLastTime = this.columnController.isPinningLeft();
+        this.fullWidthPinnedRightLastTime = this.columnController.isPinningRight();
+
+        if (this.eFullWidthRow) {
+            var params = this.createFullWidthParams(this.eFullWidthRow, null);
+            this.fullWidthRowComponent = this.cellRendererService.useCellRenderer(
+                this.fullWidthCellRenderer, this.eFullWidthRow, params);
+            this.angular1Compile(this.eFullWidthRow);
+        }
+
+        if (this.eFullWidthRowBody) {
+            var params = this.createFullWidthParams(this.eFullWidthRowBody, null);
+            this.fullWidthRowComponentBody = this.cellRendererService.useCellRenderer(
+                this.fullWidthCellRenderer, this.eFullWidthRowBody, params);
+            this.angular1Compile(this.eFullWidthRowBody);
+        }
+
+        if (this.eFullWidthRowLeft) {
+            var params = this.createFullWidthParams(this.eFullWidthRowLeft, Column.PINNED_LEFT);
+            this.fullWidthRowComponentLeft = this.cellRendererService.useCellRenderer(
+                this.fullWidthCellRenderer, this.eFullWidthRowLeft, params);
+            this.angular1Compile(this.eFullWidthRowLeft);
+        }
+
+        if (this.eFullWidthRowRight) {
+            var params = this.createFullWidthParams(this.eFullWidthRowRight, Column.PINNED_LEFT);
+            this.fullWidthRowComponentRight = this.cellRendererService.useCellRenderer(
+                this.fullWidthCellRenderer, this.eFullWidthRowRight, params);
+            this.angular1Compile(this.eFullWidthRowRight);
+        }
+
     }
 
     private destroyFullWidthComponent(): void {
@@ -663,10 +744,39 @@ export class RenderedRow extends BeanStub {
             }
             this.fullWidthRowComponent = null;
         }
-        _.removeAllChildren(this.eFullWidthRow);
+        if (this.fullWidthRowComponentBody) {
+            if (this.fullWidthRowComponentBody.destroy) {
+                this.fullWidthRowComponentBody.destroy();
+            }
+            this.fullWidthRowComponent = null;
+        }
+        if (this.fullWidthRowComponentLeft) {
+            if (this.fullWidthRowComponentLeft.destroy) {
+                this.fullWidthRowComponentLeft.destroy();
+            }
+            this.fullWidthRowComponentLeft = null;
+        }
+        if (this.fullWidthRowComponentRight) {
+            if (this.fullWidthRowComponentRight.destroy) {
+                this.fullWidthRowComponentRight.destroy();
+            }
+            this.fullWidthRowComponent = null;
+        }
+        if (this.eFullWidthRow) {
+            _.removeAllChildren(this.eFullWidthRow);
+        }
+        if (this.eFullWidthRowBody) {
+            _.removeAllChildren(this.eFullWidthRowBody);
+        }
+        if (this.eFullWidthRowLeft) {
+            _.removeAllChildren(this.eFullWidthRowLeft);
+        }
+        if (this.eFullWidthRowRight) {
+            _.removeAllChildren(this.eFullWidthRowRight);
+        }
     }
 
-    private createFullWidthParams(eRow: HTMLElement): any {
+    private createFullWidthParams(eRow: HTMLElement, pinned: string): any {
         var params = {
             data: this.rowNode.data,
             node: this.rowNode,
@@ -677,6 +787,7 @@ export class RenderedRow extends BeanStub {
             context: this.gridOptionsWrapper.getContext(),
             eGridCell: eRow,
             eParentOfValue: eRow,
+            pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this),
             colDef: {
                 cellRenderer: this.fullWidthCellRenderer,
@@ -689,30 +800,6 @@ export class RenderedRow extends BeanStub {
         }
 
         return params;
-    }
-
-    private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
-        var eRow: HTMLElement = document.createElement('span');
-        // padding means we are on the right hand side of a pinned table, ie
-        // in the main body.
-        if (!padding) {
-
-            var params = this.createFullWidthParams(eRow);
-
-            var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
-
-            if (cellComponent && cellComponent.destroy) {
-                this.addDestroyFunc( () => cellComponent.destroy() );
-            }
-        }
-
-        if (this.rowNode.footer) {
-            _.addCssClass(eRow, 'ag-footer-cell-entire-row');
-        } else {
-            _.addCssClass(eRow, 'ag-group-cell-entire-row');
-        }
-
-        return eRow;
     }
 
     private createChildScopeOrNull(data: any) {
