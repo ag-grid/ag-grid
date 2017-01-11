@@ -114,25 +114,25 @@ include '../documentation-main/documentation_header.php';
             <td>Cell is focused.</td>
         </tr>
         <tr>
-            <td>rowValueChanged</td>
+            <th>rowValueChanged</th>
             <td>A cells value within a row has changed.</td>
         </tr>
         <tr>
-            <td>rowEditingStarted</td>
+            <th>rowEditingStarted</th>
             <td>Editing a row has started (when row editing is enabled). When row editing, this event will be fired
                 once, and <code>cellEditingStarted</code> will be fired for each cell being edited.</td>
         </tr>
         <tr>
-            <td>rowEditingStopped</td>
+            <th>rowEditingStopped</th>
             <td>Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired
                 once, and <code>cellEditingStopped</code> will be fired for each cell being edited.</td>
         </tr>
         <tr>
-            <td>cellEditingStarted</td>
+            <th>cellEditingStarted</th>
             <td>Editing a cell has started.</td>
         </tr>
         <tr>
-            <td>cellEditingStopped</td>
+            <th>cellEditingStopped</th>
             <td>Editing a cell has stopped.</td>
         </tr>
         <tr>
@@ -270,7 +270,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>cellContextMenu</th>
-            <td>user has right clicked on a cell **/</td>
+            <td>user has right clicked on a cell</td>
         </tr>
         <tr>
             <th>virtualRowRemoved</th>
