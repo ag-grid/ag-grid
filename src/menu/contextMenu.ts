@@ -14,7 +14,9 @@ import {
     Utils,
     Column,
     MenuItemDef,
-    GridApi
+    GridApi,
+    IRowModel,
+    Constants
 } from "ag-grid";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -27,6 +29,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowModel') private rowModel: IRowModel;
 
     @PostConstruct
     private init(): void {
@@ -37,6 +40,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
         if (Utils.exists(node)) {
             // if user clicks a cell
             defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel'];
+            // only put in the export if normal row model, other row models confuse things with export.
+            if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL) {
+                defaultMenuOptions.push('export');
+            }
         } else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
             defaultMenuOptions = ['toolPanel'];
