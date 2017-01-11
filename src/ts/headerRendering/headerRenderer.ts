@@ -6,8 +6,8 @@ import {Bean, Autowired, Context, PostConstruct, PreDestroy} from "../context/co
 import {HeaderContainer} from "./headerContainer";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
+import {Component} from "../widgets/component";
 
 @Bean('headerRenderer')
 export class HeaderRenderer {
@@ -67,7 +67,7 @@ export class HeaderRenderer {
         this.setPinnedColContainerWidth();
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+    public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.childContainers.forEach( childContainer => childContainer.forEachHeaderElement(callback) );
     }
     

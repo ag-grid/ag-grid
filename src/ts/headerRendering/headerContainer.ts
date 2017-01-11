@@ -8,9 +8,9 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {HeaderRowComp} from "./headerRowComp";
 import {BodyDropTarget} from "./bodyDropTarget";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {Column} from "../entities/column";
 import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
+import {Component} from "../widgets/component";
 
 export class HeaderContainer {
 
@@ -40,7 +40,7 @@ export class HeaderContainer {
         this.eViewport = eViewport;
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+    public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.headerRowComps.forEach( headerRowComp => headerRowComp.forEachHeaderElement(callback) );
     }
     
