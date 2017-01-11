@@ -43,7 +43,7 @@ export class HeaderContainer {
     public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.headerRowComps.forEach( headerRowComp => headerRowComp.forEachHeaderElement(callback) );
     }
-    
+
     @PostConstruct
     private init(): void {
         this.setupDragAndDrop();
