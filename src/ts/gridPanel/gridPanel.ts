@@ -673,11 +673,13 @@ export class GridPanel extends BeanStub {
     }
 
     private isBodyVerticalScrollShowing(): boolean {
-        if (this.columnController.isPinningRight()) {
-            return false;
-        } else {
-            return _.isHorizontalScrollShowing(this.eBodyViewport);
-        }
+        // if the scroll is on the pinned panel, then it is never in the center panel.
+        // if LRT, then pinning right means scroll NOT on center
+        if (!this.enableRtl && this.columnController.isPinningRight()) { return false; }
+        // if RTL, then pinning left means scroll NOT on center
+        if (this.enableRtl && this.columnController.isPinningLeft()) { return false; }
+
+        return _.isVerticalScrollShowing(this.eBodyViewport);
     }
 
     // gets called every 500 ms. we use this to set padding on right pinned column
