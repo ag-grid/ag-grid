@@ -113,7 +113,7 @@ export class GridApi {
         return this.excelCreator.getDataAsExcelXml(params);
     }
 
-    public exportExcel(params?: CsvExportParams): void {
+    public exportDataAsExcel(params?: CsvExportParams): void {
         if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
         this.excelCreator.exportDataAsExcel(params)
     }

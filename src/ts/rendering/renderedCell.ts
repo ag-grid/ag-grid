@@ -1,4 +1,4 @@
-import {Utils as _, Utils} from "../utils";
+import {Utils as _} from "../utils";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";

@@ -45,7 +45,6 @@ export * from './dist/lib/headerRendering/headerRenderer';
 export * from './dist/lib/headerRendering/headerRowComp';
 export * from './dist/lib/headerRendering/headerTemplateLoader';
 export * from './dist/lib/headerRendering/horizontalDragService';
-export * from './dist/lib/headerRendering/iRenderedHeaderElement';
 export * from './dist/lib/headerRendering/moveColumnController';
 export * from './dist/lib/headerRendering/renderedHeaderCell';
 export * from './dist/lib/headerRendering/renderedHeaderGroupCell';
