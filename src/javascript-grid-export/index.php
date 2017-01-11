@@ -10,6 +10,12 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Data Export</h2>
 
+    <note>
+        If you are looking to export your data using the Excel native XML format and benefit from the ability to export styles, column widths... check our enterprise feature
+        <a href="/javascript-grid-excel/">Excel export</a>
+
+    </note>
+
     <p>
         The data can be exported to CSV with an API call. You have two options, let the grid do the export if the
         browser is modern and it is allowed, or you get the grid to return you the CSV string and your application
@@ -101,6 +107,7 @@ include '../documentation-main/documentation_header.php';
         <li>Value getters are used to work out the value to export (the 'Group' col in the example below uses a value getter to take the first letter of the country name)</li>
         <li>Aggregated values are exported.</li>
         <li>For groups, the first exported value (column) will always have the group key.</li>
+        <li>Heading groups are exported as part of the csv.</li>
     </ul>
 
     <show-example example="exampleExport"></show-example>

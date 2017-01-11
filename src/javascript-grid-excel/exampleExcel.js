@@ -3,8 +3,8 @@ var columnDefs = [{
     children: [
         {headerName: "Athlete", field: "athlete", width: 150},
         {headerName: "Age", field: "age", width: 90, cellClassRules:{
-            lessThan23IsGreen: function(params) { return params.value < 23},
-            lessThan20IsBlue: function(params) { return params.value < 20}
+            greenBackground: function(params) { return params.value < 23},
+            blueBackground: function(params) { return params.value < 20}
         }},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75},
@@ -22,7 +22,6 @@ var columnDefs = [{
     ]
 }];
 
-
 var floatingTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,
     date: '01-08-2020', sport: 'Floating Top Sport', gold: 22, silver: 33, bronze: 44, total: 55};
 
@@ -31,12 +30,15 @@ var floatingBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country:
 
 var gridOptions = {
     columnDefs: columnDefs,
+    groupHeaders: true,
     enableFilter: true,
     enableSorting: true,
-    showToolPanel: true,
     rowSelection: 'multiple',
     floatingTopRowData: [floatingTopRow],
-    floatingBottomRowData: [floatingBottomRow]
+    floatingBottomRowData: [floatingBottomRow],
+    defaultColDef: {
+
+    }
 };
 
 function getBooleanValue(cssSelector) {
@@ -52,9 +54,7 @@ function onBtExport() {
         skipFloatingBottom: getBooleanValue('#skipFloatingBottom'),
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
-        suppressQuotes: getBooleanValue('#suppressQuotes'),
-        fileName: document.querySelector('#fileName').value,
-        columnSeparator: document.querySelector('#columnSeparator').value
+        fileName: document.querySelector('#fileName').value
     };
 
     if (getBooleanValue('#useCellCallback')) {
@@ -77,14 +77,7 @@ function onBtExport() {
         };
     }
 
-    if (getBooleanValue('#customHeader')) {
-        params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';
-    }
-    if (getBooleanValue('#customFooter')) {
-        params.customFooter = '[[[ This ia s sample custom footer - maybe a summary line here?? ]]]\n';
-    }
-
-    gridOptions.api.exportDataAsCsv(params);
+    gridOptions.api.exportExcel(params);
 }
 
 // setup the grid after the page has finished loading

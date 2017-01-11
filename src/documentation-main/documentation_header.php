@@ -344,9 +344,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Data Export") { ?>
-                    <span class="sidebarLinkSelected">Data Export</span>
+                    <span class="sidebarLinkSelected">CSV Export</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">Data Export</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">CSV Export</a>
                 <?php } ?>
 
                 <?php if ($key == "Styling") { ?>
@@ -436,6 +436,12 @@ if (strcmp($version , 'latest') == 0) {
                 <h4>
                     Enterprise Features
                 </h4>
+
+                <?php if ($key == "Excel Export") { ?>
+                    <span class="sidebarLinkSelected">Excel Export</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/">Excel</a>
+                <?php } ?>
 
                 <?php if ($key == "Viewport") { ?>
                     <span class="sidebarLinkSelected">Viewport</span>

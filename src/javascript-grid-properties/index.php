@@ -487,6 +487,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to enable range selection.</td>
         </tr>
         <tr>
+            <th>excelStyles</th>
+            <td>The list of excel styles to be used when <a href="/javascript-grid-excel/">exporting to excel</a></td>
+        </tr>
+        <tr>
             <th>rowGroupPanelShow</th>
             <td>When to show the 'row group panel' (where you drag rows to group)  at the top. Default
                 is never. Set to either 'always' or 'onlyWhenGrouping'.</td>
