@@ -18,10 +18,12 @@ import {PivotColDefService} from "./rowStages/pivotColDefService";
 import {AggFuncService} from "./aggregation/aggFuncService";
 import {PivotCompFactory} from "./pivotCompFactory";
 import {MenuItemMapper} from "./menu/menuItemMapper";
+import {ExcelCreator} from "./excelCreator";
+import {ExcelXmlFactory} from "./excelXmlFactory";
 
 var rowModelTypes = {viewport: ViewportRowModel};
 
-Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, RowGroupCompFactory, PivotCompFactory,
+Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
     StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
