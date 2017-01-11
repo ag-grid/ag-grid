@@ -269,10 +269,6 @@ include '../documentation-main/documentation_header.php';
             <td>The client has set new floating data into the grid</td>
         </tr>
         <tr>
-            <th>cellContextMenu</th>
-            <td>user has right clicked on a cell</td>
-        </tr>
-        <tr>
             <th>virtualRowRemoved</th>
             <td>A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row.</td>
         </tr>
