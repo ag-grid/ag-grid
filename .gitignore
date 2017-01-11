@@ -1,6 +1,19 @@
 node_modules/
 bower_components/
 web-root/
+src/ts/*.js
+src/ts/**/*.js
 
-.gitignore
+.idea/encodings.xml
+
+.idea/misc.xml
+
+.idea/modules.xml
+
+.idea/vcs.xml
+
+.idea/workspace.xml
+
+ag-grid.iml
+
 

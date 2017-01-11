@@ -2006,4 +2006,8 @@ export class ColumnController {
         }
         return result;
     }
+
+    public getGridBalancedTree():OriginalColumnGroupChild[]{
+        return this.gridBalancedTree
+    }
 }

@@ -18,15 +18,7 @@ import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
-import {
-    Context,
-    Autowired,
-    PostConstruct,
-    Optional,
-    Bean,
-    Qualifier,
-    PreDestroy
-} from "./context/context";
+import {Context, Autowired, PostConstruct, Optional, Bean, Qualifier, PreDestroy} from "./context/context";
 import {DragAndDropService, DragSourceType, HDirection, VDirection} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {FilterManager} from "./filter/filterManager";
@@ -59,6 +51,7 @@ import {CellNavigationService} from "./cellNavigationService";
 import {ColumnChangeEvent} from "./columnChangeEvent";
 import {Constants} from "./constants";
 import {CsvCreator} from "./csvCreator";
+import {Downloader} from "./downloader";
 import {EventService} from "./eventService";
 import {ExpressionService} from "./expressionService";
 import {GridCore} from "./gridCore";
@@ -103,7 +96,10 @@ import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
 import {TouchListener} from "./widgets/touchListener";
 import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
+import {XmlFactory} from "./xmlFactory";
 import {BeanStub} from "./context/beanStub";
+import {GridSerializer, BaseGridSerializingSession, RowType} from "./gridSerializer";
+import {StylingService} from "./styling/stylingService";
 
 export function populateClientExports(exports: any): void {
 
@@ -222,6 +218,9 @@ export function populateClientExports(exports: any): void {
     exports.VirtualPageCache = VirtualPageCache;
     exports.VirtualPage = VirtualPage;
 
+    //styling
+    exports.StylingService = StylingService;
+
     // widgets
     exports.AgCheckbox = AgCheckbox;
     exports.Component = Component;
@@ -236,6 +235,7 @@ export function populateClientExports(exports: any): void {
     exports.ColumnChangeEvent = ColumnChangeEvent;
     exports.Constants = Constants;
     exports.CsvCreator = CsvCreator;
+    exports.Downloader = Downloader;
     exports.Events = Events;
     exports.EventService = EventService;
     exports.ExpressionService = ExpressionService;
@@ -255,5 +255,8 @@ export function populateClientExports(exports: any): void {
     exports.Utils = Utils;
     exports.NumberSequence = NumberSequence;
     exports.ValueService = ValueService;
-
+    exports.XmlFactory = XmlFactory;
+    exports.GridSerializer = GridSerializer;
+    exports.BaseGridSerializingSession = BaseGridSerializingSession;
+    exports.RowType = RowType;
 }
