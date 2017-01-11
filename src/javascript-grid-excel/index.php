@@ -35,10 +35,10 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ul>
-        <li><b>exportExcel(params)</b>: Does the full export and triggers the download automatically of the
+        <li><b>exportDataAsExcel(params)</b>: Does the full export and triggers the download automatically of the
             file in the browser so that the user would be able to open it immediately.</li>
         <li><b>getDataAsExcel(params)</b>: Returns the Excel XML that represents the export performed by
-            exportExcel(params). This can then be used by your web application, eg to send the data to the
+            <i>exportDataAsExcel(params)</i>. This can then be used by your web application, eg to send the data to the
             server for storing or sending via email etc.</li>
     </ul>
 

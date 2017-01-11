@@ -77,7 +77,7 @@ function onBtExport() {
         };
     }
 
-    gridOptions.api.exportExcel(params);
+    gridOptions.api.exportDataAsExcel(params);
 }
 
 // setup the grid after the page has finished loading
