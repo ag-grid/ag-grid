@@ -32,8 +32,14 @@ function doesExternalFilterPass(node) {
         case 'below30': return node.data.age < 30;
         case 'between30and50': return node.data.age >= 30 && node.data.age <= 50;
         case 'above50': return node.data.age > 50;
+        case 'dateAfter2008': return asDate(node.data.date) > new Date(2008,1,1);
         default: return true;
     }
+}
+
+function asDate (dateAsString){
+    var splitFields = dateAsString.split("/");
+    return new Date(splitFields[2], splitFields[1], splitFields[0]);
 }
 
 function externalFilterChanged(newValue) {
