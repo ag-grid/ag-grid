@@ -147,7 +147,6 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the cellClassRules</li>
-        <li><b>name</b> (mandatory): Same as id</li>
         <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul>
                 <li>vertical: String one of Top/Bottom</li>
                 <li>horizontal: String one of Left/Right</li>
@@ -204,8 +203,7 @@ var gridOptions = {
     ExcelStyles: [
         <span class="codeComment">// The base style, background is green</span>
         {
-            id: "lessThan23IsGreen",
-            name: "lessThan23IsGreen",
+            id: "greenBackground",
             alignment: {
                 horizontal: 'Right', vertical: 'Bottom'
             },
@@ -230,8 +228,7 @@ var gridOptions = {
         },
         <span class="codeComment">// The additional style, on top of a green background it will have a red font</span>
         {
-            id: "lessThan20FontIsRed",
-            name: "lessThan20FontIsRed",
+            id: "redFont",
             interior: {
                 color: "#FF0000", pattern: 'Solid'
             }

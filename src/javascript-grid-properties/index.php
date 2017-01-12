@@ -488,7 +488,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>excelStyles</th>
-            <td>The list of excel styles to be used when <a href="/javascript-grid-excel/">exporting to excel</a></td>
+            <td>The list of Excel styles to be used when <a href="/javascript-grid-excel/">exporting to Excel</a></td>
         </tr>
         <tr>
             <th>rowGroupPanelShow</th>
