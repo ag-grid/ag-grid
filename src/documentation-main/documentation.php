@@ -15,6 +15,29 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">22nd December 2016</div>
+        <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+            <span style="font-weight: bold;">ag-Grid v7.1 Released</span>
+        </div>
+        <div>
+            v7.1 brings <a href="../javascript-grid-rtl/">RTL</a> support along with
+            many other smaller changes and bug fixes. See
+            <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
+        <div class="news-header">8th December 2016</div>
+        <div style="padding-top: 10px;">
+            <a href="../ag-grid-angular-aot-dynamic-components/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                Understanding AOT and Dynamic Components in Angular 2
+            </a>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">5th December 2016</div>
         <div>
             v7.0.2 patch released, see <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
@@ -23,7 +46,6 @@ include 'documentation_header.php';
 
     <div class="news-box">
         <div class="news-header">30th November 2016</div>
-        <img src="../images/agGridDaily.png"/>
         <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
             <span style="font-weight: bold; color: #800000;">ag-Grid v7 Released</span>
         </div>

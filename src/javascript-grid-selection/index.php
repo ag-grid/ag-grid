@@ -75,8 +75,8 @@ include '../documentation-main/documentation_header.php';
         colDef.checkboxSelection can also be a function that returns true/false - use this if
         you want only checkboxes on some rows but not others. gridOptions.checkboxSelection can
         also be specified as a function - use this if you want, for example, the first column
-        to have checkbox selection regardless of which column it is (you would do this by looing
-        at the params and returning true if colIndex = 0).
+        to have checkbox selection regardless of which column it is (you would do this by looping the columns using the
+        column API, and check if the first column is the current one (in checkboxSelection).
     </p>
 
     <h3 id="groupSelection">Group Selection</h3>

@@ -1,7 +1,5 @@
-import {Component} from '@angular/core';
-import {CommonModule} from "@angular/common"
-
-import {GridOptions} from 'ag-grid/main';
+import {Component} from "@angular/core";
+import {GridOptions} from "ag-grid/main";
 import {StyledComponent} from "./styled-renderer.component";
 
 @Component({

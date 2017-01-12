@@ -27,8 +27,10 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>For Angular 1 - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on purpose
-    for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest cycle
-    for each one would kill performance. So you may want to $scope.$apply() after you handle the event.</note>
+        for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
+        cycle
+        for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
+    </note>
 
     <h4>
         <img src="/images/react.png" height="20px"/>
@@ -112,6 +114,28 @@ include '../documentation-main/documentation_header.php';
             <td>Cell is focused.</td>
         </tr>
         <tr>
+            <th>rowValueChanged</th>
+            <td>A cells value within a row has changed.</td>
+        </tr>
+        <tr>
+            <th>rowEditingStarted</th>
+            <td>Editing a row has started (when row editing is enabled). When row editing, this event will be fired
+                once, and <code>cellEditingStarted</code> will be fired for each cell being edited.</td>
+        </tr>
+        <tr>
+            <th>rowEditingStopped</th>
+            <td>Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired
+                once, and <code>cellEditingStopped</code> will be fired for each cell being edited.</td>
+        </tr>
+        <tr>
+            <th>cellEditingStarted</th>
+            <td>Editing a cell has started.</td>
+        </tr>
+        <tr>
+            <th>cellEditingStopped</th>
+            <td>Editing a cell has stopped.</td>
+        </tr>
+        <tr>
             <th>modelUpdated</th>
             <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
@@ -137,7 +161,8 @@ include '../documentation-main/documentation_header.php';
             <th>gridReady</th>
             <td>ag-Grid has initialised. The name 'ready'
                 was influenced by the authors time programming the Commodore 64. Use this event if,
-                for example, you need to use the grid's API to fix the columns to size.</td>
+                for example, you need to use the grid's API to fix the columns to size.
+            </td>
         </tr>
         <tr>
             <th>selectionChanged</th>
@@ -157,7 +182,9 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>columnEverythingChanged</th>
-            <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so everything has changed.</td>
+            <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so
+                everything has changed.
+            </td>
         </tr>
         <tr>
             <th>columnVisible</th>
@@ -189,7 +216,9 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>virtualColumnsChanged</th>
-            <td>The list of rendered columns has changed (only columns in the visible scrolled viewport are rendered by default).</td>
+            <td>The list of rendered columns has changed (only columns in the visible scrolled viewport are rendered by
+                default).
+            </td>
         </tr>
         <tr>
             <th>viewportChanged</th>
@@ -202,13 +231,60 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>dragStarted, dragStopped</th>
             <td>When column dragging starts of stops. Useful if you want to wait until after a drag
-                event before doing an action.</td>
+                event before doing an action.
+            </td>
+        </tr>
+        <tr>
+            <th>newColumnsLoaded</th>
+            <td>User has set in new columns.</td>
+        </tr>
+        <tr>
+            <th>columnPivotModeChanged</th>
+            <td>The pivot mode flag was changed</td>
+        </tr>
+        <tr>
+            <th>columnRowGroupChanged</th>
+            <td>A row group column was added, removed or order changed.</td>
+        </tr>
+        <tr>
+            <th>columnPivotChanged</th>
+            <td>A pivot column was added, removed or order changed.</td>
+        </tr>
+        <tr>
+            <th>gridColumnsChanged</th>
+            <td>The list of grid columns has changed.</td>
+        </tr>
+        <tr>
+            <th>displayedColumnsChanged</th>
+            <td>The list of displayed columns has changed, can result from columns open / close, column move, pivot,
+                group, etc
+            </td>
+        </tr>
+        <tr>
+            <th>rowDataChanged</th>
+            <td>The client has set new data into the grid</td>
+        </tr>
+        <tr>
+            <th>floatingRowDataChanged</th>
+            <td>The client has set new floating data into the grid</td>
+        </tr>
+        <tr>
+            <th>virtualRowRemoved</th>
+            <td>A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row.</td>
+        </tr>
+        <tr>
+            <th>itemsAdded</th>
+            <td>Client added a new row.</td>
+        </tr>
+        <tr>
+            <th>itemsRemoved</th>
+            <td>Client removed a row.</td>
         </tr>
 
     </table>
 
     <p>
-        <?php include '../enterprise.php';?>
+        <?php include '../enterprise.php'; ?>
         &nbsp;
         The below events are available in the Enterprise version of ag-Grid.
     </p>
@@ -225,4 +301,4 @@ include '../documentation-main/documentation_header.php';
     </table>
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

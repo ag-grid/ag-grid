@@ -1,7 +1,7 @@
 <html>
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid-enterprise.js?ignore=notused37"></script>
+    <script src="../dist/ag-grid-enterprise.js?ignore=notused38"></script>
     <script src="exampleFilterApi.js"></script>
 </head>
 <body>
@@ -20,6 +20,12 @@
         <button onclick="ageBelow25()">Age Below 25</button>
         <button onclick="ageAbove30()">Age Above 30</button>
         <button onclick="clearAgeFilter()">Clear Age Filter</button>
+    </span>
+    <br/>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button onclick="after2010()">Date after 01/01/2010</button>
+        <button onclick="before2012()">Date before 01/01/2012</button>
+        <button onclick="clearDateFilter()">Clear Age Filter</button>
     </span>
 
 </div>

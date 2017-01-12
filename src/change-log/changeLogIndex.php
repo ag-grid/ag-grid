@@ -8,9 +8,52 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h2>Version NEXT</h2>
+
+    <li>Enhancement: <a href="../javascript-grid-excel">Excel Export</a>.</li>
+    <li>Enhancement: richSelect cell editor now works with empty strings.</li>
+    <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#groupEditing"><i>enableGroupEdit</i></a>, Set to true to allow editing of the group rows.</li>
+    <li>Enhancement: RTL verified to work with For Print.</li>
+    <li>Enhancement: New API <i>getDocument()</i> for overriding what document is used. Currently used by Drag and Drop (may extend to other places
+    in the future). Use this when you want the grid to use a different document than the one available
+    on the global scope. This can happen if docking out components (something which Electron supports).</li>
+    <li>Enhancement: Context menu now has CSV Export and Excel Export.</li>
+    <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
+    <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
+    <li>Bugfix: Column menu was disappearing while doing vertical scroll. Now it only disappears for horizontal scroll.
+        This impacted when filtering changed the v scroll position (eg if everything filtered, scroll set back to top)</li>
+    <li>Bugfix: api.isAyFilterPresent() was returning true after api.setRowData() was called with new data and newRowsAction was not 'keep'.</li>
+    <li>Bugfix: horizontal scroll was sometimes not possible when no rows, now it is (so you can access column menu on RHS even if no rows).</li>
+    <li>Bugfix: classes ag-row-group-expanded and ag-row-group-contracted were not getting applied as group expanded and contracted.</li>
+    <li>Bugfix: if doing popup editing, and you click outside the grid, the edit is lost, which is different to click on another cell, where the edit is kept. Now they are in sync, clicking outside the pop always keeps the edit.</li>
+    <li>Bugfix: headerCellTemplate had classes in agText element removed. Now they are left alone.</li>
+    <li>Bugfix: rowIndex was missing from cellEditor params</li>
+    <li>Bugfix: CSS class ag-row-focus class was not getting applied to right row when rows were ordered or filtered</li>
+    <li>Bugfix: event selectionChanged was not getting fired when you had more than one row selected, then just clicked one row (all other rows get deselected).</li>
+    <li>Bugfix: api.sizeColumnsToFit() was incorrectly working out the vertical scroll value - meant it was out by the scroll width sometimes in it's calculations.</li>
+
     <h2>Version 7.1.x</h2>
 
-    <li>Enhancement: RTL support.</li>
+    <li>Enhancement: <a href="../javascript-grid-rtl/">RTL support</a>, so now you can support languages that go
+        from right to left.</li>
+    <li>Enhancement: new events: rowEditingStarted, rowEditingStopped, cellEditingStarted, cellEditingStopped.</li>
+    <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#singleClickEditing"><i>suppressClickEdit</i></a>.</li>
+    <li>Enhancement: added api.clearFocusedCell()</li>
+    <li>Enhancement: added <a href="../javascript-grid-clipboard/#sendToClipboard"><i>sendToClipboard</i></a></li>
+    <li>Enhancement: added <a href="../javascript-grid-keyboard-navigation/#customNavigation">custom keyboard navigation</a></li>
+
+    <li>Bug Fix: Sub menu was not working in Firefox, now fixed.</li>
+    <li>Bug Fix: Copy to clipboard was not copying focused cell then range selection was turned off.</li>
+    <li>Bug Fix: Pinned right header used to be mis-aligned by the scroll width. Now it's aligned.</li>
+
+    <li>Documentation: Angular 2 Examples Project now has examples for both SystemJS & SystemJS-Builder, Webpack and Angular-CLI</li>
+
+    <h4>ag-grid-ng2-7.1.2</h4>
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>Bug Fix: TypeScript was incorrectly trying to compile main.ts (when under node_modules) - exclude main.ts from npm publish for now</li>
+        <li>Bug Fix: Unpin versions for Angular and Zone to be more flexible</li>
+    </ul>
 
     <h2>Version 7.0.x</h2>
 

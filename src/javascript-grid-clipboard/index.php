@@ -73,9 +73,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        If you copy multiple ranges in range selection (my holding down ctrl), then only the first
-        selection will be copied into the clipboard. This was influenced by Excel, where if you try
-        to copy multiple ranges, it gives an error message saying multiple ranges cannot be copied.
+        You can copy multiple ranges in range selection by holding down ctrl to select multiple
+        ranges and then copy.
     </note>
 
     <h3>Safari Support</h3>
@@ -101,6 +100,22 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <show-example example="exampleClipboard" example-height="450px"></show-example>
+
+    <h3 id="sendToClipboard">Controlling Clipboard Copy</h3>
+
+    <p>
+        If you want to do the copy to clipboard yourself (ie not use the grids clipboard interaction)
+        then implement the callback <i>sendToClipboard(params)</i>. Use this if you are in a non-standard
+        web container that has a bespoke API for interacting with the clipboard. The callback gets the
+        data to go into the clipboard, it's your job to call the bespoke API.
+    </p>
+
+    <p>
+        The example below shows using <i>sendToClipboard(params)</i>, but rather than using the clipboard,
+        demonstrates the callback by just printing the data to the console.
+    </p>
+
+    <show-example example="exampleClipboardCustom" example-height="450px"></show-example>
 
 </div>
 

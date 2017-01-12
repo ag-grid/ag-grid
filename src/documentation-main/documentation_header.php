@@ -95,15 +95,34 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng1") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular JS</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular JS</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular 2</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular 2+</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular 2</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular 2+</a>
+                <?php } ?>
+
+
+                <?php if ($key == "Angular SystemJS") { ?>
+                    <span class="sidebarLinkSelected" style="padding-left: 40px">SystemJS</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-systemjs/" style="padding-left: 40px">SystemJS</a>
+                <?php } ?>
+
+                <?php if ($key == "Angular Webpack") { ?>
+                    <span class="sidebarLinkSelected" style="padding-left: 40px">Webpack</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-webpack/" style="padding-left: 40px">Webpack</a>
+                <?php } ?>
+
+                <?php if ($key == "Angular CLI") { ?>
+                    <span class="sidebarLinkSelected" style="padding-left: 40px">Angular CLI</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-angularcli/" style="padding-left: 40px">Angular CLI</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>
@@ -325,9 +344,9 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Data Export") { ?>
-                    <span class="sidebarLinkSelected">Data Export</span>
+                    <span class="sidebarLinkSelected">CSV Export</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">Data Export</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">CSV Export</a>
                 <?php } ?>
 
                 <?php if ($key == "Styling") { ?>
@@ -360,6 +379,12 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">&nbsp;  Bootstrap Theme</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php">&nbsp;  Bootstrap Theme</a>
+                <?php } ?>
+
+                <?php if ($key == "RTL") { ?>
+                    <span class="sidebarLinkSelected">RTL</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-rtl/">RTL</a>
                 <?php } ?>
 
                 <?php if ($key == "Icons") { ?>
@@ -411,6 +436,12 @@ if (strcmp($version , 'latest') == 0) {
                 <h4>
                     Enterprise Features
                 </h4>
+
+                <?php if ($key == "Excel Export") { ?>
+                    <span class="sidebarLinkSelected">Excel Export</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/">Excel Export</a>
+                <?php } ?>
 
                 <?php if ($key == "Viewport") { ?>
                     <span class="sidebarLinkSelected">Viewport</span>

@@ -23,7 +23,6 @@ var gridOptions = {
     debug: true,
     columnDefs: columnDefs,
     rowData: null,
-    groupHeaders: true,
     enableSorting: true,
     enableFilter: true,
     enableColResize: true

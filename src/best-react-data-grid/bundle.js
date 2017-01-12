@@ -54,7 +54,7 @@
     /******/
     /******/
     /******/ 	var hotApplyOnUpdate = true;
-    /******/ 	var hotCurrentHash = "b6bd7275c7e01c1a35f1"; // eslint-disable-line no-unused-vars
+    /******/ 	var hotCurrentHash = "244ce38a2e154ac2c6ed"; // eslint-disable-line no-unused-vars
     /******/ 	var hotCurrentModuleData = {};
     /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
     /******/
@@ -49393,7 +49393,7 @@
 
 
         // module
-        exports.push([module.id, "\r\n.ag-cell {\r\n    padding-top: 2px !important;\r\n    padding-bottom: 2px !important;\r\n}\r\n\r\nlabel {\r\n    font-weight: normal !important;\r\n}\r\n\r\n.div-percent-bar {\r\n    display: inline-block;\r\n    height: 100%;\r\n    position: relative;\r\n}\r\n\r\n.div-percent-value {\r\n    position: absolute;\r\n    padding-left: 4px;\r\n    font-weight: bold;\r\n    font-size: 13px;\r\n}\r\n\r\n.div-outer-div {\r\n    display: inline-block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n", ""]);
+        exports.push([module.id, "\r\n.ag-cell {\r\n    padding-top: 2px !important;\r\n    padding-bottom: 2px !important;\r\n}\r\n\r\nlabel {\r\n    font-weight: normal !important;\r\n}\r\n\r\n.div-percent-bar {\r\n    display: inline-block;\r\n    height: 20px;\r\n    position: relative;\r\n}\r\n\r\n.div-percent-value {\r\n    position: absolute;\r\n    padding-left: 4px;\r\n    font-weight: bold;\r\n    font-size: 13px;\r\n}\r\n\r\n.div-outer-div {\r\n    display: inline-block;\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n", ""]);
 
         // exports
 

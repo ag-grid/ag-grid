@@ -245,7 +245,7 @@ import 'ag-grid-enterprise/main';
     <ul>
         <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> - Project on Github</li>
         <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project on Github</li>
-        <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2, SystemX, JSPM, Typescript</a> - Project on Github</li>
+        <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2 & Typescript - with examples using SystemJS, Webpack and Angular-CLI</a> - Project on Github</li>
     </ul>
 
     <h3>Documentation Examples</h3>
@@ -263,7 +263,7 @@ import 'ag-grid-enterprise/main';
     </p>
     <p>
         So eg, the example has this:<br/>
-    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js?ignore=notused37"><br/></pre>
+    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js?ignore=notused38"><br/></pre>
     But all you need is this:<br/>
     <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
     </p>

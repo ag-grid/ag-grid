@@ -58,7 +58,6 @@
         columnDefs: columnDefs,
         rowData: createRowData(),
         rowSelection: 'single',
-        groupHeaders: true,
         suppressAggFuncInHeader: true,
         groupDefaultExpanded: -1,
         groupIncludeFooter: true,

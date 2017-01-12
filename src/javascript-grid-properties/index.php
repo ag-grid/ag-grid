@@ -274,6 +274,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow editable cells to start editing with a single click.</td>
         </tr>
         <tr>
+            <th>enableGroupEdit</th>
+            <td>Set to true to allow editing of the group rows.</td>
+        </tr>
+        <tr>
             <th>editType</th>
             <td>Set to 'fullRow' to enable full row editing. Otherwise leave blank to edit one
                 cell at a time.</td>
@@ -387,6 +391,82 @@ include '../documentation-main/documentation_header.php';
                 drop this feature in favour of a slight performance gain.
             </td>
         </tr>
+        <tr>
+            <th>suppressMenuHide</th>
+            <td>Set to true to always show the column menu button, rather than only showing when the mouse is
+                over the column header.</td>
+        </tr>
+
+        <tr>
+            <th>sortingOrder</th>
+            <td>SPL TODO</td>
+        </tr>
+        <tr>
+            <th>enableRtl</th>
+            <td>SPL TODO</td>
+        </tr>
+        <tr>
+            <th>suppressClickEdit</th>
+            <td>Se this to true so that neither single or double click starts editing. This is useful when you want to
+                start the editing in another way, such as including a button in your cellRenderer.</td>
+        </tr>
+        <tr>
+            <th>debug</th>
+            <td>Set this to true to enable debug information from ag-grid and related components. Will result in
+                additional logging being output, but very useful when investigating problems.</td>
+        </tr>
+        <tr>
+            <th>icons</th>
+            <td>ag-Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.
+            See <a href="../javascript-grid-icons/">Icons</a> for more information.</td>
+        </tr>
+        <tr>
+            <th>animateRows</th>
+            <td>Enable row animations by setting this to true.</td>
+        </tr>
+        <tr>
+            <th>pivotMode</th>
+            <td>Set to true to enable pivot mode. See <a href="../javascript-grid-pivoting/">Pivoting</a> for more information.</td>
+        </tr>
+        <tr>
+            <th>localeText</th>
+            <td>You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
+                a <i>localeTextFunc</i> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a> for more information. </td>
+        </tr>
+        <tr>
+            <th>localeTextFunc</th>
+            <td>You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
+                a <i>localeTextFunc</i> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a> for more information. </td>
+        </tr>
+        <tr>
+            <th>groupIncludeFooter</th>
+            <td>If grouping, whether to show a group footer when the group is expanded. If true, then by default, the footer
+                will contain aggregate data (if any) when shown and the header will be black. When closed, the header will
+                contain the aggregate data regardless of this setting (as footer is hidden anyway). This is handy for
+                'total' rows, that are displayed below the data when the group is open, and alongside the group when
+                it is closed.</td>
+        </tr>
+        <tr>
+            <th>groupSuppressRow</th>
+            <td>If true, the group row won't be displayed and the groups will be expanded by default
+                with no ability to expand / contract the groups. Useful when you want to just 'group'
+                the rows, but not add parent group row to each group.</td>
+        </tr>
+        <tr>
+            <th>groupColumnDef</th>
+            <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
+                this column is not included.</td>
+        </tr>
+        <tr>
+            <th>context</th>
+            <td>Provides a context which can be used when rendering, setting row height, filtering and so on.</td>
+        </tr>
+        <tr>
+            <th>datasource</th>
+            <td>A datasource is used when using row models a) pagination and b) virtual paging. This section explains the datasource used in each fo these row models.
+                See <a href="../javascript-grid-javascript-grid-datasource/">Datasource</a> for more information.
+            </td>
+        </tr>
     </table>
 
     <p>
@@ -405,6 +485,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>enableRangeSelection</th>
             <td>Set to true to enable range selection.</td>
+        </tr>
+        <tr>
+            <th>excelStyles</th>
+            <td>The list of Excel styles to be used when <a href="/javascript-grid-excel/">exporting to Excel</a></td>
         </tr>
         <tr>
             <th>rowGroupPanelShow</th>
@@ -466,7 +550,14 @@ include '../documentation-main/documentation_header.php';
             <th>suppressTouch</th>
             <td>Disables touch support (but does not remove the browsers efforts to simulate mouse events on touch).</td>
         </tr>
-
+        <tr>
+            <th>viewportDatasource</th>
+            <td>To use the viewportRowModel you provide the grid with a viewportDatasource. See <a href="../javascript-grid-viewport/">Viewport</a> for more information.</td>
+        </tr>
+        <tr>
+            <th>aggFuncs</th>
+            <td>Adding and clearing of aggregation functions.</td>
+        </tr>
     </table>
 </div>
 

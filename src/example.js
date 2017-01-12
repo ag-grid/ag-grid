@@ -113,6 +113,7 @@ suppressEnterprise: true,
 // rowBuffer: 0,
 //columnDefs: [],
 //singleClickEdit: true,
+// suppressClickEdit: true,
 //rowData: [
 //    {name: 'Niall'},
 //    {name: 'Eamon'},
@@ -120,7 +121,7 @@ suppressEnterprise: true,
 //    {name: 'Brian'}
 //],
     groupKeys: undefined, //set as string of keys eg ["region","country"],
-           // groupUseEntireRow: true, //one of [true, false]
+    // groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
@@ -144,6 +145,7 @@ suppressEnterprise: true,
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
+    // embedFullWidthRows: true,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
@@ -244,7 +246,27 @@ suppressEnterprise: true,
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    getContextMenuItems: getContextMenuItems
+    getContextMenuItems: getContextMenuItems,
+    excelStyles: [
+        {
+            id: 'good-score',
+            interior: {
+                color: "#94e494", pattern: 'Solid'
+            }
+        },
+        {
+            id: 'bad-score',
+            interior: {
+                color: "#e49494", pattern: 'Solid'
+            }
+        },
+        {
+            id:'header',
+            interior: {
+                color: "#CCCCCC", pattern: 'Solid'
+            }
+        }
+    ]
 };
 
 function getContextMenuItems(params) {
@@ -316,7 +338,7 @@ var defaultCols = [
                     values: ['English', 'Spanish', 'French', 'Portuguese', 'German',
                         'Swedish','Norwegian','Italian','Greek','Icelandic','Portuguese','Maltese']
                 },
-                //pinned: 'left',
+                // pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {newRowsAction: 'keep'},
                 icons: {
@@ -338,7 +360,7 @@ var defaultCols = [
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
                 },
-                //pinned: 'left',
+                // pinned: 'left',
                 floatCell: true,
                 filterParams: {
                     cellRenderer: CountryCellRenderer,
@@ -363,7 +385,7 @@ var defaultCols = [
         },
         enableRowGroup: true,
         enablePivot: true,
-        //pinned: 'right',
+        // pinned: 'right',
         // rowGroupIndex: 1,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -372,7 +394,7 @@ var defaultCols = [
     },
     {
         headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
-        //pinned: 'right',
+        // pinned: 'right',
         // rowGroupIndex: 2,
         // pivotIndex: 1,
         enableRowGroup: true,
@@ -454,8 +476,6 @@ months.forEach(function (month) {
         cellStyle: {"text-align": "right"}
     })
 });
-
-//gridOptions.columnDefs = createCols();
 
 function filterDoubleClicked(event) {
     setInterval(function () {
@@ -623,7 +643,7 @@ function rowSelected(event) {
 // the node id's are assigned from 0 upwards)
     if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
-        console.log("Callback rowSelected: " + valueToPrint);
+        console.log("Callback rowSelected: " + valueToPrint + " - " + event.node.isSelected());
     }
 }
 

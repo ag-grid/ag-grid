@@ -63,6 +63,17 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleForPrintComplex"></show-example>
 
+    <h3>For Print and RTL</h3>
+
+    <p>
+        If you are using RTL (for Right to Left languages), it will work but you need to be careful. The
+        grid will expect the browser the horizontally scroll to the left. This means you have to set CSS
+        <i>direction=rtl</i> on the body element of your document. This is demonstrated in the example
+        below.
+    </p>
+
+    <show-example example="exampleForPrintRtl"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

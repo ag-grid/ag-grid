@@ -7,8 +7,11 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
     <h2>Viewport</h2>
+    <p>
+        <?php include '../enterprise.php';?>
+        &nbsp;
+        Viewport is available in ag-Grid Enterprise.
 
     <p>
         A Viewport is a rowModel that allows showing a 'window' of data in your client. Typically all the data

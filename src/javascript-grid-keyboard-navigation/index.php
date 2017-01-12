@@ -55,8 +55,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         Custom cell renderers can listen to key presses on the focused div. The grid element that receives
         the focus is provided to the cell renderers via the <i>eGridCell</i> parameter. You can add your
-        own listeners to this cell. Via this method you can, for example, have your custom cell editors
-        go into edit mode when the Enter key is pressed.
+        own listeners to this cell. Via this method you can listen to any key press and do your own action
+        on the cell eg hitting 'x' may execute a command in your application for that cell.
     </p>
 
     <h4>Suppress Cell Selection</h4>
@@ -71,6 +71,92 @@ include '../documentation-main/documentation_header.php';
         All the items above (navigation, editing, groups, selection) are observable in the test drive.
         As such, a separate example is not provided here.
     </p>
+
+    <h2 id="customNavigation">Custom Navigation</h2>
+
+    <p>
+        Most people will be happy with the default navigation the grid does when you use the arrow keys
+        and the tab key. Some people will want to override this - for example maybe you want the tab key
+        to navigate to the cell below, not the cell to the right. To facilitate this, the grid offers
+        two methods: <i>navigateToNextCell</i> and <i>tabToNextCell</i>.
+    </p>
+
+    <h4>navigateToNextCell</h4>
+
+    <p>
+        Provide a callback <i>navigateToNextCell</i> if you want to override the arrow key navigation. The
+        function signature is as follows:
+    </p>
+
+    <pre>export NavigateToNextCellParams {
+
+    <span class="codeComment">// the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40</span>
+    key: number;
+
+    <span class="codeComment">// the cell that currently has focus</span>
+    previousCellDef: GridCellDef;
+
+    <span class="codeComment">// the cell the grid would normally pick as the next cell for this navigation</span>
+    nextCellDef: GridCellDef;
+}</pre>
+
+     <h4>tabToNextCell</h4>
+
+    <p>
+        Provide a callback <i>tabToNextCell</i> if you want to override the tab key navigation. The
+        parameter object is as follows:
+    </p>
+
+    <pre>interface TabToNextCellParams {
+
+    <span class="codeComment">// true if the shift key is also down</span>
+    backwards: boolean;
+
+    <span class="codeComment">// true if the current cell is editing (you may want to skip cells that are not editable,</span>
+    <span class="codeComment">// as the grid will enter the next cell in editing mode also if tabbing)</span>
+    editing: boolean;
+
+    <span class="codeComment">// the cell that currently has focus</span>
+    previousCellDef: GridCellDef;
+
+    <span class="codeComment">// the cell the grid would normally pick as the next cell for this navigation</span>
+    nextCellDef: GridCellDef;
+}</pre>
+
+    <h4>GridCellDef</h4>
+
+    <p>
+        Both functions above use GridCellDef. This is an object that represents a cell in the grid. It's
+        interface is as follows:
+    </p>
+
+    <pre>interface GridCellDef {
+
+    <span class="codeComment">// either 'top', 'bottom' or undefined/null (for not floating)</span>
+    floating: string;
+
+    <span class="codeComment">// a positive number from 0 to n, where n is the last row the grid is rendering</span>
+    rowIndex: number;
+
+    <span class="codeComment">// the grid column</span>
+    column: Column;
+}</pre>
+
+    <p>
+        The functions take a GridCellDef for current and next cells, as well as returning a GridCellDef object.
+        The returned GridCellDef will be the one the grid puts focus on next. Return the provided <i>nextCellDef</i>
+        to stick with the grid default behaviour. Return null/undefined to skip the navigation.
+    </p>
+
+    <h4>Example Customer Navigation</h4>
+
+    <p>
+        The example below shows both <i>navigateToNextCell</i> and <i>tabToNextCell</i> in practice.
+        <i>navigateToNextCell</i> swaps the up and down arrow keys. <i>tabToNextCell</i> uses tabbing
+        to go up and down rather than right and left.
+    </p>
+
+    <show-example example="exampleNavigation"></show-example>
 
 </div>
 

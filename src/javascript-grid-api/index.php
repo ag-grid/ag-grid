@@ -260,8 +260,8 @@ include '../documentation-main/documentation_header.php';
                 true for match, false for no match)</td>
         </tr>
         <tr>
-            <th>getFilterApi(col)</th>
-            <td>Returns the API for the filter for the column. Either provide the colDef (matches on object
+            <th>getFilterInstance(col)</th>
+            <td>Returns the filter component instance for the column. Either provide the colDef (matches on object
                 reference) or the column field attribute (matches on string comparison). Matching by field
                 is normal. Matching by colDef is useful when field is missing or not unique.
             </td>
@@ -304,6 +304,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>setFocusedCell(rowIndex, colKey, floating)</th>
             <td>Sets the focus to the specified cell. Set floating to null, 'top', or 'bottom'.</td>
+        </tr>
+        <tr>
+            <th>clearFocusedCell()</th>
+            <td>Clears the focused cell.</td>
         </tr>
         <tr>
             <th>showToolPanel(show)</th>

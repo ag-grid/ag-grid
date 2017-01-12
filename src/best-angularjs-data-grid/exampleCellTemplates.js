@@ -1,3 +1,4 @@
+agGrid.LicenseManager.setLicenseKey("your license key goes here");
 
 // this example uses Angular 1. cellTemplates doesn't make sense with any other framework
 agGrid.initialiseAgGridWithAngular1(angular);

@@ -85,6 +85,24 @@ include '../documentation-main/documentation_header.php';
         If you want to turn off the context menu completely, set the grid property <code>suppressContextMenu=true</code>.
     </p>
 
+    <h3>Built In Menu Items</h3>
+
+    <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
+
+    <ul>
+        <li><b>autoSizeAll</b>: Auto-size all columns. Always shown.</li>
+        <li><b>expandAll</b>: Expand all groups. Only shown if grouping by at least one column.</li>
+        <li><b>contractAll</b>: Contract all groups. Only shown if grouping by at least one column.</li>
+        <li><b>copy</b>: Copy selected value to clipboard</li>
+        <li><b>copyWithHeaders</b>Copy selected value to clipboard with headers.</li>
+        <li><b>paste</b>: Always disabled (see note in clipboard section).</li>
+        <li><b>resetColumns</b>: Reset all columns.</li>
+        <li><b>toolPanel</b>: Show / hide the toolpanel.</li>
+        <li><b>export</b>: Export sub menu (containing csvExport and excelExport).</li>
+        <li><b>csvExport</b>: Export to CSV using all default export values.</li>
+        <li><b>excelExport</b>: Export to Excel using all default export values.</li>
+    </ul>
+
     <h3>Context Menu Example</h3>
 
     <p>

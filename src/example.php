@@ -29,10 +29,23 @@
             })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
         </script>
 
+        <style>
+            label { font-weight: normal !important; }
+            .blue { background-color: darkblue; color: lightblue; }
 
-<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
--->
+            .ag-fresh .good-score { background-color: rgba(0,200,0,0.4) }
+            .ag-blue .good-score { background-color: rgba(0,200,0,0.4) }
+            .ag-dark .good-score { background-color: rgba(0,100,0,0.4) }
+
+            .ag-fresh .bad-score { background-color: rgba(200,0,0,0.4) }
+            .ag-blue .bad-score { background-color: rgba(200,0,0,0.4) }
+            .ag-dark .bad-score { background-color: rgba(100,0,0,0.4) }
+        </style>
+
+
+        <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        -->
 <!--        <script src="./bootstrap/jquery.min.js"></script>
         <script src="./bootstrap/bootstrap.min.js"></script>
 -->
@@ -40,8 +53,8 @@
 
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
-<!--        <script src="./dist/ag-grid.js?ignore=notused37"></script>-->
-        <script src="./dist/ag-grid-enterprise.js?ignore=notused37"></script>
+<!--        <script src="./dist/ag-grid.js?ignore=notused38"></script>-->
+        <script src="./dist/ag-grid-enterprise.js?ignore=notused38"></script>
 
         <script src="example.js"></script>
 
@@ -59,7 +72,7 @@
 
     </head>
 
-    <body class="no-user-select" style="height: 100%; margin: 0px; padding: 0px;">
+    <body style="height: 100%; margin: 0px; padding: 0px;">
 
         <!-- The table div -->
         <div style="padding-top: 98px; height: 100%; width: 100%;">
