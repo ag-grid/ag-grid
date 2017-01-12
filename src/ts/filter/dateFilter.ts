@@ -184,35 +184,42 @@ export class DateFilter extends Component implements IFilter {
         }
     }
 
-    private parseDateFrom (date:string):void{
+    private setDateFrom (date:string):void{
         this.dateFrom = this.parseDate(date);
         this.eDateFromInput.value = date;
     }
 
-    private parseDateTo (date:string):void{
+    private setDateTo (date:string):void{
         this.dateTo = this.parseDate(date);
         this.eDateToInput.value = date;
     }
 
-    private parseFilterType (filterType:string):void{
+    private setFilterType (filterType:string):void{
         this.filter = filterType;
         this.eTypeSelector.value = filterType;
     }
 
     public setModel(model: SerializedDateFilter): void {
         if (model) {
-            this.parseDateFrom(model.dateFrom);
-            this.parseDateTo(model.dateTo);
-            this.parseFilterType(model.filterType);
+            this.setDateFrom(model.dateFrom);
+            this.setDateTo(model.dateTo);
+            this.setFilterType(model.filterType);
         } else {
-            this.dateFrom = null;
-            this.dateTo = null;
+            this.setDateFrom(null);
+            this.setDateTo(null);
+            this.setFilterType("equals");
         }
     }
 
     private serializeDate (date:Date):string{
         if (!date) return null;
-        return date.getFullYear() + "-" + date.getMonth() + 1 + "-" + date.getDate()
+        return date.getFullYear() + "-" + this.pad(date.getMonth() + 1, 2) + "-" + this.pad(date.getDate(), 2)
+    }
+
+    private pad(num: number, totalStringSize:number) : string{
+        let asString:string = num + "";
+        while (asString.length < totalStringSize) asString = "0" + asString;
+        return asString;
     }
 
     private parseDate (dateAsString:string):Date{
