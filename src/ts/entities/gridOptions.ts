@@ -95,6 +95,7 @@ export interface GridOptions {
     paginationPageSize?: number;
     editType?: string;
     suppressTouch?: boolean;
+    embedFullWidthRows?: boolean;
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
 
