@@ -76,7 +76,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         this.cols = Utils.map(columnsToExport, (it: Column)=>{
             it.getColDef().cellStyle;
             return {
-                width: it.getColDef().width
+                width: it.getActualWidth()
             }
         });
     }
