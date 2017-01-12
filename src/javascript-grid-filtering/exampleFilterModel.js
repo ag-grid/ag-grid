@@ -37,7 +37,7 @@ var hardcodedFilter = {
     country: ['Ireland', 'United States'],
     age: {type: 'lessThan', filter: '30'},
     athlete: {type: 'startsWith', filter: 'Mich'},
-    date:{type: 'lessThan', dateFrom: '01/01/2010'}
+    date:{filterType: 'lessThan', dateFrom: '2010-01-01'}
 };
 
 var savedFilters = '[]';

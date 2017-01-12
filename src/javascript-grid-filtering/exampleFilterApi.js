@@ -4,7 +4,25 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
+    {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
+        comparator:function (filterLocalDateAtMidnight, cellValue){
+            var dateAsString = cellValue;
+            var dateParts  = dateAsString.split("/");
+            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]), Number(dateParts[0]));
+
+            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                return 0
+            }
+
+            if (cellDate < filterLocalDateAtMidnight) {
+                return -1;
+            }
+
+            if (cellDate > filterLocalDateAtMidnight) {
+                return 1;
+            }
+        }
+    }},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
@@ -90,6 +108,26 @@ function ageAbove30() {
 function clearAgeFilter() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setFilter(null);
+    gridOptions.api.onFilterChanged();
+}
+
+function after2010(){
+    var dateFilterComponent = gridOptions.api.getFilterInstance('date');
+    dateFilterComponent.setFilterType('greaterThan');
+    dateFilterComponent.setDateFrom('2010-01-01');
+    gridOptions.api.onFilterChanged();
+}
+
+function before2012(){
+    var dateFilterComponent = gridOptions.api.getFilterInstance('date');
+    dateFilterComponent.setFilterType('lessThan');
+    dateFilterComponent.setDateFrom('2012-01-01');
+    gridOptions.api.onFilterChanged();
+}
+
+function clearDateFilter(){
+    var dateFilterComponent = gridOptions.api.getFilterInstance('date');
+    dateFilterComponent.setDateFrom(null);
     gridOptions.api.onFilterChanged();
 }
 
