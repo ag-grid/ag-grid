@@ -142,7 +142,7 @@ export class ExcelXmlFactory {
                 prefix: "ss:",
                 prefixedMap: {
                     ID: style.id,
-                    Name: style.name
+                    Name: (style.name) ?  style.name : style.id
                 },
             },
             children: children
