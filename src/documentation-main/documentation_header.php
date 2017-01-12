@@ -440,7 +440,7 @@ if (strcmp($version , 'latest') == 0) {
                 <?php if ($key == "Excel Export") { ?>
                     <span class="sidebarLinkSelected">Excel Export</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/">Excel</a>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/">Excel Export</a>
                 <?php } ?>
 
                 <?php if ($key == "Viewport") { ?>
