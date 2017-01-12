@@ -43,16 +43,25 @@
 -->
 
                         <h2>
-                            <a class="btn btn-primary btn-large" href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Free 2 Month Trial">
-                                Start Free Trial
+                            <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/">
+                                <?php include 'images/download.svg'; ?>
+                                Download
                             </a>
                         </h2>
-
-                        <h2>
-                            <a class="btn btn-primary btn-large" href="/license-pricing.php/">
-                                View Pricing
+                        <div class="Hero-share">
+                            <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.ag-grid.com" alt="Share ag-Grid on Facebook" title="Share ag-Grid on Facebook">
+                                <?php include 'images/social-icons/facebook-logo-hacked.svg'; ?>
                             </a>
-                        </h2>
+                            <a class='share-link' href="https://twitter.com/home?status=http://www.ag-Grid.com,%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers%20%23aggrid%20" alt="Share ag-Grid on Twitter" title="Share ag-Grid on Twitter">
+                                <?php include 'images/social-icons/twitter-social-logotype-hacked.svg'; ?>
+                            </a>
+                            <a class='share-link' href="https://plus.google.com/share?url=www.ag-grid.com" alt="Share ag-Grid on Google Plus" title="Share ag-Grid on Google Plus">
+                                <?php include 'images/social-icons/google-plus-social-logotype-hacked.svg'; ?>
+                            </a>
+                            <a class='share-link' href="https://www.linkedin.com/shareArticle?mini=true&url=www.ag-grid.com&title=Angular%20Grid&summary=%20Enterprise%20Javascript%20Datagrid%20for%20serious%20enterprise%20developers&source=" alt="Share ag-Grid on LinkedIn" title="Share ag-Grid on LinkedIn">
+                                <?php include 'images/social-icons/linkedin-logo-hacked.svg'; ?>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
