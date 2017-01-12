@@ -138,7 +138,7 @@ export class CsvCreator {
         this.downloader.download(
             fileName,
             dataAsCsv,
-            "text/csv"
+            "text/csv;charset=utf-8;"
         );
         return dataAsCsv;
     }

@@ -6,7 +6,7 @@ export class Downloader {
         // for Excel, we need \ufeff at the start
         // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
         var blobObject = new Blob(["\ufeff", content], {
-            type: mimeType + ";charset=utf-8;"
+            type: mimeType
         });
         // Internet Explorer
         if (window.navigator.msSaveOrOpenBlob) {
