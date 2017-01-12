@@ -52,7 +52,6 @@ import {Downloader} from "./downloader";
 import {XmlFactory} from "./xmlFactory";
 import {GridSerializer} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
-import {ButtonPanel, DateFilter} from "./filter/dateFilter";
 
 export interface GridParams {
     // used by Web Components
@@ -129,8 +128,7 @@ export class Grid {
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService],
             components: [
-                {componentName: 'AgCheckbox', theClass: AgCheckbox},
-                {componentName: 'ButtonPanel', theClass: ButtonPanel}
+                {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],
             debug: !!gridOptions.debug
         });
