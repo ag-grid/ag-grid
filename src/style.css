@@ -327,7 +327,6 @@ h4 {
     background-image: linear-gradient(to bottom,#369c36 0,#2d812f 100%);
     border-color: #08c808;
     font-family: 'CalibreSemiBold', sans-serif;
-    text-transform: uppercase;
 }
 
 .btn-primary:hover {
