@@ -3,6 +3,7 @@ import {Component} from "../widgets/component";
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Utils} from "../utils";
 
 export interface IDateFilterParams extends IFilterParams{
     comparator: (filterLocalDateAtMidnight:Date, cellValue:any)=>number;
@@ -76,10 +77,10 @@ export class DateFilter extends Component implements IFilter {
                         </select>
                     </div>
                     <div class="ag-filter-date-from" id="filterDateFromPanel">
-                        <input class="ag-filter-filter" id="filterDateFrom" type="date" placeholder="yyyy-mm-dd"/>
+                        <input class="ag-filter-filter" id="filterDateFrom" type="text" placeholder="yyyy-mm-dd"/>
                     </div>
                     <div class="ag-filter-date-to" id="filterDateToPanel" style="display: none;">
-                        <input class="ag-filter-filter" id="filterDateTo" type="date" placeholder="yyyy-mm-dd"/>
+                        <input class="ag-filter-filter" id="filterDateTo" type="text" placeholder="yyyy-mm-dd"/>
                     </div>
                     <div class="ag-filter-apply-panel" id="applyPanel">
                         <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
@@ -131,6 +132,11 @@ export class DateFilter extends Component implements IFilter {
             this.eDateToPanel.style.display = 'block';
         }else{
             this.eDateToPanel.style.display = 'none';
+        }
+
+        if (Utils.isBrowserChrome()){
+            this.eDateFromInput.type = 'date';
+            this.eDateToInput.type = 'date';
         }
     }
 
