@@ -50,24 +50,20 @@ var gridOptions = {
     excelStyles: [
         {
             id: "greenBackground",
-            name: "greenBackground",
             interior: {
                 color: "#90ee90", pattern: 'Solid'
             }
         },
         {
             id: "redFont",
-            name: "redFont",
             font: { color: "#ff0000" }
         },{
             id: 'darkGreyBackground',
-            name: 'darkGreyBackground',
             interior: {
                 color: "#888888", pattern: 'Solid'
             }
         },{
             id:'boldBorders',
-            name:'boldBorders',
             borders: {
                 borderBottom: {
                     color: "#000000", lineStyle: 'Continuous', weight: 3
@@ -84,7 +80,6 @@ var gridOptions = {
             }
         },{
             id:'header',
-            name: 'header',
             interior: {
                 color: "#CCCCCC", pattern: 'Solid'
             }
@@ -130,7 +125,7 @@ function onBtExport() {
     }
 
 
-    gridOptions.api.exportExcel(params);
+    gridOptions.api.exportDataAsExcel(params);
 }
 
 // setup the grid after the page has finished loading
