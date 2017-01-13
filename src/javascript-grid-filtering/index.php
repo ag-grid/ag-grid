@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Filtering";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+<p>
 
     <h2>Filtering</h2>
 
@@ -54,6 +54,10 @@ include '../documentation-main/documentation_header.php';
             <td>A string comparison filter. Functionality for mating on {contains, starts with, ends with, equals}.</td>
         </tr>
         <tr>
+            <th>date</th>
+            <td>A date comparison filter. Functionality for mating on {equals, not equals, less than, greater than, in range}.</td>
+        </tr>
+        <tr>
             <th>set</th>
             <td>A set filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise
                 feature and explained further <a href="../javascript-grid-set-filtering/">here</a></td>
@@ -81,9 +85,9 @@ columnDefinition = {
     filterParams: {apply: true, newRowsAction: 'keep'}
 }</pre>
 
-    <h4>Text and Number Filter Parameters</h4>
+    <h4>Text, Number and Date Filter Parameters</h4>
     <p>
-        The filter parameters for text and number filter have the following meaning:
+        The filter parameters for text, date and number filter have the following meaning:
         <ul>
             <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,
                 to keep it in line with 'set' filters. If you want to keep the selection, then set this value
@@ -91,14 +95,62 @@ columnDefinition = {
             <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
                 automatically as the selection changes.</li>
         </ul>
+
     </p>
+    <p>
+        The date filter has an additional property to specify how the filter date should be compared with the data
+        in your cell:
+        <ul>
+            <li><b>comparator:</b> A callback to specify how the current cell value compares to the date specified in the filter,
+                the callback takes two parameters, the first one is a Javascript date object with the local date at midnight
+                selected in the filter, the second parameter is the current value of the cell being evaluated. The callback
+                must return:
+                    <ul>
+                        <li>Any number < 0 if the cell value is less than the filter date</li>
+                        <li>0 if the dates are the same</li>
+                        <li>Any number > 0 if the cell value is greater than the filter date</li>
+                    </ul>
+
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        What follows is an example of a date filter:
+<pre>
+    columnDefinition = {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
+        comparator:function (filterLocalDateAtMidnight, cellValue){
+            <span class="codeComment">// In this example the cellValue is a string with the following format:</span>
+            <span class="codeComment">// dd/mm/yyyy</span>
+            var dateAsString = cellValue;
+            var dateParts  = dateAsString.split("/");
+            <span class="codeComment">// Create a Date object that represents the date in the cell</span>
+            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]), Number(dateParts[0]));
+
+
+            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                return 0
+            }
+
+            if (cellDate < filterLocalDateAtMidnight) {
+                return -1;
+            }
+
+            if (cellDate > filterLocalDateAtMidnight) {
+                return 1;
+            }
+        }
+    }}
+</pre>
+    </pre>
+
 
     <h3>Built In Filters Example</h3>
 
     <p>
         The example below demonstrates:
         <ul>
-        <li>Two filter types text filter and number filter.</li>
+        <li>Three filter types text filter, number filter and date filter.</li>
         <li>Quick Filter</li>
         <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
@@ -431,6 +483,19 @@ nameFilter.setModel(model);</pre>
         <li>setType(string): Sets the type.</li>
         <li>getFilter(): Gets the filter text.</li>
         <li>setFilter(number): Sets the filter text.</li>
+    </ul>
+    </p>
+
+    <h3>Date Filter Component Methods</h3>
+    <p>
+        Similar to the text and number filter, the number filter also provides the following API methods:
+    <ul>
+        <li>getDateFrom(): Gets the filter date as string with the format yyyy-mm-dd. If the filter type is "in range", it returns the first date from the range.</li>
+        <li>setDateFrom(dateAsString): Sets the date from. The format of the string must be yyyy-mm-dd.</li>
+        <li>getDateTo(): Gets the second filter date of an "in range" filter as string with the format yyyy-mm-dd, if the filter type is not "in range", then this returns null</li>
+        <li>setDateTo(dateAsString): Sets the date to of an "in range" filter. The format of the string must be yyyy-mm-dd.</li>
+        <li>getFilterType(): Gets the current type of the filter, the possible values are: equals, notEquals, lessThan, greaterThan, inRange.</li>
+        <li>setFilterType(filterName): Sets the current type of the filter, it can only be one of the acceptable types of date filter.</li>
     </ul>
     </p>
 
