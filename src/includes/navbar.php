@@ -20,6 +20,15 @@
                     </iframe>
                 </span>
             </div>
+<!--             <div>
+                <h2>
+                    <a class="btn btn-primary btn-large" href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Free 2 Month Trial">
+                        Start Free Trial
+                    </a>
+                </h2>
+            </div> -->
+
+
             <div class="navbar-collapse collapse pull-right col-md-5 col-sm-6 col-xs-12">
             <ul class="nav navbar-nav navbar-right">
                     <li class="<?php if ($navKey == "demo") { ?>active<?php }?>">
