@@ -12,7 +12,7 @@ export interface IDateFilterParams extends IFilterParams{
 export interface SerializedDateFilter {
     dateFrom:string
     dateTo:string
-    filterType:string
+    type:string
 }
 
 export class DateFilter extends Component implements IFilter {
@@ -25,6 +25,7 @@ export class DateFilter extends Component implements IFilter {
 
     private filterParams: IDateFilterParams;
     private applyActive: boolean;
+    private newRowsActionKeep: boolean;
 
 
     @Autowired('gridOptionsWrapper')
@@ -64,6 +65,8 @@ export class DateFilter extends Component implements IFilter {
     public init(params: IFilterParams): void {
         this.filterParams = <IDateFilterParams>params;
         this.applyActive = (<any>params).apply === true;
+        this.newRowsActionKeep = (<any>params).newRowsAction === 'keep';
+
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(`<div>
@@ -99,6 +102,14 @@ export class DateFilter extends Component implements IFilter {
         this.onInputChanged(this.eDateFromInput, this.onDateChanged.bind(this));
         this.onInputChanged(this.eDateToInput, this.onDateChanged.bind(this));
         this.onSelectChanged(this.eTypeSelector, this.onFilterTypeChanged.bind(this));
+    }
+
+    public onNewRowsLoaded() {
+        if (!this.newRowsActionKeep) {
+            this.setFilterType(DateFilter.EQUALS);
+            this.setDateFrom(null);
+            this.setDateTo(null);
+        }
     }
 
     private onInputChanged (element:HTMLElement, listener: EventListener):void{
@@ -183,24 +194,36 @@ export class DateFilter extends Component implements IFilter {
             return {
                 dateFrom: this.serializeDate(this.dateFrom),
                 dateTo: this.serializeDate(this.dateTo),
-                filterType: this.filter
+                type: this.filter
             };
         } else {
             return null;
         }
     }
 
-    private setDateFrom (date:string):void{
+    public getDateFrom ():string{
+        return this.serializeDate(this.dateFrom);
+    }
+
+    public getDateTo ():string{
+        return this.serializeDate(this.dateTo);
+    }
+
+    public getFilterType ():string{
+        return this.filter;
+    }
+
+    public setDateFrom (date:string):void{
         this.dateFrom = this.parseDate(date);
         this.eDateFromInput.value = date;
     }
 
-    private setDateTo (date:string):void{
+    public setDateTo (date:string):void{
         this.dateTo = this.parseDate(date);
         this.eDateToInput.value = date;
     }
 
-    private setFilterType (filterType:string):void{
+    public setFilterType (filterType:string):void{
         this.filter = filterType;
         this.eTypeSelector.value = filterType;
     }
@@ -209,7 +232,7 @@ export class DateFilter extends Component implements IFilter {
         if (model) {
             this.setDateFrom(model.dateFrom);
             this.setDateTo(model.dateTo);
-            this.setFilterType(model.filterType);
+            this.setFilterType(model.type);
         } else {
             this.setDateFrom(null);
             this.setDateTo(null);
