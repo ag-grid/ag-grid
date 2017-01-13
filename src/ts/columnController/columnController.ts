@@ -1169,6 +1169,11 @@ export class ColumnController {
             column.setValueActive(true);
             this.valueColumns.push(column);
         } else {
+            if (_.exists(stateItem.aggFunc)) {
+                console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
+                    'functions, register the functions first before using them in get/set state. This is because it is' +
+                    'intended for the column state to be stored and retrieved as simple JSON.');
+            }
             column.setAggFunc(null);
             column.setValueActive(false);
         }
