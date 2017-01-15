@@ -1,15 +1,15 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./entities/rowNode";
-import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams, GetRowNodeIdFunc } from "./entities/gridOptions";
+import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams, GetRowNodeIdFunc, NavigateToNextCellParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { IDatasource } from "./rowControllers/iDatasource";
+import { GridCellDef } from "./entities/gridCell";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
@@ -57,6 +57,8 @@ export declare class GridOptionsWrapper {
     isSuppressTouch(): boolean;
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;
+    isGroupSelectsFiltered(): boolean;
+    isGroupRemoveSingleChildren(): boolean;
     isGroupIncludeFooter(): boolean;
     isGroupSuppressBlankHeader(): boolean;
     isSuppressRowClickSelection(): boolean;
@@ -81,7 +83,6 @@ export declare class GridOptionsWrapper {
     getRowStyleFunc(): Function;
     getRowClassFunc(): Function;
     getDoesDataFlowerFunc(): (data: any) => boolean;
-    getScrollbarWidth(): number;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
     getFullWidthCellRendererParams(): any;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
@@ -90,6 +91,7 @@ export declare class GridOptionsWrapper {
     getColumnApi(): ColumnApi;
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
+    isSuppressClickEdit(): boolean;
     getGroupDefaultExpanded(): number;
     getAutoSizePadding(): number;
     getMaxConcurrentDatasourceRequests(): number;
@@ -99,6 +101,7 @@ export declare class GridOptionsWrapper {
     getPaginationInitialRowCount(): number;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
+    isEnableRtl(): boolean;
     getGroupColumnDef(): ColDef;
     isGroupSuppressRow(): boolean;
     getRowGroupPanelShow(): string;
@@ -107,7 +110,7 @@ export declare class GridOptionsWrapper {
     isAngularCompileFilters(): boolean;
     isAngularCompileHeaders(): boolean;
     isDebug(): boolean;
-    getColumnDefs(): (ColDef | ColGroupDef)[];
+    getColumnDefs(): (ColGroupDef | ColDef)[];
     getDatasource(): IDatasource;
     getViewportDatasource(): IViewportDatasource;
     isEnableSorting(): boolean;
@@ -122,6 +125,7 @@ export declare class GridOptionsWrapper {
     isEnableServerSideFilter(): boolean;
     isSuppressScrollLag(): boolean;
     isSuppressMovableColumns(): boolean;
+    isAnimateRows(): boolean;
     isSuppressColumnMoveAnimation(): boolean;
     isSuppressMenuColumnPanel(): boolean;
     isSuppressMenuFilterPanel(): boolean;
@@ -154,8 +158,11 @@ export declare class GridOptionsWrapper {
     getContextMenuItemsFunc(): GetContextMenuItems;
     getMainMenuItemsFunc(): GetMainMenuItems;
     getRowNodeIdFunc(): GetRowNodeIdFunc;
+    getNavigateToNextCellFunc(): (params: NavigateToNextCellParams) => GridCellDef;
+    getTabToNextCellFunc(): (params: TabToNextCellParams) => GridCellDef;
     getProcessSecondaryColDefFunc(): (colDef: ColDef) => void;
     getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef) => void;
+    getSendToClipboardFunc(): (params: any) => void;
     getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams) => any;
     getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams) => any;
     getViewportRowModelPageSize(): number;
@@ -172,9 +179,11 @@ export declare class GridOptionsWrapper {
     getMaxColWidth(): number;
     getColWidth(): number;
     getRowBuffer(): number;
+    getScrollbarWidth(): number;
     private checkForDeprecated();
     getLocaleTextFunc(): Function;
     globalEventHandler(eventName: string, event?: any): void;
     getRowHeightAsNumber(): number;
     getRowHeightForNode(rowNode: RowNode): number;
+    private isNumeric(value);
 }

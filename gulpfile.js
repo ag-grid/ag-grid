@@ -34,8 +34,7 @@ var headerTemplate = ['/**',
 var dtsHeaderTemplate =
     '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
     '// Project: <%= pkg.homepage %>\n' +
-    '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n' +
-    '// Definitions: https://github.com/borisyankov/DefinitelyTyped\n';
+    '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n';
 
 gulp.task('default', ['watch']);
 gulp.task('release', ['webpack-all']);

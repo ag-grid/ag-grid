@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var grid_1 = require("./grid");
 var gridApi_1 = require("./gridApi");
 var events_1 = require("./events");
@@ -53,7 +54,6 @@ var sortStage_1 = require("./rowControllers/inMemory/sortStage");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
 var paginationController_1 = require("./rowControllers/paginationController");
 var component_1 = require("./widgets/component");
-var menuList_1 = require("./widgets/menuList");
 var cellNavigationService_1 = require("./cellNavigationService");
 var columnChangeEvent_1 = require("./columnChangeEvent");
 var constants_1 = require("./constants");
@@ -73,7 +73,6 @@ var popupService_1 = require("./widgets/popupService");
 var gridRow_1 = require("./entities/gridRow");
 var inMemoryRowModel_1 = require("./rowControllers/inMemory/inMemoryRowModel");
 var virtualPageRowModel_1 = require("./rowControllers/virtualPagination/virtualPageRowModel");
-var menuItemComponent_1 = require("./widgets/menuItemComponent");
 var animateSlideCellRenderer_1 = require("./rendering/cellRenderers/animateSlideCellRenderer");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
@@ -102,6 +101,8 @@ var virtualPage_1 = require("./rowControllers/virtualPagination/virtualPage");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
 var methodNotImplementedException_1 = require("./misc/methodNotImplementedException");
 var touchListener_1 = require("./widgets/touchListener");
+var scrollVisibleService_1 = require("./gridPanel/scrollVisibleService");
+var beanStub_1 = require("./context/beanStub");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -115,6 +116,7 @@ function populateClientExports(exports) {
     exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
     exports.initialiseAgGridWithWebComponents = agGridWebComponent_1.initialiseAgGridWithWebComponents;
     // context
+    exports.BeanStub = beanStub_1.BeanStub;
     exports.Context = context_1.Context;
     exports.Autowired = context_1.Autowired;
     exports.PostConstruct = context_1.PostConstruct;
@@ -143,6 +145,7 @@ function populateClientExports(exports) {
     exports.TextFilter = textFilter_1.TextFilter;
     // gridPanel
     exports.GridPanel = gridPanel_1.GridPanel;
+    exports.ScrollVisibleService = scrollVisibleService_1.ScrollVisibleService;
     exports.MouseEventService = mouseEventService_1.MouseEventService;
     // headerRendering
     exports.BodyDropPivotTarget = bodyDropPivotTarget_1.BodyDropPivotTarget;
@@ -204,8 +207,6 @@ function populateClientExports(exports) {
     exports.AgCheckbox = agCheckbox_1.AgCheckbox;
     exports.Component = component_1.Component;
     exports.PopupService = popupService_1.PopupService;
-    exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
-    exports.MenuList = menuList_1.MenuList;
     exports.Listener = componentAnnotations_1.Listener;
     exports.QuerySelector = componentAnnotations_1.QuerySelector;
     exports.TouchListener = touchListener_1.TouchListener;

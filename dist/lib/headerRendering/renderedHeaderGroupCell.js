@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -27,11 +28,12 @@ var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var touchListener_1 = require("../widgets/touchListener");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var RenderedHeaderGroupCell = (function () {
-    function RenderedHeaderGroupCell(columnGroup, eRoot, dragSourceDropTarget) {
+    function RenderedHeaderGroupCell(columnGroup, eRoot, dragSourceDropTarget, pinned) {
         this.destroyFunctions = [];
         this.columnGroup = columnGroup;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
+        this.pinned = pinned;
     }
     RenderedHeaderGroupCell.prototype.getGui = function () {
         return this.eHeaderGroupCell;
@@ -45,7 +47,7 @@ var RenderedHeaderGroupCell = (function () {
         this.eHeaderGroupCell = document.createElement('div');
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper, null, this.columnGroup);
         // this.displayName = this.columnGroup.getHeaderName();
-        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup);
+        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.setupResize();
         this.addClasses();
         this.setupLabel();
@@ -190,11 +192,13 @@ var RenderedHeaderGroupCell = (function () {
         var eGroupIcon;
         if (this.columnGroup.isExpanded()) {
             eGroupIcon = utils_1.Utils.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
+            utils_1.Utils.addCssClass(eGroupIcon, 'ag-header-expand-icon-expanded');
         }
         else {
             eGroupIcon = utils_1.Utils.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+            utils_1.Utils.addCssClass(eGroupIcon, 'ag-header-expand-icon-collapsed');
         }
-        eGroupIcon.className = 'ag-header-expand-icon';
+        utils_1.Utils.addCssClass(eGroupIcon, 'ag-header-expand-icon');
         eGroupCellLabel.appendChild(eGroupIcon);
         var expandAction = function () {
             var newExpandedValue = !_this.columnGroup.isExpanded();
@@ -219,9 +223,28 @@ var RenderedHeaderGroupCell = (function () {
             _this.childrenWidthStarts.push(column.getActualWidth());
         });
     };
+    // optionally inverts the drag, depending on pinned and RTL
+    // note - this method is duplicated in RenderedHeaderCell - should refactor out?
+    RenderedHeaderGroupCell.prototype.normaliseDragChange = function (dragChange) {
+        var result = dragChange;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, dragging left makes the col bigger, except when pinning left
+            if (this.pinned !== column_1.Column.PINNED_LEFT) {
+                result *= -1;
+            }
+        }
+        else {
+            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+            if (this.pinned === column_1.Column.PINNED_RIGHT) {
+                result *= -1;
+            }
+        }
+        return result;
+    };
     RenderedHeaderGroupCell.prototype.onDragging = function (dragChange, finished) {
         var _this = this;
-        var newWidth = this.groupWidthStart + dragChange;
+        var dragChangeNormalised = this.normaliseDragChange(dragChange);
+        var newWidth = this.groupWidthStart + dragChangeNormalised;
         var minWidth = this.columnGroup.getMinWidth();
         if (newWidth < minWidth) {
             newWidth = minWidth;
@@ -278,5 +301,5 @@ var RenderedHeaderGroupCell = (function () {
         __metadata('design:returntype', void 0)
     ], RenderedHeaderGroupCell.prototype, "init", null);
     return RenderedHeaderGroupCell;
-})();
+}());
 exports.RenderedHeaderGroupCell = RenderedHeaderGroupCell;

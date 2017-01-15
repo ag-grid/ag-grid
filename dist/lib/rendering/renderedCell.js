@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -46,8 +47,10 @@ var setLeftFeature_1 = require("./features/setLeftFeature");
 var methodNotImplementedException_1 = require("../misc/methodNotImplementedException");
 var RenderedCell = (function (_super) {
     __extends(RenderedCell, _super);
-    function RenderedCell(column, node, rowIndex, scope, renderedRow) {
+    function RenderedCell(column, node, scope, renderedRow) {
         _super.call(this, '<div/>');
+        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
+        this.cellFocused = null;
         this.firstRightPinned = false;
         this.lastLeftPinned = false;
         // because we reference eGridCell everywhere in this class,
@@ -55,11 +58,30 @@ var RenderedCell = (function (_super) {
         this.eGridCell = this.getGui();
         this.column = column;
         this.node = node;
-        this.rowIndex = rowIndex;
         this.scope = scope;
         this.renderedRow = renderedRow;
-        this.gridCell = new gridCell_1.GridCell(rowIndex, node.floating, column);
+        this.setupGridCell();
     }
+    RenderedCell.prototype.createGridCell = function () {
+        var gridCellDef = {
+            rowIndex: this.node.rowIndex,
+            floating: this.node.floating,
+            column: this.column
+        };
+        this.gridCell = new gridCell_1.GridCell(gridCellDef);
+    };
+    RenderedCell.prototype.setupGridCell = function () {
+        var _this = this;
+        var listener = function () {
+            // when index changes, this influences items that need the index, so we update the
+            // grid cell so they are working off the new index.
+            _this.createGridCell();
+            // when the index of the row changes, ie means the cell may have lost of gained focus
+            _this.checkCellFocused();
+        };
+        this.addDestroyableEventListener(this.node, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, listener);
+        this.createGridCell();
+    };
     RenderedCell.prototype.getGridCell = function () {
         return this.gridCell;
     };
@@ -238,32 +260,31 @@ var RenderedCell = (function (_super) {
     };
     RenderedCell.prototype.addCellFocusedListener = function () {
         var _this = this;
-        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
-        var cellFocusedLastTime = null;
-        var cellFocusedListener = function (event) {
-            var cellFocused = _this.focusedCellController.isCellFocused(_this.gridCell);
-            // see if we need to change the classes on this cell
-            if (cellFocused !== cellFocusedLastTime) {
-                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-focus', cellFocused);
-                utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-no-focus', !cellFocused);
-                cellFocusedLastTime = cellFocused;
-            }
-            // if this cell was just focused, see if we need to force browser focus, his can
-            // happen if focus is programmatically set.
-            if (cellFocused && event && event.forceBrowserFocus) {
-                _this.eGridCell.focus();
-            }
-            // if another cell was focused, and we are editing, then stop editing
-            var fullRowEdit = _this.gridOptionsWrapper.isFullRowEdit();
-            if (!cellFocused && !fullRowEdit && _this.editingCell) {
-                _this.stopRowOrCellEdit();
-            }
-        };
+        var cellFocusedListener = this.checkCellFocused.bind(this);
         this.eventService.addEventListener(events_1.Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         this.addDestroyFunc(function () {
             _this.eventService.removeEventListener(events_1.Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         });
         cellFocusedListener();
+    };
+    RenderedCell.prototype.checkCellFocused = function (event) {
+        var cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
+        // see if we need to change the classes on this cell
+        if (cellFocused !== this.cellFocused) {
+            utils_1.Utils.addOrRemoveCssClass(this.eGridCell, 'ag-cell-focus', cellFocused);
+            utils_1.Utils.addOrRemoveCssClass(this.eGridCell, 'ag-cell-no-focus', !cellFocused);
+            this.cellFocused = cellFocused;
+        }
+        // if this cell was just focused, see if we need to force browser focus, his can
+        // happen if focus is programmatically set.
+        if (cellFocused && event && event.forceBrowserFocus) {
+            this.eGridCell.focus();
+        }
+        // if another cell was focused, and we are editing, then stop editing
+        var fullRowEdit = this.gridOptionsWrapper.isFullRowEdit();
+        if (!cellFocused && !fullRowEdit && this.editingCell) {
+            this.stopRowOrCellEdit();
+        }
     };
     RenderedCell.prototype.setWidthOnCell = function () {
         var _this = this;
@@ -361,7 +382,7 @@ var RenderedCell = (function (_super) {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(key, this.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(key, this.gridCell.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     };
@@ -429,6 +450,7 @@ var RenderedCell = (function (_super) {
             cellStartedEdit: cellStartedEdit,
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
+            $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.eGridCell
@@ -500,6 +522,7 @@ var RenderedCell = (function (_super) {
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STARTED, this.createParams());
         return true;
     };
     RenderedCell.prototype.addInCellEditor = function () {
@@ -534,7 +557,7 @@ var RenderedCell = (function (_super) {
     };
     RenderedCell.prototype.focusCell = function (forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        this.focusedCellController.setFocusedCell(this.rowIndex, this.column, this.node.floating, forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.floating, forceBrowserFocus);
     };
     // pass in 'true' to cancel the editing.
     RenderedCell.prototype.stopRowOrCellEdit = function (cancel) {
@@ -552,15 +575,16 @@ var RenderedCell = (function (_super) {
             return;
         }
         this.editingCell = false;
-        // also have another option here to cancel after editing, so for example user could have a popup editor and
-        // it is closed by user clicking outside the editor. then the editor will close automatically (with false
-        // passed above) and we need to see if the editor wants to accept the new value.
-        var cancelAfterEnd = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
-        var acceptNewValue = !cancel && !cancelAfterEnd;
-        if (acceptNewValue) {
-            var newValue = this.cellEditor.getValue();
-            this.valueService.setValue(this.node, this.column, newValue);
-            this.value = this.getValue();
+        if (!cancel) {
+            // also have another option here to cancel after editing, so for example user could have a popup editor and
+            // it is closed by user clicking outside the editor. then the editor will close automatically (with false
+            // passed above) and we need to see if the editor wants to accept the new value.
+            var userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
+            if (!userWantsToCancel) {
+                var newValue = this.cellEditor.getValue();
+                this.valueService.setValue(this.node, this.column, newValue);
+                this.value = this.getValue();
+            }
         }
         if (this.cellEditor.destroy) {
             this.cellEditor.destroy();
@@ -587,13 +611,15 @@ var RenderedCell = (function (_super) {
         }
         this.setInlineEditingClass();
         this.refreshCell();
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
     };
     RenderedCell.prototype.createParams = function () {
         var params = {
             node: this.node,
             data: this.node.data,
             value: this.value,
-            rowIndex: this.rowIndex,
+            rowIndex: this.gridCell.rowIndex,
+            column: this.column,
             colDef: this.column.getColDef(),
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
@@ -662,7 +688,9 @@ var RenderedCell = (function (_super) {
         if (typeof colDef.onCellDoubleClicked === 'function') {
             colDef.onCellDoubleClicked(agEvent);
         }
-        if (!this.gridOptionsWrapper.isSingleClickEdit()) {
+        var editOnDoubleClick = !this.gridOptionsWrapper.isSingleClickEdit()
+            && !this.gridOptionsWrapper.isSuppressClickEdit();
+        if (editOnDoubleClick) {
             this.startRowOrCellEdit();
         }
     };
@@ -692,7 +720,9 @@ var RenderedCell = (function (_super) {
         if (colDef.onCellClicked) {
             colDef.onCellClicked(agEvent);
         }
-        if (this.gridOptionsWrapper.isSingleClickEdit()) {
+        var editOnSingleClick = this.gridOptionsWrapper.isSingleClickEdit()
+            && !this.gridOptionsWrapper.isSuppressClickEdit();
+        if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
         this.doIeFocusHack();
@@ -790,7 +820,7 @@ var RenderedCell = (function (_super) {
                 data: this.node.data,
                 node: this.node,
                 colDef: colDef,
-                rowIndex: this.rowIndex,
+                rowIndex: this.gridCell.rowIndex,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
@@ -822,11 +852,11 @@ var RenderedCell = (function (_super) {
             var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
             cbSelectionComponent.init({ rowNode: this.node });
-            this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc(function () { return cbSelectionComponent.destroy(); });
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
             this.eSpanWithValue = document.createElement('span');
             utils_1.Utils.addCssClass(this.eSpanWithValue, 'ag-cell-value');
+            this.eCellWrapper.appendChild(cbSelectionComponent.getGui());
             this.eCellWrapper.appendChild(this.eSpanWithValue);
             this.eParentOfValue = this.eSpanWithValue;
         }
@@ -900,7 +930,7 @@ var RenderedCell = (function (_super) {
         var colDef = this.column.getColDef();
         var cellRenderer = this.column.getCellRenderer();
         var floatingCellRenderer = this.column.getFloatingCellRenderer();
-        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, this.value);
+        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, this.value);
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
@@ -944,7 +974,7 @@ var RenderedCell = (function (_super) {
         }
     };
     RenderedCell.prototype.formatValue = function (value) {
-        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.rowIndex, value);
+        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, value);
     };
     RenderedCell.prototype.createRendererAndRefreshParams = function (valueFormatted, cellRendererParams) {
         var params = {
@@ -957,7 +987,7 @@ var RenderedCell = (function (_super) {
             colDef: this.column.getColDef(),
             column: this.column,
             $scope: this.scope,
-            rowIndex: this.rowIndex,
+            rowIndex: this.gridCell.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
@@ -1073,5 +1103,5 @@ var RenderedCell = (function (_super) {
         __metadata('design:returntype', void 0)
     ], RenderedCell.prototype, "init", null);
     return RenderedCell;
-})(component_1.Component);
+}(component_1.Component));
 exports.RenderedCell = RenderedCell;

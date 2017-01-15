@@ -5,7 +5,7 @@ export interface IInMemoryRowModel extends IRowModel {
 
     /** InMemory model only. Gets the model to refresh. Provide a step for the
      * step in the pipeline you want to refresh from. */
-    refreshModel(step: number, fromIndex?: number): void;
+    refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean}): void;
     /** InMemory model only. If tree / group structure, returns the top level
      * nodes only. */
     getTopLevelNodes(): RowNode[];
@@ -21,4 +21,8 @@ export interface IInMemoryRowModel extends IRowModel {
     expandOrCollapseAll(expand: boolean): void;
     /** InMemory model only. */
     setRowData(rows: any[], refresh: boolean, firstId?: number): void;
+    /** When the row height was changed for a row node */
+    onRowHeightChanged(): void;
+    /** When all row heights should be reset */
+    resetRowHeights(): void;
 }

@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -81,7 +82,7 @@ var FocusedCellController = (function () {
             eBrowserCell = eBrowserCell.parentNode;
         }
         if (utils_1.Utils.exists(column) && utils_1.Utils.exists(row)) {
-            var gridCell = new gridCell_1.GridCell(row, floating, column);
+            var gridCell = new gridCell_1.GridCell({ rowIndex: row, floating: floating, column: column });
             return gridCell;
         }
         else {
@@ -122,7 +123,9 @@ var FocusedCellController = (function () {
             return;
         }
         var column = utils_1.Utils.makeNull(this.columnController.getGridColumn(colKey));
-        this.focusedCell = new gridCell_1.GridCell(rowIndex, utils_1.Utils.makeNull(floating), column);
+        this.focusedCell = new gridCell_1.GridCell({ rowIndex: rowIndex,
+            floating: utils_1.Utils.makeNull(floating),
+            column: column });
         this.onCellFocused(forceBrowserFocus);
     };
     FocusedCellController.prototype.isCellFocused = function (gridCell) {
@@ -175,5 +178,5 @@ var FocusedCellController = (function () {
         __metadata('design:paramtypes', [])
     ], FocusedCellController);
     return FocusedCellController;
-})();
+}());
 exports.FocusedCellController = FocusedCellController;

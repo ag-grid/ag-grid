@@ -18,6 +18,7 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {FocusedCellController} from "./focusedCellController";
 import {Component} from "./widgets/component";
 import {ICompFactory} from "./interfaces/iCompFactory";
+import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 
 @Bean('gridCore')
 export class GridCore {
@@ -26,6 +27,7 @@ export class GridCore {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('paginationController') private paginationController: PaginationController;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -64,20 +66,25 @@ export class GridCore {
     @PostConstruct
     public init(): void {
 
-        // and the last bean, done in it's own section, as it's optional
-        var toolPanelGui: HTMLElement;
-
         var eSouthPanel = this.createSouthPanel();
 
+        let eastPanel: HTMLElement;
+        let westPanel: HTMLElement;
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
-            toolPanelGui = this.toolPanel.getGui();
+            // if we are doing RTL, then the tool panel appears on the left
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                westPanel = this.toolPanel.getGui();
+            } else {
+                eastPanel = this.toolPanel.getGui();
+            }
         }
 
         var createTopPanelGui = this.createNorthPanel();
 
         this.eRootPanel = new BorderLayout({
             center: this.gridPanel.getLayout(),
-            east: toolPanelGui,
+            east: eastPanel,
+            west: westPanel,
             north: createTopPanelGui,
             south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
@@ -98,6 +105,10 @@ export class GridCore {
             this.addWindowResizeListener();
         }
 
+        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
+        // which doLayout indirectly depends on
+        this.addRtlSupport();
+
         this.doLayout();
 
         this.finished = false;
@@ -109,6 +120,14 @@ export class GridCore {
         this.onRowGroupChanged();
 
         this.logger.log('ready');
+    }
+
+    private addRtlSupport(): void {
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-rtl');
+        } else {
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-ltr');
+        }
     }
 
     private createNorthPanel(): HTMLElement {
@@ -201,7 +220,7 @@ export class GridCore {
             var intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
             // if interval is negative, this stops the layout from happening
             if (intervalMillis>0){
-                setTimeout( () => {
+                this.frameworkFactory.setTimeout( () => {
                     this.doLayout();
                     this.gridPanel.periodicallyCheck();
                     this.periodicallyDoLayout();
@@ -209,7 +228,7 @@ export class GridCore {
             } else {
                 // if user provided negative number, we still do the check every 5 seconds,
                 // in case the user turns the number positive again
-                setTimeout( () => {
+                this.frameworkFactory.setTimeout( () => {
                     this.periodicallyDoLayout();
                 }, 5000);
             }
@@ -279,7 +298,7 @@ export class GridCore {
         var sizeChanged = this.eRootPanel.doLayout();
         // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
         if (sizeChanged) {
-            this.rowRenderer.drawVirtualRows();
+            this.rowRenderer.drawVirtualRowsWithLock();
             var event = {
                 clientWidth: this.eRootPanel.getGui().clientWidth,
                 clientHeight: this.eRootPanel.getGui().clientHeight

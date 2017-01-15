@@ -8,7 +8,9 @@ import {EventService} from "../eventService";
 import {Events} from "../events";
 import {HeaderRowComp} from "./headerRowComp";
 import {BodyDropTarget} from "./bodyDropTarget";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
+import {Column} from "../entities/column";
+import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
+import {Component} from "../widgets/component";
 
 export class HeaderContainer {
 
@@ -19,6 +21,7 @@ export class HeaderContainer {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
@@ -37,14 +40,10 @@ export class HeaderContainer {
         this.eViewport = eViewport;
     }
 
-    public setWidth(width: number): void {
-        this.eContainer.style.width = width + 'px';
-    }
-    
-    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+    public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.headerRowComps.forEach( headerRowComp => headerRowComp.forEachHeaderElement(callback) );
     }
-    
+
     @PostConstruct
     private init(): void {
         this.setupDragAndDrop();
@@ -52,6 +51,32 @@ export class HeaderContainer {
         // if pivoting, then the columns have changed
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onGridColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+
+        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+    }
+
+    private onColumnResized(): void {
+        this.setWidthIfPinnedContainer();
+    }
+
+    private onDisplayedColumnsChanged(): void {
+        this.setWidthIfPinnedContainer();
+    }
+
+    private onScrollVisibilityChanged(): void {
+        this.setWidthIfPinnedContainer();
+    }
+
+    private setWidthIfPinnedContainer(): void {
+        if (this.pinned === Column.PINNED_LEFT) {
+            let pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
+            this.eContainer.style.width = pinnedLeftWidthWithScroll + 'px';
+        } else if (this.pinned === Column.PINNED_RIGHT) {
+            let pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth();
+            this.eContainer.style.width = pinnedRightWidthWithScroll + 'px';
+        }
     }
 
     public destroy(): void {

@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -65,13 +66,14 @@ var FloatingRowModel = (function () {
         var rowNodes = [];
         if (allData) {
             var nextRowTop = 0;
-            allData.forEach(function (dataItem) {
+            allData.forEach(function (dataItem, index) {
                 var rowNode = new rowNode_1.RowNode();
                 _this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.floating = isTop ? constants_1.Constants.FLOATING_TOP : constants_1.Constants.FLOATING_BOTTOM;
-                rowNode.rowTop = nextRowTop;
-                rowNode.rowHeight = _this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+                rowNode.setRowTop(nextRowTop);
+                rowNode.setRowHeight(_this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+                rowNode.setRowIndex(index);
                 nextRowTop += rowNode.rowHeight;
                 rowNodes.push(rowNode);
             });
@@ -146,5 +148,5 @@ var FloatingRowModel = (function () {
         __metadata('design:paramtypes', [])
     ], FloatingRowModel);
     return FloatingRowModel;
-})();
+}());
 exports.FloatingRowModel = FloatingRowModel;

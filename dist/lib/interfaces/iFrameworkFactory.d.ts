@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { ColDef } from "../entities/colDef";
 import { ICellRenderer, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
 import { ICellEditor } from "../rendering/cellEditors/iCellEditor";
@@ -29,4 +28,7 @@ export interface IFrameworkFactory {
     gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
+    /** Because Angular 2 uses Zones, you should not use setTimout(). So to get around this, we allow the framework
+     * to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */
+    setTimeout(action: any, timeout?: any): void;
 }

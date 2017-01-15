@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -28,7 +29,7 @@ var sortController_1 = require("../sortController");
 var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var touchListener_1 = require("../widgets/touchListener");
 var RenderedHeaderCell = (function () {
-    function RenderedHeaderCell(column, eRoot, dragSourceDropTarget) {
+    function RenderedHeaderCell(column, eRoot, dragSourceDropTarget, pinned) {
         // for better structured code, anything we need to do when this column gets destroyed,
         // we put a function in here. otherwise we would have a big destroy function with lots
         // of 'if / else' mapping to things that got created.
@@ -36,6 +37,7 @@ var RenderedHeaderCell = (function () {
         this.column = column;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
+        this.pinned = pinned;
     }
     RenderedHeaderCell.prototype.getColumn = function () {
         return this.column;
@@ -48,7 +50,7 @@ var RenderedHeaderCell = (function () {
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.eHeaderCell, this.gridOptionsWrapper, this.column, null);
         // label div
         var eHeaderCellLabel = this.eHeaderCell.querySelector('#agHeaderCellLabel');
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, true);
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
@@ -336,8 +338,27 @@ var RenderedHeaderCell = (function () {
     RenderedHeaderCell.prototype.onDragStart = function () {
         this.startWidth = this.column.getActualWidth();
     };
+    // optionally inverts the drag, depending on pinned and RTL
+    // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
+    RenderedHeaderCell.prototype.normaliseDragChange = function (dragChange) {
+        var result = dragChange;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, dragging left makes the col bigger, except when pinning left
+            if (this.pinned !== column_1.Column.PINNED_LEFT) {
+                result *= -1;
+            }
+        }
+        else {
+            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+            if (this.pinned === column_1.Column.PINNED_RIGHT) {
+                result *= -1;
+            }
+        }
+        return result;
+    };
     RenderedHeaderCell.prototype.onDragging = function (dragChange, finished) {
-        var newWidth = this.startWidth + dragChange;
+        var dragChangeNormalised = this.normaliseDragChange(dragChange);
+        var newWidth = this.startWidth + dragChangeNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, finished);
     };
     RenderedHeaderCell.prototype.onIndividualColumnResized = function (column) {
@@ -402,5 +423,5 @@ var RenderedHeaderCell = (function () {
         __metadata('design:returntype', void 0)
     ], RenderedHeaderCell.prototype, "init", null);
     return RenderedHeaderCell;
-})();
+}());
 exports.RenderedHeaderCell = RenderedHeaderCell;

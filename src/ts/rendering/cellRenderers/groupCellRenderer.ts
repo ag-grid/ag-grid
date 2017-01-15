@@ -15,6 +15,7 @@ import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
+import {Column} from "../../entities/column";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -61,10 +62,38 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.rowIndex = params.rowIndex;
         this.gridApi = params.api;
 
+        if (this.isLeaveCellBlank(params)) { return; }
+
         this.addExpandAndContract(params.eGridCell);
         this.addCheckboxIfNeeded(params);
         this.addValueElement(params);
         this.addPadding(params);
+    }
+
+    // if we are doing embedded full width rows, we only show the renderer when
+    // in the body, or if pinning in the pinned section, or if pinning and RTL,
+    // in the right section. otherwise we would have the cell repeated in each section.
+    private isLeaveCellBlank(params: any): boolean {
+        if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+
+            let pinnedLeftCell = params.pinned === Column.PINNED_LEFT;
+            let pinnedRightCell = params.pinned === Column.PINNED_RIGHT;
+            let bodyCell = !pinnedLeftCell && !pinnedRightCell;
+
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                if (this.columnController.isPinningLeft()) {
+                    return !pinnedRightCell;
+                } else {
+                    return !bodyCell;
+                }
+            } else {
+                if (this.columnController.isPinningLeft()) {
+                    return !pinnedLeftCell;
+                } else {
+                    return !bodyCell;
+                }
+            }
+        }
     }
 
     private addPadding(params: any): void {
@@ -87,7 +116,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             } else if (!node.isExpandable() || reducedLeafNode) {
                 paddingPx += 10;
             }
-            this.getGui().style.paddingLeft = paddingPx + 'px';
+
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                // if doing rtl, padding is on the right
+                this.getGui().style.paddingRight = paddingPx + 'px';
+            } else {
+                // otherwise it is on the left
+                this.getGui().style.paddingLeft = paddingPx + 'px';
+            }
         }
     }
 
@@ -142,7 +178,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // if we are using in memory grid grouping, then we try to look up the column that
         // we did the grouping on. however if it is not possible (happens when user provides
         // the data already grouped) then we just the current col, ie use cellrenderer of current col
-        var columnOfGroupedCol = rowGroupColumns[params.node.level];
+        var columnOfGroupedCol = rowGroupColumns[params.node.rowGroupIndex];
         if (_.missing(columnOfGroupedCol)) {
             columnOfGroupedCol = params.column;
         }
@@ -174,10 +210,19 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private addChildCount(params: any): void {
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
-        var suppressCount = params.suppressCount;
-        if (!suppressCount && params.node.allChildrenCount >= 0) {
-            this.eChildCount.innerHTML = "(" + params.node.allChildrenCount + ")";
-        }
+        if (params.suppressCount) { return; }
+
+        let listener = ()=> {
+            if (params.node.allChildrenCount >= 0) {
+                this.eChildCount.innerHTML = `(${params.node.allChildrenCount})`;
+            } else {
+                this.eChildCount.innerHTML = '';
+            }
+        };
+
+        // filtering changes the child count, so need to cater for it
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_AFTER_FILTER_CHANGED, listener);
+        listener();
     }
 
     private getGroupName(params: any): string {
@@ -232,11 +277,16 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandOrContract.bind(this));
         this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandOrContract.bind(this));
-        this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onExpandOrContract.bind(this));
+
+        // if editing groups, then double click is to start editing
+        if (!this.gridOptionsWrapper.isEnableGroupEdit()) {
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onExpandOrContract.bind(this));
+        }
 
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
 
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
     }
 
@@ -248,15 +298,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     public onExpandOrContract(): void {
-        this.rowNode.expanded = !this.rowNode.expanded;
-        var refreshIndex = this.getRefreshFromIndex();
+        this.rowNode.setExpanded(!this.rowNode.expanded);
 
-        this.gridApi.onGroupExpandedOrCollapsed(refreshIndex);
-
-        this.showExpandAndContractIcons();
-
-        var event: any = {node: this.rowNode};
-        this.eventService.dispatchEvent(Events.EVENT_ROW_GROUP_OPENED, event)
+        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+            this.gridApi.refreshRows([this.rowNode]);
+        }
     }
 
     private showExpandAndContractIcons(): void {
@@ -272,17 +318,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             // it not expandable, show neither
             _.setVisible(this.eExpanded, false);
             _.setVisible(this.eContracted, false);
-        }
-    }
-
-    // if we are showing footers, then opening / closing the group also changes the group
-    // row, as the 'summaries' move to and from the header and footer. if not using footers,
-    // then we only need to refresh from this row down.
-    private getRefreshFromIndex(): number {
-        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            return this.rowIndex;
-        } else {
-            return this.rowIndex + 1;
         }
     }
 }

@@ -47,7 +47,10 @@ ag-Grid-React-Example
 + Release in GitHub
 + No npm publish
 
-+ then ng2 (ng2 publish too)
++ then ng2 & aurelia (ng2 publish too)
++ ng2 'npm run release' (updates docs)
++ then aurelia (aurelia publish too)
++ aurelia 'npm run release' (updates docs)
 
 ag-Grid-Docs
 

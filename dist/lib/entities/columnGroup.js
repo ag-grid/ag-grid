@@ -1,11 +1,23 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var column_1 = require("./column");
 var eventService_1 = require("../eventService");
+var context_1 = require("../context/context");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var ColumnGroup = (function () {
     function ColumnGroup(originalColumnGroup, groupId, instanceId) {
         // depends on the open/closed state of the group, only displaying columns are stored here
@@ -34,8 +46,15 @@ var ColumnGroup = (function () {
         });
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
-            var firstChildLeft = this.displayedChildren[0].getLeft();
-            this.setLeft(firstChildLeft);
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                var lastChild = this.displayedChildren[this.displayedChildren.length - 1];
+                var lastChildLeft = lastChild.getLeft();
+                this.setLeft(lastChildLeft);
+            }
+            else {
+                var firstChildLeft = this.displayedChildren[0].getLeft();
+                this.setLeft(firstChildLeft);
+            }
         }
         else {
             // this should never happen, as if we have no displayed columns, then
@@ -202,6 +221,10 @@ var ColumnGroup = (function () {
     ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
     ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
     ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'), 
+        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ColumnGroup.prototype, "gridOptionsWrapper", void 0);
     return ColumnGroup;
-})();
+}());
 exports.ColumnGroup = ColumnGroup;

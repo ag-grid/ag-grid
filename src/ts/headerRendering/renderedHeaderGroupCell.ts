@@ -12,10 +12,11 @@ import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 import {TouchListener} from "../widgets/touchListener";
+import {Component} from "../widgets/component";
 
 var svgFactory = SvgFactory.getInstance();
 
-export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
+export class RenderedHeaderGroupCell extends Component {
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -23,44 +24,33 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
-    private eHeaderGroupCell: HTMLElement;
     private eHeaderCellResize: HTMLElement;
     private columnGroup: ColumnGroup;
     private dragSourceDropTarget: DropTarget;
 
     private groupWidthStart: number;
     private childrenWidthStarts: number[];
-    private destroyFunctions: (()=>void)[] = [];
 
     private eRoot: HTMLElement;
 
     private displayName: string;
+    private pinned: string;
 
-    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget) {
+    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
+        super(`<div/>`);
         this.columnGroup = columnGroup;
         this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
-    }
-
-    public getGui(): HTMLElement {
-        return this.eHeaderGroupCell;
-    }
-
-    public onIndividualColumnResized(column: Column) {
-        if (this.columnGroup.isChildInThisGroupDeepSearch(column)) {
-            this.setWidth();
-        }
+        this.pinned = pinned;
     }
 
     @PostConstruct
     public init(): void {
 
-        this.eHeaderGroupCell = document.createElement('div');
-
-        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.eHeaderGroupCell, this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
 
         // this.displayName = this.columnGroup.getHeaderName();
-        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup);
+        this.displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
         this.setupResize();
         this.addClasses();
@@ -68,8 +58,8 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         this.setupMove();
         this.setWidth();
 
-        var setLeftFeature = new SetLeftFeature(this.columnGroup, this.eHeaderGroupCell);
-        this.destroyFunctions.push(setLeftFeature.destroy.bind(setLeftFeature));
+        var setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui());
+        this.addDestroyFunc( () => setLeftFeature.destroy() );
     }
 
     private setupLabel(): void {
@@ -77,7 +67,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         if (this.displayName && this.displayName !== '') {
             var eGroupCellLabel = document.createElement("div");
             eGroupCellLabel.className = 'ag-header-group-cell-label';
-            this.eHeaderGroupCell.appendChild(eGroupCellLabel);
+            this.getGui().appendChild(eGroupCellLabel);
 
             if (_.isBrowserSafari()) {
                 eGroupCellLabel.style.display = 'table-cell';
@@ -95,14 +85,14 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     }
 
     private addClasses(): void {
-        _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell');
+        _.addCssClass(this.getGui(), 'ag-header-group-cell');
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
         // columnGroup.getColGroupDef
         if (this.columnGroup.isPadding()) {
-            _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-no-group');
+            _.addCssClass(this.getGui(), 'ag-header-group-cell-no-group');
         } else {
-            _.addCssClass(this.eHeaderGroupCell, 'ag-header-group-cell-with-group');
+            _.addCssClass(this.getGui(), 'ag-header-group-cell-with-group');
         }
     }
 
@@ -111,7 +101,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
 
         this.eHeaderCellResize = document.createElement("div");
         this.eHeaderCellResize.className = "ag-header-cell-resize";
-        this.eHeaderGroupCell.appendChild(this.eHeaderCellResize);
+        this.getGui().appendChild(this.eHeaderCellResize);
         this.dragService.addDragHandling({
             eDraggableElement: this.eHeaderCellResize,
             eBody: this.eRoot,
@@ -150,13 +140,12 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         var result = childSuppressesMoving
             || this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.gridOptionsWrapper.isForPrint();
-            // || this.columnController.isPivotMode();
 
         return result;
     }
 
     private setupMove(): void {
-        var eLabel = <HTMLElement> this.eHeaderGroupCell.querySelector('.ag-header-group-cell-label');
+        var eLabel = this.queryForHtmlElement('.ag-header-group-cell-label');
         if (!eLabel) { return; }
 
         if (this.isSuppressMoving()) { return; }
@@ -171,7 +160,7 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource, true);
-            this.destroyFunctions.push( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+            this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
         }
     }
 
@@ -193,34 +182,28 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
     }
 
     private setWidth(): void {
-        var widthChangedListener = () => {
-            this.eHeaderGroupCell.style.width = this.columnGroup.getActualWidth() + 'px';
-        };
 
-        this.columnGroup.getLeafColumns().forEach( column => {
-            column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-            this.destroyFunctions.push( () => {
-                column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-            });
-        });
+        this.columnGroup.getLeafColumns().forEach( column =>
+            this.addDestroyableEventListener(column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this))
+        );
 
-        widthChangedListener();
+        this.onWidthChanged();
     }
 
-    public destroy(): void {
-        this.destroyFunctions.forEach( (func)=> {
-            func();
-        });
+    private onWidthChanged(): void {
+        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
     }
 
     private addGroupExpandIcon(eGroupCellLabel: HTMLElement) {
-        var eGroupIcon: any;
+        let eGroupIcon: any;
         if (this.columnGroup.isExpanded()) {
             eGroupIcon = _.createIcon('columnGroupOpened', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
+            _.addCssClass(eGroupIcon, 'ag-header-expand-icon-expanded');
         } else {
             eGroupIcon = _.createIcon('columnGroupClosed', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+            _.addCssClass(eGroupIcon, 'ag-header-expand-icon-collapsed');
         }
-        eGroupIcon.className = 'ag-header-expand-icon';
+        _.addCssClass(eGroupIcon, 'ag-header-expand-icon');
         eGroupCellLabel.appendChild(eGroupIcon);
 
         var expandAction = ()=> {
@@ -228,18 +211,11 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
             this.columnController.setColumnGroupOpened(this.columnGroup, newExpandedValue);
         };
 
-        eGroupIcon.addEventListener('click', expandAction);
-
-        this.destroyFunctions.push( ()=> {
-            eGroupIcon.removeEventListener('click', expandAction);
-        });
+        this.addDestroyableEventListener(eGroupIcon, 'click', expandAction);
 
         let touchListener = new TouchListener(eGroupIcon);
-        touchListener.addEventListener(TouchListener.EVENT_TAP, expandAction);
-        this.destroyFunctions.push( ()=> {
-            touchListener.removeEventListener(TouchListener.EVENT_TAP, expandAction);
-            touchListener.destroy();
-        });
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, expandAction);
+        this.addDestroyFunc( ()=> touchListener.destroy() );
     }
 
     public onDragStart(): void {
@@ -250,9 +226,29 @@ export class RenderedHeaderGroupCell implements IRenderedHeaderElement {
         });
     }
 
+    // optionally inverts the drag, depending on pinned and RTL
+    // note - this method is duplicated in RenderedHeaderCell - should refactor out?
+    private normaliseDragChange(dragChange: number): number {
+        let result = dragChange;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, dragging left makes the col bigger, except when pinning left
+            if (this.pinned !== Column.PINNED_LEFT) {
+                result *= -1;
+            }
+        } else {
+            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+            if (this.pinned === Column.PINNED_RIGHT) {
+                result *= -1;
+            }
+        }
+        return result;
+    }
+
     public onDragging(dragChange: any, finished: boolean): void {
 
-        var newWidth = this.groupWidthStart + dragChange;
+        let dragChangeNormalised = this.normaliseDragChange(dragChange);
+        let newWidth = this.groupWidthStart + dragChangeNormalised;
+
         var minWidth = this.columnGroup.getMinWidth();
         if (newWidth < minWidth) {
             newWidth = minWidth;

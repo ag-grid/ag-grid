@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -41,11 +42,15 @@ var RowRenderer = (function () {
         this.renderedRows = {};
         this.renderedTopFloatingRows = [];
         this.renderedBottomFloatingRows = [];
+        // we only allow one refresh at a time, otherwise the internal memory structure here
+        // will get messed up. this can happen if the user has a cellRenderer, and inside the
+        // renderer they call an API method that results in another pass of the refresh,
+        // then it will be trying to draw rows in the middle of a refresh.
+        this.refreshInProgress = false;
         this.destroyFunctions = [];
     }
     RowRenderer.prototype.agWire = function (loggerFactory) {
-        this.logger = this.loggerFactory.create('RowRenderer');
-        this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
+        this.logger = loggerFactory.create('RowRenderer');
     };
     RowRenderer.prototype.setupDocumentFragments = function () {
         var usingDocumentFragments = !!document.createDocumentFragment;
@@ -61,22 +66,15 @@ var RowRenderer = (function () {
         var _this = this;
         this.getContainersFromGridPanel();
         this.setupDocumentFragments();
-        var columnListener = this.onColumnEvent.bind(this);
-        var refreshViewListener = this.refreshView.bind(this);
-        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
-        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewListener);
-        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
+        var modelUpdatedListener = this.onModelUpdated.bind(this);
+        var floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
+        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
+        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
         this.destroyFunctions.push(function () {
-            _this.eventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, refreshViewListener);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, refreshViewListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
+            _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
         });
         this.refreshView();
-    };
-    RowRenderer.prototype.onColumnEvent = function (event) {
-        this.setMainRowWidths();
     };
     RowRenderer.prototype.getContainersFromGridPanel = function () {
         this.eFullWidthContainer = this.gridPanel.getFullWidthCellContainer();
@@ -92,19 +90,6 @@ var RowRenderer = (function () {
         this.eFloatingBottomPinnedRightContainer = this.gridPanel.getPinnedRightFloatingBottom();
         this.eFloatingBottomFullWithContainer = this.gridPanel.getFloatingBottomFullWidthCellContainer();
         this.eBodyViewport = this.gridPanel.getBodyViewport();
-        this.eAllBodyContainers = [this.eBodyContainer, this.eFloatingBottomContainer,
-            this.eFloatingTopContainer];
-        this.eAllPinnedLeftContainers = [
-            this.ePinnedLeftColsContainer,
-            this.eFloatingBottomPinnedLeftContainer,
-            this.eFloatingTopPinnedLeftContainer];
-        this.eAllPinnedRightContainers = [
-            this.ePinnedRightColsContainer,
-            this.eFloatingBottomPinnedRightContainer,
-            this.eFloatingTopPinnedRightContainer];
-    };
-    RowRenderer.prototype.setRowModel = function (rowModel) {
-        this.rowModel = rowModel;
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
         var eCells = [];
@@ -118,15 +103,6 @@ var RowRenderer = (function () {
             }
         }
         return eCells;
-    };
-    RowRenderer.prototype.setMainRowWidths = function () {
-        var mainRowWidth = this.columnController.getBodyContainerWidth() + "px";
-        this.eAllBodyContainers.forEach(function (container) {
-            var unpinnedRows = container.querySelectorAll(".ag-row");
-            for (var i = 0; i < unpinnedRows.length; i++) {
-                unpinnedRows[i].style.width = mainRowWidth;
-            }
-        });
     };
     RowRenderer.prototype.refreshAllFloatingRows = function () {
         this.refreshFloatingRows(this.renderedTopFloatingRows, this.floatingRowModel.getFloatingTopRowData(), this.eFloatingTopPinnedLeftContainer, this.eFloatingTopPinnedRightContainer, this.eFloatingTopContainer, this.eFloatingTopFullWidthContainer);
@@ -144,17 +120,51 @@ var RowRenderer = (function () {
             return;
         }
         if (rowNodes) {
-            rowNodes.forEach(function (node, rowIndex) {
-                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, eBodyContainer, null, eFullWidthContainer, ePinnedLeftContainer, null, ePinnedRightContainer, null, node, rowIndex);
+            rowNodes.forEach(function (node) {
+                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, eBodyContainer, null, eFullWidthContainer, ePinnedLeftContainer, null, ePinnedRightContainer, null, node, false);
                 _this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             });
         }
     };
-    RowRenderer.prototype.refreshView = function (refreshEvent) {
+    RowRenderer.prototype.onFloatingRowDataChanged = function () {
+        this.refreshView();
+    };
+    RowRenderer.prototype.onModelUpdated = function (refreshEvent) {
+        this.refreshView(refreshEvent.keepRenderedRows, refreshEvent.animate);
+    };
+    // if the row nodes are not rendered, no index is returned
+    RowRenderer.prototype.getRenderedIndexesForRowNodes = function (rowNodes) {
+        var result = [];
+        if (utils_1.Utils.missing(rowNodes)) {
+            return result;
+        }
+        utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
+            var rowNode = renderedRow.getRowNode();
+            if (rowNodes.indexOf(rowNode) >= 0) {
+                result.push(key);
+            }
+        });
+        return result;
+    };
+    RowRenderer.prototype.refreshRows = function (rowNodes) {
+        if (!rowNodes || rowNodes.length == 0) {
+            return;
+        }
+        // we only need to be worried about rendered rows, as this method is
+        // called to whats rendered. if the row isn't rendered, we don't care
+        var indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
+        // remove the rows
+        this.removeVirtualRows(indexesToRemove);
+        // add draw them again
+        this.refreshView(true, false);
+    };
+    RowRenderer.prototype.refreshView = function (keepRenderedRows, animate) {
+        if (keepRenderedRows === void 0) { keepRenderedRows = false; }
+        if (animate === void 0) { animate = false; }
         this.logger.log('refreshView');
+        this.getLockOnRefresh();
         var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
-        var refreshFromIndex = refreshEvent ? refreshEvent.fromIndex : null;
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
             this.eBodyContainer.style.height = containerHeight + "px";
@@ -162,9 +172,23 @@ var RowRenderer = (function () {
             this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
             this.ePinnedRightColsContainer.style.height = containerHeight + "px";
         }
-        this.refreshAllVirtualRows(refreshFromIndex);
+        this.refreshAllVirtualRows(keepRenderedRows, animate);
         this.refreshAllFloatingRows();
         this.restoreFocusedCell(focusedCell);
+        this.releaseLockOnRefresh();
+    };
+    RowRenderer.prototype.getLockOnRefresh = function () {
+        if (this.refreshInProgress) {
+            throw 'ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. ' +
+                'Your code probably called a grid API method while the grid was in the render stage. To overcome ' +
+                'this, put the API call into a timeout, eg instead of api.refreshView(), ' +
+                'call setTimeout(function(){api.refreshView(),0}). To see what part of your code ' +
+                'that caused the refresh check this stacktrace.';
+        }
+        this.refreshInProgress = true;
+    };
+    RowRenderer.prototype.releaseLockOnRefresh = function () {
+        this.refreshInProgress = false;
     };
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
     // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
@@ -204,26 +228,6 @@ var RowRenderer = (function () {
         var renderedRow = this.renderedRows[rowIndex];
         renderedRow.addEventListener(eventName, callback);
     };
-    RowRenderer.prototype.refreshRows = function (rowNodes) {
-        if (!rowNodes || rowNodes.length == 0) {
-            return;
-        }
-        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
-        // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
-        var indexesToRemove = [];
-        utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
-            var rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode) >= 0) {
-                indexesToRemove.push(key);
-            }
-        });
-        // remove the rows
-        this.removeVirtualRow(indexesToRemove);
-        // add draw them again
-        this.drawVirtualRows();
-        this.restoreFocusedCell(focusedCell);
-    };
     RowRenderer.prototype.refreshCells = function (rowNodes, colIds, animate) {
         if (animate === void 0) { animate = false; }
         if (!rowNodes || rowNodes.length == 0) {
@@ -238,34 +242,33 @@ var RowRenderer = (function () {
             }
         });
     };
-    RowRenderer.prototype.rowDataChanged = function (rows) {
-        // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
-        var indexesToRemove = [];
-        var renderedRows = this.renderedRows;
-        Object.keys(renderedRows).forEach(function (index) {
-            var renderedRow = renderedRows[index];
-            // see if the rendered row is in the list of rows we have to update
-            if (renderedRow.isDataInList(rows)) {
-                indexesToRemove.push(index);
-            }
-        });
-        // remove the rows
-        this.removeVirtualRow(indexesToRemove);
-        // add draw them again
-        this.drawVirtualRows();
-    };
     RowRenderer.prototype.destroy = function () {
         this.destroyFunctions.forEach(function (func) { return func(); });
         var rowsToRemove = Object.keys(this.renderedRows);
-        this.removeVirtualRow(rowsToRemove);
+        this.removeVirtualRows(rowsToRemove);
     };
-    RowRenderer.prototype.refreshAllVirtualRows = function (fromIndex) {
-        // remove all current virtual rows, as they have old data
-        var rowsToRemove = Object.keys(this.renderedRows);
-        this.removeVirtualRow(rowsToRemove, fromIndex);
-        // add in new rows
-        this.drawVirtualRows();
+    RowRenderer.prototype.refreshAllVirtualRows = function (keepRenderedRows, animate) {
+        var _this = this;
+        var rowsToRemove;
+        var oldRowsByNodeId = {};
+        if (keepRenderedRows) {
+            rowsToRemove = [];
+            utils_1.Utils.iterateObject(this.renderedRows, function (index, renderedRow) {
+                var rowNode = renderedRow.getRowNode();
+                if (utils_1.Utils.exists(rowNode.id)) {
+                    oldRowsByNodeId[rowNode.id] = renderedRow;
+                    delete _this.renderedRows[index];
+                }
+                else {
+                    rowsToRemove.push(index);
+                }
+            });
+        }
+        else {
+            rowsToRemove = Object.keys(this.renderedRows);
+        }
+        this.removeVirtualRows(rowsToRemove);
+        this.drawVirtualRows(oldRowsByNodeId, animate);
     };
     // public - removes the group rows and then redraws them again
     RowRenderer.prototype.refreshGroupRows = function () {
@@ -279,31 +282,34 @@ var RowRenderer = (function () {
             }
         });
         // remove the rows
-        this.removeVirtualRow(rowsToRemove);
+        this.removeVirtualRows(rowsToRemove);
         // and draw them back again
         this.ensureRowsRendered();
     };
     // takes array of row indexes
-    RowRenderer.prototype.removeVirtualRow = function (rowsToRemove, fromIndex) {
-        var that = this;
+    RowRenderer.prototype.removeVirtualRows = function (rowsToRemove) {
+        var _this = this;
         // if no fromIndex then set to -1, which will refresh everything
-        var realFromIndex = (typeof fromIndex === 'number') ? fromIndex : -1;
+        // var realFromIndex = -1;
         rowsToRemove.forEach(function (indexToRemove) {
-            if (indexToRemove >= realFromIndex) {
-                that.unbindVirtualRow(indexToRemove);
-            }
+            var renderedRow = _this.renderedRows[indexToRemove];
+            renderedRow.destroy();
+            delete _this.renderedRows[indexToRemove];
         });
     };
-    RowRenderer.prototype.unbindVirtualRow = function (indexToRemove) {
-        var renderedRow = this.renderedRows[indexToRemove];
-        renderedRow.destroy();
-        var event = { node: renderedRow.getRowNode(), rowIndex: indexToRemove };
-        this.eventService.dispatchEvent(events_1.Events.EVENT_VIRTUAL_ROW_REMOVED, event);
-        delete this.renderedRows[indexToRemove];
+    // gets called when rows don't change, but viewport does, so after:
+    // 1) size of grid changed
+    // 2) grid scrolled to new position
+    // 3) ensure index visible (which is a scroll)
+    RowRenderer.prototype.drawVirtualRowsWithLock = function () {
+        this.getLockOnRefresh();
+        this.drawVirtualRows();
+        this.releaseLockOnRefresh();
     };
-    RowRenderer.prototype.drawVirtualRows = function () {
+    RowRenderer.prototype.drawVirtualRows = function (oldRowsByNodeId, animate) {
+        if (animate === void 0) { animate = false; }
         this.workOutFirstAndLastRowsToRender();
-        this.ensureRowsRendered();
+        this.ensureRowsRendered(oldRowsByNodeId, animate);
     };
     RowRenderer.prototype.workOutFirstAndLastRowsToRender = function () {
         var newFirst;
@@ -319,8 +325,9 @@ var RowRenderer = (function () {
                 newLast = rowCount;
             }
             else {
-                var topPixel = this.eBodyViewport.scrollTop;
-                var bottomPixel = topPixel + this.eBodyViewport.offsetHeight;
+                var bodyVRange = this.gridPanel.getVerticalPixelRange();
+                var topPixel = bodyVRange.top;
+                var bottomPixel = bodyVRange.bottom;
                 var first = this.rowModel.getRowIndexAtPixel(topPixel);
                 var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
                 //add in buffer
@@ -353,12 +360,14 @@ var RowRenderer = (function () {
     RowRenderer.prototype.getLastVirtualRenderedRow = function () {
         return this.lastRenderedRow;
     };
-    RowRenderer.prototype.ensureRowsRendered = function () {
+    RowRenderer.prototype.ensureRowsRendered = function (oldRenderedRowsByNodeId, animate) {
         // var timer = new Timer();
         var _this = this;
+        if (animate === void 0) { animate = false; }
         // at the end, this array will contain the items we need to remove
         var rowsToRemove = Object.keys(this.renderedRows);
         // add in new rows
+        var delayedCreateFunctions = [];
         for (var rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
@@ -368,18 +377,35 @@ var RowRenderer = (function () {
             // check this row actually exists (in case overflow buffer window exceeds real data)
             var node = this.rowModel.getRow(rowIndex);
             if (node) {
-                this.insertRow(node, rowIndex);
+                var renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
+                utils_1.Utils.pushAll(delayedCreateFunctions, renderedRow.getAndClearNextVMTurnFunctions());
+                this.renderedRows[rowIndex] = renderedRow;
             }
         }
+        setTimeout(function () {
+            delayedCreateFunctions.forEach(function (func) { return func(); });
+        }, 0);
         // timer.print('creating template');
-        // at this point, everything in our 'rowsToRemove' . . .
-        this.removeVirtualRow(rowsToRemove);
+        // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
+        this.removeVirtualRows(rowsToRemove);
+        // and everything in our oldRenderedRowsByNodeId is an old row that is no longer used
+        var delayedDestroyFunctions = [];
+        utils_1.Utils.iterateObject(oldRenderedRowsByNodeId, function (nodeId, renderedRow) {
+            renderedRow.destroy(animate);
+            renderedRow.getAndClearDelayedDestroyFunctions().forEach(function (func) { return delayedDestroyFunctions.push(func); });
+            delete oldRenderedRowsByNodeId[nodeId];
+        });
+        setTimeout(function () {
+            delayedDestroyFunctions.forEach(function (func) { return func(); });
+        }, 400);
         // timer.print('removing');
+        // we prepend rather than append so that new rows appear under current rows. this way the new
+        // rows are not over the current rows which will get animation as they slid to new position
         if (this.eBodyContainerDF) {
-            this.eBodyContainer.appendChild(this.eBodyContainerDF);
+            utils_1.Utils.prependDC(this.eBodyContainer, this.eBodyContainerDF);
             if (!this.gridOptionsWrapper.isForPrint()) {
-                this.ePinnedLeftColsContainer.appendChild(this.ePinnedLeftColsContainerDF);
-                this.ePinnedRightColsContainer.appendChild(this.ePinnedRightColsContainerDF);
+                utils_1.Utils.prependDC(this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF);
+                utils_1.Utils.prependDC(this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF);
             }
         }
         // if we are doing angular compiling, then do digest the scope here
@@ -389,15 +415,17 @@ var RowRenderer = (function () {
         }
         // timer.print('total');
     };
-    RowRenderer.prototype.insertRow = function (node, rowIndex) {
-        var columns = this.columnController.getAllDisplayedColumns();
-        // if no cols, don't draw row
-        if (utils_1.Utils.missingOrEmpty(columns)) {
-            return;
+    RowRenderer.prototype.getOrCreateRenderedRow = function (rowNode, oldRowsByNodeId, animate) {
+        var renderedRow;
+        if (utils_1.Utils.exists(oldRowsByNodeId) && oldRowsByNodeId[rowNode.id]) {
+            renderedRow = oldRowsByNodeId[rowNode.id];
+            delete oldRowsByNodeId[rowNode.id];
         }
-        var renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer, this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF, this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF, node, rowIndex);
-        this.context.wireBean(renderedRow);
-        this.renderedRows[rowIndex] = renderedRow;
+        else {
+            renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer, this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF, this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF, rowNode, animate);
+            this.context.wireBean(renderedRow);
+        }
+        return renderedRow;
     };
     RowRenderer.prototype.getRenderedNodes = function () {
         var renderedRows = this.renderedRows;
@@ -408,7 +436,8 @@ var RowRenderer = (function () {
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
     RowRenderer.prototype.navigateToNextCell = function (key, rowIndex, column, floating) {
-        var nextCell = new gridCell_1.GridCell(rowIndex, floating, column);
+        var previousCell = new gridCell_1.GridCell({ rowIndex: rowIndex, floating: floating, column: column });
+        var nextCell = previousCell;
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
@@ -424,6 +453,22 @@ var RowRenderer = (function () {
             }
             else {
                 break;
+            }
+        }
+        // allow user to override what cell to go to next
+        var userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
+        if (utils_1.Utils.exists(userFunc)) {
+            var params = {
+                key: key,
+                previousCellDef: previousCell,
+                nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+            };
+            var nextCellDef = userFunc(params);
+            if (utils_1.Utils.exists(nextCellDef)) {
+                nextCell = new gridCell_1.GridCell(nextCellDef);
+            }
+            else {
+                nextCell = null;
             }
         }
         // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
@@ -442,7 +487,8 @@ var RowRenderer = (function () {
         this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
         if (this.rangeController) {
-            this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+            var gridCell = new gridCell_1.GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
+            this.rangeController.setRangeToCell(gridCell);
         }
     };
     RowRenderer.prototype.startEditingCell = function (gridCell, keyPress, charPress) {
@@ -469,10 +515,32 @@ var RowRenderer = (function () {
         return cellComponent;
     };
     RowRenderer.prototype.onTabKeyDown = function (previousRenderedCell, keyboardEvent) {
+        var backwards = keyboardEvent.shiftKey;
+        var success = this.moveToCellAfter(previousRenderedCell, backwards);
+        if (success) {
+            keyboardEvent.preventDefault();
+        }
+    };
+    RowRenderer.prototype.tabToNextCell = function (backwards) {
+        var focusedCell = this.focusedCellController.getFocusedCell();
+        // if no focus, then cannot navigate
+        if (utils_1.Utils.missing(focusedCell)) {
+            return false;
+        }
+        var renderedCell = this.getComponentForCell(focusedCell);
+        // if cell is not rendered, means user has scrolled away from the cell
+        if (utils_1.Utils.missing(renderedCell)) {
+            return false;
+        }
+        var result = this.moveToCellAfter(renderedCell, backwards);
+        return result;
+    };
+    // returns true if moving to next cell was successful
+    RowRenderer.prototype.moveToCellAfter = function (previousRenderedCell, backwards) {
         var editing = previousRenderedCell.isEditing();
         var gridCell = previousRenderedCell.getGridCell();
         // find the next cell to start editing
-        var nextRenderedCell = this.moveFocusToNextCell(gridCell, keyboardEvent.shiftKey, editing);
+        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, editing);
         var foundCell = utils_1.Utils.exists(nextRenderedCell);
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
@@ -488,7 +556,10 @@ var RowRenderer = (function () {
             else {
                 nextRenderedCell.focusCell(true);
             }
-            keyboardEvent.preventDefault();
+            return true;
+        }
+        else {
+            return false;
         }
     };
     RowRenderer.prototype.moveEditToNextCell = function (previousRenderedCell, nextRenderedCell) {
@@ -518,10 +589,27 @@ var RowRenderer = (function () {
     };
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
-    RowRenderer.prototype.moveFocusToNextCell = function (gridCell, shiftKey, startEditing) {
+    RowRenderer.prototype.findNextCellToFocusOn = function (gridCell, backwards, startEditing) {
         var nextCell = gridCell;
         while (true) {
-            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, shiftKey);
+            nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
+            // allow user to override what cell to go to next
+            var userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
+            if (utils_1.Utils.exists(userFunc)) {
+                var params = {
+                    backwards: backwards,
+                    editing: startEditing,
+                    previousCellDef: gridCell.getGridCellDef(),
+                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+                };
+                var nextCellDef = userFunc(params);
+                if (utils_1.Utils.exists(nextCellDef)) {
+                    nextCell = new gridCell_1.GridCell(nextCellDef);
+                }
+                else {
+                    nextCell = null;
+                }
+            }
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) {
@@ -549,7 +637,8 @@ var RowRenderer = (function () {
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
-                this.rangeController.setRangeToCell(new gridCell_1.GridCell(nextCell.rowIndex, nextCell.floating, nextCell.column));
+                var gridCell_2 = new gridCell_1.GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
+                this.rangeController.setRangeToCell(gridCell_2);
             }
             // we successfully tabbed onto a grid cell, so return true
             return nextRenderedCell;
@@ -646,5 +735,5 @@ var RowRenderer = (function () {
         __metadata('design:paramtypes', [])
     ], RowRenderer);
     return RowRenderer;
-})();
+}());
 exports.RowRenderer = RowRenderer;

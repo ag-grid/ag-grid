@@ -62,10 +62,12 @@ export interface ICellEditorParams {
     charPress: string;
     column: Column;
     node: RowNode;
+    rowIndex: number,
     api: GridApi;
     columnApi: ColumnApi;
     cellStartedEdit: boolean;
     context: any;
+    $scope: any;
     onKeyDown: (event: KeyboardEvent)=>void;
     stopEditing: ()=>void;
     eGridCell: HTMLElement;

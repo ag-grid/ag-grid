@@ -2,6 +2,7 @@ import {Utils as _} from "../utils";
 import {Constants} from "../constants";
 import {Bean, Autowired} from "../context/context";
 import {GridCore} from "../gridCore";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('popupService')
 export class PopupService {
@@ -9,6 +10,7 @@ export class PopupService {
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
     @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // this.popupService.setPopupParent(this.eRootPanel.getGui());
 
@@ -21,28 +23,45 @@ export class PopupService {
         var sourceRect = params.eventSource.getBoundingClientRect();
         var parentRect = this.getPopupParent().getBoundingClientRect();
 
-        var x = sourceRect.right - parentRect.left - 2;
         var y = sourceRect.top - parentRect.top;
 
-        var minWidth:number;
-        if (params.ePopup.clientWidth > 0) {
-            minWidth = params.ePopup.clientWidth;
-        } else {
-            minWidth = 200;
-        }
-
+        var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth: 200;
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
-        if (x > maxX) {
-            // try putting menu to the left
-            x = sourceRect.left - parentRect.left - minWidth;
-        }
-        if (x < 0) { // in case the popup has a negative value
-            x = 0;
+
+        // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
+        // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
+        // we try place it first to the left, and then if not to the right.
+        let x: number;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, try left first
+            x = xLeftPosition();
+            if (x < 0) {
+                x = xRightPosition();
+            }
+            if (x > maxX) {
+                x = 0;
+            }
+        } else {
+            // for LTR, try right first
+            x = xRightPosition();
+            if (x > maxX) {
+                x = xLeftPosition();
+            }
+            if (x < 0) {
+                x = 0;
+            }
         }
 
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
+
+        function xRightPosition(): number {
+            return sourceRect.right - parentRect.left - 2;
+        }
+        function xLeftPosition(): number {
+            return sourceRect.left - parentRect.left - minWidth;
+        }
     }
 
     public positionPopupUnderMouseEvent(params: {
@@ -155,7 +174,7 @@ export class PopupService {
 
         function checkVerticalOverflow(): void {
             var minHeight: number;
-            if (params.ePopup.clientWidth>0) {
+            if (params.ePopup.clientHeight > 0) {
                 minHeight = params.ePopup.clientHeight;
             } else {
                 minHeight = 200;

@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21,6 +22,7 @@ var valueService_1 = require("../valueService");
 var columnController_1 = require("../columnController/columnController");
 var context_1 = require("../context/context");
 var constants_1 = require("../constants");
+var utils_1 = require("../utils");
 var RowNode = (function () {
     function RowNode() {
         /** Children mapped by the pivot columns */
@@ -33,11 +35,25 @@ var RowNode = (function () {
         var event = { oldData: oldData, newData: data };
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     };
+    RowNode.prototype.createDaemonNode = function () {
+        var oldNode = new RowNode();
+        this.context.wireBean(oldNode);
+        // just copy the id and data, this is enough for the node to be used
+        // in the selection controller (the selection controller is the only
+        // place where daemon nodes can live).
+        oldNode.id = this.id;
+        oldNode.data = this.data;
+        oldNode.daemon = true;
+        oldNode.selected = this.selected;
+        oldNode.level = this.level;
+        return oldNode;
+    };
     RowNode.prototype.setDataAndId = function (data, id) {
+        var oldNode = utils_1.Utils.exists(this.id) ? this.createDaemonNode() : null;
         var oldData = this.data;
         this.data = data;
         this.setId(id);
-        this.selectionController.syncInRowNode(this);
+        this.selectionController.syncInRowNode(this, oldNode);
         var event = { oldData: oldData, newData: data };
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     };
@@ -60,6 +76,42 @@ var RowNode = (function () {
         else {
             this.id = id;
         }
+    };
+    RowNode.prototype.clearRowTop = function () {
+        this.oldRowTop = this.rowTop;
+        this.setRowTop(null);
+    };
+    RowNode.prototype.setRowTop = function (rowTop) {
+        if (this.rowTop === rowTop) {
+            return;
+        }
+        this.rowTop = rowTop;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);
+        }
+    };
+    RowNode.prototype.setRowHeight = function (rowHeight) {
+        this.rowHeight = rowHeight;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_HEIGHT_CHANGED);
+        }
+    };
+    RowNode.prototype.setRowIndex = function (rowIndex) {
+        this.rowIndex = rowIndex;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_ROW_INDEX_CHANGED);
+        }
+    };
+    RowNode.prototype.setExpanded = function (expanded) {
+        if (this.expanded === expanded) {
+            return;
+        }
+        this.expanded = expanded;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_EXPANDED_CHANGED);
+        }
+        var event = { node: this };
+        this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_GROUP_OPENED, event);
     };
     RowNode.prototype.dispatchLocalEvent = function (eventName, event) {
         if (this.eventService) {
@@ -153,37 +205,49 @@ var RowNode = (function () {
     };
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     RowNode.prototype.setSelectedParams = function (params) {
+        var groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var newValue = params.newValue === true;
         var clearSelection = params.clearSelection === true;
         var tailingNodeInSequence = params.tailingNodeInSequence === true;
         var rangeSelect = params.rangeSelect === true;
+        // groupSelectsFiltered only makes sense when group selects children
+        var groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
         if (this.id === undefined) {
             console.warn('ag-Grid: cannot select node until id for node is known');
-            return;
+            return 0;
         }
         if (this.floating) {
             console.log('ag-Grid: cannot select floating rows');
-            return;
+            return 0;
         }
         // if we are a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
         if (this.footer) {
-            this.sibling.setSelectedParams(params);
-            return;
+            var count = this.sibling.setSelectedParams(params);
+            return count;
         }
         if (rangeSelect) {
             var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
             var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             var allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (rowModelNormal && newRowClicked && allowMultiSelect) {
-                this.doRowRangeSelection();
-                return;
+                return this.doRowRangeSelection();
             }
         }
-        this.selectThisNode(newValue);
-        var groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        var updatedCount = 0;
+        // when groupSelectsFiltered, then this node may end up intermediate despite
+        // trying to set it to true / false. this group will be calculated further on
+        // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
+        // here, otherwise the updatedCount would include it.
+        var skipThisNode = groupSelectsFiltered && this.group;
+        if (!skipThisNode) {
+            var thisNodeWasSelected = this.selectThisNode(newValue);
+            if (thisNodeWasSelected) {
+                updatedCount++;
+            }
+        }
         if (groupSelectsChildren && this.group) {
-            this.selectChildNodes(newValue);
+            updatedCount += this.selectChildNodes(newValue, groupSelectsFiltered);
         }
         // clear other nodes if not doing multi select
         var actionWasOnThisNode = !tailingNodeInSequence;
@@ -191,17 +255,34 @@ var RowNode = (function () {
             if (newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti())) {
                 this.selectionController.clearOtherNodes(this);
             }
-            if (groupSelectsChildren && this.parent) {
-                this.parent.calculateSelectedFromChildrenBubbleUp();
+            // only if we selected something, then update groups and fire events
+            if (updatedCount > 0) {
+                // update groups
+                if (groupSelectsFiltered) {
+                    // if the group was selecting filtered, then all nodes above and or below
+                    // this node could have check, unchecked or intermediate, so easiest is to
+                    // recalculate selected state for all group nodes
+                    this.calculatedSelectedForAllGroupNodes();
+                }
+                else {
+                    // if no selecting filtered, then everything below the group node was either
+                    // selected or not selected, no intermediate, so no need to check items below
+                    // this one, just the parents all the way up to the root
+                    if (groupSelectsChildren && this.parent) {
+                        this.parent.calculateSelectedFromChildrenBubbleUp();
+                    }
+                }
+                // fire events
+                // this is the very end of the 'action node', so we are finished all the updates,
+                // include any parent / child changes that this method caused
+                this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
             }
-            // this is the very end of the 'action node', so we are finished all the updates,
-            // include any parent / child changes that this method caused
-            this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
                 this.selectionController.setLastSelectedNode(this);
             }
         }
+        return updatedCount;
     };
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
@@ -214,6 +295,7 @@ var RowNode = (function () {
         var lastRowHit = false;
         var lastRow;
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        var updatedCount = 0;
         var inMemoryRowModel = this.rowModel;
         inMemoryRowModel.forEachNodeAfterFilterAndSort(function (rowNode) {
             var lookingForLastRow = firstRowHit && !lastRowHit;
@@ -227,7 +309,10 @@ var RowNode = (function () {
             if (!skipThisGroupNode) {
                 var inRange = firstRowHit && !lastRowHit;
                 var childOfLastRow = rowNode.isParentOfNode(lastRow);
-                rowNode.selectThisNode(inRange || childOfLastRow);
+                var nodeWasSelected = rowNode.selectThisNode(inRange || childOfLastRow);
+                if (nodeWasSelected) {
+                    updatedCount++;
+                }
             }
             if (lookingForLastRow) {
                 if (rowNode === lastSelectedNode || rowNode === _this) {
@@ -245,6 +330,7 @@ var RowNode = (function () {
             this.calculatedSelectedForAllGroupNodes();
         }
         this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
+        return updatedCount;
     };
     RowNode.prototype.isParentOfNode = function (potentialParent) {
         var parentNode = this.parent;
@@ -272,23 +358,31 @@ var RowNode = (function () {
         });
     };
     RowNode.prototype.selectThisNode = function (newValue) {
-        if (this.selected !== newValue) {
-            this.selected = newValue;
-            if (this.eventService) {
-                this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
-            }
-            var event = { node: this };
-            this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_SELECTED, event);
+        if (this.selected === newValue) {
+            return false;
         }
+        this.selected = newValue;
+        if (this.eventService) {
+            this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
+        }
+        var event = { node: this };
+        this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_SELECTED, event);
+        return true;
     };
-    RowNode.prototype.selectChildNodes = function (newValue) {
-        for (var i = 0; i < this.childrenAfterGroup.length; i++) {
-            this.childrenAfterGroup[i].setSelectedParams({
+    RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
+        var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
+        var updatedCount = 0;
+        if (utils_1.Utils.missing(children)) {
+            return;
+        }
+        for (var i = 0; i < children.length; i++) {
+            updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
                 tailingNodeInSequence: true
             });
         }
+        return updatedCount;
     };
     RowNode.prototype.addEventListener = function (eventType, listener) {
         if (!this.eventService) {
@@ -310,6 +404,10 @@ var RowNode = (function () {
     RowNode.EVENT_CELL_CHANGED = 'cellChanged';
     RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
     RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
+    RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
+    RowNode.EVENT_TOP_CHANGED = 'topChanged';
+    RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
+    RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
     __decorate([
         context_1.Autowired('eventService'), 
         __metadata('design:type', eventService_1.EventService)
@@ -334,6 +432,10 @@ var RowNode = (function () {
         context_1.Autowired('rowModel'), 
         __metadata('design:type', Object)
     ], RowNode.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('context'), 
+        __metadata('design:type', context_1.Context)
+    ], RowNode.prototype, "context", void 0);
     return RowNode;
-})();
+}());
 exports.RowNode = RowNode;

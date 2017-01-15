@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RenderedCell } from "./renderedCell";
 import { RowNode } from "../entities/rowNode";
 import { RowRenderer } from "./rowRenderer";
@@ -25,7 +24,6 @@ export declare class RenderedRow {
     private renderedCells;
     private scope;
     private rowNode;
-    private rowIndex;
     private fullWidthRow;
     private fullWidthCellRenderer;
     private fullWidthCellRendererParams;
@@ -39,16 +37,22 @@ export declare class RenderedRow {
     private ePinnedRightContainer;
     private ePinnedRightContainerDF;
     private destroyFunctions;
+    private nextVmTurnFunctions;
+    private delayedDestroyFunctions;
+    private startRemoveAnimationFunctions;
     private renderedRowEventService;
     private editingRow;
     private initialised;
-    constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, eBodyContainerDF: DocumentFragment, eFullWidthContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedLeftContainerDF: DocumentFragment, ePinnedRightContainer: HTMLElement, ePinnedRightContainerDF: DocumentFragment, node: RowNode, rowIndex: number);
-    private setupRowContainers();
+    private animateIn;
+    constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, eBodyContainerDF: DocumentFragment, eFullWidthContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedLeftContainerDF: DocumentFragment, ePinnedRightContainer: HTMLElement, ePinnedRightContainerDF: DocumentFragment, node: RowNode, animateIn: boolean);
+    private setupRowContainers(animateInRowTop);
+    getAndClearDelayedDestroyFunctions(): Function[];
+    getAndClearNextVMTurnFunctions(): Function[];
     private addDomData(eRowContainer);
-    private setupFullWidthContainers();
+    private setupFullWidthContainers(animateInRowTop);
     private addMouseWheelListenerToFullWidthRow();
-    private setupFullWidthGroupContainers();
-    private setupNormalContainers();
+    private setupFullWidthGroupContainers(animateInRowTop);
+    private setupNormalContainers(animateInRowTop);
     init(): void;
     stopRowEditing(cancel: boolean): void;
     stopEditing(cancel?: boolean): void;
@@ -72,13 +76,17 @@ export declare class RenderedRow {
     private addCellFocusedListener();
     forEachRenderedCell(callback: (renderedCell: RenderedCell) => void): void;
     private addNodeDataChangedListener();
-    private setTopAndHeightCss();
+    private onTopChanged();
+    private setRowTop(pixels);
+    private setupTop(animateInRowTop);
+    private setHeight();
+    private addRowIndexes();
     private addRowIds();
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
     getRenderedCellForColumn(column: Column): RenderedCell;
     getCellForCol(column: Column): HTMLElement;
-    destroy(): void;
+    destroy(animate?: boolean): void;
     private destroyScope();
     isDataInList(rows: any[]): boolean;
     isGroup(): boolean;
@@ -92,7 +100,9 @@ export declare class RenderedRow {
     private addStyleFromRowStyleFunc();
     private createParams();
     private createEvent(event, eventSource);
-    private createRowContainer(eParentDF, eParent);
+    private createRowContainer(eParentDF, eParent, slideRowIn);
+    private animateRowIn(eRow, slideRowIn);
+    private roundRowTopToBounds(rowTop);
     private onRowDblClick(event);
     onRowClick(event: MouseEvent): void;
     getRowNode(): any;

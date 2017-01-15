@@ -66,14 +66,14 @@ export class FloatingRowModel {
         var rowNodes: RowNode[] = [];
         if (allData) {
             var nextRowTop = 0;
-            allData.forEach( (dataItem) => {
+            allData.forEach( (dataItem: any, index: number) => {
                 var rowNode = new RowNode();
                 this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.floating = isTop ? Constants.FLOATING_TOP : Constants.FLOATING_BOTTOM;
-                rowNode.rowTop = nextRowTop;
-                rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-
+                rowNode.setRowTop(nextRowTop);
+                rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+                rowNode.setRowIndex(index);
                 nextRowTop += rowNode.rowHeight;
                 rowNodes.push(rowNode);
             });

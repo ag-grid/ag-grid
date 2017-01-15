@@ -9,6 +9,7 @@ export * from './dist/lib/components/agGridNg1';
 export * from './dist/lib/components/agGridWebComponent';
 export * from './dist/lib/components/componentUtil';
 
+export * from './dist/lib/context/beanStub';
 export * from './dist/lib/context/context';
 
 export * from './dist/lib/dragAndDrop/dragAndDropService';
@@ -33,6 +34,7 @@ export * from './dist/lib/filter/textAndNumberFilterParameters';
 export * from './dist/lib/filter/textFilter';
 
 export * from './dist/lib/gridPanel/gridPanel';
+export * from './dist/lib/gridPanel/scrollVisibleService';
 export * from './dist/lib/gridPanel/mouseEventService';
 
 export * from './dist/lib/headerRendering/bodyDropPivotTarget';
@@ -43,7 +45,6 @@ export * from './dist/lib/headerRendering/headerRenderer';
 export * from './dist/lib/headerRendering/headerRowComp';
 export * from './dist/lib/headerRendering/headerTemplateLoader';
 export * from './dist/lib/headerRendering/horizontalDragService';
-export * from './dist/lib/headerRendering/iRenderedHeaderElement';
 export * from './dist/lib/headerRendering/moveColumnController';
 export * from './dist/lib/headerRendering/renderedHeaderCell';
 export * from './dist/lib/headerRendering/renderedHeaderGroupCell';
@@ -54,6 +55,7 @@ export * from './dist/lib/interfaces/iClipboardService';
 export * from './dist/lib/interfaces/iCompFactory';
 export * from './dist/lib/interfaces/iContextMenuFactory';
 export * from './dist/lib/interfaces/iEventEmitter';
+export * from './dist/lib/interfaces/iExcelCreator';
 export * from './dist/lib/interfaces/iFrameworkFactory';
 export * from './dist/lib/interfaces/iFilter';
 export * from './dist/lib/interfaces/iMenu';
@@ -109,11 +111,11 @@ export * from './dist/lib/rowControllers/floatingRowModel';
 export * from './dist/lib/rowControllers/paginationController';
 export * from './dist/lib/rowControllers/iDatasource';
 
+export * from './dist/lib/styling/stylingService';
+
 export * from './dist/lib/widgets/agCheckbox';
 export * from './dist/lib/widgets/component';
 export * from './dist/lib/widgets/componentAnnotations';
-export * from './dist/lib/widgets/menuItemComponent';
-export * from './dist/lib/widgets/menuList';
 export * from './dist/lib/widgets/popupService';
 export * from './dist/lib/widgets/touchListener';
 
@@ -123,6 +125,8 @@ export * from './dist/lib/clientExports';
 export * from './dist/lib/columnChangeEvent';
 export * from './dist/lib/constants';
 export * from './dist/lib/csvCreator';
+export * from './dist/lib/exportParams';
+export * from './dist/lib/downloader';
 export * from './dist/lib/events';
 export * from './dist/lib/eventService';
 export * from './dist/lib/expressionService';
@@ -131,6 +135,7 @@ export * from './dist/lib/functions';
 export * from './dist/lib/grid';
 export * from './dist/lib/gridApi';
 export * from './dist/lib/gridCore';
+export * from './dist/lib/gridSerializer';
 export * from './dist/lib/gridOptionsWrapper';
 export * from './dist/lib/logger';
 export * from './dist/lib/masterSlaveService';
@@ -140,3 +145,4 @@ export * from './dist/lib/svgFactory';
 export * from './dist/lib/templateService';
 export * from './dist/lib/utils';
 export * from './dist/lib/valueService';
+export * from './dist/lib/xmlFactory';

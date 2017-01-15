@@ -3,10 +3,10 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
-import {MenuItem} from "../widgets/menuItemComponent";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
 import {IDatasource} from "../rowControllers/iDatasource";
+import {GridCellDef} from "./gridCell";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -14,7 +14,7 @@ import {IDatasource} from "../rowControllers/iDatasource";
 export interface GridOptions {
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. PLEASE!*
      ****************************************************************/
 
     // set once in init, can never change
@@ -31,6 +31,7 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    enableRtl?: boolean;
     enableColResize?: boolean;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
@@ -38,6 +39,7 @@ export interface GridOptions {
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
     enableStatusBar?: boolean;
+    enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
     colWidth?: number;
@@ -45,6 +47,7 @@ export interface GridOptions {
     maxColWidth?: number;
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
+    suppressClickEdit?: boolean;
     debug?: boolean;
     icons?: any; // should be typed
     angularCompileRows?: boolean;
@@ -54,6 +57,7 @@ export interface GridOptions {
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
     autoSizePadding?: number;
+    animateRows?: boolean;
     suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;
     suppressDragLeaveHidesColumns?: boolean;
@@ -91,9 +95,12 @@ export interface GridOptions {
     paginationPageSize?: number;
     editType?: string;
     suppressTouch?: boolean;
+    embedFullWidthRows?: boolean;
+    //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
+    excelStyles?: any[];
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*
      ****************************************************************/
 
     // just set once
@@ -108,20 +115,22 @@ export interface GridOptions {
     defaultColDef?: ColDef;
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
      ****************************************************************/
 
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
+    groupSelectsFiltered?: boolean;
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
+    groupRemoveSingleChildren?: boolean;
     groupSuppressRow?: boolean;
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
     groupColumnDef?: ColDef;
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. YOU'VE BEEN WARNED*
      ****************************************************************/
 
     // changeable, but no immediate impact
@@ -134,7 +143,6 @@ export interface GridOptions {
     rowDeselection?: boolean;
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
-    checkboxSelection?: (params: any)=> boolean;
     rowHeight?: number;
     headerCellTemplate?: string;
 
@@ -169,6 +177,11 @@ export interface GridOptions {
     getRowStyle?: Function;
     getRowClass?: Function;
     getRowHeight?: Function;
+    checkboxSelection?: (params: any)=> boolean;
+    sendToClipboard?: (params: any)=>void;
+    navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
+    tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
+    getDocument?: ()=> Document;
 
     fullWidthCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
@@ -228,6 +241,10 @@ export interface GridOptions {
     onCellContextMenu?(event?: any): void;
     onCellValueChanged?(event?: any): void;
     onRowValueChanged?(event?: any): void;
+    onRowEditingStarted?(event?: any): void;
+    onRowEditingStopped?(event?: any): void;
+    onCellEditingStarted?(event?: any): void;
+    onCellEditingStopped?(event?: any): void;
     onCellFocused?(event?: any): void;
     onRowSelected?(event?: any): void;
     onSelectionChanged?(event?: any): void;
@@ -247,7 +264,7 @@ export interface GridOptions {
     onDragStarted?(event?: any): void;
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
-    onItemsRemove?(event?: any): void;
+    onItemsRemoved?(event?: any): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -281,7 +298,17 @@ export interface GetContextMenuItemsParams {
 }
 
 export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): (string|MenuItem)[]
+    (params: GetContextMenuItemsParams): (string|MenuItemDef)[]
+}
+
+export interface MenuItemDef {
+    name: string;
+    disabled?: boolean;
+    shortcut?: string;
+    action?: ()=>void;
+    checked?: boolean;
+    icon?: HTMLElement|string;
+    subMenu?: (MenuItemDef|string)[];
 }
 
 export interface GetMainMenuItemsParams {
@@ -293,7 +320,7 @@ export interface GetMainMenuItemsParams {
 }
 
 export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string|MenuItem)[]
+    (params: GetMainMenuItemsParams): (string|MenuItemDef)[]
 }
 
 export interface GetRowNodeIdFunc {
@@ -326,4 +353,17 @@ export interface ProcessHeaderForExportParams {
     api: GridApi,
     columnApi: ColumnApi,
     context: any
+}
+
+export interface NavigateToNextCellParams {
+    key: number;
+    previousCellDef: GridCellDef;
+    nextCellDef: GridCellDef;
+}
+
+export interface TabToNextCellParams {
+    backwards: boolean;
+    editing: boolean;
+    previousCellDef: GridCellDef;
+    nextCellDef: GridCellDef;
 }

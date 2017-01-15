@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Component } from "./component";
 export declare class AgCheckbox extends Component {
     static EVENT_CHANGED: string;
@@ -16,6 +15,7 @@ export declare class AgCheckbox extends Component {
     private passive;
     constructor();
     private init();
+    attributesSet(): void;
     private loadIcons();
     private onClick();
     getNextValue(): boolean;

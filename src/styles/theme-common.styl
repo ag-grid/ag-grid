@@ -52,15 +52,26 @@ todo
     border ag-cell-focused-border
 
   .ag-cell-no-focus
-    border-right ag-cell-no-focus-border-right
     border-top ag-cell-no-focus-border-top
-    border-left ag-cell-no-focus-border-left
     border-bottom ag-cell-no-focus-border-bottom
 
-  .ag-cell-first-right-pinned
+  .ag-ltr .ag-cell-no-focus
+    border-right ag-cell-ltr-no-focus-border-right
+    border-left ag-cell-ltr-no-focus-border-left
+
+  .ag-rtl .ag-cell-no-focus
+    border-right ag-cell-rtl-no-focus-border-right
+    border-left ag-cell-rtl-no-focus-border-left
+
+  // we use rtl and ltr below, even though it's the same style, so it propertly
+  .ag-rtl .ag-cell-first-right-pinned
+    border-left ag-border-1
+  .ag-ltr .ag-cell-first-right-pinned
     border-left ag-border-1
 
-  .ag-cell-last-left-pinned
+  .ag-rtl .ag-cell-last-left-pinned
+    border-right ag-border-1
+  .ag-ltr .ag-cell-last-left-pinned
     border-right ag-border-1
 
   // this needs to be after the other cell items, so the boarder gets preference
@@ -125,8 +136,11 @@ todo
     background ag-header-background-1
     border-bottom ag-border-1
 
-  .ag-header-cell
+  .ag-ltr .ag-header-cell
     border-right ag-border-1
+
+  .ag-rtl .ag-header-cell
+    border-left ag-border-1
 
   .ag-header-cell-moving .ag-header-cell-label
     opacity 0.5
@@ -134,8 +148,11 @@ todo
   .ag-header-cell-moving
     background-color rgb(190,190,190);
 
-  .ag-header-group-cell
+  .ag-ltr .ag-header-group-cell
     border-right ag-border-1
+
+  .ag-rtl .ag-header-group-cell
+    border-left ag-border-1
 
   .ag-header-group-cell-with-group
     border-bottom ag-border-1
@@ -148,30 +165,40 @@ todo
 
   .ag-header-group-cell-label
     padding 4px
+
+  .ag-ltr .ag-header-group-cell-label
     padding-left 10px
 
-  .ag-header-group-text
+  .ag-rtl .ag-header-group-cell-label
+    padding-right 10px
+
+  .ag-rtl .ag-header-group-text
+    margin-left 2px
+
+  .ag-ltr .ag-header-group-text
     margin-right 2px
 
   .ag-header-cell-menu-button
     padding 2px
     margin-top 4px
+    margin-left 1px
+    margin-right 1px
     border 1px solid transparent
     border-radius 3px
     box-sizing content-box /* When using bootstrap, box-sizing was set to 'border-box' */
     line-height 0px /* normal line height, a space was appearing below the menu button */
 
-  .ag-pinned-right-header
+  .ag-ltr .ag-pinned-right-header
     border-left ag-border-1
+
+  .ag-rtl .ag-pinned-left-header
+    border-right ag-border-1
 
   .ag-header-cell-menu-button:hover
     border ag-border-1
 
   .ag-body
     background-color ag-background-1
-
-  .ag-row
-    transition background-color 0.1s
 
   .ag-row-odd
     background-color ag-row-odd-background-color
@@ -217,17 +244,32 @@ todo
   .ag-group-cell
     font-style italic
 
-  .ag-group-expanded
+  .ag-ltr .ag-group-expanded
     padding-right 4px
 
-  .ag-group-contracted
+  .ag-rtl .ag-group-expanded
+    padding-left 4px
+
+  .ag-ltr .ag-group-contracted
     padding-right 4px
 
-  .ag-group-value
+  .ag-rtl .ag-group-contracted
+    padding-left 4px
+
+  .ag-ltr .ag-group-value
     padding-right 2px
 
-  .ag-group-checkbox
+  .ag-rtl .ag-group-value
+    padding-left 2px
+
+  .ag-ltr .ag-group-checkbox
     padding-right 2px
+
+  .ag-rtl .ag-group-checkbox
+    padding-left 2px
+
+  .ag-group-child-count
+    display inline-block
 
   .ag-footer-cell
     font-style italic
@@ -238,7 +280,7 @@ todo
     //color ag-foreground-1
     cursor default
     font-family ag-root-font-family
-    font-size: ag-root-font-size
+    font-size ag-root-font-size
 
     .ag-tab-header
       background-color: ag-tab-background
@@ -306,8 +348,11 @@ todo
   .ag-filter-value
     margin-left 4px
 
-  .ag-selection-checkbox
+  .ag-ltr .ag-selection-checkbox
     padding-right 4px
+
+  .ag-rtl .ag-selection-checkbox
+    padding-left 4px
 
   .ag-paging-panel
     padding 4px
@@ -322,10 +367,15 @@ todo
 
   .ag-tool-panel
     background-color ag-background-1
-    border-right ag-border-1
     border-bottom ag-border-1
     border-top ag-border-1
     color ag-foreground-1
+
+  .ltr .ag-tool-panel
+    border-right ag-border-1
+
+  .rtl .ag-tool-panel
+    border-left ag-border-1
 
   .ag-status-bar
     color ag-foreground-1
@@ -370,20 +420,20 @@ todo
     color grey
 
   .ag-column-drop-icon
-    padding-right 4px
+    margin 3px
 
   .ag-column-drop
     background-color ag-background-1
 
   /* this is for the rowGroupPanel, that appears along the top of the grid */
   .ag-column-drop-horizontal
-    padding 4px 4px 4px 4px
+    padding 2px
     border-top ag-border-1
     border-left ag-border-1
     border-right ag-border-1
 
-    .ag-column-drop-cell
-      padding 2px
+    //.ag-column-drop-cell
+    //  padding 2px
 
   /* this is for the column drops that appear in the toolPanel */
   .ag-column-drop-vertical

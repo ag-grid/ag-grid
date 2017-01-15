@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { GridApi } from "../../gridApi";
@@ -59,6 +58,7 @@ export interface ICellEditorParams {
     columnApi: ColumnApi;
     cellStartedEdit: boolean;
     context: any;
+    $scope: any;
     onKeyDown: (event: KeyboardEvent) => void;
     stopEditing: () => void;
     eGridCell: HTMLElement;

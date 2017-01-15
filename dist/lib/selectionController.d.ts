@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { RowNode } from "./entities/rowNode";
 export declare class SelectionController {
     private eventService;
@@ -22,7 +21,9 @@ export declare class SelectionController {
     getNodeForIdIfSelected(id: number): RowNode;
     clearOtherNodes(rowNodeToKeepSelected: RowNode): void;
     private onRowSelected(event);
-    syncInRowNode(rowNode: RowNode): void;
+    syncInRowNode(rowNode: RowNode, oldNode: RowNode): void;
+    private syncInOldRowNode(rowNode, oldNode);
+    private syncInNewRowNode(rowNode);
     reset(): void;
     getBestCostNodeSelection(): any;
     setRowModel(rowModel: any): void;

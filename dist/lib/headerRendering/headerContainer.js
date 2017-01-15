@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -23,6 +24,8 @@ var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var headerRowComp_1 = require("./headerRowComp");
 var bodyDropTarget_1 = require("./bodyDropTarget");
+var column_1 = require("../entities/column");
+var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
 var HeaderContainer = (function () {
     function HeaderContainer(eContainer, eViewport, eRoot, pinned) {
         this.headerRowComps = [];
@@ -31,9 +34,6 @@ var HeaderContainer = (function () {
         this.pinned = pinned;
         this.eViewport = eViewport;
     }
-    HeaderContainer.prototype.setWidth = function (width) {
-        this.eContainer.style.width = width + 'px';
-    };
     HeaderContainer.prototype.forEachHeaderElement = function (callback) {
         this.headerRowComps.forEach(function (headerRowComp) { return headerRowComp.forEachHeaderElement(callback); });
     };
@@ -43,6 +43,28 @@ var HeaderContainer = (function () {
         // if pivoting, then the columns have changed
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onGridColumnsChanged.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+    };
+    HeaderContainer.prototype.onColumnResized = function () {
+        this.setWidthIfPinnedContainer();
+    };
+    HeaderContainer.prototype.onDisplayedColumnsChanged = function () {
+        this.setWidthIfPinnedContainer();
+    };
+    HeaderContainer.prototype.onScrollVisibilityChanged = function () {
+        this.setWidthIfPinnedContainer();
+    };
+    HeaderContainer.prototype.setWidthIfPinnedContainer = function () {
+        if (this.pinned === column_1.Column.PINNED_LEFT) {
+            var pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
+            this.eContainer.style.width = pinnedLeftWidthWithScroll + 'px';
+        }
+        else if (this.pinned === column_1.Column.PINNED_RIGHT) {
+            var pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth();
+            this.eContainer.style.width = pinnedRightWidthWithScroll + 'px';
+        }
     };
     HeaderContainer.prototype.destroy = function () {
         this.removeHeaderRowComps();
@@ -110,11 +132,15 @@ var HeaderContainer = (function () {
         __metadata('design:type', eventService_1.EventService)
     ], HeaderContainer.prototype, "eventService", void 0);
     __decorate([
+        context_1.Autowired('scrollVisibleService'), 
+        __metadata('design:type', scrollVisibleService_1.ScrollVisibleService)
+    ], HeaderContainer.prototype, "scrollVisibleService", void 0);
+    __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', []), 
         __metadata('design:returntype', void 0)
     ], HeaderContainer.prototype, "init", null);
     return HeaderContainer;
-})();
+}());
 exports.HeaderContainer = HeaderContainer;

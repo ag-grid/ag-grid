@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -59,7 +60,7 @@ var FocusService = (function () {
             eTarget = eTarget.parentNode;
         }
         if (utils_1.Utils.exists(column) && utils_1.Utils.exists(row)) {
-            var gridCell = new gridCell_1.GridCell(row, floating, column);
+            var gridCell = new gridCell_1.GridCell({ rowIndex: row, floating: floating, column: column });
             return gridCell;
         }
         else {
@@ -125,5 +126,5 @@ var FocusService = (function () {
         __metadata('design:paramtypes', [])
     ], FocusService);
     return FocusService;
-})();
+}());
 exports.FocusService = FocusService;

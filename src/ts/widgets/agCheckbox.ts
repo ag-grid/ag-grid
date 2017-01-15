@@ -32,15 +32,19 @@ export class AgCheckbox extends Component {
     private passive = false;
 
     constructor() {
-        super(AgCheckbox.TEMPLATE);
+        super();
     }
 
     @PostConstruct
     private init(): void {
+        this.setTemplate(AgCheckbox.TEMPLATE);
 
         this.loadIcons();
         this.updateIcons();
-        
+    }
+
+    public attributesSet(): void {
+        super.attributesSet();
         var label = this.getAttribute('label');
         if (label) {
             this.eLabel.innerText = label;

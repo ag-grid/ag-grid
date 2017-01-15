@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -46,13 +47,20 @@ var CheckboxSelectionComponent = (function (_super) {
         utils_1.Utils.setVisible(this.eIndeterminateIcon, typeof state !== 'boolean');
     };
     CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
-        this.rowNode.setSelected(false);
+        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        var updatedCount = this.rowNode.setSelectedParams({ newValue: false, groupSelectsFiltered: groupSelectsFiltered });
+        return updatedCount;
     };
     CheckboxSelectionComponent.prototype.onUncheckedClicked = function (event) {
-        this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey });
+        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        var updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
+        return updatedCount;
     };
     CheckboxSelectionComponent.prototype.onIndeterminateClicked = function (event) {
-        this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey });
+        var result = this.onUncheckedClicked(event);
+        if (result === 0) {
+            this.onCheckedClicked();
+        }
     };
     CheckboxSelectionComponent.prototype.init = function (params) {
         this.createAndAddIcons();
@@ -73,5 +81,5 @@ var CheckboxSelectionComponent = (function (_super) {
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
     return CheckboxSelectionComponent;
-})(component_1.Component);
+}(component_1.Component));
 exports.CheckboxSelectionComponent = CheckboxSelectionComponent;

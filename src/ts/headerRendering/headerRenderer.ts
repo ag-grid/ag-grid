@@ -6,7 +6,8 @@ import {Bean, Autowired, Context, PostConstruct, PreDestroy} from "../context/co
 import {HeaderContainer} from "./headerContainer";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
+import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
+import {Component} from "../widgets/component";
 
 @Bean('headerRenderer')
 export class HeaderRenderer {
@@ -16,6 +17,7 @@ export class HeaderRenderer {
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private pinnedLeftContainer: HeaderContainer;
     private pinnedRightContainer: HeaderContainer;
@@ -54,13 +56,18 @@ export class HeaderRenderer {
         // for resized, the individual cells take care of this, so don't need to refresh everything
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.setPinnedColContainerWidth.bind(this));
+        this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
 
         if (this.columnController.isReady()) {
             this.refreshHeader();
         }
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+    private onScrollVisibilityChanged(): void {
+        this.setPinnedColContainerWidth();
+    }
+
+    public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.childContainers.forEach( childContainer => childContainer.forEachHeaderElement(callback) );
     }
     
@@ -99,13 +106,11 @@ export class HeaderRenderer {
         // pinned col doesn't exist when doing forPrint
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
-        var pinnedLeftWidth = this.columnController.getPinnedLeftContainerWidth();
-        this.eHeaderViewport.style.marginLeft = pinnedLeftWidth + 'px';
-        this.pinnedLeftContainer.setWidth(pinnedLeftWidth);
+        let pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
+        let pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth();
 
-        var pinnedRightWidth = this.columnController.getPinnedRightContainerWidth();
-        this.eHeaderViewport.style.marginRight = pinnedRightWidth + 'px';
-        this.pinnedRightContainer.setWidth(pinnedRightWidth);
+        this.eHeaderViewport.style.marginLeft = pinnedLeftWidthWithScroll + 'px';
+        this.eHeaderViewport.style.marginRight = pinnedRightWidthWithScroll + 'px';
     }
 
 }

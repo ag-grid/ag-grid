@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var constants_1 = require("../constants");
 var utils_1 = require('../utils');
 var gridCell_1 = require("./gridCell");
@@ -29,7 +30,8 @@ var GridRow = (function () {
         return "rowIndex = " + this.rowIndex + ", floating = " + this.floating;
     };
     GridRow.prototype.getGridCell = function (column) {
-        return new gridCell_1.GridCell(this.rowIndex, this.floating, column);
+        var gridCellDef = { rowIndex: this.rowIndex, floating: this.floating, column: column };
+        return new gridCell_1.GridCell(gridCellDef);
     };
     // tests if this row selection is before the other row selection
     GridRow.prototype.before = function (otherSelection) {
@@ -64,5 +66,5 @@ var GridRow = (function () {
         return this.rowIndex <= otherSelection.rowIndex;
     };
     return GridRow;
-})();
+}());
 exports.GridRow = GridRow;

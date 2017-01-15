@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var paginationController_1 = require("./rowControllers/paginationController");
 var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
@@ -51,6 +52,7 @@ var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
 var agCheckbox_1 = require("./widgets/agCheckbox");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
+var scrollVisibleService_1 = require("./gridPanel/scrollVisibleService");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -86,7 +88,7 @@ var Grid = (function () {
                 paginationController_1.PaginationController, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService,
-                cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService],
+                cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, scrollVisibleService_1.ScrollVisibleService],
             components: [{ componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }],
             debug: !!gridOptions.debug
         });
@@ -129,8 +131,9 @@ var Grid = (function () {
     // the enterprise adds viewport to this list.
     Grid.RowModelClasses = {
         virtual: virtualPageRowModel_1.VirtualPageRowModel,
-        pagination: inMemoryRowModel_1.InMemoryRowModel
+        pagination: inMemoryRowModel_1.InMemoryRowModel,
+        normal: inMemoryRowModel_1.InMemoryRowModel
     };
     return Grid;
-})();
+}());
 exports.Grid = Grid;

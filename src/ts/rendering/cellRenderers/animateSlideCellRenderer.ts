@@ -43,7 +43,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             this.getGui().removeChild(this.ePrevious);
         }
 
-        this.ePrevious = _.loadTemplate('<span class="ag-value-slide-previous ag-fade-out"></span>');
+        this.ePrevious = _.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
 
@@ -52,7 +52,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // complex set of setTimeout below creates the animation
         setTimeout( ()=> {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            _.addCssClass(this.ePrevious, 'ag-fade-out-end');
+            _.addCssClass(this.ePrevious, 'ag-value-slide-out-end');
         }, 50);
 
         setTimeout( ()=> {

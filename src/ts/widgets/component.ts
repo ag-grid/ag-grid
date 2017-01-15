@@ -1,18 +1,12 @@
-import {Utils as _} from '../utils';
-import {EventService} from "../eventService";
-import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {Utils as _} from "../utils";
 import {Context} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {BeanStub} from "../context/beanStub";
 
-export class Component implements IEventEmitter {
+export class Component extends BeanStub {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 
     private eGui: HTMLElement;
-
-    private destroyFunctions: (()=>void)[] = [];
-
-    private localEventService: EventService;
 
     private childComponents: Component[] = [];
 
@@ -21,6 +15,7 @@ export class Component implements IEventEmitter {
     private visible = true;
 
     constructor(template?: string) {
+        super();
         if (template) {
             this.setTemplate(template);
         }
@@ -68,6 +63,9 @@ export class Component implements IEventEmitter {
         (<any>this.eGui).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
+    }
+
+    public attributesSet(): void {
     }
 
     private wireQuerySelectors(): void {
@@ -120,31 +118,14 @@ export class Component implements IEventEmitter {
         this.annotatedEventListeners = null;
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
-        if (!this.localEventService) {
-            this.localEventService = new EventService();
-        }
-        this.localEventService.addEventListener(eventType, listener);
-    }
-
-    public removeEventListener(eventType: string, listener: Function): void {
-        if (this.localEventService) {
-            this.localEventService.removeEventListener(eventType, listener);
-        }
-    }
-
-    public dispatchEventAsync(eventType: string, event?: any): void {
-        setTimeout( ()=> this.dispatchEvent(eventType, event), 0);
-    }
-
-    public dispatchEvent(eventType: string, event?: any): void {
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(eventType, event);
-        }
-    }
-
     public getGui(): HTMLElement {
         return this.eGui;
+    }
+
+    // this method is for older code, that wants to provide the gui element,
+    // it is not intended for this to be in ag-Stack
+    protected setGui(eGui: HTMLElement): void {
+        this.eGui = eGui;
     }
 
     protected queryForHtmlElement(cssSelector: string): HTMLElement {
@@ -182,40 +163,18 @@ export class Component implements IEventEmitter {
     }
     
     public destroy(): void {
+        super.destroy();
         this.childComponents.forEach( childComponent => childComponent.destroy() );
-        this.destroyFunctions.forEach( func => func() );
+        this.childComponents.length = 0;
+
         this.removeAnnotatedEventListeners();
     }
 
     public addGuiEventListener(event: string, listener: (event: any)=>void): void {
         this.getGui().addEventListener(event, listener);
-        this.destroyFunctions.push( ()=> this.getGui().removeEventListener(event, listener));
+        this.addDestroyFunc( ()=> this.getGui().removeEventListener(event, listener));
     }
 
-    public addDestroyableEventListener(eElement: HTMLElement|IEventEmitter|GridOptionsWrapper, event: string, listener: (event?: any)=>void): void {
-        if (eElement instanceof HTMLElement) {
-            (<HTMLElement>eElement).addEventListener(event, listener);
-        } else if (eElement instanceof GridOptionsWrapper) {
-            (<GridOptionsWrapper>eElement).addEventListener(event, listener);
-        } else {
-            (<IEventEmitter>eElement).addEventListener(event, listener);
-        }
-
-        this.destroyFunctions.push( ()=> {
-            if (eElement instanceof HTMLElement) {
-                (<HTMLElement>eElement).removeEventListener(event, listener);
-            } else if (eElement instanceof GridOptionsWrapper) {
-                (<GridOptionsWrapper>eElement).removeEventListener(event, listener);
-            } else {
-                (<IEventEmitter>eElement).removeEventListener(event, listener);
-            }
-        });
-    }
-
-    public addDestroyFunc(func: ()=>void ): void {
-        this.destroyFunctions.push(func);
-    }
-    
     public addCssClass(className: string): void {
         _.addCssClass(this.getGui(), className);
     }

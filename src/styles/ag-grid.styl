@@ -1,9 +1,19 @@
+// nib is important, as it gets stylus to include variations on the CSS for browsers.
+// eg 'user-select' gets compiled to versions '-webkit-user-select, -moz-user-select, -ms-user-select'
 @import 'nib'
 
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
 ag-grid-ng2
     display inline-block
+
+.ag-rtl
+    //text-align right
+    direction rtl
+
+.ag-ltr
+    //text-align left
+    direction ltr
 
 .ag-select-agg-func-popup
     position absolute
@@ -143,8 +153,19 @@ ag-grid-ng2
 .ag-header-cell-resize
     height 100%
     width 4px
-    float right
     cursor col-resize
+
+.ag-ltr .ag-header-cell-resize
+    float right
+
+.ag-ltr .ag-pinned-right-header .ag-header-cell-resize
+    float left
+
+.ag-rtl .ag-header-cell-resize
+    float left
+
+.ag-rtl .ag-pinned-left-header .ag-header-cell-resize
+    float right
 
 .ag-header-expand-icon
     padding-left 4px
@@ -231,6 +252,7 @@ ag-grid-ng2
     display inline-block
     overflow hidden
     height 100%
+    position relative // otherwise the % width of children is not relative to this element
 
 .ag-pinned-right-floating-top
     float right
@@ -238,6 +260,7 @@ ag-grid-ng2
     display inline-block
     overflow hidden
     height 100%
+    position relative // otherwise the % width of children is not relative to this element
 
 .ag-floating-top-viewport
     box-sizing border-box
@@ -264,6 +287,7 @@ ag-grid-ng2
     display inline-block
     overflow hidden
     height 100%
+    position relative // otherwise the % width of children is not relative to this element
 
 .ag-pinned-right-floating-bottom
     float right
@@ -271,6 +295,7 @@ ag-grid-ng2
     display inline-block
     overflow hidden
     height 100%
+    position relative // otherwise the % width of children is not relative to this element
 
 .ag-floating-bottom-viewport
     box-sizing border-box
@@ -285,7 +310,6 @@ ag-grid-ng2
 
 .ag-pinned-left-cols-viewport
     float left
-    overflow hidden
 
 .ag-pinned-left-cols-container
     display inline-block
@@ -293,6 +317,20 @@ ag-grid-ng2
 
 .ag-pinned-right-cols-viewport
     float right
+
+// for LTR, we show scrolls on the right pinned only
+.ag-ltr .ag-pinned-right-cols-viewport
+    overflow-x hidden
+    overflow-y auto
+
+.ag-ltr .ag-pinned-left-cols-viewport
+    overflow hidden
+
+// for RTL, other way around, we show scrolls on left only
+.ag-rtl .ag-pinned-right-cols-viewport
+    overflow hidden
+
+.ag-rtl .ag-pinned-left-cols-viewport
     overflow-x hidden
     overflow-y auto
 
@@ -359,6 +397,16 @@ ag-grid-ng2
     position relative
     display inline-block
 
+// for animations, allows rows to slide up and down,
+.ag-row-animation
+    transition top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s
+
+.ag-row-no-animation
+    transition background-color 0.1s
+
+.ag-row
+    box-sizing border-box
+
 .ag-scrolls .ag-row
     white-space nowrap
     position absolute
@@ -381,11 +429,22 @@ ag-grid-ng2
         display block
 
     .ag-column-drop-cell-button
-        float right
         line-height 16px
+
+.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button
+    float right
+
+.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button
+    float left
 
 .ag-column-drop-horizontal
     white-space: nowrap;
+
+    .ag-column-drop-cell
+        display inline-block
+
+    .ag-column-drop-empty-message
+        display inline-block
 
 .ag-cell
     display inline-block
@@ -402,15 +461,18 @@ ag-grid-ng2
 // this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
 // however it is not tied to color, only placement and visiblity, which is behaviour and not style,
 // thus belongs here, besides it doesn't change wih the themes
-.ag-fade-out
+.ag-value-slide-out
     opacity 1.0
     margin-right 5px
     transition opacity 3s, margin-right 3s // as value fades, it also moves to the left via the margin setting
     transition-timing-function linear
 
-.ag-fade-out-end
+.ag-value-slide-out-end
     opacity 0.0
     margin-right 10px
+
+.ag-opacity-zero
+    opacity 0.0
 
 .ag-cell-edit-input
     width 100%
@@ -547,8 +609,13 @@ ag-grid-ng2
     display inline-block
 
 .ag-column-select-column
-    margin-left 14px
     white-space nowrap
+
+.ag-ltr .ag-column-select-column
+    margin-left 14px
+
+.ag-rtl .ag-column-select-column
+    margin-right 14px
 
 .ag-column-select-column-group
     white-space nowrap
@@ -558,7 +625,7 @@ ag-grid-ng2
 //    overflow: auto;
 
 .ag-hidden
-    display none
+    display none !important
 
 .ag-faded
     opacity 0.3

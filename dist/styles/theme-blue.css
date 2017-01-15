@@ -53,15 +53,27 @@
   border: 2px solid #217346;
 }
 .ag-blue .ag-cell-no-focus {
-  border-right: 1px dotted #9bc2e6;
   border-top: 2px solid transparent;
-  border-left: 2px solid transparent;
   border-bottom: 1px dotted #9bc2e6;
 }
-.ag-blue .ag-cell-first-right-pinned {
+.ag-blue .ag-ltr .ag-cell-no-focus {
+  border-right: 1px dotted #9bc2e6;
+  border-left: 2px solid transparent;
+}
+.ag-blue .ag-rtl .ag-cell-no-focus {
+  border-right: 2px solid transparent;
+  border-left: 1px dotted #9bc2e6;
+}
+.ag-blue .ag-rtl .ag-cell-first-right-pinned {
   border-left: 1px solid #9bc2e6;
 }
-.ag-blue .ag-cell-last-left-pinned {
+.ag-blue .ag-ltr .ag-cell-first-right-pinned {
+  border-left: 1px solid #9bc2e6;
+}
+.ag-blue .ag-rtl .ag-cell-last-left-pinned {
+  border-right: 1px solid #9bc2e6;
+}
+.ag-blue .ag-ltr .ag-cell-last-left-pinned {
   border-right: 1px solid #9bc2e6;
 }
 .ag-blue .ag-cell-highlight {
@@ -85,7 +97,6 @@
 }
 .ag-blue .ag-value-change-value {
   background-color: transparent;
-  -webkit-border-radius: 1px;
   border-radius: 1px;
   padding-left: 1px;
   padding-right: 1px;
@@ -138,8 +149,11 @@
   background: #5b9bd5;
   border-bottom: 1px solid #9bc2e6;
 }
-.ag-blue .ag-header-cell {
+.ag-blue .ag-ltr .ag-header-cell {
   border-right: 1px solid #9bc2e6;
+}
+.ag-blue .ag-rtl .ag-header-cell {
+  border-left: 1px solid #9bc2e6;
 }
 .ag-blue .ag-header-cell-moving .ag-header-cell-label {
   opacity: 0.5;
@@ -149,8 +163,11 @@
 .ag-blue .ag-header-cell-moving {
   background-color: #bebebe;
 }
-.ag-blue .ag-header-group-cell {
+.ag-blue .ag-ltr .ag-header-group-cell {
   border-right: 1px solid #9bc2e6;
+}
+.ag-blue .ag-rtl .ag-header-group-cell {
+  border-left: 1px solid #9bc2e6;
 }
 .ag-blue .ag-header-group-cell-with-group {
   border-bottom: 1px solid #9bc2e6;
@@ -163,37 +180,42 @@
 }
 .ag-blue .ag-header-group-cell-label {
   padding: 4px;
+}
+.ag-blue .ag-ltr .ag-header-group-cell-label {
   padding-left: 10px;
 }
-.ag-blue .ag-header-group-text {
+.ag-blue .ag-rtl .ag-header-group-cell-label {
+  padding-right: 10px;
+}
+.ag-blue .ag-rtl .ag-header-group-text {
+  margin-left: 2px;
+}
+.ag-blue .ag-ltr .ag-header-group-text {
   margin-right: 2px;
 }
 .ag-blue .ag-header-cell-menu-button {
   padding: 2px;
   margin-top: 4px;
+  margin-left: 1px;
+  margin-right: 1px;
   border: 1px solid transparent;
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
   -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
   box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
   line-height: 0px /* normal line height, a space was appearing below the menu button */;
 }
-.ag-blue .ag-pinned-right-header {
+.ag-blue .ag-ltr .ag-pinned-right-header {
   border-left: 1px solid #9bc2e6;
+}
+.ag-blue .ag-rtl .ag-pinned-left-header {
+  border-right: 1px solid #9bc2e6;
 }
 .ag-blue .ag-header-cell-menu-button:hover {
   border: 1px solid #9bc2e6;
 }
 .ag-blue .ag-body {
   background-color: #f6f6f6;
-}
-.ag-blue .ag-row {
-  -webkit-transition: background-color 0.1s;
-  -moz-transition: background-color 0.1s;
-  -o-transition: background-color 0.1s;
-  -ms-transition: background-color 0.1s;
-  transition: background-color 0.1s;
 }
 .ag-blue .ag-row-odd {
   background-color: #ddebf7;
@@ -216,7 +238,6 @@
 .ag-blue .ag-overlay-loading-center {
   background-color: #fff;
   border: 1px solid #9bc2e6;
-  -webkit-border-radius: 10px;
   border-radius: 10px;
   padding: 10px;
   color: #000;
@@ -224,7 +245,6 @@
 .ag-blue .ag-overlay-no-rows-center {
   background-color: #fff;
   border: 1px solid #9bc2e6;
-  -webkit-border-radius: 10px;
   border-radius: 10px;
   padding: 10px;
 }
@@ -239,17 +259,32 @@
 .ag-blue .ag-group-cell {
   font-style: italic;
 }
-.ag-blue .ag-group-expanded {
+.ag-blue .ag-ltr .ag-group-expanded {
   padding-right: 4px;
 }
-.ag-blue .ag-group-contracted {
+.ag-blue .ag-rtl .ag-group-expanded {
+  padding-left: 4px;
+}
+.ag-blue .ag-ltr .ag-group-contracted {
   padding-right: 4px;
 }
-.ag-blue .ag-group-value {
+.ag-blue .ag-rtl .ag-group-contracted {
+  padding-left: 4px;
+}
+.ag-blue .ag-ltr .ag-group-value {
   padding-right: 2px;
 }
-.ag-blue .ag-group-checkbox {
+.ag-blue .ag-rtl .ag-group-value {
+  padding-left: 2px;
+}
+.ag-blue .ag-ltr .ag-group-checkbox {
   padding-right: 2px;
+}
+.ag-blue .ag-rtl .ag-group-checkbox {
+  padding-left: 2px;
+}
+.ag-blue .ag-group-child-count {
+  display: inline-block;
 }
 .ag-blue .ag-footer-cell {
   font-style: italic;
@@ -295,7 +330,7 @@
   vertical-align: middle;
 }
 .ag-blue .ag-menu-option-shortcut {
-  padding: 2px 2px 2px 20px;
+  padding: 2px 2px 2px 2px;
   vertical-align: middle;
 }
 .ag-blue .ag-menu-option-popup-pointer {
@@ -325,8 +360,11 @@
 .ag-blue .ag-filter-value {
   margin-left: 4px;
 }
-.ag-blue .ag-selection-checkbox {
+.ag-blue .ag-ltr .ag-selection-checkbox {
   padding-right: 4px;
+}
+.ag-blue .ag-rtl .ag-selection-checkbox {
+  padding-left: 4px;
 }
 .ag-blue .ag-paging-panel {
   padding: 4px;
@@ -341,10 +379,15 @@
 }
 .ag-blue .ag-tool-panel {
   background-color: #f6f6f6;
-  border-right: 1px solid #9bc2e6;
   border-bottom: 1px solid #9bc2e6;
   border-top: 1px solid #9bc2e6;
   color: #222;
+}
+.ag-blue .ltr .ag-tool-panel {
+  border-right: 1px solid #9bc2e6;
+}
+.ag-blue .rtl .ag-tool-panel {
+  border-left: 1px solid #9bc2e6;
 }
 .ag-blue .ag-status-bar {
   color: #222;
@@ -380,7 +423,6 @@
   border: 1px solid transparent;
   padding-left: 2px;
   padding-right: 2px;
-  -webkit-border-radius: 3px;
   border-radius: 3px;
 }
 .ag-blue .ag-column-drop-cell-button:hover {
@@ -392,19 +434,16 @@
   color: #808080;
 }
 .ag-blue .ag-column-drop-icon {
-  padding-right: 4px;
+  margin: 3px;
 }
 .ag-blue .ag-column-drop {
   background-color: #f6f6f6;
 }
 .ag-blue .ag-column-drop-horizontal {
-  padding: 4px 4px 4px 4px;
+  padding: 2px;
   border-top: 1px solid #9bc2e6;
   border-left: 1px solid #9bc2e6;
   border-right: 1px solid #9bc2e6;
-}
-.ag-blue .ag-column-drop-horizontal .ag-column-drop-cell {
-  padding: 2px;
 }
 .ag-blue .ag-column-drop-vertical {
   padding: 4px 4px 10px 4px;

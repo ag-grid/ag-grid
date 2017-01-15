@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -32,7 +33,7 @@ var BodyDropTarget = (function () {
         return this.eContainer;
     };
     BodyDropTarget.prototype.init = function () {
-        this.moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned);
+        this.moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned, this.eContainer);
         this.context.wireBean(this.moveColumnController);
         this.bodyDropPivotTarget = new bodyDropPivotTarget_1.BodyDropPivotTarget(this.pinned);
         this.context.wireBean(this.bodyDropPivotTarget);
@@ -109,5 +110,5 @@ var BodyDropTarget = (function () {
         __metadata('design:returntype', void 0)
     ], BodyDropTarget.prototype, "init", null);
     return BodyDropTarget;
-})();
+}());
 exports.BodyDropTarget = BodyDropTarget;

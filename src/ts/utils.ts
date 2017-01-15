@@ -26,6 +26,8 @@ export class Utils {
     private static isSafari: boolean;
     private static isIE: boolean;
     private static isEdge: boolean;
+    private static isChrome: boolean;
+    private static isFirefox: boolean;
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -93,6 +95,34 @@ export class Utils {
         }
     }
 
+    static getScrollLeft(element: HTMLElement, rtl: boolean): number {
+        var scrollLeft = element.scrollLeft;
+        if (rtl) {
+            // Absolute value - for FF that reports RTL scrolls in negative numbers
+            scrollLeft = Math.abs(scrollLeft);
+
+            // Get Chrome and Safari to return the same value as well
+            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+                scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
+            }
+        }
+        return scrollLeft;
+    }
+
+    static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
+        if (rtl) {
+            // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
+            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+                value = element.scrollWidth - element.clientWidth - value;
+            }
+            // Firefox uses negative numbers when doing RTL scrolling
+            if (this.isBrowserFirefox()) {
+                value *= -1;
+            }
+        }
+        element.scrollLeft = value;
+    }
+
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
         if (this.missing(object)) { return; }
         var keys = Object.keys(object);
@@ -103,13 +133,13 @@ export class Utils {
         }
     }
 
-    static cloneObject(object: any): any {
-        var copy = <any>{};
+    static cloneObject<T>(object: T): T {
+        var copy = <T>{};
         var keys = Object.keys(object);
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
-            var value = object[key];
-            copy[key] = value;
+            var value = (<any>object)[key];
+            (<any>copy)[key] = value;
         }
         return copy;
     }
@@ -153,12 +183,41 @@ export class Utils {
         return result;
     }
 
+
+    static mergeDeep(object: any, source: any): void {
+        if (this.exists(source)) {
+            this.iterateObject(source, function(key: string, value: any) {
+                let currentValue: any = object[key];
+                let target: any = source[key];
+
+                if (currentValue == null){
+                    object[key] = value;
+                }
+
+                if (typeof currentValue === 'object'){
+                    if (target){
+                        this.mergeDeep (object[key], target)
+                    }
+                }
+
+                if (target){
+                    object[key] = target;
+                }
+            });
+        }
+    }
+
     static assign(object: any, source: any): void {
         if (this.exists(source)) {
             this.iterateObject(source, function(key: string, value: any) {
                 object[key] = value;
             });
         }
+    }
+
+    static pushAll(target: any[], source: any[]): void {
+        if (this.missing(source) || this.missing(target)) { return; }
+        source.forEach( func => target.push(func) );
     }
 
     static getFunctionParameters(func: any) {
@@ -259,6 +318,10 @@ export class Utils {
 
     static missingOrEmpty(value: any[]|string): boolean {
         return this.missing(value) || value.length === 0;
+    }
+
+    static missingOrEmptyObject(value: any): boolean {
+        return this.missing(value) || Object.keys(value).length === 0;
     }
 
     static exists(value: any): boolean {
@@ -411,6 +474,14 @@ export class Utils {
         }
     }
 
+    static removeAllFromArray<T>(array: T[], toRemove: T[]) {
+        toRemove.forEach( item => {
+            if (array.indexOf(item) >= 0) {
+                array.splice(array.indexOf(item), 1);
+            }
+        });
+    }
+
     static insertIntoArray<T>(array: T[], object: T, toIndex: number) {
         array.splice(toIndex, 0, object);
     }
@@ -512,6 +583,22 @@ export class Utils {
         }
     }
 
+    static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void {
+        if (this.exists(parent.firstChild)) {
+            parent.insertBefore(documentFragment, parent.firstChild);
+        } else {
+            parent.appendChild(documentFragment);
+        }
+    }
+
+    // static prepend(parent: HTMLElement, child: HTMLElement): void {
+    //     if (this.exists(parent.firstChild)) {
+    //         parent.insertBefore(child, parent.firstChild);
+    //     } else {
+    //         parent.appendChild(child);
+    //     }
+    // }
+
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
@@ -566,8 +653,12 @@ export class Utils {
         });
     }
 
-    static isScrollShowing(element: HTMLElement): boolean {
-        return element.clientHeight < element.scrollHeight
+    static isHorizontalScrollShowing(element: HTMLElement): boolean {
+        return element.clientWidth < element.scrollWidth;
+    }
+
+    static isVerticalScrollShowing(element: HTMLElement): boolean {
+        return element.clientHeight < element.scrollHeight;
     }
 
     static getScrollbarWidth() {
@@ -600,16 +691,8 @@ export class Utils {
         return pressedKey === keyToCheck;
     }
 
-    static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string) {
-        if (visible) {
-            if (this.exists(visibleStyle)) {
-                element.style.display = visibleStyle;
-            } else {
-                element.style.display = 'inline';
-            }
-        } else {
-            element.style.display = 'none';
-        }
+    static setVisible(element: HTMLElement, visible: boolean) {
+        this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
     }
 
     static isBrowserIE(): boolean {
@@ -628,9 +711,29 @@ export class Utils {
 
     static isBrowserSafari(): boolean {
         if (this.isSafari===undefined) {
-            this.isSafari = Object.prototype.toString.call((<any>window).HTMLElement).indexOf('Constructor') > 0;
+            let anyWindow = <any> window;
+            // taken from https://github.com/ceolter/ag-grid/issues/550
+            this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
+                || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })
+                (!anyWindow.safari || anyWindow.safari.pushNotification);
         }
         return this.isSafari;
+    }
+
+    static isBrowserChrome(): boolean {
+        if (this.isChrome===undefined) {
+            let anyWindow = <any> window;
+            this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+        }
+        return this.isChrome;
+    }
+
+    static isBrowserFirefox(): boolean {
+        if (this.isFirefox===undefined) {
+            let anyWindow = <any> window;
+            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';;
+        }
+        return this.isFirefox;
     }
 
     // srcElement is only available in IE. In all other browsers it is target
@@ -701,6 +804,10 @@ export class Utils {
                 }
             });
         }
+    }
+
+    static isNumeric (value:any): boolean {
+        return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
     // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
@@ -858,11 +965,17 @@ export class Utils {
 
 export class NumberSequence {
 
-    private nextValue = 0;
+    private nextValue: number;
+    private step: number;
+
+    constructor(initValue = 0, step = 1) {
+        this.nextValue = initValue;
+        this.step = step;
+    }
 
     public next() : number {
         var valToReturn = this.nextValue;
-        this.nextValue++;
+        this.nextValue += this.step;
         return valToReturn;
     }
 }

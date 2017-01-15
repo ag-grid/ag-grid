@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
@@ -13,6 +12,8 @@ export declare class Utils {
     private static isSafari;
     private static isIE;
     private static isEdge;
+    private static isChrome;
+    private static isFirefox;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(TheClass: any): string;
@@ -20,13 +21,16 @@ export declare class Utils {
         [key: string]: T;
     }): T[];
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
+    static getScrollLeft(element: HTMLElement, rtl: boolean): number;
+    static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
     static iterateObject(object: any, callback: (key: string, value: any) => void): void;
-    static cloneObject(object: any): any;
+    static cloneObject<T>(object: T): T;
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult): TResult[];
     static mapObject<TResult>(object: any, callback: (item: any) => TResult): TResult[];
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
     static filter<T>(array: T[], callback: (item: T) => boolean): T[];
     static assign(object: any, source: any): void;
+    static pushAll(target: any[], source: any[]): void;
     static getFunctionParameters(func: any): any;
     static find<T>(collection: T[], predicate: string | ((item: T) => void), value?: any): T;
     static toStrings<T>(array: T[]): string[];
@@ -38,6 +42,7 @@ export declare class Utils {
     static makeNull(value: any): any;
     static missing(value: any): boolean;
     static missingOrEmpty(value: any[] | string): boolean;
+    static missingOrEmptyObject(value: any): boolean;
     static exists(value: any): boolean;
     static existsAndNotEmpty(value: any[]): boolean;
     static removeAllChildren(node: HTMLElement): void;
@@ -59,6 +64,7 @@ export declare class Utils {
     static removeCssClass(element: HTMLElement, className: string): void;
     static removeRepeatsFromArray<T>(array: T[], object: T): void;
     static removeFromArray<T>(array: T[], object: T): void;
+    static removeAllFromArray<T>(array: T[], toRemove: T[]): void;
     static insertIntoArray<T>(array: T[], object: T, toIndex: number): void;
     static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
@@ -67,6 +73,7 @@ export declare class Utils {
     static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
+    static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the second parameter, which is the svgFactory function
@@ -74,13 +81,16 @@ export declare class Utils {
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
     static addStylesToElement(eElement: any, styles: any): void;
-    static isScrollShowing(element: HTMLElement): boolean;
+    static isHorizontalScrollShowing(element: HTMLElement): boolean;
+    static isVerticalScrollShowing(element: HTMLElement): boolean;
     static getScrollbarWidth(): number;
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string): void;
     static isBrowserIE(): boolean;
     static isBrowserEdge(): boolean;
     static isBrowserSafari(): boolean;
+    static isBrowserChrome(): boolean;
+    static isBrowserFirefox(): boolean;
     static getTarget(event: Event): Element;
     static getBodyWidth(): number;
     static getBodyHeight(): number;
@@ -190,5 +200,7 @@ export declare class Utils {
 }
 export declare class NumberSequence {
     private nextValue;
+    private step;
+    constructor(initValue?: number, step?: number);
     next(): number;
 }

@@ -4,6 +4,8 @@ import {Column} from "./column";
 import {AbstractColDef} from "./colDef";
 import {OriginalColumnGroup} from "./originalColumnGroup";
 import {EventService} from "../eventService";
+import {Autowired} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export class ColumnGroup implements ColumnGroupChild {
 
@@ -11,6 +13,8 @@ export class ColumnGroup implements ColumnGroupChild {
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
+
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children:ColumnGroupChild[];
@@ -55,8 +59,14 @@ export class ColumnGroup implements ColumnGroupChild {
 
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
-            var firstChildLeft = this.displayedChildren[0].getLeft();
-            this.setLeft(firstChildLeft);
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                let lastChild = this.displayedChildren[this.displayedChildren.length-1];
+                var lastChildLeft = lastChild.getLeft();
+                this.setLeft(lastChildLeft);
+            } else {
+                var firstChildLeft = this.displayedChildren[0].getLeft();
+                this.setLeft(firstChildLeft);
+            }
         } else {
             // this should never happen, as if we have no displayed columns, then
             // this groups should not even exist.

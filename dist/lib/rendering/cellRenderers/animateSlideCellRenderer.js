@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -33,7 +34,7 @@ var AnimateSlideCellRenderer = (function (_super) {
         if (this.ePrevious) {
             this.getGui().removeChild(this.ePrevious);
         }
-        this.ePrevious = utils_1.Utils.loadTemplate('<span class="ag-value-slide-previous ag-fade-out"></span>');
+        this.ePrevious = utils_1.Utils.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
         // having timeout of 0 allows use to skip to the next css turn,
@@ -43,7 +44,7 @@ var AnimateSlideCellRenderer = (function (_super) {
             if (refreshCountCopy !== _this.refreshCount) {
                 return;
             }
-            utils_1.Utils.addCssClass(_this.ePrevious, 'ag-fade-out-end');
+            utils_1.Utils.addCssClass(_this.ePrevious, 'ag-value-slide-out-end');
         }, 50);
         setTimeout(function () {
             if (refreshCountCopy !== _this.refreshCount) {
@@ -77,5 +78,5 @@ var AnimateSlideCellRenderer = (function (_super) {
         '<span class="ag-value-slide-current"></span>' +
         '</span>';
     return AnimateSlideCellRenderer;
-})(component_1.Component);
+}(component_1.Component));
 exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;

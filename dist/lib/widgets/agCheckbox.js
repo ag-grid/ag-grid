@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -29,14 +30,18 @@ var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var AgCheckbox = (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
-        _super.call(this, AgCheckbox.TEMPLATE);
+        _super.call(this);
         this.selected = false;
         this.readOnly = false;
         this.passive = false;
     }
     AgCheckbox.prototype.init = function () {
+        this.setTemplate(AgCheckbox.TEMPLATE);
         this.loadIcons();
         this.updateIcons();
+    };
+    AgCheckbox.prototype.attributesSet = function () {
+        _super.prototype.attributesSet.call(this);
         var label = this.getAttribute('label');
         if (label) {
             this.eLabel.innerText = label;
@@ -153,5 +158,5 @@ var AgCheckbox = (function (_super) {
         __metadata('design:returntype', void 0)
     ], AgCheckbox.prototype, "onClick", null);
     return AgCheckbox;
-})(component_1.Component);
+}(component_1.Component));
 exports.AgCheckbox = AgCheckbox;

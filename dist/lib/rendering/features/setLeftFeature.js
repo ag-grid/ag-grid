@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var utils_1 = require("../../utils");
 var column_1 = require("../../entities/column");
 var SetLeftFeature = (function () {
@@ -37,5 +38,5 @@ var SetLeftFeature = (function () {
         });
     };
     return SetLeftFeature;
-})();
+}());
 exports.SetLeftFeature = SetLeftFeature;

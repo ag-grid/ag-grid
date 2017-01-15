@@ -40,16 +40,23 @@ export class CheckboxSelectionComponent extends Component {
         _.setVisible(this.eIndeterminateIcon, typeof state !== 'boolean');
     }
 
-    private onCheckedClicked(): void {
-        this.rowNode.setSelected(false);
-    }
+    private onCheckedClicked(): number {
+        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        var updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
+        return updatedCount;
+     }
 
-    private onUncheckedClicked(event: MouseEvent): void {
-        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey});
+    private onUncheckedClicked(event: MouseEvent): number {
+        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        var updatedCount = this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
+        return updatedCount;
     }
 
     private onIndeterminateClicked(event: MouseEvent): void {
-        this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey});
+        var result = this.onUncheckedClicked(event);
+        if (result===0) {
+            this.onCheckedClicked();
+        }
     }
 
     public init(params: any): void {

@@ -1,6 +1,6 @@
 import {Constants} from "../constants";
 import {Utils as _} from '../utils';
-import {GridCell} from "./gridCell";
+import {GridCell, GridCellDef} from "./gridCell";
 import {Column} from "./column";
 
 export class GridRow {
@@ -35,7 +35,8 @@ export class GridRow {
     }
 
     public getGridCell(column: Column): GridCell {
-        return new GridCell(this.rowIndex, this.floating, column);
+        let gridCellDef = <GridCellDef> {rowIndex: this.rowIndex, floating: this.floating, column: column};
+        return new GridCell(gridCellDef);
     }
 
     // tests if this row selection is before the other row selection

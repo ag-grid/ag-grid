@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var utils_1 = require("../utils");
 var logger_1 = require("../logger");
 var Context = (function () {
@@ -44,8 +45,9 @@ var Context = (function () {
         var key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             var newComponent = new this.componentsMappedByName[key];
-            this.copyAttributesFromNode(element, newComponent.getGui());
             this.wireBean(newComponent);
+            this.copyAttributesFromNode(element, newComponent.getGui());
+            newComponent.attributesSet();
             return newComponent;
         }
         else {
@@ -215,7 +217,7 @@ var Context = (function () {
         this.logger.log('>> ag-Application Context shut down - component is dead');
     };
     return Context;
-})();
+}());
 exports.Context = Context;
 // taken from: http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply
 // allows calling 'apply' on a constructor

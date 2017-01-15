@@ -2,16 +2,31 @@ import {Column} from "./column";
 import {Utils as _} from "../utils";
 import {GridRow} from "./gridRow";
 
+// this is what gets pass into and out of the api, as JavaScript users
+export interface GridCellDef {
+    floating: string;
+    rowIndex: number;
+    column: Column;
+}
+
 export class GridCell {
 
     floating: string;
     rowIndex: number;
     column: Column;
 
-    constructor(rowIndex: number, floating: string, column: Column) {
-        this.rowIndex = rowIndex;
-        this.column = column;
-        this.floating = _.makeNull(floating);
+    constructor(gridCellDef: GridCellDef) {
+        this.rowIndex = gridCellDef.rowIndex;
+        this.column = gridCellDef.column;
+        this.floating = _.makeNull(gridCellDef.floating);
+    }
+
+    public getGridCellDef(): GridCellDef {
+        return {
+            rowIndex: this.rowIndex,
+            column: this.column,
+            floating: this.floating
+        }
     }
 
     public getGridRow(): GridRow {

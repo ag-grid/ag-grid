@@ -74,10 +74,21 @@ export class HeaderRowComp extends Component {
 
         this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
+        this.setWidth();
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this) );
+    }
+
+    private onColumnResized(): void {
+        this.setWidth();
+    }
+
+    private setWidth(): void {
+        var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
+        this.getGui().style.width = mainRowWidth;
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -90,6 +101,7 @@ export class HeaderRowComp extends Component {
             this.removeAndDestroyChildComponents(idsOfAllChildren);
         }
         this.onVirtualColumnsChanged();
+        this.setWidth();
     }
     
     private onVirtualColumnsChanged(): void {
@@ -108,7 +120,8 @@ export class HeaderRowComp extends Component {
             }
 
             // skip groups that have no displayed children. this can happen when the group is broken,
-            // and this section happens to have nothing to display for the open / closed state
+            // and this section happens to have nothing to display for the open / closed state.
+            // (PS niall note - i can't remember what i meant by the above exactly, what's a broken group???)
             if (child instanceof ColumnGroup && (<ColumnGroup>child).getDisplayedChildren().length === 0) {
                 return;
             }
@@ -125,9 +138,9 @@ export class HeaderRowComp extends Component {
     private createHeaderElement(columnGroupChild:ColumnGroupChild):IRenderedHeaderElement {
         var result:IRenderedHeaderElement;
         if (columnGroupChild instanceof ColumnGroup) {
-            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget);
+            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         } else {
-            result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget);
+            result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         }
         this.context.wireBean(result);
         return result;

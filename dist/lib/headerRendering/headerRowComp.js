@@ -1,9 +1,10 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v6.4.2
+ * @version v7.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -68,9 +69,18 @@ var HeaderRowComp = (function (_super) {
     HeaderRowComp.prototype.init = function () {
         this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
+        this.setWidth();
         this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+    };
+    HeaderRowComp.prototype.onColumnResized = function () {
+        this.setWidth();
+    };
+    HeaderRowComp.prototype.setWidth = function () {
+        var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
+        this.getGui().style.width = mainRowWidth;
     };
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
         // because column groups are created and destroyed on the fly as groups are opened / closed and columns are moved,
@@ -82,6 +92,7 @@ var HeaderRowComp = (function (_super) {
             this.removeAndDestroyChildComponents(idsOfAllChildren);
         }
         this.onVirtualColumnsChanged();
+        this.setWidth();
     };
     HeaderRowComp.prototype.onVirtualColumnsChanged = function () {
         var _this = this;
@@ -109,10 +120,10 @@ var HeaderRowComp = (function (_super) {
     HeaderRowComp.prototype.createHeaderElement = function (columnGroupChild) {
         var result;
         if (columnGroupChild instanceof columnGroup_1.ColumnGroup) {
-            result = new renderedHeaderGroupCell_1.RenderedHeaderGroupCell(columnGroupChild, this.eRoot, this.dropTarget);
+            result = new renderedHeaderGroupCell_1.RenderedHeaderGroupCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         }
         else {
-            result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget);
+            result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         }
         this.context.wireBean(result);
         return result;
@@ -140,5 +151,5 @@ var HeaderRowComp = (function (_super) {
         __metadata('design:returntype', void 0)
     ], HeaderRowComp.prototype, "init", null);
     return HeaderRowComp;
-})(component_1.Component);
+}(component_1.Component));
 exports.HeaderRowComp = HeaderRowComp;

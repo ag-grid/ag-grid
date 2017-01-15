@@ -54,7 +54,16 @@ export class TextFilter implements IFilter {
         }
         var value = this.filterParams.valueGetter(params.node);
         if (!value) {
-            return false;
+            if (this.filterType === TextFilter.NOT_EQUALS) {
+                // if there is no value, but the filter type was 'not equals',
+                // then it should pass, as a missing value is not equal whatever
+                // the user is filtering on
+                return true;
+            } else {
+                // otherwise it's some type of comparison, to which empty value
+                // will always fail
+                return false;
+            }
         }
         var valueLowerCase = value.toString().toLowerCase();
         switch (this.filterType) {

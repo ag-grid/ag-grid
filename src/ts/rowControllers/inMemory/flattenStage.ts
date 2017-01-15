@@ -31,9 +31,28 @@ export class FlattenStage implements IRowNodeStage {
         var showRootNode = pivotMode && rootNode.leafGroup;
         var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
+        // set all row tops to null, then set row tops on all visible rows. if we don't
+        // do this, then the algorithm below only sets row tops, old row tops from old rows
+        // will still lie around
+        this.resetRowTops(rootNode);
+
         this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, pivotMode);
 
         return result;
+    }
+
+    private resetRowTops(rowNode: RowNode): void {
+        rowNode.clearRowTop();
+        if (rowNode.group) {
+            if (rowNode.childrenAfterGroup) {
+                for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
+                    this.resetRowTops(rowNode.childrenAfterGroup[i])
+                }
+            }
+            if (rowNode.sibling) {
+                rowNode.sibling.clearRowTop();
+            }
+        }
     }
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],
@@ -51,13 +70,15 @@ export class FlattenStage implements IRowNodeStage {
             if (!skipGroupNode) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
             }
-            if (rowNode.group && rowNode.expanded) {
-                this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
+            if (rowNode.group) {
+                if (rowNode.expanded) {
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
 
-                // put a footer in if user is looking for it
-                if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-                    var footerNode = this.createFooterNode(rowNode);
-                    this.addRowNodeToRowsToDisplay(footerNode, result, nextRowTop);
+                    // put a footer in if user is looking for it
+                    if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+                        this.ensureFooterNodeExists(rowNode);
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop);
+                    }
                 }
             }
             if (rowNode.canFlower && rowNode.expanded) {
@@ -70,34 +91,56 @@ export class FlattenStage implements IRowNodeStage {
     // duplicated method, it's also in floatingRowModel
     private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper): void {
         result.push(rowNode);
-        rowNode.rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-        rowNode.rowTop = nextRowTop.value;
+        if (_.missing(rowNode.rowHeight)) {
+            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+            rowNode.setRowHeight(rowHeight);
+        }
+        rowNode.setRowTop(nextRowTop.value);
+        rowNode.setRowIndex(result.length  - 1);
         nextRowTop.value += rowNode.rowHeight;
     }
 
-    private createFooterNode(groupNode: RowNode): RowNode {
+    private ensureFooterNodeExists(groupNode: RowNode): void {
+        // only create footer node once, otherwise we have daemons and
+        // the animate screws up with the daemons hanging around
+        if (_.exists(groupNode.sibling)) { return; }
+
         var footerNode = new RowNode();
         this.context.wireBean(footerNode);
         Object.keys(groupNode).forEach(function (key) {
             (<any>footerNode)[key] = (<any>groupNode)[key];
         });
         footerNode.footer = true;
+        footerNode.rowTop = null;
+        footerNode.oldRowTop = null;
+        if (_.exists(footerNode.id)) {
+            footerNode.id = 'rowGroupFooter_' + footerNode.id;
+        }
         // get both header and footer to reference each other as siblings. this is never undone,
         // only overwritten. so if a group is expanded, then contracted, it will have a ghost
         // sibling - but that's fine, as we can ignore this if the header is contracted.
         footerNode.sibling = groupNode;
         groupNode.sibling = footerNode;
-        return footerNode;
     }
 
     private createFlowerNode(parentNode: RowNode): RowNode {
-        var flowerNode = new RowNode();
-        this.context.wireBean(flowerNode);
-        flowerNode.flower = true;
-        flowerNode.parent = parentNode;
-        flowerNode.data = parentNode.data;
-        flowerNode.level = parentNode.level + 1;
-        return flowerNode;
+
+        if (_.exists(parentNode.childFlower)) {
+            return parentNode.childFlower;
+        } else {
+            var flowerNode = new RowNode();
+            this.context.wireBean(flowerNode);
+            flowerNode.flower = true;
+            flowerNode.parent = parentNode;
+            if (_.exists(parentNode.id)) {
+                flowerNode.id = 'flowerNode_' + parentNode.id;
+            }
+            flowerNode.data = parentNode.data;
+            flowerNode.level = parentNode.level + 1;
+            parentNode.childFlower = flowerNode;
+            return flowerNode;
+        }
+
     }
 }
 

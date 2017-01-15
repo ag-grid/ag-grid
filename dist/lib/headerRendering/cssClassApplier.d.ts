@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v6.4.2
+// Type definitions for ag-grid v7.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 import { AbstractColDef } from "../entities/colDef";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnGroup } from "../entities/columnGroup";
