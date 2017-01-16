@@ -6,8 +6,6 @@ $pageKeyboards = "ag-Grid Column Definitions";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
     <h2>Columns</h2>
 
     <p>

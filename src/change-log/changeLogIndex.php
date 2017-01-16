@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Version NEXT</h2>
 
     <li>Enhancement: <a href="../javascript-grid-excel">Excel Export</a>.</li>
+    <li>Enhancement: <a href="../javascript-grid-filtering/#dateFilter">Date Filter</a>.</li>
     <li>Enhancement: richSelect cell editor now works with empty strings.</li>
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#groupEditing"><i>enableGroupEdit</i></a>, Set to true to allow editing of the group rows.</li>
     <li>Enhancement: RTL verified to work with For Print.</li>

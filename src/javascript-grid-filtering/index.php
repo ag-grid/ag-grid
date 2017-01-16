@@ -122,7 +122,7 @@ columnDefinition = {
     <show-example example="example1"></show-example>
 
 
-    <h3>Date Filter</h3>
+    <h3 id="dateFilter">Date Filter</h3>
 
     <p>
         The date filter allows filtering by dates. It is more complex than the text and number filters as it
