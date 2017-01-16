@@ -31,13 +31,12 @@ var columnDefs = [
     {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
 ];
 
-function MyDateEditor (dateType) {
-    this.dateType = dateType;
+function MyDateEditor () {
 }
 
 MyDateEditor.prototype.init = function(params) {
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '<input id="' + this.dateType + '" type="text" />';
+    this.eGui.innerHTML = '<input class="myDateWidget" type="text" />';
     this.eInput = this.eGui.querySelectorAll('input')[0];
 
     this.listener = params.onDateChanged;
