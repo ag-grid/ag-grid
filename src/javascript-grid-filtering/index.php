@@ -529,7 +529,45 @@ nameFilter.setModel(model);</pre>
 
     <show-example example="exampleFilterApi"></show-example>
 
-    <h3>Get / Set All Filter Models</h3>
+    <h4 id="reset_filters">Reset Individual Filters</h4>
+
+    <p>You can reset a filter to it's original state by getting the filter instance and then performing the action that makes sense for the filter type.</p>
+
+    <p>For all the filter types the sequence would be:</p>
+    <ul>
+        <li><code>var filterComponent = gridOptions.api.getFilterInstance('filter_name');</code></li>
+        <li>perform reset action for filter type</li>
+        <li><code>gridOptions.api.onFilterChanged();</code></li>
+    </ul>
+
+    <p>The following are the appropriate methods for the corresponding filter types:</p>
+    <table class="table">
+        <tr>
+            <th>Filter Type</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <th>number</th>
+            <th><code>filterComponent.setFilter(null);</code></th>
+        </tr>
+        <tr>
+            <th>text</th>
+            <th><code>filterComponent.setFilter(null);</code></th>
+        </tr>
+        <tr>
+            <th>set</th>
+            <th><code>filterComponent.selectEverything();</code></th>
+        </tr>
+    </table>
+
+    <h4>Reset All Filters</h4>
+    <p>You can reset all filters by doing the following:</p>
+    <pre>
+gridOptions.api.setFilterModel(null);
+gridOptions.api.onFilterChanged();
+</pre>
+
+    <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
 
     <p>
         It is possible to get and set the state of <b>all</b> the filters via the api methods <i>gridOptions.api.getFilterModel</i>
