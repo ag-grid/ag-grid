@@ -272,29 +272,26 @@ export class DateFilter extends Component implements IFilter {
     }
 }
 
-export class DefaultDateComponent implements IDateComponent {
+export class DefaultDateComponent extends Component implements IDateComponent {
 
-    private eDateInput:HTMLInputElement;
+    private eDateInput: HTMLInputElement;
     private listener:()=>void;
 
+    constructor() {
+        super(`<input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd">`);
+    }
+
     public init (params: IDateComponentParams):void{
-        this.eDateInput = document.createElement("input");
-        this.eDateInput.setAttribute("class", "ag-filter-filter");
-        this.eDateInput.setAttribute("type", 'text');
-        this.eDateInput.setAttribute("placeholder", 'yyyy-mm-dd');
+        this.eDateInput = <HTMLInputElement> this.getGui();
 
         if (Utils.isBrowserChrome()){
             this.eDateInput.type = 'date';
         }
+
         this.listener = params.onDateChanged;
 
-        this.eDateInput.addEventListener('input', this.listener);
+        this.addGuiEventListener('input', this.listener);
     }
-
-    public getGui():HTMLElement{
-        return this.eDateInput;
-    }
-
 
     public getDate():Date {
         return Utils.parseYyyyMmDdToDate(this.eDateInput.value, "-");
@@ -302,10 +299,6 @@ export class DefaultDateComponent implements IDateComponent {
 
     public setDate(date: Date): void {
         this.eDateInput.value = Utils.serializeDateToYyyyMmDd(date, "-");
-    }
-
-    public destroy(): void{
-        this.eDateInput.removeEventListener('input', this.listener)
     }
 
 }
