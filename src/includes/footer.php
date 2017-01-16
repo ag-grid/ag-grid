@@ -26,12 +26,12 @@
 		            <div class="col-xs-12 col-md-3">
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Documentation</h2></li>
-		                    <li><a href="/javascript-grid-getting-started/index.php">Getting Started</a></li>
-		                    <li><a href="/best-javascript-data-grid/index.php">JavaScript</a></li>
-		                    <li><a href="/best-react-data-grid/index.php">React</a></li>
-		                    <li><a href="/best-angularjs-data-grid/index.php">Angular 1.x</a></li>
-		                    <li><a href="/best-angular-2-data-grid/index.php">Angular 2+</a></li>
-		                    <li><a href="/best-web-component-data-grid/index.php">Web Components</a></li>
+		                    <li><a href="/javascript-grid-getting-started/">Getting Started</a></li>
+		                    <li><a href="/best-javascript-data-grid/">JavaScript</a></li>
+		                    <li><a href="/best-react-data-grid/">React</a></li>
+		                    <li><a href="/best-angularjs-data-grid/">Angular 1.x</a></li>
+		                    <li><a href="/best-angular-2-data-grid/">Angular 2+</a></li>
+		                    <li><a href="/best-web-component-data-grid/">Web Components</a></li>
 		                </ul>
 		            </div>
 		            <div class="col-xs-12 col-md-2">

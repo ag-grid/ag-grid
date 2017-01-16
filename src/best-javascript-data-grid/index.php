@@ -103,7 +103,7 @@ new agGrid.Grid(eGridDiv, gridOptions); //create a new grid</pre>
     <h3>Next Steps...</h3>
 
     <p>
-        Now you can go to <a href="../javascript-grid-interfacing-overview/index.php">interfacing</a>
+        Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
         to learn about accessing all the features of the grid.
     </p>
 </div>

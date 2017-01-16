@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Each column in the grid is defined using a column definition. Below is the set off all the
         properties you can set for column definitions. The section
-        <a href="../javascript-grid-grouping-headers/index.php">column groups</a>
+        <a href="../javascript-grid-grouping-headers/">column groups</a>
         details how to group columns in the headers.
     </p>
 

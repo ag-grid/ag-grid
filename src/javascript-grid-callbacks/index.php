@@ -90,7 +90,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>groupRowAggNodes(nodes)</th>
-            <td>Callback for grouping. See the section on <a href="../javascript-grid-grouping/index.php#groupingCallbacks">row grouping</a> for detailed explanation.</td>
+            <td>Callback for grouping. See the section on <a href="../javascript-grid-grouping/#groupingCallbacks">row grouping</a> for detailed explanation.</td>
         </tr>
         <tr>
             <th>isScrollLag()</th>

@@ -39,7 +39,7 @@
                         </h1>
 
                         <h1 style="padding-bottom: 10px; padding-top: 10px;">The JavaScript Datagrid for Enterprise</h1>
-<!--                        <h2>'ag' stands for Agnostic - not bound to any framework but integrates with <a href="/best-javascript-data-grid/index.php">JavaScript</a>, <a href="/best-react-data-grid/index.php">React</a>, <a href="/best-angularjs-data-grid/index.php">Angular</a>, <a href="/best-angular-2-data-grid/index.php">Angular 2</a> &amp; <a href="/best-web-component-data-grid/index.php">Web Components</a>.</h2>
+<!--                        <h2>'ag' stands for Agnostic - not bound to any framework but integrates with <a href="/best-javascript-data-grid/">JavaScript</a>, <a href="/best-react-data-grid/">React</a>, <a href="/best-angularjs-data-grid/">Angular</a>, <a href="/best-angular-2-data-grid/">Angular 2</a> &amp; <a href="/best-web-component-data-grid/">Web Components</a>.</h2>
 -->
 
                         <h2>
