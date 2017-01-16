@@ -20,6 +20,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: Context menu now has CSV Export and Excel Export.</li>
     <li>Enhancement: New <i>api.onSortChanged()</i>, call it if you update a cell with a new value and you want to apply the sort order again.</li>
     <li>Enhancement: New property <a href="../javascript-grid-grouping/#fullWidthRows"><i>fullWidthRows</i></a>.</li>
+    <li>Breaking Change: IAfterFilterGuiAttachedParams now called IAfterGuiAttachedParams (impacts TypeScript users only)</li>
     <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
     <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
     <li>Bugfix: Column menu was disappearing while doing vertical scroll. Now it only disappears for horizontal scroll.
