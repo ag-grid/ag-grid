@@ -17,9 +17,9 @@ include '../documentation-main/documentation_header.php';
     <note>
         This page discusses sorting outside of the context of paging. To see how to implement server
         side sorting, see the sections
-        <a href="/javascript-grid-pagination/index.php">pagination</a>
+        <a href="/javascript-grid-pagination/">pagination</a>
         and
-        <a href="/javascript-grid-virtual-paging/index.php">virtual paging</a>
+        <a href="/javascript-grid-virtual-paging/">virtual paging</a>
     </note>
 
     <h3>Enable Sorting</h3>

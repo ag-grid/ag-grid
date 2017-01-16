@@ -362,7 +362,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>groupRowInnerRenderer<br/> groupRowInnerRendererFramework<br/> groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
-            <td>Sets grouping row cell renderer. See the section on <a href="../javascript-grid-grouping/index.php#groupingCallbacks">row grouping</a> for detailed explanation.</td>
+            <td>Sets grouping row cell renderer. See the section on <a href="../javascript-grid-grouping/#groupingCallbacks">row grouping</a> for detailed explanation.</td>
         </tr>
         <tr>
             <th>fullWidthCellRenderer, fullWidthCellRendererFramework, fullWidthCellRendererParams</th>
