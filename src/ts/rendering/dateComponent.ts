@@ -22,6 +22,6 @@ export interface IDateComponent {
 }
 
 export interface IDateComponentParams{
-    /** Method provided to the IDateComponent as a callback to use every time the user changes the date*/
+    /** Method for component to tell ag-Grid that the date has changed. */
     onDateChanged:()=>void
 }
