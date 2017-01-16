@@ -1,18 +1,21 @@
-import {IFilter, IFilterParams, IDoesFilterPassParams} from "../interfaces/iFilter";
+import {IFilter, IFilterParams, IDoesFilterPassParams, IAfterFilterGuiAttachedParams} from "../interfaces/iFilter";
 import {Component} from "../widgets/component";
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Utils} from "../utils";
+import {IDateComponent} from "../rendering/dateComponent";
 
 export interface IDateFilterParams extends IFilterParams{
     comparator: (filterLocalDateAtMidnight:Date, cellValue:any)=>number;
+    dateComponent ?: {new(type:string): IDateComponent};
+    onDateChanged: ()=>void;
 }
 
 export interface SerializedDateFilter {
     dateFrom:string
     dateTo:string
-    filterType:string
+    type:string
 }
 
 export class DateFilter extends Component implements IFilter {
@@ -25,6 +28,10 @@ export class DateFilter extends Component implements IFilter {
 
     private filterParams: IDateFilterParams;
     private applyActive: boolean;
+    private newRowsActionKeep: boolean;
+
+    private dateToComponent:IDateComponent;
+    private dateFromComponent:IDateComponent;
 
 
     @Autowired('gridOptionsWrapper')
@@ -33,11 +40,8 @@ export class DateFilter extends Component implements IFilter {
     @Autowired('context')
     private context: Context;
 
-    @QuerySelector('#filterDateTo')
-    private eDateToInput: HTMLInputElement;
-
-    @QuerySelector('#filterDateFrom')
-    private eDateFromInput: HTMLInputElement;
+    @QuerySelector('#filterDateFromPanel')
+    private eDateFromPanel: HTMLElement;
 
     @QuerySelector('#filterDateToPanel')
     private eDateToPanel: HTMLElement;
@@ -61,9 +65,11 @@ export class DateFilter extends Component implements IFilter {
         super();
     }
 
-    public init(params: IFilterParams): void {
+    public init(params: IDateFilterParams): void {
         this.filterParams = <IDateFilterParams>params;
         this.applyActive = (<any>params).apply === true;
+        this.newRowsActionKeep = (<any>params).newRowsAction === 'keep';
+
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(`<div>
@@ -77,10 +83,8 @@ export class DateFilter extends Component implements IFilter {
                         </select>
                     </div>
                     <div class="ag-filter-date-from" id="filterDateFromPanel">
-                        <input class="ag-filter-filter" id="filterDateFrom" type="text" placeholder="yyyy-mm-dd"/>
                     </div>
                     <div class="ag-filter-date-to" id="filterDateToPanel" style="display: none;">
-                        <input class="ag-filter-filter" id="filterDateTo" type="text" placeholder="yyyy-mm-dd"/>
                     </div>
                     <div class="ag-filter-apply-panel" id="applyPanel">
                         <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
@@ -93,16 +97,46 @@ export class DateFilter extends Component implements IFilter {
             this.addDestroyableEventListener(this.eApplyButton, "click", ()=>{this.filterParams.filterChangedCallback()});
         }
 
+
+        if (params.dateComponent){
+            this.dateToComponent = new params.dateComponent("filterDateTo");
+            this.dateFromComponent = new params.dateComponent("filterDateFrom");
+        }else{
+            this.dateToComponent = new DefaultDateEditorRenderer(
+                "filterDateTo",
+                this.parseDate.bind(this),
+                this.serializeDate.bind(this)
+            );
+
+            this.dateFromComponent = new DefaultDateEditorRenderer(
+                "filterDateFrom",
+                this.parseDate.bind(this),
+                this.serializeDate.bind(this)
+            );
+        }
+
+
+
+        let dateComponentParams: IDateFilterParams = <any>{};
+        Utils.mergeDeep(dateComponentParams, params);
+        dateComponentParams['onDateChanged'] = this.onDateChanged.bind(this);
+
+        this.dateFromComponent.init(dateComponentParams);
+        this.dateToComponent.init(dateComponentParams);
+
         this.dynamicUi();
 
         this.instantiate(this.context);
-        this.onInputChanged(this.eDateFromInput, this.onDateChanged.bind(this));
-        this.onInputChanged(this.eDateToInput, this.onDateChanged.bind(this));
+
         this.onSelectChanged(this.eTypeSelector, this.onFilterTypeChanged.bind(this));
     }
 
-    private onInputChanged (element:HTMLElement, listener: EventListener):void{
-        this.addDestroyableEventListener(element, "input", listener);
+    public onNewRowsLoaded() {
+        if (!this.newRowsActionKeep) {
+            this.setFilterType(DateFilter.EQUALS);
+            this.setDateFrom(null);
+            this.setDateTo(null);
+        }
     }
 
     private onSelectChanged (element:HTMLElement, listener: EventListener):void{
@@ -110,8 +144,8 @@ export class DateFilter extends Component implements IFilter {
     }
 
     private onDateChanged(): void {
-        this.dateFrom = this.parseDate(this.eDateFromInput.value);
-        this.dateTo = this.parseDate(this.eDateToInput.value);
+        this.dateFrom = this.removeTimezone(this.dateFromComponent.getDate());
+        this.dateTo = this.removeTimezone(this.dateToComponent.getDate());
         this.filterParams.filterModifiedCallback();
         if (!this.applyActive) {
             this.filterParams.filterChangedCallback();
@@ -134,11 +168,14 @@ export class DateFilter extends Component implements IFilter {
             this.eDateToPanel.style.display = 'none';
         }
 
-        if (Utils.isBrowserChrome()){
-            this.eDateFromInput.type = 'date';
-            this.eDateToInput.type = 'date';
-        }
+        this.eDateFromPanel.appendChild(this.dateFromComponent.getGui());
+        this.eDateToPanel.appendChild(this.dateToComponent.getGui());
+
+        this.dateFromComponent.afterGuiAttached();
+        this.dateToComponent.afterGuiAttached();
     }
+
+
 
     public isFilterActive(): boolean {
         if ((this.filter === DateFilter.IN_RANGE)) {
@@ -181,26 +218,38 @@ export class DateFilter extends Component implements IFilter {
     public getModel(): SerializedDateFilter {
         if (this.isFilterActive()) {
             return {
-                dateFrom: this.serializeDate(this.dateFrom),
-                dateTo: this.serializeDate(this.dateTo),
-                filterType: this.filter
+                dateTo: this.serializeDate(this.dateToComponent.getDate()),
+                dateFrom: this.serializeDate(this.dateFromComponent.getDate()),
+                type: this.filter
             };
         } else {
             return null;
         }
     }
 
-    private setDateFrom (date:string):void{
+    public getDateFrom ():string{
+        return this.serializeDate(this.dateFromComponent.getDate());
+    }
+
+    public getDateTo ():string{
+        return this.serializeDate(this.dateToComponent.getDate());
+    }
+
+    public getFilterType ():string{
+        return this.filter;
+    }
+
+    public setDateFrom (date:string):void{
         this.dateFrom = this.parseDate(date);
-        this.eDateFromInput.value = date;
+        this.dateFromComponent.setDate(this.dateFrom);
     }
 
-    private setDateTo (date:string):void{
+    public setDateTo (date:string):void{
         this.dateTo = this.parseDate(date);
-        this.eDateToInput.value = date;
+        this.dateToComponent.setDate(this.dateTo)
     }
 
-    private setFilterType (filterType:string):void{
+    public setFilterType (filterType:string):void{
         this.filter = filterType;
         this.eTypeSelector.value = filterType;
     }
@@ -209,7 +258,7 @@ export class DateFilter extends Component implements IFilter {
         if (model) {
             this.setDateFrom(model.dateFrom);
             this.setDateTo(model.dateTo);
-            this.setFilterType(model.filterType);
+            this.setFilterType(model.type);
         } else {
             this.setDateFrom(null);
             this.setDateTo(null);
@@ -235,11 +284,63 @@ export class DateFilter extends Component implements IFilter {
 
             let fields:string[] = dateAsString.split("-");
             if (fields.length != 3) return null;
-            return new Date (Number(fields[0]),Number(fields[1]),Number(fields[2]));
+            return new Date (Number(fields[0]),Number(fields[1]) - 1,Number(fields[2]));
         }catch (e){
             return null;
         }
 
     }
 
+    private removeTimezone (from:Date):Date{
+        if (!from) return null;
+        return new Date (from.getFullYear(), from.getMonth(), from.getDate());
+    }
+}
+
+export class DefaultDateEditorRenderer implements IDateComponent{
+    private eDateInput:HTMLInputElement;
+    private listener:()=>void;
+
+    constructor(
+        private inputId:string,
+        private dateParser:(asString:string)=>Date,
+        private dateSerializer:(asDate:Date)=>string
+    ) {
+    }
+
+    init (params: IDateFilterParams):void{
+        this.eDateInput = document.createElement("input");
+        this.eDateInput.setAttribute("class", "ag-filter-filter");
+        this.eDateInput.setAttribute("id", this.inputId);
+        this.eDateInput.setAttribute("type", 'text');
+        this.eDateInput.setAttribute("placeholder", 'yyyy-mm-dd');
+
+        if (Utils.isBrowserChrome()){
+            this.eDateInput.type = 'date';
+        }
+        this.listener = params.onDateChanged;
+
+        this.eDateInput.addEventListener('input', this.listener);
+    }
+
+    getGui ():HTMLElement{
+        return this.eDateInput;
+    }
+
+
+    getDate():Date {
+        return this.dateParser(this.eDateInput.value);
+    }
+
+    setDate(date: Date): void {
+        this.eDateInput.value = this.dateSerializer(date);
+    }
+
+    destroy(): void{
+        this.eDateInput.removeEventListener('input', this.listener)
+    }
+
+    afterGuiAttached?(params?: IAfterFilterGuiAttachedParams): void{
+
+    }
 }
