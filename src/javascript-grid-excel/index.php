@@ -1,44 +1,43 @@
 <?php
 $key = "Excel Export";
-$pageTitle = "ag-Grid Excel Data Export";
-$pageDescription = "Data in the grid can be exported to csv. This page explains how to do exports along with properties you can set to get the exports done.";
-$pageKeyboards = "ag-Grid Data Export Javascript CSV";
+$pageTitle = "Javascript Excel Export";
+$pageDescription = "We are now supporting JavaScript Export to Excel. This page explains how to use this new feature to Export to Excel along with properties you can set to get the configure the exports.";
+$pageKeyboards = "Angular Export to Excel";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <p>
 
-    <h2>Excel Export</h2>
+    <h1>JavaScript Excel Export in ag-Grid</h1>
 
     <p>
         <?php include '../enterprise.php';?>
         &nbsp;
-        Excel Export is available in ag-Grid Enterprise.
+        Javascript Excel Export is available in ag-Grid Enterprise.
     </p>
 
     <p>
         Excel Export allows exporting ag-Grid data to Excel using Excel's own XML format. Using this format
-        allows for rich Excel files to be created with teh following:
+        allows for rich Excel files to be created with the following:
         <ol>
-            <li>The column width from your grid options is exported to Excel, so the columns in Excel will have the same widths as the ag-grid in your web application</li>
+            <li>The column width from your grid is exported to Excel, so the columns in Excel will have the same width as your web application</li>
             <li>You can specify Excel styles (colors, fonts, borders etc) to be included in the Excel file.</li>
-            <li>The data types of your columns are passed to Excel as part of the export so that if you want to work with the data afterwards within Excel you will have less issues</li>
-            <li>The cells of the column header groups are merged looking the same as the group headers in the ag-grid</li>
+            <li>The data types of your columns are passed to Excel as part of the export so that if you can to work with the data within Excel in the correct format.</li>
+            <li>The cells of the column header groups are merged in the same manner as the group headers in ag-Grid.</li>
         </ol>
     </p>
 
     <h3 id="ExcelExportApi">API</h3>
 
     <p>
-        The export is performed by calling the following API. Note that this API is similar to the CSV export API,
+        The export is performed by calling the following API. Note that this API is similar to the <a href="../javascript-grid-export/#cellClassRules">CSV Export</a> API,
         so you can use similar config for both.
     </p>
 
     <ul>
-        <li><b>exportDataAsExcel(params)</b>: Does the full export and triggers the download automatically of the
-            file in the browser so that the user would be able to open it immediately.</li>
+        <li><b>exportDataAsExcel(params)</b>: Does the full export and triggers the download of the file in the browser automatically so the user can open immediately.</li>
         <li><b>getDataAsExcel(params)</b>: Returns the Excel XML that represents the export performed by
-            <i>exportDataAsExcel(params)</i>. This can then be used by your web application, eg to send the data to the
+            <i>exportDataAsExcel(params)</i>. This can then be used by your web application, e.g. to send the data to the
             server for storing or sending via email etc.</li>
     </ul>
 
@@ -47,15 +46,15 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ul>
-        <li><b>skipHeader</b>: Set to true if you don't want to first line to be the column header names.</li>
+        <li><b>skipHeader</b>: Set to true if you don't want the first line to be column header names.</li>
         <li><b>skipGroups</b>: Set to true to skip headers and footers if grouping. No impact if not grouping.</li>
         <li><b>skipFooters</b>: Set to true to skip footers only if grouping. No impact if not grouping or if not using footers in grouping.</li>
         <li><b>fileName</b>: String to use as the file name. If missing, the file name 'export.xls' will be used.</li>
         <li><b>allColumns</b>: If true, all columns will be exported in the order they appear in columnDefs.
-            Otherwise only the columns currently showing the in grid, and in that order, are exported.</li>
+            Otherwise only the columns currently showing in the grid, and in that order, are exported.</li>
         <li><b>onlySelected</b>: Only export selected rows.</li>
-        <li><b>onlySelectedAllPages</b>: Only export selected rows including other pages (only makes sense when using pagination).</li>
-        <li><b>columnKeys</b>: Provide a list (an array) of column keys if you want to export specific columns.</li>
+        <li><b>onlySelectedAllPages</b>: Only export selected rows including other pages (only applicable when using pagination).</li>
+        <li><b>columnKeys</b>: Provide a list (an array) of column keys to export specific columns.</li>
         <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the CSV.</li>
         <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
     </ul>
@@ -72,7 +71,7 @@ include '../documentation-main/documentation_header.php';
 
     <h4>processHeaderCallback()</h4>
 
-    <p>If you don't like the header names the grid provides, then you can provide your own header names. Maybe you
+    <p>If you don't like the header names the grid provides then you can provide your own header names. For example, you
         have grouped columns and you want to include the columns parent groups.</p>
 
     <p>
@@ -84,8 +83,8 @@ include '../documentation-main/documentation_header.php';
     </h3>
 
     <p>
-        The data in the grid, similar to CSV export, gets exported. However unlike CSV Export, you also get to export styles.
-        The details of how to specify Styles with Excel are explained in the last example on this page.
+        The data in the grid, similar to <a href="../javascript-grid-export/#cellClassRules">CSV Export</a>, gets exported. However unlike <a href="../javascript-grid-export/#cellClassRules">CSV Export</a>, you also get to export styles.
+        The details of how to specify styles with Excel are explained in the last example on this page.
     <p>
 
     <p>Regardless, the following needs to be taken into consideration</p>
@@ -117,7 +116,7 @@ include '../documentation-main/documentation_header.php';
         <li>Filtered rows are not included in the export.</li>
         <li>The sort order is maintained in the export.</li>
         <li>The order of the columns is maintained in the export.</li>
-        <li>Only visible columns are export.</li>
+        <li>Only visible columns are exported.</li>
         <li>Value getters are used to work out the value to export (the 'Group' col in the example below uses a value getter to take the first letter of the country name)</li>
         <li>Aggregated values are exported.</li>
         <li>For groups, the first exported value (column) will always have the group key.</li>
@@ -128,7 +127,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Export with Styles</h3>
 
     <p>
-        The main reason to export to Excel instead to CSV is so that the look & feel remains as consistent as possible to the one provided in your ag-grid application. In order to
+        The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your ag-Grid application. In order to
         simplify the configuration the Excel Export reuses the <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a>. Whatever resultant class is applicable to the cell then is
         expected to be provided as an Excel Style to the ExcelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
     </p>
@@ -146,7 +145,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ul>
-        <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the cellClassRules</li>
+        <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a></li>
         <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul>
                 <li>vertical: String one of Top/Bottom</li>
                 <li>horizontal: String one of Left/Right</li>
@@ -241,8 +240,8 @@ var gridOptions = {
     <h4>Resolving Excel Styles</h4>
 
     <p>
-        The cellClassRules are executed on each cell to decide what styles to apply. Normally these styles map to CSS
-        classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel Styles
+        The <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a> are executed on each cell to decide what styles to apply. Normally these styles map to CSS
+        classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles
         that you have provided. If more than one Excel style is found, the results are merged (similar to how CSS classes
         are merged by the browser when multiple classes are applied).
     </p>
@@ -265,7 +264,7 @@ var gridOptions = {
     <p>
         Some of the most likely errors you can encounter when exporting to Excel are:
         <ul>
-            <li>Not specifying all the attributes of an Excel Style property. IE. If you specify the interior for an
+            <li>Not specifying all the attributes of an Excel Style property. If you specify the interior for an
                 Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet</li>
             <li>Using invalid characters in attributes, we recommend you not to use special characters.</li>
             <li>Not specifying the style associated to a cell, if a cell has an style that is not passed as part of the
@@ -290,7 +289,7 @@ var gridOptions = {
             <li>If a cell has an style but there isn't an associated Excel Style defined, the style for that cell won't
                 get exported. This is the case in this example of the year column which has the style notInExcel, but since
                 it hasn't been specified in the gridOptions, the column then gets exported without formatting.</li>
-            <li>Note that there is an Excel Style with name and id header that gets automatically applied to the ag-grid headers when exported to Excel</li>
+            <li>Note that there is an Excel Style with name and id header that gets automatically applied to the ag-Grid headers when exported to Excel</li>
         </ul>
     </p>
 
