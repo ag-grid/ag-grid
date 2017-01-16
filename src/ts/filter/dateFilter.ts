@@ -18,11 +18,11 @@ export interface SerializedDateFilter {
 }
 
 export class DateFilter extends Component implements IFilter {
-    public static EQUALS = 'equals';// 1;
-    public static NOT_EQUAL = 'notEqual';//2;
-    public static LESS_THAN = 'lessThan';//3;
-    public static GREATER_THAN = 'greaterThan';//4;
-    public static IN_RANGE = 'inRange';//5;
+    public static EQUALS = 'equals';
+    public static NOT_EQUAL = 'notEqual';
+    public static LESS_THAN = 'lessThan';
+    public static GREATER_THAN = 'greaterThan';
+    public static IN_RANGE = 'inRange';
 
 
     private filterParams: IDateFilterParams;
