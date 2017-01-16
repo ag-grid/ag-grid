@@ -5,7 +5,7 @@ import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {PopupService} from "../widgets/popupService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {IAfterFilterGuiAttachedParams} from "../interfaces/iFilter";
+import {IAfterGuiAttachedParams} from "../interfaces/iFilter";
 import {EventService} from "../eventService";
 
 @Bean('menuFactory')
@@ -62,7 +62,7 @@ export class StandardMenuFactory implements IMenuFactory {
         positionCallback(eMenu);
 
         if (filterWrapper.filter.afterGuiAttached) {
-            var params: IAfterFilterGuiAttachedParams = {
+            var params: IAfterGuiAttachedParams = {
                 hidePopup: hidePopup
             };
             filterWrapper.filter.afterGuiAttached(params);

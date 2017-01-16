@@ -1,4 +1,4 @@
-import {IAfterFilterGuiAttachedParams} from "../interfaces/iFilter";
+import {IAfterGuiAttachedParams} from "../interfaces/iFilter";
 export interface IDateComponent {
     /** Callback received to signal the creation of this cellEditorRenderer, placeholder to create the necessary logic
      * to setup the component, like initialising the gui, or any other part of your component*/
@@ -18,10 +18,10 @@ export interface IDateComponent {
 
     /** A hook to perform any necessary operation just after the gui for this component has been renderer
      * in the screen*/
-    afterGuiAttached?(params?: IAfterFilterGuiAttachedParams): void;
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
 export interface IDateComponentParams{
-    /** Method provided to the IDateComponent as a callback to use every time the user changes de date*/
+    /** Method provided to the IDateComponent as a callback to use every time the user changes the date*/
     onDateChanged:()=>void
 }
