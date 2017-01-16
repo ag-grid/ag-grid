@@ -51,11 +51,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>text</th>
-            <td>A string comparison filter. Functionality for mating on {contains, starts with, ends with, equals}.</td>
+            <td>A string comparison filter. Functionality for matching on {contains, starts with, ends with, equals}.</td>
         </tr>
         <tr>
             <th>date</th>
-            <td>A date comparison filter. Functionality for mating on {equals, not equals, less than, greater than, in range}.</td>
+            <td>A date comparison filter. Functionality for matching on {equals, not equals, less than, greater than, in range}.</td>
         </tr>
         <tr>
             <th>set</th>
@@ -89,9 +89,8 @@ columnDefinition = {
     <p>
         The filter parameters for text, date and number filter have the following meaning:
         <ul>
-            <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,
-                to keep it in line with 'set' filters. If you want to keep the selection, then set this value
-                to 'keep'.</li>
+            <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter.
+                If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
             <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
                 automatically as the selection changes.</li>
         </ul>
@@ -101,49 +100,66 @@ columnDefinition = {
         The date filter has an additional property to specify how the filter date should be compared with the data
         in your cell:
         <ul>
-            <li><b>comparator:</b> A callback to specify how the current cell value compares to the date specified in the filter,
-                the callback takes two parameters, the first one is a Javascript date object with the local date at midnight
-                selected in the filter, the second parameter is the current value of the cell being evaluated. The callback
-                must return:
-                    <ul>
-                        <li>Any number < 0 if the cell value is less than the filter date</li>
-                        <li>0 if the dates are the same</li>
-                        <li>Any number > 0 if the cell value is greater than the filter date</li>
-                    </ul>
-
-            </li>
+            <li><b>comparator:</b> A callback to specify how the current row's value compares to the filter.</li>
         </ul>
     </p>
 
+    <h3>Date Filter Comparator</h3>
+
     <p>
-        What follows is an example of a date filter:
+        Dates can be represented in your data in many ways e.g. as a JavaScript Date object, or as a string in
+        the format eg "26-MAR-2020" or something else different. How you represent dates will be particular to your
+        application. To work with this, the date filter asks you how it should compare with your data. This is done
+        via the <i>comparator</i> callback.
+    </p>
+
+    <p>
+        The <i>comparator</i> callback takes two parameters. The first parameter is a
+        Javascript date object with the local date at midnight
+        selected in the filter. The second parameter is the current value of the cell being evaluated.
+        The callback must return:
+        <ul>
+            <li>Any number < 0 if the cell value is less than the filter date</li>
+            <li>0 if the dates are the same</li>
+            <li>Any number > 0 if the cell value is greater than the filter date</li>
+        </ul>
+        This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> function.
+    </p>
+
+    <p>
+        Below is an example of using a date filter with a comparator.
 <pre>
-    columnDefinition = {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            <span class="codeComment">// In this example the cellValue is a string with the following format:</span>
-            <span class="codeComment">// dd/mm/yyyy</span>
-            var dateAsString = cellValue;
-            var dateParts  = dateAsString.split("/");
-            <span class="codeComment">// Create a Date object that represents the date in the cell</span>
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+colDef = {
+    ...
+    <span class="codeComment">// specify we want to use the date filter</span>
+    filter: 'date',
 
+    <span class="codeComment">// add extra parameters for the date filter</span>
+    filterParams:{
 
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
+        <span class="codeComment">// provide comparator function</span>
+        comparator: function (filterLocalDateAtMidnight, cellValue) {
 
+            <span class="codeComment">// In the example application, dates are stored as dd/mm/yyyy</span>
+            <span class="codeComment">// We create a Date object for comparison against the filter date</span>
+            var dateParts  = cellValue.split("/");
+            var day = Number(dateParts[2]);
+            var month = Number(dateParts[1]) - 1;
+            var year = Number(dateParts[0]);
+            var cellDate = new Date(day, month, year);
+
+            <span class="codeComment">// Now that both parameters are Date objects, we can compare</span>
             if (cellDate < filterLocalDateAtMidnight) {
                 return -1;
-            }
-
-            if (cellDate > filterLocalDateAtMidnight) {
+            } else if (cellDate > filterLocalDateAtMidnight) {
                 return 1;
+            } else {
+                return 0;
             }
         }
-    }}
+    }
+}
 </pre>
-    </pre>
-
 
     <h3>Built In Filters Example</h3>
 
@@ -151,7 +167,7 @@ columnDefinition = {
         The example below demonstrates:
         <ul>
         <li>Three filter types text filter, number filter and date filter.</li>
-        <li>Quick Filter</li>
+        <li>Quick filter</li>
         <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
