@@ -1,15 +1,7 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150,
-        filter: 'text',
-        filterParams: { apply: true }
-    },
-    {headerName: "Age", field: "age", width: 90,
-        filter: 'number',
-        filterParams: { apply: true }
-    },
-    {headerName: "Country", field: "country", width: 120,
-        filterParams: { apply: true }
-    },
+    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Age", field: "age", width: 90, filter: 'number'},
+    {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
@@ -29,23 +21,70 @@ var columnDefs = [
                 return 1;
             }
         },
-        apply: true
+        // Here is where we specify the component to be used as the date picket widget
+        dateComponent: MyDateEditor
     }},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-    {headerName: "Total", field: "total", width: 100, filter: 'number'}
+    {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
 ];
+
+function MyDateEditor (dateType) {
+    this.dateType = dateType;
+}
+
+MyDateEditor.prototype.init = function(params) {
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = '<input id="' + this.dateType + '" type="text" />';
+    this.eInput = this.eGui.querySelectorAll('input')[0];
+
+    this.listener = params.onDateChanged;
+    this.eInput.addEventListener('input', this.listener);
+
+    var that = this;
+    $(this.eInput).datepicker({
+        dateFormat: 'dd-mm-yy',
+        altField: '#thealtdate',
+        altFormat: 'yy-mm-dd',
+        onSelect: function() {
+            that.listener();
+        }
+    });
+};
+
+MyDateEditor.prototype.getGui = function (){
+    return this.eGui;
+};
+
+MyDateEditor.prototype.getDate = function (){
+    return $(this.eInput).datepicker( "getDate" );
+};
+
+MyDateEditor.prototype.setDate = function (date){
+    $(this.eInput).datepicker( "setDate", date );
+};
+
+MyDateEditor.prototype.destroy = function () {
+    this.eInput.removeEventListener('input', this.listener)
+};
+
+MyDateEditor.prototype.afterGuiAttached = function () {
+    $('#ui-datepicker-div').click(function(e){
+        e.stopPropagation();
+    });
+};
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    onBeforeFilterChanged: function() {console.log('onBeforeFilterChanged');},
-    onAfterFilterChanged: function() {console.log('onAfterFilterChanged');},
-    onFilterModified: function() {console.log('onFilterModified');}
+    enableFilter: true
 };
+
+function onFilterChanged(value) {
+    gridOptions.api.setQuickFilter(value);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -64,4 +103,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 });
-
