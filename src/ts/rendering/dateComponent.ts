@@ -1,9 +1,8 @@
-import {IDateFilterParams} from "../filter/dateFilter";
 import {IAfterFilterGuiAttachedParams} from "../interfaces/iFilter";
 export interface IDateComponent {
     /** Callback received to signal the creation of this cellEditorRenderer, placeholder to create the necessary logic
      * to setup the component, like initialising the gui, or any other part of your component*/
-    init?(params: IDateFilterParams): void;
+    init?(params: IDateComponentParams): void;
 
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
     getGui(): HTMLElement;
@@ -20,4 +19,9 @@ export interface IDateComponent {
     /** A hook to perform any necessary operation just after the gui for this component has been renderer
      * in the screen*/
     afterGuiAttached?(params?: IAfterFilterGuiAttachedParams): void;
+}
+
+export interface IDateComponentParams{
+    /** Method provided to the IDateComponent as a callback to use every time the user changes de date*/
+    onDateChanged:()=>void
 }
