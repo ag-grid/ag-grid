@@ -100,11 +100,36 @@ columnDefinition = {
         The date filter has an additional property to specify how the filter date should be compared with the data
         in your cell:
         <ul>
-            <li><b>comparator:</b> A callback to specify how the current row's value compares to the filter.</li>
+            <li><b>comparator:</b> A callback to specify how the current row's value compares to the filter.
+            This is explained below in the section <a href="./#dateFilterComparator">Date Filter Comparator</a>.</li>
         </ul>
     </p>
 
-    <h3>Date Filter Comparator</h3>
+    <h3>Built In Filters Example</h3>
+
+    <p>
+        The example below demonstrates:
+        <ul>
+        <li>Three filter types text filter, number filter and date filter.</li>
+        <li>Quick filter</li>
+        <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+            cell when the header is filtered. By default, no style is applied to this class, the example shows
+            applying a different color background to this style.</li>
+        <li>'suppressFilter' is set on Total to hide the filter on this column</li>
+    </ul>
+    </p>
+
+    <show-example example="example1"></show-example>
+
+
+    <h3>Date Filter</h3>
+
+    <p>
+        The date filter allows filtering by dates. It is more complex than the text and number filters as it
+        allows custom comparators and also custom date pickers.
+    </p>
+
+    <h4 id="dateFilterComparator">Date Filter Comparator</h4>
 
     <p>
         Dates can be represented in your data in many ways e.g. as a JavaScript Date object, or as a string in
@@ -120,16 +145,18 @@ columnDefinition = {
         Javascript date object with the local date at midnight
         selected in the filter. The second parameter is the current value of the cell being evaluated.
         The callback must return:
-        <ul>
-            <li>Any number < 0 if the cell value is less than the filter date</li>
-            <li>0 if the dates are the same</li>
-            <li>Any number > 0 if the cell value is greater than the filter date</li>
-        </ul>
-        This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> function.
+    <ul>
+        <li>Any number < 0 if the cell value is less than the filter date</li>
+        <li>0 if the dates are the same</li>
+        <li>Any number > 0 if the cell value is greater than the filter date</li>
+    </ul>
+    This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> function.
     </p>
 
     <p>
         Below is an example of using a date filter with a comparator.
+    </p>
+
 <pre>
 colDef = {
     ...
@@ -163,86 +190,69 @@ colDef = {
 }
 </pre>
 
-
-    <h3>Built In Filters Example</h3>
-
-    <p>
-        The example below demonstrates:
-        <ul>
-        <li>Three filter types text filter, number filter and date filter.</li>
-        <li>Quick filter</li>
-        <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
-            cell when the header is filtered. By default, no style is applied to this class, the example shows
-            applying a different color background to this style.</li>
-        <li>'suppressFilter' is set on Total to hide the filter on this column</li>
-    </ul>
-    </p>
-
-    <show-example example="example1"></show-example>
-
-
-    <h3>Custom Date Component</h3>
+    <h4>Custom Date Component</h4>
 
     <p>
-        If you are using the date filter, it is possible to specify your own component to be used as a date picker.
-        In order to do so you will have to provide it through the property dateComponent for the filterProperties.
-        See example below.
+        It is possible to specify your own component to be used as a date picker. By default the grid will us
+        the browser provided date picker for Chrome (as we think it's nice), but for all other browser it will
+        just provide a simple text field. It is assumed that you will have a chosen date picker for your application.
+        In this instance you can provide your chosen date picker to ag-Grid. This is done by providing a custom
+        Date Component via the <i>filterParams.dateComponent</i> as follows:
     </p>
 
 <pre>
-    filterParams:{
-        {...}
-        // Here is where we specify the component to be used as the date picket widget
-        dateComponent: MyDateEditor
-        {...}
-    }},
+filterParams: {
+    ...
+    <span class="codeComment">// Here is where we specify the component to be used as the date picket widget</span>
+    dateComponent: MyDateEditor
+}},
 </pre>
 
     <p>
-        The interface of a DateComponent is a follows:
+        The interface for dateComponent is similar to that of a cellRenderer and is as follows:
     </p>
 
 <pre>
-export interface DateComponent {
-    <span class="codeComment">
-    /** Callback received to signal the creation of this cellEditorRenderer, placeholder to create the necessary logic
-     * to setup the component, like initialising the gui, or any other part of your component*/
-    </span>
+export interface IDateComponent {
+    <span class="codeComment">// Callback received to signal the creation of this cellEditorRenderer,
+    // placeholder to create the necessary logic to setup the component,
+    // like initialising the gui, or any other part of your component</span>
     init?(params: IDateComponentParams): void;
 
-    <span class="codeComment">
-    /** Return the DOM element of your editor, this is what the grid puts into the DOM */
-    </span>
+    <span class="codeComment">// Return the DOM element of your editor, this is what the grid puts into the DOM</span>
     getGui(): HTMLElement;
 
-    <span class="codeComment">
-    /** Gets called once by grid after editing is finished - if your editor needs to do any cleanup, do it here */
-    </span>
+    <span class="codeComment">// Gets called once by grid after editing is finished.
+    // If your editor needs to do any cleanup, do it here</span>
     destroy?(): void;
 
-    <span class="codeComment">
-    /** Returns the current date represented by this editor */
-    </span>
+    <span class="codeComment">// Returns the current date represented by this editor</span>
     getDate(): Date;
 
-    <span class="codeComment">
-    /** Sets the date represented by this component */
-    </span>
+    <span class="codeComment">// Sets the date represented by this component</span>
     setDate(date:Date): void;
 
-    <span class="codeComment">
-    /** A hook to perform any necessary operation just after the gui for this component has been renderer
-     * in the screen*/
-    </span>
+    <span class="codeComment">// A hook to perform any necessary operation just after the
+    // gui for this component has been renderer in the screen</span>
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 </pre>
 
     <p>
-        Note that the init method of the DateComponent interface receives as parameter a IDataComponentParams, which
-        itself has a method called: 'onDateChanged'. This method is used to communicate your widget and the filter.
+        The params object for the <i>DateComponent</i> has the following signature:
+    </p>
+
+<pre>
+export interface IDateComponentParams {
+    <span class="codeComment">// Method for component to tell ag-Grid that the date has changed</span>
+    onDateChanged:()=>void
+}
+</pre>
+
+    <p>
+        The onDateChanged method is used to tell ag-Grid the date selection has changed.
         You are responsible to hook this method inside your date component so that every time that the date changes
-        inside the component, this method is called, so that ag-grid can proceed with the filtering.
+        inside the component, this method is called, so that ag-Grid can proceed with the filtering.
     </p>
 
     <p>
