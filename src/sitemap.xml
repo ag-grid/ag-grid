@@ -2,32 +2,503 @@
 <urlset
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">	  	  
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">        
 <!-- www.check-domains.com sitemap generator -->
 
 <url>
    <loc>https://www.ag-grid.com/</loc>
-   <lastmod>2015-03-09T21:52:07+00:00</lastmod>
-   <changefreq>monthly</changefreq>
+   <changefreq>daily</changefreq>
    <priority>1.0000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/</loc>
-   <lastmod>2015-03-09T21:52:07+00:00</lastmod>
-   <changefreq>monthly</changefreq>
+   <loc>https://www.ag-grid.com/example.php</loc>
+   <changefreq>weekly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-    <loc>https://www.ag-grid.com/example.php</loc>
-    <lastmod>2015-03-09T21:52:05+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8000</priority>
+   <loc>https://www.ag-grid.com/documentation-main/documentation.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
 </url>
 <url>
-    <loc>https://www.ag-grid.com/why-the-world-needed-another-angularjs-grid/index.html</loc>
-    <lastmod>2015-03-28T21:52:05+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8000</priority>
+   <loc>https://www.ag-grid.com/media/media.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/support.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/about.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/testimonials.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/license-pricing.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-getting-started/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/best-javascript-data-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-viewport/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-animation/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/example-file-browser/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-filtering/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-grouping-headers/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-sorting/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-selection/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-resizing/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-pinning/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-tree/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-row-height/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-floating/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-value-getters/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-cell-expressions/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-cell-styling/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-cell-rendering/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-cell-editing/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-context/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-insert-remove/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-refresh/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-header-rendering/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-styling/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-master-detail/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-keyboard-navigation/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-master-slave/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-touch/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-model/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-export/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-internationalisation/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-icons/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-overlays/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-for-print/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-grouping/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-aggregation/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-set-filtering/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-pivoting/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-clipboard/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-data-functions/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-tool-panel/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-column-menu/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-context-menu/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-range-selection/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-status-bar/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/best-react-data-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/best-angularjs-data-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/best-angular-2-data-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular-systemjs/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular-webpack/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular-angularcli/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/best-web-component-data-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/best-aurelia-data-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-width-and-height/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-interfacing-overview/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-properties/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-column-definitions/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-events/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-callbacks/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-api/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-column-api/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-themes/fresh-theme.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-themes/blue-theme.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-themes/dark-theme.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-themes/material-theme.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-themes/bootstrap-theme.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-rtl/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-row-models/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-datasource/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-pagination/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-virtual-paging/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-set-license/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/example-account-report/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/example-expressions-and-context/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-tutorials/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/change-log/changeLogIndex.php</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-grid-roadmap/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular-aot-dynamic-components/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular2-support-v7/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-datagrid-aurelia/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/javascript-datagrid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular-connect-2016/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
 </url>
 
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular2-support/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-angular2-support-v6/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-javascript-pivot-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-goes-commercial/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/react-and-ag-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/ag-grid-in-2016/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>https://www.ag-grid.com/why-the-world-needed-another-angularjs-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
 </urlset>
