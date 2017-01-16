@@ -109,8 +109,10 @@ columnDefinition = {
     <p>
         Dates can be represented in your data in many ways e.g. as a JavaScript Date object, or as a string in
         the format eg "26-MAR-2020" or something else different. How you represent dates will be particular to your
-        application. To work with this, the date filter asks you how it should compare with your data. This is done
-        via the <i>comparator</i> callback.
+        application.
+
+        If you are filtering JavaScript date objects the filter will work automatically, but if you are representing
+        your date in any other format you will have to provide your own <i>comparator</i> callback.
     </p>
 
     <p>
@@ -161,6 +163,7 @@ colDef = {
 }
 </pre>
 
+
     <h3>Built In Filters Example</h3>
 
     <p>
@@ -182,6 +185,68 @@ colDef = {
 
     <p>
         If you are using the date filter, it is possible to specify your own component to be used as a date picker.
+        In order to do so you will have to provide it through the property dateComponent for the filterProperties.
+        See example below.
+    </p>
+
+<pre>
+    filterParams:{
+        {...}
+        // Here is where we specify the component to be used as the date picket widget
+        dateComponent: MyDateEditor
+        {...}
+    }},
+</pre>
+
+    <p>
+        The interface of a DateComponent is a follows:
+    </p>
+
+<pre>
+export interface DateComponent {
+    <span class="codeComment">
+    /** Callback received to signal the creation of this cellEditorRenderer, placeholder to create the necessary logic
+     * to setup the component, like initialising the gui, or any other part of your component*/
+    </span>
+    init?(params: IDateComponentParams): void;
+
+    <span class="codeComment">
+    /** Return the DOM element of your editor, this is what the grid puts into the DOM */
+    </span>
+    getGui(): HTMLElement;
+
+    <span class="codeComment">
+    /** Gets called once by grid after editing is finished - if your editor needs to do any cleanup, do it here */
+    </span>
+    destroy?(): void;
+
+    <span class="codeComment">
+    /** Returns the current date represented by this editor */
+    </span>
+    getDate(): Date;
+
+    <span class="codeComment">
+    /** Sets the date represented by this component */
+    </span>
+    setDate(date:Date): void;
+
+    <span class="codeComment">
+    /** A hook to perform any necessary operation just after the gui for this component has been renderer
+     * in the screen*/
+    </span>
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+}
+</pre>
+
+    <p>
+        Note that the init method of the DateComponent interface receives as parameter a IDataComponentParams, which
+        itself has a method called: 'onDateChanged'. This method is used to communicate your widget and the filter.
+        You are responsible to hook this method inside your date component so that every time that the date changes
+        inside the component, this method is called, so that ag-grid can proceed with the filtering.
+    </p>
+
+    <p>
+        See below an example of a custom JQuery date picker.
     </p>
 
     <show-example example="customDate"></show-example>
