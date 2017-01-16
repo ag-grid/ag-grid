@@ -74,28 +74,9 @@ export class DateFilter extends Component implements IFilter {
             this.getGui().removeChild(this.eApplyPanel);
         }
 
-        // can we do something like this? need to refactor out the requirement of the constructor parameters
-        // let DateComponent = new params.dateComponent ? params.dateComponent : DefaultDateEditorRenderer;
-        // this.dateToComponent = new DateComponent();
-        // this.dateFromComponent = new DateComponent();
-
-        if (params.dateComponent) {
-            this.dateToComponent = new params.dateComponent();
-            this.dateFromComponent = new params.dateComponent();
-        } else {
-            this.dateToComponent = new DefaultDateEditorRenderer(
-                "filterDateTo",
-                this.parseDate.bind(this),
-                this.serializeDate.bind(this)
-            );
-
-            this.dateFromComponent = new DefaultDateEditorRenderer(
-                "filterDateFrom",
-                this.parseDate.bind(this),
-                this.serializeDate.bind(this)
-            );
-        }
-
+        let DateComponent = params.dateComponent ? params.dateComponent : DefaultDateComponent;
+        this.dateToComponent = new DateComponent();
+        this.dateFromComponent = new DateComponent();
 
         let dateComponentParams: IDateComponentParams = {
             onDateChanged: this.onDateChanged.bind(this)
@@ -169,8 +150,14 @@ export class DateFilter extends Component implements IFilter {
         this.eDateFromPanel.appendChild(this.dateFromComponent.getGui());
         this.eDateToPanel.appendChild(this.dateToComponent.getGui());
 
-        this.dateFromComponent.afterGuiAttached();
-        this.dateToComponent.afterGuiAttached();
+
+        if (this.dateFromComponent.afterGuiAttached) {
+            this.dateFromComponent.afterGuiAttached();
+        }
+
+        if (this.dateToComponent.afterGuiAttached) {
+            this.dateToComponent.afterGuiAttached();
+        }
     }
 
     public isFilterActive(): boolean {
@@ -228,8 +215,8 @@ export class DateFilter extends Component implements IFilter {
     public getModel(): SerializedDateFilter {
         if (this.isFilterActive()) {
             return {
-                dateTo: this.serializeDate(this.dateToComponent.getDate()),
-                dateFrom: this.serializeDate(this.dateFromComponent.getDate()),
+                dateTo: Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-"),
+                dateFrom: Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-"),
                 type: this.filter
             };
         } else {
@@ -239,12 +226,12 @@ export class DateFilter extends Component implements IFilter {
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getDateFrom ():string{
-        return this.serializeDate(this.dateFromComponent.getDate());
+        return Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getDateTo ():string{
-        return this.serializeDate(this.dateToComponent.getDate());
+        return Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
@@ -253,12 +240,12 @@ export class DateFilter extends Component implements IFilter {
     }
 
     public setDateFrom (date:string):void{
-        this.dateFrom = this.parseDate(date);
+        this.dateFrom = Utils.parseYyyyMmDdToDate(date, "-");
         this.dateFromComponent.setDate(this.dateFrom);
     }
 
     public setDateTo (date:string):void{
-        this.dateTo = this.parseDate(date);
+        this.dateTo = Utils.parseYyyyMmDdToDate(date, "-");
         this.dateToComponent.setDate(this.dateTo)
     }
 
@@ -279,53 +266,20 @@ export class DateFilter extends Component implements IFilter {
         }
     }
 
-    private serializeDate (date:Date):string{
-        if (!date) return null;
-        return date.getFullYear() + "-" + this.pad(date.getMonth() + 1, 2) + "-" + this.pad(date.getDate(), 2)
-    }
-
-    private pad(num: number, totalStringSize:number) : string{
-        let asString:string = num + "";
-        while (asString.length < totalStringSize) asString = "0" + asString;
-        return asString;
-    }
-
-    private parseDate (dateAsString:string):Date{
-        try{
-            if (!dateAsString) return null;
-            if (dateAsString.indexOf("-") === -1) return null;
-
-            let fields:string[] = dateAsString.split("-");
-            if (fields.length != 3) return null;
-            return new Date (Number(fields[0]),Number(fields[1]) - 1,Number(fields[2]));
-        }catch (e){
-            return null;
-        }
-
-    }
-
     private removeTimezone (from:Date):Date{
         if (!from) return null;
         return new Date (from.getFullYear(), from.getMonth(), from.getDate());
     }
 }
 
-export class DefaultDateEditorRenderer implements IDateComponent {
+export class DefaultDateComponent implements IDateComponent {
 
     private eDateInput:HTMLInputElement;
     private listener:()=>void;
 
-    constructor(
-        private inputId:string,
-        private dateParser:(asString:string)=>Date,
-        private dateSerializer:(asDate:Date)=>string
-    ) {
-    }
-
     public init (params: IDateComponentParams):void{
         this.eDateInput = document.createElement("input");
         this.eDateInput.setAttribute("class", "ag-filter-filter");
-        this.eDateInput.setAttribute("id", this.inputId);
         this.eDateInput.setAttribute("type", 'text');
         this.eDateInput.setAttribute("placeholder", 'yyyy-mm-dd');
 
@@ -343,14 +297,15 @@ export class DefaultDateEditorRenderer implements IDateComponent {
 
 
     public getDate():Date {
-        return this.dateParser(this.eDateInput.value);
+        return Utils.parseYyyyMmDdToDate(this.eDateInput.value, "-");
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.value = this.dateSerializer(date);
+        this.eDateInput.value = Utils.serializeDateToYyyyMmDd(date, "-");
     }
 
     public destroy(): void{
         this.eDateInput.removeEventListener('input', this.listener)
     }
+
 }
