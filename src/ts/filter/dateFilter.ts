@@ -4,12 +4,11 @@ import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Utils} from "../utils";
-import {IDateComponent} from "../rendering/dateComponent";
+import {IDateComponent, IDateComponentParams} from "../rendering/dateComponent";
 
 export interface IDateFilterParams extends IFilterParams{
-    comparator: (filterLocalDateAtMidnight:Date, cellValue:any)=>number;
-    dateComponent ?: {new(type:string): IDateComponent};
-    onDateChanged: ()=>void;
+    comparator ?: (filterLocalDateAtMidnight:Date, cellValue:any)=>number;
+    dateComponent ?: {new(): IDateComponent};
 }
 
 export interface SerializedDateFilter {
@@ -99,8 +98,8 @@ export class DateFilter extends Component implements IFilter {
 
 
         if (params.dateComponent){
-            this.dateToComponent = new params.dateComponent("filterDateTo");
-            this.dateFromComponent = new params.dateComponent("filterDateFrom");
+            this.dateToComponent = new params.dateComponent();
+            this.dateFromComponent = new params.dateComponent();
         }else{
             this.dateToComponent = new DefaultDateEditorRenderer(
                 "filterDateTo",
@@ -116,10 +115,9 @@ export class DateFilter extends Component implements IFilter {
         }
 
 
-
-        let dateComponentParams: IDateFilterParams = <any>{};
-        Utils.mergeDeep(dateComponentParams, params);
-        dateComponentParams['onDateChanged'] = this.onDateChanged.bind(this);
+        let dateComponentParams: IDateComponentParams = {
+            onDateChanged: this.onDateChanged.bind(this)
+        };
 
         this.dateFromComponent.init(dateComponentParams);
         this.dateToComponent.init(dateComponentParams);
@@ -186,7 +184,12 @@ export class DateFilter extends Component implements IFilter {
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         var value:any = this.filterParams.valueGetter(params.node);
-        let comparator: (filterDate:Date, cellValue:any)=>number = this.filterParams.comparator;
+        let comparator: (filterDate:Date, cellValue:any)=>number = null;
+        if (this.filterParams.comparator){
+            comparator = this.filterParams.comparator;
+        } else {
+            comparator = this.defaultComparator.bind(this);
+        }
 
         let compareDateFromResult: number = comparator(this.dateFrom, value);
 
@@ -213,6 +216,14 @@ export class DateFilter extends Component implements IFilter {
         }
 
         throw new Error('Unexpected type of date filter!: ' + this.filter);
+    }
+
+    private defaultComparator (filterDate:Date, cellValue:any):number {
+        //The default comparator assumes that the cellValue is a date
+        let cellAsDate :Date = <Date> cellValue;
+        if  (cellAsDate < filterDate) { return -1 }
+        if  (cellAsDate > filterDate) { return 1 }
+        return 0;
     }
 
     public getModel(): SerializedDateFilter {
@@ -308,7 +319,7 @@ export class DefaultDateEditorRenderer implements IDateComponent{
     ) {
     }
 
-    init (params: IDateFilterParams):void{
+    init (params: IDateComponentParams):void{
         this.eDateInput = document.createElement("input");
         this.eDateInput.setAttribute("class", "ag-filter-filter");
         this.eDateInput.setAttribute("id", this.inputId);
