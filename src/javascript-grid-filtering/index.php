@@ -125,7 +125,7 @@ columnDefinition = {
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");
             <span class="codeComment">// Create a Date object that represents the date in the cell</span>
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]), Number(dateParts[0]));
+            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
 
             if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
@@ -160,6 +160,15 @@ columnDefinition = {
     </p>
 
     <show-example example="example1"></show-example>
+
+
+    <h3>Custom Date Component</h3>
+
+    <p>
+        If you are using the date filter, it is possible to specify your own component to be used as a date picker.
+    </p>
+
+    <show-example example="customDate"></show-example>
 
     <h3>Apply Function</h3>
 
