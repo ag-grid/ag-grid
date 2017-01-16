@@ -39,6 +39,12 @@ export class SortController {
         this.dispatchSortChangedEvents();
     }
 
+    // gets called by API, so if data changes, use can call this, which will end up
+    // working out the sort order again of the rows.
+    public onSortChanged(): void {
+        this.dispatchSortChangedEvents();
+    }
+
     private dispatchSortChangedEvents(): void {
         this.eventService.dispatchEvent(Events.EVENT_BEFORE_SORT_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_SORT_CHANGED);

@@ -75,6 +75,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     // in the right section. otherwise we would have the cell repeated in each section.
     private isLeaveCellBlank(params: any): boolean {
         if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+
             let pinnedLeftCell = params.pinned === Column.PINNED_LEFT;
             let pinnedRightCell = params.pinned === Column.PINNED_RIGHT;
             let bodyCell = !pinnedLeftCell && !pinnedRightCell;

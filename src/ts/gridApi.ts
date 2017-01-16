@@ -438,6 +438,10 @@ export class GridApi {
         this.filterManager.onFilterChanged();
     }
 
+    public onSortChanged() {
+        this.sortController.onSortChanged();
+    }
+
     public setSortModel(sortModel:any) {
         this.sortController.setSortModel(sortModel);
     }

@@ -215,6 +215,9 @@ export class RenderedRow extends BeanStub {
             this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
             this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
 
+            _.addCssClass(this.eFullWidthRowLeft, 'ag-cell-last-left-pinned');
+            _.addCssClass(this.eFullWidthRowRight, 'ag-cell-first-right-pinned');
+
         } else {
 
             // otherwise we add to the fullWidth container as normal
@@ -729,7 +732,7 @@ export class RenderedRow extends BeanStub {
         }
 
         if (this.eFullWidthRowRight) {
-            var params = this.createFullWidthParams(this.eFullWidthRowRight, Column.PINNED_LEFT);
+            var params = this.createFullWidthParams(this.eFullWidthRowRight, Column.PINNED_RIGHT);
             this.fullWidthRowComponentRight = this.cellRendererService.useCellRenderer(
                 this.fullWidthCellRenderer, this.eFullWidthRowRight, params);
             this.angular1Compile(this.eFullWidthRowRight);
