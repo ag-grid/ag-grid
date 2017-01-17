@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -262,4 +262,5 @@ export declare class ColumnController {
     private createGroupAutoColumn();
     private createValueColumns();
     private getWidthOfColsInList(columnList);
+    getGridBalancedTree(): OriginalColumnGroupChild[];
 }

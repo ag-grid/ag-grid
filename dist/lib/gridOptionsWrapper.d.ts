@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -10,6 +10,7 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { IDatasource } from "./rowControllers/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
+import { IDateComponent } from "./rendering/dateComponent";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
@@ -85,6 +86,7 @@ export declare class GridOptionsWrapper {
     getDoesDataFlowerFunc(): (data: any) => boolean;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
     getFullWidthCellRendererParams(): any;
+    isEmbedFullWidthRows(): boolean;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getHeaderCellRenderer(): any;
     getApi(): GridApi;
@@ -99,6 +101,9 @@ export declare class GridOptionsWrapper {
     getPaginationOverflowSize(): number;
     getPaginationPageSize(): number;
     getPaginationInitialRowCount(): number;
+    getDateComponent(): {
+        new (): IDateComponent;
+    };
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
     isEnableRtl(): boolean;
@@ -115,6 +120,7 @@ export declare class GridOptionsWrapper {
     getViewportDatasource(): IViewportDatasource;
     isEnableSorting(): boolean;
     isEnableCellExpressions(): boolean;
+    isEnableGroupEdit(): boolean;
     isSuppressMiddleClickScrolls(): boolean;
     isSuppressPreventDefaultOnMouseWheel(): boolean;
     isEnableServerSideSorting(): boolean;
@@ -174,6 +180,7 @@ export declare class GridOptionsWrapper {
     getHeaderHeight(): number;
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
+    getDocument(): Document;
     getLayoutInterval(): number;
     getMinColWidth(): number;
     getMaxColWidth(): number;

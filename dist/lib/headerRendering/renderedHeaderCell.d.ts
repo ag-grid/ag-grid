@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
-import { IRenderedHeaderElement } from "./iRenderedHeaderElement";
 import { DropTarget } from "../dragAndDrop/dragAndDropService";
-export declare class RenderedHeaderCell implements IRenderedHeaderElement {
+import { Component } from "../widgets/component";
+export declare class RenderedHeaderCell extends Component {
     private context;
     private filterManager;
     private columnController;
@@ -17,14 +17,16 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     private dragAndDropService;
     private sortController;
     private $scope;
-    private eHeaderCell;
     private eRoot;
     private column;
     private childScope;
     private startWidth;
     private dragSourceDropTarget;
     private displayName;
-    private destroyFunctions;
+    private eFilterIcon;
+    private eSortAsc;
+    private eSortDesc;
+    private eSortNone;
     private pinned;
     constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string);
     getColumn(): Column;
@@ -32,21 +34,22 @@ export declare class RenderedHeaderCell implements IRenderedHeaderElement {
     private setupTooltip();
     private setupText();
     private setupFilterIcon();
+    private onFilterChanged();
     private setupWidth();
-    getGui(): HTMLElement;
-    destroy(): void;
+    private onColumnWidthChanged();
     private createScope();
     private addAttributes();
     private setupMenu();
     showMenu(eventSource: HTMLElement): void;
     private setupMovingCss();
+    private onColumnMovingChanged();
     private setupMove(eHeaderCellLabel);
     private setupTap();
     private setupResize();
     private useRenderer(headerNameValue, headerCellRenderer, eText);
     setupSort(eHeaderCellLabel: HTMLElement): void;
+    private onSortChanged();
     onDragStart(): void;
     private normaliseDragChange(dragChange);
     onDragging(dragChange: number, finished: boolean): void;
-    onIndividualColumnResized(column: Column): void;
 }

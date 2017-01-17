@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../../entities/column";
@@ -54,6 +54,7 @@ export interface ICellEditorParams {
     charPress: string;
     column: Column;
     node: RowNode;
+    rowIndex: number;
     api: GridApi;
     columnApi: ColumnApi;
     cellStartedEdit: boolean;

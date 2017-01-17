@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -19,7 +19,7 @@ export declare class SelectionController {
     removeGroupsFromSelection(): void;
     updateGroupsFromChildrenSelections(): void;
     getNodeForIdIfSelected(id: number): RowNode;
-    clearOtherNodes(rowNodeToKeepSelected: RowNode): void;
+    clearOtherNodes(rowNodeToKeepSelected: RowNode): number;
     private onRowSelected(event);
     syncInRowNode(rowNode: RowNode, oldNode: RowNode): void;
     private syncInOldRowNode(rowNode, oldNode);

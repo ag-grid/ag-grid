@@ -1,10 +1,15 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,208 +19,80 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var context_1 = require("./context/context");
+var gridSerializer_1 = require("./gridSerializer");
+var downloader_1 = require("./downloader");
 var columnController_1 = require("./columnController/columnController");
 var valueService_1 = require("./valueService");
-var context_1 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
-var constants_1 = require("./constants");
-var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
-var utils_1 = require("./utils");
-var selectionController_1 = require("./selectionController");
 var LINE_SEPARATOR = '\r\n';
-var CsvCreator = (function () {
-    function CsvCreator() {
+var CsvSerializingSession = (function (_super) {
+    __extends(CsvSerializingSession, _super);
+    function CsvSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, suppressQuotes, columnSeparator) {
+        _super.call(this, columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback);
+        this.suppressQuotes = suppressQuotes;
+        this.columnSeparator = columnSeparator;
+        this.result = '';
+        this.lineOpened = false;
     }
-    CsvCreator.prototype.exportDataAsCsv = function (params) {
-        var csvString = this.getDataAsCsv(params);
-        var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
-        var fileName = fileNamePresent ? params.fileName : 'export.csv';
-        // for Excel, we need \ufeff at the start
-        // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
-        var blobObject = new Blob(["\ufeff", csvString], {
-            type: "text/csv;charset=utf-8;"
-        });
-        // Internet Explorer
-        if (window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveOrOpenBlob(blobObject, fileName);
-        }
-        else {
-            // Chrome
-            var downloadLink = document.createElement("a");
-            downloadLink.href = window.URL.createObjectURL(blobObject);
-            downloadLink.download = fileName;
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-        }
+    CsvSerializingSession.prototype.prepare = function (columnsToExport) {
     };
-    CsvCreator.prototype.getDataAsCsv = function (params) {
-        var skipGroups = params && params.skipGroups;
-        var skipHeader = params && params.skipHeader;
-        var skipFooters = params && params.skipFooters;
-        var skipFloatingTop = params && params.skipFloatingTop;
-        var skipFloatingBottom = params && params.skipFloatingBottom;
-        var includeCustomHeader = params && params.customHeader;
-        var includeCustomFooter = params && params.customFooter;
-        var allColumns = params && params.allColumns;
-        var onlySelected = params && params.onlySelected;
-        var columnSeparator = (params && params.columnSeparator) || ',';
-        var suppressQuotes = params && params.suppressQuotes;
-        var columnKeys = params && params.columnKeys;
-        var onlySelectedAllPages = params && params.onlySelectedAllPages;
-        var processCellCallback = params && params.processCellCallback;
-        var processHeaderCallback = params && params.processHeaderCallback;
-        // when in pivot mode, we always render cols on screen, never 'all columns'
-        var isPivotMode = this.columnController.isPivotMode();
-        var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
-        var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
-        var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
-        // we can only export if it's a normal row model - unless we are exporting
-        // selected only, as this way we don't use the selected nodes rather than
-        // the row model to get the rows
-        if (!rowModelNormal && !onlySelected) {
-            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
-            return '';
-        }
-        var inMemoryRowModel = this.rowModel;
-        var that = this;
-        var result = '';
-        var columnsToExport;
-        if (utils_1.Utils.existsAndNotEmpty(columnKeys)) {
-            columnsToExport = this.columnController.getGridColumns(columnKeys);
-        }
-        else if (allColumns && !isPivotMode) {
-            columnsToExport = this.columnController.getAllPrimaryColumns();
-        }
-        else {
-            columnsToExport = this.columnController.getAllDisplayedColumns();
-        }
-        if (!columnsToExport || columnsToExport.length === 0) {
-            return '';
-        }
-        if (includeCustomHeader) {
-            result += params.customHeader;
-        }
-        // first pass, put in the header names of the cols
-        if (!skipHeader) {
-            columnsToExport.forEach(processHeaderColumn);
-            result += LINE_SEPARATOR;
-        }
-        this.floatingRowModel.forEachFloatingTopRow(processRow);
-        if (isPivotMode) {
-            inMemoryRowModel.forEachPivotNode(processRow);
-        }
-        else {
-            // onlySelectedAllPages: user doing pagination and wants selected items from
-            // other pages, so cannot use the standard row model as it won't have rows from
-            // other pages.
-            // onlySelectedNonStandardModel: if user wants selected in non standard row model
-            // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
-            if (onlySelectedAllPages || onlySelectedNonStandardModel) {
-                var selectedNodes = this.selectionController.getSelectedNodes();
-                selectedNodes.forEach(processRow);
-            }
-            else {
-                // here is everything else - including standard row model and selected. we don't use
-                // the selection model even when just using selected, so that the result is the order
-                // of the rows appearing on the screen.
-                inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
-            }
-        }
-        this.floatingRowModel.forEachFloatingBottomRow(processRow);
-        if (includeCustomFooter) {
-            result += params.customFooter;
-        }
-        function processRow(node) {
-            if (skipGroups && node.group) {
-                return;
-            }
-            if (skipFooters && node.footer) {
-                return;
-            }
-            if (onlySelected && !node.isSelected()) {
-                return;
-            }
-            if (skipFloatingTop && node.floating === 'top') {
-                return;
-            }
-            if (skipFloatingBottom && node.floating === 'bottom') {
-                return;
-            }
-            // if we are in pivotMode, then the grid will show the root node only
-            // if it's not a leaf group
-            var nodeIsRootNode = node.level === -1;
-            if (nodeIsRootNode && !node.leafGroup) {
-                return;
-            }
-            columnsToExport.forEach(function (column, index) {
-                var valueForCell;
-                if (node.group && isRowGrouping && index === 0) {
-                    valueForCell = that.createValueForGroupNode(node);
-                }
-                else {
-                    valueForCell = that.valueService.getValue(column, node);
-                }
-                valueForCell = that.processCell(node, column, valueForCell, processCellCallback);
-                if (valueForCell === null || valueForCell === undefined) {
-                    valueForCell = '';
-                }
-                if (index != 0) {
-                    result += columnSeparator;
-                }
-                result += that.putInQuotes(valueForCell, suppressQuotes);
-            });
-            result += LINE_SEPARATOR;
-        }
-        function processHeaderColumn(column, index) {
-            var nameForCol = that.getHeaderName(processHeaderCallback, column);
-            if (nameForCol === null || nameForCol === undefined) {
-                nameForCol = '';
-            }
-            if (index != 0) {
-                result += columnSeparator;
-            }
-            result += that.putInQuotes(nameForCol, suppressQuotes);
-        }
-        return result;
+    CsvSerializingSession.prototype.addCustomHeader = function (customHeader) {
+        if (!customHeader)
+            return;
+        this.result += customHeader + LINE_SEPARATOR;
     };
-    CsvCreator.prototype.getHeaderName = function (callback, column) {
-        if (callback) {
-            return callback({
-                column: column,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
-            });
-        }
-        else {
-            return this.columnController.getDisplayNameForColumn(column, 'csv', true);
-        }
+    CsvSerializingSession.prototype.addCustomFooter = function (customFooter) {
+        if (!customFooter)
+            return;
+        this.result += customFooter + LINE_SEPARATOR;
     };
-    CsvCreator.prototype.processCell = function (rowNode, column, value, processCellCallback) {
-        if (processCellCallback) {
-            return processCellCallback({
-                column: column,
-                node: rowNode,
-                value: value,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
-            });
-        }
-        else {
-            return value;
-        }
+    CsvSerializingSession.prototype.onNewHeaderGroupingRow = function () {
+        if (this.lineOpened)
+            this.result += LINE_SEPARATOR;
+        return {
+            onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
+        };
     };
-    CsvCreator.prototype.createValueForGroupNode = function (node) {
-        var keys = [node.key];
-        while (node.parent) {
-            node = node.parent;
-            keys.push(node.key);
+    CsvSerializingSession.prototype.onNewHeaderGroupingRowColumn = function (header, index, span) {
+        if (index != 0) {
+            this.result += this.columnSeparator;
         }
-        return keys.reverse().join(' -> ');
+        this.result += header;
+        for (var i = 1; i <= span; i++) {
+            this.result += this.columnSeparator + this.putInQuotes("", this.suppressQuotes);
+        }
+        this.lineOpened = true;
     };
-    CsvCreator.prototype.putInQuotes = function (value, suppressQuotes) {
+    CsvSerializingSession.prototype.onNewHeaderRow = function () {
+        if (this.lineOpened)
+            this.result += LINE_SEPARATOR;
+        return {
+            onColumn: this.onNewHeaderRowColumn.bind(this)
+        };
+    };
+    CsvSerializingSession.prototype.onNewHeaderRowColumn = function (column, index, node) {
+        if (index != 0) {
+            this.result += this.columnSeparator;
+        }
+        this.result += this.putInQuotes(this.extractHeaderValue(column), this.suppressQuotes);
+        this.lineOpened = true;
+    };
+    CsvSerializingSession.prototype.onNewBodyRow = function () {
+        if (this.lineOpened)
+            this.result += LINE_SEPARATOR;
+        return {
+            onColumn: this.onNewBodyRowColumn.bind(this)
+        };
+    };
+    CsvSerializingSession.prototype.onNewBodyRowColumn = function (column, index, node) {
+        if (index != 0) {
+            this.result += this.columnSeparator;
+        }
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, node), this.suppressQuotes);
+        this.lineOpened = true;
+    };
+    CsvSerializingSession.prototype.putInQuotes = function (value, suppressQuotes) {
         if (suppressQuotes) {
             return value;
         }
@@ -237,14 +114,33 @@ var CsvCreator = (function () {
         var valueEscaped = stringValue.replace(/"/g, "\"\"");
         return '"' + valueEscaped + '"';
     };
+    CsvSerializingSession.prototype.parse = function () {
+        return this.result;
+    };
+    return CsvSerializingSession;
+}(gridSerializer_1.BaseGridSerializingSession));
+exports.CsvSerializingSession = CsvSerializingSession;
+var CsvCreator = (function () {
+    function CsvCreator() {
+    }
+    CsvCreator.prototype.exportDataAsCsv = function (params) {
+        var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
+        var fileName = fileNamePresent ? params.fileName : 'export.csv';
+        var dataAsCsv = this.getDataAsCsv(params);
+        this.downloader.download(fileName, dataAsCsv, "text/csv;charset=utf-8;");
+        return dataAsCsv;
+    };
+    CsvCreator.prototype.getDataAsCsv = function (params) {
+        return this.gridSerializer.serialize(new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params.processCellCallback, params.processHeaderCallback, params && params.suppressQuotes, (params && params.columnSeparator) || ','), params);
+    };
     __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], CsvCreator.prototype, "rowModel", void 0);
+        context_1.Autowired('downloader'), 
+        __metadata('design:type', downloader_1.Downloader)
+    ], CsvCreator.prototype, "downloader", void 0);
     __decorate([
-        context_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', floatingRowModel_1.FloatingRowModel)
-    ], CsvCreator.prototype, "floatingRowModel", void 0);
+        context_1.Autowired('gridSerializer'), 
+        __metadata('design:type', gridSerializer_1.GridSerializer)
+    ], CsvCreator.prototype, "gridSerializer", void 0);
     __decorate([
         context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
@@ -257,10 +153,6 @@ var CsvCreator = (function () {
         context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], CsvCreator.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], CsvCreator.prototype, "selectionController", void 0);
     CsvCreator = __decorate([
         context_1.Bean('csvCreator'), 
         __metadata('design:paramtypes', [])

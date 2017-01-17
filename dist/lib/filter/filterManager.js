@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,13 +24,15 @@ var numberFilter_1 = require("./numberFilter");
 var context_1 = require("../context/context");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
+var dateFilter_1 = require("./dateFilter");
 var FilterManager = (function () {
     function FilterManager() {
         this.allFilters = {};
         this.quickFilter = null;
         this.availableFilters = {
             'text': textFilter_1.TextFilter,
-            'number': numberFilter_1.NumberFilter
+            'number': numberFilter_1.NumberFilter,
+            'date': dateFilter_1.DateFilter
         };
     }
     FilterManager.prototype.init = function () {
@@ -96,13 +98,16 @@ var FilterManager = (function () {
     };
     // returns true if any advanced filter (ie not quick filter) active
     FilterManager.prototype.isAdvancedFilterPresent = function () {
+        return this.advancedFilterPresent;
+    };
+    FilterManager.prototype.setAdvancedFilterPresent = function () {
         var atLeastOneActive = false;
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
             if (filterWrapper.filter.isFilterActive()) {
                 atLeastOneActive = true;
             }
         });
-        return atLeastOneActive;
+        this.advancedFilterPresent = atLeastOneActive;
     };
     FilterManager.prototype.updateFilterFlagInColumns = function () {
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
@@ -168,7 +173,7 @@ var FilterManager = (function () {
     };
     FilterManager.prototype.onFilterChanged = function () {
         this.eventService.dispatchEvent(events_1.Events.EVENT_BEFORE_FILTER_CHANGED);
-        this.advancedFilterPresent = this.isAdvancedFilterPresent();
+        this.setAdvancedFilterPresent();
         this.updateFilterFlagInColumns();
         this.checkExternalFilter();
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
@@ -245,6 +250,7 @@ var FilterManager = (function () {
             }
         });
         this.updateFilterFlagInColumns();
+        this.setAdvancedFilterPresent();
     };
     FilterManager.prototype.createValueGetter = function (column) {
         var that = this;

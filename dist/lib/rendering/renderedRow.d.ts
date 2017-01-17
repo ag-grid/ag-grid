@@ -1,11 +1,13 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RenderedCell } from "./renderedCell";
 import { RowNode } from "../entities/rowNode";
 import { RowRenderer } from "./rowRenderer";
 import { Column } from "../entities/column";
-export declare class RenderedRow {
+import { BeanStub } from "../context/beanStub";
+import { RowContainerComponent } from "./rowContainerComponent";
+export declare class RenderedRow extends BeanStub {
     static EVENT_RENDERED_ROW_REMOVED: string;
     private gridOptionsWrapper;
     private columnController;
@@ -19,8 +21,14 @@ export declare class RenderedRow {
     private ePinnedRightRow;
     private eBodyRow;
     private eFullWidthRow;
+    private eFullWidthRowBody;
+    private eFullWidthRowLeft;
+    private eFullWidthRowRight;
     private eAllRowContainers;
     private fullWidthRowComponent;
+    private fullWidthRowComponentBody;
+    private fullWidthRowComponentLeft;
+    private fullWidthRowComponentRight;
     private renderedCells;
     private scope;
     private rowNode;
@@ -29,14 +37,12 @@ export declare class RenderedRow {
     private fullWidthCellRendererParams;
     private parentScope;
     private rowRenderer;
-    private eBodyContainer;
-    private eBodyContainerDF;
-    private eFullWidthContainer;
-    private ePinnedLeftContainer;
-    private ePinnedLeftContainerDF;
-    private ePinnedRightContainer;
-    private ePinnedRightContainerDF;
-    private destroyFunctions;
+    private bodyContainerComp;
+    private fullWidthContainerComp;
+    private pinnedLeftContainerComp;
+    private pinnedRightContainerComp;
+    private fullWidthPinnedLeftLastTime;
+    private fullWidthPinnedRightLastTime;
     private nextVmTurnFunctions;
     private delayedDestroyFunctions;
     private startRemoveAnimationFunctions;
@@ -44,7 +50,7 @@ export declare class RenderedRow {
     private editingRow;
     private initialised;
     private animateIn;
-    constructor(parentScope: any, rowRenderer: RowRenderer, eBodyContainer: HTMLElement, eBodyContainerDF: DocumentFragment, eFullWidthContainer: HTMLElement, ePinnedLeftContainer: HTMLElement, ePinnedLeftContainerDF: DocumentFragment, ePinnedRightContainer: HTMLElement, ePinnedRightContainerDF: DocumentFragment, node: RowNode, animateIn: boolean);
+    constructor(parentScope: any, rowRenderer: RowRenderer, bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent, pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent, node: RowNode, animateIn: boolean);
     private setupRowContainers(animateInRowTop);
     getAndClearDelayedDestroyFunctions(): Function[];
     getAndClearNextVMTurnFunctions(): Function[];
@@ -52,6 +58,7 @@ export declare class RenderedRow {
     private setupFullWidthContainers(animateInRowTop);
     private addMouseWheelListenerToFullWidthRow();
     private setupFullWidthGroupContainers(animateInRowTop);
+    private createFullWidthRow(animateInRowTop);
     private setupNormalContainers(animateInRowTop);
     init(): void;
     stopRowEditing(cancel: boolean): void;
@@ -61,7 +68,7 @@ export declare class RenderedRow {
     private addDataChangedListener();
     private angular1Compile(element);
     private addColumnListener();
-    private onDisplayedColumnsChanged(event);
+    private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged(event);
     private onGridColumnsChanged();
     private refreshCellsIntoRow();
@@ -73,6 +80,8 @@ export declare class RenderedRow {
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     private addHoverFunctionality();
     private addHoverClass(hover);
+    private rowFocusedLastTime;
+    private setRowFocusClasses();
     private addCellFocusedListener();
     forEachRenderedCell(callback: (renderedCell: RenderedCell) => void): void;
     private addNodeDataChangedListener();
@@ -88,19 +97,17 @@ export declare class RenderedRow {
     getCellForCol(column: Column): HTMLElement;
     destroy(animate?: boolean): void;
     private destroyScope();
-    isDataInList(rows: any[]): boolean;
     isGroup(): boolean;
     private refreshFullWidthComponent();
     private createFullWidthComponent();
     private destroyFullWidthComponent();
-    private createFullWidthParams(eRow);
-    private createGroupSpanningEntireRowCell(padding);
+    private createFullWidthParams(eRow, pinned);
     private createChildScopeOrNull(data);
     private addStyleFromRowStyle();
     private addStyleFromRowStyleFunc();
     private createParams();
     private createEvent(event, eventSource);
-    private createRowContainer(eParentDF, eParent, slideRowIn);
+    private createRowContainer(rowContainerComp, slideRowIn);
     private animateRowIn(eRow, slideRowIn);
     private roundRowTopToBounds(rowTop);
     private onRowDblClick(event);
@@ -109,5 +116,6 @@ export declare class RenderedRow {
     refreshCells(colIds: string[], animate: boolean): void;
     private addClassesFromRowClassFunc();
     private addGridClasses();
+    private addExpandedAndContractedClasses();
     private addClassesFromRowClass();
 }

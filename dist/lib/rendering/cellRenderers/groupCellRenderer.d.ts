@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
@@ -22,6 +22,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private gridApi;
     constructor();
     init(params: any): void;
+    private isLeaveCellBlank(params);
     private addPadding(params);
     private addValueElement(params);
     private createFromInnerRenderer(params);

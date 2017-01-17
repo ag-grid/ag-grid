@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -125,6 +125,11 @@ var Component = (function (_super) {
     };
     Component.prototype.getGui = function () {
         return this.eGui;
+    };
+    // this method is for older code, that wants to provide the gui element,
+    // it is not intended for this to be in ag-Stack
+    Component.prototype.setGui = function (eGui) {
+        this.eGui = eGui;
     };
     Component.prototype.queryForHtmlElement = function (cssSelector) {
         return this.eGui.querySelector(cssSelector);

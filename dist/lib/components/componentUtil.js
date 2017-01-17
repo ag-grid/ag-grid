@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -159,7 +159,7 @@ var ComponentUtil = (function () {
         'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef'
     ];
     ComponentUtil.ARRAY_PROPERTIES = [
-        'slaveGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData', 'columnDefs'
+        'slaveGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData', 'columnDefs', 'excelStyles'
     ];
     ComponentUtil.NUMBER_PROPERTIES = [
         'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupDefaultExpanded',
@@ -184,15 +184,17 @@ var ComponentUtil = (function () {
         'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass',
-        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit'
+        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
+        'enableGroupEdit', 'embedFullWidthRows'
     ];
     ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
-        'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
+        'dateComponent', 'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
         'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
         'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
-        'getBusinessKeyForNode', 'checkboxSelection', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell'];
+        'getBusinessKeyForNode', 'checkboxSelection', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
+        'processCellFromClipboard', 'getDocument'];
     ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
         .concat(ComponentUtil.OBJECT_PROPERTIES)
         .concat(ComponentUtil.STRING_PROPERTIES)
