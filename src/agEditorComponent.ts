@@ -1,7 +1,7 @@
 import {AgFrameworkComponent} from "./agFrameworkComponent";
 
 export interface AgEditorComponent extends AgFrameworkComponent<any> {
-    agInit(params:any) : void;                   // for clarity
+    agInit(params:any) : void;                  // for clarity
     getValue() : any;
     isPopup?(): boolean;
     isCancelBeforeStart?(): boolean;
