@@ -197,11 +197,11 @@ colDef = {
         the browser provided date picker for Chrome (as we think it's nice), but for all other browser it will
         just provide a simple text field. It is assumed that you will have a chosen date picker for your application.
         In this instance you can provide your chosen date picker to ag-Grid. This is done by providing a custom
-        Date Component via the <i>filterParams.dateComponent</i> as follows:
+        Date Component via the grid property <i>dateComponent</i> as follows:
     </p>
 
 <pre>
-filterParams: {
+gridOptions: {
     ...
     <span class="codeComment">// Here is where we specify the component to be used as the date picket widget</span>
     dateComponent: MyDateEditor
@@ -259,7 +259,7 @@ export interface IDateComponentParams {
         See below an example of a custom JQuery date picker.
     </p>
 
-    <show-example example="customDate"></show-example>
+    <show-example example="exampleCustomDate"></show-example>
 
     <h3>Apply Function</h3>
 
