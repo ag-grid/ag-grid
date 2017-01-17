@@ -30,4 +30,16 @@ export class AgGridModule {
             ],
         };
     }
+
+    static forRoot():ModuleWithProviders {
+        console.warn("AgGridModule.forRoot() is deprecated - please use AgGridModule.withComponents([...optional components...]) instead.")
+        return {
+            ngModule: AgGridModule,
+            providers: [
+                Ng2FrameworkFactory,
+                Ng2ComponentFactory,
+                {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory}
+            ],
+        };
+    }
 }
