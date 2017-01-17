@@ -6,7 +6,7 @@ import {
     IDoesFilterPassParams,
     IFilter,
     IFilterParams,
-    IAfterFilterGuiAttachedParams
+    IAfterGuiAttachedParams
 } from "ag-grid/main";
 import {AgRendererComponent} from "./agRendererComponent";
 import {AgEditorComponent} from "./agEditorComponent";
@@ -147,7 +147,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                 this._agAwareComponent.setModel(model);
             }
 
-            afterGuiAttached(params: IAfterFilterGuiAttachedParams): void {
+            afterGuiAttached(params: IAfterGuiAttachedParams): void {
                 if (this._agAwareComponent.afterGuiAttached) {
                     this._agAwareComponent.afterGuiAttached(params);
                 }
