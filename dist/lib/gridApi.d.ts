@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { CsvExportParams } from "./csvCreator";
 import { MasterSlaveService } from "./masterSlaveService";
 import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
@@ -11,6 +10,7 @@ import { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeCont
 import { GridCell } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilter } from "./interfaces/iFilter";
+import { CsvExportParams } from "./exportParams";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column | ColDef;
@@ -19,6 +19,7 @@ export interface StartEditingCellParams {
 }
 export declare class GridApi {
     private csvCreator;
+    private excelCreator;
     private gridCore;
     private rowRenderer;
     private headerRenderer;
@@ -51,6 +52,8 @@ export declare class GridApi {
     getLastRenderedRow(): number;
     getDataAsCsv(params?: CsvExportParams): string;
     exportDataAsCsv(params?: CsvExportParams): void;
+    getDataAsExcel(params?: CsvExportParams): string;
+    exportDataAsExcel(params?: CsvExportParams): void;
     setDatasource(datasource: any): void;
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
     setRowData(rowData: any[]): void;
@@ -113,6 +116,7 @@ export declare class GridApi {
     destroyFilter(key: string | Column | ColDef): void;
     getColumnDef(key: string | Column | ColDef): ColDef;
     onFilterChanged(): void;
+    onSortChanged(): void;
     setSortModel(sortModel: any): void;
     getSortModel(): {
         colId: string;

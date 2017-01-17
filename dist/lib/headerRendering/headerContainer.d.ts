@@ -1,7 +1,7 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { IRenderedHeaderElement } from "./iRenderedHeaderElement";
+import { Component } from "../widgets/component";
 export declare class HeaderContainer {
     private gridOptionsWrapper;
     private context;
@@ -18,7 +18,7 @@ export declare class HeaderContainer {
     private pinned;
     private dropTarget;
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, eRoot: HTMLElement, pinned: string);
-    forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement) => void): void;
+    forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init();
     private onColumnResized();
     private onDisplayedColumnsChanged();

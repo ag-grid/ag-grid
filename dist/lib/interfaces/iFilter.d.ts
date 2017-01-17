@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -28,7 +28,7 @@ export interface IFilter {
      element. The params has one callback method 'hidePopup', which you can call at any later
      point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
      after it is pressed. */
-    afterGuiAttached?(params: IAfterFilterGuiAttachedParams): void;
+    afterGuiAttached?(params: IAfterGuiAttachedParams): void;
     /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
      after rows are loaded, it can do it here. */
     onNewRowsLoaded?(): void;
@@ -56,6 +56,6 @@ export interface IFilterParams {
     context: any;
     $scope: any;
 }
-export interface IAfterFilterGuiAttachedParams {
+export interface IAfterGuiAttachedParams {
     hidePopup?: (event?: any) => void;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,20 +52,9 @@ var RowRenderer = (function () {
     RowRenderer.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create('RowRenderer');
     };
-    RowRenderer.prototype.setupDocumentFragments = function () {
-        var usingDocumentFragments = !!document.createDocumentFragment;
-        if (usingDocumentFragments) {
-            this.eBodyContainerDF = document.createDocumentFragment();
-            if (!this.gridOptionsWrapper.isForPrint()) {
-                this.ePinnedLeftColsContainerDF = document.createDocumentFragment();
-                this.ePinnedRightColsContainerDF = document.createDocumentFragment();
-            }
-        }
-    };
     RowRenderer.prototype.init = function () {
         var _this = this;
-        this.getContainersFromGridPanel();
-        this.setupDocumentFragments();
+        this.rowContainers = this.gridPanel.getRowContainers();
         var modelUpdatedListener = this.onModelUpdated.bind(this);
         var floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
         this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
@@ -75,21 +64,6 @@ var RowRenderer = (function () {
             _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
         });
         this.refreshView();
-    };
-    RowRenderer.prototype.getContainersFromGridPanel = function () {
-        this.eFullWidthContainer = this.gridPanel.getFullWidthCellContainer();
-        this.eBodyContainer = this.gridPanel.getBodyContainer();
-        this.ePinnedLeftColsContainer = this.gridPanel.getPinnedLeftColsContainer();
-        this.ePinnedRightColsContainer = this.gridPanel.getPinnedRightColsContainer();
-        this.eFloatingTopContainer = this.gridPanel.getFloatingTopContainer();
-        this.eFloatingTopPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingTop();
-        this.eFloatingTopPinnedRightContainer = this.gridPanel.getPinnedRightFloatingTop();
-        this.eFloatingTopFullWidthContainer = this.gridPanel.getFloatingTopFullWidthCellContainer();
-        this.eFloatingBottomContainer = this.gridPanel.getFloatingBottomContainer();
-        this.eFloatingBottomPinnedLeftContainer = this.gridPanel.getPinnedLeftFloatingBottom();
-        this.eFloatingBottomPinnedRightContainer = this.gridPanel.getPinnedRightFloatingBottom();
-        this.eFloatingBottomFullWithContainer = this.gridPanel.getFloatingBottomFullWidthCellContainer();
-        this.eBodyViewport = this.gridPanel.getBodyViewport();
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
         var eCells = [];
@@ -105,10 +79,10 @@ var RowRenderer = (function () {
         return eCells;
     };
     RowRenderer.prototype.refreshAllFloatingRows = function () {
-        this.refreshFloatingRows(this.renderedTopFloatingRows, this.floatingRowModel.getFloatingTopRowData(), this.eFloatingTopPinnedLeftContainer, this.eFloatingTopPinnedRightContainer, this.eFloatingTopContainer, this.eFloatingTopFullWidthContainer);
-        this.refreshFloatingRows(this.renderedBottomFloatingRows, this.floatingRowModel.getFloatingBottomRowData(), this.eFloatingBottomPinnedLeftContainer, this.eFloatingBottomPinnedRightContainer, this.eFloatingBottomContainer, this.eFloatingBottomFullWithContainer);
+        this.refreshFloatingRows(this.renderedTopFloatingRows, this.floatingRowModel.getFloatingTopRowData(), this.rowContainers.floatingTopPinnedLeft, this.rowContainers.floatingTopPinnedRight, this.rowContainers.floatingTop, this.rowContainers.floatingTopFullWidth);
+        this.refreshFloatingRows(this.renderedBottomFloatingRows, this.floatingRowModel.getFloatingBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWith);
     };
-    RowRenderer.prototype.refreshFloatingRows = function (renderedRows, rowNodes, ePinnedLeftContainer, ePinnedRightContainer, eBodyContainer, eFullWidthContainer) {
+    RowRenderer.prototype.refreshFloatingRows = function (renderedRows, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp) {
         var _this = this;
         renderedRows.forEach(function (row) {
             row.destroy();
@@ -121,7 +95,7 @@ var RowRenderer = (function () {
         }
         if (rowNodes) {
             rowNodes.forEach(function (node) {
-                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, eBodyContainer, null, eFullWidthContainer, ePinnedLeftContainer, null, ePinnedRightContainer, null, node, false);
+                var renderedRow = new renderedRow_1.RenderedRow(_this.$scope, _this, bodyContainerComp, fullWidthContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, node, false);
                 _this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             });
@@ -167,10 +141,17 @@ var RowRenderer = (function () {
         var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
-            this.eBodyContainer.style.height = containerHeight + "px";
-            this.eFullWidthContainer.style.height = containerHeight + "px";
-            this.ePinnedLeftColsContainer.style.height = containerHeight + "px";
-            this.ePinnedRightColsContainer.style.height = containerHeight + "px";
+            // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
+            // we still want the scroll to be present, otherwise there would be no way to access the columns
+            // on the RHS - and if that was where the filter was that cause no rows to be presented, there
+            // is no way to remove the filter.
+            if (containerHeight === 0) {
+                containerHeight = 1;
+            }
+            this.rowContainers.body.setHeight(containerHeight);
+            this.rowContainers.fullWidth.setHeight(containerHeight);
+            this.rowContainers.pinnedLeft.setHeight(containerHeight);
+            this.rowContainers.pinnedRight.setHeight(containerHeight);
         }
         this.refreshAllVirtualRows(keepRenderedRows, animate);
         this.refreshAllFloatingRows();
@@ -399,14 +380,10 @@ var RowRenderer = (function () {
             delayedDestroyFunctions.forEach(function (func) { return func(); });
         }, 400);
         // timer.print('removing');
-        // we prepend rather than append so that new rows appear under current rows. this way the new
-        // rows are not over the current rows which will get animation as they slid to new position
-        if (this.eBodyContainerDF) {
-            utils_1.Utils.prependDC(this.eBodyContainer, this.eBodyContainerDF);
-            if (!this.gridOptionsWrapper.isForPrint()) {
-                utils_1.Utils.prependDC(this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF);
-                utils_1.Utils.prependDC(this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF);
-            }
+        this.rowContainers.body.flushDocumentFragment();
+        if (!this.gridOptionsWrapper.isForPrint()) {
+            this.rowContainers.pinnedLeft.flushDocumentFragment();
+            this.rowContainers.pinnedRight.flushDocumentFragment();
         }
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
@@ -422,7 +399,7 @@ var RowRenderer = (function () {
             delete oldRowsByNodeId[rowNode.id];
         }
         else {
-            renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.eBodyContainer, this.eBodyContainerDF, this.eFullWidthContainer, this.ePinnedLeftColsContainer, this.ePinnedLeftColsContainerDF, this.ePinnedRightColsContainer, this.ePinnedRightColsContainerDF, rowNode, animate);
+            renderedRow = new renderedRow_1.RenderedRow(this.$scope, this, this.rowContainers.body, this.rowContainers.fullWidth, this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight, rowNode, animate);
             this.context.wireBean(renderedRow);
         }
         return renderedRow;

@@ -1,9 +1,24 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
 import { BeanStub } from "../context/beanStub";
+import { RowContainerComponent } from "../rendering/rowContainerComponent";
+export interface RowContainerComponents {
+    fullWidth: RowContainerComponent;
+    body: RowContainerComponent;
+    pinnedLeft: RowContainerComponent;
+    pinnedRight: RowContainerComponent;
+    floatingTop: RowContainerComponent;
+    floatingTopPinnedLeft: RowContainerComponent;
+    floatingTopPinnedRight: RowContainerComponent;
+    floatingTopFullWidth: RowContainerComponent;
+    floatingBottom: RowContainerComponent;
+    floatingBottomPinnedLeft: RowContainerComponent;
+    floatingBottomPinnedRight: RowContainerComponent;
+    floatingBottomFullWith: RowContainerComponent;
+}
 export declare class GridPanel extends BeanStub {
     private masterSlaveService;
     private gridOptionsWrapper;
@@ -31,19 +46,20 @@ export declare class GridPanel extends BeanStub {
     private eBodyViewport;
     private eRoot;
     private eBody;
+    private rowContainerComponents;
     private eBodyContainer;
     private ePinnedLeftColsContainer;
     private ePinnedRightColsContainer;
     private eFullWidthCellViewport;
     private eFullWidthCellContainer;
+    private ePinnedLeftColsViewport;
+    private ePinnedRightColsViewport;
+    private eBodyViewportWrapper;
     private eHeaderContainer;
     private eHeaderOverlay;
     private ePinnedLeftHeader;
     private ePinnedRightHeader;
     private eHeader;
-    private eBodyViewportWrapper;
-    private ePinnedLeftColsViewport;
-    private ePinnedRightColsViewport;
     private eHeaderViewport;
     private eFloatingTop;
     private ePinnedLeftFloatingTop;
@@ -65,6 +81,8 @@ export declare class GridPanel extends BeanStub {
     private enableRtl;
     private forPrint;
     private scrollWidth;
+    private pinningRight;
+    private pinningLeft;
     agWire(loggerFactory: LoggerFactory): void;
     getVerticalPixelRange(): any;
     destroy(): void;
@@ -89,12 +107,6 @@ export declare class GridPanel extends BeanStub {
     private onCtrlAndC(event);
     private onCtrlAndV(event);
     private onCtrlAndD(event);
-    getPinnedLeftFloatingTop(): HTMLElement;
-    getPinnedRightFloatingTop(): HTMLElement;
-    getFloatingTopContainer(): HTMLElement;
-    getPinnedLeftFloatingBottom(): HTMLElement;
-    getPinnedRightFloatingBottom(): HTMLElement;
-    getFloatingBottomContainer(): HTMLElement;
     private createOverlayTemplate(name, defaultTemplate, userProvidedTemplate);
     private createLoadingOverlayTemplate();
     private createNoRowsOverlayTemplate();
@@ -115,14 +127,9 @@ export declare class GridPanel extends BeanStub {
     private getWidthForSizeColsToFit();
     sizeColumnsToFit(nextTimeout?: number): void;
     getBodyContainer(): HTMLElement;
-    getFullWidthCellContainer(): HTMLElement;
-    getFloatingTopFullWidthCellContainer(): HTMLElement;
-    getFloatingBottomFullWidthCellContainer(): HTMLElement;
     getDropTargetBodyContainers(): HTMLElement[];
     getBodyViewport(): HTMLElement;
-    getPinnedLeftColsContainer(): HTMLElement;
     getDropTargetLeftContainers(): HTMLElement[];
-    getPinnedRightColsContainer(): HTMLElement;
     getDropTargetPinnedRightContainers(): HTMLElement[];
     getHeaderContainer(): HTMLElement;
     getHeaderOverlay(): HTMLElement;
@@ -130,7 +137,9 @@ export declare class GridPanel extends BeanStub {
     getPinnedLeftHeader(): HTMLElement;
     getPinnedRightHeader(): HTMLElement;
     private queryHtmlElement(selector);
+    private loadTemplate();
     private findElements();
+    getRowContainers(): RowContainerComponents;
     private addMouseWheelEventListeners();
     getHeaderViewport(): HTMLElement;
     private centerMouseWheelListener(event);
@@ -142,8 +151,6 @@ export declare class GridPanel extends BeanStub {
     private setWidthsOfContainers();
     private setPinnedLeftWidth();
     private setPinnedRightWidth();
-    private pinningRight;
-    private pinningLeft;
     private setPinnedContainersVisible();
     setBodyAndHeaderHeights(): void;
     setHorizontalScrollPosition(hScrollPosition: number): void;

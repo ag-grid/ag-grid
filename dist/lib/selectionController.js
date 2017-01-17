@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -96,10 +96,11 @@ var SelectionController = (function () {
     SelectionController.prototype.clearOtherNodes = function (rowNodeToKeepSelected) {
         var _this = this;
         var groupsToRefresh = {};
+        var updatedCount = 0;
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 var rowNode = _this.selectedNodes[otherRowNode.id];
-                rowNode.setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
+                updatedCount += rowNode.setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
                 if (_this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }
@@ -108,6 +109,7 @@ var SelectionController = (function () {
         utils_1.Utils.iterateObject(groupsToRefresh, function (key, group) {
             group.calculateSelectedFromChildren();
         });
+        return updatedCount;
     };
     SelectionController.prototype.onRowSelected = function (event) {
         var rowNode = event.node;

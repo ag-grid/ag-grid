@@ -1,10 +1,15 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -28,11 +33,13 @@ var constants_1 = require("../constants");
 var cellRendererService_1 = require("./cellRendererService");
 var cellRendererFactory_1 = require("./cellRendererFactory");
 var gridPanel_1 = require("../gridPanel/gridPanel");
-var RenderedRow = (function () {
-    function RenderedRow(parentScope, rowRenderer, eBodyContainer, eBodyContainerDF, eFullWidthContainer, ePinnedLeftContainer, ePinnedLeftContainerDF, ePinnedRightContainer, ePinnedRightContainerDF, node, animateIn) {
+var beanStub_1 = require("../context/beanStub");
+var RenderedRow = (function (_super) {
+    __extends(RenderedRow, _super);
+    function RenderedRow(parentScope, rowRenderer, bodyContainerComp, fullWidthContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, node, animateIn) {
+        _super.call(this);
         this.eAllRowContainers = [];
         this.renderedCells = {};
-        this.destroyFunctions = [];
         // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
         // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
         // executes them all in one timeout
@@ -48,13 +55,10 @@ var RenderedRow = (function () {
         this.initialised = false;
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
-        this.eBodyContainer = eBodyContainer;
-        this.eBodyContainerDF = eBodyContainerDF;
-        this.eFullWidthContainer = eFullWidthContainer;
-        this.ePinnedLeftContainer = ePinnedLeftContainer;
-        this.ePinnedLeftContainerDF = ePinnedLeftContainerDF;
-        this.ePinnedRightContainer = ePinnedRightContainer;
-        this.ePinnedRightContainerDF = ePinnedRightContainerDF;
+        this.bodyContainerComp = bodyContainerComp;
+        this.fullWidthContainerComp = fullWidthContainerComp;
+        this.pinnedLeftContainerComp = pinnedLeftContainerComp;
+        this.pinnedRightContainerComp = pinnedRightContainerComp;
         this.rowNode = node;
         this.animateIn = animateIn;
     }
@@ -72,6 +76,29 @@ var RenderedRow = (function () {
             this.setupNormalContainers(animateInRowTop);
         }
     };
+    /*    private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
+            var eRow: HTMLElement = document.createElement('span');
+            // padding means we are on the right hand side of a pinned table, ie
+            // in the main body.
+            if (!padding) {
+    
+                var params = this.createFullWidthParams(eRow, null);
+    
+                var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
+    
+                if (cellComponent && cellComponent.destroy) {
+                    this.addDestroyFunc( () => cellComponent.destroy() );
+                }
+            }
+    
+            if (this.rowNode.footer) {
+                _.addCssClass(eRow, 'ag-footer-cell-entire-row');
+            } else {
+                _.addCssClass(eRow, 'ag-group-cell-entire-row');
+            }
+    
+            return eRow;
+        }*/
     // we clear so that the functions are never executed twice
     RenderedRow.prototype.getAndClearDelayedDestroyFunctions = function () {
         var result = this.delayedDestroyFunctions;
@@ -90,7 +117,7 @@ var RenderedRow = (function () {
         gridCellNoType[domDataKey] = {
             renderedRow: this
         };
-        this.destroyFunctions.push(function () { gridCellNoType[domDataKey] = null; });
+        this.addDestroyFunc(function () { gridCellNoType[domDataKey] = null; });
     };
     RenderedRow.prototype.setupFullWidthContainers = function (animateInRowTop) {
         this.fullWidthRow = true;
@@ -99,22 +126,14 @@ var RenderedRow = (function () {
         if (utils_1.Utils.missing(this.fullWidthCellRenderer)) {
             console.warn("ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()");
         }
-        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.addMouseWheelListenerToFullWidthRow();
-        }
+        this.createFullWidthRow(animateInRowTop);
     };
     RenderedRow.prototype.addMouseWheelListenerToFullWidthRow = function () {
-        var _this = this;
         var mouseWheelListener = this.gridPanel.genericMouseWheelListener.bind(this.gridPanel);
         // IE9, Chrome, Safari, Opera
-        this.eFullWidthRow.addEventListener('mousewheel', mouseWheelListener);
+        this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
         // Firefox
-        this.eFullWidthRow.addEventListener('DOMMouseScroll', mouseWheelListener);
-        this.destroyFunctions.push(function () {
-            _this.eFullWidthRow.removeEventListener('mousewheel', mouseWheelListener);
-            _this.eFullWidthRow.removeEventListener('DOMMouseScroll', mouseWheelListener);
-        });
+        this.addDestroyableEventListener(this.eFullWidthRow, 'DOMMouseScroll', mouseWheelListener);
     };
     RenderedRow.prototype.setupFullWidthGroupContainers = function (animateInRowTop) {
         this.fullWidthRow = true;
@@ -126,17 +145,33 @@ var RenderedRow = (function () {
                 innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
             };
         }
-        this.eFullWidthRow = this.createRowContainer(null, this.eFullWidthContainer, animateInRowTop);
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.addMouseWheelListenerToFullWidthRow();
+        this.createFullWidthRow(animateInRowTop);
+    };
+    RenderedRow.prototype.createFullWidthRow = function (animateInRowTop) {
+        var embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
+        if (embedFullWidthRows) {
+            // if embedding the full width, it gets added to the body, left and right
+            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
+            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
+            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
+            utils_1.Utils.addCssClass(this.eFullWidthRowLeft, 'ag-cell-last-left-pinned');
+            utils_1.Utils.addCssClass(this.eFullWidthRowRight, 'ag-cell-first-right-pinned');
+        }
+        else {
+            // otherwise we add to the fullWidth container as normal
+            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
+            // and fake the mouse wheel for the fullWidth container
+            if (!this.gridOptionsWrapper.isForPrint()) {
+                this.addMouseWheelListenerToFullWidthRow();
+            }
         }
     };
     RenderedRow.prototype.setupNormalContainers = function (animateInRowTop) {
         this.fullWidthRow = false;
-        this.eBodyRow = this.createRowContainer(this.eBodyContainerDF, this.eBodyContainer, animateInRowTop);
+        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer(this.ePinnedLeftContainerDF, this.ePinnedLeftContainer, animateInRowTop);
-            this.ePinnedRightRow = this.createRowContainer(this.ePinnedRightContainerDF, this.ePinnedRightContainer, animateInRowTop);
+            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
+            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
         }
     };
     RenderedRow.prototype.init = function () {
@@ -150,6 +185,7 @@ var RenderedRow = (function () {
             this.refreshCellsIntoRow();
         }
         this.addGridClasses();
+        this.addExpandedAndContractedClasses();
         this.addStyleFromRowStyle();
         this.addStyleFromRowStyleFunc();
         this.addClassesFromRowClass();
@@ -231,8 +267,7 @@ var RenderedRow = (function () {
             _this.addStyleFromRowStyleFunc();
             _this.addClassesFromRowClass();
         };
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, dataChangedListener);
-        this.destroyFunctions.push(function () { return _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, dataChangedListener); });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, dataChangedListener);
     };
     RenderedRow.prototype.angular1Compile = function (element) {
         if (this.scope) {
@@ -240,27 +275,27 @@ var RenderedRow = (function () {
         }
     };
     RenderedRow.prototype.addColumnListener = function () {
-        var _this = this;
         var columnListener = this.onDisplayedColumnsChanged.bind(this);
         var virtualListener = this.onVirtualColumnsChanged.bind(this);
         var gridColumnsChangedListener = this.onGridColumnsChanged.bind(this);
-        this.mainEventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-        this.mainEventService.addEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
-        this.mainEventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
-        this.mainEventService.addEventListener(events_1.Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
-        this.destroyFunctions.push(function () {
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
-        });
+        this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
+        this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_COLUMN_RESIZED, columnListener);
+        this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
     };
-    RenderedRow.prototype.onDisplayedColumnsChanged = function (event) {
+    RenderedRow.prototype.onDisplayedColumnsChanged = function () {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (this.fullWidthRow) {
-            var columnPinned = event.getType() === events_1.Events.EVENT_COLUMN_PINNED;
-            if (columnPinned) {
-                this.refreshFullWidthComponent();
+            if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+                var leftMismatch = this.fullWidthPinnedLeftLastTime !== this.columnController.isPinningLeft();
+                var rightMismatch = this.fullWidthPinnedRightLastTime !== this.columnController.isPinningRight();
+                // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
+                // embedded, as what appears in each section depends on whether we are pinned or not
+                if (leftMismatch || rightMismatch) {
+                    this.refreshFullWidthComponent();
+                }
+            }
+            else {
             }
         }
         else {
@@ -360,12 +395,7 @@ var RenderedRow = (function () {
         this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-selected', selected); });
     };
     RenderedRow.prototype.addRowSelectedListener = function () {
-        var _this = this;
-        var rowSelectedListener = this.onRowSelected.bind(this);
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
-        this.destroyFunctions.push(function () {
-            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_ROW_SELECTED, rowSelectedListener);
-        });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     };
     RenderedRow.prototype.onMouseEvent = function (eventName, mouseEvent) {
         switch (eventName) {
@@ -389,44 +419,32 @@ var RenderedRow = (function () {
         var onGuiMouseEnter = this.rowNode.onMouseEnter.bind(this.rowNode);
         var onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
         this.eAllRowContainers.forEach(function (eRow) {
-            eRow.addEventListener('mouseenter', onGuiMouseEnter);
-            eRow.addEventListener('mouseleave', onGuiMouseLeave);
+            _this.addDestroyableEventListener(eRow, 'mouseenter', onGuiMouseEnter);
+            _this.addDestroyableEventListener(eRow, 'mouseleave', onGuiMouseLeave);
         });
         var onNodeMouseEnter = this.addHoverClass.bind(this, true);
         var onNodeMouseLeave = this.addHoverClass.bind(this, false);
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
-        this.destroyFunctions.push(function () {
-            _this.eAllRowContainers.forEach(function (eRow) {
-                eRow.removeEventListener('mouseenter', onGuiMouseEnter);
-                eRow.removeEventListener('mouseleave', onGuiMouseLeave);
-            });
-            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
-            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
-        });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_MOUSE_ENTER, onNodeMouseEnter);
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_MOUSE_LEAVE, onNodeMouseLeave);
     };
     RenderedRow.prototype.addHoverClass = function (hover) {
         this.eAllRowContainers.forEach(function (eRow) { return utils_1.Utils.addOrRemoveCssClass(eRow, 'ag-row-hover', hover); });
     };
+    RenderedRow.prototype.setRowFocusClasses = function () {
+        var rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);
+        if (rowFocused !== this.rowFocusedLastTime) {
+            this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused); });
+            this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused); });
+            this.rowFocusedLastTime = rowFocused;
+        }
+        if (!rowFocused && this.editingRow) {
+            this.stopEditing(false);
+        }
+    };
     RenderedRow.prototype.addCellFocusedListener = function () {
-        var _this = this;
-        var rowFocusedLastTime = null;
-        var rowFocusedListener = function () {
-            var rowFocused = _this.focusedCellController.isRowFocused(_this.rowNode.rowIndex, _this.rowNode.floating);
-            if (rowFocused !== rowFocusedLastTime) {
-                _this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused); });
-                _this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused); });
-                rowFocusedLastTime = rowFocused;
-            }
-            if (!rowFocused && _this.editingRow) {
-                _this.stopEditing(false);
-            }
-        };
-        this.mainEventService.addEventListener(events_1.Events.EVENT_CELL_FOCUSED, rowFocusedListener);
-        this.destroyFunctions.push(function () {
-            _this.mainEventService.removeEventListener(events_1.Events.EVENT_CELL_FOCUSED, rowFocusedListener);
-        });
-        rowFocusedListener();
+        this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
+        this.setRowFocusClasses();
     };
     RenderedRow.prototype.forEachRenderedCell = function (callback) {
         utils_1.Utils.iterateObject(this.renderedCells, function (key, renderedCell) {
@@ -446,10 +464,7 @@ var RenderedRow = (function () {
             // as a result. this is what happens when selected rows are loaded in virtual pagination.
             _this.onRowSelected();
         };
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
-        this.destroyFunctions.push(function () {
-            _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
-        });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
     };
     RenderedRow.prototype.onTopChanged = function () {
         // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
@@ -464,13 +479,11 @@ var RenderedRow = (function () {
         }
     };
     RenderedRow.prototype.setupTop = function (animateInRowTop) {
-        var _this = this;
         if (this.gridOptionsWrapper.isForPrint()) {
             return;
         }
         var topChangedListener = this.onTopChanged.bind(this);
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_TOP_CHANGED, topChangedListener);
-        this.destroyFunctions.push(function () { return _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_TOP_CHANGED, topChangedListener); });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_TOP_CHANGED, topChangedListener);
         if (!animateInRowTop) {
             this.onTopChanged();
         }
@@ -486,8 +499,7 @@ var RenderedRow = (function () {
                 _this.eAllRowContainers.forEach(function (row) { return row.style.height = heightPx; });
             }
         };
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_HEIGHT_CHANGED, setHeightListener);
-        this.destroyFunctions.push(function () { return _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_HEIGHT_CHANGED, setHeightListener); });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_HEIGHT_CHANGED, setHeightListener);
         setHeightListener();
     };
     RenderedRow.prototype.addRowIndexes = function () {
@@ -507,8 +519,7 @@ var RenderedRow = (function () {
                 utils_1.Utils.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
             });
         };
-        this.rowNode.addEventListener(rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener);
-        this.destroyFunctions.push(function () { return _this.rowNode.removeEventListener(rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener); });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, rowIndexListener);
         rowIndexListener();
     };
     // adds in row and row-id attributes to the row
@@ -543,10 +554,12 @@ var RenderedRow = (function () {
     };
     RenderedRow.prototype.destroy = function (animate) {
         if (animate === void 0) { animate = false; }
+        _super.prototype.destroy.call(this);
+        // why do we have this method? shouldn't everything below be added as a destroy func beside
+        // the corresponding create logic?
         this.destroyScope();
         this.destroyFullWidthComponent();
         this.forEachRenderedCell(function (renderedCell) { return renderedCell.destroy(); });
-        this.destroyFunctions.forEach(function (func) { return func(); });
         if (animate) {
             this.startRemoveAnimationFunctions.forEach(function (func) { return func(); });
         }
@@ -568,9 +581,6 @@ var RenderedRow = (function () {
             this.scope = null;
         }
     };
-    RenderedRow.prototype.isDataInList = function (rows) {
-        return rows.indexOf(this.rowNode.data) >= 0;
-    };
     RenderedRow.prototype.isGroup = function () {
         return this.rowNode.group === true;
     };
@@ -579,9 +589,28 @@ var RenderedRow = (function () {
         this.createFullWidthComponent();
     };
     RenderedRow.prototype.createFullWidthComponent = function () {
-        var params = this.createFullWidthParams(this.eFullWidthRow);
-        this.fullWidthRowComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, this.eFullWidthRow, params);
-        this.angular1Compile(this.eFullWidthRow);
+        this.fullWidthPinnedLeftLastTime = this.columnController.isPinningLeft();
+        this.fullWidthPinnedRightLastTime = this.columnController.isPinningRight();
+        if (this.eFullWidthRow) {
+            var params = this.createFullWidthParams(this.eFullWidthRow, null);
+            this.fullWidthRowComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, this.eFullWidthRow, params);
+            this.angular1Compile(this.eFullWidthRow);
+        }
+        if (this.eFullWidthRowBody) {
+            var params = this.createFullWidthParams(this.eFullWidthRowBody, null);
+            this.fullWidthRowComponentBody = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, this.eFullWidthRowBody, params);
+            this.angular1Compile(this.eFullWidthRowBody);
+        }
+        if (this.eFullWidthRowLeft) {
+            var params = this.createFullWidthParams(this.eFullWidthRowLeft, column_1.Column.PINNED_LEFT);
+            this.fullWidthRowComponentLeft = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, this.eFullWidthRowLeft, params);
+            this.angular1Compile(this.eFullWidthRowLeft);
+        }
+        if (this.eFullWidthRowRight) {
+            var params = this.createFullWidthParams(this.eFullWidthRowRight, column_1.Column.PINNED_RIGHT);
+            this.fullWidthRowComponentRight = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, this.eFullWidthRowRight, params);
+            this.angular1Compile(this.eFullWidthRowRight);
+        }
     };
     RenderedRow.prototype.destroyFullWidthComponent = function () {
         if (this.fullWidthRowComponent) {
@@ -590,9 +619,38 @@ var RenderedRow = (function () {
             }
             this.fullWidthRowComponent = null;
         }
-        utils_1.Utils.removeAllChildren(this.eFullWidthRow);
+        if (this.fullWidthRowComponentBody) {
+            if (this.fullWidthRowComponentBody.destroy) {
+                this.fullWidthRowComponentBody.destroy();
+            }
+            this.fullWidthRowComponent = null;
+        }
+        if (this.fullWidthRowComponentLeft) {
+            if (this.fullWidthRowComponentLeft.destroy) {
+                this.fullWidthRowComponentLeft.destroy();
+            }
+            this.fullWidthRowComponentLeft = null;
+        }
+        if (this.fullWidthRowComponentRight) {
+            if (this.fullWidthRowComponentRight.destroy) {
+                this.fullWidthRowComponentRight.destroy();
+            }
+            this.fullWidthRowComponent = null;
+        }
+        if (this.eFullWidthRow) {
+            utils_1.Utils.removeAllChildren(this.eFullWidthRow);
+        }
+        if (this.eFullWidthRowBody) {
+            utils_1.Utils.removeAllChildren(this.eFullWidthRowBody);
+        }
+        if (this.eFullWidthRowLeft) {
+            utils_1.Utils.removeAllChildren(this.eFullWidthRowLeft);
+        }
+        if (this.eFullWidthRowRight) {
+            utils_1.Utils.removeAllChildren(this.eFullWidthRowRight);
+        }
     };
-    RenderedRow.prototype.createFullWidthParams = function (eRow) {
+    RenderedRow.prototype.createFullWidthParams = function (eRow, pinned) {
         var params = {
             data: this.rowNode.data,
             node: this.rowNode,
@@ -603,6 +661,7 @@ var RenderedRow = (function () {
             context: this.gridOptionsWrapper.getContext(),
             eGridCell: eRow,
             eParentOfValue: eRow,
+            pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this),
             colDef: {
                 cellRenderer: this.fullWidthCellRenderer,
@@ -613,25 +672,6 @@ var RenderedRow = (function () {
             utils_1.Utils.assign(params, this.fullWidthCellRendererParams);
         }
         return params;
-    };
-    RenderedRow.prototype.createGroupSpanningEntireRowCell = function (padding) {
-        var eRow = document.createElement('span');
-        // padding means we are on the right hand side of a pinned table, ie
-        // in the main body.
-        if (!padding) {
-            var params = this.createFullWidthParams(eRow);
-            var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
-            if (cellComponent && cellComponent.destroy) {
-                this.destroyFunctions.push(function () { return cellComponent.destroy(); });
-            }
-        }
-        if (this.rowNode.footer) {
-            utils_1.Utils.addCssClass(eRow, 'ag-footer-cell-entire-row');
-        }
-        else {
-            utils_1.Utils.addCssClass(eRow, 'ag-group-cell-entire-row');
-        }
-        return eRow;
     };
     RenderedRow.prototype.createChildScopeOrNull = function (data) {
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
@@ -687,15 +727,14 @@ var RenderedRow = (function () {
         agEvent.eventSource = eventSource;
         return agEvent;
     };
-    RenderedRow.prototype.createRowContainer = function (eParentDF, eParent, slideRowIn) {
+    RenderedRow.prototype.createRowContainer = function (rowContainerComp, slideRowIn) {
         var _this = this;
         var eRow = document.createElement('div');
         this.addDomData(eRow);
-        var eTarget = eParentDF ? eParentDF : eParent;
-        eTarget.appendChild(eRow);
+        rowContainerComp.appendRowElement(eRow);
         this.eAllRowContainers.push(eRow);
         this.delayedDestroyFunctions.push(function () {
-            eParent.removeChild(eRow);
+            rowContainerComp.removeRowElement(eRow);
         });
         this.startRemoveAnimationFunctions.push(function () {
             utils_1.Utils.addCssClass(eRow, 'ag-opacity-zero');
@@ -851,13 +890,6 @@ var RenderedRow = (function () {
             classes.push('ag-row-group');
             // if a group, put the level of the group in
             classes.push('ag-row-level-' + this.rowNode.level);
-            if (!this.rowNode.footer && this.rowNode.expanded) {
-                classes.push('ag-row-group-expanded');
-            }
-            if (!this.rowNode.footer && !this.rowNode.expanded) {
-                // opposite of expanded is contracted according to the internet.
-                classes.push('ag-row-group-contracted');
-            }
             if (this.rowNode.footer) {
                 classes.push('ag-row-footer');
             }
@@ -877,6 +909,19 @@ var RenderedRow = (function () {
         classes.forEach(function (classStr) {
             _this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addCssClass(row, classStr); });
         });
+    };
+    RenderedRow.prototype.addExpandedAndContractedClasses = function () {
+        var _this = this;
+        var isGroupNode = this.rowNode.group && !this.rowNode.footer;
+        if (!isGroupNode) {
+            return;
+        }
+        var listener = function () {
+            var expanded = _this.rowNode.expanded;
+            _this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded); });
+            _this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded); });
+        };
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, listener);
     };
     RenderedRow.prototype.addClassesFromRowClass = function () {
         var _this = this;
@@ -942,5 +987,5 @@ var RenderedRow = (function () {
         __metadata('design:returntype', void 0)
     ], RenderedRow.prototype, "init", null);
     return RenderedRow;
-}());
+}(beanStub_1.BeanStub));
 exports.RenderedRow = RenderedRow;

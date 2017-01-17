@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
@@ -19,7 +19,6 @@ export declare class DragService {
     private onTouchMoveListener;
     private logger;
     private dragEndFunctions;
-    private eBody;
     private dragSources;
     private init();
     private destroy();

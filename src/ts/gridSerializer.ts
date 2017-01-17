@@ -179,6 +179,7 @@ export class GridSerializer {
     public serialize(gridSerializingSession: GridSerializingSession, params?: CsvExportParams): string {
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
+        var columnGroups = params && params.columnGroups;
         var skipFooters = params && params.skipFooters;
         var skipFloatingTop = params && params.skipFloatingTop;
         var skipFloatingBottom = params && params.skipFloatingBottom;
@@ -188,8 +189,6 @@ export class GridSerializer {
         var onlySelected = params && params.onlySelected;
         var columnKeys = params && params.columnKeys;
         var onlySelectedAllPages = params && params.onlySelectedAllPages;
-        var processCellCallback = params && params.processCellCallback;
-        var processHeaderCallback = params && params.processHeaderCallback;
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
@@ -234,7 +233,7 @@ export class GridSerializer {
                 this.columnController.getGridBalancedTree(),
                 groupInstanceIdCreator
             );
-            if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
+            if (columnGroups && displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
                 let gridRowIterator : RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
                 let columnIndex :number = 0;
                 displayedGroups.forEach((it:ColumnGroupChild)=>{

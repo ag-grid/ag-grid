@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,11 @@ var SortController = (function () {
         if (!doingMultiSort) {
             this.clearSortBarThisColumn(column);
         }
+        this.dispatchSortChangedEvents();
+    };
+    // gets called by API, so if data changes, use can call this, which will end up
+    // working out the sort order again of the rows.
+    SortController.prototype.onSortChanged = function () {
         this.dispatchSortChangedEvents();
     };
     SortController.prototype.dispatchSortChangedEvents = function () {

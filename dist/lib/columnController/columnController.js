@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -976,6 +976,11 @@ var ColumnController = (function () {
             this.valueColumns.push(column);
         }
         else {
+            if (utils_1.Utils.exists(stateItem.aggFunc)) {
+                console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
+                    'functions, register the functions first before using them in get/set state. This is because it is' +
+                    'intended for the column state to be stored and retrieved as simple JSON.');
+            }
             column.setAggFunc(null);
             column.setValueActive(false);
         }
@@ -1732,6 +1737,9 @@ var ColumnController = (function () {
             result += columnList[i].getActualWidth();
         }
         return result;
+    };
+    ColumnController.prototype.getGridBalancedTree = function () {
+        return this.gridBalancedTree;
     };
     ColumnController.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
     __decorate([

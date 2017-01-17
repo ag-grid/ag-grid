@@ -4,6 +4,7 @@ import {Column} from "./entities/column";
 
 export interface ExportParams {
     skipHeader?: boolean;
+    columnGroups?:boolean;
     skipFooters?: boolean;
     skipGroups?: boolean;
     skipFloatingTop?: boolean;

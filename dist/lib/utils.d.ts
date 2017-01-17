@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -29,7 +29,11 @@ export declare class Utils {
     static mapObject<TResult>(object: any, callback: (item: any) => TResult): TResult[];
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
     static filter<T>(array: T[], callback: (item: T) => boolean): T[];
+    static mergeDeep(object: any, source: any): void;
     static assign(object: any, source: any): void;
+    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date;
+    static serializeDateToYyyyMmDd(date: Date, separator: string): string;
+    static pad(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
     static getFunctionParameters(func: any): any;
     static find<T>(collection: T[], predicate: string | ((item: T) => void), value?: any): T;
@@ -85,7 +89,7 @@ export declare class Utils {
     static isVerticalScrollShowing(element: HTMLElement): boolean;
     static getScrollbarWidth(): number;
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
-    static setVisible(element: HTMLElement, visible: boolean, visibleStyle?: string): void;
+    static setVisible(element: HTMLElement, visible: boolean): void;
     static isBrowserIE(): boolean;
     static isBrowserEdge(): boolean;
     static isBrowserSafari(): boolean;
@@ -96,6 +100,7 @@ export declare class Utils {
     static getBodyHeight(): number;
     static setCheckboxState(eCheckbox: any, state: any): void;
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void;
+    static isNumeric(value: any): boolean;
     /**
      * Mouse wheel (and 2-finger trackpad) support on the web sucks.  It is
      * complicated, thus this doc is long and (hopefully) detailed enough to answer

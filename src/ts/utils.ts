@@ -215,6 +215,30 @@ export class Utils {
         }
     }
 
+    static parseYyyyMmDdToDate (yyyyMmDd:string, separator:string):Date{
+        try{
+            if (!yyyyMmDd) return null;
+            if (yyyyMmDd.indexOf(separator) === -1) return null;
+
+            let fields:string[] = yyyyMmDd.split(separator);
+            if (fields.length != 3) return null;
+            return new Date (Number(fields[0]),Number(fields[1]) - 1,Number(fields[2]));
+        }catch (e){
+            return null;
+        }
+    }
+
+    static serializeDateToYyyyMmDd (date:Date, separator:string):string {
+        if (!date) return null;
+        return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2)
+    }
+
+    static pad(num: number, totalStringSize:number) : string{
+        let asString:string = num + "";
+        while (asString.length < totalStringSize) asString = "0" + asString;
+        return asString;
+    }
+
     static pushAll(target: any[], source: any[]): void {
         if (this.missing(source) || this.missing(target)) { return; }
         source.forEach( func => target.push(func) );

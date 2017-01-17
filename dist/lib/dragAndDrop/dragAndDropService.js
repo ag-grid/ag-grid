@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59,10 +59,6 @@ var DragAndDropService = (function () {
     };
     DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
-        this.eBody = document.querySelector('body');
-        if (!this.eBody) {
-            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
-        }
     };
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
@@ -231,8 +227,9 @@ var DragAndDropService = (function () {
         var top = event.pageY - (ghostHeight / 2);
         // horizontally, place cursor just right of icon
         var left = event.pageX - 30;
-        var windowScrollY = window.pageYOffset || document.documentElement.scrollTop;
-        var windowScrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        var usrDocument = this.gridOptionsWrapper.getDocument();
+        var windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
+        var windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
         // check ghost is not positioned outside of the browser
         if (browserWidth > 0) {
             if ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX)) {
@@ -254,8 +251,8 @@ var DragAndDropService = (function () {
         this.eGhost.style.top = top + 'px';
     };
     DragAndDropService.prototype.removeGhost = function () {
-        if (this.eGhost) {
-            this.eBody.removeChild(this.eGhost);
+        if (this.eGhost && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eGhost);
         }
         this.eGhost = null;
     };
@@ -268,7 +265,14 @@ var DragAndDropService = (function () {
         this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
-        this.eBody.appendChild(this.eGhost);
+        var usrDocument = this.gridOptionsWrapper.getDocument();
+        this.eGhostParent = usrDocument.querySelector('body');
+        if (!this.eGhostParent) {
+            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
+        }
+        else {
+            this.eGhostParent.appendChild(this.eGhost);
+        }
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }

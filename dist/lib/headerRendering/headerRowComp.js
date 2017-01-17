@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -106,7 +106,8 @@ var HeaderRowComp = (function (_super) {
                 return;
             }
             // skip groups that have no displayed children. this can happen when the group is broken,
-            // and this section happens to have nothing to display for the open / closed state
+            // and this section happens to have nothing to display for the open / closed state.
+            // (PS niall note - i can't remember what i meant by the above exactly, what's a broken group???)
             if (child instanceof columnGroup_1.ColumnGroup && child.getDisplayedChildren().length === 0) {
                 return;
             }
