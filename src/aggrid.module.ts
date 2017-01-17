@@ -32,7 +32,7 @@ export class AgGridModule {
     }
 
     static forRoot():ModuleWithProviders {
-        console.warn("AgGridModule.forRoot() is deprecated - please use AgGridModule.withComponents([...optional components...]) instead.")
+        console.warn("AgGridModule.forRoot() is deprecated - please use AgGridModule.withComponents([...optional components...]) instead.");
         return {
             ngModule: AgGridModule,
             providers: [
