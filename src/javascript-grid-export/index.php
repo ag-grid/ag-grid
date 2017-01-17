@@ -35,7 +35,8 @@ include '../documentation-main/documentation_header.php';
     </p>
     <ul>
         <li><b>skipHeader</b>: Set to true if you don't want to first line to be the column header names.</li>
-        <li><b>skipGroups</b>: Set to true to skip headers and footers if grouping. No impact if not grouping.</li>
+        <li><b>columnGrouping</b>: Set to true to skip header column groupings.</li>
+        <li><b>skipGroups</b>: Set to true to skip row group headers and footers if grouping rows. No impact if not grouping rows.</li>
         <li><b>skipFooters</b>: Set to true to skip footers only if grouping. No impact if not grouping or if not using footers in grouping.</li>
         <li><b>suppressQuotes</b>: Set to true to not use double quotes between values.</li>
         <li><b>fileName</b>: String to use as the file name. If missing, the file name 'export.csv' will be used.</li>
