@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-    <h2>Version NEXT</h2>
+    <h2>Version 7.2.x</h2>
 
     <li>Enhancement: <a href="../javascript-grid-excel">Excel Export</a>.</li>
     <li>Enhancement: <a href="../javascript-grid-filtering/#dateFilter">Date Filter</a>.</li>

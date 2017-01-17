@@ -15,6 +15,23 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">17th January 2017</div>
+        <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+            <img src="../images/smiley.png"/>
+                <span style="font-weight: bold;">ag-Grid v7.2 Released</span>
+            <img src="../images/smiley.png"/>
+        </div>
+        <div>
+            v7.2 brings <a href="../javascript-grid-excel/">Excel Export</a>, a new
+            <a href="../javascript-grid-filtering/#dateFilter">Date Filter</a>,
+            <a href="../javascript-grid-cell-editing/#groupEditing">Group Editing</a>,
+            <a href="../javascript-grid-grouping/#fullWidthRows">Embedded Full Width Groups</a>
+            and many other smaller changes and bug fixes. See
+            <a href="../change-log/changeLogIndex.php">Change Log</a> details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">22nd December 2016</div>
         <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
             <span style="font-weight: bold;">ag-Grid v7.1 Released</span>
@@ -25,6 +42,7 @@ include 'documentation_header.php';
             <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>
+
 
     <div class="news-box">
         <div class="news-header">8th December 2016</div>
