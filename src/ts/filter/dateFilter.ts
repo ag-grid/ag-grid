@@ -107,7 +107,7 @@ export class DateFilter extends Component implements IFilter {
                     </div>
                     <div class="ag-filter-date-from" id="filterDateFromPanel">
                     </div>
-                    <div class="ag-filter-date-to" id="filterDateToPanel" style="display: none;">
+                    <div class="ag-filter-date-to" id="filterDateToPanel">
                     </div>
                     <div class="ag-filter-apply-panel" id="applyPanel">
                         <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
