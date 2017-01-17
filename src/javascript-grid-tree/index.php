@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Tree Data</h2>
 
     <p>It is possible to provide the data to ag-Grid in a tree structure. This can be used to provide a view of
-    a tree (such as a file browser, this is what the <a href="../example-file-browser/index.php">File Browser</a>
+    a tree (such as a file browser, this is what the <a href="../example-file-browser/">File Browser</a>
         example does) or you can provide data already
     grouped (eg maybe you are going the grouping in our database).</p>
 
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
     data to the group level nodes (Sausage, Spaceman and Winklepicker) - this is where you would put aggregation
     values or group titles if needed.</p>
 
-    <p>Also take a look at the <a href="../example-file-browser/index.php">File Browser</a> example for a full example.</p>
+    <p>Also take a look at the <a href="../example-file-browser/">File Browser</a> example for a full example.</p>
 
     <show-example example="exampleTree"></show-example>
 

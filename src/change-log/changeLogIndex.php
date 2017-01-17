@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Version NEXT</h2>
 
     <li>Enhancement: <a href="../javascript-grid-excel">Excel Export</a>.</li>
+    <li>Enhancement: <a href="../javascript-grid-filtering/#dateFilter">Date Filter</a>.</li>
     <li>Enhancement: richSelect cell editor now works with empty strings.</li>
     <li>Enhancement: new property <a href="../javascript-grid-cell-editing/#groupEditing"><i>enableGroupEdit</i></a>, Set to true to allow editing of the group rows.</li>
     <li>Enhancement: RTL verified to work with For Print.</li>
@@ -20,6 +21,7 @@ include '../documentation-main/documentation_header.php';
     <li>Enhancement: Context menu now has CSV Export and Excel Export.</li>
     <li>Enhancement: New <i>api.onSortChanged()</i>, call it if you update a cell with a new value and you want to apply the sort order again.</li>
     <li>Enhancement: New property <a href="../javascript-grid-grouping/#fullWidthRows"><i>fullWidthRows</i></a>.</li>
+    <li>Breaking Change: IAfterFilterGuiAttachedParams now called IAfterGuiAttachedParams (impacts TypeScript users only)</li>
     <li>Bugfix: callback processCellForClipboard was not getting used when copying just one cell (ie not a range).</li>
     <li>Bugfix: <i>gridOptions.onItemsRemoved</i> was incorrectly called <i>gridOptions.onItemsRemove</i>.</li>
     <li>Bugfix: Column menu was disappearing while doing vertical scroll. Now it only disappears for horizontal scroll.

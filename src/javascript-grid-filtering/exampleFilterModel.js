@@ -7,7 +7,7 @@ var columnDefs = [
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]), Number(dateParts[0]));
+            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
             if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
                 return 0
@@ -37,7 +37,7 @@ var hardcodedFilter = {
     country: ['Ireland', 'United States'],
     age: {type: 'lessThan', filter: '30'},
     athlete: {type: 'startsWith', filter: 'Mich'},
-    date:{filterType: 'lessThan', dateFrom: '2010-01-01'}
+    date:{type: 'lessThan', dateFrom: '2010-01-01'}
 };
 
 var savedFilters = '[]';

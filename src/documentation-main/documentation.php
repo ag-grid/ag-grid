@@ -290,14 +290,14 @@ include 'documentation_header.php';
 <p>
     If you are introducing yourself to ag-Grid, then you should read <a href="../javascript-grid-getting-started/">Getting Started</a>.
     Then follow on to the section on the framework that interests you (one of
-    <a href="../best-javascript-data-grid/index.php">Javascript</a>,
-    <a href="../best-react-data-grid/index.php">React</a>,
-    <a href="../best-angularjs-data-grid/index.php">Angular JS</a>,
-    <a href="../best-angular-2-data-grid/index.php">Angular 2</a>,
-    <a href="../best-web-component-data-grid/index.php">Web Components</a> or
-    <a href="../best-aurelia-data-grid/index.php">Aurelia</a>) and try and get a simple example working
+    <a href="../best-javascript-data-grid/">Javascript</a>,
+    <a href="../best-react-data-grid/">React</a>,
+    <a href="../best-angularjs-data-grid/">Angular JS</a>,
+    <a href="../best-angular-2-data-grid/">Angular 2</a>,
+    <a href="../best-web-component-data-grid/">Web Components</a> or
+    <a href="../best-aurelia-data-grid/">Aurelia</a>) and try and get a simple example working
     yourself (you don't need to understand the grid, just how to install it into your application).
-    Then cover the <a href="../javascript-grid-interfacing-overview/index.php">Interfacing Overview</a>.
+    Then cover the <a href="../javascript-grid-interfacing-overview/">Interfacing Overview</a>.
     After that, you then have the foundations of ag-Grid and can jump to whatever section of the documentation
     you need to the feature you are trying to implement.
 </p>
