@@ -406,6 +406,29 @@ TAKING OUT as want to reconsider how to register components
 
 <show-example example="example2"></show-example>
 
+<h3>Cell Renderers and Row Groups</h3>
+
+<p>
+    If you are mixing cellRenderers and row grouping, then you need to understand that the value and / or data
+    may be missing in the group row. The data and value will be missing if you are not doing any aggregations
+    (hence no data at the group level) and the value will be missing if you are doing aggregations but not
+    on the column the cellRenderer is on.
+</p>
+<p>
+    This is simply fixed by checking for the existence of the data before you use it like the following:
+    <pre>
+colDef.cellRenderer = function(params) {
+    <span class="codeComment">// check the data exists, to avoid error when grouping but not aggregating</span>
+    if (params.data) {
+        <span class="codeComment">// data exists, so we can access it</span>
+        return '&lt;b>'+params.data.theBoldValue+'&lt;/b>';
+    } else {
+        <span class="codeComment">// when we return null, the grid will display a blank cell</span>
+        return null;
+    }
+};
+</pre>
+</p>
 <!-- React from here on -->
 <h2 id="reactCellRendering">
     <img src="../images/react_large.png" style="width: 60px;"/>
