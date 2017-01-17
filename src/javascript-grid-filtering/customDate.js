@@ -20,9 +20,7 @@ var columnDefs = [
             if (cellDate > filterLocalDateAtMidnight) {
                 return 1;
             }
-        },
-        // Here is where we specify the component to be used as the date picket widget
-        dateComponent: MyDateEditor
+        }
     }},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
@@ -30,6 +28,14 @@ var columnDefs = [
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
     {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
 ];
+
+var gridOptions = {
+    columnDefs: columnDefs,
+    rowData: null,
+    enableFilter: true,
+    // Here is where we specify the component to be used as the date picker widget
+    dateComponent: MyDateEditor
+};
 
 function MyDateEditor () {
 }
@@ -73,12 +79,6 @@ MyDateEditor.prototype.afterGuiAttached = function () {
     $('#ui-datepicker-div').click(function(e){
         e.stopPropagation();
     });
-};
-
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true
 };
 
 function onFilterChanged(value) {
