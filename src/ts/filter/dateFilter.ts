@@ -36,9 +36,6 @@ export class DateFilter extends Component implements IFilter {
     private dateToComponent:IDateComponent;
     private dateFromComponent:IDateComponent;
 
-    @Autowired('gridOptions')
-    private gridOptions: GridOptions;
-
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -77,7 +74,8 @@ export class DateFilter extends Component implements IFilter {
             this.getGui().removeChild(this.eApplyPanel);
         }
 
-        let DateComponent = this.gridOptions.dateComponent ? this.gridOptions.dateComponent : DefaultDateComponent;
+        let UserDateComponent = this.gridOptionsWrapper.getDateComponent();
+        let DateComponent = UserDateComponent ? UserDateComponent : DefaultDateComponent;
         this.dateToComponent = new DateComponent();
         this.dateFromComponent = new DateComponent();
 
