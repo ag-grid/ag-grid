@@ -5,10 +5,10 @@ import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Utils} from "../utils";
 import {IDateComponent, IDateComponentParams} from "../rendering/dateComponent";
+import {GridOptions} from "../entities/gridOptions";
 
 export interface IDateFilterParams extends IFilterParams{
     comparator ?: IDateComparatorFunc;
-    dateComponent ?: {new(): IDateComponent};
 }
 
 export interface IDateComparatorFunc {
@@ -35,6 +35,9 @@ export class DateFilter extends Component implements IFilter {
 
     private dateToComponent:IDateComponent;
     private dateFromComponent:IDateComponent;
+
+    @Autowired('gridOptions')
+    private gridOptions: GridOptions;
 
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
@@ -74,7 +77,7 @@ export class DateFilter extends Component implements IFilter {
             this.getGui().removeChild(this.eApplyPanel);
         }
 
-        let DateComponent = params.dateComponent ? params.dateComponent : DefaultDateComponent;
+        let DateComponent = this.gridOptions.dateComponent ? this.gridOptions.dateComponent : DefaultDateComponent;
         this.dateToComponent = new DateComponent();
         this.dateFromComponent = new DateComponent();
 
