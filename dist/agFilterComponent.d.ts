@@ -1,4 +1,4 @@
-import { IFilterParams, IDoesFilterPassParams, IAfterFilterGuiAttachedParams } from 'ag-grid/main';
+import { IFilterParams, IDoesFilterPassParams, IAfterGuiAttachedParams } from "ag-grid/main";
 import { AgFrameworkComponent } from "./agFrameworkComponent";
 export interface AgFilterComponent extends AgFrameworkComponent<IFilterParams> {
     /** The aginit(params) method is called on the filter once. */
@@ -21,7 +21,7 @@ export interface AgFilterComponent extends AgFrameworkComponent<IFilterParams> {
      element. The params has one callback method 'hidePopup', which you can call at any later
      point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
      after it is pressed. */
-    afterGuiAttached?(params: IAfterFilterGuiAttachedParams): void;
+    afterGuiAttached?(params: IAfterGuiAttachedParams): void;
     /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
      after rows are loaded, it can do it here. */
     onNewRowsLoaded?(): void;

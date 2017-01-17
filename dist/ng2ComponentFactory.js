@@ -130,7 +130,7 @@ var Ng2ComponentFactory = (function (_super) {
         return Filter;
     };
     Ng2ComponentFactory.prototype.createComponent = function (componentType, viewContainerRef) {
-        // used to cache the factory, but this a) caused issues when used with either weback/angularcli with --prod
+        // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
         // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
         // caching the factory here yields no performance benefits
         var factory = this._componentFactoryResolver.resolveComponentFactory(componentType);

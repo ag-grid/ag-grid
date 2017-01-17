@@ -20,6 +20,17 @@ var AgGridModule = (function () {
             ],
         };
     };
+    AgGridModule.forRoot = function () {
+        console.warn("AgGridModule.forRoot() is deprecated - please use AgGridModule.withComponents([...optional components...]) instead.");
+        return {
+            ngModule: AgGridModule,
+            providers: [
+                ng2FrameworkFactory_1.Ng2FrameworkFactory,
+                ng2ComponentFactory_1.Ng2ComponentFactory,
+                { provide: baseComponentFactory_1.BaseComponentFactory, useExisting: ng2ComponentFactory_1.Ng2ComponentFactory }
+            ],
+        };
+    };
     AgGridModule.decorators = [
         { type: core_1.NgModule, args: [{
                     imports: [],
