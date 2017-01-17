@@ -76,7 +76,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         this.cols = Utils.map(columnsToExport, (it: Column)=>{
             it.getColDef().cellStyle;
             return {
-                width: it.getColDef().width
+                width: it.getActualWidth()
             }
         });
     }
@@ -229,7 +229,7 @@ export class ExcelCreator implements IExcelCreator{
         this.downloader.download(
             fileName,
             content,
-            "text/xml"
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         );
     }
 
