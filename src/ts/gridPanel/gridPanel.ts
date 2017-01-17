@@ -29,7 +29,7 @@ import {RowContainerComponent} from "../rendering/rowContainerComponent";
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var gridHtml =
-    '<div>'+
+    '<div class="ag-root ag-font-style">'+
         // header
         '<div class="ag-header">'+
             '<div class="ag-pinned-left-header"></div>' +
@@ -77,7 +77,7 @@ var gridHtml =
     '</div>';
 
 var gridForPrintHtml =
-        '<div>'+
+        '<div class="ag-root ag-font-style">'+
             // header
             '<div class="ag-header-container"></div>'+
             // floating
@@ -202,6 +202,7 @@ export class GridPanel extends BeanStub {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.useScrollLag = this.isUseScrollLag();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        this.loadTemplate();
         this.findElements();
     }
 
@@ -934,18 +935,18 @@ export class GridPanel extends BeanStub {
         return <HTMLElement> this.eRoot.querySelector(selector);
     }
 
+    private loadTemplate(): void {
+        // the template we use is different when doing 'for print'
+        var template = this.forPrint ? gridForPrintHtml : gridHtml;
+        this.eRoot = <HTMLElement> _.loadTemplate(template);
+
+        // parts of the CSS need to know if we are in 'for print' mode or not,
+        // so we add a class to allow applying CSS based on this.
+        var scrollClass = this.forPrint ? 'ag-no-scrolls' : 'ag-scrolls';
+        _.addCssClass(this.eRoot, scrollClass);
+    }
+
     private findElements() {
-        if (this.forPrint) {
-            this.eRoot = <HTMLElement> _.loadTemplate(gridForPrintHtml);
-            _.addCssClass(this.eRoot, 'ag-root');
-            _.addCssClass(this.eRoot, 'ag-font-style');
-            _.addCssClass(this.eRoot, 'ag-no-scrolls');
-        } else {
-            this.eRoot = <HTMLElement> _.loadTemplate(gridHtml);
-            _.addCssClass(this.eRoot, 'ag-root');
-            _.addCssClass(this.eRoot, 'ag-font-style');
-            _.addCssClass(this.eRoot, 'ag-scrolls');
-        }
 
         if (this.forPrint) {
             this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
@@ -961,12 +962,12 @@ export class GridPanel extends BeanStub {
                 pinnedLeft: <RowContainerComponent> null,
                 pinnedRight: <RowContainerComponent> null,
 
-                floatingTop: new RowContainerComponent( {eContainer: this.eFloatingTop} ),
+                floatingTop: new RowContainerComponent( {eContainer: this.eFloatingTopContainer} ),
                 floatingTopPinnedLeft: <RowContainerComponent> null,
                 floatingTopPinnedRight: <RowContainerComponent> null,
                 floatingTopFullWidth: <RowContainerComponent> null,
 
-                floatingBottom: new RowContainerComponent( {eContainer: this.eFloatingBottom} ),
+                floatingBottom: new RowContainerComponent( {eContainer: this.eFloatingBottomContainer} ),
                 floatingBottomPinnedLeft: <RowContainerComponent> null,
                 floatingBottomPinnedRight: <RowContainerComponent> null,
                 floatingBottomFullWith: <RowContainerComponent> null
