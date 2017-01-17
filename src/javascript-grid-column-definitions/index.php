@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
         (if <i>children</i> is present, it knows it's a group).
     </p>
 
-    <h2 id="defaultProperties">Default Properties</h2>
+    <h2 id="defaultProperties">Default Column Definition</h2>
 
     <p>
         As well as defining columns, you can define default properties for the columns, so you don't
