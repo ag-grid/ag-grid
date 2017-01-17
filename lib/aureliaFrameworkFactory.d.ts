@@ -1,4 +1,4 @@
-// ag-grid-aurelia v7.1.0
+// ag-grid-aurelia v7.2.0
 import { Container, ViewResources, ViewCompiler } from "aurelia-framework";
 import { ICellRenderer, ICellEditor, IFrameworkFactory, IFilter, ICellRendererFunc, ColDef, GridOptions } from "ag-grid/main";
 import { AureliaComponentFactory } from "./aureliaComponentFactory";
