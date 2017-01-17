@@ -46,6 +46,7 @@ function getBooleanValue(cssSelector) {
 function onBtExport() {
     var params = {
         skipHeader: getBooleanValue('#skipHeader'),
+        columnGroups: getBooleanValue('#columnGroups'),
         skipFooters: getBooleanValue('#skipFooters'),
         skipGroups: getBooleanValue('#skipGroups'),
         skipFloatingTop: getBooleanValue('#skipFloatingTop'),
