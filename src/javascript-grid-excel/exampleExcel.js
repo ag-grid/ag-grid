@@ -54,7 +54,6 @@ function onBtExport() {
         skipFloatingBottom: getBooleanValue('#skipFloatingBottom'),
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
-        suppressQuotes: getBooleanValue('#suppressQuotes'),
         fileName: document.querySelector('#fileName').value
     };
 
@@ -78,7 +77,7 @@ function onBtExport() {
         };
     }
 
-    gridOptions.api.exportExcel(params);
+    gridOptions.api.exportDataAsExcel(params);
 }
 
 // setup the grid after the page has finished loading

@@ -98,6 +98,9 @@ include '../documentation-main/documentation_header.php';
         <li><b>paste</b>: Always disabled (see note in clipboard section).</li>
         <li><b>resetColumns</b>: Reset all columns.</li>
         <li><b>toolPanel</b>: Show / hide the toolpanel.</li>
+        <li><b>export</b>: Export sub menu (containing csvExport and excelExport).</li>
+        <li><b>csvExport</b>: Export to CSV using all default export values.</li>
+        <li><b>excelExport</b>: Export to Excel using all default export values.</li>
     </ul>
 
     <h3>Context Menu Example</h3>

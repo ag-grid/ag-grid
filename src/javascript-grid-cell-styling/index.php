@@ -108,7 +108,7 @@ var colDef4 = {
         $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
     </p>
 
-    <h3>Column Definition cellClassRules</h3>
+    <h3 id="cellClassRules">Column Definition cellClassRules</h3>
 
     <p>
         ag-Grid allows rules to be applied to include certain classes. If you use AngularJS, then

@@ -137,7 +137,36 @@ include '../documentation-main/documentation_header.php';
 
     </table>
 
-    <h3>Grouping columns</h3>
+    <h3>Simple Example</h3>
+
+    <p>
+        To get the discussion going, below is presented a simple grouping example where all the data is
+        grouped by country. You will also notice:
+        <ul>
+            <li>The group parent row has no cells, it spans the full width of the grid.</li>
+            <li>Animation is turned for when groups open and close.</li>
+            <li>The 'Toggle Zimbabwe' button at the top uses the grid's API to open and close the group.</li>
+        </ul>
+    </p>
+
+    <show-example example="example1"></show-example>
+
+    <h3>Grouping Columns vs Full Width Groups</h3>
+
+    <p>
+        You can represent group rows in your grid in two ways:
+        <ol>
+            <li><b>Grouping Column</b>: One column (usually the left most column) will display the group
+            information with the expand / contract icons. The row then display the rest of the cells
+            as normal (eg if a sum aggregate was used, it could be displayed in the other cells).
+            This is what is used in the main <a href="../example.php">ag-Grid demo</a>.</li>
+            <li><b>Full Width Groups</b>: The group row does not use the cells, instead on cell
+                for the group spans the entire width of the grid. This is used in the first example above.
+            </li>
+        </ol>
+    </p>
+
+    <h3>Grouping Columns</h3>
 
     <p>
         If you decide to group using the entire row (groupUseEntireRow = true), then you don't need to use
@@ -250,19 +279,6 @@ colDef.cellRendererParams = {
         <i>api.onGroupExpandedOrCollapsed()</i> when finished to get the grid to redraw the grid again just once.
     </p>
 
-    <h3>Grouping Example</h3>
-
-    <p>
-        Below shows a simple grouping example, using one attribute to group, the entire row is used
-        (so no group column) and no aggregation function. The example also demonstrates the following:
-        <ul>
-        <li>Animation is turned on the group expand / contract action.</li>
-        <li>The 'Toggle Zimbabwe' button uses the grid's API to open and close the group.</li>
-    </ul>
-    </p>
-
-    <show-example example="example1"></show-example>
-    
     <h3>Grouping Complex Objects with Keys</h3>
 
     <p>
@@ -339,6 +355,51 @@ cellRendererParams: {
     </p>
 
     <show-example example="exampleKeepingGroupState"></show-example>
+
+    <h3 id="fullWidthRows">Full Width Groups</h3>
+
+    <p>
+        Full width groups extend the width of the grid. You have two choices when using full width groups
+        using the property <i>embedFullWidthRows</i> as follows:
+        <ul>
+            <li><b>embedFullWidthRows = false: </b> The group row will always
+            span the width of the grid including pinned areas and is not impacted by horizontal scrolling.
+                This is the most common usage and thus the default. The only drawback is that for some
+            browsers (IE in particular), as you scroll vertically, the group row will lag behind the other rows.</li>
+            <li><b>embedFullWidthRows = true: </b> The group row will be split into three sections for center,
+                pinned left and pinned right. This is not ideal but works much faster with no IE issues.</li>
+        </ul>
+        So you might ask which one to use? The answer is the first one (just leave the property out, it's defaulted
+        to false) unless you want to avoid IE performance issues.
+    </p>
+    <h4>Example <i>embedFullWidthRows</i></h4>
+    <p>
+        The example below demonstrates embedFullWidthRows on and off as follows:
+        <ul>
+            <li>Both grids have columns pinned left and right.</li>
+            <li>Both grids have group rows spanning the grid width.</li>
+            <li>The top grid as embedFullWidthRows=false, the bottom grid has embedFullWidthRows=true.</li>
+        </ul>
+        So with this setup, you will notice the following difference:
+        <ul>
+            <li>
+                In the top grid, the group rows are not impacted by the pinning. In the bottom grid,
+                the groups are truncated if you make the Athlete & Year columns to small,
+                as the groups are sitting in the pinned section.
+            </li>
+            <li>
+                In the bottom grid, if you unpin the columns (via the column menu) then the group jumps
+                to the center.
+            </li>
+        </ul>
+    </p>
+
+    <show-example example="exampleFullWidthRowsComparison"></show-example>
+
+    <p>
+        If you are using custom group row rendering (explained below) and embedFullWidthRows = true, the panel
+        you are rendering in is provided via the <i>pinned</i> parameter.
+    </p>
 
     <h3>Group Row Rendering</h3>
 

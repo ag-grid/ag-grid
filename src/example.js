@@ -121,7 +121,7 @@ suppressEnterprise: true,
 //    {name: 'Brian'}
 //],
     groupKeys: undefined, //set as string of keys eg ["region","country"],
-           // groupUseEntireRow: true, //one of [true, false]
+    // groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
 //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
 //        groupSuppressAutoColumn: true,
@@ -145,6 +145,7 @@ suppressEnterprise: true,
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
+    // embedFullWidthRows: true,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
@@ -245,7 +246,27 @@ suppressEnterprise: true,
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    getContextMenuItems: getContextMenuItems
+    getContextMenuItems: getContextMenuItems,
+    excelStyles: [
+        {
+            id: 'good-score',
+            interior: {
+                color: "#94e494", pattern: 'Solid'
+            }
+        },
+        {
+            id: 'bad-score',
+            interior: {
+                color: "#e49494", pattern: 'Solid'
+            }
+        },
+        {
+            id:'header',
+            interior: {
+                color: "#CCCCCC", pattern: 'Solid'
+            }
+        }
+    ]
 };
 
 function getContextMenuItems(params) {
@@ -622,7 +643,7 @@ function rowSelected(event) {
 // the node id's are assigned from 0 upwards)
     if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
-        console.log("Callback rowSelected: " + valueToPrint);
+        console.log("Callback rowSelected: " + valueToPrint + " - " + event.node.isSelected());
     }
 }
 

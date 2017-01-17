@@ -11,7 +11,26 @@ var columnDefs = [
         filterParams: { apply: true }
     },
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
+    {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
+        comparator:function (filterLocalDateAtMidnight, cellValue){
+            var dateAsString = cellValue;
+            var dateParts  = dateAsString.split("/");
+            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]), Number(dateParts[0]));
+
+            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                return 0
+            }
+
+            if (cellDate < filterLocalDateAtMidnight) {
+                return -1;
+            }
+
+            if (cellDate > filterLocalDateAtMidnight) {
+                return 1;
+            }
+        },
+        apply: true
+    }},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number'},

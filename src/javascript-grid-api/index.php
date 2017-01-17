@@ -288,6 +288,11 @@ include '../documentation-main/documentation_header.php';
             <td>Destroys a filter, useful to create get a particular filter created from scratch again.</td>
         </tr>
         <tr>
+            <th>onSortChanged()</th>
+            <td>Gets the grid to act as if the sort was changed. Useful if you update some values in the grid and
+                want to get the grid to reorder them according to the new values.</td>
+        </tr>
+        <tr>
             <th>setSortModel(model)</th>
             <td>Sets the sort state of the grid.
             </td>

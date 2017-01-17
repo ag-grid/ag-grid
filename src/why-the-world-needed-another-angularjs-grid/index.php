@@ -277,7 +277,7 @@
             <div style="font-size: 14px; border: 1px solid lightgrey; margin-top: 25px; padding: 15px;">
                 This article was was published on:
                 <br/>
-                <a href="http://dailyjs.com/2015/03/31/angular-grid-react-native/?utm_content=buffer98f7e&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer">DailyJS</a>
+                <a href="http://dailyjs.com/2015/03/30/angular-grid-react-native/">DailyJS</a>
                 <br/>
                 <a href="http://www.dzone.com/links/why_the_world_needed_another_angularjs_grid.html">DZone</a>
                 <br/>
