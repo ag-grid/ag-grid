@@ -170,7 +170,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
     public createComponent<T>(componentType: { new(...args: any[]): T; },
                               viewContainerRef: ViewContainerRef): ComponentRef<T> {
-        // used to cache the factory, but this a) caused issues when used with either weback/angularcli with --prod
+        // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
         // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
         // caching the factory here yields no performance benefits
         let factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
