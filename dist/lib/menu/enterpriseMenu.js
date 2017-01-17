@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.1.0
+// ag-grid-enterprise v7.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -264,8 +264,14 @@ var EnterpriseMenu = (function () {
         this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.eventService.addEventListener('bodyScroll', params.hidePopup);
-        this.destroyFunctions.push(function () { return _this.eventService.removeEventListener('bodyScroll', params.hidePopup); });
+        var onBodyScroll = function (event) {
+            // if h scroll, popup is no longer over the column
+            if (event.direction === 'horizontal') {
+                params.hidePopup();
+            }
+        };
+        this.eventService.addEventListener('bodyScroll', onBodyScroll);
+        this.destroyFunctions.push(function () { return _this.eventService.removeEventListener('bodyScroll', onBodyScroll); });
     };
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();

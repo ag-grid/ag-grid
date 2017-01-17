@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.1.0
+// ag-grid-enterprise v7.2.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -110,7 +110,8 @@ var RichSelectCellEditor = (function (_super) {
         var mouseY = mouseEvent.clientY - rect.top + scrollTop;
         var row = Math.floor(mouseY / this.virtualList.getRowHeight());
         var value = this.params.values[row];
-        if (main_1.Utils.exists(value)) {
+        // not using utils.exist() as want empty string test to pass
+        if (value !== null && value !== undefined) {
             this.setSelectedValue(value);
         }
     };

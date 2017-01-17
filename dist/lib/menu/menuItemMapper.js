@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.1.0
+// ag-grid-enterprise v7.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -97,11 +97,6 @@ var MenuItemMapper = (function () {
                 name: localeTextFunc('collapseAll', 'Collapse All'),
                 action: function () { return _this.gridApi.collapseAll(); }
             };
-            case 'toolPanel': return {
-                name: localeTextFunc('toolPanel', 'Tool Panel'),
-                checked: this.gridApi.isToolPanelShowing(),
-                action: function () { return _this.gridApi.showToolPanel(!_this.gridApi.isToolPanelShowing()); }
-            };
             case 'copy': return {
                 name: localeTextFunc('copy', 'Copy'),
                 shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -125,6 +120,18 @@ var MenuItemMapper = (function () {
                 name: localeTextFunc('toolPanel', 'Tool Panel'),
                 checked: this.gridApi.isToolPanelShowing(),
                 action: function () { return _this.gridApi.showToolPanel(!_this.gridApi.isToolPanelShowing()); }
+            };
+            case 'export': return {
+                name: localeTextFunc('export', 'Export'),
+                subMenu: ['csvExport', 'excelExport']
+            };
+            case 'csvExport': return {
+                name: localeTextFunc('csvExport', 'CSV Export'),
+                action: function () { return _this.gridApi.exportDataAsCsv({}); }
+            };
+            case 'excelExport': return {
+                name: localeTextFunc('excelExport', 'Excel Export'),
+                action: function () { return _this.gridApi.exportDataAsExcel({}); }
             };
             case 'separator': return 'separator';
             default:

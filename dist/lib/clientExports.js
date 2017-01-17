@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.1.0
+// ag-grid-enterprise v7.2.0
 "use strict";
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");
@@ -35,6 +35,8 @@ var columnComponent_1 = require("./toolPanel/columnDrop/columnComponent");
 var valueColumnsPanel_1 = require("./toolPanel/columnDrop/valueColumnsPanel");
 var pivotCompFactory_1 = require("./pivotCompFactory");
 var rowGroupCompFactory_1 = require("./rowGroupCompFactory");
+var excelCreator_1 = require("./excelCreator");
+var excelXmlFactory_1 = require("./excelXmlFactory");
 function populateClientExports(exports) {
     exports.AggFuncService = aggFuncService_1.AggFuncService;
     exports.MD5 = md5_1.MD5;
@@ -69,6 +71,8 @@ function populateClientExports(exports) {
     exports.EnterpriseBoot = enterpriseBoot_1.EnterpriseBoot;
     exports.LicenseManager = licenseManager_1.LicenseManager;
     exports.PivotCompFactory = pivotCompFactory_1.PivotCompFactory;
+    exports.ExcelCreator = excelCreator_1.ExcelCreator;
+    exports.ExcelXmlFactory = excelXmlFactory_1.ExcelXmlFactory;
     exports.RangeController = rangeController_1.RangeController;
     exports.RowGroupCompFactory = rowGroupCompFactory_1.RowGroupCompFactory;
 }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.1.0
+// ag-grid-enterprise v7.2.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29,6 +29,10 @@ var ContextMenuFactory = (function () {
         if (ag_grid_1.Utils.exists(node)) {
             // if user clicks a cell
             defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel'];
+            // only put in the export if normal row model, other row models confuse things with export.
+            if (this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+                defaultMenuOptions.push('export');
+            }
         }
         else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
@@ -81,6 +85,10 @@ var ContextMenuFactory = (function () {
         ag_grid_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', ag_grid_1.GridOptionsWrapper)
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('rowModel'), 
+        __metadata('design:type', Object)
+    ], ContextMenuFactory.prototype, "rowModel", void 0);
     __decorate([
         ag_grid_1.PostConstruct, 
         __metadata('design:type', Function), 

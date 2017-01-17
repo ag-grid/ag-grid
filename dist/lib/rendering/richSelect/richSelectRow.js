@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.1.0
+// ag-grid-enterprise v7.2.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35,6 +35,10 @@ var RichSelectRow = (function (_super) {
             // not using innerHTML to prevent injection of HTML
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
             this.getGui().textContent = value.toString();
+        }
+        else {
+            // putting in blank, so if missing, at least the user can click on it
+            this.getGui().innerHTML = '&nbsp;';
         }
     };
     RichSelectRow.prototype.populateWithRenderer = function (value) {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.1.0
+// ag-grid-enterprise v7.2.0
 "use strict";
 var main_1 = require("ag-grid/main");
 var SetFilterModel = (function () {
