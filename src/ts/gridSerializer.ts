@@ -226,7 +226,7 @@ export class GridSerializer {
         }
 
         // first pass, put in the header names of the cols
-        if (!skipHeader) {
+        if (!skipHeader || columnGroups) {
             let groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
             let displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups (
                 columnsToExport,
@@ -242,10 +242,12 @@ export class GridSerializer {
                 });
             }
 
-            let gridRowIterator = gridSerializingSession.onNewHeaderRow();
-            columnsToExport.forEach((column, index)=>{
-                gridRowIterator.onColumn (column, index, null)
-            });
+            if (!skipHeader){
+                let gridRowIterator = gridSerializingSession.onNewHeaderRow();
+                columnsToExport.forEach((column, index)=>{
+                    gridRowIterator.onColumn (column, index, null)
+                });
+            }
         }
 
         this.floatingRowModel.forEachFloatingTopRow(processRow);
