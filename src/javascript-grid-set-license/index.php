@@ -44,10 +44,11 @@ LicenseManager.setLicenseKey("your license key");</pre>
     <h3>Do Not Mix Loading Mechanisms</h3>
 
     <p>
-        If you mix the methods above (eg you using CommonJS is you applicaion, but use JavaScript approach
+        If you mix the methods above (eg if you are using CommonJS in your application, but use the JavaScript approach
         above to set license key) then it will not work. This is because the ag-Grid library will be loaded twice,
-        one will have the license key and the other will be used in your applicaiton without the license key.
+        one will have the license key and the other will be used in your application without the license key.
     </p>
+
 
     <h3>Note on Aurelia</h3>
 

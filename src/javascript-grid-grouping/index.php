@@ -498,6 +498,13 @@ gridOptions.groupRowRendererParams: {
         value to the data.
     </p>
 
+    <note>
+        Filtering does not impact what groups get removed. For example if you have a group with two
+        children, the group is not removed, even if you apply a filter that removes one of the children.
+        This is because ag-Grid does grouping first and then applies filters second. If you change the filter,
+        only the filter is reapplied, the grouping is not reapplied.
+    </note>
+
     <show-example example="exampleRemoveSingleChildren"></show-example>
 
     <h3>Suppress Group Row</h3>
