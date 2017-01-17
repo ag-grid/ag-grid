@@ -65,16 +65,18 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>columnDefs</th>
-            <td>Array of Column Definitions.</td>
+            <td>Array of <a href="../javascript-grid-column-definitions/">Column Definitions</a>.</td>
         </tr>
         <tr>
             <th>defaultColDef</th>
-            <td>A default column definition. All column definitions will use these properties. Items defined in the
+            <td>A <a href="../javascript-grid-column-definitions/#defaultProperties">default column</a> definition.
+                All column definitions will use these properties. Items defined in the
             actual column definition get precedence.</td>
         </tr>
         <tr>
             <th>defaultColGroupDef</th>
-            <td>A default column group definition. All column group definitions will use these properties. Items defined in the
+            <td>A <a href="../javascript-grid-column-definitions/#defaultProperties">default column group</a> definition.
+                All column group definitions will use these properties. Items defined in the
                 actual column group definition get precedence.</td>
         </tr>
         <tr>
