@@ -1,3 +1,4 @@
+// ag-grid-ng2 v7.2.1
 "use strict";
 var core_1 = require("@angular/core");
 var main_1 = require("ag-grid/main");
@@ -149,6 +150,15 @@ var AgGridNg2 = (function () {
         this.enableRtl = undefined;
         this.suppressClickEdit = undefined;
         this.enableRtlSupport = undefined;
+        this.excelStyles = undefined;
+        this.dateComponent = undefined;
+        this.sendToClipboard = undefined;
+        this.navigateToNextCell = undefined;
+        this.tabToNextCell = undefined;
+        this.processCellFromClipboard = undefined;
+        this.getDocument = undefined;
+        this.enableGroupEdit = undefined;
+        this.embedFullWidthRows = undefined;
         this._nativeElement = elementDef.nativeElement;
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
@@ -363,6 +373,15 @@ var AgGridNg2 = (function () {
         'enableRtl': [{ type: core_1.Input },],
         'suppressClickEdit': [{ type: core_1.Input },],
         'enableRtlSupport': [{ type: core_1.Input },],
+        'excelStyles': [{ type: core_1.Input },],
+        'dateComponent': [{ type: core_1.Input },],
+        'sendToClipboard': [{ type: core_1.Input },],
+        'navigateToNextCell': [{ type: core_1.Input },],
+        'tabToNextCell': [{ type: core_1.Input },],
+        'processCellFromClipboard': [{ type: core_1.Input },],
+        'getDocument': [{ type: core_1.Input },],
+        'enableGroupEdit': [{ type: core_1.Input },],
+        'embedFullWidthRows': [{ type: core_1.Input },],
         'gridReady': [{ type: core_1.Output },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
@@ -425,6 +444,7 @@ var AgGridNg2 = (function () {
         'cellEditingStopped': [{ type: core_1.Output },],
         'displayedColumnsWidthChanged': [{ type: core_1.Output },],
         'scrollVisibilityChanged': [{ type: core_1.Output },],
+        'flashCells': [{ type: core_1.Output },],
     };
     return AgGridNg2;
 }());

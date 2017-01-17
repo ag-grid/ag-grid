@@ -249,6 +249,15 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableRtl: any = undefined;
     @Input() public suppressClickEdit: any = undefined;
     @Input() public enableRtlSupport: any = undefined;
+    @Input() public excelStyles: any = undefined;
+    @Input() public dateComponent: any = undefined;
+    @Input() public sendToClipboard: any = undefined;
+    @Input() public navigateToNextCell: any = undefined;
+    @Input() public tabToNextCell: any = undefined;
+    @Input() public processCellFromClipboard: any = undefined;
+    @Input() public getDocument: any = undefined;
+    @Input() public enableGroupEdit: any = undefined;
+    @Input() public embedFullWidthRows: any = undefined;
 
     /**
      * Outputs
@@ -315,5 +324,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public cellEditingStopped: EventEmitter<any>;
     @Output() public displayedColumnsWidthChanged: EventEmitter<any>;
     @Output() public scrollVisibilityChanged: EventEmitter<any>;
+    @Output() public flashCells: EventEmitter<any>;
 }
 

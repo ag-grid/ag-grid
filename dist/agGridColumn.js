@@ -1,3 +1,4 @@
+// ag-grid-ng2 v7.2.1
 "use strict";
 var core_1 = require("@angular/core");
 var AgGridColumn = (function () {

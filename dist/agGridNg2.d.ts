@@ -1,3 +1,4 @@
+// ag-grid-ng2 v7.2.1
 import { EventEmitter, ViewContainerRef, ElementRef, QueryList, AfterViewInit } from "@angular/core";
 import { GridOptions, GridApi, ColumnApi } from "ag-grid/main";
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
@@ -162,6 +163,15 @@ export declare class AgGridNg2 implements AfterViewInit {
     enableRtl: any;
     suppressClickEdit: any;
     enableRtlSupport: any;
+    excelStyles: any;
+    dateComponent: any;
+    sendToClipboard: any;
+    navigateToNextCell: any;
+    tabToNextCell: any;
+    processCellFromClipboard: any;
+    getDocument: any;
+    enableGroupEdit: any;
+    embedFullWidthRows: any;
     /**
      * Outputs
      */
@@ -227,4 +237,5 @@ export declare class AgGridNg2 implements AfterViewInit {
     cellEditingStopped: EventEmitter<any>;
     displayedColumnsWidthChanged: EventEmitter<any>;
     scrollVisibilityChanged: EventEmitter<any>;
+    flashCells: EventEmitter<any>;
 }

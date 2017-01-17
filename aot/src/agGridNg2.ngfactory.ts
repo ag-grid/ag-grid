@@ -164,6 +164,15 @@ export class Wrapper_AgGridNg2 {
   /*private*/ _expr_138:any;
   /*private*/ _expr_139:any;
   /*private*/ _expr_140:any;
+  /*private*/ _expr_141:any;
+  /*private*/ _expr_142:any;
+  /*private*/ _expr_143:any;
+  /*private*/ _expr_144:any;
+  /*private*/ _expr_145:any;
+  /*private*/ _expr_146:any;
+  /*private*/ _expr_147:any;
+  /*private*/ _expr_148:any;
+  /*private*/ _expr_149:any;
   subscription0:any;
   subscription1:any;
   subscription2:any;
@@ -226,6 +235,7 @@ export class Wrapper_AgGridNg2 {
   subscription59:any;
   subscription60:any;
   subscription61:any;
+  subscription62:any;
   constructor(p0:any,p1:any,p2:any) {
     this._changed = false;
     this._changes = {};
@@ -371,6 +381,15 @@ export class Wrapper_AgGridNg2 {
     this._expr_138 = import1.UNINITIALIZED;
     this._expr_139 = import1.UNINITIALIZED;
     this._expr_140 = import1.UNINITIALIZED;
+    this._expr_141 = import1.UNINITIALIZED;
+    this._expr_142 = import1.UNINITIALIZED;
+    this._expr_143 = import1.UNINITIALIZED;
+    this._expr_144 = import1.UNINITIALIZED;
+    this._expr_145 = import1.UNINITIALIZED;
+    this._expr_146 = import1.UNINITIALIZED;
+    this._expr_147 = import1.UNINITIALIZED;
+    this._expr_148 = import1.UNINITIALIZED;
+    this._expr_149 = import1.UNINITIALIZED;
   }
   ngOnDetach(view:import2.AppView<any>,componentView:import2.AppView<any>,el:any):void {
   }
@@ -438,6 +457,7 @@ export class Wrapper_AgGridNg2 {
     (this.subscription59 && this.subscription59.unsubscribe());
     (this.subscription60 && this.subscription60.unsubscribe());
     (this.subscription61 && this.subscription61.unsubscribe());
+    (this.subscription62 && this.subscription62.unsubscribe());
   }
   check_gridOptions(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_0,currValue))) {
@@ -1567,6 +1587,78 @@ export class Wrapper_AgGridNg2 {
       this._expr_140 = currValue;
     }
   }
+  check_excelStyles(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_141,currValue))) {
+      this._changed = true;
+      this.context.excelStyles = currValue;
+      this._changes['excelStyles'] = new import1.SimpleChange(this._expr_141,currValue);
+      this._expr_141 = currValue;
+    }
+  }
+  check_dateComponent(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_142,currValue))) {
+      this._changed = true;
+      this.context.dateComponent = currValue;
+      this._changes['dateComponent'] = new import1.SimpleChange(this._expr_142,currValue);
+      this._expr_142 = currValue;
+    }
+  }
+  check_sendToClipboard(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_143,currValue))) {
+      this._changed = true;
+      this.context.sendToClipboard = currValue;
+      this._changes['sendToClipboard'] = new import1.SimpleChange(this._expr_143,currValue);
+      this._expr_143 = currValue;
+    }
+  }
+  check_navigateToNextCell(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_144,currValue))) {
+      this._changed = true;
+      this.context.navigateToNextCell = currValue;
+      this._changes['navigateToNextCell'] = new import1.SimpleChange(this._expr_144,currValue);
+      this._expr_144 = currValue;
+    }
+  }
+  check_tabToNextCell(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_145,currValue))) {
+      this._changed = true;
+      this.context.tabToNextCell = currValue;
+      this._changes['tabToNextCell'] = new import1.SimpleChange(this._expr_145,currValue);
+      this._expr_145 = currValue;
+    }
+  }
+  check_processCellFromClipboard(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_146,currValue))) {
+      this._changed = true;
+      this.context.processCellFromClipboard = currValue;
+      this._changes['processCellFromClipboard'] = new import1.SimpleChange(this._expr_146,currValue);
+      this._expr_146 = currValue;
+    }
+  }
+  check_getDocument(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_147,currValue))) {
+      this._changed = true;
+      this.context.getDocument = currValue;
+      this._changes['getDocument'] = new import1.SimpleChange(this._expr_147,currValue);
+      this._expr_147 = currValue;
+    }
+  }
+  check_enableGroupEdit(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_148,currValue))) {
+      this._changed = true;
+      this.context.enableGroupEdit = currValue;
+      this._changes['enableGroupEdit'] = new import1.SimpleChange(this._expr_148,currValue);
+      this._expr_148 = currValue;
+    }
+  }
+  check_embedFullWidthRows(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_149,currValue))) {
+      this._changed = true;
+      this.context.embedFullWidthRows = currValue;
+      this._changes['embedFullWidthRows'] = new import1.SimpleChange(this._expr_149,currValue);
+      this._expr_149 = currValue;
+    }
+  }
   ngDoCheck(view:import2.AppView<any>,el:any,throwOnChange:boolean):boolean {
     var changed:any = this._changed;
     this._changed = false;
@@ -1582,7 +1674,7 @@ export class Wrapper_AgGridNg2 {
     var result:boolean = true;
     return result;
   }
-  subscribe(view:import2.AppView<any>,_eventHandler:any,emit0:boolean,emit1:boolean,emit2:boolean,emit3:boolean,emit4:boolean,emit5:boolean,emit6:boolean,emit7:boolean,emit8:boolean,emit9:boolean,emit10:boolean,emit11:boolean,emit12:boolean,emit13:boolean,emit14:boolean,emit15:boolean,emit16:boolean,emit17:boolean,emit18:boolean,emit19:boolean,emit20:boolean,emit21:boolean,emit22:boolean,emit23:boolean,emit24:boolean,emit25:boolean,emit26:boolean,emit27:boolean,emit28:boolean,emit29:boolean,emit30:boolean,emit31:boolean,emit32:boolean,emit33:boolean,emit34:boolean,emit35:boolean,emit36:boolean,emit37:boolean,emit38:boolean,emit39:boolean,emit40:boolean,emit41:boolean,emit42:boolean,emit43:boolean,emit44:boolean,emit45:boolean,emit46:boolean,emit47:boolean,emit48:boolean,emit49:boolean,emit50:boolean,emit51:boolean,emit52:boolean,emit53:boolean,emit54:boolean,emit55:boolean,emit56:boolean,emit57:boolean,emit58:boolean,emit59:boolean,emit60:boolean,emit61:boolean):void {
+  subscribe(view:import2.AppView<any>,_eventHandler:any,emit0:boolean,emit1:boolean,emit2:boolean,emit3:boolean,emit4:boolean,emit5:boolean,emit6:boolean,emit7:boolean,emit8:boolean,emit9:boolean,emit10:boolean,emit11:boolean,emit12:boolean,emit13:boolean,emit14:boolean,emit15:boolean,emit16:boolean,emit17:boolean,emit18:boolean,emit19:boolean,emit20:boolean,emit21:boolean,emit22:boolean,emit23:boolean,emit24:boolean,emit25:boolean,emit26:boolean,emit27:boolean,emit28:boolean,emit29:boolean,emit30:boolean,emit31:boolean,emit32:boolean,emit33:boolean,emit34:boolean,emit35:boolean,emit36:boolean,emit37:boolean,emit38:boolean,emit39:boolean,emit40:boolean,emit41:boolean,emit42:boolean,emit43:boolean,emit44:boolean,emit45:boolean,emit46:boolean,emit47:boolean,emit48:boolean,emit49:boolean,emit50:boolean,emit51:boolean,emit52:boolean,emit53:boolean,emit54:boolean,emit55:boolean,emit56:boolean,emit57:boolean,emit58:boolean,emit59:boolean,emit60:boolean,emit61:boolean,emit62:boolean):void {
     this._eventHandler = _eventHandler;
     if (emit0) { (this.subscription0 = this.context.gridReady.subscribe(_eventHandler.bind(view,'gridReady'))); }
     if (emit1) { (this.subscription1 = this.context.columnEverythingChanged.subscribe(_eventHandler.bind(view,'columnEverythingChanged'))); }
@@ -1646,6 +1738,7 @@ export class Wrapper_AgGridNg2 {
     if (emit59) { (this.subscription59 = this.context.cellEditingStopped.subscribe(_eventHandler.bind(view,'cellEditingStopped'))); }
     if (emit60) { (this.subscription60 = this.context.displayedColumnsWidthChanged.subscribe(_eventHandler.bind(view,'displayedColumnsWidthChanged'))); }
     if (emit61) { (this.subscription61 = this.context.scrollVisibilityChanged.subscribe(_eventHandler.bind(view,'scrollVisibilityChanged'))); }
+    if (emit62) { (this.subscription62 = this.context.flashCells.subscribe(_eventHandler.bind(view,'flashCells'))); }
   }
 }
 var renderType_AgGridNg2_Host:import4.RenderComponentType = import3.createRenderComponentType('',0,import5.ViewEncapsulation.None,([] as any[]),{});

@@ -1,13 +1,13 @@
 {
   "name": "ag-grid-ng2",
-  "version": "7.2.0",
+  "version": "7.2.1",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "verify-properties": "node agGridPropertiesCheck.js",
-    "build": "ngc -p tsconfig-src.json && npm run clean-src && ngc -p tsconfig-main.json",
+    "build": "ngc -p tsconfig-src.json && npm run clean-src && ngc -p tsconfig-main.json && npm run verify-properties",
     "clean-src":"rimraf src/*.d.ts src/*.js*",
     "clean-main":"rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts",
     "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main",

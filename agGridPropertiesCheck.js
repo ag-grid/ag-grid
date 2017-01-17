@@ -1,5 +1,6 @@
 // satisfy ag-grid HTMLElement dependency
 HTMLElement = typeof HTMLElement === 'undefined' ? function () {} : HTMLElement;
+HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () {} : HTMLSelectElement;
 
 var {AgGridNg2} = require('./dist/agGridNg2');
 var {ComponentUtil} = require("ag-grid/main");
