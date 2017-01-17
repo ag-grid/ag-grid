@@ -49,6 +49,7 @@ LicenseManager.setLicenseKey("your license key");</pre>
         one will have the license key and the other will be used in your application without the license key.
     </p>
 
+
     <h3>Note on Aurelia</h3>
 
     <p>
