@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.1
+// Type definitions for ag-grid v7.2.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -147,7 +147,7 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
-    dateComponent: {
+    dateComponent?: {
         new (): IDateComponent;
     };
     groupRowRenderer?: {
