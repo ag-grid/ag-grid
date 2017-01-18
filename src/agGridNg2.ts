@@ -69,8 +69,14 @@ export class AgGridNg2 implements AfterViewInit {
         }
 
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
-        this.api = this.gridOptions.api;
-        this.columnApi = this.gridOptions.columnApi;
+        
+        if (this.gridOptions.api) {
+            this.api = this.gridOptions.api;
+        }
+
+        if (this.gridOptions.columnApi) {
+            this.columnApi = this.gridOptions.columnApi;
+        }
 
         this._initialised = true;
     }
