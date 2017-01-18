@@ -1,4 +1,3 @@
-// ag-grid-ng2 v7.2.1
 import { QueryList } from "@angular/core";
 import { ColDef, SetFilterParameters, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef, GetQuickFilterTextParams } from "ag-grid/main";
 export declare class AgGridColumn {
