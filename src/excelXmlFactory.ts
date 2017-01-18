@@ -51,13 +51,16 @@ export class ExcelXmlFactory {
     }
 
     private excelXmlHeader() : string{
-        return "<?xml version=\"1.0\"?>" + LINE_SEPARATOR +
-            "<?mso-application progid=\"Excel.Sheet\"?>" + LINE_SEPARATOR;
+        // need to take out the question mark, otherwise it bothers php when have < and ? beside each
+        // other in a string, as php thinks it's a directive for php
+        var QUESTION_MARK = '?';
+        return '<'+QUESTION_MARK+'xml version="1.0"'+QUESTION_MARK+'>' + LINE_SEPARATOR +
+            '<'+QUESTION_MARK+'mso-application progid="Excel.Sheet"'+QUESTION_MARK+'>' + LINE_SEPARATOR;
     }
 
     private stylesXmlElement (styles:ExcelStyle[]):XmlElement{
         return {
-            name:"Styles",
+            name:'Styles',
             children:styles ? Utils.map(styles, (it)=>{
                 return this.styleXmlElement (it);
             }): []
