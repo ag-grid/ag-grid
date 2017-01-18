@@ -167,7 +167,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // callbacks
-    dateComponent:{new(): IDateComponent};
+    dateComponent?:{new(): IDateComponent};
     groupRowRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
