@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.2
+// ag-grid-enterprise v7.2.3
 "use strict";
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");

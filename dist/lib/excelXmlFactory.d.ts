@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.2
+// ag-grid-enterprise v7.2.3
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.2
+// ag-grid-enterprise v7.2.3
 import { ColDef } from "ag-grid/main";
 export declare class SetFilterModel {
     private colDef;

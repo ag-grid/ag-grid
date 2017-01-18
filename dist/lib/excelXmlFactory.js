@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.2
+// ag-grid-enterprise v7.2.3
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -55,13 +55,16 @@ var ExcelXmlFactory = (function () {
         };
     };
     ExcelXmlFactory.prototype.excelXmlHeader = function () {
-        return "<?xml version=\"1.0\"?>" + LINE_SEPARATOR +
-            "<?mso-application progid=\"Excel.Sheet\"?>" + LINE_SEPARATOR;
+        // need to take out the question mark, otherwise it bothers php when have < and ? beside each
+        // other in a string, as php thinks it's a directive for php
+        var QUESTION_MARK = '?';
+        return '<' + QUESTION_MARK + 'xml version="1.0"' + QUESTION_MARK + '>' + LINE_SEPARATOR +
+            '<' + QUESTION_MARK + 'mso-application progid="Excel.Sheet"' + QUESTION_MARK + '>' + LINE_SEPARATOR;
     };
     ExcelXmlFactory.prototype.stylesXmlElement = function (styles) {
         var _this = this;
         return {
-            name: "Styles",
+            name: 'Styles',
             children: styles ? main_3.Utils.map(styles, function (it) {
                 return _this.styleXmlElement(it);
             }) : []
