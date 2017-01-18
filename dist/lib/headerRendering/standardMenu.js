@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,8 +44,12 @@ var StandardMenuFactory = (function () {
         var eMenu = document.createElement('div');
         utils_1.Utils.addCssClass(eMenu, 'ag-menu');
         eMenu.appendChild(filterWrapper.gui);
-        var bodyScrollListener = function () {
-            hidePopup();
+        var hidePopup;
+        var bodyScrollListener = function (event) {
+            // if h scroll, popup is no longer over the column
+            if (event.direction === 'horizontal') {
+                hidePopup();
+            }
         };
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
         var closedCallback = function () {
@@ -53,7 +57,7 @@ var StandardMenuFactory = (function () {
         };
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
+        hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
         positionCallback(eMenu);
         if (filterWrapper.filter.afterGuiAttached) {
             var params = {

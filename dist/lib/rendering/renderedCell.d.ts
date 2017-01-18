@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -27,6 +27,7 @@ export declare class RenderedCell extends Component {
     private popupService;
     private cellRendererService;
     private valueFormatterService;
+    private stylingService;
     private static PRINTABLE_CHARACTERS;
     private eGridCell;
     private eSpanWithValue;
@@ -109,10 +110,10 @@ export declare class RenderedCell extends Component {
     private populateCell();
     private addStylesFromColDef();
     private addClassesFromColDef();
-    private addClassesFromRules();
     private createParentOfValue();
     isVolatile(): boolean;
     refreshCell(animate?: boolean, newData?: boolean): void;
+    private addClassesFromRules();
     private putDataIntoCell();
     private formatValue(value);
     private createRendererAndRefreshParams(valueFormatted, cellRendererParams);

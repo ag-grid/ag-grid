@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,6 +45,7 @@ var valueFormatterService_1 = require("./valueFormatterService");
 var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
 var setLeftFeature_1 = require("./features/setLeftFeature");
 var methodNotImplementedException_1 = require("../misc/methodNotImplementedException");
+var stylingService_1 = require("../styling/stylingService");
 var RenderedCell = (function (_super) {
     __extends(RenderedCell, _super);
     function RenderedCell(column, node, scope, renderedRow) {
@@ -349,8 +350,14 @@ var RenderedCell = (function (_super) {
         }
     };
     RenderedCell.prototype.onPopupEditorClosed = function () {
+        // we only call stopEditing if we are editing, as
+        // it's possible the popup called 'stop editing'
+        // before this, eg if 'enter key' was pressed on
+        // the editor.
         if (this.editingCell) {
-            this.stopRowOrCellEdit(true);
+            // note: this only happens when use clicks outside of the grid. if use clicks on another
+            // cell, then the editing will have already stopped on this cell
+            this.stopRowOrCellEdit();
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
             // cell outside of this one
@@ -445,6 +452,7 @@ var RenderedCell = (function (_super) {
             keyPress: keyPress,
             charPress: charPress,
             column: this.column,
+            rowIndex: this.gridCell.rowIndex,
             node: this.node,
             api: this.gridOptionsWrapper.getApi(),
             cellStartedEdit: cellStartedEdit,
@@ -538,13 +546,7 @@ var RenderedCell = (function (_super) {
         this.hideEditorPopup = this.popupService.addAsModalPopup(ePopupGui, true, 
         // callback for when popup disappears
         function () {
-            // we only call stopEditing if we are editing, as
-            // it's possible the popup called 'stop editing'
-            // before this, eg if 'enter key' was pressed on
-            // the editor
-            if (_this.editingCell) {
-                _this.onPopupEditorClosed();
-            }
+            _this.onPopupEditorClosed();
         });
         this.popupService.positionPopupOverComponent({
             eventSource: this.eGridCell,
@@ -640,8 +642,8 @@ var RenderedCell = (function (_super) {
         return this.column.isSuppressNavigable(this.node);
     };
     RenderedCell.prototype.isCellEditable = function () {
-        // never allow editing of groups
-        if (this.node.group) {
+        // only allow editing of groups if the user has this option enabled
+        if (this.node.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
             return false;
         }
         return this.column.isCellEditable(this.node);
@@ -811,39 +813,6 @@ var RenderedCell = (function (_super) {
             }
         }
     };
-    RenderedCell.prototype.addClassesFromRules = function () {
-        var colDef = this.column.getColDef();
-        var classRules = colDef.cellClassRules;
-        if (typeof classRules === 'object' && classRules !== null) {
-            var params = {
-                value: this.value,
-                data: this.node.data,
-                node: this.node,
-                colDef: colDef,
-                rowIndex: this.gridCell.rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
-            var classNames = Object.keys(classRules);
-            for (var i = 0; i < classNames.length; i++) {
-                var className = classNames[i];
-                var rule = classRules[className];
-                var resultOfRule;
-                if (typeof rule === 'string') {
-                    resultOfRule = this.expressionService.evaluate(rule, params);
-                }
-                else if (typeof rule === 'function') {
-                    resultOfRule = rule(params);
-                }
-                if (resultOfRule) {
-                    utils_1.Utils.addCssClass(this.eGridCell, className);
-                }
-                else {
-                    utils_1.Utils.removeCssClass(this.eGridCell, className);
-                }
-            }
-        }
-    };
     RenderedCell.prototype.createParentOfValue = function () {
         if (this.checkboxSelection) {
             this.eCellWrapper = document.createElement('span');
@@ -924,6 +893,22 @@ var RenderedCell = (function (_super) {
                 that.$compile(that.eGridCell)(that.scope);
             }
         }
+    };
+    RenderedCell.prototype.addClassesFromRules = function () {
+        var _this = this;
+        this.stylingService.processCellClassRules(this.column.getColDef(), {
+            value: this.value,
+            data: this.node.data,
+            node: this.node,
+            colDef: this.column.getColDef(),
+            rowIndex: this.gridCell.rowIndex,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        }, function (className) {
+            utils_1.Utils.addCssClass(_this.eGridCell, className);
+        }, function (className) {
+            utils_1.Utils.removeCssClass(_this.eGridCell, className);
+        });
     };
     RenderedCell.prototype.putDataIntoCell = function () {
         // template gets preference, then cellRenderer, then do it ourselves
@@ -1096,6 +1081,10 @@ var RenderedCell = (function (_super) {
         context_1.Autowired('valueFormatterService'), 
         __metadata('design:type', valueFormatterService_1.ValueFormatterService)
     ], RenderedCell.prototype, "valueFormatterService", void 0);
+    __decorate([
+        context_1.Autowired('stylingService'), 
+        __metadata('design:type', stylingService_1.StylingService)
+    ], RenderedCell.prototype, "stylingService", void 0);
     __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 

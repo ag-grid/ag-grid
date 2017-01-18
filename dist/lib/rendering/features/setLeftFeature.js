@@ -1,26 +1,28 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var utils_1 = require("../../utils");
 var column_1 = require("../../entities/column");
-var SetLeftFeature = (function () {
+var beanStub_1 = require("../../context/beanStub");
+var SetLeftFeature = (function (_super) {
+    __extends(SetLeftFeature, _super);
     function SetLeftFeature(columnOrGroup, eCell) {
-        this.destroyFunctions = [];
+        _super.call(this);
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
         this.init();
     }
     SetLeftFeature.prototype.init = function () {
-        var _this = this;
-        var listener = this.onLeftChanged.bind(this);
-        this.columnOrGroup.addEventListener(column_1.Column.EVENT_LEFT_CHANGED, listener);
-        this.destroyFunctions.push(function () {
-            _this.columnOrGroup.removeEventListener(column_1.Column.EVENT_LEFT_CHANGED, listener);
-        });
+        this.addDestroyableEventListener(this.columnOrGroup, column_1.Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.onLeftChanged();
     };
     SetLeftFeature.prototype.onLeftChanged = function () {
@@ -32,11 +34,6 @@ var SetLeftFeature = (function () {
             this.eCell.style.left = '';
         }
     };
-    SetLeftFeature.prototype.destroy = function () {
-        this.destroyFunctions.forEach(function (func) {
-            func();
-        });
-    };
     return SetLeftFeature;
-}());
+}(beanStub_1.BeanStub));
 exports.SetLeftFeature = SetLeftFeature;

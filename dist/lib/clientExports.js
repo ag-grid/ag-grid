@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,6 +58,7 @@ var cellNavigationService_1 = require("./cellNavigationService");
 var columnChangeEvent_1 = require("./columnChangeEvent");
 var constants_1 = require("./constants");
 var csvCreator_1 = require("./csvCreator");
+var downloader_1 = require("./downloader");
 var eventService_1 = require("./eventService");
 var expressionService_1 = require("./expressionService");
 var gridCore_1 = require("./gridCore");
@@ -102,7 +103,10 @@ var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
 var methodNotImplementedException_1 = require("./misc/methodNotImplementedException");
 var touchListener_1 = require("./widgets/touchListener");
 var scrollVisibleService_1 = require("./gridPanel/scrollVisibleService");
+var xmlFactory_1 = require("./xmlFactory");
 var beanStub_1 = require("./context/beanStub");
+var gridSerializer_1 = require("./gridSerializer");
+var stylingService_1 = require("./styling/stylingService");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -203,6 +207,8 @@ function populateClientExports(exports) {
     exports.VirtualPageRowModel = virtualPageRowModel_1.VirtualPageRowModel;
     exports.VirtualPageCache = virtualPageCache_1.VirtualPageCache;
     exports.VirtualPage = virtualPage_1.VirtualPage;
+    //styling
+    exports.StylingService = stylingService_1.StylingService;
     // widgets
     exports.AgCheckbox = agCheckbox_1.AgCheckbox;
     exports.Component = component_1.Component;
@@ -216,6 +222,7 @@ function populateClientExports(exports) {
     exports.ColumnChangeEvent = columnChangeEvent_1.ColumnChangeEvent;
     exports.Constants = constants_1.Constants;
     exports.CsvCreator = csvCreator_1.CsvCreator;
+    exports.Downloader = downloader_1.Downloader;
     exports.Events = events_1.Events;
     exports.EventService = eventService_1.EventService;
     exports.ExpressionService = expressionService_1.ExpressionService;
@@ -235,5 +242,9 @@ function populateClientExports(exports) {
     exports.Utils = utils_1.Utils;
     exports.NumberSequence = utils_1.NumberSequence;
     exports.ValueService = valueService_1.ValueService;
+    exports.XmlFactory = xmlFactory_1.XmlFactory;
+    exports.GridSerializer = gridSerializer_1.GridSerializer;
+    exports.BaseGridSerializingSession = gridSerializer_1.BaseGridSerializingSession;
+    exports.RowType = gridSerializer_1.RowType;
 }
 exports.populateClientExports = populateClientExports;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -65,6 +65,18 @@ var GridApi = (function () {
     };
     GridApi.prototype.exportDataAsCsv = function (params) {
         this.csvCreator.exportDataAsCsv(params);
+    };
+    GridApi.prototype.getDataAsExcel = function (params) {
+        if (!this.excelCreator) {
+            console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise');
+        }
+        return this.excelCreator.getDataAsExcelXml(params);
+    };
+    GridApi.prototype.exportDataAsExcel = function (params) {
+        if (!this.excelCreator) {
+            console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise');
+        }
+        this.excelCreator.exportDataAsExcel(params);
     };
     GridApi.prototype.setDatasource = function (datasource) {
         if (this.gridOptionsWrapper.isRowModelPagination()) {
@@ -354,6 +366,9 @@ var GridApi = (function () {
     GridApi.prototype.onFilterChanged = function () {
         this.filterManager.onFilterChanged();
     };
+    GridApi.prototype.onSortChanged = function () {
+        this.sortController.onSortChanged();
+    };
     GridApi.prototype.setSortModel = function (sortModel) {
         this.sortController.setSortModel(sortModel);
     };
@@ -573,6 +588,10 @@ var GridApi = (function () {
         context_1.Autowired('csvCreator'), 
         __metadata('design:type', csvCreator_1.CsvCreator)
     ], GridApi.prototype, "csvCreator", void 0);
+    __decorate([
+        context_1.Optional('excelCreator'), 
+        __metadata('design:type', Object)
+    ], GridApi.prototype, "excelCreator", void 0);
     __decorate([
         context_1.Autowired('gridCore'), 
         __metadata('design:type', gridCore_1.GridCore)

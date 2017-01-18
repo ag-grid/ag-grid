@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -29,32 +29,15 @@ export declare class RowRenderer {
     private renderedRows;
     private renderedTopFloatingRows;
     private renderedBottomFloatingRows;
-    private eFullWidthContainer;
-    private eBodyContainer;
-    private eBodyContainerDF;
-    private eBodyViewport;
-    private ePinnedLeftColsContainer;
-    private ePinnedLeftColsContainerDF;
-    private ePinnedRightColsContainer;
-    private ePinnedRightColsContainerDF;
-    private eFloatingTopContainer;
-    private eFloatingTopPinnedLeftContainer;
-    private eFloatingTopPinnedRightContainer;
-    private eFloatingTopFullWidthContainer;
-    private eFloatingBottomContainer;
-    private eFloatingBottomPinnedLeftContainer;
-    private eFloatingBottomPinnedRightContainer;
-    private eFloatingBottomFullWithContainer;
+    private rowContainers;
     private refreshInProgress;
     private logger;
     private destroyFunctions;
     agWire(loggerFactory: LoggerFactory): void;
-    private setupDocumentFragments();
     init(): void;
-    getContainersFromGridPanel(): void;
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshAllFloatingRows(): void;
-    private refreshFloatingRows(renderedRows, rowNodes, ePinnedLeftContainer, ePinnedRightContainer, eBodyContainer, eFullWidthContainer);
+    private refreshFloatingRows(renderedRows, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp);
     private onFloatingRowDataChanged();
     private onModelUpdated(refreshEvent);
     private getRenderedIndexesForRowNodes(rowNodes);

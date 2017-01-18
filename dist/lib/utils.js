@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -167,12 +167,57 @@ var Utils = (function () {
         });
         return result;
     };
+    Utils.mergeDeep = function (object, source) {
+        if (this.exists(source)) {
+            this.iterateObject(source, function (key, value) {
+                var currentValue = object[key];
+                var target = source[key];
+                if (currentValue == null) {
+                    object[key] = value;
+                }
+                if (typeof currentValue === 'object') {
+                    if (target) {
+                        this.mergeDeep(object[key], target);
+                    }
+                }
+                if (target) {
+                    object[key] = target;
+                }
+            });
+        }
+    };
     Utils.assign = function (object, source) {
         if (this.exists(source)) {
             this.iterateObject(source, function (key, value) {
                 object[key] = value;
             });
         }
+    };
+    Utils.parseYyyyMmDdToDate = function (yyyyMmDd, separator) {
+        try {
+            if (!yyyyMmDd)
+                return null;
+            if (yyyyMmDd.indexOf(separator) === -1)
+                return null;
+            var fields = yyyyMmDd.split(separator);
+            if (fields.length != 3)
+                return null;
+            return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
+        }
+        catch (e) {
+            return null;
+        }
+    };
+    Utils.serializeDateToYyyyMmDd = function (date, separator) {
+        if (!date)
+            return null;
+        return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2);
+    };
+    Utils.pad = function (num, totalStringSize) {
+        var asString = num + "";
+        while (asString.length < totalStringSize)
+            asString = "0" + asString;
+        return asString;
     };
     Utils.pushAll = function (target, source) {
         if (this.missing(source) || this.missing(target)) {
@@ -623,18 +668,8 @@ var Utils = (function () {
         var pressedKey = event.which || event.keyCode;
         return pressedKey === keyToCheck;
     };
-    Utils.setVisible = function (element, visible, visibleStyle) {
-        if (visible) {
-            if (this.exists(visibleStyle)) {
-                element.style.display = visibleStyle;
-            }
-            else {
-                element.style.display = 'inline';
-            }
-        }
-        else {
-            element.style.display = 'none';
-        }
+    Utils.setVisible = function (element, visible) {
+        this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
     };
     Utils.isBrowserIE = function () {
         if (this.isIE === undefined) {
@@ -650,7 +685,10 @@ var Utils = (function () {
     };
     Utils.isBrowserSafari = function () {
         if (this.isSafari === undefined) {
-            this.isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+            var anyWindow = window;
+            // taken from https://github.com/ceolter/ag-grid/issues/550
+            this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
+                || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!anyWindow.safari || anyWindow.safari.pushNotification);
         }
         return this.isSafari;
     };
@@ -726,6 +764,9 @@ var Utils = (function () {
                 }
             });
         }
+    };
+    Utils.isNumeric = function (value) {
+        return !isNaN(parseFloat(value)) && isFinite(value);
     };
     // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
     /**

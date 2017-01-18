@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,6 @@ var DragService = (function () {
     }
     DragService.prototype.init = function () {
         this.logger = this.loggerFactory.create('DragService');
-        this.eBody = document.querySelector('body');
     };
     DragService.prototype.destroy = function () {
         this.dragSources.forEach(this.removeListener.bind(this));
@@ -58,8 +57,10 @@ var DragService = (function () {
         utils_1.Utils.removeFromArray(this.dragSources, dragSourceAndListener);
     };
     DragService.prototype.setNoSelectToBody = function (noSelect) {
-        if (utils_1.Utils.exists(this.eBody)) {
-            utils_1.Utils.addOrRemoveCssClass(this.eBody, 'ag-body-no-select', noSelect);
+        var usrDocument = this.gridOptionsWrapper.getDocument();
+        var eBody = usrDocument.querySelector('body');
+        if (utils_1.Utils.exists(eBody)) {
+            utils_1.Utils.addOrRemoveCssClass(eBody, 'ag-body-no-select', noSelect);
         }
     };
     DragService.prototype.addDragSource = function (params, includeTouch) {
@@ -115,13 +116,14 @@ var DragService = (function () {
         this.dragging = false;
         this.mouseEventLastTime = mouseEvent;
         this.mouseStartEvent = mouseEvent;
+        var usrDocument = this.gridOptionsWrapper.getDocument();
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in mouseup handling.
-        document.addEventListener('mousemove', this.onMouseMoveListener);
-        document.addEventListener('mouseup', this.onMouseUpListener);
+        usrDocument.addEventListener('mousemove', this.onMouseMoveListener);
+        usrDocument.addEventListener('mouseup', this.onMouseUpListener);
         this.dragEndFunctions.push(function () {
-            document.removeEventListener('mousemove', _this.onMouseMoveListener);
-            document.removeEventListener('mouseup', _this.onMouseUpListener);
+            usrDocument.removeEventListener('mousemove', _this.onMouseMoveListener);
+            usrDocument.removeEventListener('mouseup', _this.onMouseUpListener);
         });
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {

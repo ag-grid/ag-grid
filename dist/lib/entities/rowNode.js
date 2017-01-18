@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.1.0
+ * @version v7.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -253,7 +253,7 @@ var RowNode = (function () {
         var actionWasOnThisNode = !tailingNodeInSequence;
         if (actionWasOnThisNode) {
             if (newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti())) {
-                this.selectionController.clearOtherNodes(this);
+                updatedCount += this.selectionController.clearOtherNodes(this);
             }
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {

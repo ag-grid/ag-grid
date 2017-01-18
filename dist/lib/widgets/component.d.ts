@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Context } from "../context/context";
@@ -20,6 +20,7 @@ export declare class Component extends BeanStub {
     private addAnnotatedEventListeners();
     private removeAnnotatedEventListeners();
     getGui(): HTMLElement;
+    protected setGui(eGui: HTMLElement): void;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
     appendChild(newChild: Node | Component): void;

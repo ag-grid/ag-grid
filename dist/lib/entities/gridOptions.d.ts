@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -10,12 +10,13 @@ import { ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCe
 import { IAggFunc, ColGroupDef, ColDef } from "./colDef";
 import { IDatasource } from "../rowControllers/iDatasource";
 import { GridCellDef } from "./gridCell";
+import { IDateComponent } from "../rendering/dateComponent";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
 export interface GridOptions {
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. PLEASE!*
      ****************************************************************/
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;
@@ -38,6 +39,7 @@ export interface GridOptions {
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
     enableStatusBar?: boolean;
+    enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
     colWidth?: number;
@@ -94,8 +96,10 @@ export interface GridOptions {
     paginationPageSize?: number;
     editType?: string;
     suppressTouch?: boolean;
+    embedFullWidthRows?: boolean;
+    excelStyles?: any[];
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*
      ****************************************************************/
     localeText?: any;
     localeTextFunc?: Function;
@@ -103,7 +107,7 @@ export interface GridOptions {
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
      ****************************************************************/
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
@@ -116,7 +120,7 @@ export interface GridOptions {
     forPrint?: boolean;
     groupColumnDef?: ColDef;
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
+     * Don't forget to update ComponentUtil if changing this class. YOU'VE BEEN WARNED*
      ****************************************************************/
     context?: any;
     rowStyle?: any;
@@ -143,6 +147,9 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
+    dateComponent: {
+        new (): IDateComponent;
+    };
     groupRowRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
@@ -162,6 +169,7 @@ export interface GridOptions {
     sendToClipboard?: (params: any) => void;
     navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams) => GridCellDef;
+    getDocument?: () => Document;
     fullWidthCellRenderer?: {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
@@ -241,7 +249,7 @@ export interface GridOptions {
     onDragStarted?(event?: any): void;
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
-    onItemsRemove?(event?: any): void;
+    onItemsRemoved?(event?: any): void;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

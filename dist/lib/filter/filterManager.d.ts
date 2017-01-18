@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.1.0
+// Type definitions for ag-grid v7.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -26,6 +26,7 @@ export declare class FilterManager {
     private setModelOnFilterWrapper(filter, newModel);
     getFilterModel(): any;
     isAdvancedFilterPresent(): boolean;
+    private setAdvancedFilterPresent();
     private updateFilterFlagInColumns();
     isAnyFilterPresent(): boolean;
     private doesFilterPass(node, filterToSkip?);

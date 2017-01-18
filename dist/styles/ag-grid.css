@@ -433,6 +433,11 @@ ag-grid-ng2 {
   -ms-transition: background-color 0.1s;
   transition: background-color 0.1s;
 }
+.ag-row {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .ag-scrolls .ag-row {
   white-space: nowrap;
   position: absolute;
@@ -671,7 +676,7 @@ ag-grid-ng2 {
   white-space: nowrap;
 }
 .ag-hidden {
-  display: none;
+  display: none !important;
 }
 .ag-faded {
   opacity: 0.3;

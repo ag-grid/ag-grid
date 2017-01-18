@@ -74,7 +74,6 @@ export class RowContainerComponent {
         let visible = this.childCount > 0;
 
         if (this.visible !== visible) {
-            console.log(`visible = ${visible}`);
             this.visible = visible;
             _.setVisible(eGui, visible);
         }
