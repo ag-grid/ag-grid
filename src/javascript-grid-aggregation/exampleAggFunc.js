@@ -29,12 +29,15 @@ var gridOptions = {
         // this overrides the grids built in sum function
         'sum': sumFunction,
         // this adds another function called 'abc'
-        '123': oneTwoThreeFunc
+        '123': oneTwoThreeFunc,
+        // and again xyz
+        'xyz': xyzFunc
     },
     onGridReady: function(params) {
-        // register xyz as a function - this gets called after the grid
-        // is initialised, so will be to late if we are providing rowData
-        // directly as a grid property
+        // we could also register functions after the grid is created,
+        // however because we are providing the columns in the gridOptions,
+        // it will be to late (eg remove 'xyz' from aggFuncs, and you will
+        // see the grid complains.
         params.api.addAggFunc('xyz', xyzFunc);
 
         // this has nothing to do with aggregation, just get cols to fit width
