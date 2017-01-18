@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.0
+// ag-grid-enterprise v7.2.2
 import { ColDef, IClipboardService, Column } from "ag-grid/main";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
