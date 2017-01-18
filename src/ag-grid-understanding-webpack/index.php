@@ -251,7 +251,7 @@ module.exports = {
 
         <p>From this you can see that Webpack wraps each of our files into a modules and passes them into the Webpack boostrap as an array of Modules.
             For each module it adds them to the Webpack, executes them and makes them available to other modules.</p>
-        <p>Finally, it executes <code>__webpack_require__(0)</code> which looking at the array of modules is our index.js.
+        <p>It executes <code>__webpack_require__(0)</code> which looking at the array of modules is our index.js.
             The result is the output we started with, but with far easier dependency management and less web traffic! Brilliant!</p>
 
 
