@@ -110,6 +110,14 @@ include '../documentation-main/documentation_header.php';
         than grids that cater for master / detail directly.
     </note>
 
+    <h3 id="flowerNodes">Expand Groups</h3>
+
+    <p>
+        To have the functionality to expand a group (ie have plus (+) and minus (-) icons, you need to configure the
+        group cellRenderer on one of the column definitions. This is done as follows:
+        <pre>colDef.cellRenderer = 'group'</pre>
+    </p>
+
     <h3 id="flowerNodes">Flower Nodes</h3>
 
     <p>
