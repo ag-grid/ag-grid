@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 2 ]
+if [ "$#" -lt 3 ]
   then
-    echo "You must supply the version as first parameter and the allowed peer versions as second parameter"
+    echo "You must supply the version as first parameter and the allowed peer versions as second parameter and then at least one module to export"
     exit 1
 fi
 
@@ -12,7 +12,7 @@ mkdir $1
 cd $1
 
 ## for all the modules
-declare -a modules=("ag-grid" "ag-grid-enterprise" "ag-grid-ng2" "ag-grid-ng2-example" "ag-grid-react" "ag-grid-react-example" "ag-grid-aurelia" "ag-grid-aurelia-example")
+declare -a modules=${@:3}
 
 for module in "${modules[@]}"
 do
@@ -97,7 +97,3 @@ do
 done
 
 cd..
-
-release-prepare-examples.sh $1 $2
-release-merge-locally.sh $1
-

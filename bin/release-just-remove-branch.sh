@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 1 ]
+if [ "$#" -lt 2 ]
   then
-    echo "You must supply the version of the branch to delete"
+    echo "You must supply the version of the branch to delete and at least one module"
     exit 1
 fi
 
@@ -11,7 +11,7 @@ echo "Deleting release branch " $1
 cd $1
 
 ## for all the modules
-declare -a modules=("ag-grid" "ag-grid-enterprise" "ag-grid-ng2" "ag-grid-ng2-example" "ag-grid-react" "ag-grid-react-example" "ag-grid-aurelia" "ag-grid-aurelia-example")
+declare -a modules=${@:2}
 for module in "${modules[@]}"
 do
     echo =============================================================================================
