@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.3
+// ag-grid-enterprise v7.2.4
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -279,7 +279,7 @@ var ClipboardService = (function () {
             onlySelected: true,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
         };
-        var data = this.csvCreator.exportDataAsCsv(params);
+        var data = this.csvCreator.getDataAsCsv(params);
         this.copyDataToClipboard(data);
     };
     ClipboardService.prototype.copyDataToClipboard = function (data) {
