@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 2 ]
+if [ "$#" -ne 1 ]
   then
-    echo "You must supply the target dir and the branch name"
+    echo "You must supply the target dir"
     exit 1
 fi
 
@@ -20,12 +20,9 @@ do
     echo "MODULE  $module"
     echo =============================================================================================
 
-    git clone -b $2 https://github.com/ceolter/$module.git
-    cd $module
+    git clone https://github.com/ceolter/$module.git & > /dev/null
 
-    npm i
-    npm-install-peers
-
-    cd ..
-
+    echo =============================================================================================
+    echo "CHECKING OUT IN PROCESS.."
+    echo =============================================================================================
 done
