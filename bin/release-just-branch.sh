@@ -68,23 +68,9 @@ do
     npm i
     npm-install-peers
 
-
-    case $module in
-        "ag-grid-enterprise"|"ag-grid")
-            gulp release
-            ;;
-        "ag-grid-ng2")
-            npm run release
-            ;;
-        "ag-grid-react")
-            gulp
-            ;;
-         "ag-grid-aurelia")
-            npm i aurelia-framework
-            npm run build
-            ;;
-    esac
-
+    cd ../..
+    build-just-module.sh $1 $module
+    cd "$1/$module"
 
     git add .
     git commit -m "$1"
