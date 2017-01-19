@@ -20,11 +20,8 @@ do
     echo "MODULE  $module"
     echo =============================================================================================
 
-    git clone https://github.com/ceolter/$module.git
+    git clone -b $2 https://github.com/ceolter/$module.git
     cd $module
-    git checkout -b $2
-    git branch --set-upstream-to=origin/$2
-    git pull
 
     npm i
     npm-install-peers
