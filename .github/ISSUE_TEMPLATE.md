@@ -43,4 +43,3 @@ https://plnkr.co or similar (you can use this template as a starting point: http
 
 * **Language:** [all | TypeScript X.X | ES6/7 | ES5]
 
-* **Node (for AoT issues):** `node --version` =
