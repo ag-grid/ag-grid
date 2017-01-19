@@ -13,10 +13,10 @@ today! As a contributor, here are the guidelines we would like you to follow:
 
 ## <a name="question"></a> Got a Question or Problem?
 
-Please, do not open issues for the general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on [StackOverflow](https://stackoverflow.com/questions/tagged/angular) where the questions should be tagged with tag `ag-grig-ng2`,
+Please, do not open issues for the general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on [StackOverflow](https://stackoverflow.com/questions/tagged/ag-grid) where the questions should be tagged with tag `ag-grig`,
 or on our [Forum](https://ag-grid.com/forum)
 
-If you're using the Free version of ag-Grid (ag-grid-enterprise), then the [Members Forum](https://ag-grid.com/forum) is the best place to ask - you'll get a much quicker response there.
+If you're using the Free version of ag-Grid (ag-grid-enterprise), then the [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5) is the best place to ask - you'll get a much quicker response there. Please contact accounts@ag-grid.com for access.
 
 To save your and our time we will be systematically closing all the issues that are requests for general support (for ag-Grid Free) and redirecting people to StackOverflow.
 
@@ -26,13 +26,7 @@ If you find a bug in the source code, you can help us by
 
 ## <a name="feature"></a> Missing a Feature?
 You can *request* a new feature by [submitting an issue](#submit-issue) to our GitHub
-Repository. If you would like to *implement* a new feature, please submit an issue with
-a proposal for your work first, to be sure that we can use it.
-Please consider what kind of change it is:
-
-* For a **Major Feature**, first open an issue and outline your proposal so that it can be
-discussed. This will also allow us to better coordinate our efforts, prevent duplication of work,
-and help you to craft the change so that it is successfully accepted into the project.
+Repository.
 
 ## <a name="submit"></a> Submission Guidelines
 
