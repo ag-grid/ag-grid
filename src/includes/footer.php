@@ -20,7 +20,9 @@
 		                   	<li><a href="/about.php">About</a></li>
 		                    <li><a href="/about.php#team">Team</a></li>
 		                    <li><a href="/media/media.php">Blog</a></li>
-		                    <li><a href="/testimonials.php">Testimonials</a></li>
+							<li><a href="/ag-grid-changelog">Changelog</a></li>
+							<li><a href="/ag-grid-pipeline">Pipeline</a></li>
+							<li><a href="/testimonials.php">Testimonials</a></li>
 		                </ul>
 		            </div>
 		            <div class="col-xs-12 col-md-3">

@@ -12,7 +12,7 @@
                 </a>
             </div>
             <?php } ?>
-            <div class="Header-share col-md-3 col-sm-4 col-xs-6">
+            <div class="Header-share col-md-2 col-sm-3 col-xs-6">
                <span class="pull-left">
                    <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true"
                             frameborder="0" scrolling="0" width="120px" height="20px"
@@ -29,7 +29,7 @@
             </div> -->
 
 
-            <div class="navbar-collapse collapse pull-right col-md-5 col-sm-6 col-xs-12">
+            <div class="navbar-collapse collapse pull-right col-md-6 col-sm-7 col-xs-12">
             <ul class="nav navbar-nav navbar-right">
                     <li class="<?php if ($navKey == "demo") { ?>active<?php }?>">
                         <a href="/example.php">Demo</a>
@@ -43,6 +43,14 @@
 
                     <li class="<?php if ($navKey == "support") { ?>active<?php }?>">
                         <a href="/support.php">Support</a>
+                    </li>
+
+                    <li class="<?php if ($navKey == "changelog") { ?>active<?php }?>">
+                        <a href="/ag-grid-changelog">Changelog</a>
+                    </li>
+
+                    <li class="<?php if ($navKey == "pipeline") { ?>active<?php }?>">
+                        <a href="/ag-grid-pipeline">Pipeline</a>
                     </li>
 
                     <li class="dropdown <?php if ($navKey == "about") { ?>active<?php }?>">

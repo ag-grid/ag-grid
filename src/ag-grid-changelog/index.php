@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
 
     <title>ag-Grid Pipeline</title>
-    <meta name="description" content="ag-Grid - Pipeline / Changelog of Work.">
-    <meta name="keywords" content="ag-Grid javascript grid pipeline changelog release notes"/>
+    <meta name="description" content="ag-Grid - Changelog of Work.">
+    <meta name="keywords" content="ag-Grid javascript grid changelog release notes"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -41,14 +41,13 @@
 
 <body class="big-text">
 
-<?php $navKey = "pipeline";
+<?php $navKey = "changelog";
 include '../includes/navbar.php'; ?>
 
-<?php $headerTitle = "Pipeline";
+<?php $headerTitle = "Changelog";
 include '../includes/headerRow.php'; ?>
 
-
-<div class="container info-page" >
+<div class="container info-page">
     <div class="row">
         <div class="col-md-12">
             <?php
@@ -65,7 +64,7 @@ include '../includes/headerRow.php'; ?>
 
             function mapReporter($reporter)
             {
-                if($reporter === "") {
+                if($reporter === "" || $reporter === "Internal") {
                     return "ag-Grid";
                 }
                 switch ($reporter) {
@@ -75,6 +74,7 @@ include '../includes/headerRow.php'; ?>
                 }
                 return $reporter;
             }
+
 
             function toDate($str_value)
             {
@@ -101,20 +101,10 @@ include '../includes/headerRow.php'; ?>
                     <table class="aui" resolved="">
                         <tbody>
                         <?php
-                        $showFixVersion = false;
+                        $showFixVersion = true;
                         $firstReport = true;
-                        $reportTitle = "Completed - Will be in the Next Release";
-                        $csvFile = "next_version_done.json";
-                        include './../jira_report.php';
-                        ?>
-                        <?php
-                        $reportTitle = "Not Completed - Targeted for Next Release";
-                        $csvFile = "next_version_notdone.json";
-                        include '../jira_report.php';
-                        ?>
-                        <?php
-                        $reportTitle = "Backlog";
-                        $csvFile = "backlog.json";
+                        $reportTitle = "";
+                        $csvFile = "changelog.json";
                         include '../jira_report.php';
                         ?>
                         </tbody>
