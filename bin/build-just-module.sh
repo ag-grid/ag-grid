@@ -8,13 +8,15 @@ fi
 
 
 ## for all the modules
-declare -a modules=${@:2}
-
-for module in "${modules[@]}"
+IFS=' ' read -ra ADDR <<< "${@:2}"
+for module in "${ADDR[@]}"
 do
-    cd "$1/$2"
+    cd "$1/$module"
 
-    case $1 in
+    npm install
+    npm-install-peers
+
+    case $module in
         "ag-grid-enterprise"|"ag-grid")
             gulp release
             ;;

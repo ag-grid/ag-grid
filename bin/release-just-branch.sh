@@ -12,9 +12,9 @@ mkdir $1
 cd $1
 
 ## for all the modules
-declare -a modules=${@:3}
-
-for module in "${modules[@]}"
+## for all the modules
+IFS=' ' read -ra ADDR <<< "${@:3}"
+for module in "${ADDR[@]}"
 do
     echo =============================================================================================
     echo "MODULE  $module"
@@ -64,9 +64,6 @@ do
     ## Remove backup files from sed
     rm bower.json.old
     rm package.json.old
-
-    npm i
-    npm-install-peers
 
     cd ../..
     build-just-module.sh $1 $module

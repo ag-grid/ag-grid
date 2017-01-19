@@ -11,9 +11,8 @@ echo "MERGING LOCALLY " $1
 cd $1
 
 ## for all the modules
-declare -a modules=${@:2}
-
-for module in "${modules[@]}"
+IFS=' ' read -ra ADDR <<< "${@:2}"
+for module in "${ADDR[@]}"
 do
 
     echo =============================================================================================
