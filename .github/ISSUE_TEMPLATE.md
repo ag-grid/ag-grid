@@ -28,8 +28,15 @@ https://plnkr.co or similar (you can use this template as a starting point: http
 **Please tell us about your environment:**
 <!-- Operating system, IDE, package manager, HTTP server, ... -->
 
+* **ag-grid-ng2 version:** 2.0.X
+<!-- Check whether this is still an issue in the most recent ag-grid-ng2 version -->
+
+* **ag-Grid/ag-Grid-Enterprise version:** 2.0.X
+<!-- Check whether this is still an issue in the most recent ag-Grid or ag-Grid-Enterprise version -->
+
 * **Angular version:** 2.0.X
 <!-- Check whether this is still an issue in the most recent Angular version -->
+
 
 * **Browser:** [all | Chrome XX | Firefox XX | IE XX | Safari XX | Mobile Chrome XX | Android X.X Web Browser | iOS XX Safari | iOS XX UIWebView | iOS XX WKWebView ]
 <!-- All browsers where this could be reproduced -->
