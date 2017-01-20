@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         <ul>
         <li>
-            Drag columns our of the tool panel using drag.
+            Drag columns out of the tool panel using drag.
         </li>
         <li>
             Drag columns out of the row group and pivot drop zones by dragging.
