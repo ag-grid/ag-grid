@@ -20,6 +20,7 @@
         width: 600px;
     }
 </style>
+
 <div class="container-fluid curved-border">
     <form action="https://app.britebiz.com/webToContact" method="POST" id="NB79YK" accept-charset="UTF-8" onSubmit="return validateForm();" name="NB79YK">
         <div class="hide">
@@ -48,45 +49,62 @@
             <input maxlength="100" class="form-control" placeholder="Email" type="text" value="" name="WebToContact[email]" id="WebToContact_email"/>
         </div>
         <div class="form-group">
-            <label for="WebToContact[message]">Your message to us below. If ordering, please provide the following information:</label>
-            <ul>
-                <li>Company Address and VAT Number (EU only for VAT number).</li>
-                <li>Do you require an Application Developer or a Site Developer license?
-                    <i data-toggle="popover"
-                       title="<strong>Application Developer vs Site Developer?</strong"
-                       data-content="
-                       <p><strong>Application Developer License</strong> ties the license to one particular application within your organisation. A typical example is 5 licenses to cover an application with 5 developers working concurrently on it.
-                          This is best if you a) have only one (or a fixed number) of applications you need to license or b) you want to charge the license to a particular project(s). </p>
-                        <p><strong>Site Developer License</strong> allows unlimited applications to be developed by a fixed number of developers.
-                           A typical example is 5 license to cover an unlimited number of applications with 5 developers working
-                           across all applications concurrently. Use site license if you want to cover a group of developers developing any number of applications.</p>"
-                       class="fa fa-question-circle-o"
-                       aria-hidden="true"></i>
-                </li>
-                <li style="margin-left: 15px">If Application Developer license, please provide your Application Name</li>
-                <li>Number of Licenses that you require.</li>
-                <li>Will you be selling ag-Grid as part of a SAAS (Software as a Service) offering?
-                    <i data-toggle="popover"
-                       title="<strong>SaaS</strong"
-                       data-content="
-                            <p>SaaS is Software as a Service.
-                               If you will be <span style='text-decoration: underline;'>selling</span>
-                               ag-Grid as part of a SaaS then you require an additional SaaS license.</p>"
-                       class="fa fa-question-circle-o"
-                       aria-hidden="true"></i>
-                </li>
-                <li>Will you be selling ag-Grid as part of an application (OEM)?
-                    <i data-toggle="popover"
-                       title="<strong>OEM</strong"
-                       data-content="<p>OEM is Original Equipment Manufacturer. If you will be <span style='text-decoration: underline;'>selling</span> ag-Grid as part of your product then you require additional OEM license.</p>"
-                       class="fa fa-question-circle-o"
-                       aria-hidden="true"></i>
-                </li>
-            </ul>
+            <? if ($startTrial) { ?>
+                <label for="WebToContact[message]">Your message to us below.</label>
+            <? } else { ?>
+                <label for="WebToContact[message]">Your message to us below. If ordering, please provide the following information:</label>
+                <ul>
+                    <li>Company Address and VAT Number (EU only for VAT number).</li>
+                    <li>Do you require an Application Developer or a Site Developer license?
+                        <i data-toggle="popover"
+                           title="<strong>Application Developer vs Site Developer?</strong"
+                           data-content="
+                           <p><strong>Application Developer License</strong> ties the license to one particular application within your organisation. A typical example is 5 licenses to cover an application with 5 developers working concurrently on it.
+                              This is best if you a) have only one (or a fixed number) of applications you need to license or b) you want to charge the license to a particular project(s). </p>
+                            <p><strong>Site Developer License</strong> allows unlimited applications to be developed by a fixed number of developers.
+                               A typical example is 5 license to cover an unlimited number of applications with 5 developers working
+                               across all applications concurrently. Use site license if you want to cover a group of developers developing any number of applications.</p>"
+                           class="fa fa-question-circle-o"
+                           aria-hidden="true"></i>
+                    </li>
+                    <li style="margin-left: 15px">If Application Developer license, please provide your Application Name</li>
+                    <li>Number of Licenses that you require.</li>
+                    <li>Will you be selling ag-Grid as part of a SAAS (Software as a Service) offering?
+                        <i data-toggle="popover"
+                           title="<strong>SaaS</strong"
+                           data-content="
+                                <p>SaaS is Software as a Service.
+                                   If you will be <span style='text-decoration: underline;'>selling</span>
+                                   ag-Grid as part of a SaaS then you require an additional SaaS license.</p>"
+                           class="fa fa-question-circle-o"
+                           aria-hidden="true"></i>
+                    </li>
+                    <li>Will you be selling ag-Grid as part of an application (OEM)?
+                        <i data-toggle="popover"
+                           title="<strong>OEM</strong"
+                           data-content="<p>OEM is Original Equipment Manufacturer. If you will be <span style='text-decoration: underline;'>selling</span> ag-Grid as part of your product then you require additional OEM license.</p>"
+                           class="fa fa-question-circle-o"
+                           aria-hidden="true"></i>
+                    </li>
+                </ul>
+            <? } ?>
         </div>
-        <textarea rows="8" class="form-control" name="WebToContact[message]" id="WebToContact_message"></textarea>
-        <div class="form-group">
-            <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Send your info to ag-Grid"/>
+        <textarea rows="8" class="form-control" name="WebToContact[message]" id="WebToContact_message"><? if ($startTrial) { ?>
+Dear ag-Grid Team,
+
+I am interested in taking a two trial of ag-Grid Enterprise.
+
+Please email me back with a license key that I can use for my trial.
+
+Thank you.
+<? } ?></textarea>
+
+        <div class="form-group" style="margin-top: 10px;">
+            <? if ($startTrial) { ?>
+                <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Request Trial"/>
+            <? } else { ?>
+                <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Send your info to ag-Grid"/>
+            <? } ?>
         </div>
     </form>
 </div>

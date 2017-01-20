@@ -100,7 +100,7 @@ include 'includes/headerRow.php'; ?>
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        Thank you! We'll be in contact shortly.
+                        Thank you for contacting ag-Grid. We'll be in contact shortly.
                     </div>
                 </div>
             </div>
@@ -139,29 +139,6 @@ include 'includes/headerRow.php'; ?>
                     </tr>
                 </table>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-
-            <h2>
-                ag-Grid Enterprise Evaluation License
-            </h2>
-
-            <p>
-                An evaluation license for ag-Grid Enterprise is granted to anyone wishing evaluate ag-Grid Enterprise.
-                All we ask in return is the following:
-            <ul>
-                <li>
-                    You agree to use the Evaluation License only for evaluation of ag-Grid Enterprise. You do not enter production with ag-Grid Enterprise.
-                </li>
-                <li>
-                    You limit your trial to two months (after that, either uninstall or purchase).
-                </li>
-                <li>You get in touch using the contact form below and inform us you are taking a trial.</li>
-            </ul>
-            </p>
         </div>
     </div>
 
