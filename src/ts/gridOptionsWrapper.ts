@@ -59,6 +59,7 @@ export class GridOptionsWrapper {
     private fullWidthCellRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
     private groupRowRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
     private groupRowInnerRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
+    private dateComponent : {new(): IDateComponent} ;
 
     private domDataKey = '__AG_'+Math.random().toString;
 
@@ -81,7 +82,7 @@ export class GridOptionsWrapper {
     public init(): void {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
 
-        this.setupCellRenderers();
+        this.setupFrameworkComponents();
 
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
             console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
@@ -92,10 +93,11 @@ export class GridOptionsWrapper {
         }
     }
 
-    private setupCellRenderers(): void {
+    private setupFrameworkComponents(): void {
         this.fullWidthCellRenderer = this.frameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
         this.groupRowRenderer = this.frameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
         this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
+        this.dateComponent = this.frameworkFactory.dateComponent (this.gridOptions);
     }
 
     public getDomDataKey(): string {

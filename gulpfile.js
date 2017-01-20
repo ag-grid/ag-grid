@@ -85,26 +85,21 @@ function cleanDocs() {
 //        }));
 //}
 
+
+var project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 function tscTask() {
     var tsResult = gulp
         .src('src/ts/**/*.ts')
         //.pipe(sourcemaps.init())
-        .pipe(gulpTypescript({
-            typescript: typescript,
-            module: 'commonjs',
-            experimentalDecorators: true,
-            emitDecoratorMetadata: true,
-            declarationFiles: true,
-            target: 'es5',
-            noImplicitAny: true
-        }));
+        .pipe(gulpTypescript(project));
 
     return merge([
         tsResult.dts
             .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
             .pipe(gulp.dest('dist/lib')),
         tsResult.js
-            //.pipe(sourcemaps.write())
+            // .pipe(sourcemaps.init({loadMaps: true}))
+            // .pipe(sourcemaps.write('./'))
             .pipe(header(headerTemplate, { pkg : pkg }))
             .pipe(gulp.dest('dist/lib'))
     ])

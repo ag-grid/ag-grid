@@ -92,6 +92,7 @@ export * from './dist/lib/rendering/cellEditorFactory';
 export * from './dist/lib/rendering/cellRendererFactory';
 export * from './dist/lib/rendering/cellRendererService';
 export * from './dist/lib/rendering/checkboxSelectionComponent';
+export * from './dist/lib/rendering/dateComponent';
 export * from './dist/lib/rendering/renderedCell';
 export * from './dist/lib/rendering/renderedRow';
 export * from './dist/lib/rendering/rowRenderer';
