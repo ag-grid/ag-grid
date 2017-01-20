@@ -16,10 +16,24 @@ export function reactDateComponentFactory(reactComponent: any, parentComponent?:
         }
 
         getDate(): Date {
-            return undefined;
+            var componentRef = this.getFrameworkComponentInstance();
+            if (componentRef.getDate) {
+                return componentRef.getDate();
+            } else {
+                console.log(`ag-Grid: React dateComponent is missing the mandatory method getDate()`);
+                return null;
+            }
         }
 
         setDate(date: Date): void {
+            var componentRef = this.getFrameworkComponentInstance();
+            if (componentRef.setDate) {
+                return componentRef.setDate(date);
+            } else {
+                console.log(`ag-Grid: React dateComponent is missing the mandatory method setDate(date)`);
+                return null;
+            }
+
         }
 
 
