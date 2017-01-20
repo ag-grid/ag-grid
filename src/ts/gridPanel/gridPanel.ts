@@ -850,8 +850,8 @@ export class GridPanel extends BeanStub {
         // if pinning right, then the scroll bar can show, however for some reason
         // it overlays the grid and doesn't take space. so we are only interested
         // in the body scroll showing.
-        var removeScrollWidth = this.isBodyVerticalScrollShowing();
-        if (removeScrollWidth) {
+        var removeVerticalScrollWidth = this.isVerticalScrollShowing();
+        if (removeVerticalScrollWidth) {
             availableWidth -= this.scrollWidth;
         }
         return availableWidth;
