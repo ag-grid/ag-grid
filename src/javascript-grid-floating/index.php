@@ -25,14 +25,6 @@ include '../documentation-main/documentation_header.php';
         and <i>setFloatingBottomRowData(rows)</i>
     </p>
 
-    <h4>Selection / Cell Navigation</h4>
-
-    <p>
-        Selection and cell navigation are turned off for floating rows. This was done by choice. Maybe in the future,
-        if the requirement is there, this will be provided as an option. However the most common use case for
-        floating rows is for header / footer information, which normally do not partake in the row selection process.
-    </p>
-
     <h4>Cell Editing</h4>
 
     <p>
