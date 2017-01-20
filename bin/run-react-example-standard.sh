@@ -8,6 +8,5 @@ fi
 
 
 cd $1/ag-grid-react-example
-npm i
 npm i webpack -g
 npm run standard
