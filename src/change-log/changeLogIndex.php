@@ -8,6 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h2>Version 8.0.0</h2>
+
+    <li>Enhancement: New property <i>suppressTabbing</i>, to disable the grids tabbing functionality.</li>
+    <li>Bugfix: <i>api.sizeColumnsToFit</i> was not working when columns pinned to the right and vertical scroll was
+        visible, resize was out by scrollbar width.</li>
+
     <h2>Version 7.2.x</h2>
 
     <li>Enhancement: <a href="../javascript-grid-excel">Excel Export</a>.</li>

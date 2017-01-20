@@ -398,7 +398,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to always show the column menu button, rather than only showing when the mouse is
                 over the column header.</td>
         </tr>
-
+        <tr>
+            <th>suppressTabbing</th>
+            <td>Set to true to remove the grid tabbing functionality. Use this if you want to manage tabbing
+                differently to what the grid provides..</td>
+        </tr>
         <tr>
             <th>sortingOrder</th>
             <td>SPL TODO</td>

@@ -198,6 +198,7 @@ suppressEnterprise: true,
             return '';
         }
     },
+    // suppressTabbing: true,
     // suppressRowHoverClass: true,
 // isScrollLag: function() { return true; },
 // suppressScrollLag: true,
