@@ -180,7 +180,7 @@ export class GridOptionsWrapper {
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
     public getPaginationInitialRowCount(): number { return this.gridOptions.paginationInitialRowCount; }
 
-    public getDateComponent(): {new(): IDateComponent} { return this.gridOptions.dateComponent; }
+    public getDateComponent(): {new(): IDateComponent} { return this.dateComponent; }
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public isEnableRtl() { return isTrue(this.gridOptions.enableRtl); }
