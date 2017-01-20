@@ -28,7 +28,7 @@ https://plnkr.co or similar (you can use this template as a starting point: http
 **Please tell us about your environment:**
 <!-- Operating system, IDE, package manager, HTTP server, ... -->
 
-* **ag-Grid version:** 2.0.X
+* **ag-Grid version:** X.X.X
 <!-- Check whether this is still an issue in the most recent ag-Grid version -->
 
 
