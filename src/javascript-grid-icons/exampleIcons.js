@@ -66,7 +66,9 @@ var gridOptions = {
         menuPin: 'P', // just showing letters, no graphic
         menuValue: 'V',
         menuAddRowGroup: 'A',
-        menuRemoveRowGroup: 'R'
+        menuRemoveRowGroup: 'R',
+        clipboardCopy: '>>',
+        clipboardPaste: '>>'
     }
 };
 

@@ -67,11 +67,13 @@ columnMoveValue <span class="codeComment">// when about to drop into value panel
 columnMovePivot <span class="codeComment">// when about to drop into pivot panel</span>
 dropNotAllowed <span class="codeComment">// when trying to drop column into group/value/pivot panel and column doesn't support it</span>
 
-<span class="codeComment">// column menu</span>
-menuPin <span class="codeComment">// beside the column pin option</span>
-menuValue <span class="codeComment">// beside the column value option</span>
-menuAddRowGroup <span class="codeComment">// beside the column row group option</span>
-menuRemoveRowGroup <span class="codeComment">// beside the column row group option</span>
+<span class="codeComment">// menu</span>
+menuPin <span class="codeComment">// beside the column pin menu item</span>
+menuValue <span class="codeComment">// beside the column value menu item</span>
+menuAddRowGroup <span class="codeComment">// beside the column row group menu item</span>
+menuRemoveRowGroup <span class="codeComment">// beside the column row group menu item</span>
+clipboardCopy <span class="codeComment">// beside the copy to clipboard menu item</span>
+clipboardPaste <span class="codeComment">// beside the paste from clipboard menu item</span>
 
 <span class="codeComment"></span>// column drop panels
 rowGroupPanel <span class="codeComment">// beside where to drop columns for row group</span>
