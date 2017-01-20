@@ -99,20 +99,20 @@ export class MenuItemMapper {
             case 'copy': return {
                 name: localeTextFunc('copy','Copy'),
                 shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: svgFactory.createCopyIcon(),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
                 action: ()=> this.clipboardService.copyToClipboard(false)
             };
             case 'copyWithHeaders': return {
                 name: localeTextFunc('copyWithHeaders','Copy with Headers'),
                 // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: svgFactory.createCopyIcon(),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
                 action: ()=> this.clipboardService.copyToClipboard(true)
             };
             case 'paste': return {
                 name: localeTextFunc('paste','Paste'),
                 shortcut: localeTextFunc('ctrlV','Ctrl+V'),
                 disabled: true,
-                icon: svgFactory.createPasteIcon(),
+                icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null, svgFactory.createPasteIcon),
                 action: ()=> this.clipboardService.pasteFromClipboard()
             };
             case 'toolPanel': return {
