@@ -15,6 +15,50 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div style="float: left;">
+            <a href="https://www.ng-conf.org/">
+                <img src="https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png" style="width: 90px"/>
+            </a>
+        </div>
+        <a href="https://www.ng-conf.org/">
+            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+                <div style="font-weight: bold;">ng-conf</div>
+            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+            </div>
+                <div style="font-weight: bold;">April 5th - 7th</div>
+            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+            </div>
+                <div style="font-weight: bold;">Salt Late City, UT</div>
+            </div>
+        </a>
+        <div>
+            ag-Grid will be at ng-conf 2017. This premier
+            appearance outside of Europe!
+        </div>
+    </div>
+
+    <div class="news-box">
+        <div style="float: left;">
+            <img src="http://www.i2clipart.com/cliparts/6/1/e/d/clipart-viking-warning-61ed.png" style="width: 90px"/>
+        </div>
+        <a href="https://ngvikings.org/">
+            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+                <div style="font-weight: bold;">ngVikings</div>
+            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+            </div>
+                <div style="font-weight: bold;">February 11th</div>
+            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+            </div>
+                <div style="font-weight: bold;">Copenhagen</div>
+            </div>
+        </a>
+        <div>
+            We are excited to be sponsoring ngVikings. Come to our
+            stand and say hi.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">17th January 2017</div>
         <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
             <img src="../images/smiley.png"/>
