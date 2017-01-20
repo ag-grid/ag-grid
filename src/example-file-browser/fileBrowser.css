@@ -65,3 +65,7 @@
     background-color: #ffffff;
 }
 
+.ag-file-browser .ag-menu {
+    background-color: #ffffff;
+    border: 1px solid grey;
+}
