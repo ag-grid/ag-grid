@@ -109,6 +109,18 @@ export class Utils {
         return scrollLeft;
     }
 
+    static cleanNumber(value: any): number {
+        if (typeof value === 'string') {
+            value = parseInt(value);
+        }
+        if (typeof value === 'number') {
+            value = Math.floor(value);
+        } else {
+            value = null;
+        }
+        return value;
+    }
+
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
         if (rtl) {
             // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start

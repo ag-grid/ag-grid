@@ -187,10 +187,11 @@ export class PaginationController {
     }
 
     private pageLoaded(rows: any, lastRowIndex: any) {
+        lastRowIndex = _.cleanNumber(lastRowIndex);
         var firstId = this.currentPage * this.pageSize;
         this.inMemoryRowModel.setRowData(rows, true, firstId);
         // see if we hit the last row
-        if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
+        if (!this.foundMaxRow && lastRowIndex >= 0) {
             this.foundMaxRow = true;
             this.rowCount = lastRowIndex;
             this.calculateTotalPages();

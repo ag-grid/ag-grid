@@ -202,6 +202,8 @@ export class VirtualPage implements IEventEmitter {
             this.populateWithRowData(rows);
         }
 
+        lastRow = _.cleanNumber(lastRow);
+
         // check here if lastrow should be set
         var event = {success: true, page: this, lastRow: lastRow};
 
