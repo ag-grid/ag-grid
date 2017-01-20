@@ -25,6 +25,7 @@ do
     rm -rf node_modules/$2
     npm install ../$2/$2-*.tgz
 
+    cd ../..
 done
 
 rm -rf $1/$2/$2-*.tgz
