@@ -1,7 +1,8 @@
-import {BaseFrameworkFactory, IFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, Utils, GridOptions, ICellEditor} from 'ag-grid';
+import {BaseFrameworkFactory, IFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, IDateComponent, Utils, GridOptions, ICellEditor} from 'ag-grid';
 import {reactCellRendererFactory} from "../lib/reactCellRendererFactory";
 import {reactCellEditorFactory} from "./reactCellEditorFactory";
 import {reactFilterFactory} from "./reactFilterFactory";
+import {reactDateComponentFactory} from "./reactDateComponentFactory";
 
 export class ReactFrameworkFactory implements IFrameworkFactory {
     private agGridReact: any;
@@ -9,6 +10,14 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
 
     constructor(agGridReact: any) {
         this.agGridReact = agGridReact;
+    }
+
+    public dateComponent(gridOptions:GridOptions): {new(): IDateComponent} {
+        if (Utils.exists(gridOptions.dateComponentFramework)) {
+            return reactDateComponentFactory(gridOptions.dateComponentFramework, this.agGridReact);
+        } else {
+            return this.baseFrameworkFactory.dateComponent(gridOptions);
+        }
     }
 
     public colDefFilter(colDef: ColDef): {new(): IFilter} | string {
