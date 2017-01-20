@@ -453,6 +453,7 @@ export class RenderedCell extends Component {
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
+        if (this.gridOptionsWrapper.isSuppressTabbing()) { return; }
         this.rowRenderer.onTabKeyDown(this, event);
     }
 

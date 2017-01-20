@@ -14,11 +14,9 @@ import {GridApi} from "./gridApi";
 import {ColDef, IAggFunc, ColGroupDef} from "./entities/colDef";
 import {Bean, Qualifier, Autowired, PostConstruct, PreDestroy} from "./context/context";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
-import {Events} from "./events";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
-import {Logger, LoggerFactory} from "./logger";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowControllers/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
@@ -148,6 +146,7 @@ export class GridOptionsWrapper {
     public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
     public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
     public isSuppressRowHoverClass() { return isTrue(this.gridOptions.suppressRowHoverClass); }
+    public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
