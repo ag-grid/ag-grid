@@ -32,8 +32,8 @@ https://plnkr.co or similar (you can use this template as a starting point: http
 <!-- Check whether this is still an issue in the most recent ag-Grid version -->
 
 
-* **Browser:** [all | Chrome XX | Firefox XX | IE XX | Safari XX | Mobile Chrome XX | Android X.X Web Browser | iOS XX Safari | iOS XX UIWebView | iOS XX WKWebView ]
-<!-- All browsers where this could be reproduced -->
+* **Browser:**
+<!-- Run `navigator.userAgent` in console of all of the browsers where this could be reproduced -->
 
 * **Language:** [all | TypeScript X.X | ES6/7 | ES5]
 
