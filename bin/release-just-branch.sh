@@ -67,6 +67,7 @@ do
 
     cd ../..
     build-just-module.sh $1 $module
+    dist-just-module.sh $1 $module
     cd "$1/$module"
 
     git add .

@@ -16,22 +16,6 @@ do
     npm install
     npm-install-peers
 
-    case $module in
-        "ag-grid-enterprise"|"ag-grid")
-            gulp release
-            ;;
-        "ag-grid-ng2")
-            npm run release
-            ;;
-        "ag-grid-react")
-            gulp
-            ;;
-         "ag-grid-aurelia")
-            npm i aurelia-framework
-            npm run build
-            ;;
-    esac
-
     cd ../../
 done
 
