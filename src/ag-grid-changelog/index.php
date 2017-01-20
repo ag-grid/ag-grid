@@ -12,7 +12,10 @@
     <link rel="stylesheet" href="../dist/aui/css/aui.min.css" media="all">
     <link rel="stylesheet" href="../dist/aui/css/aui-experimental.min.css" media="all">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
     <!-- Bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
@@ -64,7 +67,7 @@ include '../includes/headerRow.php'; ?>
 
             function mapReporter($reporter)
             {
-                if($reporter === "" || $reporter === "Internal") {
+                if ($reporter === "" || $reporter === "Internal") {
                     return "ag-Grid";
                 }
                 switch ($reporter) {
@@ -84,41 +87,17 @@ include '../includes/headerRow.php'; ?>
             }
 
             ?>
-
-<!--                        <div id="main" class=" aui-page-panel">-->
-<!--                            <div class="connect-theme-background-cover"></div>-->
-<!--                            <div id="main-header">-->
-<!--                                <div id="main-content" class="wiki-content">-->
-<!--                                    <div class="contentLayout2">-->
-<!--                                        <div class="columnLayout single" data-layout="single">-->
-<!--                                            <div class="cell normal" data-type="normal">-->
-<!--                                                <div class="innerCell">-->
-<!--            <div id="refresh-module-1578096519"-->
-<!--                 class="confluence-jim-macro refresh-module-id jira-table"-->
-<!--                 resolved="">-->
-<!--                <div id="jira-issues-2004560625" style="width: 100%; overflow: auto;"-->
-<!--                     class="jira-issues">-->
-                    <table class="aui" resolved="">
-                        <tbody>
-                        <?php
-                        $showFixVersion = true;
-                        $firstReport = true;
-                        $reportTitle = "";
-                        $csvFile = "changelog.json";
-                        include '../jira_report.php';
-                        ?>
-                        </tbody>
-                    </table>
-<!--                </div>-->
-<!--            </div>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
+            <table class="aui" resolved="">
+                <tbody>
+                <?php
+                $showFixVersion = true;
+                $firstReport = true;
+                $reportTitle = "";
+                $csvFile = "changelog.json";
+                include '../jira_report.php';
+                ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

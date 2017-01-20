@@ -1,15 +1,15 @@
 <?php
 $jiraDataPrefix = '../mock_jira_data/';
-if(strpos($_SERVER['HTTP_HOST'], 'ag-grid.com') !== false) {
-    $jiraDataPrefix='../jiradata/';
+if (strpos($_SERVER['HTTP_HOST'], 'ag-grid.com') !== false) {
+    $jiraDataPrefix = '../jiradata/';
 }
-$json_decoded = json_decode(file_get_contents($jiraDataPrefix.$csvFile));
+$json_decoded = json_decode(file_get_contents($jiraDataPrefix . $csvFile));
 $issue_count = count($json_decoded->{'issues'});
 for ($i = 0; $i < $issue_count; $i++) {
     if ($i == 0) {
         ?>
         <tr>
-            <td colspan="7"
+            <td colspan="8"
                 style="font-weight: bold;font-size: large;<?= $firstReport ? '' : 'padding-top: 40px' ?>"><span
                     id="ag-GridBacklog-Completed-WillbeintheNextRelease"><?= $reportTitle ?></span></td>
         </tr>
@@ -51,6 +51,11 @@ for ($i = 0; $i < $issue_count; $i++) {
             <th style="text-align: left; text-transform: capitalize;"
                 class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
                     class="jim-table-header-content">Status</span></th>
+
+            <th nowrap="true" style="text-align: left; text-transform: capitalize;"
+                class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                    class="jim-table-header-content">More Info</span></th>
+
         </tr>
         <?php
     }
@@ -58,49 +63,45 @@ for ($i = 0; $i < $issue_count; $i++) {
 
     $class = $i % 2 == 0 ? 'rowNormal' : 'rowAlternate';
 
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'key'};
-//
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'avatarId'};
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'};
-//
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'priority'}->{'iconUrl'};
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'priority'}->{'name'};
-//
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10300'}[0]->{'value'}; /* source*/
-//
-//    echo implode(",", $json_decoded->{'issues'}[$i]->{'fields'}->{'labels'});
-//
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'components'}[0]->{'name'}; /* components (could me many) */
-//
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'summary'};
-//
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'created'};
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'updated'};
-//
-//    echo $json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'};
+    $moreInfoContent = $json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10400'};
+
     ?>
+    <div class="hidden" id="<?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?>">
+        <div class="popover-heading">
+            This is the heading for #1
+        </div>
+
+        <div class="popover-body">
+            <?=
+            $moreInfoContent;
+            ?>
+        </div>
+    </div>
     <tr class="<?= $class ?>">
         <td nowrap="true"
             class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?></td>
         <!-- key -->
-        <td nowrap="true"
-            class="jira-macro-table-underline-pdfexport">
-            <span  style="display: inline;height: 100%">
-                <img style="height: 100%;vertical-align: middle"
-                src="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'iconUrl'}, FILTER_SANITIZE_STRING) ?>"
-                height="16" width="16" border="0"
-                >
-                <span style="height: 100%""><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span>
+        <td nowrap="true"   class="jira-macro-table-underline-pdfexport"> 
+            <span style="vertical-align:top;"> 
+                <span>
+                    <img style="vertical-align: middle"  
+                         src="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'iconUrl'}, FILTER_SANITIZE_STRING) ?>"
+                           height="16" width="16" border="0"  /> 
+                </span> 
+                <span
+                    style="height: 100%""><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span> 
             </span>
+             
         </td>
+         
         <!-- issue type -->
         <td
         <?php
         if ($showFixVersion) {
-        ?>
-        <td nowrap="true"
-            class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'}, FILTER_SANITIZE_STRING) ?></td>
-        <!-- fix version -->
+            ?>
+            <td nowrap="true"
+                class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'}, FILTER_SANITIZE_STRING) ?></td>
+            <!-- fix version -->
             <?php
         }
         ?>
@@ -121,8 +122,33 @@ for ($i = 0; $i < $issue_count; $i++) {
             <span
                 class="aui-lozenge aui-lozenge-subtle aui-lozenge-success"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING) ?></span>
         </td>
+        <td nowrap="true"
+            class="jira-macro-table-underline-pdfexport"
+            align="center">
+            <?php
+            if(strlen($moreInfoContent) > 0) {
+            ?>
+            <a style="width: 100%" class="btn btn-primary" data-placement="top"
+               data-popover-content="#<?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?>"
+               data-toggle="popover" data-trigger="click" href="#" tabindex="0" data-placement="left">More Info</a>
+            <?php } ?>
+        </td>
     </tr>
     <?php
 }
 ?>
-
+<script>
+    $(function () {
+        $("[data-toggle=popover]").popover({
+            html: true,
+            content: function () {
+                var content = $(this).attr("data-popover-content");
+                return $(content).children(".popover-body").html();
+            },
+//            title: function () {
+//                var title = $(this).attr("data-popover-content");
+//                return $(title).children(".popover-heading").html();
+//            }
+        });
+    });
+</script>

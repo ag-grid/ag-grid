@@ -45,14 +45,6 @@
                         <a href="/support.php">Support</a>
                     </li>
 
-                    <li class="<?php if ($navKey == "changelog") { ?>active<?php }?>">
-                        <a href="/ag-grid-changelog">Changelog</a>
-                    </li>
-
-                    <li class="<?php if ($navKey == "pipeline") { ?>active<?php }?>">
-                        <a href="/ag-grid-pipeline">Pipeline</a>
-                    </li>
-
                     <li class="dropdown <?php if ($navKey == "about") { ?>active<?php }?>">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="/about.php">About <b class="caret hidden-xs"></b></a>
                         <ul class="dropdown-menu">
