@@ -58,7 +58,7 @@ export class ComponentUtil {
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent', 'getRowHeight',
         'doesExternalFilterPass', 'getRowClass','getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
-        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
+        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard', 'processCellFromClipboard',
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef','processSecondaryColGroupDef',
         'getBusinessKeyForNode', 'checkboxSelection', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
