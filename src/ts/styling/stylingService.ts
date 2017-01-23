@@ -6,12 +6,12 @@ import {ExpressionService} from "../expressionService";
 export class StylingService {
     @Autowired('expressionService') private expressionService: ExpressionService;
 
-    processAllCellClasses(colDef:ColDef, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
+    public processAllCellClasses(colDef:ColDef, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
         this.processCellClassRules(colDef, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass)
     }
 
-    processCellClassRules(colDef:ColDef, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
+    public processCellClassRules(colDef:ColDef, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
         let classRules = colDef.cellClassRules;
         if (typeof classRules === 'object' && classRules !== null) {
             let classNames = Object.keys(classRules);
@@ -33,7 +33,7 @@ export class StylingService {
         }
     }
 
-    processStaticCellClasses (colDef:ColDef, params:any, onApplicableClass:(className:string)=>void){
+    public processStaticCellClasses (colDef:ColDef, params:any, onApplicableClass:(className:string)=>void){
         let cellClass = colDef.cellClass;
         if (cellClass) {
             var classOrClasses: any;
