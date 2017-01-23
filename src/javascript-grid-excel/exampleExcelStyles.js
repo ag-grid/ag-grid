@@ -9,7 +9,11 @@ var columnDefs = [{
         {headerName: "Country", field: "country", width: 120, cellClassRules: {
             redFont: function(params) { return params.value === 'United States' }
         }},
-        {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75},
+        {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75, cellClassRules:{
+                boldBorders: function(params) { return params.value === 'U'}
+            },
+            cellClass:['redFont', 'greenBackground']
+        },
         {headerName: "Year", field: "year", width: 75, cellClassRules:{
             notInExcel: function(params) { return true}
         }}
