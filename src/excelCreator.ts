@@ -258,7 +258,7 @@ export class ExcelCreator implements IExcelCreator{
         });
 
         var applicableStyles:string [] = [];
-        this.stylingService.processCellClassRules(
+        this.stylingService.processAllCellClasses(
             column.getColDef(),
             {
                 value: value,
