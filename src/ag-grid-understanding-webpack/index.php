@@ -17,6 +17,23 @@ include('../includes/mediaHeader.php');
 <div class="row">
     <div class="col-md-9">
 
+        <h1>Motivation</h1>
+
+        <p>When I first started working at ag-Grid (which is a great place to work!) I had to ramp up on many
+            technologies
+            and frameworks that I hadn't used before. One these was Webpack - a powerful bundler used in many
+            applications & frameworks.</p>
+
+        <p>We here at ag-Grid use Webpack to bundle our own products, as well as using it with some of our framework
+            examples.
+            Although there are alternatives to Webpack it is still very popular, and with version 2.2 recently released
+            I believe will remain
+            so for quite a while yet.</p>
+
+        <p>This blog is my attempt to document what I learnt and is the blog I wish I'd found when I first started my
+            Webpack journey,
+            all those months ago.</p>
+
         <h1>Introduction</h1>
 
         <p>
@@ -28,8 +45,8 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>All code for the blog can be found at the
-            <a href="https://github.com/seanlandsman/understanding_webpack">Understanding Webpack</a> repository on GitHub.</p>
-        </p>
+            <a href="https://github.com/seanlandsman/understanding_webpack">Understanding Webpack</a> repository on
+            GitHub.</p>
 
         <p>Let's assume we have an application that can peform two simple mathematical tasks - sum and multiply. We
             decide to split these functions into seperate
@@ -484,13 +501,15 @@ document.body.appendChild(sumResultSpan);
 
         <p>We need two Loaders to process our CSS:
         <ul>
-            <li><code>css-loader</code>: knows how to process CSS imports - takes the imported CSS and loads the file contents</li>
+            <li><code>css-loader</code>: knows how to process CSS imports - takes the imported CSS and loads the file
+                contents
+            </li>
             <li><code>style-loader</code>: takes CSS data(from imports) and adds them to the HTML document</li>
         </ul>
         </p>
 
         <p>Our Webpack config now looks like this:</p>
-<pre>
+        <pre>
 const path = require('path');
 
 module.exports = {
@@ -520,11 +539,15 @@ module.exports = {
 
         <p>
         <ul>
-            <li><code>test</code>: as before, we need to tell the Loaders that we only want it to process CSS files - this regex will only process .css files
+            <li><code>test</code>: as before, we need to tell the Loaders that we only want it to process CSS files -
+                this regex will only process .css files
             </li>
-            <li><code>loaders</code>: the loaders to use. Note that this time it's plural as we're supplying an array of Loaders. Also note that Webpack processes Loaders
-            from <strong>left to right</strong>, so the results of <code>css-loader</code> (the file contents) are passed to <code>style-loader</code> (adding the styles
-            to the HTML document)</li>
+            <li><code>loaders</code>: the loaders to use. Note that this time it's plural as we're supplying an array of
+                Loaders. Also note that Webpack processes Loaders
+                from <strong>left to right</strong>, so the results of <code>css-loader</code> (the file contents) are
+                passed to <code>style-loader</code> (adding the styles
+                to the HTML document)
+            </li>
         </ul>
         </p>
 
@@ -546,10 +569,11 @@ module.exports = {
         <p>For now, let's just extract the CSS and output it into a file that we can then import. To do this, we're
             going to make use of a Plugin: <code>ExtractTextPlugin</code>.</p>
 
-        <p>Loaders are uses for pre-processing data before it's output into our bundle. Plugins however can keep output from appearing in our bundle.</p>
+        <p>Loaders are uses for pre-processing data before it's output into our bundle. Plugins however can keep output
+            from appearing in our bundle.</p>
 
         <p>Our Webpack config now looks like this:</p>
-<pre>
+        <pre>
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -581,34 +605,38 @@ module.exports = {
 };
 </pre>
 
-        <p>At the top we're importing the ExtractTextPlugin. We've also changed the loader for CSS to use this plugin:    </p>
-<pre>
+        <p>At the top we're importing the ExtractTextPlugin. We've also changed the loader for CSS to use this
+            plugin: </p>
+        <pre>
 {
     test: /\.css$/,
     loader: ExtractTextPlugin.extract('css-loader')
 }
 </pre>
 
-        <p>This tells Webpack to pass the results off the css-loader to the ExtractTextPlugin. At the bottom we configure the plugin:</p>
-<pre>
+        <p>This tells Webpack to pass the results off the css-loader to the ExtractTextPlugin. At the bottom we
+            configure the plugin:</p>
+        <pre>
 plugins: [
     new ExtractTextPlugin('style.css')
 ]
 </pre>
         <p>What this does is tell the plugin that for all data passed to it, save it down to a file called style.css.
             This may not seem immediately useful, but as before with many seperate JavaScript files imagine we had many
-            CSS files. By doing the above we can combine many separate CSS files into one file, reducing the number of web calls required at load time.</p>
+            CSS files. By doing the above we can combine many separate CSS files into one file, reducing the number of
+            web calls required at load time.</p>
 
         <p>Looking at dist/style.css we can see:</p>
-<pre>
+        <pre>
 span {
     border: 5px solid brown;
     display:block;
 }
 </pre>
 
-        <p>Which of course is the content of our CSS. To make use of this we need to modify our index.html to import this CSS:</p>
-<pre>
+        <p>Which of course is the content of our CSS. To make use of this we need to modify our index.html to import
+            this CSS:</p>
+        <pre>
 <span class="codeComment">// index.html - our entry point to our application</span>
 &lt;html&gt;
 &lt;head&gt;
@@ -625,21 +653,26 @@ span {
         <p>Let's add some images to our application - and get Webpack (together with a suitable loader) to process them
             for us.</p>
 
-        <p>Let's add two new images to our project a small one and a large one - one for summing and one for multiplication,
+        <p>Let's add two new images to our project a small one and a large one - one for summing and one for
+            multiplication,
             just to add a little colour to our output.</p>
 
         <p>In order to process these images we're going to make use of two Loaders:
-            <ul>
+        <ul>
             <li><code>image-webpack-loader</code>: will try automatically compress large images for us</li>
-            <li><code>url-loader</code>: will inline the results from <code>image-webpack-loader</code> if the results are small, and include
-            the image in the output directory if they are large</li>
+            <li><code>url-loader</code>: will inline the results from <code>image-webpack-loader</code> if the results
+                are small, and include
+                the image in the output directory if they are large
+            </li>
         </ul>
         </p>
 
-        <p>We have two new images we want to add - multiply.png which is relatively large (about 32kb) and sum.png which is relatively small (about 13kb).</p>
+        <p>We have two new images we want to add - multiply.png which is relatively large (about 32kb) and sum.png which
+            is relatively small (about 13kb).</p>
 
-        <p>First let's add a new image utility class - this will create a new image for us and add it to the document:</p>
-<pre>
+        <p>First let's add a new image utility class - this will create a new image for us and add it to the
+            document:</p>
+        <pre>
 <span class="codeComment">// image_util.js</span>
 const addImageToPage = (imageSrc) => {
     const image = document.createElement('img');
@@ -653,7 +686,7 @@ export default addImageToPage;
 </pre>
 
         <p>Let's import both the new image utility as well as the images we want to add to our application:</p>
-<pre>
+        <pre>
 <span class="codeComment">// index.js - our application logic</span>
 import multiply from './multiply';
 import sum from './sum';
@@ -691,7 +724,7 @@ addImageToPage(sumImg);
 document.body.appendChild(sumResultSpan);
 </pre>
         <p>Finally, let's configure Webpack to process these images with the two new Loaders:</p>
-<pre>
+        <pre>
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -733,32 +766,36 @@ module.exports = {
 
         <p>
         <ul>
-            <li><code>output.publicPath</code>Allows The url-loader to know what prefix to add for files that will be saved to disk. For example a resulting
-            img.src would be img.src='dist/output_file.png'</li>
+            <li><code>output.publicPath</code>Allows The url-loader to know what prefix to add for files that will be
+                saved to disk. For example a resulting
+                img.src would be img.src='dist/output_file.png'
+            </li>
             <li><code>test</code>: as before, we need to tell the Loaders that we only want it to process image files -
                 this regex will only process .png files. We can make this
-                more complicated by adding support for other image formats, for for our purposes this simple regex will do
+                more complicated by adding support for other image formats, for for our purposes this simple regex will
+                do
             </li>
-            <li><code>loaders</code>: our loaders to use - remember that  Webpack processes Loaders from <strong>left to
+            <li><code>loaders</code>: our loaders to use - remember that Webpack processes Loaders from <strong>left to
                     right</strong>, so the results of <code>image-webpack-loader</code>
                 will be passed to <code>url-loader</code></li>
         </ul>
         </p>
 
         <p>If we now run Webpack we will see something like the following:</p>
-<pre>
+        <pre>
 38ba485a2e2306d9ad96d479e36d2e7b.png
 bundle.js
 style.css
 </pre>
 
-        <p>If we open 38ba485a2e2306d9ad96d479e36d2e7b.png we should find that it is our large image - multiply.png. The smaller image, sum.png, has been inlined in bundle.js as follows:</p>
-<pre>
+        <p>If we open 38ba485a2e2306d9ad96d479e36d2e7b.png we should find that it is our large image - multiply.png. The
+            smaller image, sum.png, has been inlined in bundle.js as follows:</p>
+        <pre>
 module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6FBMVEUAuv8AgL...."
 </pre>
 
         <p>Which would be equivalent to having:</p>
-<pre>
+        <pre>
 img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6FBMVEUAuv8AgL...'
 </pre>
 
@@ -766,12 +803,15 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 
         <img src="../images/final_webpack_output.png" style="width: 100%">
 
-        <p>From the above hopefully you can see what Webpack can offer us as application developers. With a fairly small amount
-        of configuration we've been able to process ES2015 code, bundle it, handle CSS and process both large and small images, all
-        in an easy to understand method.</p>
+        <p>From the above hopefully you can see what Webpack can offer us as application developers. With a fairly small
+            amount
+            of configuration we've been able to process ES2015 code, bundle it, handle CSS and process both large and
+            small images, all
+            in an easy to understand method.</p>
 
-        <p>We've achieved all this and we've only just scratched the surface of what Webpack can do. We can minify & uglify code, split code
-        into cache busting filename, process TypeScript and Angular 2+ - there are so many options!</p>
+        <p>We've achieved all this and we've only just scratched the surface of what Webpack can do. We can minify &
+            uglify code, split code
+            into cache busting filename, process TypeScript and Angular 2+ - there are so many options!</p>
 
         <p>Give Webpack a go - I'm sure you'll find it an indispensable tool in your developer toolkit.</p>
 
@@ -812,9 +852,7 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 
         <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
 
-            <p>
-                <img src="/images/sean.png"/>
-            </p>
+            <p><img src="../images/sean.png"/></p>
             <p style="font-weight: bold;">
                 Sean Landsman
             </p>
