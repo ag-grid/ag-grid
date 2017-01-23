@@ -1,8 +1,8 @@
 <?php
 
-$pageTitle = "Understanding Webpack";
-$pageDescription = "Understanding Webpack - Lessons Learnt at ag-Grid";
-$pageKeyboards = "ag-Grid javascript datagrid webpack";
+$pageTitle = "Webpack Tutorial: Understanding How it Works";
+$pageDescription = "Webpack Tutorial -Understanding Webpack - Lessons Learnt at ag-Grid";
+$pageKeyboards = "Webpack Tutorial";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -10,31 +10,31 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2><img src="/images/webpack_large.png"/> Understanding Webpack</h2>
+        <h1><img src="/images/webpack_large.png"/> Webpack Tutorial: Understanding How it Works</h1>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-9">
 
-        <h1>Motivation</h1>
+        <h2>Motivation</h2>
 
-        <p>This blog is my attempt to document what I learnt and is the blog I wish I'd found when I first started my
+        <p>This Webpack tutorial is my attempt to document what I learnt and is the blog I wish I'd found when I first started my
             Webpack journey,
             all those months ago.</p>
 
         <p>When I first started working at ag-Grid (which is a great place to work!) I had to ramp up on many
             technologies
-            and frameworks that I hadn't used before. One these was Webpack - a powerful bundler used in many
+            and frameworks that I hadn't used before. One of these was Webpack - a powerful bundler used in many
             applications & frameworks.</p>
 
         <p>We here at ag-Grid use Webpack to bundle our own products, as well as using it with some of our framework
             examples.
-            Although there are alternatives to Webpack it is still very popular, and with version 2.2 recently released
-            I believe will remain
+            Although there are alternatives to Webpack, it is still very popular and with version 2.2 recently released
+            I believe it will remain
             so for quite a while yet.</p>
 
-        <h1>Introduction</h1>
+        <h1>Introduction to Webpack Tutorial</h1>
 
         <p>
             Webpack is a module bundler. It takes disparate dependencies, creates modules for them and bundles the
@@ -45,11 +45,11 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>All code for the blog can be found at the
-            <a href="https://github.com/seanlandsman/understanding_webpack">Understanding Webpack</a> repository on
+            <a href="https://github.com/seanlandsman/understanding_webpack">Webpack Tutorial: Understanding How it Works</a> repository on
             GitHub.</p>
 
         <p>Let's assume we have an application that can peform two simple mathematical tasks - sum and multiply. We
-            decide to split these functions into seperate
+            decide to split these functions into separate
             files for easier maintenance:</p>
 
         <pre>
@@ -87,7 +87,7 @@ console.log('Sum of 5 and 3 = ' + totalSum);
 </pre>
 
         <p>The output of this would be:</p>
-        <pre>Product of 5 and 3 = 36
+        <pre>Product of 5 and 3 = 15
 index.js:17 Sum of 5 and 3 = 8</pre>
 
         <h1>How can Webpack help us?</h1>
@@ -106,22 +106,22 @@ index.js:17 Sum of 5 and 3 = 8</pre>
 
         <p>Now imagine that we scale this up
             to an actual fully blown Web Application - we may have dozens of dependencies, some of which depend on each
-            other. Maintaining order woudld become a nightmare!</p>
+            other. Maintaining order would become a nightmare!</p>
 
-        <p>Finally, by using global variable we risk other code overwriting our variables, causing hard to find
+        <p>Finally, by using global variables, we risk other code overwriting our variables, causing hard to find
             bugs.</p>
 
         <p>Webpack can convert these dependencies into modules - they will have a much tighter scope (which is safer).
-            Additionally by converting our dependencies into Modules Webpack can manage our dependencies for us -
+            Additionally by converting our dependencies into Modules, Webpack can manage our dependencies for us -
             Webpack will pull in the dependant Modules at the right time, in the correct scope (we'll see this in more
             detail later).</p>
 
         <h2>Death by a Thousand Cuts - Reducing Traffic</h2>
 
-        <p>If we take a look at index.html we can see that we'll need to pull down 3 seperate files. This is fine, but
+        <p>If we take a look at index.html, we can see that we'll need to pull down 3 separate files. This is fine but
             now imagine again that we have many dependencies - the end user would have to wait until all of the
             dependencies
-            had been downloaded before the main application could run.</p>
+            have been downloaded before the main application could run.</p>
 
         <p>The other main feature Webpack offers is bundling. That is, Webpack can pull all of our dependencies into a
             single file, meaning
@@ -130,16 +130,16 @@ index.js:17 Sum of 5 and 3 = 8</pre>
         <img src="../images/webpack_bundling.png" style="width: 100%">
 
         <p></p>
-        <p>Bundling, and Modularisation, are Webpack's main features. Through plugins & loaders we can further extend
-            this (we'll see this later),
+        <p>Bundling and Modularisation are Webpack's main features. Through plugins & loaders we can further extend
+            this (we'll see this later)
             but primarily this is what Webpack is for.</p>
 
         <h1>Making Dependencies Available, And Linking Them</h1>
 
-        <p>For our initial setup we'll use the CommonJS module syntax. There are other options (AMD, ES2015), but for
+        <p>For our initial setup, we'll use the CommonJS module syntax. There are other options (AMD, ES2015) but for
             now we'll use CommonJS and later move to ES2015.</p>
 
-        <p>CommonJS uses <code>module.exports</code> to exports - or make available - functions or variables to other
+        <p>CommonJS uses <code>module.exports</code> to export - or make available - functions or variables to other
             code.
             It uses <code>require</code> to then pull in these exported values.</p>
 
@@ -179,11 +179,11 @@ console.log('Sum of 5 and 3 = ' + totalSum);
 &lt;/html&gt;
 </pre>
 
-        <p>Notice that we've made both <code>sum</code> and <code>multiply</code> available to other code, and we've
+        <p>Notice that we've made both <code>sum</code> and <code>multiply</code> available to other code and we've
             pulled
             in these exported functions in both multiple.js and index.js. </p>
         <p>Notice too that our index.html now only needs to pull in a single file - bundle.js.</p>
-        <p>This is great! We now no longer have to worry about dependency order. We can expose what we want to, and keep
+        <p>This is great! We now no longer have to worry about dependency order. We can expose what we want and keep
             other code
             effectively private. We also reduce web calls from 3 (sum.js, multiply.js and index.js) to a single call -
             this will help speed loading times.</p>
@@ -202,15 +202,15 @@ module.exports = {
 }
 </pre>
 
-        <p>At a minimum we need to tell Webpack what our application entry point is, and what the resulting output
+        <p>At a minimum, we need to tell Webpack what our application entry point is and what the resulting output
             should be.</p>
 
         <p><code>entry</code>: This is the main entry point of our application. This is where our initial loading and
-            application logic will be - Webpack uses this as a starting point for it's dependency tree walking. It will
+            application logic will be. Webpack uses this as a starting point for its dependency tree walking. It will
             build
             up a dependency graph and create modules as necessary.</p>
         <p><code>output.path</code>: An absolute path for the resulting bundle. To make this cross platform and easy to
-            use we a built in Node.js
+            use, we use a built-in Node.js
             function (<code>path</code>). This will help us to dynamically create an absolute path, relative to where we
             are.
         </p>
@@ -288,9 +288,9 @@ module.exports = {
 ]);
 </pre>
 
-        <p>From this you can see that Webpack wraps each of our files into a modules and passes them into the Webpack
-            boostrap as an array of Modules.
-            For each module it adds them to the Webpack, executes them and makes them available to other modules.</p>
+        <p>From this you can see that Webpack wraps each of our files into a module and passes them into the Webpack
+            bootstrap as an array of Modules.
+            For each module, it adds them to the Webpack, executes them and makes them available to other modules.</p>
         <p>It executes <code>__webpack_require__(0)</code> which looking at the array of modules is our index.js.
             The result is the output we started with, but with far easier dependency management and less web traffic!
             Brilliant!</p>
@@ -305,7 +305,7 @@ module.exports = {
         <p>More accurately, we need to pre-process these other languages/versions into JavaScript ES5 - the version that
             Webpack can understand.</p>
 
-        <p>Here at ag-Grid we're big fans of TypeScript, but for the purposes of this example we're going to convert our
+        <p>Here at ag-Grid, we're big fans of TypeScript, but for the purposes of this example we're going to convert our
             example code into ES2015 and use Babel to convert - or <span style="font-style: italic">transpile</span> -
             our ES2015 code into s=ES5 compatible JavaScript.</p>
 
@@ -356,7 +356,7 @@ console.log(`Sum of 5 and 3 = ${totalSum}`);
         <p>We need 3 Babel dependencies in order to use it with Webpack:
         <ul><code>babel-loader</code>: The interface between Babel and Webpack</ul>
         <ul><code>babel-core</code>: Understands how to read & parse code, and generate corresponding output</ul>
-        <ul><code>babel-preset-es2015</code>: rules for babel on how to process 2015 code and convert it into ES5</ul>
+        <ul><code>babel-preset-es2015</code>: Rules for Babel on how to process ES2015 code and convert it into ES5</ul>
         </p>
 
         <p>The webpack configuration with the Babel Loader in place looks like this:</p>
@@ -390,15 +390,15 @@ module.exports = {
 
         <p>
         <ul>
-            <li><code>test</code>: we need to tell the Loader that we only want it to process JavaScript files. We don't
+            <li><code>test</code>: We need to tell the Loader that we only want it to process JavaScript files. We don't
                 want it to look for
                 CSS, HTML, images and so on - only JavaScript (.js) files. In order to do so, we provide a regex
                 expression that will match .js files
             </li>
-            <li><code>loader</code>: the loader to use - in this case the Babel Loader</li>
-            <li><code>exclude</code>: we don't want babel to process any files under node_modules</li>
+            <li><code>loader</code>: The loader to use - in this case the Babel Loader</li>
+            <li><code>exclude</code>: We don't want Babel to process any files under node_modules</li>
             <li><code>query.presets</code>: which Babel Preset (or rules) we want to apply - in our case we're looking
-                for Babel to convert es2015 code
+                for Babel to convert ES2015 code
             </li>
         </ul>
         </p>
@@ -466,7 +466,7 @@ span {
             but if we import it and then use Webpack to process it, we'll benefit from what Webpack can offer.</p>
 
         <p>An additional benefit of importing the CSS in our code is that we (developers) can see where the association
-            between the CSS and it's usage is. It's worth noting that the CSS is not scoped to the module it's imported
+            between the CSS and its usage is. It's worth noting that the CSS is not scoped to the module it's imported
             to (it's still global),
             but from a developers perspective the relationship is clearer.</p>
 
@@ -501,10 +501,10 @@ document.body.appendChild(sumResultSpan);
 
         <p>We need two Loaders to process our CSS:
         <ul>
-            <li><code>css-loader</code>: knows how to process CSS imports - takes the imported CSS and loads the file
+            <li><code>css-loader</code>: Knows how to process CSS imports - takes the imported CSS and loads the file
                 contents
             </li>
-            <li><code>style-loader</code>: takes CSS data(from imports) and adds them to the HTML document</li>
+            <li><code>style-loader</code>: Takes CSS data(from imports) and adds them to the HTML document</li>
         </ul>
         </p>
 
@@ -569,7 +569,7 @@ module.exports = {
         <p>For now, let's just extract the CSS and output it into a file that we can then import. To do this, we're
             going to make use of a Plugin: <code>ExtractTextPlugin</code>.</p>
 
-        <p>Loaders are uses for pre-processing data before it's output into our bundle. Plugins however can keep output
+        <p>Loaders are used for pre-processing data before it's output into our bundle. Plugins however can keep output
             from appearing in our bundle.</p>
 
         <p>Our Webpack config now looks like this:</p>
@@ -622,8 +622,8 @@ plugins: [
 ]
 </pre>
         <p>What this does is tell the plugin that for all data passed to it, save it down to a file called style.css.
-            This may not seem immediately useful, but as before with many seperate JavaScript files imagine we had many
-            CSS files. By doing the above we can combine many separate CSS files into one file, reducing the number of
+            This may not seem immediately useful, but as before with many separate JavaScript files, imagine we had many
+            CSS files. By doing the above, we can combine many separate CSS files into one file, reducing the number of
             web calls required at load time.</p>
 
         <p>Looking at dist/style.css we can see:</p>
@@ -659,7 +659,7 @@ span {
 
         <p>In order to process these images we're going to make use of two Loaders:
         <ul>
-            <li><code>image-webpack-loader</code>: will try automatically compress large images for us</li>
+            <li><code>image-webpack-loader</code>: will try to automatically compress large images for us</li>
             <li><code>url-loader</code>: will inline the results from <code>image-webpack-loader</code> if the results
                 are small, and include
                 the image in the output directory if they are large
@@ -670,7 +670,7 @@ span {
         <p>We have two new images we want to add - multiply.png which is relatively large (about 32kb) and sum.png which
             is relatively small (about 13kb).</p>
 
-        <p>First let's add a new image utility class - this will create a new image for us and add it to the
+        <p>First, let's add a new image utility class - this will create a new image for us and add it to the
             document:</p>
         <pre>
 <span class="codeComment">// image_util.js</span>
@@ -766,13 +766,13 @@ module.exports = {
 
         <p>
         <ul>
-            <li><code>output.publicPath</code>Allows The url-loader to know what prefix to add for files that will be
-                saved to disk. For example a resulting
+            <li><code>output.publicPath</code>Allows the url-loader to know what prefix to add for files that will be
+                saved to disk. For example, a resulting
                 img.src would be img.src='dist/output_file.png'
             </li>
             <li><code>test</code>: as before, we need to tell the Loaders that we only want it to process image files -
                 this regex will only process .png files. We can make this
-                more complicated by adding support for other image formats, for for our purposes this simple regex will
+                more complicated by adding support for other image formats, for our purposes this simple regex will
                 do
             </li>
             <li><code>loaders</code>: our loaders to use - remember that Webpack processes Loaders from <strong>left to
@@ -803,7 +803,7 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 
         <img src="../images/final_webpack_output.png" style="width: 100%">
 
-        <p>From the above hopefully you can see what Webpack can offer us as application developers. With a fairly small
+        <p>From this Webpack Tutorial, you can see what Webpack can offer us as application developers. With a fairly small
             amount
             of configuration we've been able to process ES2015 code, bundle it, handle CSS and process both large and
             small images, all
@@ -817,8 +817,8 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-angular-aot-dynamic-components/"
-               data-text="Understanding AOT and Dynamic Components in Angular 2" data-via="seanlandsman"
+               data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
+               data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -836,8 +836,8 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 
         <div>
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-angular-aot-dynamic-components/"
-               data-text="Understanding AOT and Dynamic Components in Angular 2" data-via="seanlandsman"
+               data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
+               data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
