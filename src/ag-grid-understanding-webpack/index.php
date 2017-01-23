@@ -52,12 +52,13 @@ include('../includes/mediaHeader.php');
             decide to split these functions into separate
             files for easier maintenance:</p>
 
-        <pre>
+<pre>
 <span class="codeComment">// sum.js</span>
 var sum = function (a, b) {
     return a + b;
 };
-
+</pre>
+<pre>
 <span class="codeComment">// multiply.js</span>
 <span class="codeComment">// slightly contrived here - we're going to repeatedly sum to multiply, to illustrate dependency</span>
 <span class="codeComment">// interaction</span>
@@ -68,13 +69,16 @@ var multiply = function (a, b) {
     }
     return total;
 };
+</pre>
+<pre>
 <span class="codeComment">// index.js - our application logic</span>
 var totalMultiply = multiply(5, 3);
 var totalSum = sum(5, 3);
 
 console.log('Product of 5 and 3 = ' + totalMultiply);
 console.log('Sum of 5 and 3 = ' + totalSum);
-
+</pre>
+<pre>
 <span class="codeComment">// index.html - our entry point to our application</span>
 &lt;html&gt;
 &lt;head&gt;
@@ -142,13 +146,14 @@ index.js:17 Sum of 5 and 3 = 8</pre>
             code.
             It uses <code>require</code> to then pull in these exported values.</p>
 
-        <pre>
+<pre>
 <span class="codeComment">// sum.js</span>
 var sum = function (a, b) {
     return a + b;
 };
 module.exports = sum;
-
+</pre>
+<pre>
 <span class="codeComment">// multiply.js</span>
 var multiply = function (a, b) {
     var total = 0;
@@ -158,7 +163,8 @@ var multiply = function (a, b) {
     return total;
 };
 module.exports = multiply;
-
+</pre>
+<pre>
 <span class="codeComment">// index.js - our application logic</span>
 var multiply = require('./multiply');
 var sum = require('./sum');
@@ -168,7 +174,8 @@ var totalSum = sum(5, 3);
 
 console.log('Product of 5 and 3 = ' + totalMultiply);
 console.log('Sum of 5 and 3 = ' + totalSum);
-
+</pre>
+<pre>
 <span class="codeComment">// index.html - our entry point to our application</span>
 &lt;html&gt;
 &lt;head&gt;
@@ -224,7 +231,7 @@ module.exports = {
 
         <p>Looking at the resulting bundle.js can be very instructional (prettified and commented for easier
             navigation):</p>
-        <pre>
+<pre>
 <span class="codeComment">// the webpack bootstrap</span>
 (function (modules) {
     // The module cache
@@ -313,12 +320,13 @@ module.exports = {
             more information about Babel.</p>
 
         <p>First, let's convert our ES5 code into ES2015:</p>
-        <pre>
+<pre>
 <span class="codeComment">// sum.js</span>
 const sum = (a, b) => a + b;
 
 export default sum;
-
+</pre>
+<pre>
 <span class="codeComment">// multiply.js</span>
 import sum from './sum';
 
@@ -331,7 +339,8 @@ const multiply = (a, b) => {
 };
 
 export default multiply;
-
+</pre>
+<pre>
 <span class="codeComment">// index.js - our application logic</span>
 import multiply from './multiply';
 import sum from './sum';
@@ -341,7 +350,8 @@ const totalSum = sum(5, 3);
 
 console.log(`Product of 5 and 3 = ${totalMultiply}`);
 console.log(`Sum of 5 and 3 = ${totalSum}`);
-
+</pre>
+<pre>
 <span class="codeComment">// index.html is unchanged</span>
 </pre>
         <p>Here we're using Arrow Functions, the const keyword, Template Strings and the es2015 import/export module
@@ -422,7 +432,7 @@ function(module, exports) {
 
         <p>Let's expand our example to actually output the results of our calculations. We'll create a body on the page,
             and then add the results of the product and sum to spans, which we'll add to the body:</p>
-        <pre>
+<pre>
 <span class="codeComment">// index.js - our application logic</span>
 import multiply from './multiply';
 import sum from './sum';
@@ -453,7 +463,7 @@ document.body.appendChild(sumResultSpan);
             result.</p>
 
         <p>Our CSS will look like this:</p>
-        <pre>
+<pre>
 <span class="codeComment">// math_output.css</span>
 span {
     border: 5px solid brown;
@@ -469,7 +479,7 @@ span {
             to (it's still global),
             but from a developers perspective the relationship is clearer.</p>
 
-        <pre>
+<pre>
 <span class="codeComment">// index.js - our application logic</span>
 import multiply from './multiply';
 import sum from './sum';
