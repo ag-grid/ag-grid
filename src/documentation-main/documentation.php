@@ -32,8 +32,7 @@ include 'documentation_header.php';
             </div>
         </a>
         <div>
-            ag-Grid will be at ng-conf 2017. This premier
-            appearance outside of Europe!
+            ag-Grid will be at ng-conf 2017.This will be our premier appearance outside of Europe!
         </div>
     </div>
 

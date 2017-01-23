@@ -390,7 +390,7 @@ export interface IDateComponentParams {
 
     <show-example example="exampleQuickFilter"></show-example>
 
-    <h3>Custom Column Filtering</h3>
+    <h3 id="customer_col_filtering">Custom Column Filtering</h3>
 
     <p>
         If the filters provided don't provide what you want, then it's time to build your own filter class.
