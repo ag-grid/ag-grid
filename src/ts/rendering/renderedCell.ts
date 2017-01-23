@@ -916,34 +916,21 @@ export class RenderedCell extends Component {
     }
 
     private addClassesFromColDef() {
-        var colDef = this.column.getColDef();
-        if (colDef.cellClass) {
-          var classToUse: any;
-
-            if (typeof colDef.cellClass === 'function') {
-                var cellClassParams = {
-                    value: this.value,
-                    data: this.node.data,
-                    node: this.node,
-                    colDef: colDef,
-                    $scope: this.scope,
-                    context: this.gridOptionsWrapper.getContext(),
-                    api: this.gridOptionsWrapper.getApi()
-                };
-                var cellClassFunc = <(cellClassParams: any) => string|string[]> colDef.cellClass;
-                classToUse = cellClassFunc(cellClassParams);
-            } else {
-                classToUse = colDef.cellClass;
+        this.stylingService.processStaticCellClasses(
+            this.column.getColDef(),
+            {
+                value: this.value,
+                data: this.node.data,
+                node: this.node,
+                colDef: this.column.getColDef(),
+                rowIndex: this.gridCell.rowIndex,
+                api: this.gridOptionsWrapper.getApi(),
+                context: this.gridOptionsWrapper.getContext()
+            },
+            (className:string)=>{
+                _.addCssClass(this.eGridCell, className);
             }
-
-            if (typeof classToUse === 'string') {
-                _.addCssClass(this.eGridCell, classToUse);
-            } else if (Array.isArray(classToUse)) {
-                classToUse.forEach( (cssClassItem: string)=> {
-                    _.addCssClass(this.eGridCell, cssClassItem);
-                });
-            }
-        }
+        );
     }
 
 
