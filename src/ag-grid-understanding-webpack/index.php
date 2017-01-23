@@ -10,7 +10,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1><img src="/images/webpack_large.png"/> Webpack Tutorial: Understanding How it Works</h1>
+        <h1><img src="../images/webpack_large.png"/> Webpack Tutorial: Understanding How it Works</h1>
     </div>
 </div>
 
@@ -45,7 +45,7 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>All code for the blog can be found at the
-            <a href="https://github.com/seanlandsman/understanding_webpack">Webpack Tutorial: Understanding How it Works</a> repository on
+            <a href="https://github.com/seanlandsman/ag-grid-understanding-webpack">Webpack Tutorial: Understanding How it Works</a> repository on
             GitHub.</p>
 
         <p>Let's assume we have an application that can peform two simple mathematical tasks - sum and multiply. We
@@ -120,8 +120,7 @@ index.js:17 Sum of 5 and 3 = 8</pre>
 
         <p>If we take a look at index.html, we can see that we'll need to pull down 3 separate files. This is fine but
             now imagine again that we have many dependencies - the end user would have to wait until all of the
-            dependencies
-            have been downloaded before the main application could run.</p>
+            dependencies had been downloaded before the main application could run.</p>
 
         <p>The other main feature Webpack offers is bundling. That is, Webpack can pull all of our dependencies into a
             single file, meaning
@@ -560,10 +559,6 @@ module.exports = {
 
         <p>This is clever, but there are other ways for us to process the CSS. We can split the CSS in cache busting
             (files with unique hashes) and then include these files into our resulting bundle.
-            <!--but that is beyond the scope
-        of this blog. For more information please refer to the <a href="https://github.com/webpack/css-loader" target="_blank">css-loader</a>
-            and <a href="https://github.com/webpack/style-loader" target="_blank">style-loader</a> GitHub pages.
-            -->
         </p>
 
         <p>For now, let's just extract the CSS and output it into a file that we can then import. To do this, we're
