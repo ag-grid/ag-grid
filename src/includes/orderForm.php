@@ -92,7 +92,7 @@
         <textarea rows="8" class="form-control" name="WebToContact[message]" id="WebToContact_message"><? if ($startTrial) { ?>
 Dear ag-Grid Team,
 
-I am interested in taking a two trial of ag-Grid Enterprise.
+I am interested in taking a two month trial of ag-Grid Enterprise.
 
 Please email me back with a license key that I can use for my trial.
 
