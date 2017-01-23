@@ -19,6 +19,10 @@ include('../includes/mediaHeader.php');
 
         <h1>Motivation</h1>
 
+        <p>This blog is my attempt to document what I learnt and is the blog I wish I'd found when I first started my
+            Webpack journey,
+            all those months ago.</p>
+
         <p>When I first started working at ag-Grid (which is a great place to work!) I had to ramp up on many
             technologies
             and frameworks that I hadn't used before. One these was Webpack - a powerful bundler used in many
@@ -29,10 +33,6 @@ include('../includes/mediaHeader.php');
             Although there are alternatives to Webpack it is still very popular, and with version 2.2 recently released
             I believe will remain
             so for quite a while yet.</p>
-
-        <p>This blog is my attempt to document what I learnt and is the blog I wish I'd found when I first started my
-            Webpack journey,
-            all those months ago.</p>
 
         <h1>Introduction</h1>
 
