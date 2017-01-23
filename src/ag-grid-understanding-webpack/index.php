@@ -63,7 +63,7 @@ var sum = function (a, b) {
 <span class="codeComment">// interaction</span>
 var multiply = function (a, b) {
     var total = 0;
-    for (let i = 0; i < b; i++) {
+    for (var i = 0; i < b; i++) {
         total = sum(a, total);
     }
     return total;
@@ -153,7 +153,7 @@ module.exports = sum;
 <span class="codeComment">// multiply.js</span>
 var multiply = function (a, b) {
     var total = 0;
-    for (let i = 0; i < b; i++) {
+    for (var i = 0; i < b; i++) {
         total = sum(a, total);
     }
     return total;
@@ -269,7 +269,7 @@ module.exports = {
 
         var multiply = function (a, b) {
             var total = 0;
-            for (let i = 0; i < b; i++) {
+            for (var i = 0; i < b; i++) {
                 total = sum(a, total);
             }
             return total;
