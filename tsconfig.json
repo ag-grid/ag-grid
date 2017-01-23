@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "typescript": "typescript",
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declarationFiles": true,
+    "target": "es5",
+    "noImplicitAny": true
+  }
+}

@@ -4,6 +4,7 @@ import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCell
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 import {IFilter} from "./iFilter";
 import {GridOptions} from "../entities/gridOptions";
+import {IDateComponent} from "../rendering/dateComponent";
 
 export interface IFrameworkFactory {
 
@@ -20,6 +21,8 @@ export interface IFrameworkFactory {
     gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string;
 
     gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string;
+
+    dateComponent (gridOptions: GridOptions): {new(): IDateComponent};
 
     /** Because Angular 2 uses Zones, you should not use setTimout(). So to get around this, we allow the framework
      * to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */
