@@ -1,8 +1,8 @@
 <?php
 
 $pageTitle = "ag-Grid Blog";
-$pageDescription = "A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid";
-$pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
+$pageDescription = "a collection of blogs from ag-Grid team";
+$pageKeyboards = "blogs ag-grid angular react webpack";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -21,7 +21,7 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
-        <a href="../ag-grid-angular-aot-dynamic-components/">
+        <a href="../ag-grid-understanding-webpack/">
             <img src="../images/agGridDaily.png" style="width: 225px;"/>
         </a>
     </div>
@@ -29,11 +29,11 @@ include('../includes/mediaHeader.php');
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
             <a href="/ag-grid-understanding-webpack/">
-                Understanding Webpack
+                Webpack Tutorial: Understanding How it Works
             </a>
         </div>
         <div style="float: right;  color: #767676;">
-            20th January 2017
+            23rd January 2017
         </div>
     </div>
     <div style="color: #767676">

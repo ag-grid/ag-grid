@@ -553,7 +553,7 @@ module.exports = {
             </li>
             <li><code>loaders</code>: the loaders to use. Note that this time it's plural as we're supplying an array of
                 Loaders. Also note that Webpack processes Loaders
-                from <strong>left to right</strong>, so the results of <code>css-loader</code> (the file contents) are
+                from <strong>right to left</strong>, so the results of <code>css-loader</code> (the file contents) are
                 passed to <code>style-loader</code> (adding the styles
                 to the HTML document)
             </li>
@@ -780,8 +780,7 @@ module.exports = {
                 more complicated by adding support for other image formats, for our purposes this simple regex will
                 do
             </li>
-            <li><code>loaders</code>: our loaders to use - remember that Webpack processes Loaders from <strong>left to
-                    right</strong>, so the results of <code>image-webpack-loader</code>
+            <li><code>loaders</code>: our loaders to use - remember that Webpack processes Loaders from <strong>right to left</strong>, so the results of <code>image-webpack-loader</code>
                 will be passed to <code>url-loader</code></li>
         </ul>
         </p>

@@ -15,6 +15,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">23rd January 2017</div>
+        <div style="padding-top: 10px;">
+            <a href="../ag-grid-understanding-webpack/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                Webpack Tutorial: Understanding How it Works
+            </a>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div style="float: left;">
             <a href="https://www.ng-conf.org/">
                 <img src="https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png" style="width: 90px"/>
