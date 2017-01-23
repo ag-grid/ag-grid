@@ -4,7 +4,7 @@ import {MD5} from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = 'MTQ2ODM5ODkxNjg4MA==';
+    private static RELEASE_INFORMATION:string = 'MTQ4NTE3OTkyOTcwNw==';
     private static licenseKey:string;
 
     @Autowired('md5') private md5:MD5;
@@ -33,13 +33,13 @@ export class LicenseManager {
 
         if (!valid) {
             LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
-                '* Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license. *');
+                '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
         } else if(!current) {
             var formattedExpiryDate= LicenseManager.formatDate(expiry);
             var formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
             LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
                 `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. Please ` +
-                            'contact ag-Grid Support to renew your license');
+                            'contact accounts@ag-grid.com to renew your license');
         }
     }
 
