@@ -50,7 +50,6 @@ include '../includes/navbar.php'; ?>
 <?php $headerTitle = "Pipeline";
 include '../includes/headerRow.php'; ?>
 
-
 <div class="container info-page" >
     <div class="row">
         <div class="col-md-12">

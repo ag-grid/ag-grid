@@ -3,7 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <title>ag-Grid Pipeline</title>
+    <title>ag-Grid Changelog</title>
     <meta name="description" content="ag-Grid - Changelog of Work.">
     <meta name="keywords" content="ag-Grid javascript grid changelog release notes"/>
 
@@ -24,6 +24,10 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+    <link inline rel="stylesheet" href="../documentation-main/documentation.css">
+    <script src="../documentation-main/documentation.js"></script>
+
     <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
     <script>
         (function (h, o, t, j, a, r) {
@@ -42,7 +46,7 @@
 
 </head>
 
-<body class="big-text">
+<body class="big-text" ng-app="documentation">
 
 <?php $navKey = "changelog";
 include '../includes/navbar.php'; ?>
@@ -53,6 +57,9 @@ include '../includes/headerRow.php'; ?>
 <div class="container info-page">
     <div class="row">
         <div class="col-md-12">
+            <note>
+                This page covers the Changelog for all items for 8.x and above. For the Changelog covering versions 7.x and above before go <a href="/change-log/changeLogIndex.php">here</a>.
+            </note>
             <?php
             function mapIssueType($issueType)
             {

@@ -7,12 +7,16 @@ $json_decoded = json_decode(file_get_contents($jiraDataPrefix . $csvFile));
 $issue_count = count($json_decoded->{'issues'});
 for ($i = 0; $i < $issue_count; $i++) {
     if ($i == 0) {
+        if ($reportTitle !== "") {
+            ?>
+            <tr>
+                <td colspan="8"
+                    style="font-weight: bold;font-size: large;<?= $firstReport ? '' : 'padding-top: 40px' ?>"><span
+                        id="ag-GridBacklog-Completed-WillbeintheNextRelease"><?= $reportTitle ?></span></td>
+            </tr>
+            <?php
+        }
         ?>
-        <tr>
-            <td colspan="8"
-                style="font-weight: bold;font-size: large;<?= $firstReport ? '' : 'padding-top: 40px' ?>"><span
-                    id="ag-GridBacklog-Completed-WillbeintheNextRelease"><?= $reportTitle ?></span></td>
-        </tr>
         <tr>
 
             <th style="text-align: left; text-transform: capitalize;"
@@ -126,11 +130,11 @@ for ($i = 0; $i < $issue_count; $i++) {
             class="jira-macro-table-underline-pdfexport"
             align="center">
             <?php
-            if(strlen($moreInfoContent) > 0) {
-            ?>
-            <a style="width: 100%" class="btn btn-primary" data-placement="top"
-               data-popover-content="#<?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?>"
-               data-toggle="popover" data-trigger="click" href="#" tabindex="0" data-placement="left">More Info</a>
+            if (strlen($moreInfoContent) > 0) {
+                ?>
+                <a style="width: 100%" class="btn btn-primary" data-placement="top"
+                   data-popover-content="#<?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?>"
+                   data-toggle="popover" data-trigger="click" href="#" tabindex="0" data-placement="left">More Info</a>
             <?php } ?>
         </td>
     </tr>
