@@ -129,8 +129,10 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your ag-Grid application. In order to
-        simplify the configuration the Excel Export reuses the <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a>. Whatever resultant class is applicable to the cell then is
-        expected to be provided as an Excel Style to the ExcelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
+        simplify the configuration the Excel Export reuses the <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a>
+        and the <a href="../javascript-grid-cell-styling/#cellClass">cellClass</a> from the column definition.
+        Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the
+        ExcelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
     </p>
 
     <p>
@@ -187,21 +189,30 @@ include '../documentation-main/documentation_header.php';
     <pre>
 var columnDef = {
     ...,
-    <span class="codeComment">// The same cellClassRules can be used for CSS and Excel</span>
-    cssClassRules: {
-        lessThan23IsGreen: function(params) { return params.value < 23},
-        lessThan20IsBlue: function(params) { return params.value < 20}
-    }
+    <span class="codeComment">// The same cellClassRules and cellClass can be used for CSS and Excel</span>
+    cellClassRules: {
+        greenBackground: function(params) { return params.value < 23}
+    },
+    cellClass: 'redFont'
 }
 
 <span class="codeComment">// In this example we can see how we merge the styles in Excel.</span>
-<span class="codeComment">// Everyone less than 23 will have a green background,</span>
-<span class="codeComment">// if also less than 20 the font color will also be red</span>
+<span class="codeComment">// Everyone less than 23 will have a green background, and a light green color font (#e0ffc1)</span>
+<span class="codeComment">// also because redFont is set in cellClass, it will always be applied</span>
 
 var gridOptions = {
     ...,
     ExcelStyles: [
-        <span class="codeComment">// The base style, background is green</span>
+        <span class="codeComment">// The base style, red font.</span>
+        {
+            id: "redFont",
+            interior: {
+                color: "#FF0000", pattern: 'Solid'
+            }
+        },
+        <span class="codeComment">// The cellClassStyle: background is green and font color is light green,</span>
+        <span class="codeComment">// note that since this excel style it's defined after redFont</span>
+        <span class="codeComment">// it will override the red font color obtained through cellClass:'red'</span>
         {
             id: "greenBackground",
             alignment: {
@@ -225,14 +236,8 @@ var gridOptions = {
             interior: {
                 color: "#008000", pattern: 'Solid'
             }
-        },
-        <span class="codeComment">// The additional style, on top of a green background it will have a red font</span>
-        {
-            id: "redFont",
-            interior: {
-                color: "#FF0000", pattern: 'Solid'
-            }
         }
+
     ]
 }
 
@@ -241,8 +246,10 @@ var gridOptions = {
     <h4>Resolving Excel Styles</h4>
 
     <p>
-        The <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a> are executed on each cell to decide what styles to apply. Normally these styles map to CSS
-        classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles
+        All the defined classes from <a href="../javascript-grid-cell-styling/#cellClass">cellClass</a> and all the classes resultant of evaluating
+        the <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a>
+        are applied to each cell when exporting to Excel.
+        Normally these styles map to CSS classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles
         that you have provided. If more than one Excel style is found, the results are merged (similar to how CSS classes
         are merged by the browser when multiple classes are applied).
     </p>
@@ -282,8 +289,7 @@ var gridOptions = {
         This example illustrates the following features from the Excel export.
         <ul>
             <li>Cells with only one style will be exported to Excel, as you can see in the Country and Gold columns</li>
-            <li>Styles can be combined it a similar fashion than CSS, this can be seen in the column age where athletes l
-                ess than 20 years old get two styles applied (greenBackground and redFont)</li>
+            <li>Styles can be combined it a similar fashion than CSS, this can be seen in the column age where athletes less than 20 years old get two styles applied (greenBackground and redFont)</li>
             <li>A default columnDef containing cellClassRules can be specified and it will be exported to Excel.
                 You can see this is in the styling of the oddRows of the grid (boldBorders)</li>
             <li>Its possible to export borders as specified in the gold column (boldBorders)</li>
@@ -291,6 +297,7 @@ var gridOptions = {
                 get exported. This is the case in this example of the year column which has the style notInExcel, but since
                 it hasn't been specified in the gridOptions, the column then gets exported without formatting.</li>
             <li>Note that there is an Excel Style with name and id header that gets automatically applied to the ag-Grid headers when exported to Excel</li>
+            <li>As you can see in the column "Group", the Excel styles can be combined into cellClassRules and cellClass</li>
         </ul>
     </p>
 
