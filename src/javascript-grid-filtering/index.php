@@ -698,7 +698,7 @@ gridOptions.api.onFilterChanged();
     <p>
         For examples on React filtering, see the
         <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
-        In the example, both 'Skills' and 'Proficiency' columns use React filters.</p>
+        In the example, 'Skills' , 'DOB' and 'Proficiency' columns use React filters.</p>
     </p>
 
     <h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Filter</h3>

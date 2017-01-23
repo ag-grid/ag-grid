@@ -54,7 +54,7 @@
     /******/
     /******/
     /******/ 	var hotApplyOnUpdate = true;
-    /******/ 	var hotCurrentHash = "b42cb2b2fb72ddf7f65a"; // eslint-disable-line no-unused-vars
+    /******/ 	var hotCurrentHash = "2910d687e7683cc05339"; // eslint-disable-line no-unused-vars
     /******/ 	var hotCurrentModuleData = {};
     /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
     /******/
@@ -51448,7 +51448,9 @@
                         }, { headerName: "Country", field: "country", width: 150, enableRowGroup: true, enablePivot: true,
                             // an example of using a non-React cell renderer
                             cellRenderer: countryCellRenderer, pinned: true,
-                            filterParams: { cellRenderer: countryCellRenderer, cellHeight: 20 } }, { headerName: "DOB", field: "dob", width: 150, enableRowGroup: true, enablePivot: true, filter: 'date' }]
+                            filterParams: { cellRenderer: countryCellRenderer, cellHeight: 20 } }, { headerName: "DOB", field: "dob", width: 90, enableRowGroup: true, enablePivot: true, filter: 'date', cellRenderer: function cellRenderer(params) {
+                            return pad(params.value.getDate(), 2) + '/' + pad(params.value.getMonth() + 1, 2) + '/' + params.value.getFullYear();
+                        } }]
                     }, {
                         headerName: 'IT Skills',
                         children: [{ headerName: "Skills", width: 125, suppressSorting: true, field: 'skills', enableRowGroup: true, enablePivot: true,
@@ -51485,6 +51487,14 @@
             } else {
                 return null;
             }
+        }
+
+        //Utility function used to pad the date formatting.
+        function pad(num, totalStringSize) {
+            var asString = num + "";
+            while (asString.length < totalStringSize) {
+                asString = "0" + asString;
+            }return asString;
         }
 
         /***/ },
