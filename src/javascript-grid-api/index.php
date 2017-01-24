@@ -411,7 +411,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>stopEditing(cancel?)</th>
-            <td>If a cell is editing, it stops the editing. Pass 'true' if you don't want to cancel the editing
+            <td>If a cell is editing, it stops the editing. Pass 'true' if you want to cancel the editing
                 (ie don't accept changes).</td>
         </tr>
         <tr>
