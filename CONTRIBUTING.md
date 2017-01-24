@@ -1,6 +1,6 @@
-# Contributing to ag-grid-ng2
+# Contributing to ag-grid-react
 
-We would love for you to contribute to ag-grid-ng2 and help make it even better than it is
+We would love for you to contribute to ag-grid-react and help make it even better than it is
 today! As a contributor, here are the guidelines we would like you to follow:
 
  - [Question or Problem?](#question)
