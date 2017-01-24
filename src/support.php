@@ -174,9 +174,11 @@
 
             <h2>Changelog and Pipeline of Work</h2>
 
+            <!--
             <p>
                 For the Changelog covering versions 8.x and above please go to <a href="/ag-grid-changelog">here</a>.
             </p>
+            -->
             <p>
                 For the Changelog covering versions 7.x and earlier please go to <a href="/change-log/changeLogIndex.php">here</a>.
             </p>
