@@ -86,8 +86,7 @@ include '../includes/headerRow.php'; ?>
             }
 
             ?>
-
-                    <table class="aui" resolved="">
+                    <table class="aui">
                         <tbody>
                         <?php
                         $showFixVersion = false;

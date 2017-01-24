@@ -69,36 +69,32 @@ for ($i = 0; $i < $issue_count; $i++) {
 
     $moreInfoContent = $json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10400'};
 
-    ?>
-    <div class="hidden" id="<?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?>">
-        <div class="popover-heading">
-            This is the heading for #1
-        </div>
+    if (strlen($moreInfoContent) > 0) {
+        ?>
+        <div class="hidden" id="<?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?>">
+            <div class="popover-heading">
+                This is the heading for #1
+            </div>
 
-        <div class="popover-body">
-            <?=
-            $moreInfoContent;
-            ?>
+            <div class="popover-body">
+                <?=
+                $moreInfoContent;
+                ?>
+            </div>
         </div>
-    </div>
+        <?php
+    }
+    ?>
     <tr class="<?= $class ?>">
         <td nowrap="true"
             class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?></td>
-        <!-- key -->
-        <td nowrap="true"   class="jira-macro-table-underline-pdfexport"> 
-            <span style="vertical-align:top;"> 
-                <span>
-                    <img style="vertical-align: middle"  
-                         src="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'iconUrl'}, FILTER_SANITIZE_STRING) ?>"
-                           height="16" width="16" border="0"  /> 
-                </span> 
-                <span
-                    style="height: 100%""><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span> 
-            </span>
-             
+        <td nowrap="true" class="jira-macro-table-underline-pdfexport">
+            <span><img style="vertical-align: middle"
+                       src="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'iconUrl'}, FILTER_SANITIZE_STRING) ?>"
+                       height="16" width="16" border="0"/></span>
+            <span
+                style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span>
         </td>
-         
-        <!-- issue type -->
         <td
         <?php
         if ($showFixVersion) {

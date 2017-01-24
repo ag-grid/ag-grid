@@ -57,10 +57,9 @@ include '../includes/headerRow.php'; ?>
 <div class="container info-page">
     <div class="row">
         <div class="col-md-12">
-            <note>
-                This page covers the Changelog for all items for 8.x and above. For the Changelog covering versions 7.x and above before go <a href="/change-log/changeLogIndex.php">here</a>.
-            </note>
-            <?php
+            <note>This page covers the Changelog for all items for 8.x and above. For the Changelog covering versions
+                7.x and above before go <a href="/change-log/changeLogIndex.php">here</a>.
+            </note> <?php
             function mapIssueType($issueType)
             {
                 switch ($issueType) {
@@ -85,25 +84,19 @@ include '../includes/headerRow.php'; ?>
                 return $reporter;
             }
 
-
             function toDate($str_value)
             {
                 $date = new DateTime($str_value, new DateTimeZone('GMT'));
                 return $date->format('j M Y');
-//                return $date->format('j F Y H:i');
             }
 
             ?>
-            <table class="aui" resolved="">
-                <tbody>
-                <?php
-                $showFixVersion = true;
+            <table class="aui">
+                <tbody><?php $showFixVersion = true;
                 $firstReport = true;
                 $reportTitle = "";
                 $csvFile = "changelog.json";
-                include '../jira_report.php';
-                ?>
-                </tbody>
+                include '../jira_report.php'; ?></tbody>
             </table>
         </div>
     </div>
