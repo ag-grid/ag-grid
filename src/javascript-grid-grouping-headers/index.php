@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The list of columns in <i>gridOptions.columnDefs</i> can be a mix of columns and column groups.
         You can mix and match at will, every level can have any number of columns and groups and in any
-        order. What you need to understand when defining as as follows:
+        order. What you need to understand when defining as follows:
         <ul>
             <li>
                 The 'children' attribute is mandatory for groups and not applicable for columns.

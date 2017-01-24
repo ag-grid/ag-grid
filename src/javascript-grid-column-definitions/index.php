@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
         As well as defining columns, you can define default properties for the columns, so you don't
         have to repeat the item everywhere. Use grid property <i>defaultColDef</i> for properties common
         to all columns and <i>defaultColGroupDef</i> for properties common to column groups.
-        For example the following provides defaults for columns and gorups.
+        For example the following provides defaults for columns and groups.
     </p>
 
     <pre>var gridOptions = {

@@ -56,7 +56,7 @@ var colDef = {
     </code></pre>
 
 
-    <h3>Column Definition cellClass</h3>
+    <h3 id="cellClass">Column Definition cellClass</h3>
 
     <p>
         Provides a class for the cells in this column. Can be a string (a class), array of strings

@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The grid API exposes functions that go beyond events and properties that
-        you application can call. The grid needs to be initialised before the API
+        your application can call. The grid needs to be initialised before the API
         can be accessed.
     </p>
 
