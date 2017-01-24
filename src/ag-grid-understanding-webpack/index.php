@@ -86,7 +86,6 @@ console.log('Sum of 5 and 3 = ' + totalSum);
     &lt;script src="src/multiply.js"&gt;&lt;/script&gt;
     &lt;script src="src/index.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
-&lt;body>&lt;/body>
 &lt;/html&gt;
 </pre>
 
@@ -155,6 +154,8 @@ module.exports = sum;
 </pre>
 <pre>
 <span class="codeComment">// multiply.js</span>
+var sum = require('./sum');
+
 var multiply = function (a, b) {
     var total = 0;
     for (var i = 0; i < b; i++) {
@@ -181,7 +182,6 @@ console.log('Sum of 5 and 3 = ' + totalSum);
 &lt;head&gt;
     &lt;script src="./dist/bundle.js""&gt;&lt;/script&gt;
 &lt;/head&gt;
-&lt;body>&lt;/body>
 &lt;/html&gt;
 </pre>
 
@@ -648,7 +648,6 @@ span {
     &lt;link rel="stylesheet" href="dist/style.css"/>
     &lt;script src="./dist/bundle.js""&gt;&lt;/script&gt;
 &lt;/head&gt;
-&lt;body>&lt;/body>
 &lt;/html&gt;
 </pre>
         <p>The output will be the same as before.</p>
