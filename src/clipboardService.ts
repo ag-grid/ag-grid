@@ -129,7 +129,7 @@ export class ClipboardService implements IClipboardService {
         var focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) { return; }
 
-        var parsedData = this.dataToArray(data);
+        var parsedData: string[][] = this.dataToArray(data);
         if (!parsedData) {
             return;
         }
@@ -148,33 +148,12 @@ export class ClipboardService implements IClipboardService {
 
         let columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
 
-        parsedData.forEach( (values: string[]) => {
-            // if we have come to end of rows in grid, then skip
-            if (!currentRow) { return; }
-
-            let rowNode = this.getRowNode(currentRow);
-            updatedRowNodes.push(rowNode);
-
-            values.forEach( (value: any, index: number)=> {
-                let column = columnsToPasteInto[index];
-
-                if (Utils.missing(column)) { return; }
-                if (!column.isCellEditable(rowNode)) { return; }
-
-                let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
-
-                this.valueService.setValue(rowNode, column, processedValue);
-                let gridCellDef = <GridCellDef> {rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column};
-                var cellId = new GridCell(gridCellDef).createId();
-                cellsToFlash[cellId] = true;
-
-                if (updatedColumnIds.indexOf(column.getId()) < 0) {
-                    updatedColumnIds.push(column.getId());
-                }
-            });
-            // move to next row down for next set of values
-            currentRow = this.cellNavigationService.getRowBelow(currentRow);
-        });
+        let onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
+        if (onlyOneCellInRange) {
+            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
+        } else {
+            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds);
+        }
 
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
@@ -182,6 +161,62 @@ export class ClipboardService implements IClipboardService {
         this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
 
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+    }
+
+    private multipleCellRange(clipboardGridData: string[][], currentRow: GridRow, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[]) {
+        clipboardGridData.forEach((clipboardRowData: string[]) => {
+            // if we have come to end of rows in grid, then skip
+            if (!currentRow) {
+                return;
+            }
+
+            let rowNode = this.getRowNode(currentRow);
+            updatedRowNodes.push(rowNode);
+
+            clipboardRowData.forEach((value: any, index: number)=> {
+                let column = columnsToPasteInto[index];
+
+                if (Utils.missing(column)) {
+                    return;
+                }
+                if (!column.isCellEditable(rowNode)) {
+                    return;
+                }
+
+                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds);
+            });
+            // move to next row down for next set of values
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+        });
+        return currentRow;
+    }
+
+    private singleCellRange(parsedData: string[][], updatedRowNodes: RowNode[], currentRow: GridRow, cellsToFlash: any, updatedColumnIds: string[]) {
+        let value = parsedData[0][0];
+        var rowCallback = (gridRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+            updatedRowNodes.push(rowNode);
+            columns.forEach((column) => {
+                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds);
+            })
+        };
+        this.iterateActiveRanges(false, rowCallback);
+    }
+
+    private updateCellValue(rowNode: RowNode, column:Column, value: string, currentRow: GridRow, cellsToFlash: any, updatedColumnIds: string[]) {
+        let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
+        this.valueService.setValue(rowNode, column, processedValue);
+
+        let gridCellDef = <GridCellDef> {
+            rowIndex: currentRow.rowIndex,
+            floating: currentRow.floating,
+            column: column
+        };
+        var cellId = new GridCell(gridCellDef).createId();
+        cellsToFlash[cellId] = true;
+
+        if (updatedColumnIds.indexOf(column.getId()) < 0) {
+            updatedColumnIds.push(column.getId());
+        }
     }
 
     public copyToClipboard(includeHeaders = false): void {
@@ -315,14 +350,15 @@ export class ClipboardService implements IClipboardService {
 
     private processRangeCell(rowNode: RowNode, column: Column, value: any, func: (params: ProcessCellForExportParams) => void ): any {
         if (func) {
-            return func({
+            let params = {
                 column: column,
                 node: rowNode,
                 value: value,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
-            });
+            };
+            return func(params);
         } else {
             return value;
         }
