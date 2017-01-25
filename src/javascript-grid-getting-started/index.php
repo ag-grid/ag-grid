@@ -180,13 +180,13 @@ import 'ag-grid-enterprise/main';
     </p>
 
     <style>
-        td {
+        .blog-main td {
             padding: 2px 10px 2px 10px;
         }
-        th {
+        .blog-main th {
             padding: 2px 10px 2px 10px;
         }
-        table {
+        .blog-main table {
             margin-bottom: 10px;
         }
     </style>

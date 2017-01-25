@@ -506,17 +506,17 @@ h1, h2, h3, h4, h5 {
 }
 
 .Hero h2 {
-    font-size: 20px;
     color: #FFFFFF;
-    padding: 0 25% 40px;
+    margin: 0 auto;
     font-style: italic;
     line-height: 1.25;
+    padding: 0;
 }
 
-@media only screen and (max-width : 768px) {
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
     .Hero h2 {
-        font-size: 16px;
-        padding: 0 15% 40px;
+        padding: 28px 0;
     }
 }
 
@@ -529,24 +529,31 @@ h1, h2, h3, h4, h5 {
 }
 
 .Hero .btn {
-    font-size: 18px;
-    padding: 12px 24px;
+    font-size: 16px;
+    padding: 5px;
     letter-spacing: 0.1em;
     display: inline-block;
     color: #fff;
     border: 2px solid #fff;
     border-radius: 10px;
-    padding: 18px 36px;
     font-size: 18px;
-    font-weight: 600;
-    text-transform: uppercase;
-    min-width: 280px;
+    font-style: normal;
     background: rgba(0, 0, 0, .4) !important;
-    /* 
-    -webkit-animation: HeroFadeOut 0.3s ease-in-out;
-    -moz-animation: HeroFadeOut 0.3s ease-in-out;
-    animation: HeroFadeOut 0.3s ease-in-out;
-    */
+    margin: 0 5px 10px 5px;
+}
+
+/* Small Devices, Tablets, Desktops */
+@media only screen and (min-width : 768px) {
+    .Hero .btn {
+        padding: 12px 24px;
+        font-size: 18px;
+    }
+}
+
+.Hero .btn.alt {
+    background-color: #9c3636 !important;
+    background: linear-gradient(#9c3636, #812d2f) !important;
+    border: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 .Hero .btn:hover {
@@ -974,4 +981,40 @@ h1, h2, h3, h4, h5 {
 
 .teamWrapper-3 .teamWrapper-mulitplyEffect {
     background-color: #f4e526;
+}
+
+/*
+* === Google Custom search in docs ===
+*/
+
+@media only screen and (min-width : 992px) {
+    #documentationSearch {
+        width: 152px;
+        height: 25px;
+    }                
+}
+
+#documentationSearch .gsc-search-button {
+    display: none;
+}
+
+#documentationSearch .gsc-search-box-tools .gsc-search-box .gsc-input {
+    font-size: 13px;
+}
+
+#documentationSearch .documentationSearch-spinner {
+    display: none;
+} 
+
+#documentationSearch .documentationSearch-spinner.active {
+    display: block;
+} 
+
+cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
+    width: auto !important;
+    height: auto !important;
+    border-color: #474747;
+    background-color: #474747;
+    background-image: none;
+    filter: none;
 }
