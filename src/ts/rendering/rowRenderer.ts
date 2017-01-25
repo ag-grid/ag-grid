@@ -697,7 +697,7 @@ export class RowRenderer {
     // @return: RenderedCell when navigation successful, otherwise null
     private findNextCellToFocusOn(gridCell: GridCell, backwards: boolean, startEditing: boolean): RenderedCell {
 
-        var nextCell = gridCell;
+        var nextCell: GridCell = gridCell;
 
         while (true) {
 
@@ -732,7 +732,11 @@ export class RowRenderer {
                 this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
             }
 
-            this.gridPanel.ensureColumnVisible(nextCell.column);
+            // pinned columns don't scroll, so no need to ensure index visible
+            if (!nextCell.column.isPinned()) {
+                this.gridPanel.ensureColumnVisible(nextCell.column);
+            }
+
             // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
             // floating cell, the scrolls get out of sync
             this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
