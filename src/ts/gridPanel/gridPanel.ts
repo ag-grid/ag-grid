@@ -415,7 +415,8 @@ export class GridPanel extends BeanStub {
             case 'keydown':
                 let key = keyboardEvent.which || keyboardEvent.keyCode;
                 if (key == Constants.KEY_PAGE_DOWN || key == Constants.KEY_PAGE_UP) {
-                    this.handlePageButton(keyboardEvent);
+                    // taking this out until we work through all the bugs
+                    // this.handlePageButton(keyboardEvent);
                 } else {
                     renderedCell.onKeyDown(keyboardEvent);
                 }
@@ -427,6 +428,7 @@ export class GridPanel extends BeanStub {
     }
 
     private handlePageButton (keyboardEvent:KeyboardEvent): void{
+
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         //  before we move the scroll
@@ -478,8 +480,6 @@ export class GridPanel extends BeanStub {
         //***************************************************************************
         //Stop event defaults and propagation
         keyboardEvent.preventDefault();
-        keyboardEvent.stopPropagation();
-
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -1378,15 +1378,23 @@ export class GridPanel extends BeanStub {
             let pinnedScrollListener = wrapWithDebounce(onPinnedLeftVerticalScroll);
             this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', pinnedScrollListener);
 
-            let suppressScroll = () => this.ePinnedRightColsViewport.scrollTop = 0;
-            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', suppressScroll);
+            let suppressRightScroll = () => this.ePinnedRightColsViewport.scrollTop = 0;
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', suppressRightScroll);
         } else {
             let pinnedScrollListener = wrapWithDebounce(onPinnedRightVerticalScroll);
             this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', pinnedScrollListener);
 
-            let suppressScroll = () => this.ePinnedLeftColsViewport.scrollTop = 0;
-            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressScroll);
+            let suppressLeftScroll = () => this.ePinnedLeftColsViewport.scrollTop = 0;
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressLeftScroll);
         }
+
+        let suppressCenterScroll = () => {
+            if (this.getPrimaryScrollViewport()!==this.eBodyViewport) {
+                this.eBodyViewport.scrollTop = 0;
+            }
+        };
+
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', suppressCenterScroll);
 
         this.addIEPinFix(onPinnedRightVerticalScroll, onPinnedLeftVerticalScroll);
     }
