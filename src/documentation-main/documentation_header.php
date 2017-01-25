@@ -71,6 +71,11 @@ if (strcmp($version , 'latest') == 0) {
 
             <div class="col-sm-2">
 
+                <h4>Search</h4>
+                <div id="documentationSearch">
+                    <img src="/images/spinner.svg" class="documentationSearch-spinner active" width="24" height="24" />
+                    <gcse:searchbox enableAutoComplete="true" enableHistory="true" autoCompleteMaxCompletions="5" autoCompleteMatchType="any"></gcse:searchbox>
+                </div>
 
                 <h4>
                     The Basics
@@ -574,3 +579,5 @@ if (strcmp($version , 'latest') == 0) {
             </div>
 
             <div class="col-sm-10 blog-main">
+        
+                <gcse:searchresults></gcse:searchresults>

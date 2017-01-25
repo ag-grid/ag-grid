@@ -44,8 +44,10 @@
 
                         <h2>
                             <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/">
-                                <?php include 'images/download.svg'; ?>
-                                Download
+                                Use Free Version
+                            </a>
+                            <a class="btn btn-primary btn-large" href="/start-trial.php">
+                                Trial Enterprise Version
                             </a>
                         </h2>
                         <div class="Hero-share">
