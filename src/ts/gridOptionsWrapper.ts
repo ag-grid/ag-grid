@@ -59,7 +59,7 @@ export class GridOptionsWrapper {
     private groupRowInnerRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
     private dateComponent : {new(): IDateComponent} ;
 
-    private domDataKey = '__AG_'+Math.random().toString;
+    private domDataKey = '__AG_'+Math.random().toString();
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
