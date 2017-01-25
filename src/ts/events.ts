@@ -1,3 +1,9 @@
+import {GridCell} from "./entities/gridCell";
+import {RowNode} from "./entities/rowNode";
+import {Column} from "./entities/column";
+import {ColDef} from "./entities/colDef";
+import {GridApi} from "./gridApi";
+import {ColumnApi} from "./columnController/columnController";
 export class Events {
 
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
@@ -65,6 +71,11 @@ export class Events {
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
 
+    public static EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
+    public static EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
+
+    public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
+
     /** 3 events for filtering. The grid LISTENS for filterChanged, and does the filter here. The before and after
      * are for the client, if it wants to do something before or after the filter getting applied. */
     public static EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
@@ -129,6 +140,7 @@ export class Events {
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
 
+
 }
 
 export interface ModelUpdatedEvent {
@@ -138,4 +150,18 @@ export interface ModelUpdatedEvent {
      * it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
     keepRenderedRows: boolean;
+}
+
+export interface CellEvent {
+    node: RowNode;
+    data: any;
+    value: any;
+    rowIndex: number;
+    column: Column;
+    colDef: ColDef;
+    $scope: any;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+    event: Event;
 }

@@ -88,6 +88,8 @@ export class RenderedRow extends BeanStub {
 
     private animateIn: boolean;
 
+    private rowFocusedLastTime: boolean;
+
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
                 bodyContainerComp: RowContainerComponent,
@@ -522,8 +524,6 @@ export class RenderedRow extends BeanStub {
     private addHoverClass(hover: boolean): void {
         this.eAllRowContainers.forEach( eRow => _.addOrRemoveCssClass(eRow, 'ag-row-hover', hover) );
     }
-
-    private rowFocusedLastTime: boolean;
 
     private setRowFocusClasses(): void {
         var rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);

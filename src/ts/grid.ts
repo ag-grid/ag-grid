@@ -52,6 +52,7 @@ import {Downloader} from "./downloader";
 import {XmlFactory} from "./xmlFactory";
 import {GridSerializer} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
+import {ColumnHoverService} from "./rendering/columnHoverService";
 
 export interface GridParams {
     // used by Web Components
@@ -126,7 +127,8 @@ export class Grid {
                 PaginationController, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
-                CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService],
+                CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
+                ColumnHoverService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

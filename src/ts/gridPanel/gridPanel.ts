@@ -352,7 +352,7 @@ export class GridPanel extends BeanStub {
     }
 
     private addMouseEvents(): void {
-        var eventNames = ['click','mousedown','dblclick','contextmenu'];
+        var eventNames = ['click','mousedown','dblclick','contextmenu','mouseover','mouseout'];
         eventNames.forEach( eventName => {
             var listener = this.processMouseEvent.bind(this, eventName);
             this.eAllCellContainers.forEach( container => {

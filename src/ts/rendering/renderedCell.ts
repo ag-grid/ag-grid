@@ -9,7 +9,7 @@ import {ColumnController, ColumnApi} from "../columnController/columnController"
 import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
-import {Events} from "../events";
+import {Events, CellEvent} from "../events";
 import {RenderedRow} from "./renderedRow";
 import {Autowired, PostConstruct, Optional, Context} from "../context/context";
 import {GridApi} from "../gridApi";
@@ -30,6 +30,7 @@ import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
 import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
 import {StylingService} from "../styling/stylingService";
+import {ColumnHoverService} from "./columnHoverService";
 
 export class RenderedCell extends Component {
 
@@ -54,6 +55,7 @@ export class RenderedCell extends Component {
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('stylingService') private stylingService: StylingService;
+    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
@@ -377,6 +379,7 @@ export class RenderedCell extends Component {
         this.addHighlightListener();
         this.addChangeListener();
         this.addCellFocusedListener();
+        this.addColumnHoverListener();
 
         this.addDomData();
 
@@ -389,12 +392,27 @@ export class RenderedCell extends Component {
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
             this.eGridCell.setAttribute("tabindex", "-1");
         }
-        
+
         // these are the grid styles, don't change between soft refreshes
         this.addClasses();
         this.setInlineEditingClass();
         this.createParentOfValue();
         this.populateCell();
+    }
+
+    private addColumnHoverListener(): void {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.onColumnHover();
+    }
+
+    private onColumnHover(): void {
+        var isHovered = this.columnHoverService.isHovered(this.column);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
+
+    }
+
+    private checkHoveringCell(): void {
+
     }
 
     private addDomData(): void {
@@ -745,7 +763,7 @@ export class RenderedCell extends Component {
         return params;
     }
 
-    private createEvent(event: any): any {
+    private createEvent(event: any): CellEvent {
         var agEvent = this.createParams();
         agEvent.event = event;
         return agEvent;
@@ -775,7 +793,19 @@ export class RenderedCell extends Component {
             case 'mousedown': this.onMouseDown(); break;
             case 'dblclick': this.onCellDoubleClicked(mouseEvent); break;
             case 'contextmenu': this.onContextMenu(mouseEvent); break;
+            case 'mouseout': this.onMouseOut(mouseEvent); break;
+            case 'mouseover': this.onMouseOver(mouseEvent); break;
         }
+    }
+
+    private onMouseOut(mouseEvent: MouseEvent): void {
+        var agEvent = this.createEvent(mouseEvent);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OUT, agEvent);
+    }
+
+    private onMouseOver(mouseEvent: MouseEvent): void {
+        var agEvent = this.createEvent(mouseEvent);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OVER, agEvent);
     }
 
     private onContextMenu(mouseEvent: MouseEvent): void {
@@ -878,7 +908,7 @@ export class RenderedCell extends Component {
         _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-inline-editing', editingInline);
         _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-not-inline-editing', !editingInline);
     }
-    
+
     private populateCell() {
         // populate
         this.putDataIntoCell();
@@ -1130,7 +1160,7 @@ export class RenderedCell extends Component {
 
         return params;
     }
-    
+
     private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string): void {
 
         var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
@@ -1148,6 +1178,7 @@ export class RenderedCell extends Component {
         if (this.node.group && !this.node.footer) {
             _.addCssClass(this.eGridCell, 'ag-group-cell');
         }
+
     }
 
 }
