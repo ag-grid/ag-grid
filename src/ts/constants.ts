@@ -28,6 +28,9 @@ export class Constants {
 
     static KEY_F2 = 113;
 
+    static KEY_PAGE_UP = 33;
+    static KEY_PAGE_DOWN = 34;
+
     static ROW_MODEL_TYPE_PAGINATION = 'pagination';
     static ROW_MODEL_TYPE_VIRTUAL = 'virtual';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
