@@ -25,6 +25,7 @@ import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
+import {GridCell} from "../entities/gridCell";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -207,20 +208,7 @@ export class GridPanel extends BeanStub {
     }
 
     public getVerticalPixelRange(): any {
-        let container: HTMLElement;
-        if (this.enableRtl) {
-            if (this.columnController.isPinningLeft()) {
-                container = this.ePinnedLeftColsViewport;
-            } else {
-                container = this.eBodyViewport;
-            }
-        } else {
-            if (this.columnController.isPinningRight()) {
-                container = this.ePinnedRightColsViewport;
-            } else {
-                container = this.eBodyViewport;
-            }
-        }
+        let container: HTMLElement = this.getPrimaryScrollViewport();
         let result = {
             top: container.scrollTop,
             bottom: container.scrollTop + container.offsetHeight
@@ -420,16 +408,78 @@ export class GridPanel extends BeanStub {
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         var renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
-        if (renderedCell) {
-            switch (eventName) {
-                case 'keydown':
+
+        if (!renderedCell) { return; }
+
+        switch (eventName) {
+            case 'keydown':
+                let key = keyboardEvent.which || keyboardEvent.keyCode;
+                if (key == Constants.KEY_PAGE_DOWN || key == Constants.KEY_PAGE_UP) {
+                    this.handlePageButton(keyboardEvent);
+                } else {
                     renderedCell.onKeyDown(keyboardEvent);
-                    break;
-                case 'keypress':
-                    renderedCell.onKeyPress(keyboardEvent);
-                    break;
-            }
+                }
+                break;
+            case 'keypress':
+                renderedCell.onKeyPress(keyboardEvent);
+                break;
         }
+    }
+
+    private handlePageButton (keyboardEvent:KeyboardEvent): void{
+        //***************************************************************************
+        //where to place the newly selected cell cursor after the scroll
+        //  before we move the scroll
+        //      a) find the top position of the current selected cell
+        //      b) find what is the delta of that compared to the current scroll
+
+        let focusedCell : GridCell = this.focusedCellController.getFocusedCell();
+        let focusedRowNode = this.rowModel.getRow(focusedCell.rowIndex);
+        let focusedAbsoluteTop = focusedRowNode.rowTop;
+        let selectionTopDelta = focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop;
+
+
+        //***************************************************************************
+        //how much to scroll:
+        //  a) One entire page from or to
+        //  b) the top of the first row in the current view
+        //  c) then find what is the row that would appear the first one in the screen and adjust it to its top pos
+        //      this will avoid having half printed rows at the top
+
+        let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
+
+        let currentTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
+        let currentTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(currentTopmostPixel));
+        let currentTopmostRowTop = currentTopmostRow.rowTop;
+        let key = keyboardEvent.which || keyboardEvent.keyCode;
+        let toScrollUnadjusted = key == Constants.KEY_PAGE_DOWN ?
+            pageSize + currentTopmostRowTop :
+            currentTopmostRowTop - pageSize;
+
+        let nextScreenTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(toScrollUnadjusted));
+
+
+        //***************************************************************************
+        //scroll and redraw
+        this.getPrimaryScrollViewport().scrollTop = nextScreenTopmostRow.rowTop;
+        // This is needed so that when we try to focus on the cell is actually rendered.
+        this.rowRenderer.refreshView();
+
+        //***************************************************************************
+        //refocus
+        let newIndex:number = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + selectionTopDelta);
+        this.focusedCellController.setFocusedCell(
+            newIndex,
+            focusedCell.column,
+            focusedCell.floating,
+            true
+        );
+
+        //***************************************************************************
+        //Stop event defaults and propagation
+        keyboardEvent.preventDefault();
+        keyboardEvent.stopPropagation();
+
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
