@@ -208,7 +208,7 @@ export class Utils {
 
                 if (typeof currentValue === 'object'){
                     if (target){
-                        this.mergeDeep (object[key], target)
+                        Utils.mergeDeep (object[key], target)
                     }
                 }
 
