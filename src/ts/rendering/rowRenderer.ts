@@ -156,7 +156,12 @@ export class RowRenderer {
     }
 
     private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
-        this.refreshView(refreshEvent.keepRenderedRows, refreshEvent.animate);
+        let params: RefreshViewParams = {
+            keepRenderedRows: refreshEvent.keepRenderedRows,
+            animate: refreshEvent.animate
+        };
+        this.refreshView(params);
+
     }
 
     // if the row nodes are not rendered, no index is returned
@@ -188,12 +193,12 @@ export class RowRenderer {
         this.refreshView(true);
     }
 
-    public refreshView(keepRenderedRows = false, animate = false): void {
+    public refreshView(params: RefreshViewParams = {}): void {
         this.logger.log('refreshView');
 
         this.getLockOnRefresh();
 
-        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
+        let focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
@@ -208,8 +213,10 @@ export class RowRenderer {
             this.rowContainers.pinnedRight.setHeight(containerHeight);
         }
 
-        this.refreshAllVirtualRows(keepRenderedRows, animate);
-        this.refreshAllFloatingRows();
+        this.refreshAllVirtualRows(params.keepRenderedRows, params.animate);
+        if (params.onlyBody){
+            this.refreshAllFloatingRows();
+        }
 
         this.restoreFocusedCell(focusedCell);
 
@@ -782,4 +789,11 @@ export class RowRenderer {
             return nextRenderedCell;
         }
     }
+}
+
+export interface RefreshViewParams {
+    keepRenderedRows?:boolean;
+    animate?:boolean;
+    suppressKeepFocus?:boolean;
+    onlyBody?:boolean;
 }

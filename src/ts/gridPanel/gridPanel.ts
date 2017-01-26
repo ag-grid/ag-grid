@@ -2,7 +2,7 @@ import {Utils as _} from "../utils";
 import {MasterSlaveService} from "../masterSlaveService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import {RowRenderer} from "../rendering/rowRenderer";
+import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
 import {FloatingRowModel} from "../rowControllers/floatingRowModel";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
@@ -416,7 +416,7 @@ export class GridPanel extends BeanStub {
                 let key = keyboardEvent.which || keyboardEvent.keyCode;
                 if (key == Constants.KEY_PAGE_DOWN || key == Constants.KEY_PAGE_UP) {
                     // taking this out until we work through all the bugs
-                    // this.handlePageButton(keyboardEvent);
+                    this.handlePageButton(keyboardEvent);
                 } else {
                     renderedCell.onKeyDown(keyboardEvent);
                 }
@@ -465,7 +465,11 @@ export class GridPanel extends BeanStub {
         //scroll and redraw
         this.getPrimaryScrollViewport().scrollTop = nextScreenTopmostRow.rowTop;
         // This is needed so that when we try to focus on the cell is actually rendered.
-        this.rowRenderer.refreshView();
+        let refreshViewParams:RefreshViewParams ={
+            onlyBody: true,
+            suppressKeepFocus: true
+        };
+        this.rowRenderer.refreshView(refreshViewParams);
 
         //***************************************************************************
         //refocus
