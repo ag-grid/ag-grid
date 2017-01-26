@@ -86,6 +86,14 @@ columnDefinition = {
         on the colDef, the set filter would not work.
     </p>
 
+    <h3>Set Filter - Search Field</h3>
+
+    <p>
+        The text box in the set filter is to allow filtering of displayed filter items, but doesn't actually change the
+        applied filter.</p><p>The expected flow when using the search box would be uncheck "Select All", type what you're after
+        in the search box and then finally select the filter entries you want to actually filter on.
+    </p>
+
     <h3>Set Filters Example</h3>
 
     <p>

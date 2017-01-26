@@ -155,6 +155,11 @@ include '../documentation-main/documentation_header.php';
         informed to redraw.
     </p>
 
+    <note>
+        Sometimes the gridReady grid event can fire before the Angular component is ready to receive it, so in an Angular
+        environment its safer to on you cannot safely rely on <code>AfterViewInit</code> instead before using the API
+    </note>
+
     <h3>Providing Angular 2 Components to ag-Grid</h3>
     <p>In order for ag-Grid to be able to use your Angular 2 Components, you need to provide them in the <strong>top level</strong> module:</p>
 <pre>
@@ -345,18 +350,6 @@ private getCountryFilterParams():any {
         else to make it faster. If you are looking for a lightning fast grid, even if you are using Angular 2 and
         the ag-grid-ng2 component, consider using plain ag-Grid Components (as explained on the pages for
         rendering etc) inside ag-Grid instead of creating Angular 2 counterparts.
-    </p>
-
-    <h2>Known Issues</h2>
-
-    <p>
-        <b>"Attempt to use a dehydrated detector"</b>
-    </p>
-
-    <p>
-        If you are getting the above error, then check out <a
-            href="https://www.ag-grid.com/forum/showthread.php?tid=3537">this post</a>
-        where jose_DS shines some light on the issue.
     </p>
 
     <h2>Next Steps...</h2>
