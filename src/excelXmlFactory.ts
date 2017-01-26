@@ -17,7 +17,7 @@ export class ExcelXmlFactory {
         var excelWorkbook = this.excelWorkbook();
 
         return this.excelXmlHeader() +
-            this.xmlFactory.createXml(this.workbook(documentProperties, excelWorkbook, styles, worksheets));
+            this.xmlFactory.createXml(this.workbook(documentProperties, excelWorkbook, styles, worksheets), boolean=>boolean?"1":"0");
     }
 
     private workbook(documentProperties: XmlElement, excelWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]) : XmlElement{
@@ -35,13 +35,15 @@ export class ExcelXmlFactory {
         return {
             name: "Workbook",
             properties: {
-                prefix: "xmlns:",
-                prefixedMap: {
-                    o: "urn:schemas-microsoft-com:office:office",
-                    x: "urn:schemas-microsoft-com:office:excel",
-                    ss: "urn:schemas-microsoft-com:office:spreadsheet",
-                    html: "http://www.w3.org/TR/REC-html40"
-                },
+                prefixedAttributes:[{
+                    prefix: "xmlns:",
+                    map: {
+                        o: "urn:schemas-microsoft-com:office:office",
+                        x: "urn:schemas-microsoft-com:office:excel",
+                        ss: "urn:schemas-microsoft-com:office:spreadsheet",
+                        html: "http://www.w3.org/TR/REC-html40"
+                    },
+                }],
                 rawMap: {
                     xmlns: "urn:schemas-microsoft-com:office:spreadsheet"
                 }
@@ -80,13 +82,15 @@ export class ExcelXmlFactory {
                 borders.push({
                     name: "Border",
                     properties: {
-                        prefix: "ss:",
-                        prefixedMap: {
-                            Position: current,
-                            LineStyle: it.lineStyle,
-                            Weight: it.weight,
-                            Color: it.color
-                        }
+                        prefixedAttributes:[{
+                            prefix: "ss:",
+                            map: {
+                                Position: current,
+                                LineStyle: it.lineStyle,
+                                Weight: it.weight,
+                                Color: it.color
+                            }
+                        }]
                     }
                 })
             });
@@ -98,11 +102,19 @@ export class ExcelXmlFactory {
             children.push({
                 name: "Alignment",
                 properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Vertical: style.alignment.vertical,
-                        Horizontal: style.alignment.horizontal
-                    }
+                    prefixedAttributes:[{
+                        prefix: "ss:",
+                        map: {
+                            Vertical: style.alignment.vertical,
+                            Horizontal: style.alignment.horizontal,
+                            Indent: style.alignment.indent,
+                            ReadingOrder: style.alignment.readingOrder,
+                            Rotate: style.alignment.rotate,
+                            ShrinkToFit: style.alignment.shrinkToFit,
+                            VerticalText: style.alignment.verticalText,
+                            WrapText: style.alignment.wrapText
+                        }
+                    }]
                 }
             })
         }
@@ -118,10 +130,26 @@ export class ExcelXmlFactory {
             children.push({
                 name: "Font",
                 properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Color: style.font.color
-                    }
+                    prefixedAttributes:[{
+                        prefix: "ss:",
+                        map: {
+                            Bold: style.font.bold,
+                            Italic: style.font.italic,
+                            Color: style.font.color,
+                            Outline: style.font.outline,
+                            Shadow: style.font.shadow,
+                            Size: style.font.size,
+                            StrikeThrough: style.font.strikeThrough,
+                            Underline: style.font.underline,
+                            VerticalAlign: style.font.verticalAlign
+                        }
+                    },{
+                        prefix: "x:",
+                        map: {
+                            CharSet: style.font.charSet,
+                            Family: style.font.family
+                        }
+                    }]
                 }
             })
         }
@@ -130,30 +158,65 @@ export class ExcelXmlFactory {
             children.push({
                 name: "Interior",
                 properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Color: style.interior.color,
-                        Pattern: style.interior.pattern
-                    }
+                    prefixedAttributes:[{
+                        prefix: "ss:",
+                        map: {
+                            Color: style.interior.color,
+                            Pattern: style.interior.pattern,
+                            PatternColor: style.interior.patternColor
+                        }
+                    }]
                 }
             })
         }
 
+        if (style.protection){
+            children.push({
+                name: "Protection",
+                properties: {
+                    prefixedAttributes:[{
+                        prefix: "ss:",
+                        map: {
+                            Protected: style.protection.protected,
+                            HideFormula: style.protection.hideFormula
+                        }
+                    }]
+                }
+            })
+        }
+
+        if (style.numberFormat){
+            children.push({
+                name: "NumberFormat",
+                properties: {
+                    prefixedAttributes:[{
+                        prefix: "ss:",
+                        map: {
+                            Format: style.numberFormat.format
+                        }
+                    }]
+                }
+            })
+        }
+
+
         return {
             name: "Style",
             properties: {
-                prefix: "ss:",
-                prefixedMap: {
-                    ID: style.id,
-                    Name: (style.name) ?  style.name : style.id
-                },
+                prefixedAttributes:[{
+                    prefix: "ss:",
+                    map: {
+                        ID: style.id,
+                        Name: (style.name) ?  style.name : style.id
+                    }
+                }]
             },
             children: children
 
         }
     }
 
-    private worksheetXmlElement (worksheet:ExcelWorksheet){
+    private worksheetXmlElement (worksheet:ExcelWorksheet):XmlElement{
         var children:XmlElement[] = [];
         Utils.map(worksheet.table.columns, (it):XmlElement=>{
             return this.columnXmlElement (it);
@@ -174,10 +237,12 @@ export class ExcelXmlFactory {
                 children:children
             }],
             properties:{
-                prefix:"ss:",
-                prefixedMap: {
-                    Name:worksheet.name
-                }
+                prefixedAttributes: [{
+                    prefix:"ss:",
+                    map: {
+                        Name:worksheet.name
+                    }
+                }]
             }
         };
     }
@@ -186,10 +251,12 @@ export class ExcelXmlFactory {
         return {
             name:"Column",
             properties:{
-                prefix:"ss:",
-                prefixedMap: {
-                    Width:column.width
-                }
+                prefixedAttributes: [{
+                    prefix:"ss:",
+                    map: {
+                        Width:column.width
+                    }
+                }]
             }
         };
     }
@@ -216,16 +283,20 @@ export class ExcelXmlFactory {
         return {
             name: "Cell",
             properties: {
-                prefix: "ss:",
-                prefixedMap: properties
+                prefixedAttributes: [{
+                    prefix: "ss:",
+                    map: properties
+                }]
             },
             children: [{
                 name: "Data",
                 properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Type: ExcelDataType[cell.data.type]
-                    }
+                    prefixedAttributes: [{
+                        prefix: "ss:",
+                        map: {
+                            Type: ExcelDataType[cell.data.type]
+                        }
+                    }]
                 },
                 textNode: cell.data.value
             }]
@@ -325,11 +396,28 @@ export interface ExcelStyle {
     borders?: ExcelBorders
     font?: ExcelFont
     interior?: ExcelInterior
+    numberFormat?: ExcelNumberFormat
+    protection?: ExcelProtection
+}
+
+export interface ExcelProtection {
+    protected: boolean
+    hideFormula: boolean
+}
+
+export interface ExcelNumberFormat {
+    format: string
 }
 
 export interface ExcelAlignment {
     vertical: string
+    indent: number
     horizontal: string
+    readingOrder: string
+    rotate: number
+    shrinkToFit: boolean
+    verticalText: boolean
+    wrapText: boolean
 }
 
 export interface ExcelBorders {
@@ -346,29 +434,22 @@ export interface ExcelBorder {
 }
 
 export interface ExcelFont {
-    color: string
+    bold: boolean,
+    color: string,
+    fontName: string,
+    italic: boolean,
+    outline: boolean,
+    shadow: boolean,
+    size:number,
+    strikeThrough:boolean,
+    underline:string,
+    verticalAlign:string,
+    charSet:number,
+    family:string
 }
 
 export interface ExcelInterior {
     color: string
     pattern: string
-}
-
-export class HorizontalAlign {
-    public static LEFT = 'Left';
-    public static RIGHT = 'Right';
-}
-
-export class VerticalAlign{
-    public static BOTTOM = 'BOTTOM';
-    public static TOP = 'TOP';
-    public static CENTER = 'CENTER';
-}
-
-export class LineStyle {
-    public static CONTINUOUS = 'CONTINUOUS';
-}
-
-export class Pattern {
-    public static SOLID = 'SOLID';
+    patternColor: string
 }

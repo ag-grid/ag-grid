@@ -64,6 +64,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
     private rows:ExcelRow[] = [];
 
     private cols:ExcelColumn[];
+
     public addCustomHeader(customHeader: string): void {
         throw new Error ("Custom header not supported for Excel serialization");
     }
@@ -82,14 +83,14 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        var currentCells:ExcelCell[] = [];
+        let currentCells:ExcelCell[] = [];
         let that = this;
         this.rows.push({
             cells:currentCells
         });
         return {
              onColumn: (header: string, index: number, span:number)=>{
-                 var styleIds:string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
+                 let styleIds:string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
                  currentCells.push(that.createMergedCell(styleIds.length > 0 ? styleIds[0] : null, ExcelDataType.String, header, span));
              }
         };
@@ -104,7 +105,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
     }
 
     onNewRow(onNewColumnAccumulator:(rowIndex:number, currentCells:ExcelCell[])=> (column: Column, index: number, node?:RowNode)=>void ):RowAccumulator{
-        var currentCells:ExcelCell[] = [];
+        let currentCells:ExcelCell[] = [];
         this.rows.push({
             cells:currentCells
         });
@@ -134,9 +135,9 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
     }
 
     onNewBodyColumn (rowIndex:number, currentCells:ExcelCell[]): (column: Column, index: number, node?:RowNode)=>void {
-        var that = this;
+        let that = this;
         return (column: Column, index: number, node?:RowNode) => {
-            var valueForCell = this.extractRowCellValue(column, index, node);
+            let valueForCell = this.extractRowCellValue(column, index, node);
             let styleIds:string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
             let excelStyleId: string = null;
             if (styleIds && styleIds.length == 1){
@@ -155,7 +156,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
     addNewMixedStyle (styleIds:string[]):void{
         this.mixedStyleCounter += 1;
         let excelId = 'mixedStyle' + this.mixedStyleCounter;
-        var resultantStyle: ExcelStyle = {};
+        let resultantStyle: ExcelStyle = {};
 
         styleIds.forEach((styleId:string)=>{
             this.excelStyles.forEach((excelStyle:ExcelStyle)=>{
@@ -253,11 +254,11 @@ export class ExcelCreator implements IExcelCreator{
         if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) return ["header"];
         if (!this.gridOptions.excelStyles || this.gridOptions.excelStyles.length === 0) return null;
 
-        var styleIds : string[] = this.gridOptions.excelStyles.map((it:ExcelStyle)=>{
+        let styleIds : string[] = this.gridOptions.excelStyles.map((it:ExcelStyle)=>{
             return it.id
         });
 
-        var applicableStyles:string [] = [];
+        let applicableStyles:string [] = [];
         this.stylingService.processAllCellClasses(
             column.getColDef(),
             {
