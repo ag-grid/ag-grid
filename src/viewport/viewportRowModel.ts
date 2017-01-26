@@ -221,4 +221,10 @@ export class ViewportRowModel implements IRowModel {
     public addItems(item: any[]): void {
         console.log('not yet supported');
     }
+
+    public isRowPresent(rowNode: RowNode): boolean {
+        console.log('not yet supported');
+        return false;
+    }
+
 }
