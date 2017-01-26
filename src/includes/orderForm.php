@@ -21,10 +21,16 @@
     }
 </style>
 
-<div class="container-fluid curved-border">
-    <form action="https://app.britebiz.com/webToContact" method="POST" id="NB79YK" accept-charset="UTF-8" onSubmit="return validateForm();" name="NB79YK">
+<?php if ($startTrial) { 
+    $formKey = "startTrial";
+}
+?>
+    
+<div id="orderForm" class="container-fluid curved-border">
+    <form action="https://app.britebiz.com/webToContact" method="POST" id="<?php echo $formKey; ?>" accept-charset="UTF-8" onSubmit="return <?php echo $formKey; ?>_validateForm();" name="<?php echo $formKey; ?>">
         <div class="hide">
-            <input type="hidden" value="NB79YK" name="form_id" id="form_id"/><input type="hidden" value="57f3c21fac73aa8" name="wtc" id="wtc"/>
+            <input type="hidden" value="NB79YK" name="form_id" id="form_id"/>
+            <input type="hidden" value="57f3c21fac73aa8" name="wtc" id="wtc"/>
             <input type="hidden" value="https://www.ag-grid.com/license-pricing.php?submitted=true" name="return_url" id="return_url"/>
             <input type="hidden" value="" name="WebToContact[gclid]" id="WebToContact_gclid"/>
         </div>
@@ -55,7 +61,13 @@
                 <label for="WebToContact[message]">Your message to us below. If ordering, please provide the following information:</label>
                 <ul>
                     <li>Company Address and VAT Number (EU only for VAT number).</li>
-                    <li>Do you require an Application Developer or a Site Developer license?
+                    <li>Number of Licenses that you require.</li>
+
+                    <?php if( $formKey == "applicationDeveloper") { ?>
+                    <li>Application Name</li>
+                    <?php } ?>
+
+                    <!-- <li>Do you require an Application Developer or a Site Developer license?
                         <i data-toggle="popover"
                            title="<strong>Application Developer vs Site Developer?</strong"
                            data-content="
@@ -66,9 +78,13 @@
                                across all applications concurrently. Use site license if you want to cover a group of developers developing any number of applications.</p>"
                            class="fa fa-question-circle-o"
                            aria-hidden="true"></i>
-                    </li>
-                    <li style="margin-left: 15px">If Application Developer license, please provide your Application Name</li>
-                    <li>Number of Licenses that you require.</li>
+                    </li> -->
+
+                    
+
+
+
+                    <?php if( $formKey == "saasAndOEM") { ?>
                     <li>Will you be selling ag-Grid as part of a SAAS (Software as a Service) offering?
                         <i data-toggle="popover"
                            title="<strong>SaaS</strong"
@@ -86,6 +102,7 @@
                            class="fa fa-question-circle-o"
                            aria-hidden="true"></i>
                     </li>
+                    <?php } ?>
                 </ul>
             <? } ?>
         </div>
@@ -110,83 +127,113 @@ Thank you.
 </div>
 
 <script type="text/javascript">
-    function getParameterByName(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
 
-    function findField(fieldName) {
-        return document.forms['NB79YK']['WebToContact[' + fieldName + ']'];
-    }
-    function fieldFocus(fieldName) {
-        field = findField(fieldName);
-        if (field)
-            return field.focus()
-    }
-    function fieldVal(fieldName) {
-        field = findField(fieldName);
-        if (field)
-            return field.value;
-        return '';
-    }
-    function validateEmail(fieldName) {
-        var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,20})?$/;
-        if (fieldVal(fieldName) == "" || !emailReg.test(fieldVal(fieldName))) {
-            alert("Invalid Email Address!");
-            fieldFocus(fieldName);
-            return false;
-        } else {
-            return true;
+
+    (function(){
+
+        // dynamic methods as we have three order forms on pricing page
+
+        var formKey = "<?php echo $formKey; ?>"
+
+        window[formKey + "_getParameterByName"] = function(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
-    }
-
-
-    function validateForm() {
-        var mandFields = new Array('first_name', 'last_name', 'company_name', 'email', 'message');
-        var fieldLbl = new Array('First Name', 'Last Name', 'Company Name', 'Email', 'Message');
-        for (i = 0; i < mandFields.length; i++) {
-            fieldValue = fieldVal(mandFields[i]);
-            if ((fieldValue.replace(/^s+|s+$/g, '')).length == 0) {
-                alert(fieldLbl[i] + ' cannot be empty');
-                fieldFocus(mandFields[i]);
+        window[formKey + "_findField"] = function(fieldName) {
+            return document.forms[formKey]['WebToContact[' + fieldName + ']'];
+        }
+        window[formKey + "_fieldFocus"] = function(fieldName) {
+            field = window[formKey + "_findField"](fieldName);
+            if (field)
+                return field.focus()
+        }
+        window[formKey + "_fieldVal"] = function(fieldName) {
+            field = window[formKey + "_findField"](fieldName);
+            if (field)
+                return field.value;
+            return '';
+        }
+        window[formKey + "_validateEmail"] = function(fieldName) {
+            var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,20})?$/;
+            if (window[formKey + "_findField"](fieldName) == "" || !emailReg.test(window[formKey + "_fieldVal"](fieldName))) {
+                alert("Invalid Email Address!");
+                window[formKey + "_fieldFocus"](fieldName);
                 return false;
             } else {
-                field = findField(mandFields[i]);
-                if (field.nodeName == 'SELECT') {
-                    if (field.options[field.selectedIndex].value == '-None-') {
-                        alert('You must select an option for: ' + fieldLbl[i]);
-                        field.focus();
-                        return false;
-                    }
-                }
+
+                // append site key for internal use
+                document.forms[formKey]['WebToContact[message]'].value += ' | Form: '+formKey+'';
+
+                return true;
             }
         }
 
-        if (validateEmail("email")) {
-            var field = findField('btn_submit');
-            if (field) field.disabled = true;
-            return true;
+        /*
+        function validateEmail(fieldName) {
+            var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,20})?$/;
+            if (fieldVal(fieldName) == "" || !emailReg.test(fieldVal(fieldName))) {
+                alert("Invalid Email Address!");
+                fieldFocus(fieldName);
+                return false;
+            } else {
+                return true;
+            }
         }
-        return false;
-    }
+        */
 
-    $(function() {
-        $('[data-toggle="popover"]').popover({
-            placement : 'top',
-            trigger : 'hover',
-            html : true
+        window[formKey + "_validateForm"] = function() {
+
+            
+
+            var mandFields = new Array('first_name', 'last_name', 'company_name', 'email', 'message');
+            var fieldLbl = new Array('First Name', 'Last Name', 'Company Name', 'Email', 'Message');
+            for (i = 0; i < mandFields.length; i++) {
+                fieldValue = window[formKey + "_fieldVal"](mandFields[i]);
+                if ((fieldValue.replace(/^s+|s+$/g, '')).length == 0) {
+                    alert(fieldLbl[i] + ' cannot be empty');
+                    window[formKey + "_fieldFocus"](mandFields[i]);
+                    return false;
+                } else {
+                    field = window[formKey + "_findField"](mandFields[i]);
+                    if (field.nodeName == 'SELECT') {
+                        if (field.options[field.selectedIndex].value == '-None-') {
+                            alert('You must select an option for: ' + fieldLbl[i]);
+                            field.focus();
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            if (window[formKey + "_validateEmail"]("email")) {
+                var field = window[formKey + "_findField"]('btn_submit');
+                if (field) field.disabled = true;
+                return true;
+            }
+            return false;
+        }
+
+        $(function() {
+            $('[data-toggle="popover"]').popover({
+                placement : 'top',
+                trigger : 'hover',
+                html : true
+            });
+
+            var submitted = window[formKey + "_getParameterByName"]("submitted");
+
+            if(submitted) {
+                $("#thankyou").show();
+            } else {
+                $("#thankyou").hide();
+            }
         });
 
-        var submitted = getParameterByName("submitted");
-        if(submitted) {
-            $("#thankyou").show();
-        } else {
-            $("#thankyou").hide();
-        }
-    });
+    })();
+
 </script>

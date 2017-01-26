@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-12">
         <h2>
-            Common Questions
+            Frequently Asked Questions
         </h2>
     </div>
 </div>
@@ -22,10 +22,10 @@
     <div class="col-md-12">
 
         <div class="question">
-            What is Application Developer vs Site Developer?
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_1">What is Application Developer vs Site Developer?</a>
         </div>
 
-        <div class="answer">
+        <div class="answer collapse" id="answer_1">
             <p>
                 Application developer license ties the license to one particular application within your organisation.
                 A typical example is 5 licenses to cover an application with 5 developers working concurrently on it.
@@ -48,10 +48,10 @@
     <div class="col-md-12">
 
         <div class="question">
-            What is OEM and SaaS License?
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_2">What is OEM and SaaS License?</a>
         </div>
 
-        <div class="answer">
+        <div class="answer collapse" id="answer_2">
 
             <p>
                 SaaS is <a href="https://en.wikipedia.org/wiki/Software_as_a_service">Software as a Service</a>.
@@ -74,10 +74,10 @@
     <div class="col-md-12">
 
         <div class="question">
-            Do Developers Have to be Named?
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_3">Do Developers Have to be Named?</a>
         </div>
 
-        <div class="answer">
+        <div class="answer collapse" id="answer_3">
             <p>
             No. If you license an application you provide the number of developers working on that application.
             We trust that you do not go over the number of concurrent developers on that application at any
@@ -92,10 +92,10 @@
     <div class="col-md-12">
 
         <div class="question">
-            What does Perpetual Mean?
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_4">What does Perpetual Mean?</a>
         </div>
 
-        <div class="answer">
+        <div class="answer collapse" id="answer_4">
 
             <p>
                 The perpetual nature of the Enterprise license means you can continue to use the version of
@@ -113,10 +113,10 @@
     <div class="col-md-12">
 
         <div class="question">
-            Do You Provide Bulk or Other License Types?
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_5">Do You Provide Bulk or Other License Types?</a>
         </div>
 
-        <div class="answer">
+        <div class="answer collapse" id="answer_5">
         <p>
             Yes. Get in touch and tell us what you are looking for and we can propose what we think is fair.
         </p>

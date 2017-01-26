@@ -1018,3 +1018,168 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     background-image: none;
     filter: none;
 }
+
+
+/*
+* === Pricing/Order page ===
+*/
+
+.pricing-row {
+    margin-top: 40px;
+}
+
+.pricing-plan {
+    margin-bottom: 6px;
+    padding-bottom: 34px;
+    top: 38px;
+    height: 735px;
+}
+
+
+.pricing-plan.red {
+    height: 740px;
+}
+
+.pricing-plan {
+    margin-bottom: 30px;
+    background: #fafafa;
+    border-radius: 4px;
+    box-shadow: 0 0 14px 0 rgba(160,160,160,.2);
+    border: 1px solid #E3E3E3;
+    position: relative;
+}
+.pricing-plan, .recommend-badge {
+    text-align: center;
+    position: relative;
+}
+
+.pricing-plan h4 {
+    font-size: 21px;
+    font-weight: 300;
+    text-align: inherit;
+    margin: 24px 0 14px;
+    font-size: 24px;
+    color: #404040;
+}
+
+.pricing-plan .price {
+    margin-bottom: 20px;
+    font-size: 1.875em;
+    font-weight: 500;
+}
+
+.pricing-plan .price-sub {
+    color: #888;
+    display: block;
+    font-size: 12px;
+}
+
+.pricing-plan ul {
+    margin: 0;
+    padding: 20px 20px 0px 20px;
+    list-style: none;
+}
+
+.pricing-plan ul li {
+    font-size: 15px;
+    padding: 7px 0;
+    position: relative;
+}
+
+.pricing-plan ul li span {
+    position: relative;
+    padding-left: 30px;
+}
+
+.pricing-plan ul li span:before {
+    background: url('/images/check-symbol.svg') no-repeat;
+    background-size: 24px 24px;
+    content: '';
+    width: 24px;
+    height: 24px;
+    display: block;
+    position: absolute;
+    top: -6px;
+    left: 0;
+}           
+
+@media only screen and (min-width : 992px) {
+    .pricing-plan ul li {
+        height: auto;
+    }
+}
+
+.recommend-badge {
+    width: 100%;
+    padding: 8px 0 2px;
+    z-index: 1;
+    color: #fff;
+    border-radius: 4px 4px 0 0;
+    background-color: #9c3636;
+}
+
+.pricing-plan.red {
+    top: 0;
+    border-radius: 0 0 4px 4px;
+    border: 5px solid #9c3636;
+}
+
+.pricing-plan .btn.large, .pricing-question .btn.large, {
+    height: 50px;
+    line-height: 49px;
+    vertical-align: middle;
+}
+
+.pricing-plan .btn.large, .pricing-question .btn.large {
+    height: 60px;
+    line-height: 59px;
+    vertical-align: middle;
+    padding: 0 33px;
+}
+
+.pricing-question .btn.large {
+    margin-top: 10px;
+    height: 40px;
+    line-height: 39px;
+}
+
+.pricing-plan .btn.red, .pricing-question .btn.red {
+    color: #FFF;
+    background: #9c3636;
+}
+
+.pricing-plan .btn {
+    font-size: .938em;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    width: 180px;
+    margin-left: -90px;
+}
+
+.pricing-plan .extra {
+    border-top: 1px solid #E3E3E3;
+    border-bottom: 1px solid #E3E3E3;
+    font-size: .813em;
+    font-weight: 400;
+    padding: 12px 0;
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 16px;
+    text-align: center;
+    background: #fff;
+}
+
+.pricing-plan .extra p {
+    margin: 0;
+}
+
+.pricing-plan .pricing-plan-intro {
+    font-size: 13px;
+    padding: 20px;
+}
+
+.modal-header {
+    background-color: #9c3636;
+    color: #FFF;
+}
