@@ -81,7 +81,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) { return; }
 
         var animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate});
+        this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true});
     }
 
     public getType(): string {
@@ -96,7 +96,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    public refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean}): void {
+    public refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean, keepEditingRows?: boolean}): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -174,6 +174,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     public getRow(index: number): RowNode {
         return this.rowsToDisplay[index];
+    }
+
+    public isRowPresent(rowNode: RowNode): boolean {
+        return this.rowsToDisplay.indexOf(rowNode) >= 0;
     }
 
     public getVirtualRowCount(): number {
@@ -416,7 +420,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public onRowHeightChanged(): void {
-        this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true});
+        this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true});
     }
 
     public resetRowHeights(): void {

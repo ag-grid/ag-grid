@@ -10,6 +10,8 @@ export interface IRowModel {
     getRowIndexAtPixel(pixel: number): number;
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
     getRowCombinedHeight(): number;
+    /** Returns true if the provided rowNode is in the list of rows to render */
+    isRowPresent(rowNode: RowNode): boolean;
 
     /** Add an item at the specified location */
     insertItemsAtIndex(index: number, items: any[]): void;

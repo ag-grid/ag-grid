@@ -299,6 +299,10 @@ export class RenderedRow extends BeanStub {
         this.stopEditing(cancel);
     }
 
+    public isEditing(): boolean {
+        return this.editingRow;
+    }
+
     public stopEditing(cancel = false): void {
         this.forEachRenderedCell( renderedCell => {
             renderedCell.stopEditing(cancel);

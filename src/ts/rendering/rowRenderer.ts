@@ -16,7 +16,6 @@ import {Bean, PreDestroy, Qualifier, Context, Autowired, PostConstruct, Optional
 import {GridCore} from "../gridCore";
 import {ColumnController} from "../columnController/columnController";
 import {Logger, LoggerFactory} from "../logger";
-import {ColumnChangeEvent} from "../columnChangeEvent";
 import {IRowModel} from "../interfaces/iRowModel";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
@@ -186,7 +185,7 @@ export class RowRenderer {
         this.removeVirtualRows(indexesToRemove);
 
         // add draw them again
-        this.refreshView(true, false);
+        this.refreshView(true);
     }
 
     public refreshView(keepRenderedRows = false, animate = false): void {
@@ -435,10 +434,10 @@ export class RowRenderer {
 
         // add in new rows
         var delayedCreateFunctions: Function[] = [];
-        for (var rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
+        for (let rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
-                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
+                _.removeFromArray(rowsToRemove, rowIndex.toString());
                 continue;
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
@@ -454,6 +453,24 @@ export class RowRenderer {
         }, 0);
 
         // timer.print('creating template');
+
+        // check that none of the rows to remove are editing, as if they are, we want to keep them,
+        // otherwise the user will loose the context of the edit
+        rowsToRemove = _.filter(rowsToRemove, indexStr => {
+            let ROW_NEEDS_TO_BE_REMOVED : boolean = true;
+            let ROW_NEEDS_TO_BE_KEPT : boolean = false;
+            let renderedRow = this.renderedRows[indexStr];
+
+            // if not editing, always remove the row
+            if (!renderedRow.isEditing()) { return ROW_NEEDS_TO_BE_REMOVED; }
+
+            // editing row, only remove if it is not rendered, eg filtered out or new data set.
+            // the reason we want to keep is if user is scrolling up and down, we don't want to loose
+            // the context of the editing in process.
+            let rowNode = renderedRow.getRowNode();
+            let rowNodePresent = this.rowModel.isRowPresent(rowNode);
+            return rowNodePresent ? ROW_NEEDS_TO_BE_KEPT : ROW_NEEDS_TO_BE_REMOVED;
+        });
 
         // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
         this.removeVirtualRows(rowsToRemove);

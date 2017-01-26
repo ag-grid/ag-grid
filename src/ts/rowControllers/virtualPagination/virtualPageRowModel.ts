@@ -16,17 +16,17 @@ import {VirtualPageCache, CacheParams} from "./virtualPageCache";
 export class VirtualPageRowModel implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-
     private destroyFunctions: (()=>void)[] = [];
 
     private virtualPageCache: VirtualPageCache;
-    private datasource: IDatasource;
 
+    private datasource: IDatasource;
     @PostConstruct
     public init(): void {
         if (!this.gridOptionsWrapper.isRowModelVirtual()) { return; }
@@ -215,6 +215,11 @@ export class VirtualPageRowModel implements IRowModel {
     public addItems(items: any[]): void {
         console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
             'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
+    }
+
+    public isRowPresent(rowNode: RowNode): boolean {
+        console.log('ag-Grid: not supported.');
+        return false;
     }
 
     public refreshVirtualPageCache(): void {
