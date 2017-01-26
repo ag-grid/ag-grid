@@ -150,8 +150,15 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styling/#cellClassRules">cellClassRules</a></li>
         <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul>
-                <li>vertical: String one of Top/Bottom</li>
-                <li>horizontal: String one of Left/Right</li>
+                <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
+                <li>indent: Number of indents</li>
+                <li>readingOrder: String one of RightToLeft, LeftToRight, and Context</li>
+                <li>rotate: Number. Specifies the rotation of the text within the cell. 90 is straight up, 0 is horizontal, and -90 is straight down</li>
+                <li>shrinkToFit: Boolean. True means that the text size should be shrunk so that all of the text fits within the cell. False means that the font within the cell should behave normally</li>
+                <li>vertical: String one of Automatic, Top, Bottom, Center, Justify, Distributed, and JustifyDistributed</li>
+                <li>verticalText: Boolean. Specifies whether the text is drawn "downwards", whereby each letter is drawn horizontally, one above the other. </li>
+                <li>wrapText: Boolean. Specifies whether the text in this cell should wrap at the cell boundary.
+                    False means that text either spills or gets truncated at the cell boundary (depending on whether the adjacent cell(s) have content). </li>
             </ul>
         </li>
         <li><b>borders</b> (optional): All the 4 borders must be specified (explained in next section): <ul>
@@ -162,13 +169,35 @@ include '../documentation-main/documentation_header.php';
             </ul>
         </li>
         <li><b>font</b> (optional):  The color must be declared: <ul>
+                <li>bold. Boolean</li>
                 <li>color. A color in hexadecimal format</li>
+                <li>fontName. String</li>
+                <li>italic. Boolean</li>
+                <li>outline. Boolean</li>
+                <li>shadow. Boolean</li>
+                <li>size. Number. Size of the font in points</li>
+                <li>strikeThrough. Boolean.</li>
+                <li>underline. One of None, Subscript, and Superscript.</li>
+                <li>charSet. Number. Win32-dependent character set value.</li>
+                <li>family. String. Win32-dependent font family. One of Automatic, Decorative, Modern, Roman, Script, and Swiss</li>
             </ul>
         </li>
         <li><b>interior</b> (optional): The color and pattern must be declared:
             <ul>
                 <li><b>color</b>: A color in hexadecimal format</li>
                 <li><b>pattern</b>: One of the following strings: None, Solid, Gray75, Gray50, Gray25, Gray125, Gray0625, HorzStripe, VertStripe, ReverseDiagStripe, DiagStripe, DiagCross, ThickDiagCross, ThinHorzStripe, ThinVertStripe, ThinReverseDiagStripe, ThinDiagStripe, ThinHorzCross, and ThinDiagCross</li>
+                <li><b>patternColor</b>: A color in hexadecimal format</li>
+            </ul>
+        </li>
+        <li><b>numberFormat</b> (optional): A javascript object with one property called format, this is any valid Excel format like: #,##0.00 (This formatting is used in the example below in the age column)
+        </li>
+        <li><b>protection</b> (optional): A javascript object with the following properties:
+            <ul>
+                <li><b>protected</b>: Boolean. This attribute indicates whether or not this cell is protected.
+                    When the worksheet is unprotected, cell-level protection has no effect. When a cell is protected,
+                    it will not allow the user to enter information into it.</li>
+                <li><b>hideFormula</b>: Boolean. This attribute indicates whether or not this cell's formula should be hidden
+                    when worksheet protection is enabled.</li>
             </ul>
         </li>
 </ul>
@@ -298,6 +327,8 @@ var gridOptions = {
                 it hasn't been specified in the gridOptions, the column then gets exported without formatting.</li>
             <li>Note that there is an Excel Style with name and id header that gets automatically applied to the ag-Grid headers when exported to Excel</li>
             <li>As you can see in the column "Group", the Excel styles can be combined into cellClassRules and cellClass</li>
+            <li>Note that there are specific to Excel styles applied, the age column has a number formatting style applied
+                and the group column uses italic and bold font</li>
         </ul>
     </p>
 

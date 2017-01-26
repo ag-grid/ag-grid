@@ -2,7 +2,7 @@ var columnDefs = [{
     headerName: 'Group1',
     children: [
         {headerName: "Athlete", field: "athlete", width: 150},
-        {headerName: "Age", field: "age", width: 90, cellClassRules:{
+        {headerName: "Age", field: "age", width: 90, cellClass:'twoDecimalPlaces', cellClassRules:{
             greenBackground: function(params) { return params.value < 23},
             redFont: function(params) { return params.value < 20}
         }},
@@ -60,7 +60,11 @@ var gridOptions = {
         },
         {
             id: "redFont",
-            font: { color: "#ff0000" }
+            font: {
+                underline: "Single",
+                italic: true,
+                color: "#ff0000"
+            }
         },{
             id: 'darkGreyBackground',
             interior: {
@@ -86,6 +90,11 @@ var gridOptions = {
             id:'header',
             interior: {
                 color: "#CCCCCC", pattern: 'Solid'
+            }
+        },{
+            id:'twoDecimalPlaces',
+            numberFormat:{
+                format: '#,##0.00'
             }
         }
 
