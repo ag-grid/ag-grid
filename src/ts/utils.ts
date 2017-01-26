@@ -266,13 +266,21 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[], predicate: string |((item: T) => void), value?: any): T {
+    static find<T>(collection: T[]| {[id:string]:T}, predicate: string |((item: T) => void), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
+
+        if (!Array.isArray(collection)) {
+            let objToArray = this.values(collection);
+            return this.find(objToArray, predicate, value);
+        }
+
+        let collectionAsArray = <T[]> collection;
+
         var firstMatchingItem: T;
-        for (var i = 0; i < collection.length; i++) {
-            var item: T = collection[i];
+        for (var i = 0; i < collectionAsArray.length; i++) {
+            var item: T = collectionAsArray[i];
             if (typeof predicate === 'string') {
                 if ((<any>item)[predicate] === value) {
                     firstMatchingItem = item;

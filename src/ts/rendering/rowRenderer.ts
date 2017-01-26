@@ -457,19 +457,19 @@ export class RowRenderer {
         // check that none of the rows to remove are editing, as if they are, we want to keep them,
         // otherwise the user will loose the context of the edit
         rowsToRemove = _.filter(rowsToRemove, indexStr => {
-            let ROW_NEEDS_TO_BE_REMOVED : boolean = true;
-            let ROW_NEEDS_TO_BE_KEPT : boolean = false;
+            let REMOVE_ROW : boolean = true;
+            let KEEP_ROW : boolean = false;
             let renderedRow = this.renderedRows[indexStr];
 
             // if not editing, always remove the row
-            if (!renderedRow.isEditing()) { return ROW_NEEDS_TO_BE_REMOVED; }
+            if (!renderedRow.isEditing()) { return REMOVE_ROW; }
 
             // editing row, only remove if it is not rendered, eg filtered out or new data set.
             // the reason we want to keep is if user is scrolling up and down, we don't want to loose
             // the context of the editing in process.
             let rowNode = renderedRow.getRowNode();
             let rowNodePresent = this.rowModel.isRowPresent(rowNode);
-            return rowNodePresent ? ROW_NEEDS_TO_BE_KEPT : ROW_NEEDS_TO_BE_REMOVED;
+            return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
         });
 
         // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed

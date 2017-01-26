@@ -300,7 +300,15 @@ export class RenderedRow extends BeanStub {
     }
 
     public isEditing(): boolean {
-        return this.editingRow;
+        if (this.gridOptionsWrapper.isFullRowEdit()) {
+            // if doing row editing, then the local variable is the one that is used
+            return this.editingRow;
+        } else {
+            // if not doing row editing, then the renderedRow has no edit state, so
+            // we have to look at the individual cells
+            let editingCell = _.find(this.renderedCells, renderedCell => renderedCell && renderedCell.isEditing() );
+            return _.exists(editingCell);
+        }
     }
 
     public stopEditing(cancel = false): void {
@@ -410,18 +418,33 @@ export class RenderedRow extends BeanStub {
     // container (ie into pinned)
     private refreshCellsIntoRow() {
 
-        var columns = this.columnController.getAllDisplayedVirtualColumns();
-        
-        var renderedCellKeys = Object.keys(this.renderedCells);
+        let columns = this.columnController.getAllDisplayedVirtualColumns();
+
+        var cellsToRemove = Object.keys(this.renderedCells);
 
         columns.forEach( (column: Column) => {
             var renderedCell = this.getOrCreateCell(column);
             this.ensureCellInCorrectRow(renderedCell);
-            _.removeFromArray(renderedCellKeys, column.getColId());
+            _.removeFromArray(cellsToRemove, column.getColId());
         });
 
+        // we never remove rendered ones, as this would cause the cells to loose their values while editing
+        // as the grid is scrolling horizontally
+        cellsToRemove = _.filter(cellsToRemove, indexStr => {
+            let REMOVE_CELL : boolean = true;
+            let KEEP_CELL : boolean = false;
+            let renderedCell = this.renderedCells[indexStr];
+
+            if (_.exists(renderedCell)) {
+                return renderedCell.isEditing() ? KEEP_CELL : REMOVE_CELL;
+            } else {
+                return REMOVE_CELL;
+            }
+        });
+
+
         // remove old cells from gui, but we don't destroy them, we might use them again
-        this.removeRenderedCells(renderedCellKeys);
+        this.removeRenderedCells(cellsToRemove);
     }
 
     private removeRenderedCells(colIds: string[]): void {
