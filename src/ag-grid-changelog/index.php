@@ -48,7 +48,10 @@
 
 <body class="big-text" ng-app="documentation">
 
-<?php $navKey = "changelog";
+<?php
+date_default_timezone_set('Europe/London');
+
+$navKey = "changelog";
 include '../includes/navbar.php'; ?>
 
 <?php $headerTitle = "Changelog";

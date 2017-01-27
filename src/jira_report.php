@@ -3,20 +3,32 @@ $jiraDataPrefix = '../mock_jira_data/';
 if (strpos($_SERVER['HTTP_HOST'], 'ag-grid.com') !== false) {
     $jiraDataPrefix = '../jiradata/';
 }
-$json_decoded = json_decode(file_get_contents($jiraDataPrefix . $csvFile));
+$filename = $jiraDataPrefix . $csvFile;
+$json_decoded = json_decode(file_get_contents($filename));
 $issue_count = count($json_decoded->{'issues'});
+$noReportTitle = $reportTitle === "";
 for ($i = 0; $i < $issue_count; $i++) {
     if ($i == 0) {
-        if ($reportTitle !== "") {
-            ?>
-            <tr>
-                <td colspan="8"
-                    style="font-weight: bold;font-size: large;<?= $firstReport ? '' : 'padding-top: 40px' ?>"><span
-                        id="ag-GridBacklog-Completed-WillbeintheNextRelease"><?= $reportTitle ?></span></td>
-            </tr>
-            <?php
-        }
         ?>
+        <tr>
+            <td colspan="<?= $noReportTitle ? 9 : 8 ?>"
+                style="font-weight: bold;font-size: large;<?= $firstReport ? '' : 'padding-top: 40px' ?>">
+                <?php
+                if (!$noReportTitle) {
+                    ?>
+                    <span style="float: left"
+                          id="ag-GridBacklog-Completed-WillbeintheNextRelease"><?= $reportTitle ?></span>
+                    <?php
+                }
+                if ($firstReport) {
+                    ?>
+                    <span style="float: right">Last Updated: <?= date("d F Y H:i", filemtime($filename)) ?></span>
+                    <?php
+
+                }
+                ?>
+            </td>
+        </tr>
         <tr>
 
             <th style="text-align: left; text-transform: capitalize;"

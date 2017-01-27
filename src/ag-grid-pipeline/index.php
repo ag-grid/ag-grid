@@ -44,7 +44,10 @@
 
 <body class="big-text">
 
-<?php $navKey = "pipeline";
+<?php
+date_default_timezone_set('Europe/London');
+
+$navKey = "pipeline";
 include '../includes/navbar.php'; ?>
 
 <?php $headerTitle = "Pipeline";
