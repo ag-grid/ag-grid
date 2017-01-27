@@ -108,6 +108,21 @@ var colDef4 = {
         $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
     </p>
 
+    <h3 id="rowStyling">Row Styles</h3>
+    <p>You can provide a style to be applied across the row by using the <code>getRowStye</code> or <code>getRowClass</code> callbacks.</p>
+    <p>For example, if you wanted to apply a bottom border across each cell you could do something like this:</p>
+<pre>
+<span class="codeComment">// with a row style</span>
+gridOptions.getRowStyle = function(params) {
+    return { borderStyle: 'solid' }
+}
+<span class="codeComment">// with a row class</span>
+gridOptions.getRowClass = function(params) {
+    return 'my-class';
+}
+</pre>
+
+
     <h3 id="cellClassRules">Column Definition cellClassRules</h3>
 
     <p>
