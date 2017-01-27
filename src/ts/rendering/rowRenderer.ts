@@ -190,7 +190,9 @@ export class RowRenderer {
         this.removeVirtualRows(indexesToRemove);
 
         // add draw them again
-        this.refreshView(true);
+        this.refreshView({
+            keepRenderedRows: true
+        });
     }
 
     public refreshView(params: RefreshViewParams = {}): void {
