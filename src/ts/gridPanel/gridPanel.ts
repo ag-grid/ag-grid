@@ -416,9 +416,9 @@ export class GridPanel extends BeanStub {
             case 'keydown':
                 let key = keyboardEvent.which || keyboardEvent.keyCode;
                 if (key == Constants.KEY_PAGE_DOWN || key == Constants.KEY_PAGE_UP) {
-                    this.handleOnePageButton(keyboardEvent);
+                    this.handleVerticalPageButton(keyboardEvent);
                 } else if (key == Constants.KEY_PAGE_HOME || key == Constants.KEY_PAGE_END) {
-                    this.handleAbsPageButton(keyboardEvent);
+                    this.handleDiagonalPageButton(keyboardEvent);
                 } else {
                     renderedCell.onKeyDown(keyboardEvent);
                 }
@@ -429,9 +429,7 @@ export class GridPanel extends BeanStub {
         }
     }
 
-    private handleAbsPageButton (keyboardEvent:KeyboardEvent): void{
-        let focusedCell : GridCell = this.focusedCellController.getFocusedCell();
-
+    private handleDiagonalPageButton (keyboardEvent:KeyboardEvent): void{
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
@@ -447,11 +445,26 @@ export class GridPanel extends BeanStub {
             this.rowModel.getRowCount() - 1;
         let rowToScrollTo: RowNode = this.rowModel.getRow(rowIndexToScrollTo);
 
-        this.performScroll(rowToScrollTo, selectionTopDelta, focusedCell, keyboardEvent);
+
+        //***************************************************************************
+        //column to select
+        let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
+        let columnToSelect : Column = key == Constants.KEY_PAGE_HOME ?
+            allColumns[0]:
+            allColumns[allColumns.length - 1];
+
+
+        let diagonalScroll: DiagonalScroll = {
+            focusedRowTopDelta: selectionTopDelta,
+            type: ScrollType.DIAGONAL,
+            rowToScrollTo: rowToScrollTo,
+            columnToScrollTo: columnToSelect
+        };
+        this.consumeScrollKey(diagonalScroll, keyboardEvent);
     }
 
-    private handleOnePageButton (keyboardEvent:KeyboardEvent): void{
 
+    private handleVerticalPageButton (keyboardEvent:KeyboardEvent): void{
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         //  before we move the scroll
@@ -483,14 +496,46 @@ export class GridPanel extends BeanStub {
 
         let nextScreenTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(toScrollUnadjusted));
 
-
-        this.performScroll(nextScreenTopmostRow, selectionTopDelta, focusedCell, keyboardEvent);
+        let verticalScroll : VerticalScroll = {
+            rowToScrollTo: nextScreenTopmostRow,
+            focusedRowTopDelta: selectionTopDelta,
+            type: ScrollType.VERTICAL,
+            currentColumn: focusedCell.column
+        };
+        this.consumeScrollKey(verticalScroll, keyboardEvent);
     }
 
-    private performScroll(rowToScrollTo: RowNode, newFocusedCellTopDelta: number, previousFocusedCell: GridCell, keyboardEvent: KeyboardEvent) {
+    private consumeScrollKey(scroll: Scroll, keyboardEvent: KeyboardEvent) {
+        this.performScroll(scroll);
         //***************************************************************************
-        //scroll and redraw
-        this.getPrimaryScrollViewport().scrollTop = rowToScrollTo.rowTop;
+        //Stop event defaults and propagation
+        keyboardEvent.preventDefault();
+    }
+
+    private performScroll(scroll: Scroll) {
+        let verticalScroll: VerticalScroll;
+        let diagonalScroll: DiagonalScroll;
+        let horizontalScroll: HorizontalScroll;
+
+        //***************************************************************************
+        // Scroll screen
+        switch (scroll.type){
+            case ScrollType.VERTICAL:
+                verticalScroll = <VerticalScroll> scroll;
+                this.getPrimaryScrollViewport().scrollTop = verticalScroll.rowToScrollTo.rowTop;
+                break;
+            case ScrollType.DIAGONAL:
+                diagonalScroll = <DiagonalScroll> scroll;
+                this.getPrimaryScrollViewport().scrollTop = diagonalScroll.rowToScrollTo.rowTop;
+                this.getPrimaryScrollViewport().scrollLeft = diagonalScroll.columnToScrollTo.getLeft();
+                break;
+            case ScrollType.HORIZONTAL:
+                horizontalScroll = <HorizontalScroll> scroll;
+                this.getPrimaryScrollViewport().scrollLeft = horizontalScroll.columnToScrollTo.getLeft();
+                break;
+        }
+
+        //***************************************************************************
         // This is needed so that when we try to focus on the cell is actually rendered.
         let refreshViewParams: RefreshViewParams = {
             onlyBody: true,
@@ -500,18 +545,29 @@ export class GridPanel extends BeanStub {
 
 
         //***************************************************************************
-        //refocus
-        let newIndex: number = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + newFocusedCellTopDelta);
+        // New focused cell
+        let focusedRowIndex: number;
+        let focusedColumn: Column;
+        switch (scroll.type){
+            case ScrollType.VERTICAL:
+                focusedRowIndex = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + verticalScroll.focusedRowTopDelta);
+                focusedColumn = verticalScroll.currentColumn;
+                break;
+            case ScrollType.DIAGONAL:
+                focusedRowIndex = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + diagonalScroll.focusedRowTopDelta);
+                focusedColumn = diagonalScroll.columnToScrollTo;
+                break;
+            case ScrollType.HORIZONTAL:
+                focusedRowIndex = horizontalScroll.currentRow.rowIndex;
+                focusedColumn = horizontalScroll.columnToScrollTo;
+                break;
+        }
         this.focusedCellController.setFocusedCell(
-            newIndex,
-            previousFocusedCell.column,
-            previousFocusedCell.floating,
+            focusedRowIndex,
+            focusedColumn,
+            null,
             true
         );
-
-        //***************************************************************************
-        //Stop event defaults and propagation
-        keyboardEvent.preventDefault();
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -1599,4 +1655,30 @@ export class GridPanel extends BeanStub {
     public removeScrollEventListener(listener: ()=>void): void {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
+}
+
+enum ScrollType {
+    HORIZONTAL, VERTICAL, DIAGONAL
+}
+
+interface Scroll {
+    type: ScrollType
+}
+
+interface VerticalScroll extends Scroll{
+    rowToScrollTo : RowNode
+    focusedRowTopDelta: number
+    currentColumn: Column
+}
+
+interface HorizontalScroll extends Scroll {
+    columnToScrollTo: Column,
+    columnToFocus: Column,
+    currentRow: RowNode
+}
+
+interface DiagonalScroll extends Scroll {
+    rowToScrollTo : RowNode,
+    focusedRowTopDelta: number,
+    columnToScrollTo: Column
 }
