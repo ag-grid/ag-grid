@@ -26,6 +26,7 @@ import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
 import {GridCell} from "../entities/gridCell";
+import {RowNode} from "../entities/rowNode";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -415,8 +416,9 @@ export class GridPanel extends BeanStub {
             case 'keydown':
                 let key = keyboardEvent.which || keyboardEvent.keyCode;
                 if (key == Constants.KEY_PAGE_DOWN || key == Constants.KEY_PAGE_UP) {
-                    // taking this out until we work through all the bugs
-                    this.handlePageButton(keyboardEvent);
+                    this.handleOnePageButton(keyboardEvent);
+                } else if (key == Constants.KEY_PAGE_HOME || key == Constants.KEY_PAGE_END) {
+                    this.handleAbsPageButton(keyboardEvent);
                 } else {
                     renderedCell.onKeyDown(keyboardEvent);
                 }
@@ -427,7 +429,28 @@ export class GridPanel extends BeanStub {
         }
     }
 
-    private handlePageButton (keyboardEvent:KeyboardEvent): void{
+    private handleAbsPageButton (keyboardEvent:KeyboardEvent): void{
+        let focusedCell : GridCell = this.focusedCellController.getFocusedCell();
+
+        //***************************************************************************
+        //where to place the newly selected cell cursor after the scroll
+        let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
+        let key = keyboardEvent.which || keyboardEvent.keyCode;
+        let selectionTopDelta : number = key == Constants.KEY_PAGE_HOME ?
+            0:
+            pageSize;
+
+        //***************************************************************************
+        //where to scroll to
+        let rowIndexToScrollTo = key == Constants.KEY_PAGE_HOME ?
+            0:
+            this.rowModel.getRowCount() - 1;
+        let rowToScrollTo: RowNode = this.rowModel.getRow(rowIndexToScrollTo);
+
+        this.performScroll(rowToScrollTo, selectionTopDelta, focusedCell, keyboardEvent);
+    }
+
+    private handleOnePageButton (keyboardEvent:KeyboardEvent): void{
 
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
@@ -461,23 +484,28 @@ export class GridPanel extends BeanStub {
         let nextScreenTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(toScrollUnadjusted));
 
 
+        this.performScroll(nextScreenTopmostRow, selectionTopDelta, focusedCell, keyboardEvent);
+    }
+
+    private performScroll(rowToScrollTo: RowNode, newFocusedCellTopDelta: number, previousFocusedCell: GridCell, keyboardEvent: KeyboardEvent) {
         //***************************************************************************
         //scroll and redraw
-        this.getPrimaryScrollViewport().scrollTop = nextScreenTopmostRow.rowTop;
+        this.getPrimaryScrollViewport().scrollTop = rowToScrollTo.rowTop;
         // This is needed so that when we try to focus on the cell is actually rendered.
-        let refreshViewParams:RefreshViewParams ={
+        let refreshViewParams: RefreshViewParams = {
             onlyBody: true,
             suppressKeepFocus: true
         };
         this.rowRenderer.refreshView(refreshViewParams);
 
+
         //***************************************************************************
         //refocus
-        let newIndex:number = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + selectionTopDelta);
+        let newIndex: number = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + newFocusedCellTopDelta);
         this.focusedCellController.setFocusedCell(
             newIndex,
-            focusedCell.column,
-            focusedCell.floating,
+            previousFocusedCell.column,
+            previousFocusedCell.floating,
             true
         );
 

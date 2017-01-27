@@ -30,6 +30,8 @@ export class Constants {
 
     static KEY_PAGE_UP = 33;
     static KEY_PAGE_DOWN = 34;
+    static KEY_PAGE_HOME = 36;
+    static KEY_PAGE_END = 35;
 
     static ROW_MODEL_TYPE_PAGINATION = 'pagination';
     static ROW_MODEL_TYPE_VIRTUAL = 'virtual';
