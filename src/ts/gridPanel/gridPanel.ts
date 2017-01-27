@@ -436,10 +436,13 @@ export class GridPanel extends BeanStub {
     private handlePageScrollingKey (pagingKeyGroup:string, pagingKey:string, keyboardEvent:KeyboardEvent): void{
         switch (pagingKeyGroup){
             case "diagonalScrollKeys":
-                this.scrollDiagonally(pagingKey);
+                this.pageDiagonally(pagingKey);
                 break;
             case "verticalScrollKeys":
-                this.scrollVertically(pagingKey);
+                this.pageVertically(pagingKey);
+                break;
+            case "horizontalScrollKeys":
+                this.pageHorizontally(pagingKey);
                 break;
         }
 
@@ -448,7 +451,26 @@ export class GridPanel extends BeanStub {
         keyboardEvent.preventDefault();
     }
 
-    private scrollDiagonally (pagingKey:string): void{
+    private pageHorizontally (pagingKey:string): void{
+        //***************************************************************************
+        //column to select
+        let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
+        let columnToSelect : Column = pagingKey === "ctrlLeft" ?
+            allColumns[0]:
+            allColumns[allColumns.length - 1];
+
+
+        let horizontalScroll: HorizontalScroll = {
+            type: ScrollType.HORIZONTAL,
+            columnToScrollTo: columnToSelect,
+            columnToFocus: columnToSelect
+        };
+        this.performScroll(horizontalScroll);
+    }
+
+
+
+    private pageDiagonally (pagingKey:string): void{
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
@@ -482,7 +504,28 @@ export class GridPanel extends BeanStub {
     }
 
 
-    private scrollVertically (pagingKey:string): void{
+    private pageVertically (pagingKey:string): void{
+        if (pagingKey === "ctrlUp"){
+            this.performScroll({
+                rowToScrollTo: this.rowModel.getRow(0),
+                focusedRowTopDelta: 0,
+                type: ScrollType.VERTICAL
+            } as VerticalScroll);
+            return;
+        }
+
+        if (pagingKey === "ctrlDown"){
+            this.performScroll({
+                rowToScrollTo: this.rowModel.getRow(this.rowModel.getRowCount() - 1),
+                focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
+                type: ScrollType.VERTICAL
+            } as VerticalScroll);
+            return;
+        }
+
+        //*********PAGING KEYS******************************************************
+
+
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         //  before we move the scroll
@@ -1719,5 +1762,6 @@ function testKeyboardBindingGroups (keyboardBindingGroups:KeyboardBindingGroup[]
 function testKeyboardBinding (keyboardBinding:KeyboardBinding, event:KeyboardEvent): boolean{
     let key = event.which || event.keyCode;
     return (keyboardBinding.ctlRequired === event.ctrlKey) &&
-        (keyboardBinding.keyCode === key);
+        (keyboardBinding.keyCode === key) &&
+        (keyboardBinding.altRequired === event.altKey);
 }

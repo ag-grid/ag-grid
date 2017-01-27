@@ -49,18 +49,22 @@ export class Constants {
         bindings: [{
             id: "pageUp",
             ctlRequired: false,
+            altRequired: false,
             keyCode: Constants.KEY_PAGE_UP
         },{
             id: "pageDown",
             ctlRequired: false,
+            altRequired: false,
             keyCode: Constants.KEY_PAGE_DOWN
         },{
             id: "ctrlUp",
-            ctlRequired: true,
+            ctlRequired: false,
+            altRequired: true,
             keyCode: Constants.KEY_UP
         },{
-            id: "ctrDown",
-            ctlRequired: true,
+            id: "ctrlDown",
+            ctlRequired: false,
+            altRequired: true,
             keyCode: Constants.KEY_DOWN
         }]
     };
@@ -69,11 +73,13 @@ export class Constants {
         id: "horizontalScrollKeys",
         bindings: [{
             id: "ctrlLeft",
-            ctlRequired: true,
+            ctlRequired: false,
+            altRequired: true,
             keyCode: Constants.KEY_LEFT
         },{
             id: "ctrlRight",
-            ctlRequired: true,
+            ctlRequired: false,
+            altRequired: true,
             keyCode: Constants.KEY_RIGHT
         }]
     };
@@ -83,10 +89,12 @@ export class Constants {
         bindings: [{
             id: "home",
             ctlRequired: false,
+            altRequired: false,
             keyCode: Constants.KEY_PAGE_HOME
         }, {
             id: "end",
             ctlRequired: false,
+            altRequired: false,
             keyCode: Constants.KEY_PAGE_END
         }]
     }
@@ -96,6 +104,7 @@ export class Constants {
 export interface KeyboardBinding {
     id:string;
     ctlRequired:boolean;
+    altRequired:boolean;
     keyCode:number;
 }
 
