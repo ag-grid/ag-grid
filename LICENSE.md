@@ -93,11 +93,19 @@ If credit has been extended to You by Us, all payments under this Agreement are 
 
 10.SUPPORT AND MAINTENANCE
 
-We will supply the Support Services  to You as described in section 10(A) below and for whom any applicable maintenance and support fee has been paid, should we choose (at our discretion) to charge such fees.
+We will supply the Support Services  to You as described in section 10(A) below and
+for whom any applicable maintenance and support fee has been paid, should we choose
+(at our discretion) to charge such fees.
 
 (A) Support Services
 
-The Support Services only apply to the Software for which they are purchased and not to any other application, library or product developed or sold by Us. The Support Services are only provided in English. The Support Services will be provided for the current release of the Software and previous releases for up to 12 months from the release date. We will use Our reasonable endeavours to respond to your queries submitted via the Support Services within 24 hours on working days (as defined by the English calendar) but You acknowledge and accept that this may not always be possible.
+The Support Services only apply to the Software for which they are purchased and not to any
+other application, library or product developed or sold by Us. The Support Services are only
+provided in English. The Support Services will be provided for the current release of the
+Software and previous releases for up to 12 months from the release date. We will use Our
+reasonable endeavours to respond to your queries submitted via the Support Services within 24
+hours on working days (as defined by the English calendar) but You acknowledge and accept that
+this may not always be possible.
 
 (B) Your Responsibilities
 
@@ -107,7 +115,13 @@ It is the Your responsibility that queries are raised by suitably trained indivi
 
 (C) Limitation of Liability
 
-We shall not be responsible for providing support via the Support Services to the extent that the issue is caused by: (a) Your misuse, improper use, mis-configuration, alteration, or damage to the Software; (b) Your use of the Software with any hardware or software not supplied or supported by Us; (c) Your failure to install an update to the Software if such update would have resolved the issue; or (d) any uses of the Software that are not in accordance with the Agreement. 
+We shall not be responsible for providing support via the Support Services to the extent that the issue is caused by: (a) Your misuse, improper use, mis-configuration, alteration, or damage to the Software; (b) Your use of the Software with any hardware or software not supplied or supported by Us; (c) Your failure to install an update to the Software if such update would have resolved the issue; or (d) any uses of the Software that are not in accordance with the Agreement.
+
+(d) Fair Usage Policy
+
+Each APPLICATION DEVELOPER LICENSE and SITE DEVELOPER LICENSE permits raising 10 support queries
+for the support period of the license. Should the number of support queries extend 10 then
+We reserve the right to stop providing support.
 
 11.MISCELLANEOUS
 
