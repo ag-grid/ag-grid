@@ -108,13 +108,12 @@ include 'includes/headerRow.php'; ?>
     </div>
 
     <div class="row">
-        <div class="col-md-9">
-
+        <div class="col-md-8">
             <h2>
                 Choosing a License
             </h2>
 
-            <p>
+            <p style="margin-top: 20px;">
                 ag-Grid Free comes with standard features and is released under MIT. There is no warranty or support.
             </p>
             
@@ -123,177 +122,180 @@ include 'includes/headerRow.php'; ?>
                 to use ag-Grid Enterprise, you must purchase an ag-Grid Enterprise license.
             </p>
         </div>
-        <div class="col-md-3">
-            <h2>
-                &nbsp;
-            </h2>
-            <div style="background-color: beige; border: 1px solid darkgrey; border-radius: 10px; padding: 10px;">
-                <table>
-                    <tr>
-                        <td style="vertical-align: top; padding-right: 10px; font-size: 20px;">
-                            <i class="fa fa-question-circle"></i>
-                        </td>
-                        <td>
-                            email <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry">accounts@ag-grid.com</a> for help with license
-                        </td>
-                    </tr>
-                </table>
+        <div class="col-md-3 col-md-offset-1">
+            
+            <h2>Got a question?</h2>
+            
+            <div class="pricing-question">
+                <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry" class="btn large red">Contact Us</a>
             </div>
+            
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
 
-            <h2>
+            <h2 class="text-center">
                 Free vs Enterprise Comparison and Pricing
             </h2>
 
-            <table class="theTable" style="width: 100%;">
-                <tr>
-                    <td class="titleCell tableHighlightCell tableCell">
-                        <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid</span>
-                    </td>
-                    <td class="gapCol"/>
-                    <td class="titleCell tableHighlightCell tableCell">
-                        <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid Enterprise</span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="titlePrice tableCell">
-                        <div style="font-size: 20px; font-weight: bold;">
-                            Free
+            <div class="row pricing-row">
+                <div class="col-md-4">
+                    <div class="pricing-plan">
+                        <div class="pricing-plan-top">
+                            <h4>Application Developer</h4>
+                            <div>
+                                <span class="price">&pound;495</span>
+                                <span class="price-sub">per Developer</span>
+                            </div>
+                            <p class="pricing-plan-intro">Best for open source projects &amp; hobbyists.</p>
+                            <div class="extra">
+                                <p>Released under <a href="https://github.com/ceolter/ag-grid/blob/master/LICENSE.txt">MIT</a></p>
+                            </div>
+                            <ul>
+                                <li><span>Usage of ag-Grid in a single Application</span></li>
+                                <li><span>Access to the Enterprise Support Forum</span></li>
+                                <li><span>Perpetual License</span></li>
+                                <li><span>1 Year of Upgrades and Maintenance</span></li>
+                                <li><span>Feature Requests</span></li>
+                            </ul>
                         </div>
-                    </td>
-                    <td class="gapCol"/>
-                    <td class="titlePrice tableCell">
-                        <div>
-                            <span style="font-size: 20px; font-weight: bold;">
-                                £495
-                            </span>
-                            per Application Developer
+                        <a class="btn large red" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-applicationDeveloper">Enquire</a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="recommend-badge">Recommended</div>
+                    <div class="pricing-plan red">
+                        <div class="pricing-plan-top">
+                            <h4>Site Developer</span></h4>
+                            <div>
+                                <span class="price">&pound;795</span>
+                                <span class="price-sub">per Developer</span>
+                            </div>
+                            <p class="pricing-plan-intro">Best for professional developers.</p>
+                            <div class="extra">
+                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                            </div>
+                            <ul>
+                                <li><span>Usage of ag-Grid in a multiple Applications</span></li>
+                                <li><span>Access to the Enterprise Support Forum</span></li>
+                                <li><span>Perpetual License</span></li>
+                                <li><span>1 Year of Upgrades and Maintenance</span></li>
+                                <li><span>Feature Requests</span></li>
+                            </ul>
                         </div>
-                        <div>
-                            OR
+                        <a class="btn large red" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-siteDeveloper">Enquire</a>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="pricing-plan">
+                        <div class="pricing-plan-top">
+                            <h4>SaaS and OEM</h4>
+                            <div>
+                                <span class="price">POA</span>
+                                <span class="price-sub">price on asking</span>
+                            </div>
+                            <p class="pricing-plan-intro">Best for professional developers.</p>
+                            <div class="extra">
+                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                            </div>
+                            <ul>
+                                <li><span>Usage of ag-Grid in SaaS/OEM Applications</span></li>
+                                <li><span>Access to the Enterprise Support Forum</span></li>
+                                <li><span>Perpetual License</span></li>
+                                <li><span>1 Year of Upgrades and Maintenance</span></li>
+                                <li><span>Feature Requests</span></li>
+                            </ul>
                         </div>
-                        <div>
-                            <span style="font-size: 20px; font-weight: bold;">
-                                £795
-                            </span>
-                            per Site Developer
-                        </div>
-                        <div style="padding-top: 20px;">
-                            All Licenses Perpetual
-                        </div>
-                        <div style="padding-top: 20px;">
-                            OEM and SaaS Available Extras
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="titlePrice tableCell">
-                        Best for open source projects & hobbyists
-                    </td>
-                    <td class="gapCol"/>
-                    <td class="titlePrice tableCell">
-                        Best for professional developers building enterprise applications
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="tableHighlightCell tableCell">
-                        Released under <a href="https://github.com/ceolter/ag-grid/blob/master/LICENSE.txt">MIT</a>
-                    </td>
-                    <td class="gapCol"/>
-                    <td class="tableHighlightCell tableCell">
-                        Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="benefitsCell tableCell">
-
-                        <div class="gridFeature">
-                            Standard Grid Features<br/>
-                            (as per documentation)
-                        </div>
+                        <a class="btn large red" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-saasAndOEM">Enquire</a>
+                    </div>
+                </div> 
 
 
-                        <div class="gridFeaturePlus">Plus</div>
 
-                        <div class="gridFeature">Get help via Stack Overflow or Free Forum</div>
-
-                    </td>
-                    <td class="gapCol"/>
-                    <td class="benefitsCell tableCell">
-
-                        <div class="gridFeature">
-                            Standard and Enterprise Grid Features<br/>
-                            (as per documentation)
-                        </div>
-
-                        <div class="gridFeaturePlus">Plus</div>
-
-                        <div class="gridFeature">
-                            Upgrades for 1 Year
-                        </div>
-
-                        <div class="gridFeaturePlus">Plus</div>
-
-                        <div class="gridFeature">
-                            Online Support for 1 Year
-                        </div>
-
-                        <div class="gridFeaturePlus">Plus</div>
-
-                        <div class="gridFeature">
-                            Raise Bugs and Feature Requests
-                        </div>
-
-                        <div class="gridFeaturePlus">Plus</div>
-
-                        <div class="gridFeature">
-                            Influence the Future Direction of ag-Grid
-                        </div>
-
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="tableHighlightCell tableCell">
-                        Download for Free
-                    </td>
-                    <td class="gapCol"/>
-                    <td class="tableHighlightCell tableCell">
-                        Complete Form Below
-                    </td>
-                </tr>
-            </table>
+            </div>
 
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-12" style="text-align: center; padding: 40px;">
-            Still don't know which version you want? Then go for ag-Grid Enterprise, your contribution
-         will help ag-Grid grow into the future.
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12" style="text-align: center;">
-            <span style="background-color: beige; border: 1px solid darkgrey; border-radius: 10px; padding: 10px;">
-                For questions on licensing or ordering, please email <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry">accounts@ag-grid.com</a> <b>OR</b> complete the form below.
-            </span>
-        </div>
-    </div>
-
-    <?php include("includes/orderForm.php"); ?>
-    <?php include("includes/commonQuestions.php"); ?>
 
 </div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center">Testimonials</h2>
+        </div>
+    </div>
+</div>
+
+<?php include 'home/testimonials-2.php'; ?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <?php include("includes/commonQuestions.php"); ?>
+        </div>
+        <div class="col-md-6">
+            <h2>Our Customers</h2>
+            <?php include("includes/customerLogos.php"); ?>
+        </div>
+    </div>
+</div>
+
+<!-- The Order Form Modal -->
+<div class="modal fade orderForm-applicationDeveloper" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Order Enquiry</h4>
+        </div>
+        <div class="modal-body">
+            <?php 
+            $formKey = "applicationDeveloper";
+            include("includes/orderForm.php"); ?>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- The Order Form Modal -->
+<div class="modal fade orderForm-siteDeveloper" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Order Enquiry</h4>
+        </div>
+        <div class="modal-body">
+            <?php 
+            $formKey = "siteDeveloper";
+            include("includes/orderForm.php"); ?>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- The Order Form Modal -->
+<div class="modal fade orderForm-saasAndOEM" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Order Enquiry</h4>
+        </div>
+        <div class="modal-body">
+            <?php 
+            $formKey = "saasAndOEM";
+            include("includes/orderForm.php"); ?>
+        </div>
+    </div>
+  </div>
+</div>
+
 
 <?php include("includes/footer.php"); ?>
 
