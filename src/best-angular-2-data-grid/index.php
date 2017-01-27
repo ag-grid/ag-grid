@@ -67,6 +67,12 @@ include '../documentation-main/documentation_header.php';
         <li>A Filter Example, with the filter written as a Angular 2 Component
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/filter-component.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/filter-component.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
+        <li>A Master/Detail Example, with both the Master and the Detail elements being Angular 2 Components
+            <ul>
+                <li>Master: <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/masterdetail-master.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/masterdetail-master.component.html" target="_blank" class="fa fa-external-link"> html</a></li>
+                <li>Detail: <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/detail-panel.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/detail-panel.component.html" target="_blank" class="fa fa-external-link"> html</a></li>
+            </ul>
+        </li>
     </ul>
     </p>
 
