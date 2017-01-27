@@ -1,20 +1,20 @@
-import {Utils as _} from "../utils";
-import {Column} from "../entities/column";
-import {FilterManager} from "../filter/filterManager";
-import {ColumnController} from "../columnController/columnController";
-import {HeaderTemplateLoader} from "./headerTemplateLoader";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {HorizontalDragService} from "./horizontalDragService";
-import {GridCore} from "../gridCore";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {CssClassApplier} from "./cssClassApplier";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../dragAndDrop/dragAndDropService";
-import {SortController} from "../sortController";
-import {SetLeftFeature} from "../rendering/features/setLeftFeature";
-import {TouchListener} from "../widgets/touchListener";
-import {Component} from "../widgets/component";
+import {Utils as _} from "../../utils";
+import {Column} from "../../entities/column";
+import {FilterManager} from "../../filter/filterManager";
+import {ColumnController} from "../../columnController/columnController";
+import {HeaderTemplateLoader} from "../headerTemplateLoader";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {HorizontalDragService} from "../horizontalDragService";
+import {GridCore} from "../../gridCore";
+import {IMenuFactory} from "../../interfaces/iMenuFactory";
+import {Autowired, Context, PostConstruct} from "../../context/context";
+import {CssClassApplier} from "../cssClassApplier";
+import {IRenderedHeaderElement} from "../iRenderedHeaderElement";
+import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
+import {SortController} from "../../sortController";
+import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
+import {TouchListener} from "../../widgets/touchListener";
+import {Component} from "../../widgets/component";
 
 export class RenderedHeaderCell extends Component {
 

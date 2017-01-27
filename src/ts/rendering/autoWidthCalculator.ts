@@ -5,7 +5,7 @@ import {Bean} from "../context/context";
 import {Utils as _} from "../utils";
 import {Autowired} from "../context/context";
 import {HeaderRenderer} from "../headerRendering/headerRenderer";
-import {RenderedHeaderCell} from "../headerRendering/renderedHeaderCell";
+import {RenderedHeaderCell} from "../headerRendering/deprecated/renderedHeaderCell";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 @Bean('autoWidthCalculator')

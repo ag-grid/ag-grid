@@ -46,8 +46,8 @@ export * from './dist/lib/headerRendering/headerRowComp';
 export * from './dist/lib/headerRendering/headerTemplateLoader';
 export * from './dist/lib/headerRendering/horizontalDragService';
 export * from './dist/lib/headerRendering/moveColumnController';
-export * from './dist/lib/headerRendering/renderedHeaderCell';
-export * from './dist/lib/headerRendering/renderedHeaderGroupCell';
+export * from './dist/lib/headerRendering/deprecated/renderedHeaderCell';
+export * from './dist/lib/headerRendering/deprecated/renderedHeaderGroupCell';
 export * from './dist/lib/headerRendering/standardMenu';
 
 export * from './dist/lib/interfaces/iAggFuncService';

@@ -1,18 +1,18 @@
-import {Utils as _} from "../utils";
-import {SvgFactory} from "../svgFactory";
-import {ColumnGroup} from "../entities/columnGroup";
-import {ColumnController} from "../columnController/columnController";
-import {FilterManager} from "../filter/filterManager";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Column} from "../entities/column";
-import {HorizontalDragService} from "./horizontalDragService";
-import {Autowired, PostConstruct} from "../context/context";
-import {CssClassApplier} from "./cssClassApplier";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
-import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
-import {SetLeftFeature} from "../rendering/features/setLeftFeature";
-import {TouchListener} from "../widgets/touchListener";
-import {Component} from "../widgets/component";
+import {Utils as _} from "../../utils";
+import {SvgFactory} from "../../svgFactory";
+import {ColumnGroup} from "../../entities/columnGroup";
+import {ColumnController} from "../../columnController/columnController";
+import {FilterManager} from "../../filter/filterManager";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {Column} from "../../entities/column";
+import {HorizontalDragService} from "../horizontalDragService";
+import {Autowired, PostConstruct} from "../../context/context";
+import {CssClassApplier} from "../cssClassApplier";
+import {IRenderedHeaderElement} from "../iRenderedHeaderElement";
+import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
+import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
+import {TouchListener} from "../../widgets/touchListener";
+import {Component} from "../../widgets/component";
 
 var svgFactory = SvgFactory.getInstance();
 

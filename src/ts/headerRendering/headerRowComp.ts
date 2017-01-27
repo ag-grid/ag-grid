@@ -8,11 +8,13 @@ import {ColumnController} from "../columnController/columnController";
 import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {Column} from "../entities/column";
 import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import {RenderedHeaderGroupCell} from "./renderedHeaderGroupCell";
-import {RenderedHeaderCell} from "./renderedHeaderCell";
+import {RenderedHeaderGroupCell} from "./deprecated/renderedHeaderGroupCell";
+import {RenderedHeaderCell} from "./deprecated/renderedHeaderCell";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {Utils as _} from "../utils";
+import {HeaderWrapperComp} from "./headerWrapperComp";
+import {ColDef} from "../entities/colDef";
 
 export class HeaderRowComp extends Component {
 
@@ -135,13 +137,41 @@ export class HeaderRowComp extends Component {
         this.removeAndDestroyChildComponents(currentChildIds);
     }
 
+    // check if user is using the deprecated
+    private isUsingOldHeaderRenderer(column: Column): boolean {
+        let colDef = column.getColDef();
+
+        return _.anyExists([
+            // header template
+            this.gridOptionsWrapper.getHeaderCellTemplateFunc(),
+            this.gridOptionsWrapper.getHeaderCellTemplate(),
+            colDef.headerCellTemplate,
+            // header cellRenderer
+            colDef.headerCellRenderer,
+            this.gridOptionsWrapper.getHeaderCellRenderer()
+        ]);
+
+    }
+
     private createHeaderElement(columnGroupChild:ColumnGroupChild):IRenderedHeaderElement {
         var result:IRenderedHeaderElement;
+
         if (columnGroupChild instanceof ColumnGroup) {
             result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         } else {
-            result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+/*
+            if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
+                ////// DEPRECATED - TAKE THIS OUT IN V9
+                result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            } else {
+                // the future!!!
+                result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            }
+*/
+            result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+
         }
+
         this.context.wireBean(result);
         return result;
     }

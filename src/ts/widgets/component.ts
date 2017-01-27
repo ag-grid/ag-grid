@@ -1,8 +1,9 @@
 import {Utils as _} from "../utils";
 import {Context} from "../context/context";
 import {BeanStub} from "../context/beanStub";
+import {IComponent} from "../interfaces/iComponent";
 
-export class Component extends BeanStub {
+export class Component extends BeanStub implements IComponent<any> {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 

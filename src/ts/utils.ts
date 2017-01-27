@@ -376,6 +376,17 @@ export class Utils {
         }
     }
 
+    static anyExists(values: any[]): boolean {
+        if (values) {
+            for (var i = 0; i<values.length; i++) {
+                if (this.exists(values[i])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     static existsAndNotEmpty(value: any[]): boolean {
         return this.exists(value) && value.length > 0;
     }
