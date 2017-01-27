@@ -1,9 +1,9 @@
-import {GridCell} from "./entities/gridCell";
 import {RowNode} from "./entities/rowNode";
 import {Column} from "./entities/column";
 import {ColDef} from "./entities/colDef";
 import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnController";
+
 export class Events {
 
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
