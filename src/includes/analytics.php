@@ -23,6 +23,12 @@
         ga('create', 'UA-60553231-2', 'auto');
         ga('send', 'pageview');
 
+        // workaround script for Google Site Search
+        _gaq = {}; 
+        _gaq.push = function () { 
+            ga('send', 'pageview', arguments[0][1]); 
+        };
+
     </script>
 
 <?php } ?>
