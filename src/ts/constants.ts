@@ -44,4 +44,64 @@ export class Constants {
     static FLOATING_TOP = 'top';
     static FLOATING_BOTTOM = 'bottom';
 
+    static VERTICAL_SCROLL_KEYS: KeyboardBindingGroup = {
+        id: "verticalScrollKeys",
+        bindings: [{
+            id: "pageUp",
+            ctlRequired: false,
+            keyCode: Constants.KEY_PAGE_UP
+        },{
+            id: "pageDown",
+            ctlRequired: false,
+            keyCode: Constants.KEY_PAGE_DOWN
+        },{
+            id: "ctrlUp",
+            ctlRequired: true,
+            keyCode: Constants.KEY_UP
+        },{
+            id: "ctrDown",
+            ctlRequired: true,
+            keyCode: Constants.KEY_DOWN
+        }]
+    };
+
+    static HORIZONTAL_SCROLL_KEYS: KeyboardBindingGroup = {
+        id: "horizontalScrollKeys",
+        bindings: [{
+            id: "ctrlLeft",
+            ctlRequired: true,
+            keyCode: Constants.KEY_LEFT
+        },{
+            id: "ctrlRight",
+            ctlRequired: true,
+            keyCode: Constants.KEY_RIGHT
+        }]
+    };
+
+    static DIAGONAL_SCROLL_KEYS: KeyboardBindingGroup = {
+        id: "diagonalScrollKeys",
+        bindings: [{
+            id: "home",
+            ctlRequired: false,
+            keyCode: Constants.KEY_PAGE_HOME
+        }, {
+            id: "end",
+            ctlRequired: false,
+            keyCode: Constants.KEY_PAGE_END
+        }]
+    }
 }
+
+
+export interface KeyboardBinding {
+    id:string;
+    ctlRequired:boolean;
+    keyCode:number;
+}
+
+export interface KeyboardBindingGroup {
+    id:string;
+    bindings:KeyboardBinding[]
+}
+
+
