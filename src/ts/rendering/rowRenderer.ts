@@ -214,7 +214,7 @@ export class RowRenderer {
         }
 
         this.refreshAllVirtualRows(params.keepRenderedRows, params.animate);
-        if (params.onlyBody){
+        if (!params.onlyBody){
             this.refreshAllFloatingRows();
         }
 
