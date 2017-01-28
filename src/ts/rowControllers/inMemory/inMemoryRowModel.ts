@@ -96,7 +96,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    public refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean, keepEditingRows?: boolean}): void {
+    public refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean, keepEditingRows?: boolean, newRowNodes?: RowNode[]}): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
