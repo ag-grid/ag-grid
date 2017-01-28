@@ -1,24 +1,4 @@
-var columnDefs = [
-    {headerName: "Product", field: "product", rowGroupIndex: 0, hide: true},
-    {headerName: "Portfolio", field: "portfolio", rowGroupIndex: 1, hide: true},
-    {headerName: "Book", field: "book", rowGroupIndex: 2, hide: true},
-    {headerName: "Trade", field: "trade"},
-    {headerName: "Latest Batch", field: "batch", cellClass: 'number', aggFunc: 'max'},
-    {headerName: "Current", field: "current", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "Previous", field: "previous", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "Change", valueGetter: "data.previous - data.current", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "PL 1", field: "pl1", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "PL 2", field: "pl2", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "Gain-DX", field: "gainDx", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "SX / PX", field: "sxPx", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "99 Out", field: "_99Out", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "Submitter ID", field: "submitterID", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "Submitted Deal ID", field: "submitterDealID", aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-    {headerName: "Deal Type", field: "dealType", aggFunc: 'sum'},
-    {headerName: "Bid Flag", field: "bidFlag", aggFunc: 'sum'}
-];
-
-var rowData = [];
+var valueGetterExecCount = 0;
 
 var products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
     'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
@@ -36,10 +16,46 @@ var nextBookId = 23472;
 var nextTradeId = 437629287;
 var nextBatchId = 1001;
 
-createSampleData();
+var gridOptions;
+
+function createCols() {
+    return [
+        // the group column
+        {headerName: 'Hierarchy', field: 'trade', cellRenderer: 'group', width: 200},
+
+        // these are the row groups, so they are all hidden (they are showd in the group column)
+        {headerName: 'Product', field: 'product', rowGroupIndex: 0, hide: true},
+        {headerName: 'Portfolio', field: 'portfolio', rowGroupIndex: 1, hide: true},
+        {headerName: 'Book', field: 'book', rowGroupIndex: 2, hide: true},
+        {headerName: 'Trade', field: 'trade', hide: true},
+
+        // all the other columns (visible and not grouped)
+        {headerName: 'Latest Batch', field: 'batch', cellClass: 'number', aggFunc: 'max'},
+        {headerName: 'Current', field: 'current', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Previous', field: 'previous', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Change', valueGetter: changeValueGetter, aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'PL 1', field: 'pl1', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'PL 2', field: 'pl2', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Gain-DX', field: 'gainDx', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'SX / PX', field: 'sxPx', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: '99 Out', field: '_99Out', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Submitter ID', field: 'submitterID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Submitted Deal ID', field: 'submitterDealID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Deal Type', field: 'dealType', aggFunc: 'sum'},
+        {headerName: 'Bid Flag', field: 'bidFlag', aggFunc: 'sum'}
+    ];
+}
+
+// simple value getter, however we can see how many times it gets called. this
+// gives us an indication to how many rows get recalculated when data changes
+function changeValueGetter(params) {
+    valueGetterExecCount++;
+    return params.data.previous - params.data.current;
+}
 
 // build up the test data, creates approx 50,000 rows
-function createSampleData() {
+function createRowData() {
+    var rowData = [];
     var thisBatch = nextBatchId++;
     for (var i = 0; i<products.length; i++) {
         var product = products[i];
@@ -58,6 +74,7 @@ function createSampleData() {
             }
         }
     }
+    return rowData;
 }
 
 function createTradeRecord(product, portfolio, book, batch) {
@@ -98,20 +115,26 @@ function createTradeId() {
     return nextTradeId
 }
 
-console.log('row count is ' + rowData.length);
-
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: rowData,
-    animateRows: true,
-    enableColResize: true,
-    suppressAggFuncInHeader: true,
-    defaultColDef: {
-        width: 120
-    }
-};
+function createGridOptions() {
+    gridOptions = {
+        columnDefs: createCols(),
+        rowData: createRowData(),
+        // because we are supplying our own group column,
+        // we don't use the grids default
+        groupSuppressAutoColumn: true,
+        animateRows: true,
+        enableColResize: true,
+        enableRangeSelection: true,
+        suppressAggFuncInHeader: true,
+        defaultColDef: {
+            width: 120
+        }
+    };
+    console.log('rowData.length: ' + gridOptions.rowData.length);
+}
 
 function add20PalmOil() {
+    valueGetterExecCount = 0;
     var newData = [];
     var batch = nextBatchId++;
     for (var i = 0; i<20; i++) {
@@ -122,6 +145,7 @@ function add20PalmOil() {
         newData.push(trade);
     }
     gridOptions.api.addItems(newData);
+    console.log('after insert valueGetterExecCount: ' + valueGetterExecCount);
 }
 
 // function onAddRow() {
@@ -147,5 +171,7 @@ function add20PalmOil() {
 // ag-Grid will not find the div in the document.
 document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
+    createGridOptions();
     new agGrid.Grid(eGridDiv, gridOptions);
+    console.log('initial valueGetterExecCount: ' + valueGetterExecCount);
 });

@@ -112,8 +112,8 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleInsertRemoveGroups"></show-example>
 
-<!--    <show-example example="exampleInsertRemoveBigData"></show-example>
--->
+    <show-example example="exampleInsertRemoveBigData"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
