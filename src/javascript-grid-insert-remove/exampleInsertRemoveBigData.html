@@ -1,0 +1,34 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise.js?ignore=notused39"></script>
+    <script src="exampleInsertRemoveBigData.js"></script>
+</head>
+<style>
+    .number {
+        text-align: right;
+    }
+    .ag-row-level-0 {
+        font-weight: bold;
+    }
+    .ag-row-level-1 {
+        color: darkblue;
+    }
+    .ag-row-level-2 {
+        color: darkgreen;
+    }
+</style>
+<body style="position: relative;">
+
+    <div style="height: 100%; padding-top: 25px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+
+    <div style="position: absolute; top: 0px; left: 0px;">
+        <button onclick="add20PalmOil()">Add 20 Palm Oil</button>
+        <!--<button onclick="two()">Two</button>-->
+        <!--<button onclick="three()">Three</button>-->
+    </div>
+
+</body>
+</html>
