@@ -11,13 +11,23 @@ var columnDefs = [
     {headerName: "Total", field: "total", width: 100}
 ];
 
+
+var manual = false;
+
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true
+    enableColResize: true,
+    onColumnResized: (params) => {
+        if(params.finished || manual) {
+            console.log(`Post Resize Functionality ${params.finished} ${manual}`);
+            manual = false;
+        }
+    }
 };
 
 function sizeToFit() {
+    manual = true;
     gridOptions.api.sizeColumnsToFit();
 }
 

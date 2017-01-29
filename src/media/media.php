@@ -21,6 +21,30 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-fun-git-cmd-line/">
+            <img src="../images/agGridDaily.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-fun-git-cmd-line/">
+                Git on the Command Line - Improving the Experience
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            30th January 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Configuring Git and enhancing your Command Line to give you instant feedback on where you are and what you're doing.
+    </div>
+</div>
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../ag-grid-understanding-webpack/">
             <img src="../images/agGridDaily.png" style="width: 225px;"/>
         </a>

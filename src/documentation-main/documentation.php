@@ -15,6 +15,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
+        <div class="news-header">30th January 2017</div>
+        <div style="padding-top: 10px;">
+            <a href="../ag-grid-fun-git-cmd-line/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                Git on the Command Line - Improving the Experience
+            </a>
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">23rd January 2017</div>
         <div style="padding-top: 10px;">
             <a href="../ag-grid-understanding-webpack/">
