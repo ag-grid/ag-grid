@@ -4,7 +4,7 @@ import {Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SelectionController} from "../../selectionController";
 import {EventService} from "../../eventService";
-import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
+import {IRowNodeStage, StageExecuteParams} from "../../interfaces/iRowNodeStage";
 import {ColumnController} from "../../columnController/columnController";
 
 @Bean('flattenStage')
@@ -16,7 +16,9 @@ export class FlattenStage implements IRowNodeStage {
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
 
-    public execute(rootNode: RowNode): RowNode[] {
+    public execute(params: StageExecuteParams): RowNode[] {
+        let rootNode = params.rowNode;
+
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var result: RowNode[] = [];

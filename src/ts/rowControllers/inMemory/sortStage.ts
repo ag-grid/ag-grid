@@ -4,6 +4,7 @@ import {SortController} from "../../sortController";
 import {RowNode} from "../../entities/rowNode";
 import {ValueService} from "../../valueService";
 import {Utils as _} from "../../utils";
+import {StageExecuteParams} from "../../interfaces/iRowNodeStage";
 
 @Bean('sortStage')
 export class SortStage {
@@ -12,7 +13,8 @@ export class SortStage {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('valueService') private valueService: ValueService;
 
-    public execute(rowNode: RowNode): any {
+    public execute(params: StageExecuteParams): void {
+        let rowNode = params.rowNode;
         var sortOptions: any;
 
         // if the sorting is already done by the server, then we should not do it here

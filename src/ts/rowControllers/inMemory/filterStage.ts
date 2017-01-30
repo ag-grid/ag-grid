@@ -3,7 +3,7 @@ import {Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
-import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
+import {IRowNodeStage, StageExecuteParams} from "../../interfaces/iRowNodeStage";
 
 @Bean('filterStage')
 export class FilterStage implements IRowNodeStage {
@@ -11,7 +11,8 @@ export class FilterStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('filterManager') private filterManager: FilterManager;
 
-    public execute(rowNode: RowNode): any {
+    public execute(params: StageExecuteParams): void {
+        let rowNode = params.rowNode;
 
         var filterActive: boolean;
 

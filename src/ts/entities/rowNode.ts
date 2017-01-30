@@ -105,8 +105,7 @@ export class RowNode {
     public expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
     public sibling: RowNode;
-    /** Not to be used, internal temporary map used by the grid when creating groups */
-    public _childrenMap: {};
+
     /** The height, in pixels, of this row */
     public rowHeight: number;
     /** The top pixel for this row */
