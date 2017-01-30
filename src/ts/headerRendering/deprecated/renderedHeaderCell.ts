@@ -9,7 +9,6 @@ import {GridCore} from "../../gridCore";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {Autowired, Context, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
-import {IRenderedHeaderElement} from "../iRenderedHeaderElement";
 import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {SortController} from "../../sortController";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
