@@ -408,7 +408,7 @@ export class GridPanel extends BeanStub {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        var renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        let renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
 
         if (!renderedCell) { return; }
 
@@ -435,13 +435,13 @@ export class GridPanel extends BeanStub {
 
     private handlePageScrollingKey (pagingKeyGroup:string, pagingKey:string, keyboardEvent:KeyboardEvent): void{
         switch (pagingKeyGroup){
-            case "diagonalScrollKeys":
+            case Constants.DIAGONAL_SCROLL_KEYS_ID:
                 this.pageDiagonally(pagingKey);
                 break;
-            case "verticalScrollKeys":
+            case Constants.VERTICAL_SCROLL_KEYS_ID:
                 this.pageVertically(pagingKey);
                 break;
-            case "horizontalScrollKeys":
+            case Constants.HORIZONTAL_SCROLL_KEYS_ID:
                 this.pageHorizontally(pagingKey);
                 break;
         }
@@ -451,11 +451,12 @@ export class GridPanel extends BeanStub {
         keyboardEvent.preventDefault();
     }
 
+    //Either CTL LEFT/RIGHT
     private pageHorizontally (pagingKey:string): void{
         //***************************************************************************
         //column to select
         let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
-        let columnToSelect : Column = pagingKey === "ctrlLeft" ?
+        let columnToSelect : Column = pagingKey === Constants.KEY_CTRL_LEFT_NAME ?
             allColumns[0]:
             allColumns[allColumns.length - 1];
 
@@ -470,17 +471,18 @@ export class GridPanel extends BeanStub {
 
 
 
+    //Either HOME OR END
     private pageDiagonally (pagingKey:string): void{
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
-        let selectionTopDelta : number = pagingKey === "home" ?
+        let selectionTopDelta : number = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             0:
             pageSize;
 
         //***************************************************************************
         //where to scroll to
-        let rowIndexToScrollTo = pagingKey === "home" ?
+        let rowIndexToScrollTo = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             0:
             this.rowModel.getRowCount() - 1;
         let rowToScrollTo: RowNode = this.rowModel.getRow(rowIndexToScrollTo);
@@ -489,7 +491,7 @@ export class GridPanel extends BeanStub {
         //***************************************************************************
         //column to select
         let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
-        let columnToSelect : Column = pagingKey === "home" ?
+        let columnToSelect : Column = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             allColumns[0]:
             allColumns[allColumns.length - 1];
 
@@ -504,8 +506,9 @@ export class GridPanel extends BeanStub {
     }
 
 
+    //EITHER CTRL UP/DOWN or PAGE UP/DOWN
     private pageVertically (pagingKey:string): void{
-        if (pagingKey === "ctrlUp"){
+        if (pagingKey === Constants.KEY_CTRL_UP_NAME){
             this.performScroll({
                 rowToScrollTo: this.rowModel.getRow(0),
                 focusedRowTopDelta: 0,
@@ -514,7 +517,7 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        if (pagingKey === "ctrlDown"){
+        if (pagingKey === Constants.KEY_CTRL_DOWN_NAME){
             this.performScroll({
                 rowToScrollTo: this.rowModel.getRow(this.rowModel.getRowCount() - 1),
                 focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
@@ -550,7 +553,7 @@ export class GridPanel extends BeanStub {
         let currentTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
         let currentTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(currentTopmostPixel));
         let currentTopmostRowTop = currentTopmostRow.rowTop;
-        let toScrollUnadjusted = pagingKey == "pageDown" ?
+        let toScrollUnadjusted = pagingKey == Constants.KEY_PAGE_DOWN_NAME ?
             pageSize + currentTopmostRowTop :
             currentTopmostRowTop - pageSize;
 
@@ -565,6 +568,7 @@ export class GridPanel extends BeanStub {
         this.performScroll(verticalScroll);
     }
 
+    //Performs any scroll
     private performScroll(scroll: Scroll) {
         let verticalScroll: VerticalScroll;
         let diagonalScroll: DiagonalScroll;

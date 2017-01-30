@@ -33,6 +33,15 @@ export class Constants {
     static KEY_PAGE_HOME = 36;
     static KEY_PAGE_END = 35;
 
+    static KEY_PAGE_UP_NAME = 'pageUp';
+    static KEY_PAGE_DOWN_NAME = 'pageDown';
+    static KEY_PAGE_HOME_NAME = 'home';
+    static KEY_PAGE_END_NAME = 'end';
+    static KEY_CTRL_UP_NAME = 'ctrlUp';
+    static KEY_CTRL_LEFT_NAME = 'ctrlLeft';
+    static KEY_CTRL_RIGHT_NAME = 'ctrlRight';
+    static KEY_CTRL_DOWN_NAME = 'ctrlDown';
+
     static ROW_MODEL_TYPE_PAGINATION = 'pagination';
     static ROW_MODEL_TYPE_VIRTUAL = 'virtual';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
@@ -43,26 +52,30 @@ export class Constants {
 
     static FLOATING_TOP = 'top';
     static FLOATING_BOTTOM = 'bottom';
+    
+    static VERTICAL_SCROLL_KEYS_ID = 'verticalScrollKeys';
+    static HORIZONTAL_SCROLL_KEYS_ID = 'horizontalScrollKeys';
+    static DIAGONAL_SCROLL_KEYS_ID = 'diagonalScrollKeys';
 
     static VERTICAL_SCROLL_KEYS: KeyboardBindingGroup = {
-        id: "verticalScrollKeys",
+        id: Constants.VERTICAL_SCROLL_KEYS_ID,
         bindings: [{
-            id: "pageUp",
+            id: Constants.KEY_PAGE_UP_NAME,
             ctlRequired: false,
             altRequired: false,
             keyCode: Constants.KEY_PAGE_UP
         },{
-            id: "pageDown",
+            id: Constants.KEY_PAGE_DOWN_NAME,
             ctlRequired: false,
             altRequired: false,
             keyCode: Constants.KEY_PAGE_DOWN
         },{
-            id: "ctrlUp",
+            id: Constants.KEY_CTRL_UP_NAME,
             ctlRequired: false,
             altRequired: true,
             keyCode: Constants.KEY_UP
         },{
-            id: "ctrlDown",
+            id: Constants.KEY_CTRL_DOWN_NAME,
             ctlRequired: false,
             altRequired: true,
             keyCode: Constants.KEY_DOWN
@@ -70,14 +83,14 @@ export class Constants {
     };
 
     static HORIZONTAL_SCROLL_KEYS: KeyboardBindingGroup = {
-        id: "horizontalScrollKeys",
+        id: Constants.HORIZONTAL_SCROLL_KEYS_ID,
         bindings: [{
-            id: "ctrlLeft",
+            id: Constants.KEY_CTRL_LEFT_NAME,
             ctlRequired: false,
             altRequired: true,
             keyCode: Constants.KEY_LEFT
         },{
-            id: "ctrlRight",
+            id: Constants.KEY_CTRL_RIGHT_NAME,
             ctlRequired: false,
             altRequired: true,
             keyCode: Constants.KEY_RIGHT
@@ -85,14 +98,14 @@ export class Constants {
     };
 
     static DIAGONAL_SCROLL_KEYS: KeyboardBindingGroup = {
-        id: "diagonalScrollKeys",
+        id: Constants.DIAGONAL_SCROLL_KEYS_ID,
         bindings: [{
-            id: "home",
+            id: Constants.KEY_PAGE_HOME_NAME,
             ctlRequired: false,
             altRequired: false,
             keyCode: Constants.KEY_PAGE_HOME
         }, {
-            id: "end",
+            id: Constants.KEY_PAGE_END_NAME,
             ctlRequired: false,
             altRequired: false,
             keyCode: Constants.KEY_PAGE_END
