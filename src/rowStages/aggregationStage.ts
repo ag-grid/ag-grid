@@ -8,6 +8,7 @@ import {
     ValueService,
     RowNode,
     Column,
+    StageExecuteParams,
     IAggFunc
 } from "ag-grid/main";
 import {PivotStage} from "./pivotStage";
@@ -24,7 +25,8 @@ export class AggregationStage implements IRowNodeStage {
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    public execute(rootNode: RowNode): any {
+    public execute(params: StageExecuteParams): any {
+        let rootNode = params.rowNode;
 
         // we don't do aggregation if user provided the groups
         var rowsAlreadyGrouped = Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());

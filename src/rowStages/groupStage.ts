@@ -8,6 +8,7 @@ import {
     ColumnController,
     ValueService,
     EventService,
+    StageExecuteParams,
     RowNode,
     Column,
     Utils,
@@ -30,7 +31,9 @@ export class GroupStage implements IRowNodeStage {
     // with the other rows.
     private groupIdSequence = new NumberSequence(1);
 
-    public execute(rowNode: RowNode): void {
+    public execute(params: StageExecuteParams): void {
+        let rootNode = params.rowNode;
+        let newRowNodes = params.newRowNodes;
 
         var groupedCols = this.columnController.getRowGroupColumns();
         var expandByDefault: number;
@@ -43,13 +46,20 @@ export class GroupStage implements IRowNodeStage {
 
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
 
-        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault, includeParents);
+        if (newRowNodes) {
+            this.insertRowNodes(newRowNodes, rootNode, groupedCols, expandByDefault, includeParents);
+        } else {
+            this.recursivelyGroup(rootNode, groupedCols, 0, expandByDefault, includeParents);
 
-        if (this.gridOptionsWrapper.isGroupRemoveSingleChildren()) {
-            this.recursivelyDeptFirstRemoveSingleChildren(rowNode, includeParents);
+            // remove single children only works when doing a new grouping, it is not compatible with
+            // inserting / removing rows, as the group which a new record may belong to may have already
+            // been snipped out.
+            if (this.gridOptionsWrapper.isGroupRemoveSingleChildren()) {
+                this.recursivelyDeptFirstRemoveSingleChildren(rootNode, includeParents);
+            }
         }
 
-        this.recursivelySetLevelOnChildren(rowNode, 0);
+        this.recursivelySetLevelOnChildren(rootNode, 0);
     }
 
     private recursivelySetLevelOnChildren(rowNode: RowNode, level: number): void {
@@ -88,7 +98,7 @@ export class GroupStage implements IRowNodeStage {
 
         if (groupingThisLevel) {
             var groupColumn = groupColumns[level];
-            this.setChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level, includeParents);
+            this.bucketIntoChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level, includeParents);
             rowNode.childrenAfterGroup.forEach( child => {
                 this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, includeParents);
             });
@@ -101,23 +111,42 @@ export class GroupStage implements IRowNodeStage {
 
     }
 
-    private setChildrenAfterGroup(rowNode: RowNode, groupColumn: Column, expandByDefault: any, level: number, includeParents: boolean): void {
+    private bucketIntoChildrenAfterGroup(rowNode: RowNode, groupColumn: Column, expandByDefault: any, level: number, includeParents: boolean): void {
 
         rowNode.childrenAfterGroup = [];
         rowNode.childrenMapped = {};
 
         rowNode.allLeafChildren.forEach( child => {
-            var groupKey = this.getKeyForNode(groupColumn, child);
-
-            var groupForChild = <RowNode> rowNode.childrenMapped[groupKey];
-            if (!groupForChild) {
-                groupForChild = this.createGroup(groupColumn, groupKey, rowNode, expandByDefault, level, includeParents);
-                rowNode.childrenMapped[groupKey] = groupForChild;
-                rowNode.childrenAfterGroup.push(groupForChild);
-            }
-
-            groupForChild.allLeafChildren.push(child);
+            this.placeNodeIntoNextGroup(rowNode, child, groupColumn, expandByDefault, level, includeParents);
         });
+    }
+
+    private insertRowNodes(newRowNodes: RowNode[], rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean): void {
+
+        newRowNodes.forEach( rowNode => {
+            let nextGroup = rootNode;
+            groupColumns.forEach( (groupColumn, level) => {
+                nextGroup = this.placeNodeIntoNextGroup(nextGroup, rowNode, groupColumn, expandByDefault, level, includeParents);
+            });
+            rowNode.parent = nextGroup;
+        });
+    }
+
+
+    private placeNodeIntoNextGroup(previousGroup: RowNode, nodeToPlace: RowNode, groupColumn: Column, expandByDefault: any,
+                                   level: number, includeParents: boolean): RowNode {
+        var groupKey = this.getKeyForNode(groupColumn, nodeToPlace);
+
+        var nextGroup = <RowNode> previousGroup.childrenMapped[groupKey];
+        if (!nextGroup) {
+            nextGroup = this.createGroup(groupColumn, groupKey, previousGroup, expandByDefault, level, includeParents);
+            previousGroup.childrenMapped[groupKey] = nextGroup;
+            previousGroup.childrenAfterGroup.push(nextGroup);
+        }
+
+        nextGroup.allLeafChildren.push(nodeToPlace);
+
+        return nextGroup;
     }
 
     private getKeyForNode(groupColumn: Column, rowNode: RowNode): any {

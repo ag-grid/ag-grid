@@ -5,6 +5,7 @@ import {
     ValueService,
     EventService,
     RowNode,
+    StageExecuteParams,
     Column,
     Utils,
     ColDef,
@@ -31,7 +32,8 @@ export class PivotStage implements IRowNodeStage {
 
     private aggregationColumnsHashLastTime: string;
 
-    public execute(rootNode: RowNode): any {
+    public execute(params: StageExecuteParams): void {
+        let rootNode = params.rowNode;
         if (this.columnController.isPivotActive()) {
             this.executePivotOn(rootNode);
         } else {
