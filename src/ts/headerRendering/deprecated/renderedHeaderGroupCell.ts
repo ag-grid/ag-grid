@@ -8,7 +8,6 @@ import {Column} from "../../entities/column";
 import {HorizontalDragService} from "../horizontalDragService";
 import {Autowired, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
-import {IRenderedHeaderElement} from "../iRenderedHeaderElement";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {TouchListener} from "../../widgets/touchListener";
@@ -112,7 +111,7 @@ export class RenderedHeaderGroupCell extends Component {
         });
 
         if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
-            this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {
+            this.eHeaderCellResize.addEventListener('dblclick', () => {
                 // get list of all the column keys we are responsible for
                 var keys: string[] = [];
                 this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column)=>{
