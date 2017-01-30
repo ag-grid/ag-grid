@@ -166,7 +166,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>selectionChanged</th>
-            <td>Selection is changed. Use the grid API to get the new selection.</td>
+            <td>Row selection is changed. Use the grid API to get the new row selected.</td>
         </tr>
         <tr>
             <th>cellValueChanged</th>
