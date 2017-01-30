@@ -1,14 +1,17 @@
 {
   "name": "ag-grid-vue",
-  "version": "0.0.1-beta.1",
   "description": "ag-Grid Vue Component",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "0.0.1-beta.2",
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceolter/ag-grid-vue/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ceolter/ag-grid-vue.git"
+  "homepage": "https://github.com/ceolter/ag-grid-vue#readme",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --inline --hot",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "keywords": [
     "grid",
@@ -16,13 +19,23 @@
     "table",
     "vue"
   ],
-  "author": "Sean Landsman <sean@thelandsmans.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ceolter/ag-grid-vue/issues"
-  },
-  "homepage": "https://github.com/ceolter/ag-grid-vue#readme",
   "dependencies": {
-    "ag-grid": "^7.1.0"
+    "vue": "^2.1.0"
+  },
+  "peerDependencies": {
+    "ag-grid": "7.2.x"
+  },
+  "devDependencies": {
+    "babel-core": "^6.0.0",
+    "babel-loader": "^6.0.0",
+    "babel-preset-es2015": "^6.0.0",
+    "cross-env": "^3.0.0",
+    "css-loader": "^0.25.0",
+    "file-loader": "^0.9.0",
+    "vue-loader": "^10.0.0",
+    "vue-template-compiler": "^2.1.0",
+    "webpack": "^2.2.0",
+    "webpack-dev-server": "^2.2.0"
   }
 }
+
