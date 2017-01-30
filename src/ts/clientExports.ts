@@ -33,7 +33,6 @@ import {HeaderTemplateLoader} from "./headerRendering/deprecated/headerTemplateL
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
 import {MoveColumnController} from "./headerRendering/moveColumnController";
 import {RenderedHeaderCell} from "./headerRendering/deprecated/renderedHeaderCell";
-import {RenderedHeaderGroupCell} from "./headerRendering/deprecated/renderedHeaderGroupCell";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {BorderLayout} from "./layout/borderLayout";
 import {TabbedLayout} from "./layout/tabbedLayout";
@@ -164,7 +163,6 @@ export function populateClientExports(exports: any): void {
     exports.HorizontalDragService = HorizontalDragService;
     exports.MoveColumnController = MoveColumnController;
     exports.RenderedHeaderCell = RenderedHeaderCell;
-    exports.RenderedHeaderGroupCell = RenderedHeaderGroupCell;
     exports.StandardMenuFactory = StandardMenuFactory;
 
     // layout

@@ -157,11 +157,14 @@ export class HeaderRowComp extends Component {
         var result:Component;
 
         if (columnGroupChild instanceof ColumnGroup) {
-            // result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
             result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         } else {
             if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
                 ////// DEPRECATED - TAKE THIS OUT IN V9
+                if (!warningGiven) {
+                    console.warn('ag-Grid: since v8, custom headers are now done using components. Please refer to the documentation https://www.ag-grid.com/javascript-grid-header-rendering/. Support for the old way will be dropped in v9.');
+                    warningGiven = true;
+                }
                 result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
             } else {
                 // the future!!!
@@ -174,3 +177,5 @@ export class HeaderRowComp extends Component {
     }
 
 }
+
+let warningGiven = false;
