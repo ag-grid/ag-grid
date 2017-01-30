@@ -38,7 +38,6 @@ export * from './dist/lib/gridPanel/scrollVisibleService';
 export * from './dist/lib/gridPanel/mouseEventService';
 
 export * from './dist/lib/headerRendering/deprecated/headerTemplateLoader';
-export * from './dist/lib/headerRendering/deprecated/renderedHeaderCell';
 export * from './dist/lib/headerRendering/deprecated/renderedHeaderGroupCell';
 
 export * from './dist/lib/headerRendering/bodyDropPivotTarget';
