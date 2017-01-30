@@ -178,6 +178,106 @@ column.addEventListener('filterChanged', function() {
 
     <h2>Header Group Rendering</h2>
 
+    <p>
+        This section details how to put a header group component into ag-Grid.
+    </p>
+
+    <h3>Grid vs Your Responsibilities</h3>
+
+    <p>
+        As with normal headers, ag-Grid will always handle resize and column moving.
+        The header group component (your big) is responsible for the following:
+    </p>
+
+    <ul>
+        <li><b>Group Open / Close:</b> If the group can open (one or more columns visibility
+        depends on the open / closed state of the group) then your header group component
+        should handle the interaction with the user for opening and closing groups.</li>
+    </ul>
+
+    <h3>Header Group Component Interface</h3>
+
+    <p>
+        The header group component interface is almost identical to the above header component.
+        The only difference is the params object passed to the <i>init()</i> method.
+    </p>
+
+    <pre>export interface IHeaderGroupComp {
+
+    <span class="codeComment">// optional method, gets called once with params</span>
+    init?(params: IHeaderGroupCompParams): void;
+
+    <span class="codeComment">// gets called once, you should return the HTML element</span>
+    getGui(): HTMLElement;
+
+    <span class="codeComment">// optional method, gets called once, when component is destroyed</span>
+    destroy?(): void;
+
+}</pre>
+
+
+    <p>The params passed to <i>init()</i> are as follows:</p>
+    <pre>export interface IHeaderCompParams {
+
+    <span class="codeComment">// the column group the header is for</span>
+    columnGroup: ColumnGroup;
+
+    <span class="codeComment">// the text label to render. if the column is using a headerValueGetter,</span>
+    <span class="codeComment">// the displayName will take this into account.</span>
+    displayName: string;
+
+    <span class="codeComment">// opens / closes the column group</span><span style="color: darkred; ">##### check name of callback</span>
+    setExpanded(expanded: boolean): void;
+
+    <span style="color: darkred; ">##### do we need callbacks here???</span>
+}</pre>
+
+    <h3>Opening / Closing Groups</h3>
+
+    <p>
+        Not all column groups can open and close, so you should display open / close
+        features accordingly. To check if a column group should have
+        open / close functionality, check the <i>isExpandable()</i> method on the column
+        group.
+    </p>
+
+    <pre>var showExpandableIcons = params.columnGroup.isExpandable()</pre>
+
+    <p>
+        To check if a column group is open or closed, check the <i>isExpanded()</i> method
+        on the column group.
+    </p>
+
+    <pre>var groupIsOpen = params.columnGroup.isExpanded();</pre>
+
+    <p>
+        To open / close a column group, use the <i>params.setExpanded()</i> method.
+    </p>
+
+    <pre>var oldValue = params.columnGroup.isExpanded();
+var newValue = !oldValue;
+params.setExpanded(newValue);</pre>
+
+    <h3>Example - Header Group Cells</h3>
+
+    <p style="color: darkgreen; font-size: 30px;">
+        Alberto to provide example
+    </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- old bit, to be remove when we release v9 -->
+
     <div style="border-left: 4px solid lightcoral; padding-left: 4px;">
         <h2><span style="color: darkred;">DEPRECATED -</span> Header Templates</h2>
 
