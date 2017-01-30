@@ -159,7 +159,6 @@ export class HeaderRowComp extends Component {
         if (columnGroupChild instanceof ColumnGroup) {
             result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         } else {
-/*
             if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
                 ////// DEPRECATED - TAKE THIS OUT IN V9
                 result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
@@ -167,9 +166,6 @@ export class HeaderRowComp extends Component {
                 // the future!!!
                 result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
             }
-*/
-            result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
-
         }
 
         this.context.wireBean(result);

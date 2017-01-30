@@ -5,18 +5,13 @@ import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../dragAndDrop/dragAndDropService";
 import {HeaderComp, IHeaderCompParams} from "./headerComp";
-import {FilterManager} from "../filter/filterManager";
 import {ColumnController} from "../columnController/columnController";
-import {GridCore} from "../gridCore";
-import {HeaderTemplateLoader} from "./headerTemplateLoader";
 import {HorizontalDragService} from "./horizontalDragService";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SortController} from "../sortController";
 import {CssClassApplier} from "./cssClassApplier";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
-import {TouchListener} from "../widgets/touchListener";
 import {IComponent} from "../interfaces/iComponent";
+import {IMenuFactory} from "../interfaces/iMenuFactory";
 
 export class HeaderWrapperComp extends Component {
 
@@ -30,6 +25,8 @@ export class HeaderWrapperComp extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalDragService') private horizontalDragService: HorizontalDragService;
+    @Autowired('context') private context: Context;
+    @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
     private column: Column;
     private eRoot: HTMLElement;
@@ -50,34 +47,54 @@ export class HeaderWrapperComp extends Component {
     private init(): void {
         let displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
 
-        let headerComp = this.appendHeaderComp(displayName);
+        let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+        let enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
+
+        let headerComp = this.appendHeaderComp(displayName, enableSorting, enableMenu);
 
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
         this.setupMove(headerComp.getGui(), displayName);
+        this.setupSortableClass(enableSorting);
+
+        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.onFilterChanged();
 
         var setLeftFeature = new SetLeftFeature(this.column, this.getGui());
         this.addDestroyFunc( ()=> setLeftFeature.destroy() );
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
-
     }
 
-    private appendHeaderComp(displayName: string): IComponent<any> {
+    private setupSortableClass(enableSorting:boolean):void{
+        if (enableSorting) {
+            let eGui = this.getGui();
+            _.addCssClass(eGui, 'ag-header-cell-sortable');
+        }
+    }
+
+    private onFilterChanged(): void {
+        var filterPresent = this.column.isFilterActive();
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+    }
+
+    private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any> {
         let headerComp = new HeaderComp();
 
         let params = <IHeaderCompParams> {
             column: this.column,
-            displayName: displayName
+            displayName: displayName,
+            enableSorting: enableSorting,
+            enableMenu: enableMenu
         };
 
+        this.context.wireBean(headerComp);
         headerComp.init(params);
 
         this.appendChild(headerComp);
-
         return headerComp;
     }
 
