@@ -43,6 +43,10 @@ export class HeaderWrapperComp extends Component {
         this.pinned = pinned;
     }
 
+    public getColumn(): Column {
+        return this.column;
+    }
+
     @PostConstruct
     private init(): void {
         let displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
@@ -131,7 +135,7 @@ export class HeaderWrapperComp extends Component {
 
     private setupResize(): void {
         var colDef = this.column.getColDef();
-        var eResize = this.queryForHtmlElement('[ref="agResizeBar"]');
+        var eResize = this.getRefElement('agResizeBar');
 
         // if no eResize in template, do nothing
         if (!eResize) {

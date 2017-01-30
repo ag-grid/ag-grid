@@ -21,7 +21,7 @@ export interface IHeader {
 
 }
 
-export interface IHeaderComp extends IHeader, IComponent<any> {
+export interface IHeaderComp extends IHeader, IComponent<IHeaderCompParams> {
 
 }
 

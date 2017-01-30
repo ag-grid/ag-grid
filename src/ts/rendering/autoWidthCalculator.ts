@@ -7,6 +7,13 @@ import {Autowired} from "../context/context";
 import {HeaderRenderer} from "../headerRendering/headerRenderer";
 import {RenderedHeaderCell} from "../headerRendering/deprecated/renderedHeaderCell";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {HeaderComp} from "../headerRendering/headerComp";
+import {HeaderWrapperComp} from "../headerRendering/headerWrapperComp";
+import {Component} from "../widgets/component";
+
+export interface GuiProvider {
+    ():HTMLElement
+}
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator {
@@ -16,14 +23,15 @@ export class AutoWidthCalculator {
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
     public getPreferredWidthForColumn(column: Column): number {
-        var renderedHeaderCell = this.getHeaderCellForColumn(column);
+        let eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
-        if (!renderedHeaderCell) { 
+        if (!eHeaderCell) {
             return -1; 
         }
 
@@ -44,7 +52,7 @@ export class AutoWidthCalculator {
         // we only consider the lowest level cell, not the group cell. in 99% of the time, this
         // will be enough. if we consider groups, then it gets to complicated for what it's worth,
         // as the groups can span columns and this class only considers one column at a time.
-        this.cloneItemIntoDummy(renderedHeaderCell.getGui(), eDummyContainer);
+        this.cloneItemIntoDummy(eHeaderCell, eDummyContainer);
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
@@ -61,21 +69,26 @@ export class AutoWidthCalculator {
         return dummyContainerWidth + autoSizePadding;
     }
 
-    private getHeaderCellForColumn(column: Column): RenderedHeaderCell {
+    private getHeaderCellForColumn(column: Column): HTMLElement {
 
-        var renderedHeaderCell: RenderedHeaderCell = null;
+        let comp : Component = null;
 
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement( headerElement => {
             if (headerElement instanceof RenderedHeaderCell) {
-                var currentCell = <RenderedHeaderCell> headerElement;
+                let currentCell = <RenderedHeaderCell> headerElement;
                 if (currentCell.getColumn() === column) {
-                    renderedHeaderCell = currentCell;
+                    comp = currentCell;
+                }
+            } else if (headerElement instanceof HeaderWrapperComp) {
+                let headerWrapperComp = <HeaderWrapperComp> headerElement;
+                if (headerWrapperComp.getColumn() === column) {
+                    comp = headerWrapperComp;
                 }
             }
         });
 
-        return renderedHeaderCell;
+        return comp ? comp.getGui() : null;
     }
     
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {

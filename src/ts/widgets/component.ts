@@ -192,4 +192,5 @@ export class Component extends BeanStub implements IComponent<any> {
     public getRefElement(refName: string): HTMLElement {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
     }
+
 }

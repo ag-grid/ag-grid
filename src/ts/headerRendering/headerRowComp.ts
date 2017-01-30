@@ -15,6 +15,8 @@ import {Events} from "../events";
 import {Utils as _} from "../utils";
 import {HeaderWrapperComp} from "./headerWrapperComp";
 import {ColDef} from "../entities/colDef";
+import {HeaderGroupComp} from "./headerGroupComp";
+import {HeaderGroupWrapperComp} from "./headerGroupWrapperComp";
 
 export class HeaderRowComp extends Component {
 
@@ -157,7 +159,8 @@ export class HeaderRowComp extends Component {
         var result:IRenderedHeaderElement;
 
         if (columnGroupChild instanceof ColumnGroup) {
-            result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            // result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         } else {
             if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
                 ////// DEPRECATED - TAKE THIS OUT IN V9
