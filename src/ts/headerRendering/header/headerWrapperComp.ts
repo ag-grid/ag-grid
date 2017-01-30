@@ -1,17 +1,17 @@
 
-import {Component} from "../widgets/component";
-import {PostConstruct, Autowired, Context} from "../context/context";
-import {Column} from "../entities/column";
-import {Utils as _} from "../utils";
-import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../dragAndDrop/dragAndDropService";
+import {Component} from "../../widgets/component";
+import {PostConstruct, Autowired, Context} from "../../context/context";
+import {Column} from "../../entities/column";
+import {Utils as _} from "../../utils";
+import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {HeaderComp, IHeaderCompParams} from "./headerComp";
-import {ColumnController} from "../columnController/columnController";
-import {HorizontalDragService} from "./horizontalDragService";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {CssClassApplier} from "./cssClassApplier";
-import {SetLeftFeature} from "../rendering/features/setLeftFeature";
-import {IComponent} from "../interfaces/iComponent";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
+import {ColumnController} from "../../columnController/columnController";
+import {HorizontalDragService} from "../horizontalDragService";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {CssClassApplier} from "../cssClassApplier";
+import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
+import {IComponent} from "../../interfaces/iComponent";
+import {IMenuFactory} from "../../interfaces/iMenuFactory";
 
 export class HeaderWrapperComp extends Component {
 

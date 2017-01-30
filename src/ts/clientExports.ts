@@ -29,7 +29,7 @@ import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CssClassApplier} from "./headerRendering/cssClassApplier";
 import {HeaderContainer} from "./headerRendering/headerContainer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
-import {HeaderTemplateLoader} from "./headerRendering/headerTemplateLoader";
+import {HeaderTemplateLoader} from "./headerRendering/deprecated/headerTemplateLoader";
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
 import {MoveColumnController} from "./headerRendering/moveColumnController";
 import {RenderedHeaderCell} from "./headerRendering/deprecated/renderedHeaderCell";

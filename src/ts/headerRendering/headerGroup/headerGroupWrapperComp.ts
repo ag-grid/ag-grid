@@ -1,17 +1,17 @@
 
-import {Component} from "../widgets/component";
-import {Column} from "../entities/column";
-import {Utils as _} from "../utils";
-import {ColumnGroup} from "../entities/columnGroup";
-import {ColumnController} from "../columnController/columnController";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {HorizontalDragService} from "./horizontalDragService";
-import {Autowired, PostConstruct, Context} from "../context/context";
-import {CssClassApplier} from "./cssClassApplier";
-import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
-import {SetLeftFeature} from "../rendering/features/setLeftFeature";
+import {Component} from "../../widgets/component";
+import {Column} from "../../entities/column";
+import {Utils as _} from "../../utils";
+import {ColumnGroup} from "../../entities/columnGroup";
+import {ColumnController} from "../../columnController/columnController";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {HorizontalDragService} from "../horizontalDragService";
+import {Autowired, PostConstruct, Context} from "../../context/context";
+import {CssClassApplier} from "../cssClassApplier";
+import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
+import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {HeaderGroupComp, IHeaderGroupCompParams} from "./headerGroupComp";
-import {IComponent} from "../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 
 export class HeaderGroupWrapperComp extends Component {
 

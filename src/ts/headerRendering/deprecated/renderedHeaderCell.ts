@@ -2,7 +2,7 @@ import {Utils as _} from "../../utils";
 import {Column} from "../../entities/column";
 import {FilterManager} from "../../filter/filterManager";
 import {ColumnController} from "../../columnController/columnController";
-import {HeaderTemplateLoader} from "../headerTemplateLoader";
+import {HeaderTemplateLoader} from "./headerTemplateLoader";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridCore} from "../../gridCore";

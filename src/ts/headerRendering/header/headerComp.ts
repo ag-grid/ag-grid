@@ -1,14 +1,14 @@
 
-import {Component} from "../widgets/component";
-import {Column} from "../entities/column";
-import {Utils as _} from "../utils";
-import {Autowired} from "../context/context";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SortController} from "../sortController";
-import {TouchListener} from "../widgets/touchListener";
-import {IComponent} from "../interfaces/iComponent";
-import {SvgFactory} from "../svgFactory";
+import {Component} from "../../widgets/component";
+import {Column} from "../../entities/column";
+import {Utils as _} from "../../utils";
+import {Autowired} from "../../context/context";
+import {IMenuFactory} from "../../interfaces/iMenuFactory";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {SortController} from "../../sortController";
+import {TouchListener} from "../../widgets/touchListener";
+import {IComponent} from "../../interfaces/iComponent";
+import {SvgFactory} from "../../svgFactory";
 
 export interface IHeaderCompParams {
     column: Column;

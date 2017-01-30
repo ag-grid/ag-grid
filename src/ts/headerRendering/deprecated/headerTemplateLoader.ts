@@ -1,8 +1,8 @@
-import {Utils as _} from "../utils";
-import {SvgFactory} from "../svgFactory";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Column} from "../entities/column";
-import {Bean, Autowired} from "../context/context";
+import {Utils as _} from "../../utils";
+import {SvgFactory} from "../../svgFactory";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {Column} from "../../entities/column";
+import {Bean, Autowired} from "../../context/context";
 
 var svgFactory = SvgFactory.getInstance();
 

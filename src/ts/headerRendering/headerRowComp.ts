@@ -5,18 +5,14 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {ColumnGroup} from "../entities/columnGroup";
 import {ColumnController} from "../columnController/columnController";
-import {IRenderedHeaderElement} from "./iRenderedHeaderElement";
 import {Column} from "../entities/column";
 import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import {RenderedHeaderGroupCell} from "./deprecated/renderedHeaderGroupCell";
 import {RenderedHeaderCell} from "./deprecated/renderedHeaderCell";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {Utils as _} from "../utils";
-import {HeaderWrapperComp} from "./headerWrapperComp";
-import {ColDef} from "../entities/colDef";
-import {HeaderGroupComp} from "./headerGroupComp";
-import {HeaderGroupWrapperComp} from "./headerGroupWrapperComp";
+import {HeaderWrapperComp} from "./header/headerWrapperComp";
+import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
 
 export class HeaderRowComp extends Component {
 
@@ -28,7 +24,7 @@ export class HeaderRowComp extends Component {
     private dept: number;
     private pinned: string;
 
-    private headerElements: {[key: string]: IRenderedHeaderElement} = {};
+    private headerElements: {[key: string]: Component} = {};
 
     private eRoot: HTMLElement;
     private dropTarget: DropTarget;
@@ -45,7 +41,7 @@ export class HeaderRowComp extends Component {
         this.dropTarget = dropTarget;
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement)=>void): void {
+    public forEachHeaderElement(callback: (comp: Component)=>void): void {
         Object.keys(this.headerElements).forEach( key => {
             var headerElement = this.headerElements[key];
             callback(headerElement);
@@ -73,6 +69,7 @@ export class HeaderRowComp extends Component {
         this.getGui().style.height = rowHeight + 'px';
     }
 
+    //noinspection JSUnusedLocalSymbols
     @PostConstruct
     private init(): void {
 
@@ -91,6 +88,7 @@ export class HeaderRowComp extends Component {
     }
 
     private setWidth(): void {
+        //noinspection UnnecessaryLocalVariableJS
         var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
         this.getGui().style.width = mainRowWidth;
     }
@@ -155,8 +153,8 @@ export class HeaderRowComp extends Component {
 
     }
 
-    private createHeaderElement(columnGroupChild:ColumnGroupChild):IRenderedHeaderElement {
-        var result:IRenderedHeaderElement;
+    private createHeaderElement(columnGroupChild:ColumnGroupChild): Component {
+        var result:Component;
 
         if (columnGroupChild instanceof ColumnGroup) {
             // result = new RenderedHeaderGroupCell(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);

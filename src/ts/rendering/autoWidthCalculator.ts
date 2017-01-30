@@ -7,8 +7,8 @@ import {Autowired} from "../context/context";
 import {HeaderRenderer} from "../headerRendering/headerRenderer";
 import {RenderedHeaderCell} from "../headerRendering/deprecated/renderedHeaderCell";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {HeaderComp} from "../headerRendering/headerComp";
-import {HeaderWrapperComp} from "../headerRendering/headerWrapperComp";
+import {HeaderComp} from "../headerRendering/header/headerComp";
+import {HeaderWrapperComp} from "../headerRendering/header/headerWrapperComp";
 import {Component} from "../widgets/component";
 
 export interface GuiProvider {

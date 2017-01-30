@@ -37,17 +37,18 @@ export * from './dist/lib/gridPanel/gridPanel';
 export * from './dist/lib/gridPanel/scrollVisibleService';
 export * from './dist/lib/gridPanel/mouseEventService';
 
+export * from './dist/lib/headerRendering/deprecated/headerTemplateLoader';
+export * from './dist/lib/headerRendering/deprecated/renderedHeaderCell';
+export * from './dist/lib/headerRendering/deprecated/renderedHeaderGroupCell';
+
 export * from './dist/lib/headerRendering/bodyDropPivotTarget';
 export * from './dist/lib/headerRendering/bodyDropTarget';
 export * from './dist/lib/headerRendering/cssClassApplier';
 export * from './dist/lib/headerRendering/headerContainer';
 export * from './dist/lib/headerRendering/headerRenderer';
 export * from './dist/lib/headerRendering/headerRowComp';
-export * from './dist/lib/headerRendering/headerTemplateLoader';
 export * from './dist/lib/headerRendering/horizontalDragService';
 export * from './dist/lib/headerRendering/moveColumnController';
-export * from './dist/lib/headerRendering/deprecated/renderedHeaderCell';
-export * from './dist/lib/headerRendering/deprecated/renderedHeaderGroupCell';
 export * from './dist/lib/headerRendering/standardMenu';
 
 export * from './dist/lib/interfaces/iAggFuncService';
