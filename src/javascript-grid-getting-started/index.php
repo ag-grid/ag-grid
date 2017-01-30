@@ -278,7 +278,7 @@ import 'ag-grid-enterprise/main';
         details of how to use the grid.
     </p>
 
-    <h2>Compatibility</h2>
+    <h2>Browser Support/Compatibility</h2>
 
     <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
 

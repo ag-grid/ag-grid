@@ -224,6 +224,72 @@ api.forEachNodeAfterFilter( function(node) {
 
     <show-example example="example4" example-height="450px"></show-example>
 
+    <h3 id="selectionArrowKeys">Selection with Keyboard Arrow Keys</h3>
+
+    <p>
+        By default, you can select a row on mouse click. And you can navigate up and down the rows
+        using your keyboard keys. But the selection state does not correlate with the navigation keys.
+        However, we can add this behaviour using your own
+        <a href="/javascript-grid-keyboard-navigation/#customNavigation">Custom Navigation</a>.
+    </p>
+
+    <p>
+        First we need to provide a callback to the navigateToNextCell property in gridOptions to
+        override the default arrow key navigation
+    </p>
+
+    <pre><code>var gridOptions = {
+
+        // ...
+
+        navigateToNextCell: myNavigation
+
+}</code></pre>
+
+
+    <p>
+        From the code below you can see that we iterate over each node and call the <i>setSelected()</i>
+        method if matches the current rowIndex.</p>
+
+    <pre><code>function myNavigation(params) {
+
+   var previousCell = params.previousCellDef;
+   var suggestedNextCell = params.nextCellDef;
+
+   var KEY_UP = 38;
+   var KEY_DOWN = 40;
+   var KEY_LEFT = 37;
+   var KEY_RIGHT = 39;
+
+   switch (params.key) {
+       case KEY_DOWN:
+           previousCell = params.previousCellDef;
+           // set selected cell on current cell + 1
+           gridOptions.api.forEachNode( (node) => {
+               if (previousCell.rowIndex + 1 === node.rowIndex) {
+                   node.setSelected(true);
+               }
+           });
+           return suggestedNextCell;
+       case KEY_UP:
+           previousCell = params.previousCellDef;
+           // set selected cell on current cell - 1
+           gridOptions.api.forEachNode( (node) => {
+               if (previousCell.rowIndex - 1 === node.rowIndex) {
+                   node.setSelected(true);
+               }
+           });
+           return suggestedNextCell;
+       case KEY_LEFT:
+       case KEY_RIGHT:
+           return suggestedNextCell;
+       default:
+           throw "this will never happen, navigation is always on of the 4 keys above";
+   }
+}</code></pre>
+
+    <show-example example="example5" example-height="450px"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
