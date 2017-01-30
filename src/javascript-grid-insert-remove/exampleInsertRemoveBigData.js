@@ -9,7 +9,7 @@ var portfolios = ['Aggressive','Defensive','Income','Speculative','Hybrid'];
 
 // as we create books, we remember what products they belong to, so we can
 // add to these books later when use clicks one of the buttons
-var productBooks = {};
+var productToPortfolioToBooks = {};
 
 var maxTradesPerBook = 10;
 var nextBookId = 23472;
@@ -21,7 +21,8 @@ var gridOptions;
 function createCols() {
     return [
         // the group column
-        {headerName: 'Hierarchy', field: 'trade', cellRenderer: 'group', width: 200},
+        {headerName: 'Hierarchy', field: 'trade', cellRenderer: 'group', width: 200,
+            comparator: agGrid.defaultGroupComparator},
 
         // these are the row groups, so they are all hidden (they are showd in the group column)
         {headerName: 'Product', field: 'product', rowGroupIndex: 0, hide: true},
@@ -59,13 +60,14 @@ function createRowData() {
     var thisBatch = nextBatchId++;
     for (var i = 0; i<products.length; i++) {
         var product = products[i];
-        productBooks[product] = [];
+        productToPortfolioToBooks[product] = {};
         for (var j = 0; j<portfolios.length; j++) {
             var portfolio = portfolios[j];
+            productToPortfolioToBooks[product][portfolio] = [];
             var bookCount = Math.floor(Math.random()*100) + 10;
             for (var k = 0; k<bookCount; k++) {
                 var book = createBookName();
-                productBooks[product].push(book);
+                productToPortfolioToBooks[product][portfolio].push(book);
                 var tradeCount = Math.floor(Math.random()*maxTradesPerBook) + 1;
                 for (var l = 0; l < tradeCount; l++) {
                     var trade = createTradeRecord(product, portfolio, book, thisBatch);
@@ -125,6 +127,7 @@ function createGridOptions() {
         animateRows: true,
         enableColResize: true,
         enableRangeSelection: true,
+        enableSorting: true,
         suppressAggFuncInHeader: true,
         defaultColDef: {
             width: 120
@@ -133,14 +136,14 @@ function createGridOptions() {
     console.log('rowData.length: ' + gridOptions.rowData.length);
 }
 
-function add20PalmOil() {
+function add20PalmOilExistingBooks() {
     valueGetterExecCount = 0;
     var newData = [];
     var batch = nextBatchId++;
     for (var i = 0; i<20; i++) {
-        var books = productBooks['Palm Oil'];
-        var book = books[Math.floor(Math.random()*books.length)];
         var portfolio = portfolios[Math.floor(Math.random()*portfolios.length)];
+        var books = productToPortfolioToBooks['Palm Oil'][portfolio];
+        var book = books[Math.floor(Math.random()*books.length)];
         var trade = createTradeRecord('Palm Oil', portfolio, book, batch);
         newData.push(trade);
     }
@@ -148,24 +151,19 @@ function add20PalmOil() {
     console.log('after insert valueGetterExecCount: ' + valueGetterExecCount);
 }
 
-// function onAddRow() {
-//     var newItem = createNewRowData();
-//     gridOptions.api.addItems([newItem]);
-// }
-// function addItems() {
-//     var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-//     gridOptions.api.addItems(newItems);
-// }
-//
-// function onInsertRowAt2() {
-//     var newItem = createNewRowData();
-//     gridOptions.api.insertItemsAtIndex(2, [newItem]);
-// }
-//
-// function onRemoveSelected() {
-//     var selectedNodes = gridOptions.api.getSelectedNodes();
-//     gridOptions.api.removeItems(selectedNodes);
-// }
+var intervalId;
+
+function toggleFeed() {
+    var intervalActive = !!intervalId;
+    if (intervalActive) {
+        clearInterval(intervalId);
+        intervalId = null;
+        document.querySelector('#toggleInterval').innerHTML = '&#9658; Start Feed';
+    } else {
+        intervalId = setInterval(add20PalmOilExistingBooks, 1000);
+        document.querySelector('#toggleInterval').innerHTML = '&#9724; Stop Feed';
+    }
+}
 
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
