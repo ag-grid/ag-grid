@@ -99,7 +99,7 @@ include '../includes/headerRow.php'; ?>
                         include './../jira_report.php';
                         ?>
                         <?php
-                        $reportTitle = "Not Completed - Targeted for Next Release";
+                        $reportTitle = "Scheduled for Dev - should be in a release soon";
                         $csvFile = "next_version_notdone.json";
                         include '../jira_report.php';
                         ?>
