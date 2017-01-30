@@ -71,13 +71,13 @@ export class Constants {
             keyCode: Constants.KEY_PAGE_DOWN
         },{
             id: Constants.KEY_CTRL_UP_NAME,
-            ctlRequired: false,
-            altRequired: true,
+            ctlRequired: true,
+            altRequired: false,
             keyCode: Constants.KEY_UP
         },{
             id: Constants.KEY_CTRL_DOWN_NAME,
-            ctlRequired: false,
-            altRequired: true,
+            ctlRequired: true,
+            altRequired: false,
             keyCode: Constants.KEY_DOWN
         }]
     };
@@ -86,13 +86,13 @@ export class Constants {
         id: Constants.HORIZONTAL_SCROLL_KEYS_ID,
         bindings: [{
             id: Constants.KEY_CTRL_LEFT_NAME,
-            ctlRequired: false,
-            altRequired: true,
+            ctlRequired: true,
+            altRequired: false,
             keyCode: Constants.KEY_LEFT
         },{
             id: Constants.KEY_CTRL_RIGHT_NAME,
-            ctlRequired: false,
-            altRequired: true,
+            ctlRequired: true,
+            altRequired: false,
             keyCode: Constants.KEY_RIGHT
         }]
     };
