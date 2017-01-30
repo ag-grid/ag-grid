@@ -113,7 +113,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         switch (params.step) {
             case constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState);
+                this.doRowGrouping(params.groupState, params.newRowNodes);
                 // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -303,7 +303,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     // + gridApi.recomputeAggregates()
     public doAggregate() {
         if (this.aggregationStage) {
-            this.aggregationStage.execute(this.rootNode);
+            this.aggregationStage.execute({rowNode: this.rootNode});
         }
     }
 
@@ -328,10 +328,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doSort() {
-        this.sortStage.execute(this.rootNode);
+        this.sortStage.execute({rowNode: this.rootNode});
     }
 
-    private doRowGrouping(groupState: any) {
+    private doRowGrouping(groupState: any, newRowNodes: RowNode[]) {
 
         // grouping is enterprise only, so if service missing, skip the step
         var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
@@ -339,13 +339,15 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
         if (this.groupStage) {
 
-            // remove old groups from the selection model, as we are about to replace them
-            // with new groups
-            this.selectionController.removeGroupsFromSelection();
-
-            this.groupStage.execute(this.rootNode);
-
-            this.restoreGroupState(groupState);
+            if (newRowNodes) {
+                this.groupStage.execute({rowNode: this.rootNode, newRowNodes: newRowNodes});
+            } else {
+                // groups are about to get disposed, so need to deselect any that are selected
+                this.selectionController.removeGroupsFromSelection();
+                this.groupStage.execute({rowNode: this.rootNode});
+                // set open/closed state on groups
+                this.restoreGroupState(groupState);
+            }
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
                 this.selectionController.updateGroupsFromChildrenSelections();
@@ -370,12 +372,12 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doFilter() {
-        this.filterStage.execute(this.rootNode);
+        this.filterStage.execute({rowNode: this.rootNode});
     }
 
     private doPivot() {
         if (this.pivotStage) {
-            this.pivotStage.execute(this.rootNode);
+            this.pivotStage.execute({rowNode: this.rootNode});
         }
     }
 
@@ -409,7 +411,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute(this.rootNode);
+        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
     }
 
     public insertItemsAtIndex(index: number, items: any[]): void {
@@ -438,6 +440,11 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         var groupState = this.getGroupState();
         var newNodes = this.nodeManager.addItems(items);
         this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
+
+        // if (newNodes) {
+        //     this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState, newRowNodes: newNodes});
+        //     this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, {rowNodes: newNodes})
+        // }
     }
 
     private refreshAndFireEvent(eventName: string, rowNodes: RowNode[], groupState: any): void {
