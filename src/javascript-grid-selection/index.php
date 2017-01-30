@@ -234,7 +234,6 @@ api.forEachNodeAfterFilter( function(node) {
     </p>
 
     <p>
-        To incorporate this new selection behaviour you need to create your own Custom Navigation.
         First we need to provide a callback to the navigateToNextCell property in gridOptions to
         override the default arrow key navigation
     </p>
