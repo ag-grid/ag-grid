@@ -53,8 +53,8 @@ include '../documentation-main/documentation_header.php';
 &lt;html>
 &lt;head>
     &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
-    &lt;script src="node_modules/ag-grid/dist/styles/ag-grid.css">&lt;/script>
-    &lt;script src="node_modules/ag-grid/dist/styles/theme-fresh.css">&lt;/script>
+    &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" />
+    &lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
     &lt;script src="&lt;your script>.js">&lt;/script>
 &lt;/head>
 </pre>
