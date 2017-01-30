@@ -12,7 +12,7 @@ import {Events} from "../events";
 import {IRowModel} from "../interfaces/iRowModel";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
-import {Constants} from "../constants";
+import {Constants, KeyboardBinding, KeyboardBindingGroup} from "../constants";
 import {SelectionController} from "../selectionController";
 import {CsvCreator} from "../csvCreator";
 import {MouseEventService} from "./mouseEventService";
@@ -408,17 +408,21 @@ export class GridPanel extends BeanStub {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        var renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        let renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
 
         if (!renderedCell) { return; }
 
         switch (eventName) {
             case 'keydown':
-                let key = keyboardEvent.which || keyboardEvent.keyCode;
-                if (key == Constants.KEY_PAGE_DOWN || key == Constants.KEY_PAGE_UP) {
-                    this.handleOnePageButton(keyboardEvent);
-                } else if (key == Constants.KEY_PAGE_HOME || key == Constants.KEY_PAGE_END) {
-                    this.handleAbsPageButton(keyboardEvent);
+                let pageScrollingKeys: KeyboardBindingGroup[] = [
+                    Constants.DIAGONAL_SCROLL_KEYS,
+                    Constants.HORIZONTAL_SCROLL_KEYS,
+                    Constants.VERTICAL_SCROLL_KEYS
+                ];
+                let result: TestKeyboardBindingGroupsResult = testKeyboardBindingGroups(pageScrollingKeys, keyboardEvent);
+
+                if (result){
+                    this.handlePageScrollingKey (result.trappedKeyboardBindingGroup.id, result.trappedKeyboardBinding.id, keyboardEvent);
                 } else {
                     renderedCell.onKeyDown(keyboardEvent);
                 }
@@ -429,28 +433,101 @@ export class GridPanel extends BeanStub {
         }
     }
 
-    private handleAbsPageButton (keyboardEvent:KeyboardEvent): void{
-        let focusedCell : GridCell = this.focusedCellController.getFocusedCell();
+    private handlePageScrollingKey (pagingKeyGroup:string, pagingKey:string, keyboardEvent:KeyboardEvent): void{
+        switch (pagingKeyGroup){
+            case Constants.DIAGONAL_SCROLL_KEYS_ID:
+                this.pageDiagonally(pagingKey);
+                break;
+            case Constants.VERTICAL_SCROLL_KEYS_ID:
+                this.pageVertically(pagingKey);
+                break;
+            case Constants.HORIZONTAL_SCROLL_KEYS_ID:
+                this.pageHorizontally(pagingKey);
+                break;
+        }
 
+        //***************************************************************************
+        //Stop event defaults and propagation
+        keyboardEvent.preventDefault();
+    }
+
+    //Either CTL LEFT/RIGHT
+    private pageHorizontally (pagingKey:string): void{
+        //***************************************************************************
+        //column to select
+        let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
+        let columnToSelect : Column = pagingKey === Constants.KEY_CTRL_LEFT_NAME ?
+            allColumns[0]:
+            allColumns[allColumns.length - 1];
+
+
+        let horizontalScroll: HorizontalScroll = {
+            type: ScrollType.HORIZONTAL,
+            columnToScrollTo: columnToSelect,
+            columnToFocus: columnToSelect
+        };
+        this.performScroll(horizontalScroll);
+    }
+
+
+
+    //Either HOME OR END
+    private pageDiagonally (pagingKey:string): void{
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
-        let key = keyboardEvent.which || keyboardEvent.keyCode;
-        let selectionTopDelta : number = key == Constants.KEY_PAGE_HOME ?
+        let selectionTopDelta : number = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             0:
             pageSize;
 
         //***************************************************************************
         //where to scroll to
-        let rowIndexToScrollTo = key == Constants.KEY_PAGE_HOME ?
+        let rowIndexToScrollTo = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             0:
             this.rowModel.getRowCount() - 1;
         let rowToScrollTo: RowNode = this.rowModel.getRow(rowIndexToScrollTo);
 
-        this.performScroll(rowToScrollTo, selectionTopDelta, focusedCell, keyboardEvent);
+
+        //***************************************************************************
+        //column to select
+        let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
+        let columnToSelect : Column = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
+            allColumns[0]:
+            allColumns[allColumns.length - 1];
+
+
+        let diagonalScroll: DiagonalScroll = {
+            focusedRowTopDelta: selectionTopDelta,
+            type: ScrollType.DIAGONAL,
+            rowToScrollTo: rowToScrollTo,
+            columnToScrollTo: columnToSelect
+        };
+        this.performScroll(diagonalScroll);
     }
 
-    private handleOnePageButton (keyboardEvent:KeyboardEvent): void{
+
+    //EITHER CTRL UP/DOWN or PAGE UP/DOWN
+    private pageVertically (pagingKey:string): void{
+        if (pagingKey === Constants.KEY_CTRL_UP_NAME){
+            this.performScroll({
+                rowToScrollTo: this.rowModel.getRow(0),
+                focusedRowTopDelta: 0,
+                type: ScrollType.VERTICAL
+            } as VerticalScroll);
+            return;
+        }
+
+        if (pagingKey === Constants.KEY_CTRL_DOWN_NAME){
+            this.performScroll({
+                rowToScrollTo: this.rowModel.getRow(this.rowModel.getRowCount() - 1),
+                focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
+                type: ScrollType.VERTICAL
+            } as VerticalScroll);
+            return;
+        }
+
+        //*********PAGING KEYS******************************************************
+
 
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
@@ -476,21 +553,48 @@ export class GridPanel extends BeanStub {
         let currentTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
         let currentTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(currentTopmostPixel));
         let currentTopmostRowTop = currentTopmostRow.rowTop;
-        let key = keyboardEvent.which || keyboardEvent.keyCode;
-        let toScrollUnadjusted = key == Constants.KEY_PAGE_DOWN ?
+        let toScrollUnadjusted = pagingKey == Constants.KEY_PAGE_DOWN_NAME ?
             pageSize + currentTopmostRowTop :
             currentTopmostRowTop - pageSize;
 
         let nextScreenTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(toScrollUnadjusted));
 
+        let verticalScroll : VerticalScroll = {
+            rowToScrollTo: nextScreenTopmostRow,
+            focusedRowTopDelta: selectionTopDelta,
+            type: ScrollType.VERTICAL
+        };
 
-        this.performScroll(nextScreenTopmostRow, selectionTopDelta, focusedCell, keyboardEvent);
+        this.performScroll(verticalScroll);
     }
 
-    private performScroll(rowToScrollTo: RowNode, newFocusedCellTopDelta: number, previousFocusedCell: GridCell, keyboardEvent: KeyboardEvent) {
+    //Performs any scroll
+    private performScroll(scroll: Scroll) {
+        let verticalScroll: VerticalScroll;
+        let diagonalScroll: DiagonalScroll;
+        let horizontalScroll: HorizontalScroll;
+
+        let focusedCellBeforeScrolling : GridCell = this.focusedCellController.getFocusedCell();
+
         //***************************************************************************
-        //scroll and redraw
-        this.getPrimaryScrollViewport().scrollTop = rowToScrollTo.rowTop;
+        // Scroll screen
+        switch (scroll.type){
+            case ScrollType.VERTICAL:
+                verticalScroll = <VerticalScroll> scroll;
+                this.getPrimaryScrollViewport().scrollTop = verticalScroll.rowToScrollTo.rowTop;
+                break;
+            case ScrollType.DIAGONAL:
+                diagonalScroll = <DiagonalScroll> scroll;
+                this.getPrimaryScrollViewport().scrollTop = diagonalScroll.rowToScrollTo.rowTop;
+                this.getPrimaryScrollViewport().scrollLeft = diagonalScroll.columnToScrollTo.getLeft();
+                break;
+            case ScrollType.HORIZONTAL:
+                horizontalScroll = <HorizontalScroll> scroll;
+                this.getPrimaryScrollViewport().scrollLeft = horizontalScroll.columnToScrollTo.getLeft();
+                break;
+        }
+
+        //***************************************************************************
         // This is needed so that when we try to focus on the cell is actually rendered.
         let refreshViewParams: RefreshViewParams = {
             onlyBody: true,
@@ -500,18 +604,29 @@ export class GridPanel extends BeanStub {
 
 
         //***************************************************************************
-        //refocus
-        let newIndex: number = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + newFocusedCellTopDelta);
+        // New focused cell
+        let focusedRowIndex: number;
+        let focusedColumn: Column;
+        switch (scroll.type){
+            case ScrollType.VERTICAL:
+                focusedRowIndex = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + verticalScroll.focusedRowTopDelta);
+                focusedColumn = focusedCellBeforeScrolling.column;
+                break;
+            case ScrollType.DIAGONAL:
+                focusedRowIndex = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + diagonalScroll.focusedRowTopDelta);
+                focusedColumn = diagonalScroll.columnToScrollTo;
+                break;
+            case ScrollType.HORIZONTAL:
+                focusedRowIndex = focusedCellBeforeScrolling.rowIndex;
+                focusedColumn = horizontalScroll.columnToScrollTo;
+                break;
+        }
         this.focusedCellController.setFocusedCell(
-            newIndex,
-            previousFocusedCell.column,
-            previousFocusedCell.floating,
+            focusedRowIndex,
+            focusedColumn,
+            null,
             true
         );
-
-        //***************************************************************************
-        //Stop event defaults and propagation
-        keyboardEvent.preventDefault();
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -1599,4 +1714,58 @@ export class GridPanel extends BeanStub {
     public removeScrollEventListener(listener: ()=>void): void {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
+}
+
+enum ScrollType {
+    HORIZONTAL, VERTICAL, DIAGONAL
+}
+
+interface Scroll {
+    type: ScrollType
+}
+
+interface VerticalScroll extends Scroll{
+    rowToScrollTo : RowNode
+    focusedRowTopDelta: number
+}
+
+interface HorizontalScroll extends Scroll {
+    columnToScrollTo: Column,
+    columnToFocus: Column,
+}
+
+interface DiagonalScroll extends Scroll {
+    rowToScrollTo : RowNode,
+    focusedRowTopDelta: number,
+    columnToScrollTo: Column
+}
+
+
+export interface TestKeyboardBindingGroupsResult {
+    trappedKeyboardBinding: KeyboardBinding,
+    trappedKeyboardBindingGroup: KeyboardBindingGroup
+}
+
+
+function testKeyboardBindingGroups (keyboardBindingGroups:KeyboardBindingGroup[], event:KeyboardEvent): TestKeyboardBindingGroupsResult{
+    for (let i=0; i<keyboardBindingGroups.length; i++){
+        let keyboardBindingGroup: KeyboardBindingGroup = keyboardBindingGroups[i];
+        for (let j=0; j< keyboardBindingGroup.bindings.length; j++){
+            let keyboardBinding = keyboardBindingGroup.bindings[j];
+            if (testKeyboardBinding(keyboardBinding, event)){
+                return {
+                    trappedKeyboardBinding: keyboardBinding,
+                    trappedKeyboardBindingGroup: keyboardBindingGroup
+                }
+            }
+        }
+    }
+    return null;
+}
+
+function testKeyboardBinding (keyboardBinding:KeyboardBinding, event:KeyboardEvent): boolean{
+    let key = event.which || event.keyCode;
+    return (keyboardBinding.ctlRequired === event.ctrlKey) &&
+        (keyboardBinding.keyCode === key) &&
+        (keyboardBinding.altRequired === event.altKey);
 }
