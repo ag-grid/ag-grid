@@ -7,6 +7,8 @@ import {Column} from "./column";
 import {IFilter} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
+import {IHeaderComp} from "../headerRendering/header/headerComp";
+import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -35,6 +37,8 @@ export interface ColGroupDef extends AbstractColDef {
     openByDefault?: boolean;
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
+    /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    headerGroupComponent?:{new(): IHeaderGroupComp}
 }
 
 export interface IAggFunc {
@@ -224,6 +228,11 @@ export interface ColDef extends AbstractColDef {
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column;
+
+    /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    headerComponent?:{new(): IHeaderComp}
+    /** The custom header component parameters**/
+    headerComponentParams?:any
 
 }
 

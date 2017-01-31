@@ -4,7 +4,7 @@ import {PostConstruct, Autowired, Context} from "../../context/context";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
-import {HeaderComp, IHeaderCompParams} from "./headerComp";
+import {HeaderComp, IHeaderCompParams, IHeaderComp} from "./headerComp";
 import {ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
@@ -12,6 +12,9 @@ import {CssClassApplier} from "../cssClassApplier";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {IComponent} from "../../interfaces/iComponent";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
+import {GridApi} from "../../gridApi";
+import {SortController} from "../../sortController";
+import {EventService} from "../../eventService";
 
 export class HeaderWrapperComp extends Component {
 
@@ -27,6 +30,9 @@ export class HeaderWrapperComp extends Component {
     @Autowired('horizontalDragService') private horizontalDragService: HorizontalDragService;
     @Autowired('context') private context: Context;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('sortController') private sortController: SortController;
+    @Autowired('eventService') private eventService: EventService;
 
     private column: Column;
     private eRoot: HTMLElement;
@@ -86,13 +92,22 @@ export class HeaderWrapperComp extends Component {
     }
 
     private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any> {
-        let headerComp = new HeaderComp();
+        let CurrentHeaderComp: {new(params:any): IHeaderComp} = this.getHeaderComponent();
+        let customParams: any = this.column.getColDef().headerComponentParams;
+        let headerComp: IHeaderComp = new CurrentHeaderComp(customParams);
 
         let params = <IHeaderCompParams> {
             column: this.column,
             displayName: displayName,
             enableSorting: enableSorting,
-            enableMenu: enableMenu
+            enableMenu: enableMenu,
+            showColumnMenu: (source:HTMLElement)=>{
+                this.gridApi.showColumnMenuAfterButtonClick(this.column, source)
+            },
+            progressSort: (mouseEvent?:MouseEvent)=>{
+                this.sortController.progressSort(this.column, mouseEvent ? mouseEvent.shiftKey : false);
+            },
+            eventService: this.eventService
         };
 
         this.context.wireBean(headerComp);
@@ -100,6 +115,12 @@ export class HeaderWrapperComp extends Component {
 
         this.appendChild(headerComp);
         return headerComp;
+    }
+
+    private getHeaderComponent():{new(): IHeaderComp} {
+        return this.getColumn().getColDef().headerComponent ?
+            this.getColumn().getColDef().headerComponent:
+            HeaderComp;
     }
 
     private onColumnMovingChanged(): void {

@@ -10,8 +10,9 @@ import {Autowired, PostConstruct, Context} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {HeaderGroupComp, IHeaderGroupCompParams} from "./headerGroupComp";
+import {HeaderGroupComp, IHeaderGroupCompParams, IHeaderGroupComp} from "./headerGroupComp";
 import {IComponent} from "../../interfaces/iComponent";
+import {ColGroupDef} from "../../entities/colDef";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -66,7 +67,7 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private appendHeaderGroupComp(displayName: string): IComponent<IHeaderGroupCompParams> {
-        let headerComp = new HeaderGroupComp();
+        let headerComp = this.getHeaderGroupComponent();
 
         let params = <IHeaderGroupCompParams> {
             displayName: displayName,
@@ -78,6 +79,14 @@ export class HeaderGroupWrapperComp extends Component {
 
         this.appendChild(headerComp);
         return headerComp;
+    }
+
+    private getHeaderGroupComponent(): IHeaderGroupComp {
+        let CustomHeaderGroupComponent = (<ColGroupDef>this.columnGroup.getDefinition()).headerGroupComponent;
+        if (CustomHeaderGroupComponent){
+            return new CustomHeaderGroupComponent();
+        }
+        return new HeaderGroupComp();
     }
 
     private addClasses(): void {
