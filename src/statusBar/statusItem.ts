@@ -17,7 +17,7 @@ export class StatusItem extends Component {
     }
 
     @PostConstruct
-    private init(): void {
+    public init(): void {
         this.lbValue = this.queryForHtmlElement('#_value');
     }
 
