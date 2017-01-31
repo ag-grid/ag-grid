@@ -466,7 +466,18 @@ colDef.cellEditorParams = {
     </ul>
     </p>
 
-    <show-example example="exampleCellEditing"></show-example>
+    <show-example example="exampleDatepicker"></show-example>
+
+    <h3>Datepicker Cell Editing Example</h3>
+
+    <p>The example below illustrates:
+    <ul>
+        <li>'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.</li>
+    </ul>
+
+     <show-example example="exampleDatepicker"></show-example>
+
+    </p>
 
     <h2 id="fullRowEdit">Full Row Editing</h2>
 
