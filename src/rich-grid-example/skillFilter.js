@@ -1,6 +1,6 @@
 import RefData from "./refData";
 
-let SKILL_TEMPLATE =
+const SKILL_TEMPLATE =
     '<label style="border: 1px solid lightgrey; margin: 4px; padding: 4px; display: inline-block;">' +
     '  <span>' +
     '    <div style="text-align: center;">SKILL_NAME</div>' +
@@ -11,12 +11,12 @@ let SKILL_TEMPLATE =
     '  </span>' +
     '</label>';
 
-let FILTER_TITLE =
+const FILTER_TITLE =
     '<div style="text-align: center; background: lightgray; width: 100%; display: block; border-bottom: 1px solid grey;">' +
     '<b>TITLE_NAME</b>' +
     '</div>';
 
-export default {
+export class SkillFilter {
     init(params){
         this.filterChangedCallback = params.filterChangedCallback;
         this.model = {
@@ -26,7 +26,8 @@ export default {
             mac: false,
             windows: false
         };
-    },
+    }
+
     getGui() {
         let eGui = document.createElement('div');
         eGui.style.width = '380px';
@@ -52,7 +53,8 @@ export default {
         });
 
         return eGui;
-    },
+    }
+
     doesFilterPass(params) {
 
         let rowSkills = params.data.skills;
@@ -68,17 +70,17 @@ export default {
         });
 
         return passed;
-    },
+    }
 
     isFilterActive() {
         let model = this.model;
         let somethingSelected = model.android || model.css || model.html5 || model.mac || model.windows;
         return somethingSelected;
-    },
+    }
 
     getModel(){
         return undefined;
-    },
+    }
 
     setModel(model){
     }

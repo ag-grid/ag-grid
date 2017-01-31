@@ -1,28 +1,28 @@
-let FILTER_TITLE =
+const FILTER_TITLE =
     '<div style="text-align: center; background: lightgray; width: 100%; display: block; border-bottom: 1px solid grey;">' +
     '<b>TITLE_NAME</b>' +
     '</div>';
 
-let PROFICIENCY_TEMPLATE =
+const PROFICIENCY_TEMPLATE =
     '<label style="padding-left: 4px;">' +
     '<input type="radio" name="RANDOM"/>' +
     'PROFICIENCY_NAME' +
     '</label>';
 
-let PROFICIENCY_NONE = 'none';
-let PROFICIENCY_ABOVE40 = 'above40';
-let PROFICIENCY_ABOVE60 = 'above60';
-let PROFICIENCY_ABOVE80 = 'above80';
+const PROFICIENCY_NONE = 'none';
+const PROFICIENCY_ABOVE40 = 'above40';
+const PROFICIENCY_ABOVE60 = 'above60';
+const PROFICIENCY_ABOVE80 = 'above80';
 
-let PROFICIENCY_NAMES = ['No Filter', 'Above 40%', 'Above 60%', 'Above 80%'];
-let PROFICIENCY_VALUES = [PROFICIENCY_NONE, PROFICIENCY_ABOVE40, PROFICIENCY_ABOVE60, PROFICIENCY_ABOVE80];
+const PROFICIENCY_NAMES = ['No Filter', 'Above 40%', 'Above 60%', 'Above 80%'];
+const PROFICIENCY_VALUES = [PROFICIENCY_NONE, PROFICIENCY_ABOVE40, PROFICIENCY_ABOVE60, PROFICIENCY_ABOVE80];
 
-export default {
-    init(params){
+export class ProficiencyFilter {
+    init(params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.selected = PROFICIENCY_NONE;
         this.valueGetter = params.valueGetter;
-    },
+    }
 
     getGui() {
         let eGui = document.createElement('div');
@@ -50,7 +50,7 @@ export default {
         });
 
         return eGui;
-    },
+    }
 
     doesFilterPass(params) {
 
@@ -68,15 +68,15 @@ export default {
                 return true;
         }
 
-    },
+    }
 
     isFilterActive() {
         return this.selected !== PROFICIENCY_NONE;
-    },
+    }
 
     getModel() {
         return undefined;
-    },
+    }
 
     setModel(model) {
     }

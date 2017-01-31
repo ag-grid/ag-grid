@@ -1,7 +1,7 @@
 <script>
     import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "ag-grid/main";
-    import VueFrameworkFactory from "./vueFrameworkFactory";
-    import VueComponentFactory from "./vueComponentFactory";
+    import {VueFrameworkFactory} from "./vueFrameworkFactory";
+    import {VueComponentFactory} from "./vueComponentFactory";
 
     const props = ['gridOptions'];
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
@@ -36,32 +36,8 @@
                 } else {
                     console.log('ag-Grid-vue: could not find event emitter for: ' + eventType);
                 }
-            },
-            createComponent() {
-                let self = this;
-                let Child = this.$options.components['extform-input'];
-                let child = new Child({
-                    el: this.$el.querySelector('.child-host'), // define the el of component
-                    parent: this, // define parent of component
-                });
             }
         },
-//        components: {
-//            'square-component': {
-//                template: '<div>{{ valueSquared() }}',
-//                props: {
-//                    params: {
-//                        type: Number,
-//                        default: 5
-//                    }
-//                },
-//                methods: {
-//                    valueSquared() {
-//                        return params.value * params.value;
-//                    }
-//                }
-//            }
-//        },
         mounted() {
             let vueFrameworkFactory = new VueFrameworkFactory(this.$el, this);
             let gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
