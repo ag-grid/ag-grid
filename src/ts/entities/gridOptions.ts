@@ -363,6 +363,7 @@ export interface NavigateToNextCellParams {
     key: number;
     previousCellDef: GridCellDef;
     nextCellDef: GridCellDef;
+    event: KeyboardEvent;
 }
 
 export interface TabToNextCellParams {
