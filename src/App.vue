@@ -85,11 +85,26 @@
 <!--:debug="true"-->
 
 <script>
+    import Vue from "vue";
     import agGridComponent from './agGridVue.vue'
 
     import ProficiencyFilter from './proficiencyFilter';
     import SkillFilter from './skillFilter';
     import RefData from './refData'
+
+    let SquareComponent = Vue.extend({
+        template: '<div>{{ valueSquared() }}',
+        data: function () {
+            return {
+                value: 5
+            }
+        },
+        methods: {
+            valueSquared() {
+                return this.params.value * this.params.value;
+            }
+        }
+    });
 
     export default {
         data () {
@@ -106,78 +121,89 @@
             createRowData() {
                 const rowData = [];
 
-                for (let i = 0; i < 10000; i++) {
-                    const countryData = RefData.COUNTRIES[i % RefData.COUNTRIES.length];
-                    rowData.push({
-                        name: RefData.FIRST_NAMES[i % RefData.FIRST_NAMES.length] + ' ' + RefData.LAST_NAMES[i % RefData.LAST_NAMES.length],
-                        skills: {
-                            android: Math.random() < 0.4,
-                            html5: Math.random() < 0.4,
-                            mac: Math.random() < 0.4,
-                            windows: Math.random() < 0.4,
-                            css: Math.random() < 0.4
-                        },
-                        address: RefData.ADDRESSES[i % RefData.ADDRESSES.length],
-                        years: Math.round(Math.random() * 100),
-                        proficiency: Math.round(Math.random() * 100),
-                        country: countryData.country,
-                        continent: countryData.continent,
-                        language: countryData.language,
-                        mobile: createRandomPhoneNumber(),
-                        landline: createRandomPhoneNumber()
-                    });
-                }
+                rowData.push({value: 10});
+
+//                for (let i = 0; i < 10000; i++) {
+//                    const countryData = RefData.COUNTRIES[i % RefData.COUNTRIES.length];
+//                    rowData.push({
+//                        name: RefData.FIRST_NAMES[i % RefData.FIRST_NAMES.length] + ' ' + RefData.LAST_NAMES[i % RefData.LAST_NAMES.length],
+//                        skills: {
+//                            android: Math.random() < 0.4,
+//                            html5: Math.random() < 0.4,
+//                            mac: Math.random() < 0.4,
+//                            windows: Math.random() < 0.4,
+//                            css: Math.random() < 0.4
+//                        },
+//                        address: RefData.ADDRESSES[i % RefData.ADDRESSES.length],
+//                        years: Math.round(Math.random() * 100),
+//                        proficiency: Math.round(Math.random() * 100),
+//                        country: countryData.country,
+//                        continent: countryData.continent,
+//                        language: countryData.language,
+//                        mobile: createRandomPhoneNumber(),
+//                        landline: createRandomPhoneNumber()
+//                    });
+//                }
 
                 this.rowData = rowData;
             },
             createColumnDefs() {
                 this.columnDefs = [
+
                     {
-                        headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
-                        suppressMenu: true, pinned: true
-                    },
-                    {
-                        headerName: 'Employee',
-                        children: [
-                            {
-                                headerName: "Name", field: "name",
-                                width: 150, pinned: true
-                            },
-                            {
-                                headerName: "Country", field: "country", width: 150,
-                                cellRenderer: countryCellRenderer, pinned: true,
-                                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
-                            },
-                        ]
-                    },
-                    {
-                        headerName: 'IT Skills',
-                        children: [
-                            {
-                                headerName: "Skills",
-                                width: 125,
-                                suppressSorting: true,
-                                cellRenderer: skillsCellRenderer,
-                                filter: SkillFilter
-                            },
-                            {
-                                headerName: "Proficiency",
-                                field: "proficiency",
-                                width: 120,
-                                cellRenderer: percentCellRenderer,
-                                filter: ProficiencyFilter
-                            },
-                        ]
-                    },
-                    {
-                        headerName: 'Contact',
-                        children: [
-                            {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-                            {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
-                            {headerName: "Address", field: "address", width: 500, filter: 'text'}
-                        ]
+                        headerName: "Value", field: "value",
+                        width: 150, cellRendererFramework: SquareComponent,
+                        editable:true
                     }
+
                 ];
+//                this.columnDefs = [
+//                    {
+//                        headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
+//                        suppressMenu: true, pinned: true
+//                    },
+//                    {
+//                        headerName: 'Employee',
+//                        children: [
+//                            {
+//                                headerName: "Name", field: "name",
+//                                width: 150, pinned: true
+//                            },
+//                            {
+//                                headerName: "Country", field: "country", width: 150,
+//                                cellRenderer: countryCellRenderer, pinned: true,
+//                                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
+//                            },
+//                        ]
+//                    },
+//                    {
+//                        headerName: 'IT Skills',
+//                        children: [
+//                            {
+//                                headerName: "Skills",
+//                                width: 125,
+//                                suppressSorting: true,
+//                                cellRenderer: skillsCellRenderer,
+//                                filter: SkillFilter
+//                            },
+//                            {
+//                                headerName: "Proficiency",
+//                                field: "proficiency",
+//                                width: 120,
+//                                cellRenderer: percentCellRenderer,
+//                                filter: ProficiencyFilter
+//                            },
+//                        ]
+//                    },
+//                    {
+//                        headerName: 'Contact',
+//                        children: [
+//                            {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
+//                            {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
+//                            {headerName: "Address", field: "address", width: 500, filter: 'text'}
+//                        ]
+//                    }
+//                ];
             },
             calculateRowCount() {
                 if (this.gridOptions.api && this.rowData) {
@@ -220,7 +246,7 @@
 
             // taking out, as when we 'select all', it prints to much to the console!!
             onRowSelected(event) {
-                 console.log('onRowSelected: ' + event.node.data.name);
+                console.log('onRowSelected: ' + event.node.data.name);
             },
 
             onSelectionChanged() {
