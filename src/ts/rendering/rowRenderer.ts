@@ -545,7 +545,7 @@ export class RowRenderer {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(key: number, rowIndex: number, column: Column, floating: string) {
+    public navigateToNextCell(event: KeyboardEvent, key: number, rowIndex: number, column: Column, floating: string) {
 
         let previousCell = new GridCell({rowIndex: rowIndex, floating: floating, column: column});
         let nextCell = previousCell;
@@ -575,7 +575,8 @@ export class RowRenderer {
             let params = <NavigateToNextCellParams> {
                 key: key,
                 previousCellDef: previousCell,
-                nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+                nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
+                event: event
             };
             let nextCellDef = userFunc(params);
             if (_.exists(nextCellDef)) {

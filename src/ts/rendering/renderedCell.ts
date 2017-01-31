@@ -490,11 +490,11 @@ export class RenderedCell extends Component {
         event.preventDefault();
     }
 
-    private onNavigationKeyPressed(event: any, key: number): void {
+    private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(key, this.gridCell.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
