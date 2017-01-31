@@ -172,6 +172,8 @@ column.addEventListener('filterChanged', function() {
 
     <h3>Example - Header Cells</h3>
 
+    <show-example example="exampleHeaderTemplate_component"></show-example>
+
     <p style="color: darkgreen; font-size: 30px;">
         Alberto to provide example
     </p>
@@ -265,15 +267,7 @@ params.setExpanded(newValue);</pre>
     </p>
 
 
-
-
-
-
-
-
-
-
-
+    <show-example example="exampleHeaderGroupComponent"></show-example>
 
 
     <!-- old bit, to be remove when we release v9 -->
