@@ -27,7 +27,6 @@ var gridOptions = {
     }
 };
 
-
 function MyHeaderComponent() {
 }
 
@@ -35,7 +34,7 @@ MyHeaderComponent.prototype.init = function (params){
     this.params = params;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = ''+
-        '<div class="customHeaderLabel"> --' + this.params.displayName + '-- </div>' +
+        '<div class="customHeaderLabel">' + this.params.displayName + '</div>' +
         '<div class="customExpandButton"><i class="fa fa-arrow-right"></i></div>';
 
     this.onExpandButtonClickedListener = this.expandOrCollapse.bind(this);

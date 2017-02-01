@@ -238,7 +238,7 @@ column.addEventListener('filterChanged', function() {
         </ul>
     </p>
 
-    <show-example example="exampleHeaderTemplate_component"></show-example>
+    <show-example example="exampleHeaderComponent"></show-example>
 
     <h2>Header Group Rendering</h2>
 
@@ -281,7 +281,7 @@ column.addEventListener('filterChanged', function() {
 
 
     <p>The params passed to <i>init()</i> are as follows:</p>
-    <pre>export interface IHeaderCompParams {
+    <pre>export interface IHeaderGroupParams {
 
     <span class="codeComment">// the column group the header is for</span>
     columnGroup: ColumnGroup;
@@ -290,10 +290,8 @@ column.addEventListener('filterChanged', function() {
     <span class="codeComment">// the displayName will take this into account.</span>
     displayName: string;
 
-    <span class="codeComment">// opens / closes the column group</span><span style="color: darkred; ">##### check name of callback</span>
+    <span class="codeComment">// opens / closes the column group</span>
     setExpanded(expanded: boolean): void;
-
-    <span style="color: darkred; ">##### do we need callbacks here???</span>
 }</pre>
 
     <h3>Opening / Closing Groups</h3>
@@ -315,22 +313,17 @@ column.addEventListener('filterChanged', function() {
     <pre>var groupIsOpen = params.columnGroup.isExpanded();</pre>
 
     <p>
-        To open / close a column group, use the <i>params.setExpanded()</i> method.
+        To open / close a column group, use the <i>params.setExpanded(boolean)</i> method.
     </p>
 
-    <pre>var oldValue = params.columnGroup.isExpanded();
+    <pre><span class="codeComment">// this code toggles the expanded state</span>
+var oldValue = params.columnGroup.isExpanded();
 var newValue = !oldValue;
 params.setExpanded(newValue);</pre>
 
     <h3>Example - Header Group Cells</h3>
 
-    <p style="color: darkgreen; font-size: 30px;">
-        Alberto to provide example
-    </p>
-
-
     <show-example example="exampleHeaderGroupComponent"></show-example>
-
 
     <!-- old bit, to be remove when we release v9 -->
 
