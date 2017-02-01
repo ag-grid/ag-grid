@@ -41,7 +41,6 @@ export class ColumnGroup implements ColumnGroupChild {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
-        console.log('ColumnGroup->new()');
     }
 
     // as the user is adding and removing columns, the groups are recalculated.

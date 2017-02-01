@@ -101,11 +101,14 @@ export class HeaderWrapperComp extends Component {
             displayName: displayName,
             enableSorting: enableSorting,
             enableMenu: enableMenu,
-            showColumnMenu: (source:HTMLElement)=>{
+            showColumnMenu: (source:HTMLElement) => {
                 this.gridApi.showColumnMenuAfterButtonClick(this.column, source)
             },
-            progressSort: (mouseEvent?:MouseEvent)=>{
-                this.sortController.progressSort(this.column, mouseEvent ? mouseEvent.shiftKey : false);
+            progressSort: (multiSort?:boolean) => {
+                this.sortController.progressSort(this.column, !!multiSort);
+            },
+            setSort: (sort: string, multiSort?: boolean) => {
+                this.sortController.setSortForColumn(this.column, sort, !!multiSort);
             },
             eventService: this.eventService
         };

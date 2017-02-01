@@ -17,9 +17,17 @@ export class SortController {
     @Autowired('eventService') private eventService: EventService;
 
     public progressSort(column: Column, multiSort: boolean): void {
+        let nextDirection = this.getNextSortDirection(column);
+        this.setSortForColumn(column, nextDirection, multiSort);
+    }
+
+    public setSortForColumn(column: Column, sort: string, multiSort: boolean): void {
+
+        // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
+        if (sort!==Column.SORT_ASC && sort!==Column.SORT_DESC) { sort = null; }
 
         // update sort on current col
-        column.setSort(this.getNextSortDirection(column));
+        column.setSort(sort);
 
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.getSort()) {

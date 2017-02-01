@@ -10,6 +10,7 @@ import {TouchListener} from "../../widgets/touchListener";
 import {IComponent} from "../../interfaces/iComponent";
 import {SvgFactory} from "../../svgFactory";
 import {EventService} from "../../eventService";
+import {RefSelector} from "../../widgets/componentAnnotations";
 
 export interface IHeaderCompParams {
     column: Column;
@@ -38,13 +39,13 @@ var svgFactory = SvgFactory.getInstance();
 export class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE =
         '<div>' +
-        '  <span ref="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-        '  <div ref="agLabel" class="ag-header-cell-label">' +
-        '    <span ref="agSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-        '    <span ref="agSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-        '    <span ref="agNoSort" class="ag-header-icon ag-sort-none-icon"></span>' +
-        '    <span ref="agFilter" class="ag-header-icon ag-filter-icon"></span>' +
-        '    <span ref="agText" class="ag-header-cell-text"></span>' +
+        '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+        '  <div ref="eLabel" class="ag-header-cell-label">' +
+        '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+        '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+        '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
+        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
+        '    <span ref="eText" class="ag-header-cell-text"></span>' +
         '  </div>' +
         '</div>';
 
@@ -52,10 +53,14 @@ export class HeaderComp extends Component implements IHeaderComp {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
-    private eFilterIcon: HTMLElement;
-    private eSortAsc: HTMLElement;
-    private eSortDesc: HTMLElement;
-    private eSortNone: HTMLElement;
+    @RefSelector('eFilter') private eFilter: HTMLElement;
+    @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
+
+    @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
+    @RefSelector('eSortNone') private eSortNone: HTMLElement;
+    @RefSelector('eMenu') private eMenu: HTMLElement;
+    @RefSelector('eLabel') private eLabel: HTMLElement;
+    @RefSelector('eText') private eText: HTMLElement;
 
     private params:IHeaderCompParams;
     
@@ -69,27 +74,26 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.setupTap();
         this.setupIcons(params.column);
         this.setupMenu();
-        this.setupSort(this.getRefElement("agLabel"));
+        this.setupSort();
         this.setupFilterIcon();
         this.setupText(params.displayName);
     }
 
     private setupText(displayName: string): void {
-        var eText = this.getRefElement('agText');
-        eText.innerHTML = displayName;
+        this.eText.innerHTML = displayName;
     }
 
     private setupIcons(column:Column): void {
-        this.addInIcon('sortAscending', 'agSortAsc', column, svgFactory.createArrowUpSvg);
-        this.addInIcon('sortDescending', 'agSortDesc', column, svgFactory.createArrowDownSvg);
-        this.addInIcon('sortUnSort', 'agNoSort', column, svgFactory.createArrowUpDownSvg);
-        this.addInIcon('menu', 'agMenu', column, svgFactory.createMenuSvg);
-        this.addInIcon('filter', 'agFilter', column, svgFactory.createFilterSvg);
+        this.addInIcon('sortAscending', this.eSortAsc, column, svgFactory.createArrowUpSvg);
+        this.addInIcon('sortDescending', this.eSortDesc, column, svgFactory.createArrowDownSvg);
+        this.addInIcon('sortUnSort', this.eSortNone, column, svgFactory.createArrowUpDownSvg);
+        this.addInIcon('menu', this.eMenu, column, svgFactory.createMenuSvg);
+        this.addInIcon('filter', this.eFilter, column, svgFactory.createFilterSvg);
     }
 
-    private addInIcon(iconName: string, refName: string, column: Column, defaultIconFactory: () => HTMLElement): void {
+    private addInIcon(iconName: string, eParent: HTMLElement, column: Column, defaultIconFactory: () => HTMLElement): void {
         var eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
-        this.getRefElement(refName).appendChild(eIcon);
+        eParent.appendChild(eIcon);
     }
 
     private setupTap(): void {
@@ -110,30 +114,29 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupMenu(): void {
-        let eMenu = this.getRefElement('agMenu');
 
         // if no menu provided in template, do nothing
-        if (!eMenu) {
+        if (!this.eMenu) {
             return;
         }
 
         if (!this.params.enableMenu) {
-            _.removeFromParent(eMenu);
+            _.removeFromParent(this.eMenu);
             return;
         }
 
-        eMenu.addEventListener('click', ()=> this.showMenu(eMenu));
+        this.eMenu.addEventListener('click', ()=> this.showMenu(this.eMenu));
 
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
-            eMenu.style.opacity = '0';
-            this.addGuiEventListener('mouseover', function () {
-                eMenu.style.opacity = '1';
+            this.eMenu.style.opacity = '0';
+            this.addGuiEventListener('mouseover', ()=> {
+                this.eMenu.style.opacity = '1';
             });
-            this.addGuiEventListener('mouseout', function () {
-                eMenu.style.opacity = '0';
+            this.addGuiEventListener('mouseout', ()=> {
+                this.eMenu.style.opacity = '0';
             });
         }
-        var style = <any> eMenu.style;
+        var style = <any> this.eMenu.style;
         style['transition'] = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     }
@@ -142,27 +145,22 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     }
 
-    public setupSort(eHeaderCellLabel: HTMLElement): void {
+    public setupSort(): void {
         var enableSorting = this.params.enableSorting;
 
         if (!enableSorting) {
-            _.removeFromParent(this.getRefElement('agSortAsc'));
-            _.removeFromParent(this.getRefElement('agSortDesc'));
-            _.removeFromParent(this.getRefElement('agNoSort'));
+            _.removeFromParent(this.eSortAsc);
+            _.removeFromParent(this.eSortDesc);
+            _.removeFromParent(this.eSortNone);
             return;
         }
 
         // add the event on the header, so when clicked, we do sorting
-        if (eHeaderCellLabel) {
-            eHeaderCellLabel.addEventListener("click", (event:MouseEvent) => {
+        if (this.eLabel) {
+            this.eLabel.addEventListener("click", (event:MouseEvent) => {
                 this.sortController.progressSort(this.params.column, event.shiftKey);
             });
         }
-
-        // add listener for sort changing, and update the icons accordingly
-        this.eSortAsc = this.getRefElement('agSortAsc');
-        this.eSortDesc = this.getRefElement('agSortDesc');
-        this.eSortNone = this.getRefElement('agNoSort');
 
         this.addDestroyableEventListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.onSortChanged();
@@ -189,9 +187,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupFilterIcon(): void {
-        this.eFilterIcon = this.getRefElement('agFilter');
 
-        if (!this.eFilterIcon) {
+        if (!this.eFilter) {
             return;
         }
 
@@ -201,7 +198,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChanged(): void {
         var filterPresent = this.params.column.isFilterActive();
-        _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
+        _.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     }
 
 }
