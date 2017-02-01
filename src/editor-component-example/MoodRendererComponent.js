@@ -9,24 +9,17 @@ export default Vue.extend({
         }
     },
     methods: {
-        refresh(params)
-        {
+        refresh(params) {
             this.params = params;
             this.setMood(params);
-        }
-        ,
+        },
 
-        setMood(params)
-        {
+        setMood(params) {
             this.mood = params.value;
             this.imgForMood = this.mood === 'Happy' ? '../images/smiley.png' : '../images/smiley-sad.png';
         }
-    }
-    ,
-    created()
-    {
+    },
+    created() {
         this.setMood(this.params);
     }
 })
-;
-
