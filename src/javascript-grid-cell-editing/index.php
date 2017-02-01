@@ -424,7 +424,7 @@ colDef.cellEditorParams = {
     </p>
 
     <p>
-        <b>startEditingCell(params)</b><br/>
+        <b>api.startEditingCell(params)</b><br/>
         Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
         <ul>
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
@@ -434,8 +434,11 @@ colDef.cellEditorParams = {
     </p>
 
     <p>
-        <b>stopEditing()</b><br/>
-        Takes no parameters and stops the current editing. If not editing, then does nothing.
+        <b>api.stopEditing(cancel)</b><br/>
+        If the grid is editing this will stop editing.
+    </p>
+    <p>
+        Pass true to cancel editing, i.e. revert any changes.
     </p>
 
     <h3>Start / Stop Editing Events</h3>
@@ -463,7 +466,18 @@ colDef.cellEditorParams = {
     </ul>
     </p>
 
-    <show-example example="exampleCellEditing"></show-example>
+    <show-example example="exampleDatepicker"></show-example>
+
+    <h3>Datepicker Cell Editing Example</h3>
+
+    <p>The example below illustrates:
+    <ul>
+        <li>'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.</li>
+    </ul>
+
+     <show-example example="exampleDatepicker"></show-example>
+
+    </p>
 
     <h2 id="fullRowEdit">Full Row Editing</h2>
 
