@@ -2,6 +2,10 @@ export function QuerySelector(selector?: string): Function {
     return querySelectorFunc.bind(this, selector);
 }
 
+export function RefSelector(ref?: string): Function {
+    return querySelectorFunc.bind(this, '[ref='+ref+']');
+}
+
 function querySelectorFunc(selector: string, classPrototype: any, methodOrAttributeName: string, index: number) {
 
     if (selector===null) {

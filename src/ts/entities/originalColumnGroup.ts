@@ -2,16 +2,21 @@ import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
 import {ColGroupDef} from "./colDef";
 import {ColumnGroup} from "./columnGroup";
 import {Column} from "./column";
+import {EventService} from "../eventService";
+import {IEventEmitter} from "../interfaces/iEventEmitter";
 
-export class OriginalColumnGroup implements OriginalColumnGroupChild {
+export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter  {
+    public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+
+    private localEventService = new EventService();
 
     private colGroupDef: ColGroupDef;
+
     private children: OriginalColumnGroupChild[];
     private groupId: string;
-
     private expandable = false;
-    private expanded: boolean;
 
+    private expanded: boolean;
     private padding: boolean;
 
     constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean) {
@@ -27,6 +32,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
 
     public setExpanded(expanded: boolean): void {
         this.expanded = expanded;
+        this.localEventService.dispatchEvent(OriginalColumnGroup.EVENT_EXPANDED_CHANGED);
     }
 
     public isExpandable(): boolean {
@@ -86,6 +92,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
 
     // need to check that this group has at least one col showing when both expanded and contracted.
     // if not, then we don't allow expanding and contracting on this group
+
     public calculateExpandable() {
         // want to make sure the group doesn't disappear when it's open
         var atLeastOneShowingWhenOpen = false;
@@ -111,5 +118,13 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild {
         }
 
         this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+    }
+
+    addEventListener(eventType: string, listener: Function): void {
+        this.localEventService.addEventListener(eventType, listener);
+    }
+
+    removeEventListener(eventType: string, listener: Function): void {
+        this.localEventService.removeEventListener(eventType, listener);
     }
 }

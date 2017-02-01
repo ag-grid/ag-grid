@@ -10,6 +10,8 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Autowired, PostConstruct} from "../../context/context";
 import {DropTarget, DragAndDropService} from "../../dragAndDrop/dragAndDropService";
 import {TouchListener} from "../../widgets/touchListener";
+import {RefSelector, Listener} from "../../widgets/componentAnnotations";
+import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 
 var svgFactory = SvgFactory.getInstance();
 
@@ -32,13 +34,16 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE =
-        '<div class="ag-header-group-cell-label">' +
-          '<span ref="agLabel" class="ag-header-group-text"></span>' +
-          '<span ref="agColumnGroupOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>' +
-          '<span ref="agColumnGroupClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>' +
-        '</div>';
+        `<div class="ag-header-group-cell-label">` +
+          `<span ref="agLabel" class="ag-header-group-text"></span>` +
+          `<span ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>` +
+          `<span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>` +
+        `</div>`;
 
     private params: IHeaderGroupCompParams;
+
+    @RefSelector('agOpened') private eOpenIcon: HTMLElement;
+    @RefSelector('agClosed') private eCloseIcon: HTMLElement;
 
     constructor() {
         super(HeaderGroupComp.TEMPLATE);
@@ -49,6 +54,49 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         this.setupLabel();
         this.addGroupExpandIcon();
+
+        if (this.params.columnGroup.isExpandable()) {
+            this.setupExpandIcons();
+        } else {
+            this.removeExpandIcons();
+        }
+    }
+
+    private setupExpandIcons(): void {
+
+        this.addInIcon('columnGroupOpened', 'agOpened', svgFactory.createGroupExpandedIcon);
+        this.addInIcon('columnGroupClosed', 'agClosed', svgFactory.createGroupContractedIcon);
+
+        this.addTouchAndClickListeners(this.eCloseIcon);
+        this.addTouchAndClickListeners(this.eOpenIcon);
+
+        this.updateIconVisibilty();
+
+        this.addDestroyableEventListener(this.params.columnGroup.getOriginalColumnGroup(), OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibilty.bind(this));
+    }
+
+    private addTouchAndClickListeners(eElement: HTMLElement): void {
+        var expandAction = ()=> {
+            var newExpandedValue = !this.params.columnGroup.isExpanded();
+            this.columnController.setColumnGroupOpened(this.params.columnGroup, newExpandedValue);
+        };
+
+        let touchListener = new TouchListener(this.eCloseIcon);
+
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, expandAction);
+        this.addDestroyFunc( ()=> touchListener.destroy() );
+        this.addDestroyableEventListener(eElement, 'click', expandAction);
+    }
+
+    private updateIconVisibilty(): void {
+        let expanded = this.params.columnGroup.isExpanded();
+        _.setVisible(this.eOpenIcon, !expanded);
+        _.setVisible(this.eCloseIcon, expanded);
+    }
+
+    private removeExpandIcons(): void {
+        _.setVisible(this.eOpenIcon, false);
+        _.setVisible(this.eCloseIcon, false);
     }
 
     private addInIcon(iconName: string, refName: string, defaultIconFactory: () => HTMLElement): void {
@@ -57,38 +105,11 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addGroupExpandIcon() {
-
-        var eOpenIcon = this.getRefElement('agColumnGroupOpened');
-        var eCloseIcon = this.getRefElement('agColumnGroupClosed');
-
         if (!this.params.columnGroup.isExpandable()) {
-            _.removeFromParent(eOpenIcon);
-            _.removeFromParent(eCloseIcon);
+            _.setVisible(this.eOpenIcon, false);
+            _.setVisible(this.eCloseIcon, false);
             return;
         }
-
-        var expandAction = ()=> {
-            var newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnController.setColumnGroupOpened(this.params.columnGroup, newExpandedValue);
-        };
-
-        let iconForEvents: HTMLElement;
-
-        if (this.params.columnGroup.isExpanded()) {
-            this.addInIcon('columnGroupOpened', 'agColumnGroupOpened', svgFactory.createGroupContractedIcon);
-            iconForEvents = eOpenIcon;
-            _.removeFromParent(eCloseIcon);
-        } else {
-            this.addInIcon('columnGroupClosed', 'agColumnGroupClosed', svgFactory.createGroupExpandedIcon);
-            iconForEvents = eCloseIcon;
-            _.removeFromParent(eOpenIcon);
-        }
-
-        this.addDestroyableEventListener(iconForEvents, 'click', expandAction);
-
-        let touchListener = new TouchListener(iconForEvents);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, expandAction);
-        this.addDestroyFunc( ()=> touchListener.destroy() );
     }
 
     private setupLabel(): void {

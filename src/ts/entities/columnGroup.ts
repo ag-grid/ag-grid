@@ -13,6 +13,12 @@ export class ColumnGroup implements ColumnGroupChild {
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
+    public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'leftChanged';
+
+    // this is static, a it is used outside of this class
+    public static createUniqueId(groupId: string, instanceId: number): string {
+        return groupId + '_' + instanceId;
+    }
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
@@ -25,9 +31,9 @@ export class ColumnGroup implements ColumnGroupChild {
     private instanceId: number;
     private originalColumnGroup: OriginalColumnGroup;
 
-    private moving = false;
+    // private moving = false
     private left: number;
-    private eventService:EventService = new EventService();
+    private localEventService: EventService = new EventService();
 
     private parent: ColumnGroupChild;
 
@@ -35,6 +41,15 @@ export class ColumnGroup implements ColumnGroupChild {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
+        console.log('ColumnGroup->new()');
+    }
+
+    // as the user is adding and removing columns, the groups are recalculated.
+    // this reset clears out all children, ready for children to be added again
+    public reset(): void {
+        this.parent = null;
+        this.children = null;
+        this.displayedChildren = null;
     }
 
     public getParent(): ColumnGroupChild {
@@ -46,7 +61,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public getUniqueId(): string {
-        return this.groupId + '_' + this.instanceId;
+        return ColumnGroup.createUniqueId(this.groupId, this.instanceId);
     }
 
     public checkLeft(): void {
@@ -81,25 +96,25 @@ export class ColumnGroup implements ColumnGroupChild {
     public setLeft(left: number) {
         if (this.left !== left) {
             this.left = left;
-            this.eventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
+            this.localEventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
         }
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        this.eventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        this.eventService.removeEventListener(eventType, listener);
+        this.localEventService.removeEventListener(eventType, listener);
     }
 
-    public setMoving(moving: boolean) {
-        this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
-    }
-
-    public isMoving(): boolean {
-        return this.moving;
-    }
+    // public setMoving(moving: boolean) {
+    //     this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
+    // }
+    //
+    // public isMoving(): boolean {
+    //     return this.moving;
+    // }
 
     public getGroupId(): string {
         return this.groupId;
@@ -230,31 +245,31 @@ export class ColumnGroup implements ColumnGroupChild {
         // it not expandable, everything is visible
         if (!this.originalColumnGroup.isExpandable()) {
             this.displayedChildren = this.children;
-            return;
-        }
-        // and calculate again
-        for (var i = 0, j = this.children.length; i < j; i++) {
-            var abstractColumn = this.children[i];
-            var headerGroupShow = abstractColumn.getColumnGroupShow();
-            switch (headerGroupShow) {
-                case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
-                    // when set to open, only show col if group is open
-                    if (this.originalColumnGroup.isExpanded()) {
+        } else {
+            // and calculate again
+            this.children.forEach( abstractColumn => {
+                var headerGroupShow = abstractColumn.getColumnGroupShow();
+                switch (headerGroupShow) {
+                    case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
+                        // when set to open, only show col if group is open
+                        if (this.originalColumnGroup.isExpanded()) {
+                            this.displayedChildren.push(abstractColumn);
+                        }
+                        break;
+                    case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
+                        // when set to open, only show col if group is open
+                        if (!this.originalColumnGroup.isExpanded()) {
+                            this.displayedChildren.push(abstractColumn);
+                        }
+                        break;
+                    default:
+                        // default is always show the column
                         this.displayedChildren.push(abstractColumn);
-                    }
-                    break;
-                case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
-                    // when set to open, only show col if group is open
-                    if (!this.originalColumnGroup.isExpanded()) {
-                        this.displayedChildren.push(abstractColumn);
-                    }
-                    break;
-                default:
-                    // default is always show the column
-                    this.displayedChildren.push(abstractColumn);
-                    break;
-            }
+                        break;
+                }
+            });
         }
-    }
 
+        this.localEventService.dispatchEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED);
+    }
 }

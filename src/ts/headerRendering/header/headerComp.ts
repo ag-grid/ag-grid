@@ -9,6 +9,7 @@ import {SortController} from "../../sortController";
 import {TouchListener} from "../../widgets/touchListener";
 import {IComponent} from "../../interfaces/iComponent";
 import {SvgFactory} from "../../svgFactory";
+import {QuerySelector} from "../../widgets/componentAnnotations";
 
 export interface IHeaderCompParams {
     column: Column;
@@ -54,7 +55,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private eSortNone: HTMLElement;
 
     private params:IHeaderCompParams;
-    
+
     constructor() {
         super(HeaderComp.TEMPLATE);
     }

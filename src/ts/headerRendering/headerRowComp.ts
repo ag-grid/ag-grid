@@ -81,6 +81,7 @@ export class HeaderRowComp extends Component {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this) );
     }
 
     private onColumnResized(): void {
@@ -88,20 +89,20 @@ export class HeaderRowComp extends Component {
     }
 
     private setWidth(): void {
-        //noinspection UnnecessaryLocalVariableJS
         var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
         this.getGui().style.width = mainRowWidth;
     }
 
+    private onGridColumnsChanged(): void {
+        this.removeAndDestroyAllChildComponents();
+    }
+
+    private removeAndDestroyAllChildComponents(): void {
+        var idsOfAllChildren = Object.keys(this.headerElements);
+        this.removeAndDestroyChildComponents(idsOfAllChildren);
+    }
+
     private onDisplayedColumnsChanged(): void {
-        // because column groups are created and destroyed on the fly as groups are opened / closed and columns are moved,
-        // we have to throw away all of the components when columns are changed, as the references to the old groups
-        // are no longer value. this is not true for columns where columns do not get destroyed between open / close
-        // or moving actions.
-        if (this.showingGroups) {
-            var idsOfAllChildren = Object.keys(this.headerElements);
-            this.removeAndDestroyChildComponents(idsOfAllChildren);
-        }
         this.onVirtualColumnsChanged();
         this.setWidth();
     }
@@ -123,7 +124,8 @@ export class HeaderRowComp extends Component {
 
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
-            // (PS niall note - i can't remember what i meant by the above exactly, what's a broken group???)
+            // (a broken group is one that is split, ie columns in the group have a non-group column
+            // in between them)
             if (child instanceof ColumnGroup && (<ColumnGroup>child).getDisplayedChildren().length === 0) {
                 return;
             }
@@ -178,4 +180,5 @@ export class HeaderRowComp extends Component {
 
 }
 
+// remove this in v9, when we take out support for the old headers
 let warningGiven = false;

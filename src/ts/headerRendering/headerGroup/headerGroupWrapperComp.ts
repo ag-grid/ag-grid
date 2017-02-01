@@ -31,13 +31,12 @@ export class HeaderGroupWrapperComp extends Component {
     private pinned: string;
     private eRoot: HTMLElement;
 
-    // private eHeaderCellResize: HTMLElement;
-    // private groupWidthStart: number;
-    // private childrenWidthStarts: number[];
-
     private eHeaderCellResize: HTMLElement;
     private groupWidthStart: number;
     private childrenWidthStarts: number[];
+
+    // the children can change, we keep destory functions related to listening to the children here
+    private childColumnsDestroyFuncs: Function[] = [];
 
     constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderGroupWrapperComp.TEMPLATE);
@@ -59,7 +58,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupResize();
         this.addClasses();
         this.setupMove(displayName);
-        this.setWidth();
+        this.setupWidth();
 
         var setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui());
         this.addDestroyFunc( () => setLeftFeature.destroy() );
@@ -144,19 +143,51 @@ export class HeaderGroupWrapperComp extends Component {
         return result;
     }
 
-    private setWidth(): void {
+    private setupWidth(): void {
 
-        this.columnGroup.getLeafColumns().forEach( column =>
-            this.addDestroyableEventListener(column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this))
-        );
+        // we need to listen to changes in child columns, as they impact our width
+        this.addListenersToChildrenColumns();
+
+        // the children belonging to this group can change, so we need to add and remove listeners as they change
+        this.addDestroyableEventListener(this.columnGroup, ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
 
         this.onWidthChanged();
+
+        // the child listeners are not tied to this components lifecycle, as children can get added and removed
+        // to the group - hence they are on a different lifecycle. so we must make sure the existing children
+        // listeners are removed when we finally get destroyed
+        this.addDestroyFunc(this.destroyListenersOnChildrenColumns.bind(this));
+    }
+
+    private onDisplayedChildrenChanged(): void {
+        this.addListenersToChildrenColumns();
+        this.onWidthChanged();
+    }
+
+    private addListenersToChildrenColumns(): void {
+        // first destroy any old listeners
+        this.destroyListenersOnChildrenColumns();
+
+        // now add new listeners to the new set of children
+        let widthChangedListener = this.onWidthChanged.bind(this);
+        this.columnGroup.getLeafColumns().forEach( column => {
+            column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            column.addEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
+            this.childColumnsDestroyFuncs.push( ()=> {
+                column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+                column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
+            });
+        });
+    }
+
+    private destroyListenersOnChildrenColumns(): void {
+        this.childColumnsDestroyFuncs.forEach( func => func() );
+        this.childColumnsDestroyFuncs = [];
     }
 
     private onWidthChanged(): void {
         this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
     }
-
 
     private setupResize(): void {
         if (!this.gridOptionsWrapper.isEnableColResize()) { return; }
