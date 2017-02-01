@@ -70,7 +70,10 @@ export class HeaderGroupWrapperComp extends Component {
 
         let params = <IHeaderGroupCompParams> {
             displayName: displayName,
-            columnGroup: this.columnGroup
+            columnGroup: this.columnGroup,
+            setExpanded: (expanded:boolean)=>{
+                this.columnController.setColumnGroupOpened(this.columnGroup, expanded);
+            }
         };
 
         this.context.wireBean(headerComp);
