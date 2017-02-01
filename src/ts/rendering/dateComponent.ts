@@ -1,5 +1,4 @@
-import {IAfterGuiAttachedParams} from "../interfaces/iFilter";
-
+import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 export interface IDateComponent {
     /** Callback received to signal the creation of this cellEditorRenderer, placeholder to create the necessary logic
      * to setup the component, like initialising the gui, or any other part of your component*/

@@ -1,14 +1,13 @@
-import {IFilter, IFilterParams, IDoesFilterPassParams, IAfterGuiAttachedParams} from "../interfaces/iFilter";
+import {IFilterParams, IDoesFilterPassParams, IFilterComp} from "../interfaces/iFilter";
 import {Component} from "../widgets/component";
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Utils} from "../utils";
 import {IDateComponent, IDateComponentParams} from "../rendering/dateComponent";
-import {GridOptions} from "../entities/gridOptions";
 
-export interface IDateFilterParams extends IFilterParams{
-    comparator ?: IDateComparatorFunc;
+export interface IDateFilterParams extends IFilterParams {
+    comparator?: IDateComparatorFunc;
 }
 
 export interface IDateComparatorFunc {
@@ -21,7 +20,7 @@ export interface SerializedDateFilter {
     type:string
 }
 
-export class DateFilter extends Component implements IFilter {
+export class DateFilter extends Component implements IFilterComp {
 
     public static EQUALS = 'equals';
     public static NOT_EQUAL = 'notEqual';

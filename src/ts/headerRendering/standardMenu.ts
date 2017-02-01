@@ -5,8 +5,8 @@ import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {PopupService} from "../widgets/popupService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {IAfterGuiAttachedParams} from "../interfaces/iFilter";
 import {EventService} from "../eventService";
+import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {

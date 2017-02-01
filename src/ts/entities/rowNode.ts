@@ -505,7 +505,7 @@ export class RowNode {
         }
 
         var event: any = {node: this};
-        this.mainEventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event)
+        this.mainEventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event);
 
         return true;
     }

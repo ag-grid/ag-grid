@@ -1,9 +1,9 @@
 import {Utils as _} from "../utils";
-import {IFilter, IFilterParams, IDoesFilterPassParams} from "../interfaces/iFilter";
+import {IFilterParams, IDoesFilterPassParams, IFilterComp} from "../interfaces/iFilter";
 import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
-export class TextFilter implements IFilter {
+export class TextFilter implements IFilterComp {
 
     public static CONTAINS = 'contains';//1;
     public static EQUALS = 'equals';//2;

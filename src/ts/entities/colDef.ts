@@ -1,10 +1,8 @@
 import {RowNode} from "./rowNode";
-import {SetFilterParameters} from "../filter/setFilterParameters";
-import {TextAndNumberFilterParameters} from "../filter/textAndNumberFilterParameters";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
 import {Column} from "./column";
-import {IFilter} from "../interfaces/iFilter";
+import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {IHeaderComp} from "../headerRendering/header/headerComp";
@@ -198,12 +196,12 @@ export interface ColDef extends AbstractColDef {
     templateUrl?: string;
 
     /** one of the built in filter names: [set, number, text], or a filter function*/
-    filter?: string | {new(): IFilter};
+    filter?: string | {new(): IFilterComp};
 
     filterFramework?: any;
 
     /** The filter params are specific to each filter! */
-    filterParams?: SetFilterParameters | TextAndNumberFilterParameters;
+    filterParams?: any;
 
     /** Rules for applying css classes */
     cellClassRules?: { [cssClassName: string]: (Function | string) };
