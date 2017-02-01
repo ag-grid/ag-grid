@@ -18,7 +18,8 @@ export interface IHeaderCompParams {
     enableSorting: boolean;
     enableMenu: boolean;
     showColumnMenu: (source:HTMLElement)=>void;
-    progressSort: (event:MouseEvent)=>void;
+    progressSort: (multiSort?: boolean)=>void;
+    setSort: (sort: string, multiSort?: boolean)=>void;
     eventService: EventService
 }
 
