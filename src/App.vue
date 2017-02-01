@@ -6,7 +6,8 @@
         <!--<editor-components-example></editor-components-example>-->
         <!--<floating-row-example></floating-row-example>-->
         <!--<full-width-row-example></full-width-row-example>-->
-        <grouped-row-example></grouped-row-example>
+        <!--<grouped-row-example></grouped-row-example>-->
+        <filter-example></filter-example>
     </div>
 </template>
 
@@ -23,6 +24,7 @@
     import FloatingRowExample from './floating-row-example/FloatingRowExample.vue'
     import FullWidthRowExample from './full-width-example/FullWidthExample.vue'
     import GroupedRowExample from './grouped-row-example/GroupedRowExample.vue'
+    import FilterExample from './filter-example/FilterExample.vue'
 
     export default {
         components: {
@@ -33,6 +35,7 @@
             'floating-row-example': FloatingRowExample,
             'full-width-row-example': FullWidthRowExample,
             'grouped-row-example': GroupedRowExample,
+            'filter-example': FilterExample,
         }
     }
 </script>

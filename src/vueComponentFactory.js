@@ -45,7 +45,6 @@ export class VueComponentFactory {
         class CellEditor {
             init(params) {
                 let details = {
-                    // parent: that.parent,
                     data: {
                         params: params
                     }
@@ -98,46 +97,58 @@ export class VueComponentFactory {
     }
 
     createFilterFromComponent(component) {
-        /*
-         class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilter {
-         init(params: IFilterParams){
-         super.init(params);
-         this._componentRef.changeDetectorRef.detectChanges();
-         }
+        let componentType = this.getComponentType(component);
+        if (!componentType) {
+            return;
+        }
 
-         isFilterActive() {
-         return this.component.isFilterActive();
-         }
+        class Filter {
+            init(params) {
+                let details = {
+                    data: {
+                        params: params
+                    }
+                };
+                this.component = new componentType(details);
+                this.component.$mount();
+            }
 
-         doesFilterPass(params: IDoesFilterPassParams) {
-         return this.component.doesFilterPass(params);
-         }
+            getGui() {
+                return this.component.$el;
+            }
 
-         getModel() {
-         return this.component.getModel();
-         }
+            destroy() {
+                this.component.$destroy();
+            }
 
-         setModel(model){
-         this.component.setModel(model);
-         }
+            isFilterActive() {
+                return this.component.isFilterActive();
+            }
 
-         afterGuiAttached(params: IAfterGuiAttachedParams){
-         if (this.component.afterGuiAttached) {
-         this.component.afterGuiAttached(params);
-         }
-         }
+            doesFilterPass(params) {
+                return this.component.doesFilterPass(params);
+            }
 
-         getFrameworkComponentInstance() {
-         return this._frameworkComponentInstance;
-         }
+            getModel() {
+                return this.component.getModel();
+            }
 
-         protected createComponent(): ComponentRef<AgFilterComponent> {
-         return that.createComponent(componentType,
-         viewContainerRef);
-         }
+            setModel(model) {
+                this.component.setModel(model);
+            }
 
-         }
-         */
+            afterGuiAttached(params) {
+                if (this.component.afterGuiAttached) {
+                    this.component.afterGuiAttached(params);
+                }
+            }
+
+            getFrameworkComponentInstance() {
+                return this.component;
+            }
+        }
+
+        return Filter;
     }
 
     getComponentType(component) {
