@@ -5,18 +5,24 @@
         <!--<rich-dynamic-components-example></rich-dynamic-components-example>-->
         <!--<editor-components-example></editor-components-example>-->
         <!--<floating-row-example></floating-row-example>-->
-        <full-width-row-example></full-width-row-example>
+        <!--<full-width-row-example></full-width-row-example>-->
+        <grouped-row-example></grouped-row-example>
     </div>
 </template>
 
 <script>
     import Vue from "vue";
+
+    // only needed if you're using enterprise features
+    import "ag-grid-enterprise/main";
+
     import RichGridExample from './rich-grid-example/RichGridExample.vue'
     import DynamicComponentExample from './dynamic-component-example/DynamicComponentExample.vue'
     import RichDynamicComponentExample from './rich-dynamic-component-example/RichDynamicComponentExample.vue'
     import EditorComponentExample from './editor-component-example/EditorComponentExample.vue'
     import FloatingRowExample from './floating-row-example/FloatingRowExample.vue'
     import FullWidthRowExample from './full-width-example/FullWidthExample.vue'
+    import GroupedRowExample from './grouped-row-example/GroupedRowExample.vue'
 
     export default {
         components: {
@@ -26,6 +32,7 @@
             'editor-components-example': EditorComponentExample,
             'floating-row-example': FloatingRowExample,
             'full-width-row-example': FullWidthRowExample,
+            'grouped-row-example': GroupedRowExample,
         }
     }
 </script>
