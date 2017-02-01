@@ -13,6 +13,9 @@ include '../documentation-main/documentation_header.php';
         </note>
         -->
 
+    IFilter is now IFilterComp
+
+
     <h2>Version 7.2.x</h2>
 
     <li>Enhancement: <a href="../javascript-grid-excel">Excel Export</a>.</li>
