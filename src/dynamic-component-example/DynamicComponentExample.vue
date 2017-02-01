@@ -28,10 +28,7 @@
             return {
                 gridOptions: null,
                 columnDefs: null,
-                rowData: null,
-                showGrid: false,
-                showToolPanel: false,
-                rowCount: null
+                rowData: null
             }
         },
         components: {
@@ -106,7 +103,6 @@
             this.gridOptions = {};
             this.createRowData();
             this.createColumnDefs();
-            this.showGrid = true;
         }
     }
 </script>

@@ -1,32 +1,56 @@
 import Vue from "vue";
 
 export default Vue.extend({
-    template: '<img width="20px" :src="imgForMood" />',
+    template: `
+        <div :ref="'container'" class="mood" tabindex="0" @keydown="onKeyDown">
+            <img src="images/smiley.png" @click="onClick(true)" :class="{selected : happy, default : !happy}">
+            <img src="images/smiley-sad.png" @click="onClick(false)" :class="{selected : !happy, default : happy}">
+        </div>`,
     data() {
         return {
-            mood: 'Happy',
+            happy: false,
             imgForMood: null
         }
     },
     methods: {
-        refresh(params)
-        {
-            this.params = params;
-            this.setMood(params);
-        }
-        ,
+        getValue() {
+            return this.happy ? "Happy" : "Sad";
+        },
 
-        setMood(params)
-        {
-            this.mood = params.value;
-            this.imgForMood = this.mood === 'Happy' ? '../images/smiley.png' : '../images/smiley-sad.png';
+        isPopup() {
+            return true;
+        },
+
+        setHappy(happy) {
+            this.happy = happy;
+        },
+
+        toggleMood() {
+            this.setHappy(!this.happy);
+        },
+
+        onClick(happy) {
+            this.setHappy(happy);
+            this.params.api.stopEditing();
+        },
+
+        onKeyDown(event) {
+            let key = event.which || event.keyCode;
+            if (key == 37 ||  // left
+                key == 39) {  // right
+                this.toggleMood();
+                event.stopPropagation();
+            }
         }
-    }
-    ,
-    created()
-    {
-        this.setMood(this.params);
+    },
+    created() {
+        this.setHappy(this.params.value === "Happy");
+    },
+    mounted() {
+        Vue.nextTick(() => {
+            this.$refs.container.focus();
+        });
     }
 })
-;
+
 

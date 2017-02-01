@@ -66,7 +66,6 @@
             this.gridOptions = {};
             this.createRowData();
             this.createColumnDefs();
-            this.showGrid = true;
         }
     }
 </script>

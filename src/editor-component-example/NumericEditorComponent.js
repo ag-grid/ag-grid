@@ -1,54 +1,62 @@
 import Vue from "vue";
 
 export default Vue.extend({
-    template: `
-        <div :ref="'container'" class="mood" tabindex="0" @keydown="onKeyDown">
-            <img src="images/smiley.png" @click="onClick(true)" :class="{selected : happy, default : !happy}">
-            <img src="images/smiley-sad.png" @click="onClick(false)" :class="{selected : !happy, default : happy}">
-        </div>`,
+    template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/> {{ value }}`,
     data() {
         return {
-            happy: false,
-            imgForMood: null
+            value: '',
+            cancelBeforeStart: true
         }
     },
     methods: {
         getValue() {
-            return this.happy ? "Happy" : "Sad";
+            return this.value;
         },
 
-        isPopup() {
-            return true;
+        isCancelBeforeStart() {
+            return this.cancelBeforeStart;
         },
 
-        setHappy(happy) {
-            this.happy = happy;
+        // will reject the number if it greater than 1,000,000
+        // not very practical, but demonstrates the method.
+        isCancelAfterEnd() {
+            return this.value > 1000000;
         },
 
-        toggleMood() {
-            this.setHappy(!this.happy);
-        },
-
-        onClick(happy) {
-            this.setHappy(happy);
-            this.params.api.stopEditing();
-        },
-
-        onKeyDown(event) {
-            let key = event.which || event.keyCode;
-            if (key == 37 ||  // left
-                key == 39) {  // right
-                this.toggleMood();
-                event.stopPropagation();
+        onKeyDown(event){
+            if (!this.isKeyPressedNumeric(event)) {
+                if (event.preventDefault) event.preventDefault();
             }
+        },
+
+        getCharCodeFromEvent(event) {
+            event = event || window.event;
+            return (typeof event.which == "undefined") ? event.keyCode : event.which;
+        },
+
+        isCharNumeric(charStr) {
+            return /\d/.test(charStr);
+        },
+
+        isKeyPressedNumeric(event) {
+            const charCode = this.getCharCodeFromEvent(event);
+            const charStr = String.fromCharCode(charCode);
+            return this.isCharNumeric(charStr);
         }
     },
     created() {
-        this.setHappy(this.params.value === "Happy");
+        this.value = this.params.value;
+
+        // only start edit if key pressed is a number, not a letter
+        this.cancelBeforeStart = this.params.charPress && ('1234567890'.indexOf(this.params.charPress) < 0);
     },
     mounted() {
         Vue.nextTick(() => {
-            this.$refs.container.focus();
+            // need to check if the input reference is still valid - if the edit was cancelled before it started there
+            // wont be an editor component anymore
+            if (this.$refs.input) {
+                this.$refs.input.focus();
+            }
         });
     }
 })

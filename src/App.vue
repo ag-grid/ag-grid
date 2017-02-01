@@ -2,7 +2,8 @@
     <div id="app">
         <!--<rich-grid-example></rich-grid-example>-->
         <!--<dynamic-components-example></dynamic-components-example>-->
-        <rich-dynamic-components-example></rich-dynamic-components-example>
+        <!--<rich-dynamic-components-example></rich-dynamic-components-example>-->
+        <editor-components-example></editor-components-example>
     </div>
 </template>
 
@@ -11,12 +12,14 @@
     import RichGridExample from './rich-grid-example/RichGridExample.vue'
     import DynamicComponentExample from './dynamic-component-example/DynamicComponentExample.vue'
     import RichDynamicComponentExample from './rich-dynamic-component-example/RichDynamicComponentExample.vue'
+    import EditorComponentExample from './editor-component-example/EditorComponentExample.vue'
 
     export default {
         components: {
             'rich-grid-example': RichGridExample,
             'dynamic-components-example': DynamicComponentExample,
-            'rich-dynamic-components-example': RichDynamicComponentExample
+            'rich-dynamic-components-example': RichDynamicComponentExample,
+            'editor-components-example': EditorComponentExample
         }
     }
 </script>
