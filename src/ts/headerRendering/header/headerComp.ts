@@ -9,13 +9,16 @@ import {SortController} from "../../sortController";
 import {TouchListener} from "../../widgets/touchListener";
 import {IComponent} from "../../interfaces/iComponent";
 import {SvgFactory} from "../../svgFactory";
-import {QuerySelector} from "../../widgets/componentAnnotations";
+import {EventService} from "../../eventService";
 
 export interface IHeaderCompParams {
     column: Column;
     displayName: string;
     enableSorting: boolean;
     enableMenu: boolean;
+    showColumnMenu: (source:HTMLElement)=>void;
+    progressSort: (event:MouseEvent)=>void;
+    eventService: EventService
 }
 
 export interface IHeader {
@@ -55,7 +58,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private eSortNone: HTMLElement;
 
     private params:IHeaderCompParams;
-
+    
     constructor() {
         super(HeaderComp.TEMPLATE);
     }

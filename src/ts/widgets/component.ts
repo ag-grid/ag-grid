@@ -9,7 +9,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
     private eGui: HTMLElement;
 
-    private childComponents: Component[] = [];
+    private childComponents: IComponent<any>[] = [];
 
     private annotatedEventListeners: any[] = [];
 
@@ -137,11 +137,11 @@ export class Component extends BeanStub implements IComponent<any> {
         return <HTMLInputElement> this.eGui.querySelector(cssSelector);
     }
 
-    public appendChild(newChild: Node|Component): void {
+    public appendChild(newChild: Node|IComponent<any>): void {
         if (_.isNodeOrElement(newChild)) {
             this.eGui.appendChild(<Node>newChild);
         } else {
-            var childComponent = <Component>newChild;
+            var childComponent = <IComponent<any>>newChild;
             this.eGui.appendChild(childComponent.getGui());
             this.childComponents.push(childComponent);
         }
