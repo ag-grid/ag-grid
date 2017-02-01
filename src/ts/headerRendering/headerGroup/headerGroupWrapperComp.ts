@@ -10,7 +10,7 @@ import {Autowired, PostConstruct, Context} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {HeaderGroupComp, IHeaderGroupCompParams, IHeaderGroupComp} from "./headerGroupComp";
+import {HeaderGroupComp, IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {IComponent} from "../../interfaces/iComponent";
 import {ColGroupDef} from "../../entities/colDef";
 
@@ -18,7 +18,7 @@ export class HeaderGroupWrapperComp extends Component {
 
     private static TEMPLATE =
         '<div class="ag-header-group-cell">' +
-        '  <div ref="agResize" class="ag-header-cell-resize"></div>' +
+          '<div ref="agResize" class="ag-header-cell-resize"></div>' +
         '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -65,10 +65,10 @@ export class HeaderGroupWrapperComp extends Component {
         this.addDestroyFunc( () => setLeftFeature.destroy() );
     }
 
-    private appendHeaderGroupComp(displayName: string): IComponent<IHeaderGroupCompParams> {
+    private appendHeaderGroupComp(displayName: string): IComponent<IHeaderGroupParams> {
         let headerComp = this.getHeaderGroupComponent();
 
-        let params = <IHeaderGroupCompParams> {
+        let params = <IHeaderGroupParams> {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: (expanded:boolean)=>{

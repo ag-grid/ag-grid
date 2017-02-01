@@ -15,7 +15,7 @@ import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 
 var svgFactory = SvgFactory.getInstance();
 
-export interface IHeaderGroupCompParams {
+export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
     displayName: string;
     setExpanded: (expanded:boolean)=>void
@@ -25,7 +25,7 @@ export interface IHeaderGroup {
 
 }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupCompParams> {
+export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {
 
 }
 
@@ -41,7 +41,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
           `<span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>` +
         `</div>`;
 
-    private params: IHeaderGroupCompParams;
+    private params: IHeaderGroupParams;
 
     @RefSelector('agOpened') private eOpenIcon: HTMLElement;
     @RefSelector('agClosed') private eCloseIcon: HTMLElement;
@@ -50,7 +50,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         super(HeaderGroupComp.TEMPLATE);
     }
 
-    public init(params: IHeaderGroupCompParams) {
+    public init(params: IHeaderGroupParams) {
         this.params = params;
 
         this.setupLabel();

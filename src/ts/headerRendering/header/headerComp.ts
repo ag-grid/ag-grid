@@ -157,8 +157,8 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.eLabel.addEventListener("click", (event:MouseEvent) => {
-                this.sortController.progressSort(this.params.column, event.shiftKey);
+            this.eLabel.addEventListener('click', (event:MouseEvent) => {
+                this.params.progressSort(event.shiftKey);
             });
         }
 
