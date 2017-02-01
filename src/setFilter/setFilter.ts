@@ -1,4 +1,4 @@
-import {IFilter, IFilterParams, IDoesFilterPassParams, Utils, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
+import {IFilterComp, IFilterParams, IDoesFilterPassParams, Utils, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
@@ -11,7 +11,7 @@ interface ISetFilterParams extends IFilterParams {
     newRowsAction: string;
 }
 
-export class SetFilter extends Component implements IFilter {
+export class SetFilter extends Component implements IFilterComp {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
