@@ -18,6 +18,7 @@ var svgFactory = SvgFactory.getInstance();
 export interface IHeaderGroupCompParams {
     columnGroup: ColumnGroup;
     displayName: string;
+    setExpanded: (expanded:boolean)=>void
 }
 
 export interface IHeaderGroup {
