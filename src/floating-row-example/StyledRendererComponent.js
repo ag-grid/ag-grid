@@ -18,5 +18,5 @@ export default Vue.extend({
         this.style = this.params.style;
     }
 })
-;
+
 
