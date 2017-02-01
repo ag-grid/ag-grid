@@ -54,10 +54,12 @@ MyHeaderComponent.prototype.init = function (agParams){
     }
 
     if (this.agParams.enableSorting){
-        this.onSortRequestedListener = this.onSortRequested.bind(this);
-        this.eSortDownButton.addEventListener('click', this.onSortRequestedListener);
-        this.eSortUpButton.addEventListener('click', this.onSortRequestedListener);
-        this.eSortRemoveButton.addEventListener('click', this.onSortRequestedListener);
+        this.onSortAscRequestedListener = this.onSortRequested.bind(this, 'asc');
+        this.eSortDownButton.addEventListener('click', this.onSortAscRequestedListener);
+        this.onSortDescRequestedListener = this.onSortRequested.bind(this, 'desc');
+        this.eSortUpButton.addEventListener('click', this.onSortDescRequestedListener);
+        this.onRemoveSortListener = this.onSortRequested.bind(this, '');
+        this.eSortRemoveButton.addEventListener('click', this.onRemoveSortListener);
 
 
         this.onSortChangedListener = this.onSortChanged.bind(this);
@@ -99,8 +101,8 @@ MyHeaderComponent.prototype.onMenuClick = function () {
     this.agParams.showColumnMenu (this.eMenuButton);
 };
 
-MyHeaderComponent.prototype.onSortRequested = function (event) {
-    this.agParams.progressSort (event.shiftKey);
+MyHeaderComponent.prototype.onSortRequested = function (order, event) {
+    this.agParams.setSort (order, event.shiftKey);
 };
 
 MyHeaderComponent.prototype.destroy = function () {
