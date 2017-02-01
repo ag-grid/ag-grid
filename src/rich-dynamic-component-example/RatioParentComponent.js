@@ -1,15 +1,10 @@
 import Vue from "vue";
+import RatioComponent from "./RatioComponent";
 
 export default Vue.extend({
-    template: "<span>{{ params.value | currency('EUR') }}</span>",
-    filters: {
-        currency(value, symbol) {
-            let result = value;
-            if(!isNaN(value)) {
-                result = value.toFixed(2);
-            }
-            return symbol + value;
-        }
+    template: '<span class="ratioParent" style="height:19px"><ag-ratio :topRatio="params.value.top" :bottomRatio="params.value.bottom"></ag-ratio></span>',
+    components: {
+        'ag-ratio': RatioComponent
     }
 });
 

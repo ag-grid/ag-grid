@@ -31,10 +31,10 @@
 
                 // generically look up the eventType
                 let emitter = this[eventType];
-                if (emitter && emitter instanceof Function) {
+                if (emitter) {
                     emitter(event);
                 } else {
-                    console.log('ag-Grid-vue: could not find event emitter for: ' + eventType);
+                    // the app isnt listening for this - ignore it
                 }
             }
         },
