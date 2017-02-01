@@ -2,7 +2,7 @@ import {ICellRenderer, ICellRendererFunc} from "./rendering/cellRenderers/iCellR
 import {ColDef} from "./entities/colDef";
 import {GridOptions} from "./entities/gridOptions";
 import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
-import {IFilter} from "./interfaces/iFilter";
+import {IFilterComp} from "./interfaces/iFilter";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDateComponent} from "./rendering/dateComponent";
 
@@ -24,7 +24,7 @@ export class BaseFrameworkFactory implements IFrameworkFactory {
         return colDef.cellEditor;
     }
 
-    public colDefFilter(colDef: ColDef): {new(): IFilter} | string {
+    public colDefFilter(colDef: ColDef): {new(): IFilterComp} | string {
         return colDef.filter;
     }
 

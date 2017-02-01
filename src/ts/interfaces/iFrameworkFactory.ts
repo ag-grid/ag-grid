@@ -2,7 +2,7 @@
 import {ColDef} from "../entities/colDef";
 import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
-import {IFilter} from "./iFilter";
+import {IFilter, IFilterComp} from "./iFilter";
 import {GridOptions} from "../entities/gridOptions";
 import {IDateComponent} from "../rendering/dateComponent";
 
@@ -14,7 +14,7 @@ export interface IFrameworkFactory {
 
     colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string;
 
-    colDefFilter(colDef: ColDef): {new(): IFilter} | string;
+    colDefFilter(colDef: ColDef): {new(): IFilterComp} | string;
 
     gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string;
 
