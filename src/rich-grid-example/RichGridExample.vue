@@ -110,7 +110,7 @@
             createRowData() {
                 const rowData = [];
 
-                for (let i = 0; i < 10000; i++) {
+                for (let i = 0; i < 2500; i++) {
                     const countryData = RefData.COUNTRIES[i % RefData.COUNTRIES.length];
                     rowData.push({
                         name: RefData.FIRST_NAMES[i % RefData.FIRST_NAMES.length] + ' ' + RefData.LAST_NAMES[i % RefData.LAST_NAMES.length],

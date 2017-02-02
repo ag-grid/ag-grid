@@ -1,13 +1,13 @@
 <template>
     <div id="app">
-        <!--<rich-grid-example></rich-grid-example>-->
-        <!--<dynamic-components-example></dynamic-components-example>-->
-        <!--<rich-dynamic-components-example></rich-dynamic-components-example>-->
-        <!--<editor-components-example></editor-components-example>-->
-        <!--<floating-row-example></floating-row-example>-->
-        <!--<full-width-row-example></full-width-row-example>-->
-        <!--<grouped-row-example></grouped-row-example>-->
-        <!--<filter-example></filter-example>-->
+        <rich-grid-example></rich-grid-example>
+        <dynamic-components-example></dynamic-components-example>
+        <rich-dynamic-components-example></rich-dynamic-components-example>
+        <editor-components-example></editor-components-example>
+        <floating-row-example></floating-row-example>
+        <full-width-row-example></full-width-row-example>
+        <grouped-row-example></grouped-row-example>
+        <filter-example></filter-example>
         <master-detail-example></master-detail-example>
     </div>
 </template>
@@ -15,6 +15,8 @@
 <script>
     import Vue from "vue";
 
+    import "../node_modules/ag-grid/dist/styles/ag-grid.css"
+    import "../node_modules/ag-grid/dist/styles/theme-fresh.css"
     // only needed if you're using enterprise features
     import "ag-grid-enterprise/main";
 
