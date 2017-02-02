@@ -120,7 +120,7 @@ export class Grid {
                 globalEventListener: params ? params.globalEventListener : null,
                 frameworkFactory: frameworkFactory
             },
-            beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+            beans: [rowModelClass, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
@@ -130,7 +130,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService],
+                ColumnHoverService, VMTurnService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],
