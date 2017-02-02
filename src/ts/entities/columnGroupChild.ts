@@ -8,6 +8,7 @@ export interface ColumnGroupChild extends IEventEmitter {
     getActualWidth(): number;
     getMinWidth(): number;
     getLeft(): number;
+    getOldLeft(): number;
     getDefinition(): AbstractColDef;
     getColumnGroupShow(): string;
     getParent(): ColumnGroupChild;

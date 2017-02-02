@@ -87,6 +87,7 @@ export class RenderedHeaderCell extends Component {
         this.setupWidth();
 
         var setLeftFeature = new SetLeftFeature(this.column, eGui);
+        this.context.wireBean(setLeftFeature);
         this.addDestroyFunc( ()=> setLeftFeature.destroy() );
     }
 

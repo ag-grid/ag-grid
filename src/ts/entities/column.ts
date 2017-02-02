@@ -67,6 +67,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     private visible: any;
     private pinned: string;
     private left: number;
+    private oldLeft: number;
     private aggFunc: string | IAggFunc;
     private sort: string;
     private sortedAt: number;
@@ -302,11 +303,16 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         return this.left;
     }
 
+    public getOldLeft(): number {
+        return this.oldLeft;
+    }
+
     public getRight(): number {
         return this.left + this.actualWidth;
     }
 
     public setLeft(left: number) {
+        this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
             this.eventService.dispatchEvent(Column.EVENT_LEFT_CHANGED);

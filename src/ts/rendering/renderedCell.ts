@@ -386,6 +386,7 @@ export class RenderedCell extends Component {
         // this.addSuppressShortcutKeyListenersWhileEditing();
 
         var setLeftFeature = new SetLeftFeature(this.column, this.eGridCell);
+        this.context.wireBean(setLeftFeature);
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 
         // only set tab index if cell selection is enabled

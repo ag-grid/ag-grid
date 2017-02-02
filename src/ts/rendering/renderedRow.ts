@@ -442,7 +442,6 @@ export class RenderedRow extends BeanStub {
             }
         });
 
-
         // remove old cells from gui, but we don't destroy them, we might use them again
         this.removeRenderedCells(cellsToRemove);
     }
