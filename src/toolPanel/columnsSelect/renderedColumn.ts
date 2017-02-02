@@ -23,9 +23,9 @@ export class RenderedColumn extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
-        '  <span class="ag-column-select-indent"></span>' +
-        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-        '  <span class="ag-column-select-label"></span>' +
+          '<span class="ag-column-select-indent"></span>' +
+          '<ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
+          '<span class="ag-column-select-label"></span>' +
         '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
