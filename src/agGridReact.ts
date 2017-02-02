@@ -1,12 +1,14 @@
 /// <reference path="../typings/tsd"/>
 
 import {ReactFrameworkFactory} from './reactFrameworkFactory';
+import {ReactFrameworkComponentWrapper} from "./ReactFrameworkComponentWrapper";
 
 var React = require('react');
 var ReactDOM = require('react-dom');
 var AgGrid = require('ag-grid');
 
 export var AgGridReact = React.createClass({
+
 
     render: function() {
         return React.DOM.div({
@@ -34,6 +36,8 @@ export var AgGridReact = React.createClass({
         var domNode = ReactDOM.findDOMNode(this);
 
         this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
+        AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
+
         new AgGrid.Grid(domNode, this.gridOptions, gridParams);
 
         this.api = this.gridOptions.api;

@@ -7,7 +7,7 @@ export class AgReactComponent {
     private eParentElement: HTMLElement;
     private componentRef: any;
 
-    private reactComponent: any;
+    reactComponent: any;
     private parentComponent: any;
 
     constructor(reactComponent: any, parentComponent?: any) {

@@ -1,9 +1,9 @@
 import {AgReactComponent} from "./agReactComponent";
-import {IFilter, IFilterParams} from "ag-grid";
+import {IFilterComp, IFilter, IFilterParams} from "ag-grid";
 var React = require('react');
 
 // wraps the provided React filter component
-export function reactFilterFactory(reactComponent: any, parentComponent?: any): {new(): IFilter} {
+export function reactFilterFactory(reactComponent: any, parentComponent?: any): {new(): IFilterComp} {
 
     class ReactFilter extends AgReactComponent implements IFilter {
 

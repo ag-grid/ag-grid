@@ -19,8 +19,7 @@ function tscTask() {
             experimentalDecorators: true,
             emitDecoratorMetadata: true,
             declarationFiles: true,
-            target: 'es5',
-            noImplicitAny: true
+            target: 'es5'
         }));
 
     return merge([
