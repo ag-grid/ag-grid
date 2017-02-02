@@ -1482,20 +1482,6 @@ export class GridPanel extends BeanStub {
         return newScrollPosition - oldScrollPosition;
     }
 
-    public turnOnAnimationForABit(): void {
-        if (this.gridOptionsWrapper.isSuppressColumnMoveAnimation()) {
-            return;
-        }
-        this.animationThreadCount++;
-        var animationThreadCountCopy = this.animationThreadCount;
-        _.addCssClass(this.eRoot, 'ag-column-moving');
-        setTimeout( ()=> {
-            if (this.animationThreadCount===animationThreadCountCopy) {
-                _.removeCssClass(this.eRoot, 'ag-column-moving');
-            }
-        }, 300);
-    }
-
     private addScrollListener() {
         // if printing, then no scrolling, so no point in listening for scroll events
         if (this.forPrint) {

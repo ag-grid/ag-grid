@@ -36,7 +36,7 @@ export class HeaderGroupWrapperComp extends Component {
     private groupWidthStart: number;
     private childrenWidthStarts: number[];
 
-    // the children can change, we keep destory functions related to listening to the children here
+    // the children can change, we keep destroy functions related to listening to the children here
     private childColumnsDestroyFuncs: Function[] = [];
 
     constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
@@ -62,6 +62,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupWidth();
 
         var setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui());
+        this.context.wireBean(setLeftFeature);
         this.addDestroyFunc( () => setLeftFeature.destroy() );
     }
 

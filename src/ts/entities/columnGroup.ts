@@ -33,6 +33,7 @@ export class ColumnGroup implements ColumnGroupChild {
 
     // private moving = false
     private left: number;
+    private oldLeft: number;
     private localEventService: EventService = new EventService();
 
     private parent: ColumnGroupChild;
@@ -92,7 +93,12 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.left;
     }
 
+    public getOldLeft(): number {
+        return this.oldLeft;
+    }
+
     public setLeft(left: number) {
+        this.oldLeft = left;
         if (this.left !== left) {
             this.left = left;
             this.localEventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);

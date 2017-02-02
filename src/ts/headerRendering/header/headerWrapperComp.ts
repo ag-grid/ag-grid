@@ -74,6 +74,7 @@ export class HeaderWrapperComp extends Component {
         this.onFilterChanged();
 
         var setLeftFeature = new SetLeftFeature(this.column, this.getGui());
+        this.context.wireBean(setLeftFeature);
         this.addDestroyFunc( ()=> setLeftFeature.destroy() );
 
         this.addAttributes();

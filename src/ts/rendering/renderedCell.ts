@@ -31,6 +31,7 @@ import {SetLeftFeature} from "./features/setLeftFeature";
 import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
 import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
+import {ColumnAnimationService} from "./columnAnimationService";
 
 export class RenderedCell extends Component {
 
@@ -45,6 +46,7 @@ export class RenderedCell extends Component {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -147,6 +149,12 @@ export class RenderedCell extends Component {
 
     public destroy(): void {
         super.destroy();
+
+        if (this.eParentRow) {
+            this.eParentRow.removeChild(this.getGui());
+            this.eParentRow = null;
+        }
+
         if (this.cellEditor && this.cellEditor.destroy) {
             this.cellEditor.destroy();
         }
@@ -386,6 +394,7 @@ export class RenderedCell extends Component {
         // this.addSuppressShortcutKeyListenersWhileEditing();
 
         var setLeftFeature = new SetLeftFeature(this.column, this.eGridCell);
+        this.context.wireBean(setLeftFeature);
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 
         // only set tab index if cell selection is enabled

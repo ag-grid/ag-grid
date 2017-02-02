@@ -416,6 +416,15 @@ ag-grid-ng2
 //    white-space: nowrap
     position relative // need at least some position for the cell height to work
 
+.ag-column-moving
+    .ag-cell
+        transition left 0.2s
+    .ag-header-cell
+        transition left 0.2s
+    .ag-header-group-cell
+        transition left 0.2s
+        transition width 0.2s
+
 .ag-column-drop
     width 100%
     box-sizing border-box

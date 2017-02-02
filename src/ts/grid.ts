@@ -53,6 +53,7 @@ import {XmlFactory} from "./xmlFactory";
 import {GridSerializer} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
 import {ColumnHoverService} from "./rendering/columnHoverService";
+import {ColumnAnimationService} from "./rendering/columnAnimationService";
 import {ComponentProvider} from "./componentProvider";
 
 export interface GridParams {
@@ -126,8 +127,8 @@ export class Grid {
                 globalEventListener: params ? params.globalEventListener : null,
                 frameworkFactory: frameworkFactory
             },
-            beans: [ComponentProvider, rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader,
-                FloatingRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
+            beans: [rowModelClass, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+                DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
                 GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
@@ -136,7 +137,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService],
+                ColumnHoverService, ColumnAnimationService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],
