@@ -1034,3 +1034,5 @@ export class NumberSequence {
         return valToReturn;
     }
 }
+
+export let _ = Utils;

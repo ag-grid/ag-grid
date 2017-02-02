@@ -5,6 +5,7 @@ import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Utils} from "../utils";
 import {IDateComponent, IDateComponentParams} from "../rendering/dateComponent";
+import {ComponentProvider} from "../componentProvider";
 
 export interface IDateFilterParams extends IFilterParams {
     comparator?: IDateComparatorFunc;
@@ -37,6 +38,9 @@ export class DateFilter extends Component implements IFilterComp {
 
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
+
+    @Autowired('componentProvider')
+    private componentProvider: ComponentProvider;
 
     @Autowired('context')
     private context: Context;
@@ -73,17 +77,13 @@ export class DateFilter extends Component implements IFilterComp {
             this.getGui().removeChild(this.eApplyPanel);
         }
 
-        let UserDateComponent = this.gridOptionsWrapper.getDateComponent();
-        let DateComponent = UserDateComponent ? UserDateComponent : DefaultDateComponent;
-        this.dateToComponent = new DateComponent();
-        this.dateFromComponent = new DateComponent();
-
         let dateComponentParams: IDateComponentParams = {
             onDateChanged: this.onDateChanged.bind(this)
         };
 
-        this.dateFromComponent.init(dateComponentParams);
-        this.dateToComponent.init(dateComponentParams);
+        this.dateToComponent = this.componentProvider.newDateComponent(dateComponentParams);
+        this.dateFromComponent = this.componentProvider.newDateComponent(dateComponentParams);
+
 
         this.addInDateComponents();
         this.setVisibilityOnDateToPanel();

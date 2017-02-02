@@ -5,7 +5,10 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     ProcessRowParams,
-    ProcessCellForExportParams, GetRowNodeIdFunc, NavigateToNextCellParams, TabToNextCellParams
+    ProcessCellForExportParams,
+    GetRowNodeIdFunc,
+    NavigateToNextCellParams,
+    TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
@@ -20,7 +23,6 @@ import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellR
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowControllers/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
-import {IDateComponent} from "./rendering/dateComponent";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -57,7 +59,6 @@ export class GridOptionsWrapper {
     private fullWidthCellRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
     private groupRowRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
     private groupRowInnerRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
-    private dateComponent : {new(): IDateComponent} ;
 
     private domDataKey = '__AG_'+Math.random().toString();
 
@@ -95,7 +96,6 @@ export class GridOptionsWrapper {
         this.fullWidthCellRenderer = this.frameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
         this.groupRowRenderer = this.frameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
         this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
-        this.dateComponent = this.frameworkFactory.dateComponent (this.gridOptions);
     }
 
     public getDomDataKey(): string {
@@ -179,7 +179,6 @@ export class GridOptionsWrapper {
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
     public getPaginationInitialRowCount(): number { return this.gridOptions.paginationInitialRowCount; }
 
-    public getDateComponent(): {new(): IDateComponent} { return this.dateComponent; }
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public isEnableRtl() { return isTrue(this.gridOptions.enableRtl); }
