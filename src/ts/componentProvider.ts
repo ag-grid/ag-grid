@@ -10,7 +10,8 @@ import {_} from "./utils";
 
 
 export interface ComponentConfig {
-    methodList:string[],
+    mandatoryMethodList:string[],
+    optionalMethodList:string[],
     defaultComponent:{new(params:any): IComponent<any>}
 }
 
@@ -20,7 +21,7 @@ export interface ComponentConfig {
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface FrameworkComponentWrapper {
-    <A extends IComponent<any> & B, B> (frameworkComponent:{new(params:any): B}, methodList:string[]):A
+    wrap <A extends IComponent<any>> (frameworkComponent:{new(): any}, methodList:string[]):A
 }
 
 
@@ -43,15 +44,18 @@ export class ComponentProvider {
     public postContruct (){
         this.allComponentConfig = {
             dateComponent: {
-                methodList: ['getDate', 'setDate'],
+                mandatoryMethodList: ['getDate', 'setDate'],
+                optionalMethodList: [],
                 defaultComponent: DefaultDateComponent
             },
             headerComponent: {
-                methodList: [],
+                mandatoryMethodList: [],
+                optionalMethodList: [],
                 defaultComponent: HeaderComp
             },
             headerGroupComponent: {
-                methodList: [],
+                mandatoryMethodList: [],
+                optionalMethodList: [],
                 defaultComponent: HeaderGroupComp
             }
         }
@@ -88,11 +92,10 @@ export class ComponentProvider {
 
 
         //Using framework component
-        return <A>this.frameworkComponentWrapper(FrameworkComponentRaw, thisComponentConfig.methodList);
+        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList);
     }
 
-    public createAgGridComponent<A extends IComponent<P> & B, B, P>
-    (holder:GridOptions | ColDef | ColGroupDef, componentName:string, agGridParams:P): A{
+    public createAgGridComponent<A extends IComponent<any>> (holder:GridOptions | ColDef | ColGroupDef, componentName:string, agGridParams:any): A{
         let component: A = <A>this.newAgGridComponent(holder, componentName);
         let customParams:any = (<any>holder)[componentName + "Params"];
         let finalParams:any = {};
