@@ -12,7 +12,7 @@
 <script>
     import Vue from "vue";
     import agGridComponent from '../agGridVue.vue'
-    import RatioParentComponent from './RatioParentComponent'
+    import RatioParentComponent from './RatioParentComponent.vue'
     import ClickableParentComponent from './ClickableParentComponent'
 
     export default {
@@ -70,26 +70,4 @@
     }
 </script>
 
-<style>
-    svg {
-        width:100%;
-        height:100%;
-        pointer-events: none;
-    }
 
-    .topBar {
-        fill: #ff9933;
-    }
-
-    .bottomBar {
-        fill: #6699ff;
-    }
-
-    .ratioParent {
-        display: block;
-        overflow:hidden;
-        border:1px solid #ccc;
-        border-radius:6px;
-        background: #fff;
-    }
-</style>

@@ -17,7 +17,6 @@ export default Vue.extend({
         'ag-clickable': ClickableComponent
     },
     created() {
-        console.log(this.params)
         this.cell = {row: this.params.value, col: this.params.colDef.headerName};
     }
 });
