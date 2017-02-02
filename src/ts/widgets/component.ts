@@ -179,7 +179,11 @@ export class Component extends BeanStub implements IComponent<any> {
     public addCssClass(className: string): void {
         _.addCssClass(this.getGui(), className);
     }
-    
+
+    public removeCssClass(className: string): void {
+        _.removeCssClass(this.getGui(), className);
+    }
+
     public getAttribute(key: string): string {
         var eGui = this.getGui();
         if (eGui) {
