@@ -202,9 +202,13 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private setupResize(): void {
-        if (!this.gridOptionsWrapper.isEnableColResize()) { return; }
-
         this.eHeaderCellResize = this.getRefElement('agResize');
+
+        if (!this.gridOptionsWrapper.isEnableColResize()) {
+            _.removeFromParent(this.eHeaderCellResize);
+            return;
+        }
+
         this.dragService.addDragHandling({
             eDraggableElement: this.eHeaderCellResize,
             eBody: this.eRoot,
