@@ -12,7 +12,7 @@
 <script>
     import Vue from "vue";
     import agGridComponent from '../agGridVue.vue'
-    import CurrencyComponent from './CurrencyComponent'
+    import CurrencyComponent from './CurrencyComponent.vue'
 
     let SquareComponent = Vue.extend({
         template: '<span>{{ valueSquared() }}</span>',
