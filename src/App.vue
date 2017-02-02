@@ -1,13 +1,14 @@
 <template>
     <div id="app">
-        <!--<rich-grid-example></rich-grid-example>-->
+        <rich-grid-example></rich-grid-example>
         <!--<dynamic-components-example></dynamic-components-example>-->
         <!--<rich-dynamic-components-example></rich-dynamic-components-example>-->
         <!--<editor-components-example></editor-components-example>-->
         <!--<floating-row-example></floating-row-example>-->
         <!--<full-width-row-example></full-width-row-example>-->
         <!--<grouped-row-example></grouped-row-example>-->
-        <filter-example></filter-example>
+        <!--<filter-example></filter-example>-->
+        <!--<master-detail-example></master-detail-example>-->
     </div>
 </template>
 
@@ -25,6 +26,7 @@
     import FullWidthRowExample from './full-width-example/FullWidthExample.vue'
     import GroupedRowExample from './grouped-row-example/GroupedRowExample.vue'
     import FilterExample from './filter-example/FilterExample.vue'
+    import MasterDetailExample from './master-detail-example/MasterDetailExample.vue'
 
     export default {
         components: {
@@ -36,6 +38,7 @@
             'full-width-row-example': FullWidthRowExample,
             'grouped-row-example': GroupedRowExample,
             'filter-example': FilterExample,
+            'MasterDetailExample': MasterDetailExample,
         }
     }
 </script>

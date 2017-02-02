@@ -3,7 +3,7 @@
         <h1>Rich Grid with Pure JavaScript</h1>
         <div style="padding: 4px;">
             <div style="float: right;">
-                <input @keyup="onQuickFilterChanged(event)" type="text" id="quickFilterInput"
+                <input @keyup="onQuickFilterChanged" type="text" id="quickFilterInput"
                        placeholder="Type text to filter..."/>
                 <button :disabled="!showGrid" @click="showGrid=false">Destroy Grid</button>
                 <button :disabled="showGrid" @click="showGrid=true">Create Grid</button>
@@ -31,7 +31,7 @@
             <div style="clear: both;"></div>
             <div style="padding: 4px;" class="toolbar">
                 <label>
-                    <input type="checkbox" @change="showToolPanel=event.target.checked"/>
+                    <input type="checkbox" v-model="showToolPanel"/>
                     Show Tool Panel
                 </label>
                 <button @click="createRowData()">Refresh Data</button>
@@ -224,7 +224,7 @@
 
             // taking out, as when we 'select all', it prints to much to the console!!
             onRowSelected(event) {
-                console.log('onRowSelected: ' + event.node.data.name);
+//                console.log('onRowSelected: ' + event.node.data.name);
             },
 
             onSelectionChanged() {
