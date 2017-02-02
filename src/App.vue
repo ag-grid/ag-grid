@@ -1,7 +1,7 @@
 <template>
     <div id="app">
-        <!--<rich-grid-example></rich-grid-example>-->
-        <dynamic-components-example></dynamic-components-example>
+        <rich-grid-example></rich-grid-example>
+        <!--<dynamic-components-example></dynamic-components-example>-->
         <!--<rich-dynamic-components-example></rich-dynamic-components-example>-->
         <!--<editor-components-example></editor-components-example>-->
         <!--<floating-row-example></floating-row-example>-->
