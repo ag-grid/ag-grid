@@ -20,6 +20,7 @@ import {defaultGroupComparator} from "../functions";
 import {Bean, Qualifier, Autowired, PostConstruct, Context, Optional} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {IAggFuncService} from "../interfaces/iAggFuncService";
+import {ColumnAnimationService} from "../rendering/columnAnimationService";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -184,6 +185,7 @@ export class ColumnController {
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
+    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
 
     // these are the columns provided by the client. this doesn't change, even if the
@@ -723,6 +725,7 @@ export class ColumnController {
     }
 
     public moveColumns(columnsToMoveKeys: (Column|ColDef|String)[], toIndex: number): void {
+        this.columnAnimationService.start();
 
         if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
             console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
@@ -736,8 +739,6 @@ export class ColumnController {
         var failedRules = !this.doesMovePassRules(columnsToMove, toIndex);
         if (failedRules) { return; }
 
-        this.gridPanel.turnOnAnimationForABit();
-
         _.moveInArray(this.gridColumns, columnsToMove, toIndex);
 
         this.updateDisplayedColumns();
@@ -749,6 +750,8 @@ export class ColumnController {
             event.withColumn(columnsToMove[0]);
         }
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_MOVED, event);
+
+        this.columnAnimationService.finish();
     }
 
     private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
@@ -911,13 +914,14 @@ export class ColumnController {
     }
 
     public setColumnsVisible(keys: (Column|ColDef|String)[], visible: boolean): void {
-        this.gridPanel.turnOnAnimationForABit();
+        this.columnAnimationService.start();
         this.actionOnGridColumns(keys, (column: Column): boolean => {
             column.setVisible(visible);
             return true;
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_VISIBLE).withVisible(visible);
         });
+        this.columnAnimationService.finish();
     }
 
     public setColumnPinned(key: Column|ColDef|String, pinned: string|boolean): void {
@@ -925,7 +929,8 @@ export class ColumnController {
     }
 
     public setColumnsPinned(keys: (Column|ColDef|String)[], pinned: string|boolean): void {
-        this.gridPanel.turnOnAnimationForABit();
+        this.columnAnimationService.start();
+
         var actualPinned: string;
         if (pinned === true || pinned === Column.PINNED_LEFT) {
             actualPinned = Column.PINNED_LEFT;
@@ -941,6 +946,8 @@ export class ColumnController {
         }, ()=> {
             return new ColumnChangeEvent(Events.EVENT_COLUMN_PINNED).withPinned(actualPinned);
         });
+
+        this.columnAnimationService.finish();
     }
 
     // does an action on a set of columns. provides common functionality for looking up the
@@ -1454,19 +1461,18 @@ export class ColumnController {
 
     // called by headerRenderer - when a header is opened or closed
     public setColumnGroupOpened(passedGroup: ColumnGroup|string, newValue: boolean, instanceId?:number): void {
+        this.columnAnimationService.start();
+
         var groupToUse: ColumnGroup = this.getColumnGroup(passedGroup, instanceId);
         if (!groupToUse) { return; }
         this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
         groupToUse.setExpanded(newValue);
-        // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
-        // the animation moves all the row the the right rather than to the left (ie it's the static
-        // columns that actually get their coordinates updated)
-        if (!this.gridOptionsWrapper.isEnableRtl()) {
-            this.gridPanel.turnOnAnimationForABit();
-        }
+
         this.updateGroupsAndDisplayedColumns();
         var event = new ColumnChangeEvent(Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_GROUP_OPENED, event);
+
+        this.columnAnimationService.finish();
     }
 
     // used by updateModel

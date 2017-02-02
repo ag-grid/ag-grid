@@ -5,7 +5,7 @@ import {Column} from "../../entities/column";
 import {BeanStub} from "../../context/beanStub";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {VMTurnService} from "../../misc/vmTurnService";
+import {ColumnAnimationService} from "../columnAnimationService";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -13,7 +13,7 @@ export class SetLeftFeature extends BeanStub {
     private eCell: HTMLElement;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('vmTurnService') private vmTurnService: VMTurnService;
+    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
 
     constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement) {
         super();
@@ -30,7 +30,7 @@ export class SetLeftFeature extends BeanStub {
     private setLeftFirstTime(): void {
         let suppressMoveAnimation = this.gridOptionsWrapper.isSuppressColumnMoveAnimation();
         let oldLeftExists = _.exists(this.columnOrGroup.getOldLeft());
-        let animateColumnMove = this.vmTurnService.isActive() && oldLeftExists && !suppressMoveAnimation;
+        let animateColumnMove = this.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
         } else {
@@ -42,7 +42,7 @@ export class SetLeftFeature extends BeanStub {
         let left = this.columnOrGroup.getLeft();
         let oldLeft = this.columnOrGroup.getOldLeft();
         this.setLeft(oldLeft);
-        this.vmTurnService.executeNextVMTurn( () => {
+        this.columnAnimationService.executeNextVMTurn( () => {
             this.setLeft(left);
         });
     }
