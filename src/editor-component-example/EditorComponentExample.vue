@@ -11,7 +11,7 @@
     import Vue from "vue";
     import agGridComponent from '../agGridVue.vue'
     import MoodRendererComponent from './MoodRendererComponent'
-    import MoodEditorComponent from './MoodEditorComponent'
+    import MoodEditorComponent from './MoodEditorComponent.vue'
     import NumericEditorComponent from './NumericEditorComponent'
 
     export default {
@@ -70,24 +70,3 @@
     }
 </script>
 
-<style>
-    .mood {
-        border-radius: 15px;
-        border: 1px solid grey;
-        background: #e6e6e6;
-        padding: 15px;
-        text-align: center;
-        display: inline-block;
-        outline: none
-    }
-
-    .default {
-        border: 1px solid transparent !important;
-        padding: 4px;
-    }
-
-    .selected {
-        border: 1px solid lightgreen !important;
-        padding: 4px;
-    }
-</style>
