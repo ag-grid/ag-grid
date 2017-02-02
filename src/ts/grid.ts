@@ -53,6 +53,7 @@ import {XmlFactory} from "./xmlFactory";
 import {GridSerializer} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
 import {ColumnHoverService} from "./rendering/columnHoverService";
+import {ComponentProvider} from "./componentProvider";
 
 export interface GridParams {
     // used by Web Components
@@ -118,8 +119,8 @@ export class Grid {
                 globalEventListener: params ? params.globalEventListener : null,
                 frameworkFactory: frameworkFactory
             },
-            beans: [rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
-                DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
+            beans: [ComponentProvider, rowModelClass, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader,
+                FloatingRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
                 GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
