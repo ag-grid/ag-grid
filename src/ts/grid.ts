@@ -73,6 +73,7 @@ export class Grid {
     private context: Context;
 
     private static enterpriseBeans: any[];
+    private static frameworkBeans: any[];
 
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -87,6 +88,12 @@ export class Grid {
 
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
         _.iterateObject(rowModelClasses, (key: string, value: any)=> Grid.RowModelClasses[key] = value );
+    }
+
+    public static setFrameworkBeans(frameworkBeans: any[]): void {
+        this.frameworkBeans = frameworkBeans;
+
+
     }
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
@@ -108,7 +115,7 @@ export class Grid {
         }
 
         this.context = new Context({
-            overrideBeans: Grid.enterpriseBeans,
+            overrideBeans: Grid.enterpriseBeans.concat(Grid.frameworkBeans),
             seed: {
                 enterprise: enterprise,
                 gridOptions: gridOptions,
