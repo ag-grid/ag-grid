@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, suppressMenu: true},
-    {headerName: "Age", field: "age", width: 90, suppressSorting: true, headerComponentParams : { menuIcon: 'fa-external-link'}},
-    {headerName: "Country", field: "country", width: 120, suppressMenu: true},
-    {headerName: "Year", field: "year", width: 90, suppressSorting: true},
-    {headerName: "Date", field: "date", width: 110, suppressMenu: true},
-    {headerName: "Sport", field: "sport", width: 110, suppressSorting: true},
-    {headerName: "Gold", field: "gold", width: 100, headerComponentParams : { menuIcon: 'fa-cog'}},
-    {headerName: "Silver", field: "silver", width: 100, suppressSorting: true},
-    {headerName: "Bronze", field: "bronze", width: 100, suppressMenu: true},
-    {headerName: "Total", field: "total", width: 100, suppressSorting: true}
+    {headerName: "Athlete", field: "athlete", suppressMenu: true},
+    {headerName: "Age", field: "age", suppressSorting: true, headerComponentParams : { menuIcon: 'fa-external-link'}},
+    {headerName: "Country", field: "country", suppressMenu: true},
+    {headerName: "Year", field: "year", suppressSorting: true},
+    {headerName: "Date", field: "date", suppressMenu: true},
+    {headerName: "Sport", field: "sport", suppressSorting: true},
+    {headerName: "Gold", field: "gold", headerComponentParams : { menuIcon: 'fa-cog'}},
+    {headerName: "Silver", field: "silver", suppressSorting: true},
+    {headerName: "Bronze", field: "bronze", suppressMenu: true},
+    {headerName: "Total", field: "total", suppressSorting: true}
 ];
 
 var gridOptions = {
@@ -19,6 +19,7 @@ var gridOptions = {
     enableColResize: true,
     suppressMenuHide: true,
     defaultColDef : {
+        width: 100,
         headerComponent : MyHeaderComponent,
         headerComponentParams : {
             menuIcon: 'fa-bars'
