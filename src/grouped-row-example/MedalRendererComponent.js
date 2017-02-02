@@ -10,8 +10,7 @@ export default Vue.extend({
             bronze: null
         }
     },
-    created()
-    {
+    created() {
         this.country = this.params.node.key;
         this.gold = this.params.data.gold;
         this.silver = this.params.data.silver;

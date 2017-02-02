@@ -3,12 +3,12 @@
         <!--<rich-grid-example></rich-grid-example>-->
         <!--<dynamic-components-example></dynamic-components-example>-->
         <!--<rich-dynamic-components-example></rich-dynamic-components-example>-->
-        <editor-components-example></editor-components-example>
+        <!--<editor-components-example></editor-components-example>-->
         <!--<floating-row-example></floating-row-example>-->
         <!--<full-width-row-example></full-width-row-example>-->
         <!--<grouped-row-example></grouped-row-example>-->
         <!--<filter-example></filter-example>-->
-        <!--<master-detail-example></master-detail-example>-->
+        <master-detail-example></master-detail-example>
     </div>
 </template>
 

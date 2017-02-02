@@ -18,7 +18,7 @@
 <script>
     import Vue from "vue";
     import agGridComponent from '../agGridVue.vue'
-    import DetailPanelComponent from './DetailPanelComponent'
+    import DetailPanelComponent from './DetailPanelComponent.vue'
 
     // a list of names we pick from when generating data
     const FIRST_NAMES = ['Sophia', 'Emma', 'Olivia', 'Isabella', 'Mia', 'Ava', 'Lily', 'Zoe', 'Emily', 'Chloe', 'Layla',
@@ -144,56 +144,3 @@
     }
 </script>
 
-<style>
-    .full-width-panel {
-        position: relative;
-        background: #fafafa;
-        height: 100%;
-        width: 100%;
-        padding: 5px;
-        box-sizing: border-box;
-        border-left: 2px solid grey;
-        border-bottom: 2px solid lightgray;
-        border-right: 2px solid lightgray;
-    }
-
-    .call-record-cell {
-        text-align: right;
-    }
-
-    .full-width-detail {
-        padding-top: 4px;
-    }
-
-    .full-width-details {
-        float: left;
-        padding: 5px;
-        margin: 5px;
-        width: 150px;
-    }
-
-    .full-width-grid {
-        margin-left: 150px;
-        padding-top: 25px;
-        box-sizing: border-box;
-        display: block;
-        height: 100%;
-    }
-
-    .full-width-grid-toolbar {
-        top: 4px;
-        left: 30px;
-        margin-left: 150px;
-        display: block;
-        position: absolute;
-    }
-
-    .full-width-phone-icon {
-        padding-right: 10px;
-    }
-
-    .full-width-search {
-        border: 1px solid #eee;
-        margin-left: 10px;
-    }
-</style>

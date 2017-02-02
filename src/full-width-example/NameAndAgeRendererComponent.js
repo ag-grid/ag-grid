@@ -7,8 +7,7 @@ export default Vue.extend({
             values: null
         }
     },
-    created()
-    {
+    created() {
         this.values = `Name: ${this.params.data.name}, Age: ${this.params.data.age}`;
     }
 })
