@@ -4,11 +4,11 @@ import {GridOptions} from "./entities/gridOptions";
 import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
 import {IFilterComp} from "./interfaces/iFilter";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
-import {IDateComponent} from "./rendering/dateComponent";
+import {IDateComp} from "./rendering/dateComponent";
 
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
 export class BaseFrameworkFactory implements IFrameworkFactory {
-    public dateComponent(gridOptions: GridOptions): {new():IDateComponent} {
+    public dateComponent(gridOptions: GridOptions): {new():IDateComp} {
         return gridOptions.dateComponent;
     }
 

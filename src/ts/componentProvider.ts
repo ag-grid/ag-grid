@@ -1,10 +1,10 @@
 import {Bean, Autowired, Optional, PostConstruct, Context} from "./context/context";
-import {IDateComponent, IDateComponentParams} from "./rendering/dateComponent";
+import {IDateComp, IDateParams} from "./rendering/dateComponent";
 import {GridOptions} from "./entities/gridOptions";
 import {IComponent} from "./interfaces/iComponent";
 import {ColDef, ColGroupDef} from "./entities/colDef";
-import {HeaderGroupComp, IHeaderGroupComp, IHeaderGroupCompParams} from "./headerRendering/headerGroup/headerGroupComp";
-import {HeaderComp, IHeaderComp, IHeaderCompParams} from "./headerRendering/header/headerComp";
+import {HeaderGroupComp, IHeaderGroupComp, IHeaderGroupParams} from "./headerRendering/headerGroup/headerGroupComp";
+import {HeaderComp, IHeaderComp, IHeaderParams} from "./headerRendering/header/headerComp";
 import {DefaultDateComponent} from "./filter/dateFilter";
 import {_} from "./utils";
 
@@ -57,7 +57,7 @@ export class ComponentProvider {
         }
     }
 
-    public createAgGridComponent<A extends IComponent<any> & B, B>
+    private newAgGridComponent<A extends IComponent<any> & B, B>
     (holder:GridOptions | ColDef | ColGroupDef, componentName:string): A{
         let thisComponentConfig: ComponentConfig= this.allComponentConfig[componentName];
         if (!thisComponentConfig){
@@ -91,9 +91,9 @@ export class ComponentProvider {
         return <A>this.frameworkComponentWrapper(FrameworkComponentRaw, thisComponentConfig.methodList);
     }
 
-    public createWireAndInitAgGridComponent<A extends IComponent<P> & B, B, P>
+    public createAgGridComponent<A extends IComponent<P> & B, B, P>
     (holder:GridOptions | ColDef | ColGroupDef, componentName:string, agGridParams:P): A{
-        let component: A = <A>this.createAgGridComponent(holder, componentName);
+        let component: A = <A>this.newAgGridComponent(holder, componentName);
         let customParams:any = (<any>holder)[componentName + "Params"];
         let finalParams:any = {};
         _.mergeDeep(finalParams, agGridParams);
@@ -104,15 +104,15 @@ export class ComponentProvider {
         return component;
     }
 
-    public newDateComponent (params: IDateComponentParams): IDateComponent{
-        return <IDateComponent>this.createWireAndInitAgGridComponent(this.gridOptions, "dateComponent", params);
+    public newDateComponent (params: IDateParams): IDateComp{
+        return <IDateComp>this.createAgGridComponent(this.gridOptions, "dateComponent", params);
     }
 
-    public newHeaderComponent (params:IHeaderCompParams): IHeaderComp{
-        return <IHeaderComp>this.createWireAndInitAgGridComponent(params.column.getColDef(), "headerComponent", params);
+    public newHeaderComponent (params:IHeaderParams): IHeaderComp{
+        return <IHeaderComp>this.createAgGridComponent(params.column.getColDef(), "headerComponent", params);
     }
 
-    public newHeaderGroupComponent (params:IHeaderGroupCompParams): IHeaderGroupComp{
-        return <IHeaderGroupComp>this.createWireAndInitAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", params);
+    public newHeaderGroupComponent (params:IHeaderGroupParams): IHeaderGroupComp{
+        return <IHeaderGroupComp>this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", params);
     }
 }

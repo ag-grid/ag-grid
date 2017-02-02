@@ -1,10 +1,9 @@
-
 import {Component} from "../../widgets/component";
 import {PostConstruct, Autowired, Context} from "../../context/context";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
-import {HeaderComp, IHeaderCompParams, IHeaderComp} from "./headerComp";
+import {IHeaderParams, IHeaderComp} from "./headerComp";
 import {ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
@@ -94,7 +93,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any> {
-        let params = <IHeaderCompParams> {
+        let params = <IHeaderParams> {
             column: this.column,
             displayName: displayName,
             enableSorting: enableSorting,
