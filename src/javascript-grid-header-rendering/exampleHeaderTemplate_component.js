@@ -26,15 +26,14 @@ var gridOptions = {
     }
 };
 
-function MyHeaderComponent(params) {
-    this.params = params;
+function MyHeaderComponent() {
 }
 
 MyHeaderComponent.prototype.init = function (agParams){
     this.agParams = agParams;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = ''+
-        '<div class="customHeaderMenuButton"><i class="fa ' + this.params.menuIcon + '"></i></div>' +
+        '<div class="customHeaderMenuButton"><i class="fa ' + this.agParams.menuIcon + '"></i></div>' +
         '<div class="customHeaderLabel">' + this.agParams.displayName + '</div>' +
         '<div class="customSortDownLabel inactive"><i class="fa fa-long-arrow-down"></i></div>' +
         '<div class="customSortUpLabel inactive"><i class="fa fa-long-arrow-up"></i></div>' +
