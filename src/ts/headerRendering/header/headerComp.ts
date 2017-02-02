@@ -11,7 +11,7 @@ import {SvgFactory} from "../../svgFactory";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
 
-export interface IHeaderCompParams {
+export interface IHeaderParams {
     column: Column;
     displayName: string;
     enableSorting: boolean;
@@ -26,7 +26,7 @@ export interface IHeader {
 
 }
 
-export interface IHeaderComp extends IHeader, IComponent<IHeaderCompParams> {
+export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 
 }
 
@@ -62,13 +62,13 @@ export class HeaderComp extends Component implements IHeaderComp {
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eText') private eText: HTMLElement;
 
-    private params:IHeaderCompParams;
+    private params:IHeaderParams;
     
     constructor() {
         super(HeaderComp.TEMPLATE);
     }
 
-    public init(params: IHeaderCompParams): void {
+    public init(params: IHeaderParams): void {
         this.params = params;
 
         this.setupTap();

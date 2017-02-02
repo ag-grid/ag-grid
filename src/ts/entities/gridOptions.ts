@@ -7,7 +7,7 @@ import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCell
 import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
 import {IDatasource} from "../rowControllers/iDatasource";
 import {GridCellDef} from "./gridCell";
-import {IDateComponent} from "../rendering/dateComponent";
+import {IDateComp} from "../rendering/dateComponent";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -168,7 +168,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // callbacks
-    dateComponent?:{new(): IDateComponent};
+    dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
     groupRowRendererFramework?: any;

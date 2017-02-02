@@ -4,7 +4,8 @@ import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Utils} from "../utils";
-import {IDateComponent, IDateComponentParams} from "../rendering/dateComponent";
+import {IDateParams, IDateComp} from "../rendering/dateComponent";
+import {ComponentProvider} from "../componentProvider";
 
 export interface IDateFilterParams extends IFilterParams {
     comparator?: IDateComparatorFunc;
@@ -32,11 +33,14 @@ export class DateFilter extends Component implements IFilterComp {
     private applyActive: boolean;
     private newRowsActionKeep: boolean;
 
-    private dateToComponent:IDateComponent;
-    private dateFromComponent:IDateComponent;
+    private dateToComponent:IDateComp;
+    private dateFromComponent:IDateComp;
 
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
+
+    @Autowired('componentProvider')
+    private componentProvider: ComponentProvider;
 
     @Autowired('context')
     private context: Context;
@@ -73,17 +77,13 @@ export class DateFilter extends Component implements IFilterComp {
             this.getGui().removeChild(this.eApplyPanel);
         }
 
-        let UserDateComponent = this.gridOptionsWrapper.getDateComponent();
-        let DateComponent = UserDateComponent ? UserDateComponent : DefaultDateComponent;
-        this.dateToComponent = new DateComponent();
-        this.dateFromComponent = new DateComponent();
-
-        let dateComponentParams: IDateComponentParams = {
+        let dateComponentParams: IDateParams = {
             onDateChanged: this.onDateChanged.bind(this)
         };
 
-        this.dateFromComponent.init(dateComponentParams);
-        this.dateToComponent.init(dateComponentParams);
+        this.dateToComponent = this.componentProvider.newDateComponent(dateComponentParams);
+        this.dateFromComponent = this.componentProvider.newDateComponent(dateComponentParams);
+
 
         this.addInDateComponents();
         this.setVisibilityOnDateToPanel();
@@ -272,7 +272,7 @@ export class DateFilter extends Component implements IFilterComp {
     }
 }
 
-export class DefaultDateComponent extends Component implements IDateComponent {
+export class DefaultDateComponent extends Component implements IDateComp {
 
     private eDateInput: HTMLInputElement;
     private listener:()=>void;
@@ -281,7 +281,7 @@ export class DefaultDateComponent extends Component implements IDateComponent {
         super(`<input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd">`);
     }
 
-    public init (params: IDateComponentParams):void{
+    public init (params: IDateParams):void{
         this.eDateInput = <HTMLInputElement> this.getGui();
 
         if (Utils.isBrowserChrome()){

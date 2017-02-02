@@ -1,10 +1,9 @@
-
 import {Component} from "../../widgets/component";
 import {PostConstruct, Autowired, Context} from "../../context/context";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
-import {HeaderComp, IHeaderCompParams, IHeaderComp} from "./headerComp";
+import {IHeaderParams, IHeaderComp} from "./headerComp";
 import {ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
@@ -15,6 +14,7 @@ import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridApi} from "../../gridApi";
 import {SortController} from "../../sortController";
 import {EventService} from "../../eventService";
+import {ComponentProvider} from "../../componentProvider";
 
 export class HeaderWrapperComp extends Component {
 
@@ -33,6 +33,7 @@ export class HeaderWrapperComp extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('componentProvider') private componentProvider: ComponentProvider;
 
     private column: Column;
     private eRoot: HTMLElement;
@@ -54,7 +55,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     @PostConstruct
-    private init(): void {
+    public init(): void {
         let displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
 
         let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
@@ -93,11 +94,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any> {
-        let CurrentHeaderComp: {new(params:any): IHeaderComp} = this.getHeaderComponent();
-        let customParams: any = this.column.getColDef().headerComponentParams;
-        let headerComp: IHeaderComp = new CurrentHeaderComp(customParams);
-
-        let params = <IHeaderCompParams> {
+        let params = <IHeaderParams> {
             column: this.column,
             displayName: displayName,
             enableSorting: enableSorting,
@@ -113,18 +110,11 @@ export class HeaderWrapperComp extends Component {
             },
             eventService: this.eventService
         };
+        let headerComp: IHeaderComp = this.componentProvider.newHeaderComponent(params);
 
-        this.context.wireBean(headerComp);
-        headerComp.init(params);
 
         this.appendChild(headerComp);
         return headerComp;
-    }
-
-    private getHeaderComponent():{new(): IHeaderComp} {
-        return this.getColumn().getColDef().headerComponent ?
-            this.getColumn().getColDef().headerComponent:
-            HeaderComp;
     }
 
     private onColumnMovingChanged(): void {
