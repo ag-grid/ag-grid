@@ -10,7 +10,7 @@ export class ColumnAnimationService {
     @Autowired('gridPanel') gridPanel: GridPanel;
 
     private executeNextFuncs: Function[] = [];
-    private waitThenExecuteFuncs: Function[] = [];
+    private executeLaterFuncs: Function[] = [];
 
     private active = false;
 
@@ -49,6 +49,14 @@ export class ColumnAnimationService {
         }
     }
 
+    public executeLaterVMTurn(func: Function): void {
+        if (this.active) {
+            this.executeLaterFuncs.push(func);
+        } else {
+            func();
+        }
+    }
+
     private ensureAnimationCssClassPresent(): void {
         // up the count, so we can tell if someone else has updated the count
         // by the time the 'wait' func executes
@@ -56,7 +64,7 @@ export class ColumnAnimationService {
         var animationThreadCountCopy = this.animationThreadCount;
         _.addCssClass(this.gridPanel.getRoot(), 'ag-column-moving');
 
-        this.waitThenExecuteFuncs.push(()=> {
+        this.executeLaterFuncs.push(()=> {
             // only remove the class if this thread was the last one to update it
             if (this.animationThreadCount===animationThreadCountCopy) {
                 _.removeCssClass(this.gridPanel.getRoot(), 'ag-column-moving');
@@ -69,8 +77,8 @@ export class ColumnAnimationService {
         let nowFuncs = this.executeNextFuncs;
         this.executeNextFuncs = [];
 
-        let waitFuncs = this.waitThenExecuteFuncs;
-        this.waitThenExecuteFuncs = [];
+        let waitFuncs = this.executeLaterFuncs;
+        this.executeLaterFuncs = [];
 
         if (nowFuncs.length===0 && waitFuncs.length===0) { return; }
 

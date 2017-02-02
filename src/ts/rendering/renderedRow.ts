@@ -17,6 +17,7 @@ import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
+import {ColumnAnimationService} from "./columnAnimationService";
 
 export class RenderedRow extends BeanStub {
 
@@ -24,6 +25,7 @@ export class RenderedRow extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('$compile') private $compile: any;
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('context') private context: Context;
@@ -125,30 +127,6 @@ export class RenderedRow extends BeanStub {
             this.setupNormalContainers(animateInRowTop);
         }
     }
-
-/*    private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
-        var eRow: HTMLElement = document.createElement('span');
-        // padding means we are on the right hand side of a pinned table, ie
-        // in the main body.
-        if (!padding) {
-
-            var params = this.createFullWidthParams(eRow, null);
-
-            var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
-
-            if (cellComponent && cellComponent.destroy) {
-                this.addDestroyFunc( () => cellComponent.destroy() );
-            }
-        }
-
-        if (this.rowNode.footer) {
-            _.addCssClass(eRow, 'ag-footer-cell-entire-row');
-        } else {
-            _.addCssClass(eRow, 'ag-group-cell-entire-row');
-        }
-
-        return eRow;
-    }*/
 
     // we clear so that the functions are never executed twice
     public getAndClearDelayedDestroyFunctions(): Function[] {
@@ -451,11 +429,6 @@ export class RenderedRow extends BeanStub {
             var renderedCell = this.renderedCells[key];
             // could be old reference, ie removed cell
             if (_.missing(renderedCell)) { return; }
-
-            if (renderedCell.getParentRow()) {
-                renderedCell.getParentRow().removeChild(renderedCell.getGui());
-                renderedCell.setParentRow(null);
-            }
 
             renderedCell.destroy();
             this.renderedCells[key] = null;
