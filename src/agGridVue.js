@@ -15,7 +15,7 @@ ComponentUtil.EVENTS.forEach((eventName) => {
     props.push(eventName);
 });
 
-export const AgGridVue = Vue.extend({
+export default Vue.extend({
     template: '<div></div>',
     props: props,
     data()  {
