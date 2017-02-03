@@ -31,7 +31,7 @@ import {VirtualPageRowModel} from "./rowControllers/virtualPagination/virtualPag
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
-import {IFilter} from "./interfaces/iFilter";
+import {IFilter, IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
 
@@ -406,7 +406,7 @@ export class GridApi {
         return this.getFilterInstance(colDef);
     }
 
-    public getFilterInstance(key: string|Column|ColDef): IFilter {
+    public getFilterInstance(key: string|Column|ColDef): IFilterComp {
         var column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.getFilterComponent(column);

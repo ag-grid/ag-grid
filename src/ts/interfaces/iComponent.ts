@@ -23,7 +23,5 @@ export interface IComponent<T> {
      after it is pressed. */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 
-    /** If using React or Angular 2, returns the underlying component instance, so you can call methods
-     * on it if you want. */
-    getFrameworkComponentInstance?(): any;
+
 }
