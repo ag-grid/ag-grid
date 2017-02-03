@@ -42,6 +42,14 @@
                 </a>
             </div>
             <div class="col-md-2" style="text-align: center;">
+                <a href="/best-vuejs-data-grid//">
+                    <div>
+                        <img inline src="images/vue_small.png" alt="Best VueJS Data Grid" title="Best VueJS Data Grid"/>
+                    </div>
+                    Angular 2
+                </a>
+            </div>
+            <div class="col-md-2" style="text-align: center;">
                 <a href="/best-web-component-data-grid/" alt="Best Web Component Data Grid" title="Best Web Component Data Grid">
                     <div>
                         <img inline src="images/webComponents_small.png"/>

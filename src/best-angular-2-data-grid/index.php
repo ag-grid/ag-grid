@@ -1,55 +1,53 @@
 <?php
 $key = "Getting Started ng2";
-$pageTitle = "Angular 2 Datagrid";
-$pageDescription = "Demonstrate the best Angular 2 datagrid. Shows and example of a datagrid for using with Angular 2.";
-$pageKeyboards = "Angular 2 Grid";
+$pageTitle = "Angular Datagrid";
+$pageDescription = "Demonstrate the best Angular datagrid. Shows and example of a datagrid for using with Angular.";
+$pageKeyboards = "Angular Grid";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h1>Implementing the Angular 2 Datagrid</h1>
+    <h1>Implementing the Angular Datagrid</h1>
 
     <p>
-        If you are building an Angular 2 application then you have the choice between A) using the plain JavaScript version
-        of ag-Grid or B) using the ag-Grid Angular 2 Component from the <a href="https://github.com/ceolter/ag-grid-ng2">
-            ag-grid-ng2</a> project. If you use the ag-Grid Angular 2 Component, then the grid's properties, events and API
-        will all tie in with the Angular 2 ecosystem. This will make your Angular 2 coding easier.
+        If you are building an Angular application then you have the choice between A) using the plain JavaScript version
+        of ag-Grid or B) using the ag-Grid Angular Component from the <a href="https://github.com/ceolter/ag-grid-ng2">
+            ag-grid-ng2</a> project. If you use the ag-Grid Angular Component, then the grid's properties, events and API
+        will all tie in with the Angular ecosystem. This will make your Angular coding easier.
     </p>
 
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
-        for feedback or issue reporting around ag-Grid's support for Angular 2.</note>
+        for feedback or issue reporting around ag-Grid's support for Angular.</note>
 
-    <h2>ag-Grid Angular 2 Features</h2>
+    <h2>ag-Grid Angular Features</h2>
 
     <p>
-        Every feature of ag-Grid is available when using the ag-Grid Angular 2 Component. The Angular 2 Component wraps
+        Every feature of ag-Grid is available when using the ag-Grid Angular Component. The Angular Component wraps
         the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
-        Angular 2 ag-Grid when it comes to features.
+        Angular ag-Grid when it comes to features.
     </p>
 
-    <h3>Angular 2 Full Example</h3>
+    <h3>Angular Full Example</h3>
 
     <p>
         This page goes through the
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a>
-        on Github. Because the example depends on SystemX and JSPM, it is not included in the
-        online documentation.
-    </p>
+        on Github.</p>
 
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
         feature set:
     <ul>
-        <li>A feature rich grid example, demonstrating many of ag-Grid's features using Angular 2 as a wrapper
+        <li>A feature rich grid example, demonstrating many of ag-Grid's features using Angular as a wrapper
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/rich-grid.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/rich-grid.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>An example using markup to create a grid
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/rich-grid-declarative.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/rich-grid-declarative.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Simple Example, using CellRenders created from Angular 2 Components
+        <li>A Simple Example, using CellRenders created from Angular Components
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-component.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-component.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Richer Example, using CellRenderers created from Angular 2 Components, with child components, and two-way binding (parent to child components events)
+        <li>A Richer Example, using CellRenderers created from Angular Components, with child components, and two-way binding (parent to child components events)
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-rich.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-rich.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features
@@ -64,10 +62,10 @@ include '../documentation-main/documentation_header.php';
         <li>A Group Row Inner Renderer Example
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/group-row-renderer.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/group-row-renderer.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Filter Example, with the filter written as a Angular 2 Component
+        <li>A Filter Example, with the filter written as a Angular Component
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/filter-component.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/filter-component.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Master/Detail Example, with both the Master and the Detail elements being Angular 2 Components
+        <li>A Master/Detail Example, with both the Master and the Detail elements being Angular Components
             <ul>
                 <li>Master: <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/masterdetail-master.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/masterdetail-master.component.html" target="_blank" class="fa fa-external-link"> html</a></li>
                 <li>Detail: <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/detail-panel.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/detail-panel.component.html" target="_blank" class="fa fa-external-link"> html</a></li>
@@ -81,7 +79,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         In your package.json file, specify dependency on ag-grid AND ag-grid-ng2.
         The ag-grid package contains the core ag-grid engine and the ag-grid-ng2
-        contains the Angular 2 component.
+        contains the Angular component.
         <pre>"dependencies": {
     ...
     "ag-grid": "7.2.x",
@@ -103,7 +101,7 @@ include '../documentation-main/documentation_header.php';
     <pre>@NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withComponents([...optional Angular 2 Components to be used in the grid....]]),
+        AgGridModule.withComponents([...optional Angular Components to be used in the grid....]]),
         ...
 })</pre>
 
@@ -116,16 +114,16 @@ include '../documentation-main/documentation_header.php';
 &lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
 </pre>
 
-    <h2>Configuring ag-Grid in Angular 2</h2>
+    <h2>Configuring ag-Grid in Angular</h2>
 
-    <p>You can configure the grid in the following ways through Angular 2:</p>
+    <p>You can configure the grid in the following ways through Angular:</p>
     <ul>
         <li><b>Events:</b> All data out of the grid comes through events. These use
-            Angular 2 event bindings eg <i>(modelUpdated)="onModelUpdated()"</i>.
+            Angular event bindings eg <i>(modelUpdated)="onModelUpdated()"</i>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
         </li>
-        <li><b>Properties:</b> All the data is provided to the grid as Angular 2
+        <li><b>Properties:</b> All the data is provided to the grid as Angular
             bindings. These are bound onto the ag-Grid properties bypassing the
             elements attributes. The values for the bindings come from the parent
             controller.
@@ -144,7 +142,7 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li><b>Changing Properties:</b> When a property changes value, AngularJS
             automatically passes the new value onto the grid. This is used in
-            the following locations:<br/>
+            the following locations in the "feature rich grid example" above:<br/>
             a) The 'quickFilter' on the top right updates the quick filter of
             the grid.
             b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
@@ -166,8 +164,8 @@ include '../documentation-main/documentation_header.php';
         environment its safer to on you cannot safely rely on <code>AfterViewInit</code> instead before using the API
     </note>
 
-    <h3>Providing Angular 2 Components to ag-Grid</h3>
-    <p>In order for ag-Grid to be able to use your Angular 2 Components, you need to provide them in the <strong>top level</strong> module:</p>
+    <h3>Providing Angular Components to ag-Grid</h3>
+    <p>In order for ag-Grid to be able to use your Angular Components, you need to provide them in the <strong>top level</strong> module:</p>
 <pre>
 @NgModule({
 imports: [
@@ -181,7 +179,7 @@ imports: [
             ...other components
 </pre>
 
-    <p>You can then use these components as editors, renderers or filters. For example, to use an Angular 2 Component as a Cell Renderer, you would do the following:</p>
+    <p>You can then use these components as editors, renderers or filters. For example, to use an Angular Component as a Cell Renderer, you would do the following:</p>
 <pre>
 let colDefs = [
     {
@@ -197,7 +195,7 @@ let colDefs = [
 </pre>
     <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
-        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular 2 Components in ag-Grid.</p>
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular Components in ag-Grid.</p>
 
     <p>
         The example has ag-Grid configured through the template in the following ways:
@@ -229,14 +227,14 @@ let colDefs = [
 &lt;/ag-grid-ng2></pre>
 
     <p>
-        The above is all you need to get started using ag-Grid in a Angular 2 application. Now would
+        The above is all you need to get started using ag-Grid in a Angular application. Now would
         be a good time to try it in a simple app and get some data displaying and practice with
         some of the grid settings before moving onto the advanced features of cellRendering
         and custom filtering.
     </p>
 
     <h3>Building & Building</h3>
-    <p>There are many ways to build and/or bundle an Angular 2 Application. We provide 3 full working examples using
+    <p>There are many ways to build and/or bundle an Angular Application. We provide 3 full working examples using
         either SystemJS, Webpack or Angular-CLI as part of the <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub.</p>
     <p>We document the main parts of these tools here, but please refer to the examples for more detail.</p>
 
@@ -252,10 +250,10 @@ let colDefs = [
         </li>
     </ul>
 
-    <h2>ag-Grid Angular 2 Examples</h2>
+    <h2>ag-Grid Angular Examples</h2>
     <h3>Example: Rich Grid without Components</h3>
     <p>
-        The example below shows a rich configuration of ag-Grid, with no Angular 2 Components.
+        The example below shows a rich configuration of ag-Grid, with no Angular Components.
     </p>
     <show-example example="../ng2-example/index.html?example=rich-grid"
                   jsfile="../ng2-example/app/rich-grid.component.ts"
@@ -338,24 +336,24 @@ private getCountryFilterParams():any {
             html="../ng2-example/app/rich-grid-declarative.component.html"
             exampleHeight="525px"></show-example>
 
-    <h2>Cell Rendering & Cell Editing using Angular 2</h2>
+    <h2>Cell Rendering & Cell Editing using Angular</h2>
 
     <p>
         It is possible to build
         <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
-        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular 2. Doing each of these
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular. Doing each of these
         is explained in the section on each.
     </p>
 
     <p>
-        Although it is possible to use Angular 2 for your customisations of ag-Grid, it is not necessary. The grid
-        will happily work with both Angular 2 and non-Angular 2 portions (eg cellRenderers in Angular 2 or normal JavaScript).
-        If you do use Angular 2, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
-        internal framework is already highly tuned to work incredibly fast and does not require Angular 2 or anything
-        else to make it faster. If you are looking for a lightning fast grid, even if you are using Angular 2 and
+        Although it is possible to use Angular for your customisations of ag-Grid, it is not necessary. The grid
+        will happily work with both Angular and non-Angular portions (eg cellRenderers in Angular or normal JavaScript).
+        If you do use Angular, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
+        internal framework is already highly tuned to work incredibly fast and does not require Angular or anything
+        else to make it faster. If you are looking for a lightning fast grid, even if you are using Angular and
         the ag-grid-ng2 component, consider using plain ag-Grid Components (as explained on the pages for
-        rendering etc) inside ag-Grid instead of creating Angular 2 counterparts.
+        rendering etc) inside ag-Grid instead of creating Angular counterparts.
     </p>
 
     <h2>Next Steps...</h2>

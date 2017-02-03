@@ -34,10 +34,18 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        Angular 2
+        Angular
     </h4>
     <p>
         Add callbacks to the gridOptions or set as AngularJS properties.
+    </p>
+
+    <h4>
+        <img src="/images/vue_large.png" height="20px"/>
+        VueJS
+    </h4>
+    <p>
+        Add callbacks to the gridOptions or set as VueJS properties.
     </p>
 
     <h4>

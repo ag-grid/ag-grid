@@ -686,7 +686,7 @@ gridOptions.api.onFilterChanged();
     <show-example example="exampleFilterModel"></show-example>
 
     <h2 id="reactFiltering">
-        <img src="../images/react.png" height="20px"/>
+        <img src="../images/react.png" style="width: 60px"/>
         React Filtering
     </h2>
 
@@ -818,34 +818,31 @@ laterOnInYourApplicationSomewhere() {
 }</pre>
     </p>
 
-<!--    <p>Again it's some magic to get them working. After this, all you need to do is follow the standard
-        ag-Grid custom filter interface in your React component. In other words, the methods in the ag-Grid
-        custom filter should appear on your components backing object. The example shows all of this in action.</p>
--->
+    <!-- start of angular -->
     <h2 id="ng2Filtering">
-        <img src="../images/angular2.png" height="20px"/>
-        Angular 2 Filtering
+        <img src="../images/angular2_large.png" style="width: 60px"/>
+        Angular Filtering
     </h2>
 
     <p>
-        It is possible to provide a Angular 2 Component filter for ag-Grid to use. All of the information above is
-        relevant to Angular 2 filters. This section explains how to apply this logic to your Angular 2 component.
+        It is possible to provide a Angular Component filter for ag-Grid to use. All of the information above is
+        relevant to Angular filters. This section explains how to apply this logic to your Angular component.
     </p>
 
     <p>
-        For an example on Angular 2 filtering, see the
+        For an example on Angular filtering, see the
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.</p>
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 Filter</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Filter</h3>
 
     <p>
         If you are using the ag-grid-ng2 component to create the ag-Grid instance,
         then you will have the option of additionally specifying the filters
-        as Angular 2 components.
+        as Angular components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your filter as a Angular 2 component</span>
+    <pre ng-non-bindable><span class="codeComment">// create your filter as a Angular component</span>
 @Component({
     selector: 'filter-cell',
     template: `
@@ -912,16 +909,16 @@ colDef = {
     ...
 }</pre>
 
-    <p>Your Angular 2 components need to implement <code>AgFilterComponent</code>. The ag Framework expects to find the
+    <p>Your Angular components need to implement <code>AgFilterComponent</code>. The ag Framework expects to find the
         mandatory methods on the interface on the created component (and will call optional methods if they're present).</p>
 
     <p>
         By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
-        will know it's a Angular 2 component, based on the fact that you are using the Angular 2 version of
+        will know it's a Angular component, based on the fact that you are using the Angular version of
         ag-Grid.
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Params</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Params</h3>
 
     <p>The ag Framework expects to find the <code>agInit</code> (on the <code>AgFilterComponent</code> interface) method on the created component, and uses it to supply the 'filter params'.</p>
 
@@ -932,31 +929,31 @@ agInit(params:IFilterParams):void {
 }</pre>
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Methods / Lifecycle</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the IFilter interface described above are applicable
-        to the Angular 2 Component with the following exceptions:
+        to the Angular Component with the following exceptions:
     <ul>
         <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
-        <li><i>destroy()</i> is not used. Instead implement the Angular 2<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
+        <li><i>destroy()</i> is not used. Instead implement the Angular<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
             any cleanup you need to do.</li>
-        <li><i>getGui()</i> is not used. Angular 2 will provide the Gui via the supplied template.</li>
+        <li><i>getGui()</i> is not used. Angular will provide the Gui via the supplied template.</li>
     </ul>
 
     <p>
         After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
-        same so put them directly onto your Angular 2 Component.
+        same so put them directly onto your Angular Component.
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Accessing the Angular 2 Component Instance</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Accessing the Angular Component Instance</h3>
 
     <p>
         ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
-        method. If your component is a Angular 2 component, then this will give you a reference to the ag-Grid's
-        Component which wraps your Angular 2 Component. Just like Russian Dolls. To get to the wrapped Angular 2 instance
+        method. If your component is a Angular component, then this will give you a reference to the ag-Grid's
+        Component which wraps your Angular Component. Just like Russian Dolls. To get to the wrapped Angular instance
         of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <pre><span class="codeComment">// lets assume a Angular 2 component as follows</span>
+        <pre><span class="codeComment">// lets assume a Angular component as follows</span>
 @Component({
     selector: 'filter-cell',
     template: `
@@ -979,7 +976,7 @@ laterOnInYourApplicationSomewhere() {
     <span class="codeComment">// get reference to the ag-Grid Filter component</span>
     let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
 
-    <span class="codeComment">// get Angular 2 instance from the ag-Grid instance</span>
+    <span class="codeComment">// get Angular instance from the ag-Grid instance</span>
     let ng2FilterInstance = agGridFilter.getFrameworkComponentInstance();
 
     <span class="codeComment">// now were sucking diesel!!!</span>
@@ -987,16 +984,200 @@ laterOnInYourApplicationSomewhere() {
 }</pre>
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Example: Filtering using Angular 2 Components</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Example: Filtering using Angular Components</h3>
     <p>
-        Using Angular 2 Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
+        Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
     <show-example example="../ng2-example/index.html?example=filter-component"
                   jsfile="../ng2-example/app/filter-component.component.ts"
                   html="../ng2-example/app/filter-component.component.html"></show-example>
 
+    <!-- start of vue -->
+    <h2 id="vueFiltering">
+        <img src="../images/vue_large.png" style="width: 60px"/>
+        VueJS Filtering
+    </h2>
+
+    <p>
+        It is possible to provide a VueJS Component filter for ag-Grid to use. All of the information above is
+        relevant to VueJS filters. This section explains how to apply this logic to your VueJS component.
+    </p>
+
+    <p>
+        For an example on VueJS filtering, see the
+        <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on Github.</p>
+    </p>
+
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS Filter</h3>
+
+    <p>
+        If you are using the ag-grid-vue component to create the ag-Grid instance,
+        then you will have the option of additionally specifying the filters
+        as VueJS components.
+    </p>
+
+<p>A VueJS component can be defined in a few different ways (please see <a href="/best-vuejs-data-grid#define_component">
+        Defining VueJS Components</a> for all the options), but in this example we're going to define our renderer as a Single File Component:</p>
+
+
+<pre ng-non-bindable><span class="codeComment">// create your filter as Filter Component</span>
+import Vue from "vue";
+
+export default Vue.extend({
+    template: `&lt;input style="height: 20px" :ref="'input'" v-model="text"&gt;`,
+    data() {
+        return {
+            text: '',
+            valueGetter: null
+        }
+    },
+    methods: {
+        isFilterActive() {
+            console.log("isactive");
+            return this.text !== null && this.text !== undefined && this.text !== '';
+        },
+
+        doesFilterPass(params){
+            console.log("filterpass");
+            return !this.text || this.text.toLowerCase()
+                    .split(" ")
+                    .every((filterWord) => {
+                        return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+                    });
+        },
+
+        getModel() {
+            return {value: this.text};
+        },
+
+        setModel(model) {
+            this.text = model.value;
+        },
+
+        afterGuiAttached() {
+            this.$refs.input.focus();
+        },
+
+        componentMethod(message) {
+            alert(`Alert from PartialMatchFilterComponent ${message}`);
+        },
+    },
+    watch: {
+        'text': function(val, oldVal) {
+            if (val !== oldVal) {
+                this.params.filterChangedCallback();
+            }
+        }
+    },
+    created()
+    {
+        this.valueGetter = this.params.valueGetter;
+    }
+})
+
+<span class="codeComment">// then reference the Component in your colDef like this</span>
+colDef = {
+    <span class="codeComment">// we use cellRendererFramework instead of cellRenderer </span>
+    filterFramework: PartialMatchFilterComponent,
+
+    <span class="codeComment">// specify all the other fields as normal</span>
+    headerName: "Filter Component",
+    field: "name",
+    width: 400
+    ...
+}
+</pre>
+
+    <p>
+        By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
+        will know it's a VueJS component, based on the fact that you are using the VueJS version of
+        ag-Grid.
+    </p>
+
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Params</h3>
+
+<p>The 'filter params'  will be made available implicitly in a data value names <code>params</code>. This value will be available to
+    you from the <code>created</code> VueJS lifecycle hook.</p>
+
+<p>You can think of this as you having defined the following:</p>
+<pre>
+export default {
+    data () {
+        return {
+            params: null
+        }
+    },
+    ...
+</pre>
+
+    <p>but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.</p>
+
+    </p>
+
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
+
+    <p>
+        All of the methods in the IFilter interface described above are applicable
+        to the VueJS Component with the following exceptions:
+    <ul>
+        <li><i>init()</i> is not used. The cells value is made available implicitly via a data field called <code>params</code>.</li>
+        <li><i>getGui()</i> is not used. VueJS will provide the Gui via the supplied template.</li>
+    </ul>
+
+    <p>
+        After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
+        same so put them directly onto your VueJS Component.
+    </p>
+
+<!--    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Accessing the VueJS Component Instance</h3>-->
+<!---->
+<!--    <p>-->
+<!--        ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>-->
+<!--        method. If your component is a VueJS component, then this will give you a reference to the ag-Grid's-->
+<!--        Component which wraps your VueJS Component. Just like Russian Dolls. To get to the wrapped VueJS instance-->
+<!--        of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:-->
+<!--        <pre><span class="codeComment">// lets assume a VueJS component as follows</span>-->
+<!--@Component({-->
+<!--    selector: 'filter-cell',-->
+<!--    template: `-->
+<!--        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">-->
+<!--    `-->
+<!--})-->
+<!--class PartialMatchFilterComponent implements AgFilterComponent {-->
+<!---->
+<!--    ... <span class="codeComment">// standard filter methods hidden</span>-->
+<!---->
+<!--    <span class="codeComment">// put a custom method on the filter</span>-->
+<!--    myMethod() {-->
+<!--        <span class="codeComment">// does something</span>-->
+<!--    }-->
+<!--}-->
+<!---->
+<!--<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>-->
+<!--laterOnInYourApplicationSomewhere() {-->
+<!---->
+<!--    <span class="codeComment">// get reference to the ag-Grid Filter component</span>-->
+<!--    let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>-->
+<!---->
+<!--    <span class="codeComment">// get VueJS instance from the ag-Grid instance</span>-->
+<!--    let vueFilterInstance = agGridFilter.getFrameworkComponentInstance();-->
+<!---->
+<!--    <span class="codeComment">// now were sucking diesel!!!</span>-->
+<!--    vueFilterInstance.myMethod();-->
+<!--}</pre>-->
+<!--    </p>-->
+
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Example: Filtering using VueJS Components</h3>
+    <p>
+        Using VueJS Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
+    </p>
+    <show-example url="../vue-examples/#/filter"
+                  jsfile="../vue-examples/src/filter-example/FilterExample.vue"
+                  exampleHeight="525px"></show-example>
+
+    <!-- start of aurelia -->
     <h2 id="aureliaFiltering">
-        <img src="../images/aurelia.png" height="20px"/>
+        <img src="../images/aurelia.png" style="width: 60px"/>
         Aurelia Filtering
     </h2>
 

@@ -10,6 +10,7 @@ include('../includes/mediaHeader.php');
 <link inline rel="stylesheet" href="../documentation-main/documentation.css">
 <script src="../documentation-main/documentation.js"></script>
 
+
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
         <h1><img src="../images/webpack_large.png"/> Webpack Tutorial: Understanding How it Works</h1>
@@ -820,7 +821,7 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 
         <p>We've achieved all this and we've only just scratched the surface of what Webpack can do. We can minify &
             uglify code, split code
-            into cache busting filename, process TypeScript and Angular 2+ - there are so many options!</p>
+            into cache busting filename, process TypeScript and Angular - there are so many options!</p>
 
         <p>Give Webpack a go - I'm sure you'll find it an indispensable tool in your developer toolkit.</p>
 

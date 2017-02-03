@@ -34,10 +34,14 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        Angular 2
+        Angular
+    </h4>
+    <h4>
+        <img src="/images/vue_large.png" height="20px"/>
+        VueJS
     </h4>
     <p>
-        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or Angular 2 bound properties.
+        Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound properties.
     </p>
 
     <h4>

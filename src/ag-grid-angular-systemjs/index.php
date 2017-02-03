@@ -1,14 +1,14 @@
 <?php
 $key = "Angular SystemJS";
-$pageTitle = "Angular 2 Datagrid using SystemJS";
-$pageDescription = "Demonstrate the best Angular 2 datagrid using SystemJS and SystemJS Builder";
-$pageKeyboards = "Angular 2 Grid SystemJS";
+$pageTitle = "Angular Datagrid using SystemJS";
+$pageDescription = "Demonstrate the best Angular datagrid using SystemJS and SystemJS Builder";
+$pageKeyboards = "Angular Grid SystemJS";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h1>Angular 2 - Building with SystemJS</h1>
+    <h1>Angular - Building with SystemJS</h1>
 
     <p>We document the main steps required when using SystemJS and SystemJS-Builder below, but please refer to
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub for a full working example of this.</p>
@@ -118,7 +118,7 @@ System.config({
 </pre>
 
     <p>
-        All the above items are specific to either Angular 2, SystemJS or SystemJS Builder. The above is intended to point
+        All the above items are specific to either Angular, SystemJS or SystemJS Builder. The above is intended to point
         you in the right direction. If you need more information on this, please see the documentation
         for those projects.
     </p>

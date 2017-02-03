@@ -32,11 +32,11 @@ include('../includes/mediaHeader.php');
 
         <p>
             Being framework agnostic allows you to choose your framework and datagrid separately. It also reduces the work
-            required when you move frameworks (e.g. moving from Angular 1 to Angular 2, or React to Aurelia etc.).
+            required when you move frameworks (e.g. moving from Angular 1 to Angular, VueJS or React to Aurelia etc.).
         </p>
 
         <p>
-            If you choose a datagrid that is not framework agnostic (e.g. written using Angular 2) then you have locked
+            If you choose a datagrid that is not framework agnostic (e.g. written using Angular) then you have locked
             into that framework. If you select a datagrid you should not be locked into a framework.
         </p>
 

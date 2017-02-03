@@ -72,7 +72,16 @@ include '../documentation-main/documentation_header.php';
     </h4>
     <p>
         Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-        use columnApi directly on the Angular 2 grid component.
+        use columnApi directly on the Angular grid component.
+    </p>
+
+    <h4>
+        <img src="/images/vue_large.png" height="20px"/>
+        VueJS
+    </h4>
+    <p>
+        Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+        use columnApi directly on the VueJS grid component.
     </p>
 
     <h4>

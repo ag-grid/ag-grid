@@ -44,12 +44,22 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        Angular 2
+        Angular
     </h4>
     <p>
         Add the relevant onXXX() method to the gridOptions or register a method
         via api.addEventListener(eventName, handler). You can also register events
-        using Angular 2 event binding eg <i>(event-name)="myEventHandler"</i>.
+        using Angular event binding eg <i>(event-name)="myEventHandler"</i>.
+    </p>
+
+    <h4>
+        <img src="/images/vue_large.png" height="20px"/>
+        VueJS
+    </h4>
+    <p>
+        Add the relevant onXXX() method to the gridOptions or register a method
+        via api.addEventListener(eventName, handler). You can also register events
+        using VueJS event binding eg <i>:event-name="myEventHandler"</i>.
     </p>
 
     <h4>

@@ -36,11 +36,20 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        Angular 2
+        Angular
     </h4>
     <p>
         Use api placed inside gridOptions by the grid during initialisation. You can also
-        use api directly on the AngularJ 2 grid component.
+        use api directly on the Angular grid component.
+    </p>
+
+    <h4>
+        <img src="/images/vue_large.png" height="20px"/>
+        VueJS
+    </h4>
+    <p>
+        Use api placed inside gridOptions by the grid during initialisation. You can also
+        use api directly on the VueJS grid component.
     </p>
 
     <h4>
