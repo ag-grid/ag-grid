@@ -463,20 +463,30 @@ export class RowRenderer {
 
         // timer.print('creating template');
 
-        // check that none of the rows to remove are editing, as if they are, we want to keep them,
-        // otherwise the user will loose the context of the edit
+        // check that none of the rows to remove are editing or focused as:
+        // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
+        //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
+        //    the edit is reset - so we want to keep it rendered.
+        // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
+        //    otherwise the user can range select and drag (with focus cell going out of the viewport)
+        //    and then ctrl+c, nothing will happen if cell is removed from dom.
         rowsToRemove = _.filter(rowsToRemove, indexStr => {
             let REMOVE_ROW : boolean = true;
             let KEEP_ROW : boolean = false;
             let renderedRow = this.renderedRows[indexStr];
+            let rowNode = renderedRow.getRowNode();
 
-            // if not editing, always remove the row
-            if (!renderedRow.isEditing()) { return REMOVE_ROW; }
+            let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
+            let rowIsEditing = renderedRow.isEditing();
 
-            // editing row, only remove if it is not rendered, eg filtered out or new data set.
+            let mightWantToKeepRow = rowHasFocus || rowIsEditing;
+
+            // if we deffo don't want to keep it,
+            if (!mightWantToKeepRow) { return REMOVE_ROW; }
+
+            // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
             // the reason we want to keep is if user is scrolling up and down, we don't want to loose
             // the context of the editing in process.
-            let rowNode = renderedRow.getRowNode();
             let rowNodePresent = this.rowModel.isRowPresent(rowNode);
             return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
         });

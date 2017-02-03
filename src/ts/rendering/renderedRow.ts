@@ -391,16 +391,26 @@ export class RenderedRow extends BeanStub {
         this.removeRenderedCells(allRenderedCellIds);
     }
 
+    private isCellInWrongRow(renderedCell: RenderedCell): boolean {
+        let column = renderedCell.getColumn();
+        let rowWeWant = this.getRowForColumn(column);
+
+        // if in wrong container, remove it
+        var oldRow = renderedCell.getParentRow();
+        return oldRow !== rowWeWant;
+    }
+
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
     private refreshCellsIntoRow() {
 
-        let columns = this.columnController.getAllDisplayedVirtualColumns();
+        let displayedVirtualColumns = this.columnController.getAllDisplayedVirtualColumns();
+        let displayedColumns = this.columnController.getAllDisplayedColumns();
 
         var cellsToRemove = Object.keys(this.renderedCells);
 
-        columns.forEach( (column: Column) => {
+        displayedVirtualColumns.forEach( (column: Column) => {
             var renderedCell = this.getOrCreateCell(column);
             this.ensureCellInCorrectRow(renderedCell);
             _.removeFromArray(cellsToRemove, column.getColId());
@@ -413,8 +423,21 @@ export class RenderedRow extends BeanStub {
             let KEEP_CELL : boolean = false;
             let renderedCell = this.renderedCells[indexStr];
 
-            if (_.exists(renderedCell)) {
-                return renderedCell.isEditing() ? KEEP_CELL : REMOVE_CELL;
+            if (!renderedCell) { return REMOVE_CELL; }
+
+            // always remove the cell if it's in the wrong pinned location
+            if (this.isCellInWrongRow(renderedCell)) { return REMOVE_CELL; }
+
+            // we want to try and keep editing and focused cells
+            let editing = renderedCell.isEditing();
+            let focused = this.focusedCellController.isCellFocused(renderedCell.getGridCell());
+
+            let mightWantToKeepCell = editing || focused;
+
+            if (mightWantToKeepCell) {
+                let column = renderedCell.getColumn();
+                let cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+                return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
             } else {
                 return REMOVE_CELL;
             }
@@ -435,16 +458,19 @@ export class RenderedRow extends BeanStub {
         });
     }
 
+    private getRowForColumn(column: Column): HTMLElement {
+        switch (column.getPinned()) {
+            case Column.PINNED_LEFT: return this.ePinnedLeftRow;
+            case Column.PINNED_RIGHT: return this.ePinnedRightRow;
+            default: return this.eBodyRow;
+        }
+    }
+
     private ensureCellInCorrectRow(renderedCell: RenderedCell): void {
         var eRowGui = renderedCell.getGui();
         var column = renderedCell.getColumn();
 
-        var rowWeWant: HTMLElement;
-        switch (column.getPinned()) {
-            case Column.PINNED_LEFT: rowWeWant = this.ePinnedLeftRow; break;
-            case Column.PINNED_RIGHT: rowWeWant = this.ePinnedRightRow; break;
-            default: rowWeWant = this.eBodyRow; break;
-        }
+        let rowWeWant = this.getRowForColumn(column);
 
         // if in wrong container, remove it
         var oldRow = renderedCell.getParentRow();
