@@ -144,6 +144,10 @@ export class FocusedCellController {
         return this.isRowFocused(rowNode.rowIndex, rowNode.floating);
     }
 
+    public isAnyCellFocused(): boolean {
+        return !!this.focusedCell;
+    }
+
     public isRowFocused(rowIndex: number, floating: string): boolean {
         if (_.missing(this.focusedCell)) { return false; }
         var floatingOrNull = _.makeNull(floating);
