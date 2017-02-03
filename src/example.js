@@ -291,6 +291,7 @@ var firstColumn = {
         headerName: 'Name',
         field: 'name',
         width: 200,
+        selectAllCheckbox: true,
         editable: true,
         enableRowGroup: true,
         // enablePivot: true,
