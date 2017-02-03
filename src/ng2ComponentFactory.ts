@@ -4,7 +4,7 @@ import {
     ICellEditor,
     MethodNotImplementedException,
     IDoesFilterPassParams,
-    IFilter,
+    IFilterComp,
     IFilterParams,
     IAfterGuiAttachedParams
 } from "ag-grid/main";
@@ -122,10 +122,10 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     private adaptComponentToFilter(componentType: { new(...args: any[]): AgFilterComponent; },
-                                   viewContainerRef: ViewContainerRef): {new(): IFilter} {
+                                   viewContainerRef: ViewContainerRef): {new(): IFilterComp} {
 
         let that = this;
-        class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilter {
+        class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilterComp {
             init(params: IFilterParams): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();

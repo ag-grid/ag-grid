@@ -1,5 +1,5 @@
 import {ViewContainerRef, Injectable} from "@angular/core";
-import {ICellRenderer, ICellEditor, MethodNotImplementedException, IFilter} from "ag-grid/main";
+import {ICellRenderer, ICellEditor, MethodNotImplementedException, IFilterComp} from "ag-grid/main";
 import {AgRendererComponent} from "./agRendererComponent";
 import {AgEditorComponent} from "./agEditorComponent";
 import {AgFilterComponent} from "./agFilterComponent";
@@ -25,7 +25,7 @@ export class BaseComponentFactory {
     }
 
     public createFilterFromComponent(componentType: { new(...args: any[]): AgFilterComponent; },
-                                     viewContainerRef: ViewContainerRef): {new(): IFilter} {
+                                     viewContainerRef: ViewContainerRef): {new(): IFilterComp} {
         console.log("Use AgGridModule.withComponents() if you wish to use dynamic components");
         throw new MethodNotImplementedException();
     }

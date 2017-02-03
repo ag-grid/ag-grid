@@ -4,8 +4,8 @@ import {
     ICellEditor,
     BaseFrameworkFactory,
     IFrameworkFactory,
-    IFilter,
     ICellRendererFunc,
+    IFilterComp,
     ColDef,
     GridOptions
 } from "ag-grid/main";
@@ -103,7 +103,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public colDefFilter(colDef: ColDef): {new (): IFilter;} | string {
+    public colDefFilter(colDef: ColDef): {new (): IFilterComp;} | string {
         if(colDef.filterFramework && colDef.filterFramework.component) {
             console.warn("colDef.filterFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
             colDef.filterFramework = colDef.filterFramework.component;
