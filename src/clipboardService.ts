@@ -120,7 +120,7 @@ export class ClipboardService implements IClipboardService {
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
 
-        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+        this.dispatchFlashCells(cellsToFlash);
     }
 
     private finishPasteFromClipboard(data: string) {
@@ -158,7 +158,7 @@ export class ClipboardService implements IClipboardService {
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
 
-        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+        this.dispatchFlashCells(cellsToFlash);
 
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     }
@@ -322,7 +322,7 @@ export class ClipboardService implements IClipboardService {
 
         this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
-        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+        this.dispatchFlashCells(cellsToFlash);
     }
 
     private copyFocusedCellToClipboard(): void {
@@ -345,7 +345,13 @@ export class ClipboardService implements IClipboardService {
         let cellId = focusedCell.createId();
         let cellsToFlash = {};
         (<any>cellsToFlash)[cellId] = true;
-        this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+        this.dispatchFlashCells(cellsToFlash);
+    }
+
+    private dispatchFlashCells(cellsToFlash: {}): void {
+        setTimeout( ()=> {
+            this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+        }, 0);
     }
 
     private processRangeCell(rowNode: RowNode, column: Column, value: any, func: (params: ProcessCellForExportParams) => void ): any {
