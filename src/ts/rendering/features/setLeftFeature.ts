@@ -52,10 +52,11 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private setLeft(value: number): void {
+        // if the value is null, then that means the column is no longer
+        // displayed. there is logic in the rendering to fade these columns
+        // out, so we don't try and change their left positions.
         if (_.exists(value)) {
             this.eCell.style.left = value + 'px';
-        } else {
-            this.eCell.style.left = '';
         }
     }
 
