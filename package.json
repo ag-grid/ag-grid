@@ -17,7 +17,8 @@
     "grid",
     "data",
     "table",
-    "vue"
+    "vue",
+    "vuejs"
   ],
   "peerDependencies": {
     "ag-grid": "7.2.x",
