@@ -135,7 +135,7 @@ import {Grid} from 'ag-grid/main';
     </ul>
     </p>
 
-    <p>Even if you are using React, Angular 1 or 2 or Web Components, the above is all you need to do.
+    <p>Even if you are using React, AngularJS, Angular, VueJS or Web Components, the above is all you need to do.
     Any grid you create will be an enterprise grid once you load the library.</p>
 
     <h4>CommonJS</h4>
@@ -159,13 +159,13 @@ import 'ag-grid-enterprise/main';
 
     <h2>Additional Framework Projects</h2>
 
-    <p>If using React or Angular 2, you will also need to reference the additional ag-Grid project for that
+    <p>If using React or Angular, you will also need to reference the additional ag-Grid project for that
     framework. Details are provided the documentation for those frameworks.</p>
 
     <h4>Bundled vs CommonJS & Frameworks Summary</h4>
 
     <p>
-        If you want to use the Angular 2 or React component of ag-Grid, then you have to
+        If you want to use the Angular or React component of ag-Grid, then you have to
         use the commonjs distribution (not the bundled). You will also need to include
         the additional ag-Grid project for these components.
     </p>
@@ -217,10 +217,16 @@ import 'ag-grid-enterprise/main';
             <td>-</td>
         </tr>
         <tr>
-            <td>Angular 2</td>
+            <td>Angular</td>
             <td>No</td>
             <td>Yes</td>
             <td>ag-grid-ng2</td>
+        </tr>
+        <tr>
+            <td>VueJS</td>
+            <td>No</td>
+            <td>Yes</td>
+            <td>ag-grid-vue</td>
         </tr>
         <tr>
             <td>Web Components</td>
@@ -245,7 +251,7 @@ import 'ag-grid-enterprise/main';
     <ul>
         <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> - Project on Github</li>
         <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project on Github</li>
-        <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular 2 & Typescript - with examples using SystemJS, Webpack and Angular-CLI</a> - Project on Github</li>
+        <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular & Typescript - with examples using SystemJS, Webpack and Angular-CLI</a> - Project on Github</li>
     </ul>
 
     <h3>Documentation Examples</h3>
@@ -272,7 +278,7 @@ import 'ag-grid-enterprise/main';
 
     <p>
         ag-Grid does not favor any framework. It's agnostic. It doesn't have a preference what framework you use. ag-Grid supports
-        5 flavours: React, AngularJS, Angular 2, Web Components and Native Javascript. Every ag-Grid
+        5 flavours: React, AngularJS, Angular, VueJS, Web Components and Native Javascript. Every ag-Grid
         feature is fully available in each framework, there is no bias. You choose which framework you
         want. So continue now to the section on the framework you are interested in, then jump to the
         details of how to use the grid.

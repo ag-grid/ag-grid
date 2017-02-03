@@ -106,11 +106,10 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } ?>
 
                 <?php if ($key == "Getting Started ng2") { ?>
-                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular 2+</span>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
                 <?php } else { ?>
-                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular 2+</a>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular</a>
                 <?php } ?>
-
 
                 <?php if ($key == "Angular SystemJS") { ?>
                     <span class="sidebarLinkSelected" style="padding-left: 40px">SystemJS</span>
@@ -128,6 +127,12 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected" style="padding-left: 40px">Angular CLI</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-angularcli/" style="padding-left: 40px">Angular CLI</a>
+                <?php } ?>
+
+                <?php if ($key == "Getting Started VueJS") { ?>
+                    <span class="sidebarLinkSelected childItem"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
+                <?php } else { ?>
+                    <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-vuejs-data-grid/"><img inline src="/images/vue_small.png"width="20px"> VueJS</a>
                 <?php } ?>
 
                 <?php if ($key == "Getting Started Web Components") { ?>

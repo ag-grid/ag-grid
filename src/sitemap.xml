@@ -286,6 +286,11 @@
    <priority>0.6400</priority>
 </url>
 <url>
+   <loc>https://www.ag-grid.com/best-vuejs-data-grid/</loc>
+   <changefreq>weekly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
    <loc>https://www.ag-grid.com/ag-grid-angular-systemjs/</loc>
    <changefreq>weekly</changefreq>
    <priority>0.6400</priority>

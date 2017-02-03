@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        Like cellRenderers, cellEditor components have nothing to do with Angular or React or any other
+        Like cellRenderers, cellEditor components have nothing to do with Angular, React or any other
         framework components. The are called components because they follow similar concepts. All you
         need to do to create an ag-Grid cellRenderer component is implement the required methods in
         your class.
@@ -692,28 +692,28 @@ colDef = {
 
     <h2 id="ng2CellEditing">
         <img src="../images/angular2_large.png" style="width: 60px;"/>
-        Angular 2 Cell Editing
+        Angular Cell Editing
     </h2>
 
     <p>
-        It is possible to provide a Angular 2 cellEditor for ag-Grid to use. All of the information above is
-        relevant to Angular 2 cellEditors. This section explains how to apply this logic to your Angular 2 component.
+        It is possible to provide a Angular cellEditor for ag-Grid to use. All of the information above is
+        relevant to Angular cellEditors. This section explains how to apply this logic to your Angular component.
     </p>
 
     <p>
-        For an example of Angular 2 cellEditing, see the
+        For an example of Angular cellEditing, see the
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 cellEditor</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular cellEditor</h3>
 
     <p>
         If you are using the ag-grid-ng2 component to create the ag-Grid instance,
         then you will have the option of additionally specifying the cellEditors
-        as Angular 2 components.
+        as Angular components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your cellEditor as a Angular 2 component</span>
+    <pre ng-non-bindable><span class="codeComment">// create your cellEditor as a Angular component</span>
 @Component({
     selector: 'editor-cell',
     template: `
@@ -794,72 +794,225 @@ colDef = {
         headerName: "Mood",
         field: "mood",
         <span class="codeComment">// instead of cellEditor we use cellEditorFramework</span>
-        cellEditorFramework: {
-            component: MoodEditorComponent,
-            moduleImports: [CommonModule]
-        },
-
+        cellEditorFramework: MoodEditorComponent,
         <span class="codeComment">// specify all the other fields as normal</span>
         editable: true,
         width: 150
     }
 }</pre>
 
-    <p>Your Angular 2 components need to implement <code>AgEditorComponent</code>.</p>
-
-    <p>When specifying Angular 2 Components you can optionally specify Component dependencies, as well as which modules you wish to import.
-        The latter is important if your component uses built in Angular 2 components (such as ngIf, ngStyle etc).</p>
-
-    <pre>
-cellEditorFramework: {
-    component: YourComponent,
-
-    <span class="codeComment">// optional - these go into module.declarations</span>
-    dependencies: [YourChildComponent1, YourChildComponent2],
-
-    <span class="codeComment">// optional - these go into module.imports</span>
-    moduleImports: [CommonModule, FormsModule]
-}
-</pre>
+    <p>Your Angular components need to implement <code>AgEditorComponent</code>.</p>
 
     <p>
         By using <i>colDef.cellEditorFramework</i> (instead of <i>colDef.cellEditor</i>) the grid
-        will know it's a Angular 2 component, based on the fact that you are using the Angular 2 version of
+        will know it's a Angular component, based on the fact that you are using the Angular version of
         ag-Grid.
     </p>
 
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Parameters</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Parameters</h3>
 
-    <p>Your Angular 2 components need to implement <code>AgEditorComponent</code>.
+    <p>Your Angular components need to implement <code>AgEditorComponent</code>.
         The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the cell <code>params</code>.</p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Methods / Lifecycle</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the ICellEditor interface described above are applicable
-        to the Angular 2 Component with the following exceptions:
+        to the Angular Component with the following exceptions:
     <ul>
         <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
-        <li><i>destroy()</i> is not used. Instead implement the Angular 2<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
+        <li><i>destroy()</i> is not used. Instead implement the Angular<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
             any cleanup you need to do.</li>
-        <li><i>getGui()</i> is not used. Instead do normal Angular 2 magic in your Component via the Angular 2 template.</li>
+        <li><i>getGui()</i> is not used. Instead do normal Angular magic in your Component via the Angular template.</li>
         <li><i>afterGuiAttached()</i> is not used. Instead implement <code>AfterViewInit</code> (<code>ngAfterViewInit</code>) for any post Gui setup (ie to focus on an element).</li>
     </ul>
 
     <p>
         All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
-        should be put onto your Angular 2 component and will work as normal.
+        should be put onto your Angular component and will work as normal.
     </p>
 
-    <h3>Example: Cell Editing using Angular 2 Components</h3>
+    <h3>Example: Cell Editing using Angular Components</h3>
     <p>
-        Using Angular 2 Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
+        Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
     <show-example example="../ng2-example/index.html?example=editor-component"
                   jsfile="../ng2-example/app/editor-component.component.ts"
                   html="../ng2-example/app/editor-component.component.html"></show-example>
     
+    
+    <!-- start of vue -->
+    <h2 id="vueCellEditing">
+        <img src="../images/vue_large.png" style="width: 60px;"/>
+        VueJS Cell Editing
+    </h2>
+
+    <p>
+        It is possible to provide a VueJS cellEditor for ag-Grid to use. All of the information above is
+        relevant to VueJS cellEditors. This section explains how to apply this logic to your VueJS component.
+    </p>
+
+    <p>
+        For an example of VueJS cellEditing, see the
+        <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
+    </p>
+
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS cellEditor</h3>
+
+    <p>
+        If you are using the ag-grid-vue component to create the ag-Grid instance,
+        then you will have the option of additionally specifying the cellEditors
+        as VueJS components.
+    </p>
+
+    <p>A VueJS component can be defined in a few different ways (please see <a href="/best-vuejs-data-grid#define_component">
+            Defining VueJS Components</a> for all the options), but in this example we're going to define our editor as a Single File Component:</p>
+
+<pre ng-non-bindable><span class="codeComment">// create your cellEditor as a VueJS component</span>
+&lt;template&gt;
+    &lt;div :ref="'container'" class="mood" tabindex="0" @keydown="onKeyDown"&gt;
+        &lt;img src="images/smiley.png" @click="onClick(true)" :class="{selected : happy, default : !happy}"&gt;
+        &lt;img src="images/smiley-sad.png" @click="onClick(false)" :class="{selected : !happy, default : happy}"&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    import Vue from "vue";
+
+    export default Vue.extend({
+        data() {
+            return {
+                happy: false,
+                imgForMood: null
+            }
+        },
+        methods: {
+            getValue() {
+                return this.happy ? "Happy" : "Sad";
+            },
+
+            isPopup() {
+                return true;
+            },
+
+            setHappy(happy) {
+                this.happy = happy;
+            },
+
+            toggleMood() {
+                this.setHappy(!this.happy);
+            },
+
+            onClick(happy) {
+                this.setHappy(happy);
+                this.params.api.stopEditing();
+            },
+
+            onKeyDown(event) {
+                let key = event.which || event.keyCode;
+                if (key == 37 ||  // left
+                    key == 39) {  // right
+                    this.toggleMood();
+                    event.stopPropagation();
+                }
+            }
+        },
+        created() {
+            this.setHappy(this.params.value === "Happy");
+        },
+        mounted() {
+            Vue.nextTick(() =&gt; {
+                this.$refs.container.focus();
+            });
+        }
+    })
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+    .mood {
+        border-radius: 15px;
+        border: 1px solid grey;
+        background: #e6e6e6;
+        padding: 15px;
+        text-align: center;
+        display: inline-block;
+        outline: none
+    }
+
+    .default {
+        border: 1px solid transparent !important;
+        padding: 4px;
+    }
+
+    .selected {
+        border: 1px solid lightgreen !important;
+        padding: 4px;
+    }
+&lt;/style&gt;
+
+<span class="codeComment">// then reference the Component in your colDef like this</span>
+this.colDefs = [
+    {
+        <span class="codeComment">// specify all the other fields as normal</span>
+        headerName: "Mood",
+        field: "mood",
+        editable: true,
+        width: 250,
+        <span class="codeComment">// instead of cellEditor we use cellEditorFramework</span>
+        cellEditorFramework: MoodEditorComponent
+    }
+</pre>
+
+    <p>
+        By using <i>colDef.cellEditorFramework</i> (instead of <i>colDef.cellEditor</i>) the grid
+        will know it's a VueJS component, based on the fact that you are using the VueJS version of
+        ag-Grid.
+    </p>
+
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Parameters</h3>
+
+    <p>The Grid cell's value will be made available implicitly in a data value names <code>params</code>. This value will be available to
+        you from the <code>created</code> VueJS lifecycle hook.</p>
+
+    <p>You can think of this as you having defined the following:</p>
+<pre>
+export default {
+    data () {
+        return {
+            params: null
+        }
+    },
+    ...
+</pre>
+
+    <p>but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.</p>
+
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
+
+    <p>
+        All of the methods in the ICellEditor interface described above are applicable
+        to the VueJS Component with the following exceptions:
+    <ul>
+        <li><i>init()</i> is not used. The cells value is made available implicitly via a data field called <code>params</code>.</li>
+        <li><i>getGui()</i> is not used. Instead do normal VueJS magic in your Component via the VueJS template.</li>
+        <li><i>afterGuiAttached()</i> is not used. Instead implement the <code>mounted</code> VueJS lifecycle hook for any post Gui setup (ie to focus on an element).</li>
+    </ul>
+
+    <p>
+        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
+        should be put onto your VueJS component and will work as normal.
+    </p>
+
+    <h3>Example: Cell Editing using VueJS Components</h3>
+    <p>
+        Using VueJS Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
+    </p>
+    <show-example url="../vue-examples/#/editor"
+                  jsfile="../vue-examples/src/editor-component-example/EditorComponentExample.vue"
+                  exampleHeight="525px"></show-example>
+    
+    <!-- start of aurelia -->    
     <h2 id="aureliaCellEditing">
         <img src="../images/aurelia_large.png" style="width: 60px;"/>
         Aurelia Cell Editing

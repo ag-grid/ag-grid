@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
         feel to already existing DOM elements (nice for everyone). It also has the added benefit
-        of fitting nicely into Web Components, React and Angular 2.
+        of fitting nicely into Web Components, React and Angular.
     </p>
     <p>
         Each interaction with the grid can be broken down into the following categories:
@@ -36,6 +36,7 @@ include '../documentation-main/documentation_header.php';
         <img src="/images/react.png" height="50px"/>
         <img src="/images/angularjs.png" height="50px"/>
         <img src="/images/angular2.png" height="50px"/>
+        <img src="/images/vue_large.png" height="50px"/>
         <img src="/images/webComponents.png" height="50px"/>
         <img src="/images/aurelia.png" height="50px"/>
         Grid Options
@@ -44,7 +45,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The gridOptions is a 'one stop shop' for the entire interface into the grid. The
         grid options can be used regardless of the framework you are using, however if you
-        are using React, Angular 2 or Web Components, you can achieve what grid options
+        are using React, Angular or Web Components, you can achieve what grid options
         provides you with in other ways.
     </p>
 
@@ -163,7 +164,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <p>
         The API's are accessible through the component. This is useful in two situations.
-        The first us by using an Angular 2 ID. In the example above, the ID is given
+        The first us by using an Angular ID. In the example above, the ID is given
         as '#myGrid' which then allows something like this:
     </p>
 
@@ -171,25 +172,25 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <h2>
         <img src="/images/angular2.png" height="50px"/>
-        Angular 2
+        Angular
     </h2>
 
     <p>
-        The gridOptions are fully available as stated above for Angular 2. However you can take
-        advantage of Angular 2's properties and events provided by ag-Grids Angular 2 Component.
+        The gridOptions are fully available as stated above for Angular. However you can take
+        advantage of Angular's properties and events provided by ag-Grids Angular Component.
         This is done as follows:
     </p>
 
     <ul>
         <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
         <li><b>Properties</b>: Properties are defined as HTML attributes enclosed in square
-            brackets and are Angular 2 bound values.</li>
+            brackets and are Angular bound values.</li>
         <li><b>Callbacks</b>: Callbacks are actually a type of property, but by convention they are
             always functions and are not for relaying event information. They are bound as properties
-            using square brackets. As callbacks are not events, they do not impact the Angular 2
+            using square brackets. As callbacks are not events, they do not impact the Angular
             event cycle, and as such should not change the state of anything.</li>
         <li><b>Event Handlers</b>: Event handlers are defined as HTML attributes enclosed in
-            normal brackets and are Angular 2 bound functions.</li>
+            normal brackets and are Angular bound functions.</li>
         <li><b>API</b>: The grid API and column API are accessible through the component.</li>
     </ul>
 
@@ -228,11 +229,73 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <p>
         The API's are accessible through the component. This is useful in two situations.
-        The first us by using an Angular 2 ID. In the example above, the ID is given
+        The first us by using an Angular ID. In the example above, the ID is given
         as '#myGrid' which then allows something like this:
     </p>
 
     <pre><code>&lt;button (click)="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+
+    <h2>
+        <img src="/images/vue_large.png" height="50px"/>
+        VueJS
+    </h2>
+
+    <p>
+        The gridOptions are fully available as stated above for VueJS. However you can take
+        advantage of VueJS's properties and events provided by ag-Grids VueJS Component.
+        This is done as follows:
+    </p>
+
+    <ul>
+        <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
+        <li><b>Properties</b>: Properties are defined as HTML attributes prefixed with a colon <code>:</code>
+            and are VueJS bound values.</li>
+        <li><b>Callbacks</b>: Callbacks are actually a type of property, but by convention they are
+            always functions and are not for relaying event information. They are bound as properties
+            prefixed with a colon <code>:</code>. As callbacks are not events, they do not impact the VueJS
+            event cycle, and as such should not change the state of anything.</li>
+        <li><b>Event Handlers</b>: Event handlers are defined as HTML attributes prefixed with a colon <code>:</code>
+            and are VueJS bound functions.</li>
+        <li><b>API</b>: The grid API and column API are accessible through the component.</li>
+    </ul>
+
+    <p>
+        All of the above (attributes, properties, callbacks and event handlers) are registered
+        using their 'dash' syntax and not camelcase. For example, the property enableSorting
+        is bound using enable-sorting. <i>enable-sorting</i>. The following example shows
+        some bindings:
+    </p>
+
+    <pre>
+<&lt;ag-grid-vue
+    <span class="codeComment">// these are attributes, not bound, give explicit values here</span>
+    rowHeight="22"
+    rowSelection="multiple"
+
+    <span class="codeComment">// these are boolean values</span>
+    <span class="codeComment">// (leaving them out will default them to false)</span>
+    :enableColResize="true"
+    :enableSorting="true"
+
+    <span class="codeComment">// these are bound properties</span>
+    :gridOptions="gridOptions"
+    :columnDefs="columnDefs"
+
+    <span class="codeComment">// this is a callback</span>
+    :isScrollLag="myIsScrollLagFunction"
+
+    <span class="codeComment">// these are registering event callbacks</span>
+    :modelUpdated="onModelUpdated"
+    :cellClicked="onCellClicked"
+&lt;/ag-grid-vue></code></pre>
+
+    <p>
+        The API's are accessible through the component. This is useful in two situations.
+        The first us by using an Angular ID. In the example above, the ID is given
+        as '#myGrid' which then allows something like this:
+    </p>
+
+    <pre><code>&lt;button @click="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
 
     <h2>
         <img src="/images/webComponents.png" height="50px"/>
@@ -271,7 +334,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     <p>
         This example shows setting up as a Web Component in HTML. Notice it's simliar
-        to Angular 2, however no binding of properties or event handling.
+        to Angular, however no binding of properties or event handling.
     </p>
 
     <pre><code>&lt;ag-grid-ng2

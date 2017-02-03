@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         Web Components are of particular interest to ag-Grid as I see them as the future for reusable components.
-        A true Web Component will be reusable in any framework. Angular 2's directives are based on Web Components.
+        A true Web Component will be reusable in any framework. Angular's directives are based on Web Components.
     </p>
     <note>
         Web components are an emerging technology and not available in all browsers. Some browsers lacking support
@@ -72,8 +72,8 @@ myGrid.setGridOptions(gridOptions);</code></pre>
     <h2>Complex Web Components Example</h2>
 
     <p>
-        The complex example for Web Components is similar to that for Angular 2. This is on purpose as
-        Angular 2 components are based on Web Components. The example demonstrates the following:
+        The complex example for Web Components is similar to that for Angular. This is on purpose as
+        Angular components are based on Web Components. The example demonstrates the following:
     </p>
 
     <ul>

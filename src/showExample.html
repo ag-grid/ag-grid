@@ -2,7 +2,7 @@
     <ul class="nav nav-tabs">
         <a href="{{source}}" target="_blank" style="float: right;">open example in new tab</a>
         <li ng-class="{active: selectedTab=='example'}" class="active"><a ng-click="selectedTab='example'">Example</a></li>
-        <li ng-class="{active: selectedTab=='html'}"><a ng-click="selectedTab='html'">Html</a></li>
+        <li ng-if="showHtmlTab" ng-class="{active: selectedTab=='html'}"><a ng-click="selectedTab='html'">Html</a></li>
         <li ng-class="{active: selectedTab=='javascript'}"><a ng-click="selectedTab='javascript'">{{sourceLang}}</a></li>
         <li ng-repeat="extraPage in extraPages" ng-class="{active: isActive(extraPage)}"><a ng-click="setActive(extraPage)">{{extraPage}}</a></li>
     </ul>
