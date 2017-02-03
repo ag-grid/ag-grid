@@ -13,6 +13,7 @@ import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {HeaderGroupComp, IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {IComponent} from "../../interfaces/iComponent";
 import {ColGroupDef} from "../../entities/colDef";
+import {ComponentProvider} from "../../componentProvider";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -26,6 +27,7 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('horizontalDragService') private dragService: HorizontalDragService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('context') private context: Context;
+    @Autowired('componentProvider') private componentProvider:ComponentProvider;
 
     private columnGroup: ColumnGroup;
     private dragSourceDropTarget: DropTarget;
@@ -67,8 +69,6 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private appendHeaderGroupComp(displayName: string): IComponent<IHeaderGroupParams> {
-        let headerComp = this.getHeaderGroupComponent();
-
         let params = <IHeaderGroupParams> {
             displayName: displayName,
             columnGroup: this.columnGroup,
@@ -76,20 +76,9 @@ export class HeaderGroupWrapperComp extends Component {
                 this.columnController.setColumnGroupOpened(this.columnGroup, expanded);
             }
         };
-
-        this.context.wireBean(headerComp);
-        headerComp.init(params);
-
+        let headerComp = this.componentProvider.newHeaderGroupComponent(params);
         this.appendChild(headerComp);
         return headerComp;
-    }
-
-    private getHeaderGroupComponent(): IHeaderGroupComp {
-        let CustomHeaderGroupComponent = (<ColGroupDef>this.columnGroup.getDefinition()).headerGroupComponent;
-        if (CustomHeaderGroupComponent){
-            return new CustomHeaderGroupComponent();
-        }
-        return new HeaderGroupComp();
     }
 
     private addClasses(): void {
