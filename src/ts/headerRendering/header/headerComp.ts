@@ -37,6 +37,7 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 var svgFactory = SvgFactory.getInstance();
 
 export class HeaderComp extends Component implements IHeaderComp {
+
     private static TEMPLATE =
         '<div>' +
         '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
@@ -63,7 +64,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     @RefSelector('eText') private eText: HTMLElement;
 
     private params:IHeaderParams;
-    
+
     constructor() {
         super(HeaderComp.TEMPLATE);
     }

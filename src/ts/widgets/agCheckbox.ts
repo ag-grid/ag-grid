@@ -36,7 +36,7 @@ export class AgCheckbox extends Component {
     }
 
     @PostConstruct
-    private init(): void {
+    private postConstruct(): void {
         this.setTemplate(AgCheckbox.TEMPLATE);
 
         this.loadIcons();
