@@ -17,15 +17,6 @@ gulp.task('src', () => {
     // .pipe(gulp.dest('dist'));
 });
 
-gulp.task('src', () => {
-    return gulp.src('./exports.js')
-        .pipe(babel({
-            presets: ['es2015']
-        }))
-        .pipe(rename('main.js'))
-        .pipe(gulp.dest('./'));
-});
-
 gulp.task('exports', () => {
     return gulp.src('./exports.js')
         .pipe(babel({

@@ -11,7 +11,7 @@
   "homepage": "https://github.com/ceolter/ag-grid-vue#readme",
   "private": true,
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build": "gulp"
   },
   "keywords": [
     "grid",
