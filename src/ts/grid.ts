@@ -115,8 +115,18 @@ export class Grid {
             frameworkFactory = new BaseFrameworkFactory();
         }
 
+        let overrideBeans:any[]= [];
+
+        if (Grid.enterpriseBeans){
+            overrideBeans = overrideBeans.concat(Grid.enterpriseBeans);
+        }
+
+        if (Grid.frameworkBeans){
+            overrideBeans = overrideBeans.concat(Grid.frameworkBeans);
+        }
+
         this.context = new Context({
-            overrideBeans: Grid.enterpriseBeans.concat(Grid.frameworkBeans),
+            overrideBeans: overrideBeans,
             seed: {
                 enterprise: enterprise,
                 gridOptions: gridOptions,
