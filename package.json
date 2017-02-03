@@ -9,7 +9,6 @@
     "url": "https://github.com/ceolter/ag-grid-vue/issues"
   },
   "homepage": "https://github.com/ceolter/ag-grid-vue#readme",
-  "private": true,
   "scripts": {
     "build": "gulp"
   },
