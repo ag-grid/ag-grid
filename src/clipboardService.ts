@@ -231,10 +231,16 @@ export class ClipboardService implements IClipboardService {
         } else if (selectedRowsToCopy) {
             // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
-        } else {
-            // then lastly, if no range or no row selection,
-            // then copy the focused cell
+        } else if (this.focusedCellController.isAnyCellFocused()) {
+            // if there is a focused cell, copy this
             this.copyFocusedCellToClipboard();
+        } else {
+            // lastly if no focused cell, try range again. this can happen
+            // if use has cellSelection turned off (so no focused cell)
+            // but has a cell clicked, so there exists a cell range
+            // of exactly one cell (hence the first 'if' above didn't
+            // get executed).
+            this.copySelectedRangeToClipboard(includeHeaders);
         }
     }
 
