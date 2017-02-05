@@ -837,7 +837,7 @@ colDef = {
     <p>
         Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-example example="../ng2-example/index.html?example=editor-component"
+    <show-example example="../ng2-example/index.html?fromDocs=true&example=editor-component"
                   jsfile="../ng2-example/app/editor-component.component.ts"
                   html="../ng2-example/app/editor-component.component.html"></show-example>
     

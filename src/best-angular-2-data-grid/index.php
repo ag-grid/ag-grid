@@ -255,7 +255,7 @@ let colDefs = [
     <p>
         The example below shows a rich configuration of ag-Grid, with no Angular Components.
     </p>
-    <show-example example="../ng2-example/index.html?example=rich-grid"
+    <show-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
                   jsfile="../ng2-example/app/rich-grid.component.ts"
                   html="../ng2-example/app/rich-grid.component.html"
                   exampleHeight="525px"></show-example>
@@ -331,7 +331,7 @@ private getCountryFilterParams():any {
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
     <show-example
-            example="../ng2-example/index.html?example=rich-grid-declarative"
+            example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
             jsfile="../ng2-example/app/rich-grid-declarative.component.ts"
             html="../ng2-example/app/rich-grid-declarative.component.html"
             exampleHeight="525px"></show-example>

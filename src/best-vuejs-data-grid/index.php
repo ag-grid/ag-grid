@@ -367,7 +367,7 @@ this.columnDefs = [
     <p>
         The example below shows a rich configuration of ag-Grid, with no VueJS Components.
     </p>
-    <show-example example="../vue-examples/"
+    <show-example url="../vue-examples/#/"
                   jsfile="../vue-examples/src/rich-grid-example/RichGridExample.vue"
                   exampleHeight="525px"></show-example>
 
@@ -375,9 +375,9 @@ this.columnDefs = [
 
     <p>
         It is possible to build
-        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
-        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
-        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using VueJS. Doing each of these
+        <a href="../javascript-grid-cell-rendering/#vue2CellRendering">cellRenders</a>,
+        <a href="../javascript-grid-cell-editing/#vue2CellEditing">cellEditors</a> and
+        <a href="../javascript-grid-filtering/#vue2Filtering">filters</a> using VueJS. Doing each of these
         is explained in the section on each.
     </p>
 
