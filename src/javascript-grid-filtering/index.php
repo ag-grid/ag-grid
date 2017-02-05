@@ -1129,43 +1129,38 @@ export default {
         same so put them directly onto your VueJS Component.
     </p>
 
-<!--    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Accessing the VueJS Component Instance</h3>-->
-<!---->
-<!--    <p>-->
-<!--        ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>-->
-<!--        method. If your component is a VueJS component, then this will give you a reference to the ag-Grid's-->
-<!--        Component which wraps your VueJS Component. Just like Russian Dolls. To get to the wrapped VueJS instance-->
-<!--        of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:-->
-<!--        <pre><span class="codeComment">// lets assume a VueJS component as follows</span>-->
-<!--@Component({-->
-<!--    selector: 'filter-cell',-->
-<!--    template: `-->
-<!--        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">-->
-<!--    `-->
-<!--})-->
-<!--class PartialMatchFilterComponent implements AgFilterComponent {-->
-<!---->
-<!--    ... <span class="codeComment">// standard filter methods hidden</span>-->
-<!---->
-<!--    <span class="codeComment">// put a custom method on the filter</span>-->
-<!--    myMethod() {-->
-<!--        <span class="codeComment">// does something</span>-->
-<!--    }-->
-<!--}-->
-<!---->
-<!--<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>-->
-<!--laterOnInYourApplicationSomewhere() {-->
-<!---->
-<!--    <span class="codeComment">// get reference to the ag-Grid Filter component</span>-->
-<!--    let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>-->
-<!---->
-<!--    <span class="codeComment">// get VueJS instance from the ag-Grid instance</span>-->
-<!--    let vueFilterInstance = agGridFilter.getFrameworkComponentInstance();-->
-<!---->
-<!--    <span class="codeComment">// now were sucking diesel!!!</span>-->
-<!--    vueFilterInstance.myMethod();-->
-<!--}</pre>-->
-<!--    </p>-->
+    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Accessing the VueJS Component Instance</h3>
+
+    <p>
+        ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
+        method. If your component is a VueJS component, then this will give you a reference to the ag-Grid's
+        Component which wraps your VueJS Component. Just like Russian Dolls. To get to the wrapped VueJS instance
+        of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
+        <pre><span class="codeComment">// lets assume a VueJS component as follows</span>
+export default Vue.extend({
+    template: `&lt;input style="height: 20px" :ref="'input'" v-model="text"&gt;`,
+    data() {
+        ...data
+    },
+    methods: {
+        componentMethod(message) {
+            alert(`Alert from PartialMatchFilterComponent ${message}`);
+        },
+        ...other methods
+
+<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
+laterOnInYourApplicationSomewhere() {
+
+    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
+    let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
+
+    <span class="codeComment">// get VueJS instance from the ag-Grid instance</span>
+    let vueFilterInstance = agGridFilter.getFrameworkComponentInstance();
+
+    <span class="codeComment">// now were sucking diesel!!!</span>
+    vueFilterInstance.componentMethod();
+}</pre>
+    </p>
 
     <h3><img src="../images/vue_large.png" style="width: 20px;"/> Example: Filtering using VueJS Components</h3>
     <p>
