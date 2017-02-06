@@ -15,12 +15,18 @@ import {GridApi} from "../../gridApi";
 import {SortController} from "../../sortController";
 import {EventService} from "../../eventService";
 import {ComponentProvider} from "../../componentProvider";
+import {AgCheckbox} from "../../widgets/agCheckbox";
+import {IRowModel} from "../../interfaces/iRowModel";
+import {Constants} from "../../constants";
+import {InMemoryRowModel} from "../../rowControllers/inMemory/inMemoryRowModel";
+import {QuerySelector, RefSelector} from "../../widgets/componentAnnotations";
+import {RowNode} from "../../entities/rowNode";
 
 export class HeaderWrapperComp extends Component {
 
     private static TEMPLATE =
         '<div class="ag-header-cell">' +
-          '<div ref="agResizeBar" class="ag-header-cell-resize"></div>' +
+          '<div ref="eResize" class="ag-header-cell-resize"></div>' +
             // <inner component goes here>
         '</div>';
 
@@ -34,6 +40,9 @@ export class HeaderWrapperComp extends Component {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
+    @Autowired('rowModel') private rowModel: IRowModel;
+
+    @RefSelector('eResize') private eResize:  HTMLElement;
 
     private column: Column;
     private eRoot: HTMLElement;
@@ -61,6 +70,9 @@ export class HeaderWrapperComp extends Component {
         let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
         let enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
 
+        // do this before adding headerComp, as it needs to be put in first
+        // this.setupSelectAllCheckbox();
+
         let headerComp = this.appendHeaderComp(displayName, enableSorting, enableMenu);
 
         this.setupWidth();
@@ -80,6 +92,32 @@ export class HeaderWrapperComp extends Component {
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
+
+/*    private setupSelectAllCheckbox(): void {
+
+        if (!this.column.getColDef().selectAllCheckbox) {
+            return;
+        }
+
+        let rowModelType = this.rowModel.getType();
+        let inMemoryRowModel: InMemoryRowModel;
+
+        if (rowModelType===Constants.ROW_MODEL_TYPE_NORMAL || Constants.ROW_MODEL_TYPE_PAGINATION) {
+            inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        } else {
+            return;
+        }
+
+        let selectAllCheckbox = new AgCheckbox();
+        this.context.wireBean(selectAllCheckbox);
+        selectAllCheckbox.addCssClass('ag-header-select-all');
+        this.appendChild(selectAllCheckbox);
+
+        let rootNode = inMemoryRowModel.getRootNode();
+        this.addDestroyableEventListener(rootNode, RowNode.EVENT_ROW_SELECTED, ()=> {
+            console.log('changed ' + rootNode.isSelected());
+        });
+    }*/
 
     private setupSortableClass(enableSorting:boolean):void{
         if (enableSorting) {
@@ -150,21 +188,20 @@ export class HeaderWrapperComp extends Component {
 
     private setupResize(): void {
         var colDef = this.column.getColDef();
-        var eResize = this.getRefElement('agResizeBar');
 
         // if no eResize in template, do nothing
-        if (!eResize) {
+        if (!this.eResize) {
             return;
         }
 
         var weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
         if (!weWantResize) {
-            _.removeFromParent(eResize);
+            _.removeFromParent(this.eResize);
             return;
         }
 
         this.horizontalDragService.addDragHandling({
-            eDraggableElement: eResize,
+            eDraggableElement: this.eResize,
             eBody: this.eRoot,
             cursor: 'col-resize',
             startAfterPixels: 0,
@@ -174,7 +211,7 @@ export class HeaderWrapperComp extends Component {
 
         var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
-            this.addDestroyableEventListener(eResize, 'dblclick', () => {
+            this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column);
             });
         }

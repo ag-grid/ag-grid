@@ -172,6 +172,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         return this.rootNode ? this.rootNode.childrenAfterGroup : null;
     }
 
+    public getRootNode() {
+        return this.rootNode;
+    }
+
     public getRow(index: number): RowNode {
         return this.rowsToDisplay[index];
     }

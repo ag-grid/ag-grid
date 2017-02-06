@@ -232,6 +232,8 @@ export interface ColDef extends AbstractColDef {
     /** The custom header component parameters**/
     headerComponentParams?:any
 
+    /** If true, a 'select all' checkbox will be put into the header */
+    selectAllCheckbox?: boolean;
 }
 
 export interface IsColumnFunc {
