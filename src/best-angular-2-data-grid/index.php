@@ -233,7 +233,39 @@ let colDefs = [
         and custom filtering.
     </p>
 
-    <h3>Building & Building</h3>
+    <h4>Child to Parent Communication</h4>
+
+    <p>There are a variety of ways to manage component communication in Angular (shared service, local variables etc), but you
+        often need a simple way to let a "parent" component know that something has happened on a "child" component. In this case
+        the simplest route is to use the <code>gridOptions.context</code> to hold a reference to the parent, which the child can then access.</p>
+
+    <pre>
+<span class="codeComment">// in the parent component - the component that hosts ag-grid-ng2 and specifies which angular components to use in the grid</span>
+constructor() {
+    this.gridOptions = &lt;GridOptions&gt;{
+        context: {
+            componentParent: this
+        }
+    };
+    this.gridOptions.rowData = this.createRowData();
+    this.gridOptions.columnDefs = this.createColumnDefs();
+}
+
+<span class="codeComment">// in the child component - the angular components created dynamically in the grid</span>
+<span class="codeComment">// the parent component can then be accessed as follows:</span>
+this.params.context.componentParent
+</pre>
+
+    <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
+        point is that you can use the <code>context</code> mechanism to share information between the components.</p>
+
+    <p>The <span style="font-style: italic">"A Simple Example, using CellRenders created from Angular Components"</span> above illustrates this in the Child/Parent column:</p>
+    <ul>
+        <li><a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-component.component.ts" target="_blank" class="fa fa-external-link"> Parent Component</a></li>
+        <li><a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/child-message.component.ts" target="_blank" class="fa fa-external-link"> Child Component</a></li>
+    </ul>
+
+    <h3>Building & Bundling</h3>
     <p>There are many ways to build and/or bundle an Angular Application. We provide 3 full working examples using
         either SystemJS, Webpack or Angular-CLI as part of the <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub.</p>
     <p>We document the main parts of these tools here, but please refer to the examples for more detail.</p>

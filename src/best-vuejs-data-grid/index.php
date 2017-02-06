@@ -198,7 +198,7 @@ components: {
 }
 </pre>
 
-    <p>Note here that we can define the propery name either quoted or not - but note that in order to reference these
+    <p>Note here that we can define the property name either quoted or not - but note that in order to reference these
         components in your column definitions you'll need to provide them as case-sensitive strings (see referencing components below).</p>
 
     <h4>Simple, Locally Declared Components</h4>
@@ -358,7 +358,38 @@ this.columnDefs = [
         and custom filtering.
     </p>
 
-    <h3>Building & Building</h3>
+    <h4>Child to Parent Communication</h4>
+
+    <p>There are a variety of ways to manage component communication in Angular (shared service, local variables etc), but you
+    often need a simple way to let a "parent" component know that something has happened on a "child" component. In this case
+    the simplest route is to use the <code>gridOptions.context</code> to hold a reference to the parent, which the child can then access.</p>
+
+<pre>
+<span class="codeComment">// in the parent component - the component that hosts ag-grid-ng2 and specifies which angular components to use in the grid</span>
+beforeMount() {
+    this.gridOptions = {
+        context: {
+            componentParent: this
+        }
+    };
+    this.createRowData();
+    this.createColumnDefs();
+},
+
+<span class="codeComment">// in the child component - the Vue components created dynamically in the grid</span>
+<span class="codeComment">// the parent component can then be accessed as follows:</span>
+this.params.context.componentParent
+</pre>
+
+    <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
+    point is that you can use the <code>context</code> mechanism to share information between the components.</p>
+
+    <p>The <span style="font-style: italic">"A Simple Example, using CellRenders created from VueJS Components"</span> above illustrates this in the Child/Parent column:</p>
+    <ul>
+        <li><a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue" target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
+    </ul>
+
+    <h3>Building & Bundling</h3>
     <p>There are many ways to build and/or bundle an VueJS Application. We provide fully working examples using a simplified
         Webpack build as part of the <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on GitHub.</p>
 
