@@ -296,7 +296,7 @@ somePointLater() {
     <h2>Cell Rendering, Cell Editing and Filtering using React</h2>
 
     <p>
-        It is possible to build <a href="../javascript-grid-cell-rendering/#reactCellRendering">cellRenders</a>,
+        It is possible to build <a href="../javascript-grid-cell-rendering/#reactCellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#reactCellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#reactFiltering">filters</a> using React. Doing each of these
         is explained in the section on each.

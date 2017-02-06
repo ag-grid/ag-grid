@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
         <li>An example using markup to create a grid
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/rich-grid-declarative.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/rich-grid-declarative.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Simple Example, using CellRenders created from Angular Components
+        <li>A Simple Example, using CellRenderers created from Angular Components
             <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-component.component.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-component.component.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Richer Example, using CellRenderers created from Angular Components, with child components, and two-way binding (parent to child components events)
@@ -193,7 +193,7 @@ let colDefs = [
     ...other column definitions
 ]
 </pre>
-    <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
+    <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular Components in ag-Grid.</p>
 
@@ -259,7 +259,7 @@ this.params.context.componentParent
     <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
         point is that you can use the <code>context</code> mechanism to share information between the components.</p>
 
-    <p>The <span style="font-style: italic">"A Simple Example, using CellRenders created from Angular Components"</span> above illustrates this in the Child/Parent column:</p>
+    <p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from Angular Components"</span> above illustrates this in the Child/Parent column:</p>
     <ul>
         <li><a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/from-component.component.ts" target="_blank" class="fa fa-external-link"> Parent Component</a></li>
         <li><a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/child-message.component.ts" target="_blank" class="fa fa-external-link"> Child Component</a></li>
@@ -372,7 +372,7 @@ private getCountryFilterParams():any {
 
     <p>
         It is possible to build
-        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenders</a>,
+        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular. Doing each of these
         is explained in the section on each.

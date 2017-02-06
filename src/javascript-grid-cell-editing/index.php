@@ -369,7 +369,7 @@ colDef.cellEditorParams = {
 
     <p>
         Like cellRenderers, cellEditors can also be registered with ag-Grid and referenced by
-        strings. You register cellRenders in one of the following ways:
+        strings. You register cellRenderers in one of the following ways:
     <ul>
         <li>Provide <i>cellEditors</i> property to the grid as a map of key=>cellEditor pairs.
             This property is used once during grid initialisation.</li>

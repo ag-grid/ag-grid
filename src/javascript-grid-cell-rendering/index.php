@@ -374,13 +374,13 @@ TAKING OUT as want to reconsider how to register components
 <p>
     You do not need to register your cellRenderers. However if you do, they will be stored alongside the grid
     provided cellRenderers and will be available to your column definitions and identified by strings. This
-    is useful if you want to provide your own cellRenders inside your company that are reused
+    is useful if you want to provide your own cellRenderers inside your company that are reused
     across grids. It also means you can define your columns using only JSON and not require
     referencing JavaScript functions directly.
 </p>
 
 <p>
-    You register cellRenders in one of the following ways:
+    You register cellRenderers in one of the following ways:
     <ul>
     <li>Provide <i>cellRenderers</i> property to the grid as a map of key=>cellRenderer pairs.
     This property is used once during grid initialisation.</li>
@@ -389,7 +389,7 @@ TAKING OUT as want to reconsider how to register components
 </ul>
 </p>
 -->
-<p>If you have many instances of a grid, you must register the cellRenders with each one.</p>
+<p>If you have many instances of a grid, you must register the cellRenderers with each one.</p>
 
 <h3>Example: Using cellRenderers</h3>
 

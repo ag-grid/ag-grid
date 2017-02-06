@@ -261,7 +261,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Lots of work has been done to support natively React and Angular 2, to allow you to plug in React
-        and Angular 2 cellEditors and cellRenders simply. Now, instead of using cellRenderer, you use
+        and Angular 2 cellEditors and cellRenderers simply. Now, instead of using cellRenderer, you use
         cellRendererFramework as follows:
         <pre><span class="codeComment">// when not using React or Angular 2</span>
 colDef.cellRenderer = MyCellRenderer;
