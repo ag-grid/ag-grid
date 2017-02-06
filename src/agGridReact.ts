@@ -1,7 +1,7 @@
 /// <reference path="../typings/tsd"/>
 
 import {ReactFrameworkFactory} from './reactFrameworkFactory';
-import {ReactFrameworkComponentWrapper} from "./ReactFrameworkComponentWrapper";
+import {ReactFrameworkComponentWrapper} from "./reactFrameworkComponentWrapper";
 
 var React = require('react');
 var ReactDOM = require('react-dom');
