@@ -1,8 +1,8 @@
 <?php
 $key = "Filtering Aurelia";
-$pageTitle = "ag-Grid Filtering";
-$pageDescription = "ag-Grid Filtering";
-$pageKeyboards = "ag-Grid Filtering";
+$pageTitle = "ag-Grid Filtering Aurelia";
+$pageDescription = "ag-Grid Filtering Aurelia";
+$pageKeyboards = "ag-Grid Filtering Aurelia";
 include '../documentation-main/documentation_header.php';
 ?>
 

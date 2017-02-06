@@ -1,8 +1,8 @@
 <?php
 $key = "Filtering React";
-$pageTitle = "ag-Grid Filtering";
-$pageDescription = "ag-Grid Filtering";
-$pageKeyboards = "ag-Grid Filtering";
+$pageTitle = "ag-Grid Filtering React";
+$pageDescription = "ag-Grid Filtering React";
+$pageKeyboards = "ag-Grid Filtering React";
 include '../documentation-main/documentation_header.php';
 ?>
 

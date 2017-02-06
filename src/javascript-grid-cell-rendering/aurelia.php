@@ -1,8 +1,8 @@
 <?php
 $key = "Cell Rendering Aurelia";
-$pageTitle = "ag-Grid Cell Rendering";
+$pageTitle = "ag-Grid Cell Rendering Aurelia";
 $pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
-$pageKeyboards = "ag-Grid Cell Renderers";
+$pageKeyboards = "ag-Grid Cell Renderers Aurelia";
 include '../documentation-main/documentation_header.php';
 ?>
 

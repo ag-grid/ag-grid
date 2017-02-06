@@ -1,8 +1,8 @@
 <?php
 $key = "Cell Editing Aurelia";
-$pageTitle = "ag-Grid Cell Editing";
+$pageTitle = "ag-Grid Cell Editing Aurelia";
 $pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
-$pageKeyboards = "ag-Grid Cell Editors";
+$pageKeyboards = "ag-Grid Cell Editors Aurelia";
 include '../documentation-main/documentation_header.php';
 ?>
 

@@ -1,8 +1,8 @@
 <?php
 $key = "Cell Editing Angular";
-$pageTitle = "ag-Grid Cell Editing";
+$pageTitle = "ag-Grid Cell Editing Angular";
 $pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
-$pageKeyboards = "ag-Grid Cell Editors";
+$pageKeyboards = "ag-Grid Cell Editors Angular";
 include '../documentation-main/documentation_header.php';
 ?>
 

@@ -1,8 +1,8 @@
 <?php
 $key = "Filtering Angular";
-$pageTitle = "ag-Grid Filtering";
-$pageDescription = "ag-Grid Filtering";
-$pageKeyboards = "ag-Grid Filtering";
+$pageTitle = "ag-Grid Filtering Angular";
+$pageDescription = "ag-Grid Filtering Angular";
+$pageKeyboards = "ag-Grid Filtering Angular, Angular 2";
 include '../documentation-main/documentation_header.php';
 ?>
 
