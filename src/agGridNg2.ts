@@ -268,6 +268,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public getDocument: any = undefined;
     @Input() public enableGroupEdit: any = undefined;
     @Input() public embedFullWidthRows: any = undefined;
+    @Input() public dateComponentFramework: any = undefined;
+    @Input() public suppressTabbing: any = undefined;
 
     /**
      * Outputs
@@ -335,5 +337,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public displayedColumnsWidthChanged: EventEmitter<any>;
     @Output() public scrollVisibilityChanged: EventEmitter<any>;
     @Output() public flashCells: EventEmitter<any>;
+    @Output() public cellMouseOver: EventEmitter<any>;
+    @Output() public cellMouseOut: EventEmitter<any>;
+    @Output() public columnHoverChanged: EventEmitter<any>;
+
 }
 
