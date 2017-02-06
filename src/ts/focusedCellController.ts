@@ -8,6 +8,7 @@ import {ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {GridCell} from "./entities/gridCell";
 import {Constants} from "./constants";
+import {RowNode} from "./entities/rowNode";
 
 @Bean('focusedCellController')
 export class FocusedCellController {
@@ -137,6 +138,14 @@ export class FocusedCellController {
     public isCellFocused(gridCell: GridCell): boolean {
         if (_.missing(this.focusedCell)) { return false; }
         return this.focusedCell.column === gridCell.column && this.isRowFocused(gridCell.rowIndex, gridCell.floating);
+    }
+
+    public isRowNodeFocused(rowNode: RowNode): boolean {
+        return this.isRowFocused(rowNode.rowIndex, rowNode.floating);
+    }
+
+    public isAnyCellFocused(): boolean {
+        return !!this.focusedCell;
     }
 
     public isRowFocused(rowIndex: number, floating: string): boolean {
