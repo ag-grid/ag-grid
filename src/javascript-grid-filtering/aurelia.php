@@ -13,6 +13,13 @@ include '../documentation-main/documentation_header.php';
         Aurelia Filtering
     </h2>
 
+    <div class="note" style="margin-bottom: 20px">
+        <img align="left" src="../images/note.png" style="margin-right: 10px;" />
+        <p>This section explains how to create an ag-Grid Filter using Aurelia. You should read about how
+        <a href="../javascript-grid-filtering/">Filters work in ag-Grid</a> first before trying to
+        understand this section.</p>
+    </div>
+
     <p>
         All of the information above is relevant to Aurelia filters - this section explains how to apply this logic to your Aurelia component.
     </p>

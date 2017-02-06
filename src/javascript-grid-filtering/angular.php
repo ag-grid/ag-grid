@@ -2,7 +2,7 @@
 $key = "Filtering Angular";
 $pageTitle = "ag-Grid Filtering Angular";
 $pageDescription = "ag-Grid Filtering Angular";
-$pageKeyboards = "ag-Grid Filtering Angular, Angular 2";
+$pageKeyboards = "ag-Grid Filtering Angular";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -13,6 +13,13 @@ include '../documentation-main/documentation_header.php';
         <img src="../images/angular2_large.png" style="width: 60px"/>
         Angular Filtering
     </h2>
+
+    <div class="note" style="margin-bottom: 20px">
+        <img align="left" src="../images/note.png" style="margin-right: 10px;" />
+        <p>This section explains how to create an ag-Grid Filter using Angular. You should read about how
+        <a href="../javascript-grid-filtering/">Filters work in ag-Grid</a> first before trying to
+        understand this section.</p>
+    </div>
 
     <p>
         It is possible to provide a Angular Component filter for ag-Grid to use. All of the information above is
