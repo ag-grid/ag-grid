@@ -215,6 +215,30 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/">Filtering</a>
                 <?php } ?>
 
+                    <?php if ($key == "Filtering Angular") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">Angular 2</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/angular.php" style="padding-left: 40px">Angular 2</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Filtering Aurelia") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">Aurelia</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/aurelia.php" style="padding-left: 40px">Aurelia</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Filtering React") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">React</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/react.php" style="padding-left: 40px">React</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Filtering VueJS") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">VueJS</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/vuejs.php" style="padding-left: 40px">VueJS</a>
+                    <?php } ?>
+
                 <?php if ($key == "Selection") { ?>
                     <span class="sidebarLinkSelected">Selection</span>
                 <?php } else { ?>
@@ -281,11 +305,60 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/">Cell Rendering</a>
                 <?php } ?>
 
+                    <?php if ($key == "Cell Rendering Angular") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">Angular 2</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/angular.php" style="padding-left: 40px">Angular 2</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Rendering Aurelia") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">Aurelia</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/aurelia.php" style="padding-left: 40px">Aurelia</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Rendering React") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">React</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/react.php" style="padding-left: 40px">React</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Rendering VueJS") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">VueJS</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/vuejs.php" style="padding-left: 40px">VueJS</a>
+                    <?php } ?>
+
+
                 <?php if ($key == "Cell Editing") { ?>
                     <span class="sidebarLinkSelected">Cell Editing</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/">Cell Editing</a>
                 <?php } ?>
+
+                    <?php if ($key == "Cell Editing Angular") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">Angular 2</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/angular.php" style="padding-left: 40px">Angular 2</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Editing Aurelia") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">Aurelia</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/aurelia.php" style="padding-left: 40px">Aurelia</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Editing React") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">React</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/react.php" style="padding-left: 40px">React</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Editing VueJS") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 40px">VueJS</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/vuejs.php" style="padding-left: 40px">VueJS</a>
+                    <?php } ?>
 
                 <?php if ($key == "Context") { ?>
                     <span class="sidebarLinkSelected">Context</span>
