@@ -141,6 +141,12 @@ export interface ColDef extends AbstractColDef {
     /** Set to true to render a selection checkbox in the column. */
     checkboxSelection?: boolean | ((params: any)=>boolean);
 
+    /** If true, a 'select all' checkbox will be put into the header */
+    headerCheckboxSelection?: boolean | ((params: any)=>boolean);
+
+    /** If true, the header checkbox selection will work on filtered items*/
+    headerCheckboxSelectionFilteredOnly?: boolean;
+
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
 
@@ -231,9 +237,6 @@ export interface ColDef extends AbstractColDef {
     headerComponent?:{new(): IHeaderComp}
     /** The custom header component parameters**/
     headerComponentParams?:any
-
-    /** If true, a 'select all' checkbox will be put into the header */
-    selectAllCheckbox?: boolean;
 }
 
 export interface IsColumnFunc {

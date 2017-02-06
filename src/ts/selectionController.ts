@@ -12,6 +12,7 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
+import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -230,12 +231,17 @@ export class SelectionController {
         return count === 0;
     }
 
-    public deselectAllRowNodes() {
-        _.iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
-            if (rowNode) {
-                rowNode.selectThisNode(false);
-            }
-        });
+    public deselectAllRowNodes(justFiltered = false) {
+
+        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        let callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
+
+        if (justFiltered) {
+            inMemoryRowModel.forEachNodeAfterFilter(callback);
+        } else {
+            inMemoryRowModel.forEachNode(callback);
+        }
+
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
@@ -244,17 +250,31 @@ export class SelectionController {
         // we should not have to do this, as deselecting the nodes fires events
         // that we pick up, however it's good to clean it down, as we are still
         // left with entries pointing to 'undefined'
-        this.selectedNodes = {};
+        if (!justFiltered) {
+            this.selectedNodes = {};
+        }
         this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
     }
 
-    public selectAllRowNodes() {
+    public selectAllRowNodes(justFiltered = false) {
         if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
-            throw 'selectAll only available with normal row model, ie not virtual pagination';
+            throw `selectAll only available with normal row model, ie not ${this.rowModel.getType()}`;
         }
-        this.rowModel.forEachNode( (rowNode: RowNode) => {
-            rowNode.selectThisNode(true);
-        });
+
+        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        let callback = (rowNode: RowNode) => rowNode.selectThisNode(true);
+
+        if (justFiltered) {
+            inMemoryRowModel.forEachNodeAfterFilter(callback);
+        } else {
+            inMemoryRowModel.forEachNode(callback);
+        }
+
+        // the above does not clean up the parent rows if they are selected
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+            this.updateGroupsFromChildrenSelections();
+        }
+
         this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
     }
 

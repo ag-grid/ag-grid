@@ -315,6 +315,14 @@ export class GridApi {
         this.selectionController.deselectAllRowNodes();
     }
 
+    public selectAllFiltered() {
+        this.selectionController.selectAllRowNodes(true);
+    }
+
+    public deselectAllFiltered() {
+        this.selectionController.deselectAllRowNodes(true);
+    }
+
     public recomputeAggregates(): void {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call recomputeAggregates unless using normal row model') }
         this.inMemoryRowModel.refreshModel({step: Constants.STEP_AGGREGATE});
