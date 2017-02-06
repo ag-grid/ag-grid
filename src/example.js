@@ -70,6 +70,8 @@ var groupColumn = {
             return params.data[params.colDef.field];
         }
     },
+    headerCheckboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
     comparator: agGrid.defaultGroupComparator,
     cellRenderer: 'group',
     cellRendererParams: {
@@ -160,12 +162,8 @@ suppressEnterprise: true,
 //toolPanelSuppressValues: true,
 //groupSuppressAutoColumn: true,
 //groupAggFields: ['bankBalance','totalWinnings'],
-    checkboxSelection: function (params) {
-        // we show checkbox selection in the first column, unless we are grouping,
-        // as the group column is configured to always show selection
-        var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
-        return params.colIndex === 0 && !isGrouping;
-    },
+
+
 //suppressMenuFilterPanel: true,
 //suppressMenuMainPanel: true,
 //suppressMenuColumnPanel: true,
@@ -291,15 +289,19 @@ var firstColumn = {
         headerName: 'Name',
         field: 'name',
         width: 200,
-        selectAllCheckbox: true,
         editable: true,
         enableRowGroup: true,
         // enablePivot: true,
         filter: PersonFilter,
         checkboxSelection: function (params) {
-            // we put checkbox on the name if we are not doing no grouping
+            // we put checkbox on the name if we are not doing grouping
             return params.columnApi.getRowGroupColumns().length === 0;
         },
+        headerCheckboxSelection: function (params) {
+            // we put checkbox on the name if we are not doing grouping
+            return params.columnApi.getRowGroupColumns().length === 0;
+        },
+        headerCheckboxSelectionFilteredOnly: true,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
