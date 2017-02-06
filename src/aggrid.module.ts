@@ -6,6 +6,7 @@ import {Ng2FrameworkFactory} from './ng2FrameworkFactory';
 import {Ng2ComponentFactory} from './ng2ComponentFactory';
 import {BaseComponentFactory} from "./baseComponentFactory";
 import {AgGridColumn} from "./agGridColumn";
+import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
 
 @NgModule({
     imports: [],
@@ -25,7 +26,9 @@ export class AgGridModule {
             providers: [
                 Ng2FrameworkFactory,
                 Ng2ComponentFactory,
+                Ng2FrameworkComponentWrapper,
                 {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory},
+                {provide: Ng2FrameworkComponentWrapper, useExisting: Ng2ComponentFactory},
                 {provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}
             ],
         };

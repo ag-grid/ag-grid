@@ -45,6 +45,7 @@ export class AgGridNg2 implements AfterViewInit {
         // if the list of grid events change, we don't need to change this code.
         this.createComponentEvents();
 
+        Ng2FrameworkComponentWrapper._viewContainerRef = this.viewContainerRef;
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
     }
 
@@ -268,7 +269,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public getDocument: any = undefined;
     @Input() public enableGroupEdit: any = undefined;
     @Input() public embedFullWidthRows: any = undefined;
-    @Input() public dateComponentFramework: any = undefined;
     @Input() public suppressTabbing: any = undefined;
 
     /**
