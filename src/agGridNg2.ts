@@ -13,6 +13,7 @@ import {
 import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "ag-grid/main";
 import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
+import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
 
 @Component({
     selector: 'ag-grid-ng2',
@@ -68,6 +69,7 @@ export class AgGridNg2 implements AfterViewInit {
                 });
         }
 
+        Grid.setFrameworkBeans([Ng2FrameworkComponentWrapper]);
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
         
         if (this.gridOptions.api) {
@@ -257,6 +259,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableRtlSupport: any = undefined;
     @Input() public excelStyles: any = undefined;
     @Input() public dateComponent: any = undefined;
+    @Input() public dateComponentFramework: any = undefined;
+    @Input() public dateComponentParams: any = undefined;
     @Input() public sendToClipboard: any = undefined;
     @Input() public navigateToNextCell: any = undefined;
     @Input() public tabToNextCell: any = undefined;
