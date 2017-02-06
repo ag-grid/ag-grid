@@ -9,13 +9,11 @@ import {AgFilterComponent} from "./agFilterComponent";
 @Bean ("frameworkComponentWrapper")
 export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper {
     public static _viewContainerRef: ViewContainerRef;
-
-    constructor(private _componentFactoryResolver: ComponentFactoryResolver) {
-    }
+    public static _componentFactoryResolver: ComponentFactoryResolver;
 
     wrap <A extends IComponent<any>>(Ng2Component: { new (): any}, methodList: string[]): A{
         let that = this;
-        class DynamicAgNg2Component extends BaseGuiComponent<IFilterParams, AgFilterComponent> {
+        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> {
             init(params: IFilterParams): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
@@ -31,11 +29,11 @@ export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper 
         let wrapper : DynamicAgNg2Component= new DynamicAgNg2Component ();
         methodList.forEach((methodName=>{
             let methodProxy: Function = function (){
-                if (wrapper.getFrameworkComponentInstance().prototype[methodName]) {
+                if (wrapper.getFrameworkComponentInstance()[methodName]) {
                     var componentRef = this.getFrameworkComponentInstance();
-                    return wrapper.getFrameworkComponentInstance().prototype[methodName].apply (componentRef, arguments)
+                    return wrapper.getFrameworkComponentInstance()[methodName].apply (componentRef, arguments)
                 } else {
-                    console.warn('ag-Grid: React dateComponent is missing the method ' + methodName + '()');
+                    console.warn('ag-Grid: Angular dateComponent is missing the method ' + methodName + '()');
                     return null;
                 }
             };
@@ -54,7 +52,7 @@ export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper 
         // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
         // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
         // caching the factory here yields no performance benefits
-        let factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
+        let factory = Ng2FrameworkComponentWrapper._componentFactoryResolver.resolveComponentFactory(componentType);
         return viewContainerRef.createComponent(factory);
     }
 }

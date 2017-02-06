@@ -8,7 +8,8 @@ import {
     ElementRef,
     ContentChildren,
     QueryList,
-    AfterViewInit
+    AfterViewInit,
+    ComponentFactoryResolver
 } from "@angular/core";
 import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "ag-grid/main";
 import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
@@ -38,7 +39,8 @@ export class AgGridNg2 implements AfterViewInit {
 
     constructor(elementDef: ElementRef,
                 private viewContainerRef: ViewContainerRef,
-                private ng2FrameworkFactory: Ng2FrameworkFactory) {
+                private ng2FrameworkFactory: Ng2FrameworkFactory,
+                private _componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
 
         // create all the events generically. this is done generically so that
@@ -46,6 +48,7 @@ export class AgGridNg2 implements AfterViewInit {
         this.createComponentEvents();
 
         Ng2FrameworkComponentWrapper._viewContainerRef = this.viewContainerRef;
+        Ng2FrameworkComponentWrapper._componentFactoryResolver = this._componentFactoryResolver;
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
     }
 
