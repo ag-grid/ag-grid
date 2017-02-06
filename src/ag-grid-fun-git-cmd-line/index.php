@@ -171,8 +171,8 @@ GIT_PROMPT_START_USER="${USER}@${HOSTNAME} ${Yellow}${PathShort}${ResetColor}"
 
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
-               data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
+               data-url="https://www.ag-grid.com//ag-grid-fun-git-cmd-line/"
+               data-text="Git on the Command Line - Improving the Experience" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -190,8 +190,8 @@ GIT_PROMPT_START_USER="${USER}@${HOSTNAME} ${Yellow}${PathShort}${ResetColor}"
 
         <div>
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
-               data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
+               data-url="https://www.ag-grid.com//ag-grid-fun-git-cmd-line/"
+               data-text="Git on the Command Line - Improving the Experience" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
