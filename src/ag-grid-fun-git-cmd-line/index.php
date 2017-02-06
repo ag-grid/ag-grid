@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "Git on the Command Line - Improving the Experience";
+$pageTitle = "Git Color";
 $pageDescription = "Git on the Command Line - Improving the Experience - How we use Git at ag-Grid";
 $pageKeyboards = "Git Command Line";
 
