@@ -69,8 +69,8 @@ export class ComponentProvider {
         }
 
         let DefaultComponent : {new(): A} = <{new(): A}>thisComponentConfig.defaultComponent;
-        let CustomAgGridComponent : {new(): A} = (<any>holder)[componentName];
-        let FrameworkComponentRaw : {new(): B} = (<any>holder)[componentName + "Framework"];
+        let CustomAgGridComponent : {new(): A} = holder ? (<any>holder)[componentName] : null;
+        let FrameworkComponentRaw : {new(): B} = holder ? (<any>holder)[componentName + "Framework"] : null;
 
         if (CustomAgGridComponent && FrameworkComponentRaw){
             throw Error("You are trying to register: " + componentName + " twice.")
@@ -97,7 +97,7 @@ export class ComponentProvider {
 
     public createAgGridComponent<A extends IComponent<any>> (holder:GridOptions | ColDef | ColGroupDef, componentName:string, agGridParams:any): A{
         let component: A = <A>this.newAgGridComponent(holder, componentName);
-        let customParams:any = (<any>holder)[componentName + "Params"];
+        let customParams:any = holder ? (<any>holder)[componentName + "Params"] : null;
         let finalParams:any = {};
         _.mergeDeep(finalParams, agGridParams);
         _.mergeDeep(finalParams, customParams);
