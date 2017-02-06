@@ -13,6 +13,13 @@ include '../documentation-main/documentation_header.php';
         React Cell Editing
     </h2>
 
+    <div class="note" style="margin-bottom: 20px">
+        <img align="left" src="../images/note.png" style="margin-right: 10px;" />
+        <p>This section explains how to utilise ag-Grid cellEditors using React. You should read about how
+        <a href="../javascript-grid-cell-editing/">Cell Editing works in ag-Grid</a> first before trying to
+        understand this section.</p>
+    </div>
+
     <p>
         It is possible to provide a React cellEditor for ag-Grid to use. All of the information above is
         relevant to React cellEditors. This section explains how to apply this logic to your React component.

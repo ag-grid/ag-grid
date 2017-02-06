@@ -12,6 +12,13 @@ include '../documentation-main/documentation_header.php';
     VueJS Cell Rendering
 </h2>
 
+<div class="note" style="margin-bottom: 20px">
+    <img align="left" src="../images/note.png" style="margin-right: 10px;" />
+    <p>This section explains how to utilise ag-Grid cellRenders using VueJS. You should read about how
+    <a href="../javascript-grid-cell-rendering/">Cell Rendering works in ag-Grid</a> first before trying to
+    understand this section.</p>
+</div>
+
 <p>
     It is possible to provide a VueJS cellRenderers for ag-Grid to use. All of the information above is
     relevant to VueJS cellRenderers. This section explains how to apply this logic to your VueJS component.
