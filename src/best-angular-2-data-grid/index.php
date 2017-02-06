@@ -233,7 +233,7 @@ let colDefs = [
         and custom filtering.
     </p>
 
-    <h4>Child to Parent Communication</h4>
+    <h4 id="parent_child">Child to Parent Communication</h4>
 
     <p>There are a variety of ways to manage component communication in Angular (shared service, local variables etc), but you
         often need a simple way to let a "parent" component know that something has happened on a "child" component. In this case
