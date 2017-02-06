@@ -25,7 +25,7 @@ include 'documentation_header.php';
     </div>
 
     <div class="news-box">
-        <div class="news-header">XX February 2017</div>
+        <div class="news-header">6th February 2017</div>
         <div style="padding-top: 10px;">
             <a href="../ag-grid-fun-git-cmd-line/">
                 <img src="../images/agGridDaily.png"/>

@@ -33,7 +33,7 @@ include('../includes/mediaHeader.php');
             </a>
         </div>
         <div style="float: right;  color: #767676;">
-            30th January 2017
+            6th February 2017
         </div>
     </div>
     <div style="color: #767676">
