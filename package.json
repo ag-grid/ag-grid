@@ -44,7 +44,7 @@
     "typescript": "2.0.3"
   },
   "peerDependencies": {
-    "ag-grid": "file:../ag-grid",
+    "ag-grid": "7.2.x",
     "@angular/compiler": ">=2.1.x",
     "@angular/compiler-cli": ">=2.1.x",
     "@angular/core": ">=2.1.x",
