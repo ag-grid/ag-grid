@@ -150,9 +150,9 @@
             <div class="modal-dialog" style="width: 887px;">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button type="button" class="close videoClose" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <div style="padding-top: 30px">
-                            <iframe width="853" height="480" src="https://www.youtube.com/embed/tsuhoLiSWmU" frameborder="0" allowfullscreen></iframe>
+                            <iframe width="853" height="480" id="videoIframe" frameborder="0" allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>
