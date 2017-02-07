@@ -1,5 +1,6 @@
 ag-Grid Angular Component
 ==============
+
 This project contains the Angular Component for use with ag-Grid
 
 #### Install with Bower
@@ -14,11 +15,7 @@ $ npm install ag-grid-ng2
 
 See the [www.ag-grid.com](http://www.ag-grid.com) for an overview and full documentation.
 
-
-Building
-==============
-
-To build:
+#### To Build
 - `npm install gulp -g`
 - `npm install npm-install-peers -g`
 - `npm install`
