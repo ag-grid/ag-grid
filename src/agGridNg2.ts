@@ -19,6 +19,9 @@ import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
 @Component({
     selector: 'ag-grid-ng2',
     template: '',
+    providers: [
+        Ng2FrameworkFactory
+    ],
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
@@ -75,7 +78,7 @@ export class AgGridNg2 implements AfterViewInit {
 
         Grid.setFrameworkBeans([Ng2FrameworkComponentWrapper]);
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
-        
+
         if (this.gridOptions.api) {
             this.api = this.gridOptions.api;
         }

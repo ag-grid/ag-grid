@@ -24,7 +24,6 @@ export class AgGridModule {
         return {
             ngModule: AgGridModule,
             providers: [
-                Ng2FrameworkFactory,
                 Ng2ComponentFactory,
                 Ng2FrameworkComponentWrapper,
                 {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory},
@@ -39,7 +38,6 @@ export class AgGridModule {
         return {
             ngModule: AgGridModule,
             providers: [
-                Ng2FrameworkFactory,
                 Ng2ComponentFactory,
                 {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory}
             ],
