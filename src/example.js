@@ -285,29 +285,6 @@ function getContextMenuItems(params) {
     return result;
 }
 
-var firstColumn = {
-        headerName: 'Name',
-        field: 'name',
-        width: 200,
-        editable: true,
-        enableRowGroup: true,
-        // enablePivot: true,
-        filter: PersonFilter,
-        checkboxSelection: function (params) {
-            // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
-        },
-        headerCheckboxSelection: function (params) {
-            // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
-        },
-        headerCheckboxSelectionFilteredOnly: true,
-        icons: {
-            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-        }
-};
-
 //var groupColumn = {
 //    headerName: "Name", field: "name", headerGroup: 'Participant', width: 200, editable: true, filter: PersonFilter,
 //    cellRenderer: {
@@ -329,7 +306,28 @@ var defaultCols = [
         headerName: 'Participant',
         // marryChildren: true,
         children: [
-            firstColumn,
+            {
+                headerName: 'Name',
+                field: 'name',
+                width: 200,
+                editable: true,
+                enableRowGroup: true,
+                // enablePivot: true,
+                filter: PersonFilter,
+                checkboxSelection: function (params) {
+                    // we put checkbox on the name if we are not doing grouping
+                    return params.columnApi.getRowGroupColumns().length === 0;
+                },
+                headerCheckboxSelection: function (params) {
+                    // we put checkbox on the name if we are not doing grouping
+                    return params.columnApi.getRowGroupColumns().length === 0;
+                },
+                headerCheckboxSelectionFilteredOnly: true,
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                }
+            },
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
                 cellRenderer: languageCellRenderer,

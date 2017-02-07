@@ -152,10 +152,74 @@ include '../documentation-main/documentation_header.php';
     <h3>Header Checkbox Selection</h3>
 
     <p>
-        bla bla bla
+        It is possible to have a checkbox in the header for selection. To configure the
+        column to have checkbox, set <i>colDef.headerCheckboxSelection=true</i>.
+        <i>headerCheckboxSelection</i> can also be a function, if you want the checkbox
+        to appear sometimes (eg if the columns is ordered first in the grid).
+    </p>
+
+    <pre><span class="codeComment">// the name column header always has a checkbox in the header</span>
+colDef = {
+    field: 'name',
+    headerCheckboxSelection: true
+    ...
+}
+
+<span class="codeComment">// the country column header only has checkbox if it is the first column</span>
+colDef = {
+    field: 'country',
+    headerCheckboxSelection: function(params) {
+        var displayedColumns = params.columnApi.getAllDisplayedColumns();
+        var thisIsFirstColumn = displayedColumns[0] === params.column;
+        return thisIsFirstColumn;
+    }
+    ...
+}</pre>
+
+    <p>
+        If <i>headerCheckboxSelection</i> is a function, the function will be called every
+        time there is a change to the displayed columns, to check for changes.
+    </p>
+
+    <h4>Select Everything or just Filtered</h4>
+
+    <p>
+        The header checkbox has two modes of operation, 'normal' and 'filtered only'.
+        <ul>
+            <li><b>colDef.headerCheckboxSelectionFilteredOnly=false</b>: The checkbox
+            will select all rows when checked, and un-select all rows when unchecked.
+            The checkbox will update it's state based on all rows.</li>
+            <li><b>colDef.headerCheckboxSelectionFilteredOnly=true</b>: The checkbox
+            will select only filtered rows when checked and un-select only filtered
+            rows when unchecked. The checkbox will update it's state base on only
+            filtered rows.</li>
+        </ul>
+        The examples below demonstrate both of these options.
+    </p>
+
+    <h4>Header Checkbox Example 1 - Filtered Only = true</h4>
+
+    <p>
+        This example has the following characteristics:
+        <ul>
+            <li>The checkbox works on filtered only. That means if you filter first, then hit the checkbox to select
+                or un-select, then only the filtered results get impacted.</li>
+            <li>The checkbox is always on the athlete column, even if the athlete column is moved.</li>
+        </ul>
     </p>
 
     <show-example example="exampleHeaderCheckbox"></show-example>
+
+    <h4>Header Checkbox Example 2 - Filtered Only = false</h4>
+
+    <p>
+        The next example is similar to the one above with the following changes:
+        <ul>
+        <li>The select selects everything, not just filtered.</li>
+        <li>The column that the selection checkbox goes on is always the first column.
+        This can be observed by dragging the columns to reorder them.</li>
+    </ul>
+    </p>
 
     <show-example example="exampleHeaderCheckboxEntireSet"></show-example>
 

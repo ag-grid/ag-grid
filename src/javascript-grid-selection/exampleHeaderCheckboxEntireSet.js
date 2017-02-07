@@ -18,6 +18,7 @@ var gridOptions = {
         headerCheckboxSelection: isFirstColumn,
         checkboxSelection: isFirstColumn
     },
+    enableColResize: true,
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
     columnDefs: columnDefs

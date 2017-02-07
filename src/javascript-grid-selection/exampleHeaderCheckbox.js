@@ -19,6 +19,7 @@ var gridOptions = {
     defaultColDef: {
         width: 100
     },
+    enableColResize: true,
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
     columnDefs: columnDefs
