@@ -10,9 +10,8 @@ import {Autowired, PostConstruct, Context} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {HeaderGroupComp, IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
+import {IHeaderGroupParams} from "./headerGroupComp";
 import {IComponent} from "../../interfaces/iComponent";
-import {ColGroupDef} from "../../entities/colDef";
 import {ComponentProvider} from "../../componentProvider";
 
 export class HeaderGroupWrapperComp extends Component {

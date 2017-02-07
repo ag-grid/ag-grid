@@ -223,7 +223,6 @@ export class GridOptionsWrapper {
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
-    public getCheckboxSelection(): (params: any)=>boolean { return this.gridOptions.checkboxSelection; }
     public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
@@ -400,6 +399,10 @@ export class GridOptionsWrapper {
         }
         if (options.groupAggFunction) {
             console.warn('ag-grid: since version 4.3.x groupAggFunction is now called groupRowAggNodes');
+        }
+        if (options.checkboxSelection) {
+            console.warn('ag-grid: since version 8.0.x checkboxSelection is not supported as a grid option. ' +
+                'If you want this on all columns, use defaultColDef instead and set it there');
         }
     }
 

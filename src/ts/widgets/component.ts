@@ -150,7 +150,7 @@ export class Component extends BeanStub implements IComponent<any> {
     public addFeature(context: Context, feature: BeanStub): void {
         context.wireBean(feature);
         if (feature.destroy) {
-            this.addDestroyFunc(feature.destroy.bind(this));
+            this.addDestroyFunc(feature.destroy.bind(feature));
         }
     }
 

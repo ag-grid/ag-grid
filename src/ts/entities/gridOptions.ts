@@ -181,7 +181,6 @@ export interface GridOptions {
     getRowStyle?: Function;
     getRowClass?: Function;
     getRowHeight?: Function;
-    checkboxSelection?: (params: any)=> boolean;
     sendToClipboard?: (params: any)=>void;
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
