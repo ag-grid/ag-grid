@@ -14,14 +14,7 @@ export class VueComponentFactory {
 
         class CellRendererComponent {
             init(params) {
-                let details = {
-                    // parent: that.parent,
-                    data: {
-                        params: params
-                    }
-                };
-                this.component = new componentType(details);
-                this.component.$mount();
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType);
             }
 
             getGui() {
@@ -44,13 +37,7 @@ export class VueComponentFactory {
 
         class CellEditor {
             init(params) {
-                let details = {
-                    data: {
-                        params: params
-                    }
-                };
-                this.component = new componentType(details);
-                this.component.$mount();
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType);
             }
 
             getValue() {
@@ -104,13 +91,7 @@ export class VueComponentFactory {
 
         class Filter {
             init(params) {
-                let details = {
-                    data: {
-                        params: params
-                    }
-                };
-                this.component = new componentType(details);
-                this.component.$mount();
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType);
             }
 
             getGui() {
@@ -163,5 +144,18 @@ export class VueComponentFactory {
             // assume a type
             return component;
         }
+    }
+
+    static createAndMountComponent(params, componentType) {
+        let details = {
+            // parent: that.parent,
+            data: {
+                params: params
+            }
+        };
+
+        let component = new componentType(details);
+        component.$mount();
+        return component;
     }
 }
