@@ -40,6 +40,7 @@ export * from './dist/lib/gridPanel/mouseEventService';
 export * from './dist/lib/headerRendering/deprecated/headerTemplateLoader';
 export * from './dist/lib/headerRendering/deprecated/renderedHeaderCell';
 
+export * from './dist/lib/headerRendering/header/headerComp';
 export * from './dist/lib/headerRendering/bodyDropPivotTarget';
 export * from './dist/lib/headerRendering/bodyDropTarget';
 export * from './dist/lib/headerRendering/cssClassApplier';
