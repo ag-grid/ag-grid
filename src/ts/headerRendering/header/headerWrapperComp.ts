@@ -4,7 +4,7 @@ import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {IHeaderParams, IHeaderComp} from "./headerComp";
-import {ColumnController, ColumnApi} from "../../columnController/columnController";
+import {ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {CssClassApplier} from "../cssClassApplier";
@@ -16,7 +16,6 @@ import {SortController} from "../../sortController";
 import {EventService} from "../../eventService";
 import {ComponentProvider} from "../../componentProvider";
 import {AgCheckbox} from "../../widgets/agCheckbox";
-import {IRowModel} from "../../interfaces/iRowModel";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {SelectAllFeature} from "./selectAllFeature";
 
