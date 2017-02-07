@@ -115,12 +115,6 @@ include '../documentation-main/documentation_header.php';
             testing, as it provides a way for your tool to identify rules based on unique business keys.</td>
         </tr>
         <tr>
-            <th>checkboxSelection(params)</th>
-            <td>Callback to say if a cell should have checkbox selection. Same as property on colDef,
-            except this gets called for each column. If you want the first column to have selection,
-            regardless of the column, get this to return "params.colIndex===0"</td>
-        </tr>
-        <tr>
             <th>getHeaderCellTemplate</th>
             <td>Function to use instead of headerCellTemplate, should return string or html DOM element.</td>
         </tr>

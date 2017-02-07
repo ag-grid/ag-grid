@@ -15,6 +15,7 @@ include '../documentation-main/documentation_header.php';
 
     IFilter is now IFilterComp
 
+    gridOptions.checkboxSelection is now gone, use defaultColDef.checkboxSelection instead
 
     <h2>Version 7.2.x</h2>
 

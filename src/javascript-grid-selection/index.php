@@ -147,7 +147,17 @@ include '../documentation-main/documentation_header.php';
     </ol>
     </p>
 
-    <show-example example="exampleSelectionCheckboxFiltered" example-height="450px"></show-example>
+    <show-example example="exampleSelectionCheckboxFiltered"></show-example>
+
+    <h3>Header Checkbox Selection</h3>
+
+    <p>
+        bla bla bla
+    </p>
+
+    <show-example example="exampleHeaderCheckbox"></show-example>
+
+    <show-example example="exampleHeaderCheckboxEntireSet"></show-example>
 
     <h3>Selection Events</h3>
 
@@ -163,7 +173,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <show-example example="example3" example-height="450px"></show-example>
+    <show-example example="example3"></show-example>
 
     <h3>Node Selection API</h3>
 
@@ -222,7 +232,7 @@ api.forEachNodeAfterFilter( function(node) {
         data for selection purposes.
     </p>
 
-    <show-example example="example4" example-height="450px"></show-example>
+    <show-example example="example4"></show-example>
 
     <h3 id="selectionArrowKeys">Selection with Keyboard Arrow Keys</h3>
 
