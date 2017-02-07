@@ -21,7 +21,6 @@
   ],
   "peerDependencies": {
     "ag-grid": "7.2.x",
-    "ag-grid-enterprise": "7.2.x",
     "vue": "^2.1.0"
   },
   "devDependencies": {
