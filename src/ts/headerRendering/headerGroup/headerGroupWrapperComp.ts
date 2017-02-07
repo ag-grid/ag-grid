@@ -63,9 +63,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMove(displayName);
         this.setupWidth();
 
-        var setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui());
-        this.context.wireBean(setLeftFeature);
-        this.addDestroyFunc( () => setLeftFeature.destroy() );
+        this.addFeature(this.context, new SetLeftFeature(this.columnGroup, this.getGui()));
     }
 
     private appendHeaderGroupComp(displayName: string): IComponent<IHeaderGroupParams> {

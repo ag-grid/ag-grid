@@ -86,9 +86,7 @@ export class RenderedHeaderCell extends Component {
         this.setupText();
         this.setupWidth();
 
-        var setLeftFeature = new SetLeftFeature(this.column, eGui);
-        this.context.wireBean(setLeftFeature);
-        this.addDestroyFunc( ()=> setLeftFeature.destroy() );
+        this.addFeature(this.context, new SetLeftFeature(this.column, eGui));
     }
 
     private setupTooltip(): void {

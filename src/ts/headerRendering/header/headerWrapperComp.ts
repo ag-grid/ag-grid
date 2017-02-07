@@ -82,13 +82,8 @@ export class HeaderWrapperComp extends Component {
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        var setLeftFeature = new SetLeftFeature(this.column, this.getGui());
-        this.context.wireBean(setLeftFeature);
-        this.addDestroyFunc( ()=> setLeftFeature.destroy() );
-
-        let selectAllFeature = new SelectAllFeature(this.cbSelectAll, this.column);
-        this.context.wireBean(selectAllFeature);
-        this.addDestroyFunc( ()=> selectAllFeature.destroy() );
+        this.addFeature(this.context, new SetLeftFeature(this.column, this.getGui()));
+        this.addFeature(this.context, new SelectAllFeature(this.cbSelectAll, this.column));
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
