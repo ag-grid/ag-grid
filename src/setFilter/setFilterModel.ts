@@ -2,6 +2,11 @@ import {Utils} from "ag-grid/main";
 import {ColDef} from "ag-grid/main";
 import {SetFilterParameters} from "ag-grid/main";
 
+// we cannot have 'null' as a key in a JavaScript map,
+// it needs to be a string. so we use this string for
+// storing null values.
+const NULL_VALUE = '___NULL___';
+
 export class SetFilterModel {
 
     private colDef: ColDef;
@@ -207,10 +212,27 @@ export class SetFilterModel {
     public selectEverything() {
         var count = this.allUniqueValues.length;
         for (var i = 0; i < count; i++) {
-            var value = this.allUniqueValues[i];
-            this.selectedValuesMap[value] = null;
+            var key = this.allUniqueValues[i];
+            let safeKey = this.valueToKey(key);
+            this.selectedValuesMap[safeKey] = null;
         }
         this.selectedValuesCount = count;
+    }
+
+    private valueToKey(key: string): string {
+        if (key===null) {
+            return NULL_VALUE;
+        } else {
+            return key;
+        }
+    }
+
+    private keyToValue(value: string): string {
+        if (value===NULL_VALUE) {
+            return null;
+        } else {
+            return value;
+        }
     }
 
     public isFilterActive() {
@@ -231,21 +253,24 @@ export class SetFilterModel {
     }
 
     public unselectValue(value: any) {
-        if (this.selectedValuesMap[value] !== undefined) {
-            delete this.selectedValuesMap[value];
+        let safeKey = this.valueToKey(value);
+        if (this.selectedValuesMap[safeKey] !== undefined) {
+            delete this.selectedValuesMap[safeKey];
             this.selectedValuesCount--;
         }
     }
 
     public selectValue(value: any) {
-        if (this.selectedValuesMap[value] === undefined) {
-            this.selectedValuesMap[value] = null;
+        let safeKey = this.valueToKey(value);
+        if (this.selectedValuesMap[safeKey] === undefined) {
+            this.selectedValuesMap[safeKey] = null;
             this.selectedValuesCount++;
         }
     }
 
     public isValueSelected(value: any) {
-        return this.selectedValuesMap[value] !== undefined;
+        let safeKey = this.valueToKey(value);
+        return this.selectedValuesMap[safeKey] !== undefined;
     }
 
     public isEverythingSelected() {
@@ -261,8 +286,9 @@ export class SetFilterModel {
             return null;
         }
         var selectedValues = <any>[];
-        Utils.iterateObject(this.selectedValuesMap, function (key: any) {
-            selectedValues.push(key);
+        Utils.iterateObject(this.selectedValuesMap, (key: string) => {
+            let value = this.keyToValue(key);
+            selectedValues.push(value);
         });
         return selectedValues;
     }
@@ -271,9 +297,9 @@ export class SetFilterModel {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (var i = 0; i < model.length; i++) {
-                var newValue = model[i];
-                if (this.allUniqueValues.indexOf(newValue) >= 0) {
-                    this.selectValue(model[i]);
+                var value = model[i];
+                if (this.allUniqueValues.indexOf(value) >= 0) {
+                    this.selectValue(value);
                 }
             }
         } else {
