@@ -213,11 +213,11 @@ gridOptions: {
     </p>
 
 <pre>
-export interface IDateComponent {
+interface IDateComp {
     <span class="codeComment">// Callback received to signal the creation of this cellEditorRenderer,
     // placeholder to create the necessary logic to setup the component,
     // like initialising the gui, or any other part of your component</span>
-    init?(params: IDateComponentParams): void;
+    init?(params: IDateParams): void;
 
     <span class="codeComment">// Return the DOM element of your editor, this is what the grid puts into the DOM</span>
     getGui(): HTMLElement;
@@ -243,7 +243,7 @@ export interface IDateComponent {
     </p>
 
 <pre>
-export interface IDateComponentParams {
+export interface IDateCompParams {
     <span class="codeComment">// Method for component to tell ag-Grid that the date has changed</span>
     onDateChanged:()=>void
 }
@@ -298,7 +298,7 @@ export interface IDateComponentParams {
 
     <p>
         The example below shows external filters in action. There are two methods on gridOptions you
-        need to implement: <i>cbIsExternalFilterPresent()</i> and <i>cbDoesExternalFilterPass(node)</i>.
+        need to implement: <i>isExternalFilterPresent()</i> and <i>doesExternalFilterPass(node)</i>.
     </p>
     <ul>
 
@@ -403,7 +403,7 @@ export interface IDateComponentParams {
         can be any function / class that implements the following interface:
     </p>
 
-    <pre>interface IFilter {
+    <pre>interface IFilterComp {
 
     <span class="codeComment">// mandatory methods</span>
 
@@ -655,7 +655,6 @@ nameFilter.setModel(model);</pre>
     <p>You can reset all filters by doing the following:</p>
     <pre>
 gridOptions.api.setFilterModel(null);
-gridOptions.api.onFilterChanged();
 </pre>
 
     <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
