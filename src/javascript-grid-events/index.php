@@ -218,7 +218,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>columnMoved</th>
-            <td>A column was moved.</td>
+            <td>A column was moved. To find out when the column move is finished you can use the dragStopped event below.</td>
         </tr>
         <tr>
             <th>columnGroupOpened</th>
@@ -240,7 +240,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>dragStarted, dragStopped</th>
-            <td>When column dragging starts of stops. Useful if you want to wait until after a drag
+            <td>When column dragging starts or stops. Useful if you want to wait until after a drag
                 event before doing an action.
             </td>
         </tr>
