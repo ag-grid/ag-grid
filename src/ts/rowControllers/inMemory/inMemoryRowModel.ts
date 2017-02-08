@@ -418,11 +418,13 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
     }
 
-    public insertItemsAtIndex(index: number, items: any[]): void {
+    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
         // remember group state, so we can expand groups that should be expanded
         var groupState = this.getGroupState();
         var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
-        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
+        if (!skipRefresh) {
+            this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
+        }
     }
 
     public onRowHeightChanged(): void {
@@ -434,16 +436,21 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.onRowHeightChanged();
     }
 
-    public removeItems(rowNodes: RowNode[]): void {
+    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
         var groupState = this.getGroupState();
         var removedNodes = this.nodeManager.removeItems(rowNodes);
-        this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
+        if (!skipRefresh) {
+            this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
+        }
     }
 
-    public addItems(items: any[]): void {
+    public addItems(items: any[], skipRefresh: boolean): void {
         var groupState = this.getGroupState();
         var newNodes = this.nodeManager.addItems(items);
-        this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
+
+        if (!skipRefresh) {
+            this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
+        }
 
         // if (newNodes) {
         //     this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState, newRowNodes: newNodes});

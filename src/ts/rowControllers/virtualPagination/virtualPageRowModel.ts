@@ -201,18 +201,18 @@ export class VirtualPageRowModel implements IRowModel {
         return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
     }
 
-    public insertItemsAtIndex(index: number, items: any[]): void {
+    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
         if (this.virtualPageCache) {
             this.virtualPageCache.insertItemsAtIndex(index, items);
         }
     }
 
-    public removeItems(rowNodes: RowNode[]): void {
+    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
         console.log('ag-Grid: it is not possible to removeItems when using virtual pagination. Instead use the ' +
             'API to refresh the cache');
     }
 
-    public addItems(items: any[]): void {
+    public addItems(items: any[], skipRefresh: boolean): void {
         console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
             'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
     }

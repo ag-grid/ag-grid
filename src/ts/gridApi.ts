@@ -627,16 +627,16 @@ export class GridApi {
         }
     }
 
-    public insertItemsAtIndex(index: number, items: any[]): void {
-        this.rowModel.insertItemsAtIndex(index, items);
+    public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
+        this.rowModel.insertItemsAtIndex(index, items, skipRefresh);
     }
 
-    public removeItems(rowNodes: RowNode[]): void {
-        this.rowModel.removeItems(rowNodes);
+    public removeItems(rowNodes: RowNode[], skipRefresh = false): void {
+        this.rowModel.removeItems(rowNodes, skipRefresh);
     }
 
-    public addItems(items: any[]): void {
-        this.rowModel.addItems(items);
+    public addItems(items: any[], skipRefresh = false): void {
+        this.rowModel.addItems(items, skipRefresh);
     }
 
     public refreshVirtualPageCache(): void {
