@@ -11,13 +11,28 @@ include '../documentation-main/documentation_header.php';
     <h2>Header Rendering</h2>
 
     <p>
-        Customising how the column headers look is done using header components.
+        You can specify what header renderer to use at the column definition level.
+        If not specified, the grid's default header rendering components will be used.
+    </p>
+
+    <p>
         There are two types of header components:
         <ul>
             <li><b>Header Component</b>: For rendering the normal column headers.</li>
             <li><b>Header Group Component</b>: For rendering column groups.</li>
         </ul>
     </p>
+
+    <p>
+        You specify the header component to use in the column definition (or you can set
+        in the default column definition to impact all columns).
+    </p>
+
+    <pre><span class="codeComment">// specify a column definition</span>
+var myColDef = {
+    // put in a custom header component
+
+}</pre>
 
     <note>
         Header Components were introduced in v8 of ag-Grid. Before this customising the header was done
