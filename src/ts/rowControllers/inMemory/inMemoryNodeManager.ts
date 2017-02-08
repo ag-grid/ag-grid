@@ -113,7 +113,7 @@ export class InMemoryNodeManager {
             node.group = false;
             node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
             if (node.canFlower) {
-                node.expanded = false;
+                node.expanded = this.isExpanded(level);
             }
         }
 
@@ -126,6 +126,15 @@ export class InMemoryNodeManager {
         this.nextId++;
 
         return node;
+    }
+
+    private isExpanded(level: any) {
+        let expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+        if (expandByDefault===-1) {
+            return true;
+        } else {
+            return level < expandByDefault;
+        }
     }
 
     private setLeafChildren(node: RowNode): void {
