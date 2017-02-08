@@ -1,9 +1,9 @@
 import {Component} from "../../widgets/component";
-import {ICellEditor} from "./iCellEditor";
+import {ICellEditorComp} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 import {Constants} from "../../constants";
 
-export class SelectCellEditor extends Component implements ICellEditor {
+export class SelectCellEditor extends Component implements ICellEditorComp {
 
     private focusAfterAttached: boolean;
     private eSelect: HTMLSelectElement;

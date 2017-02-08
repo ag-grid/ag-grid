@@ -1,5 +1,5 @@
 import {Utils as _} from "../utils";
-import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./cellRenderers/iCellRenderer";
 import {Autowired, Context, Bean} from "../context/context";
 import {CellRendererFactory} from "./cellRendererFactory";
 
@@ -16,10 +16,10 @@ export class CellRendererService {
      * @params: The params to pass to the cell renderer if it's a function or a class.
      * @eTarget: The DOM element we will put the results of the html element into *
      * @return: If options a, it returns the created class instance */
-    public useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string,
+    public useCellRenderer(cellRendererKey: {new(): ICellRendererComp} | ICellRendererFunc | string,
                             eTarget: HTMLElement,
                             params: any
-                        ): ICellRenderer {
+                        ): ICellRendererComp {
 
         var cellRenderer = this.lookUpCellRenderer(cellRendererKey);
         if (_.missing(cellRenderer)) {
@@ -29,7 +29,7 @@ export class CellRendererService {
         }
 
         var resultFromRenderer: HTMLElement | string;
-        var iCellRendererInstance: ICellRenderer = null;
+        var iCellRendererInstance: ICellRendererComp = null;
 
         this.checkForDeprecatedItems(cellRenderer);
 
@@ -37,7 +37,7 @@ export class CellRendererService {
         var rendererIsAComponent = this.doesImplementICellRenderer(cellRenderer);
         // if it's a component, we create and initialise it
         if (rendererIsAComponent) {
-            var CellRendererClass = <{new(): ICellRenderer}> cellRenderer;
+            var CellRendererClass = <{new(): ICellRendererComp}> cellRenderer;
             iCellRendererInstance = new CellRendererClass();
             this.context.wireBean(iCellRendererInstance);
 

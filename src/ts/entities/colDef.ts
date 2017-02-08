@@ -1,11 +1,11 @@
 import {RowNode} from "./rowNode";
-import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
-import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
+import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
 import {Column} from "./column";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
-import {IHeaderComp} from "../headerRendering/header/headerComp";
+import {IHeaderComp, IHeader} from "../headerRendering/header/headerComp";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 
 /** AbstractColDef can be a group or a column definition */
@@ -106,17 +106,17 @@ export interface ColDef extends AbstractColDef {
     cellStyle?: {} | ((params:any) => {});
 
     /** A function for rendering a cell. */
-    cellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    cellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: {};
 
     /** Cell editor */
-    cellEditor?: {new(): ICellEditor} | string;
+    cellEditor?: {new(): ICellEditorComp} | string;
     cellEditorFramework?: any;
     cellEditorParams?: {};
 
     /** A function for rendering a floating cell. */
-    floatingCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    floatingCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     floatingCellRendererFramework?: any;
     floatingCellRendererParams?: {};
 
@@ -236,7 +236,9 @@ export interface ColDef extends AbstractColDef {
     pivotValueColumn?: Column;
 
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerComponent?:{new(): IHeaderComp}
+    headerComponent?:{new(): any}
+    /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    headerComponentFramework?: {new (): any};
     /** The custom header component parameters**/
     headerComponentParams?:any
 }

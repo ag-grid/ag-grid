@@ -13,7 +13,7 @@ import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
-import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
@@ -44,17 +44,17 @@ export class RenderedRow extends BeanStub {
 
     private eAllRowContainers: HTMLElement[] = [];
 
-    private fullWidthRowComponent: ICellRenderer;
-    private fullWidthRowComponentBody: ICellRenderer;
-    private fullWidthRowComponentLeft: ICellRenderer;
-    private fullWidthRowComponentRight: ICellRenderer;
+    private fullWidthRowComponent: ICellRendererComp;
+    private fullWidthRowComponentBody: ICellRendererComp;
+    private fullWidthRowComponentLeft: ICellRendererComp;
+    private fullWidthRowComponentRight: ICellRendererComp;
 
     private renderedCells: {[key: string]: RenderedCell} = {};
     private scope: any;
     private rowNode: RowNode;
 
     private fullWidthRow: boolean;
-    private fullWidthCellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private fullWidthCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     private fullWidthCellRendererParams: any;
 
     private parentScope: any;

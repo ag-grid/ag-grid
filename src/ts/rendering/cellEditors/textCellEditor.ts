@@ -1,9 +1,9 @@
 import {Constants} from "../../constants";
 import {Component} from "../../widgets/component";
-import {ICellEditor, ICellEditorParams} from "./iCellEditor";
+import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 
-export class TextCellEditor extends Component implements ICellEditor {
+export class TextCellEditor extends Component implements ICellEditorComp {
 
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
 

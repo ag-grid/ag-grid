@@ -19,7 +19,7 @@ import {Bean, Qualifier, Autowired, PostConstruct, PreDestroy} from "./context/c
 import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {ICellRendererFunc, ICellRenderer} from "./rendering/cellRenderers/iCellRenderer";
+import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowControllers/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
@@ -56,9 +56,9 @@ export class GridOptionsWrapper {
 
     private propertyEventService: EventService = new EventService();
 
-    private fullWidthCellRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
-    private groupRowRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
-    private groupRowInnerRenderer : {new(): ICellRenderer} | ICellRendererFunc | string;
+    private fullWidthCellRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
+    private groupRowRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
+    private groupRowInnerRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
 
     private domDataKey = '__AG_'+Math.random().toString();
 
@@ -104,9 +104,9 @@ export class GridOptionsWrapper {
 
     // the cellRenderers come from the instances for this class, not from gridOptions, which allows
     // the baseFrameworkFactory to replace with framework specific ones
-    public getFullWidthCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.fullWidthCellRenderer; }
-    public getGroupRowRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.groupRowRenderer; }
-    public getGroupRowInnerRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string { return this.groupRowInnerRenderer; }
+    public getFullWidthCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.fullWidthCellRenderer; }
+    public getGroupRowRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.groupRowRenderer; }
+    public getGroupRowInnerRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.groupRowInnerRenderer; }
 
     public isEnterprise() { return this.enterprise;}
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
