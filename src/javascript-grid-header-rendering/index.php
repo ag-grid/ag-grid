@@ -167,7 +167,7 @@ var myColumns = {
     <span class="codeComment">// callback to request the grid to show the column menu.</span>
     <span class="codeComment">// pass in the html element of the column menu to have the </span>
     <span class="codeComment">// grid position the menu over the button.</span>
-    showColumnMenu(menuButton: HTMLElement): void; <span style="color: darkred; ">##### is this method name right?</span>
+    showColumnMenu(menuButton: HTMLElement): void;
 }</pre>
 
     <h3>Sorting</h3>

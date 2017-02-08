@@ -215,36 +215,6 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/">Filtering</a>
                 <?php } ?>
 
-                <?php if ($key == "Filter Component") { ?>
-                    <span class="sidebarLinkSelected">Filter Components</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/">Filter Components</a>
-                <?php } ?>
-
-                    <?php if ($key == "Filtering Angular") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Filtering Aurelia") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Filtering React") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Filtering VueJS") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                    <?php } ?>
-
                 <?php if ($key == "Selection") { ?>
                     <span class="sidebarLinkSelected">Selection</span>
                 <?php } else { ?>
@@ -305,72 +275,11 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-styling/">Cell Styling</a>
                 <?php } ?>
 
-                <?php if ($key == "Cell Rendering") { ?>
-                    <span class="sidebarLinkSelected">Cell Rendering</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/">Cell Rendering</a>
-                <?php } ?>
-
-                    <?php if ($key == "Cell Rendering Angular") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Cell Rendering Aurelia") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Cell Rendering React") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Cell Rendering VueJS") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                    <?php } ?>
-
-
                 <?php if ($key == "Cell Editing") { ?>
                     <span class="sidebarLinkSelected">Cell Editing</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/">Cell Editing</a>
                 <?php } ?>
-
-                <?php if ($key == "Cell Editor") { ?>
-                    <span class="sidebarLinkSelected">Cell Editor</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/">Cell Editor</a>
-                <?php } ?>
-
-                    <?php if ($key == "Cell Editing Angular") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Cell Editing Aurelia") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Cell Editing React") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Cell Editing VueJS") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                    <?php } ?>
 
                 <?php if ($key == "Context") { ?>
                     <span class="sidebarLinkSelected">Context</span>
@@ -395,37 +304,6 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-animation/">Animation</a>
                 <?php } ?>
-
-                <?php if ($key == "Header Rendering") { ?>
-                    <span class="sidebarLinkSelected">Header Components</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/">Header Components</a>
-                <?php } ?>
-
-                    <?php if ($key == "Header Rendering Angular") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Header Rendering Aurelia") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Header Rendering React") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Header Rendering VueJS") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                    <?php } ?>
-
 
                 <?php if ($key == "Keyboard Navigation") { ?>
                     <span class="sidebarLinkSelected">Keyboard Navigation</span>
@@ -524,6 +402,130 @@ if (strcmp($version , 'latest') == 0) {
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-for-print/">For Print</a>
                 <?php } ?>
+
+                <h4>
+                    Components
+                </h4>
+
+                <?php if ($key == "Cell Rendering") { ?>
+                    <span class="sidebarLinkSelected">Cell Renderer</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/">Cell Renderer</a>
+                <?php } ?>
+
+                    <?php if ($key == "Cell Rendering Angular") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Rendering Aurelia") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Rendering React") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Rendering VueJS") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
+                    <?php } ?>
+
+                <?php if ($key == "Cell Editor") { ?>
+                    <span class="sidebarLinkSelected">Cell Editor</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/">Cell Editor</a>
+                <?php } ?>
+
+                    <?php if ($key == "Cell Editing Angular") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Editing Aurelia") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Editing React") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Cell Editing VueJS") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
+                    <?php } ?>
+
+                <?php if ($key == "Filter Component") { ?>
+                    <span class="sidebarLinkSelected">Filter Components</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/">Filter Components</a>
+                <?php } ?>
+
+                    <?php if ($key == "Filtering Angular") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Filtering Aurelia") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Filtering React") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Filtering VueJS") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
+                    <?php } ?>
+
+                <?php if ($key == "Header Rendering") { ?>
+                    <span class="sidebarLinkSelected">Header Components</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/">Header Components</a>
+                <?php } ?>
+
+                    <?php if ($key == "Header Rendering Angular") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Header Rendering Aurelia") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Header Rendering React") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Header Rendering VueJS") { ?>
+                        <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
+                    <?php } ?>
 
                 <h4>
                     Row Models
