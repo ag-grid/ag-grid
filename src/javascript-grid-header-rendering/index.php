@@ -18,8 +18,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         There are two types of header components:
         <ul>
-            <li><b>Header Component</b>: For rendering the normal column headers.</li>
-            <li><b>Header Group Component</b>: For rendering column groups.</li>
+            <li><b>Header Component</b>: For rendering the normal column headers. Configured for columns.</li>
+            <li><b>Header Group Component</b>: For rendering column groups. Configured for column groups.</li>
         </ul>
     </p>
 
@@ -28,11 +28,29 @@ include '../documentation-main/documentation_header.php';
         in the default column definition to impact all columns).
     </p>
 
-    <pre><span class="codeComment">// specify a column definition</span>
-var myColDef = {
-    // put in a custom header component
+    <pre><span class="codeComment">// a list of column definitions</span>
+var myColumns = {
 
-}</pre>
+    <span class="codeComment">// these columns use the default header</span>
+    {headerName: "Athlete", field: "athlete"},
+    {headerName: "Sport", field: "sport"},
+
+    <span class="codeComment">// this column uses a custom header</span>
+    {headerName: "Age", field: "age", headerComponent: MyHeaderComponent},
+
+    <span class="codeComment">// you can also specify header components for groups</span>
+    {
+        headerName: "Medals",
+        <span class="codeComment">// custom header component</span>
+        headerGroupComponent: MyHeaderGroupComponent,
+        children: [
+            {headerName: "Gold", field: "gold"},
+            {headerName: "Silver", field: "silver"},
+            {headerName: "Gold", field: "bronze"}
+        ]
+    }
+}
+</pre>
 
     <note>
         Header Components were introduced in v8 of ag-Grid. Before this customising the header was done
@@ -43,7 +61,8 @@ var myColDef = {
     <h2 id="headerComponent">Header Component</h2>
 
     <p>
-        This section details how to put a header component into ag-Grid.
+        This section details how to put a header component into ag-Grid. How to create header <b>group</b> components
+        is explained in the next section.
     </p>
 
     <h3>Grid vs Your Responsibilities</h3>
