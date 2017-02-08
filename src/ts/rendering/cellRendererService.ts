@@ -1,5 +1,5 @@
 import {Utils as _} from "../utils";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {Autowired, Context, Bean} from "../context/context";
 import {CellRendererFactory} from "./cellRendererFactory";
 

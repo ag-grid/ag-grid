@@ -22,7 +22,7 @@ import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
@@ -1126,8 +1126,8 @@ export class RenderedCell extends Component {
         return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, value);
     }
 
-    private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): any {
-        var params = {
+    private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {
+        var params = <ICellRendererParams> {
             value: this.value,
             valueFormatted: valueFormatted,
             valueGetter: this.getValue,
