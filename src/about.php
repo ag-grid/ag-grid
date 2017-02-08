@@ -68,16 +68,6 @@
                         GB 998360167
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <a href="https://beta.companieshouse.gov.uk/company/07318192">UK Companies House</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="https://london.techhub.com/">Techhub @ Campus</a>
-                    </td>
-                </tr>
                 </table>
                 <br/>
             </p>

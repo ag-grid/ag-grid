@@ -123,7 +123,7 @@ var myColumns = {
         Header components work similar to other component types in ag-Grid in which they should
         implement the following interface:
     </p>
-    <pre>export interface IHeaderComp {
+    <pre>interface IHeaderComp {
 
     <span class="codeComment">// optional method, gets called once with params</span>
     init?(params: IHeaderCompParams): void;
