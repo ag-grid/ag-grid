@@ -43,25 +43,35 @@ include '../documentation-main/documentation_header.php';
         the grid.
     </p>
 
-    <h4>&#8226; API insertItemsAtIndex(index, items)</h4>
+    <h4>&#8226; API insertItemsAtIndex(index, items, skipRefresh=false)</h4>
 
     <p>
         Inserts the data at the provided index. Provide items as raw data, not rowNodes (ie same as data in original
         rowData).
     </p>
 
-    <h4>&#8226; API removeItems(rowNodes)</h4>
+    <h4>&#8226; API removeItems(rowNodes, skipRefresh=false)</h4>
 
     <p>
         Removes the provided rowNodes from the grid. The rowNodes are used to identify the rows rather than indexes
         as this makes the method neutral to any sorting, filtering or grouping that may be active in the grid.
     </p>
 
-    <h4>&#8226; API addItems(items)</h4>
+    <h4>&#8226; API addItems(items, skipRefresh=false)</h4>
 
     <p>
         Adds items to the end of the list. If the grid is sorted, then adding to the end of the list is fine, as
         the sorting will then sort the items anyway.
+    </p>
+
+    <h4>Skip Refresh</h4>
+
+    <p>
+        Each of the methods above has an optional parameter <i>skipRefresh</i>. This parameter is only used
+        in the InMemoryRowModel. If it is true, the grid will not refresh the model - that means it will not
+        rework the groups, sorting and filtering. Use this if you have many updates to do and only want to
+        refresh after the last one (set to false for the last call). This will give a performance gain as
+        the grid will only group, sort and filter once when you are finished all the updates.
     </p>
 
     <h3>Getting Data Out</h3>
