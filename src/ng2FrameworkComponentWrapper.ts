@@ -1,15 +1,14 @@
-import {ComponentRef, ViewContainerRef, Injectable, ComponentFactoryResolver} from "@angular/core";
-import {Bean}  from 'ag-grid';
-import {IComponent, IFilterParams}  from "ag-grid/main";
+import {ComponentRef, ViewContainerRef, ComponentFactoryResolver} from "@angular/core";
+import {IComponent, Bean, IFilterParams}  from "ag-grid/main";
 import {FrameworkComponentWrapper}  from 'ag-grid';
-import {AgFrameworkComponent} from "./agFrameworkComponent";
-import {AgFilterComponent} from "./agFilterComponent";
+import {AgFrameworkComponent} from "./interfaces";
 
-@Injectable()
 @Bean ("frameworkComponentWrapper")
 export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper {
-    public static _viewContainerRef: ViewContainerRef;
-    public static _componentFactoryResolver: ComponentFactoryResolver;
+    constructor(
+        private viewContainerRef: ViewContainerRef,
+        private componentFactoryResolver: ComponentFactoryResolver
+    ){}
 
     wrap <A extends IComponent<any>>(Ng2Component: { new (): any}, methodList: string[]): A{
         let that = this;
@@ -21,7 +20,7 @@ export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper 
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
                 return that.createComponent(Ng2Component,
-                    Ng2FrameworkComponentWrapper._viewContainerRef);
+                    that.viewContainerRef);
             }
 
         }
@@ -52,8 +51,8 @@ export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper 
         // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
         // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
         // caching the factory here yields no performance benefits
-        let factory = Ng2FrameworkComponentWrapper._componentFactoryResolver.resolveComponentFactory(componentType);
-        return viewContainerRef.createComponent(factory);
+        let factory = this.componentFactoryResolver.resolveComponentFactory(componentType);
+        return this.viewContainerRef.createComponent(factory);
     }
 }
 
