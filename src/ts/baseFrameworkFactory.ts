@@ -1,4 +1,4 @@
-import {ICellRenderer, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ColDef} from "./entities/colDef";
 import {GridOptions} from "./entities/gridOptions";
 import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
@@ -12,11 +12,11 @@ export class BaseFrameworkFactory implements IFrameworkFactory {
         return gridOptions.dateComponent;
     }
 
-    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return colDef.floatingCellRenderer;
     }
 
-    public colDefCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return colDef.cellRenderer;
     }
 
@@ -28,15 +28,15 @@ export class BaseFrameworkFactory implements IFrameworkFactory {
         return colDef.filter;
     }
 
-    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return gridOptions.fullWidthCellRenderer;
     }
 
-    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return gridOptions.groupRowRenderer;
     }
 
-    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return gridOptions.groupRowInnerRenderer;
     }
 

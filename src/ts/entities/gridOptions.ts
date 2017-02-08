@@ -3,7 +3,7 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
-import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
 import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
 import {IDatasource} from "../rowControllers/iDatasource";
 import {GridCellDef} from "./gridCell";
@@ -170,10 +170,10 @@ export interface GridOptions {
     // callbacks
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
-    groupRowRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
-    groupRowInnerRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    groupRowInnerRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
     isScrollLag?(): boolean;
     isExternalFilterPresent?(): boolean;
@@ -187,7 +187,7 @@ export interface GridOptions {
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
     getDocument?: ()=> Document;
 
-    fullWidthCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    fullWidthCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
     fullWidthCellRendererParams?: any;
     isFullWidthCell?(rowNode: RowNode): boolean;

@@ -22,7 +22,7 @@ import {ICellEditor, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
-import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
@@ -83,7 +83,7 @@ export class RenderedCell extends Component {
     private scope: any;
 
     private cellEditor: ICellEditor;
-    private cellRenderer: ICellRenderer;
+    private cellRenderer: ICellRendererComp;
 
     private value: any;
     private checkboxSelection: boolean;
@@ -1166,7 +1166,7 @@ export class RenderedCell extends Component {
         return params;
     }
 
-    private useCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string): void {
+    private useCellRenderer(cellRendererKey: {new(): ICellRendererComp} | ICellRendererFunc | string, cellRendererParams: {}, valueFormatted: string): void {
 
         var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
 

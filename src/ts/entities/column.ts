@@ -13,7 +13,7 @@ import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
-import {ICellRenderer, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
 import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
@@ -92,8 +92,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     private primary: boolean;
 
-    private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
-    private floatingCellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    private floatingCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     private cellEditor: {new(): ICellEditor} | string;
     private filter: {new(): IFilter} | string;
 
@@ -150,7 +150,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         this.validate();
     }
 
-    public getCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public getCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return this.cellRenderer;
     }
 
@@ -158,7 +158,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         return this.cellEditor;
     }
 
-    public getFloatingCellRenderer(): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public getFloatingCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return this.floatingCellRenderer;
     }
 

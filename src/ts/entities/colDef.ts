@@ -1,6 +1,6 @@
 import {RowNode} from "./rowNode";
 import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
-import {ICellRendererFunc, ICellRenderer} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
 import {Column} from "./column";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
@@ -104,7 +104,7 @@ export interface ColDef extends AbstractColDef {
     cellStyle?: {} | ((params:any) => {});
 
     /** A function for rendering a cell. */
-    cellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    cellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: {};
 
@@ -114,7 +114,7 @@ export interface ColDef extends AbstractColDef {
     cellEditorParams?: {};
 
     /** A function for rendering a floating cell. */
-    floatingCellRenderer?: {new(): ICellRenderer} | ICellRendererFunc | string;
+    floatingCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     floatingCellRendererFramework?: any;
     floatingCellRendererParams?: {};
 
