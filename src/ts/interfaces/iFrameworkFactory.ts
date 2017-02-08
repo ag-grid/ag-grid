@@ -1,6 +1,6 @@
 import {ColDef} from "../entities/colDef";
 import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
-import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
+import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
 import {IFilter, IFilterComp} from "./iFilter";
 import {GridOptions} from "../entities/gridOptions";
 
@@ -10,7 +10,7 @@ export interface IFrameworkFactory {
 
     colDefCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string;
 
-    colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string;
+    colDefCellEditor(colDef: ColDef): {new(): ICellEditorComp} | string;
 
     colDefFilter(colDef: ColDef): {new(): IFilterComp} | string;
 

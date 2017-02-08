@@ -1,4 +1,4 @@
-import {ICellEditor} from "./iCellEditor";
+import {ICellEditorComp} from "./iCellEditor";
 import {ICellEditorParams} from "./iCellEditor";
 import {Component} from "../../widgets/component";
 import {ICellRenderer} from "../cellRenderers/iCellRenderer";
@@ -14,7 +14,7 @@ export interface ILargeTextEditorParams extends ICellEditorParams {
     cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
 }
 
-export class LargeTextCellEditor extends Component implements ICellEditor {
+export class LargeTextCellEditor extends Component implements ICellEditorComp {
     private static TEMPLATE =
         // tab index is needed so we can focus, which is needed for keyboard events
         '<div class="ag-large-text" tabindex="0">' +

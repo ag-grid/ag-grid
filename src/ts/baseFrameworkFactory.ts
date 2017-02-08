@@ -1,7 +1,7 @@
 import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ColDef} from "./entities/colDef";
 import {GridOptions} from "./entities/gridOptions";
-import {ICellEditor} from "./rendering/cellEditors/iCellEditor";
+import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 import {IFilterComp} from "./interfaces/iFilter";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDateComp} from "./rendering/dateComponent";
@@ -20,7 +20,7 @@ export class BaseFrameworkFactory implements IFrameworkFactory {
         return colDef.cellRenderer;
     }
 
-    public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
+    public colDefCellEditor(colDef: ColDef): {new(): ICellEditorComp} | string {
         return colDef.cellEditor;
     }
 

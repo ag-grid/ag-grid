@@ -1,7 +1,7 @@
 // Type definitions for ag-grid v7.2.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { ICellEditor } from "./iCellEditor";
+import { ICellEditorComp } from "./iCellEditor";
 import { ICellEditorParams } from "./iCellEditor";
 import { Component } from "../../widgets/component";
 import { ICellRenderer } from "../cellRenderers/iCellRenderer";
@@ -14,7 +14,7 @@ export interface ILargeTextEditorParams extends ICellEditorParams {
         new (): ICellRenderer;
     } | ICellRendererFunc | string;
 }
-export declare class LargeTextCellEditor extends Component implements ICellEditor {
+export declare class LargeTextCellEditor extends Component implements ICellEditorComp {
     private static TEMPLATE;
     private params;
     private textarea;

@@ -1,6 +1,6 @@
 import {Bean, PostConstruct, Autowired, Context} from "../context/context";
 import {Utils} from '../utils';
-import {ICellEditor, ICellEditorParams} from "./cellEditors/iCellEditor";
+import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {TextCellEditor} from "./cellEditors/textCellEditor";
 import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
@@ -21,7 +21,7 @@ export class CellEditorFactory {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private cellEditorMap: {[key: string]: {new(): ICellEditor}} = {};
+    private cellEditorMap: {[key: string]: {new(): ICellEditorComp}} = {};
 
     @PostConstruct
     private init(): void {
@@ -32,7 +32,7 @@ export class CellEditorFactory {
         this.cellEditorMap[CellEditorFactory.LARGE_TEXT] = LargeTextCellEditor;
     }
     
-    public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
+    public addCellEditor(key: string, cellEditor: {new(): ICellEditorComp}): void {
         this.cellEditorMap[key] = cellEditor;
     }
 
@@ -43,9 +43,9 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor(key: string|{new(): ICellEditor}, params: ICellEditorParams): ICellEditor {
+    public createCellEditor(key: string|{new(): ICellEditorComp}, params: ICellEditorParams): ICellEditorComp {
 
-        var CellEditorClass: {new(): ICellEditor};
+        var CellEditorClass: {new(): ICellEditorComp};
 
         if (Utils.missing(key)) {
             CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
@@ -56,7 +56,7 @@ export class CellEditorFactory {
                 CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
             }
         } else {
-            CellEditorClass = <{new(): ICellEditor}> key;
+            CellEditorClass = <{new(): ICellEditorComp}> key;
         }
 
         var cellEditor = new CellEditorClass();

@@ -14,7 +14,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
 import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
-import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
+import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
 import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 
@@ -94,7 +94,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
 
     private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     private floatingCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private cellEditor: {new(): ICellEditor} | string;
+    private cellEditor: {new(): ICellEditorComp} | string;
     private filter: {new(): IFilter} | string;
 
     private parent: ColumnGroupChild;
@@ -154,7 +154,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         return this.cellRenderer;
     }
 
-    public getCellEditor(): {new(): ICellEditor} | string {
+    public getCellEditor(): {new(): ICellEditorComp} | string {
         return this.cellEditor;
     }
 

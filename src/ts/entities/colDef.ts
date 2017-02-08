@@ -1,5 +1,5 @@
 import {RowNode} from "./rowNode";
-import {ICellEditor} from "../rendering/cellEditors/iCellEditor";
+import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
 import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
 import {Column} from "./column";
 import {IFilterComp} from "../interfaces/iFilter";
@@ -109,7 +109,7 @@ export interface ColDef extends AbstractColDef {
     cellRendererParams?: {};
 
     /** Cell editor */
-    cellEditor?: {new(): ICellEditor} | string;
+    cellEditor?: {new(): ICellEditorComp} | string;
     cellEditorFramework?: any;
     cellEditorParams?: {};
 
