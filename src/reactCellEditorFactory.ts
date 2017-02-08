@@ -1,9 +1,9 @@
-import {ICellEditor} from 'ag-grid';
+import {ICellEditorComp} from 'ag-grid';
 import {AgReactComponent} from "./agReactComponent";
 
-export function reactCellEditorFactory(reactComponent:any, parentComponent?:any):{new(): ICellEditor} {
+export function reactCellEditorFactory(reactComponent:any, parentComponent?:any):{new(): ICellEditorComp} {
 
-    class ReactCellEditor extends AgReactComponent implements ICellEditor {
+    class ReactCellEditor extends AgReactComponent implements ICellEditorComp {
 
         constructor() {
             super(reactComponent, parentComponent);
