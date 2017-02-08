@@ -34,10 +34,18 @@ include '../documentation-main/documentation_header.php';
 
     <h4>
         <img src="/images/angular2.png" height="20px"/>
-        Angular 2
+        Angular
     </h4>
     <p>
         Add callbacks to the gridOptions or set as AngularJS properties.
+    </p>
+
+    <h4>
+        <img src="/images/vue_large.png" height="20px"/>
+        VueJS
+    </h4>
+    <p>
+        Add callbacks to the gridOptions or set as VueJS properties.
     </p>
 
     <h4>
@@ -105,12 +113,6 @@ include '../documentation-main/documentation_header.php';
             <td>Return a business key for the node. If implemented, then each row in the dom will have an attribute
                 <i>row-id='abc'</i> where abc is what you return as the business key. This is useful for automated
             testing, as it provides a way for your tool to identify rules based on unique business keys.</td>
-        </tr>
-        <tr>
-            <th>checkboxSelection(params)</th>
-            <td>Callback to say if a cell should have checkbox selection. Same as property on colDef,
-            except this gets called for each column. If you want the first column to have selection,
-            regardless of the column, get this to return "params.colIndex===0"</td>
         </tr>
         <tr>
             <th>getHeaderCellTemplate</th>

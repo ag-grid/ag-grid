@@ -629,6 +629,30 @@ h1, h2, h3, h4, h5 {
     padding-bottom: 40px;
 }
 
+.HomeIntro .HomeIntro-video h3 {
+    margin-bottom: 30px;
+}
+
+// responsive video for mobile view
+@media only screen and (max-width : 768px) {
+    .HomeIntro .HomeIntro-video {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 */
+    }
+    .HomeIntro .HomeIntro-video iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.HomeIntro .HomeIntro-snippet {
+    margin-bottom: 30px;
+}
+
+
 .HomeFreeVsEnterprise h2 {
     padding-bottom: 20px;
 }
@@ -1032,12 +1056,12 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     margin-bottom: 6px;
     padding-bottom: 34px;
     top: 38px;
-    height: 735px;
+    height: 410px;
 }
 
 
 .pricing-plan.red {
-    height: 740px;
+    height: 415px;
 }
 
 .pricing-plan {
@@ -1182,4 +1206,33 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .modal-header {
     background-color: #9c3636;
     color: #FFF;
+}
+
+/*
+* === Demo Page ===
+*/
+
+.videoLink {
+    margin: 12px 0 0 0;
+    padding: 2px 0 0 30px;
+    color: #FFF;
+    position: relative;
+}
+
+.videoLink svg {
+    height: 24px;
+    width: 24px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.videoLink:link, .videoLink:visited, .videoLink:active {
+    color: #9d9d9d;
+    text-decoration: none;
+}
+
+.videoLink:hover {
+    color: #FFF;
+    text-decoration: none;
 }

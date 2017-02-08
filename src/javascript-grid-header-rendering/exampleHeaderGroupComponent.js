@@ -3,8 +3,8 @@ var columnDefs = [{
         headerGroupComponent: MyHeaderComponent,
         children: [
             {headerName: "Athlete", field: "athlete", width: 150},
-            {headerName: "Age", field: "age", width: 90},
-            {headerName: "Country", field: "country", width: 120}
+            {headerName: "Age", field: "age", width: 90,  columnGroupShow: 'open'},
+            {headerName: "Country", field: "country", width: 120,  columnGroupShow: 'open'}
     ]},
     {
         headerName: "Medal details",
@@ -12,21 +12,21 @@ var columnDefs = [{
         children: [
             {headerName: "Year", field: "year", width: 90},
             {headerName: "Date", field: "date", width: 110},
-            {headerName: "Sport", field: "sport", width: 110},
-            {headerName: "Gold", field: "gold", width: 100},
-            {headerName: "Silver", field: "silver", width: 100},
-            {headerName: "Bronze", field: "bronze", width: 100},
-            {headerName: "Total", field: "total", width: 100}
+            {headerName: "Sport", field: "sport", width: 110, columnGroupShow: 'open'},
+            {headerName: "Gold", field: "gold", width: 100, columnGroupShow: 'open'},
+            {headerName: "Silver", field: "silver", width: 100,  columnGroupShow: 'open'},
+            {headerName: "Bronze", field: "bronze", width: 100, columnGroupShow: 'open'},
+            {headerName: "Total", field: "total", width: 100,  columnGroupShow: 'open'}
         ]}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
+    enableColResize: true,
     defaultColDef: {
     }
 };
-
 
 function MyHeaderComponent() {
 }
@@ -34,26 +34,47 @@ function MyHeaderComponent() {
 MyHeaderComponent.prototype.init = function (params){
     this.params = params;
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = "< " + this.params.displayName + " >";
+    this.eGui.innerHTML = ''+
+        '<div class="customHeaderLabel">' + this.params.displayName + '</div>' +
+        '<div class="customExpandButton"><i class="fa fa-arrow-right"></i></div>';
 
-    this.listener = this.onClick.bind(this);
-    this.eGui.addEventListener('click', this.listener);
+    this.onExpandButtonClickedListener = this.expandOrCollapse.bind(this);
+    this.eExpandButton = this.eGui.querySelector(".customExpandButton");
+    this.eExpandButton.addEventListener('click', this.onExpandButtonClickedListener);
+
+    this.onExpandChangedListener = this.syncExpandButtons.bind(this);
+    this.params.columnGroup.getOriginalColumnGroup().addEventListener('expandedChanged', this.onExpandChangedListener);
+
+    this.syncExpandButtons();
 };
 
 MyHeaderComponent.prototype.getGui = function (){
     return this.eGui;
 };
 
-MyHeaderComponent.prototype.onClick = function (){
-    if (this.eGui.style.color === 'red') {
-        this.eGui.style.color = '';
-    } else {
-        this.eGui.style.color = 'red';
+MyHeaderComponent.prototype.expandOrCollapse = function (){
+   var currentState = this.params.columnGroup.getOriginalColumnGroup().isExpanded();
+   this.params.setExpanded(!currentState);
+};
+
+MyHeaderComponent.prototype.syncExpandButtons = function (){
+    function collapsed (toDeactivate){
+        toDeactivate.className = toDeactivate.className.split(' ')[0] + ' collapsed';
+    }
+
+    function expanded (toActivate){
+        toActivate.className = toActivate.className.split(' ')[0] + ' expanded';
+    }
+
+    if (this.params.columnGroup.getOriginalColumnGroup().isExpanded()){
+        expanded(this.eExpandButton);
+    }else{
+        collapsed(this.eExpandButton);
     }
 };
 
 MyHeaderComponent.prototype.destroy = function () {
-    this.eGui.removeEventListener('click', this.listener)
+    this.eExpandButton.removeEventListener('click', this.onExpandButtonClickedListener);
 };
 
 

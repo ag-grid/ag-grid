@@ -154,6 +154,11 @@ for ($i = 0; $i < $issue_count; $i++) {
         $("[data-toggle=popover]").popover({
             html: true,
             content: function () {
+                var that = this;
+                setTimeout(function () {
+                    $("#" + $(that).attr("aria-describedby")).attr("tabindex",-1).focus();
+                    $("#" + $(that).attr("aria-describedby")).blur();
+                }, 10);
                 var content = $(this).attr("data-popover-content");
                 return $(content).children(".popover-body").html();
             },

@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, suppressMenu: true},
-    {headerName: "Age", field: "age", width: 90, suppressSorting: true, headerComponentParams : { menuIcon: 'fa-external-link'}},
-    {headerName: "Country", field: "country", width: 120, suppressMenu: true},
-    {headerName: "Year", field: "year", width: 90, suppressSorting: true},
-    {headerName: "Date", field: "date", width: 110, suppressMenu: true},
-    {headerName: "Sport", field: "sport", width: 110, suppressSorting: true},
-    {headerName: "Gold", field: "gold", width: 100, headerComponentParams : { menuIcon: 'fa-cog'}},
-    {headerName: "Silver", field: "silver", width: 100, suppressSorting: true},
-    {headerName: "Bronze", field: "bronze", width: 100, suppressMenu: true},
-    {headerName: "Total", field: "total", width: 100, suppressSorting: true}
+    {headerName: "Athlete", field: "athlete", suppressMenu: true},
+    {headerName: "Age", field: "age", suppressSorting: true, headerComponentParams : { menuIcon: 'fa-external-link'}},
+    {headerName: "Country", field: "country", suppressMenu: true},
+    {headerName: "Year", field: "year", suppressSorting: true},
+    {headerName: "Date", field: "date", suppressMenu: true},
+    {headerName: "Sport", field: "sport", suppressSorting: true},
+    {headerName: "Gold", field: "gold", headerComponentParams : { menuIcon: 'fa-cog'}},
+    {headerName: "Silver", field: "silver", suppressSorting: true},
+    {headerName: "Bronze", field: "bronze", suppressMenu: true},
+    {headerName: "Total", field: "total", suppressSorting: true}
 ];
 
 var gridOptions = {
@@ -19,6 +19,7 @@ var gridOptions = {
     enableColResize: true,
     suppressMenuHide: true,
     defaultColDef : {
+        width: 100,
         headerComponent : MyHeaderComponent,
         headerComponentParams : {
             menuIcon: 'fa-bars'
@@ -26,15 +27,14 @@ var gridOptions = {
     }
 };
 
-function MyHeaderComponent(params) {
-    this.params = params;
+function MyHeaderComponent() {
 }
 
 MyHeaderComponent.prototype.init = function (agParams){
     this.agParams = agParams;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = ''+
-        '<div class="customHeaderMenuButton"><i class="fa ' + this.params.menuIcon + '"></i></div>' +
+        '<div class="customHeaderMenuButton"><i class="fa ' + this.agParams.menuIcon + '"></i></div>' +
         '<div class="customHeaderLabel">' + this.agParams.displayName + '</div>' +
         '<div class="customSortDownLabel inactive"><i class="fa fa-long-arrow-down"></i></div>' +
         '<div class="customSortUpLabel inactive"><i class="fa fa-long-arrow-up"></i></div>' +
@@ -54,10 +54,12 @@ MyHeaderComponent.prototype.init = function (agParams){
     }
 
     if (this.agParams.enableSorting){
-        this.onSortRequestedListener = this.onSortRequested.bind(this);
-        this.eSortDownButton.addEventListener('click', this.onSortRequestedListener);
-        this.eSortUpButton.addEventListener('click', this.onSortRequestedListener);
-        this.eSortRemoveButton.addEventListener('click', this.onSortRequestedListener);
+        this.onSortAscRequestedListener = this.onSortRequested.bind(this, 'asc');
+        this.eSortDownButton.addEventListener('click', this.onSortAscRequestedListener);
+        this.onSortDescRequestedListener = this.onSortRequested.bind(this, 'desc');
+        this.eSortUpButton.addEventListener('click', this.onSortDescRequestedListener);
+        this.onRemoveSortListener = this.onSortRequested.bind(this, '');
+        this.eSortRemoveButton.addEventListener('click', this.onRemoveSortListener);
 
 
         this.onSortChangedListener = this.onSortChanged.bind(this);
@@ -99,8 +101,8 @@ MyHeaderComponent.prototype.onMenuClick = function () {
     this.agParams.showColumnMenu (this.eMenuButton);
 };
 
-MyHeaderComponent.prototype.onSortRequested = function (event) {
-    this.agParams.progressSort (event.shiftKey);
+MyHeaderComponent.prototype.onSortRequested = function (order, event) {
+    this.agParams.setSort (order, event.shiftKey);
 };
 
 MyHeaderComponent.prototype.destroy = function () {

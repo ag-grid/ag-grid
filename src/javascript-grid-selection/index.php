@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
             is clicked.</li>
     </ul>
 
-    <h3>Example - Single Row Selection</h3>
+    <h3 id="singleRowSelectionExample">Example - Single Row Selection</h3>
 
     <p>
         The example below shows single row selection.
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example1" example-height="450px"></show-example>
 
-    <h3>Example - Multiple Row Selection</h3>
+    <h3 id="multiRowSelectionExample">Example - Multiple Row Selection</h3>
 
     <p>
         The example below shows multi-row selection.
@@ -56,7 +56,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example2" example-height="450px"></show-example>
 
-    <h3>Checkbox Selection</h3>
+    <h3 id="checkboxSelection">Checkbox Selection</h3>
 
     <p>
         Checkbox selection can be used in two places: a) row selection and b) group selection.
@@ -100,7 +100,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h4>Groups & Checkbox Selection Example 1</h4>
+    <h4 id="groupsSelectionExample1">Groups & Checkbox Selection Example 1</h4>
 
     <p>
         The example below shows checkbox selection with groups. Selecting the group has the
@@ -117,7 +117,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleGroupSelection" example-height="450px"></show-example>
 
-    <h4>Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
+    <h4 id="groupsSelectionExample2">Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
 
     <p>
         The example below is similar to the previous example except it does not put checkboxes
@@ -128,7 +128,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleSelectionCheckbox" example-height="450px"></show-example>
 
-    <h4>Groups & Checkbox Selection Example 3 - Only Filtered</h4>
+    <h4 id="groupsSelectionExample3">Groups & Checkbox Selection Example 3 - Only Filtered</h4>
 
     <p>
         Lastly we show an example using <i>groupSelectsFiltered=true</i>. Here, when you filter
@@ -147,9 +147,83 @@ include '../documentation-main/documentation_header.php';
     </ol>
     </p>
 
-    <show-example example="exampleSelectionCheckboxFiltered" example-height="450px"></show-example>
+    <show-example example="exampleSelectionCheckboxFiltered"></show-example>
 
-    <h3>Selection Events</h3>
+    <h3 id="headerCheckboxSelection">Header Checkbox Selection</h3>
+
+    <p>
+        It is possible to have a checkbox in the header for selection. To configure the
+        column to have checkbox, set <i>colDef.headerCheckboxSelection=true</i>.
+        <i>headerCheckboxSelection</i> can also be a function, if you want the checkbox
+        to appear sometimes (eg if the columns is ordered first in the grid).
+    </p>
+
+    <pre><span class="codeComment">// the name column header always has a checkbox in the header</span>
+colDef = {
+    field: 'name',
+    headerCheckboxSelection: true
+    ...
+}
+
+<span class="codeComment">// the country column header only has checkbox if it is the first column</span>
+colDef = {
+    field: 'country',
+    headerCheckboxSelection: function(params) {
+        var displayedColumns = params.columnApi.getAllDisplayedColumns();
+        var thisIsFirstColumn = displayedColumns[0] === params.column;
+        return thisIsFirstColumn;
+    }
+    ...
+}</pre>
+
+    <p>
+        If <i>headerCheckboxSelection</i> is a function, the function will be called every
+        time there is a change to the displayed columns, to check for changes.
+    </p>
+
+    <h4>Select Everything or just Filtered</h4>
+
+    <p>
+        The header checkbox has two modes of operation, 'normal' and 'filtered only'.
+        <ul>
+            <li><b>colDef.headerCheckboxSelectionFilteredOnly=false</b>: The checkbox
+            will select all rows when checked, and un-select all rows when unchecked.
+            The checkbox will update it's state based on all rows.</li>
+            <li><b>colDef.headerCheckboxSelectionFilteredOnly=true</b>: The checkbox
+            will select only filtered rows when checked and un-select only filtered
+            rows when unchecked. The checkbox will update it's state base on only
+            filtered rows.</li>
+        </ul>
+        The examples below demonstrate both of these options.
+    </p>
+
+    <h4 id="headerSelectionExample1">Header Checkbox Example 1 - Filtered Only = true</h4>
+
+    <p>
+        This example has the following characteristics:
+        <ul>
+            <li>The checkbox works on filtered only. That means if you filter first, then hit the checkbox to select
+                or un-select, then only the filtered results get impacted.</li>
+            <li>The checkbox is always on the athlete column, even if the athlete column is moved.</li>
+        </ul>
+    </p>
+
+    <show-example example="exampleHeaderCheckbox"></show-example>
+
+    <h4 id="headerSelectionExample2">Header Checkbox Example 2 - Filtered Only = false</h4>
+
+    <p>
+        The next example is similar to the one above with the following changes:
+        <ul>
+        <li>The select selects everything, not just filtered.</li>
+        <li>The column that the selection checkbox goes on is always the first column.
+        This can be observed by dragging the columns to reorder them.</li>
+    </ul>
+    </p>
+
+    <show-example example="exampleHeaderCheckboxEntireSet"></show-example>
+
+    <h3 id="selectionEvents">Selection Events</h3>
 
     <p>
         There are two events with regards selection:<br/>
@@ -163,9 +237,9 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <show-example example="example3" example-height="450px"></show-example>
+    <show-example example="example3"></show-example>
 
-    <h3>Node Selection API</h3>
+    <h3 id="nodeSelectionApi">Node Selection API</h3>
 
     <p>
         To select rows programmatically, use the node.setSelected() method. This method takes two
@@ -192,14 +266,16 @@ var selected = node.isSelected();</pre>
     (and grand child) nodes are selected, false if all unselected, or undefined if a mixture.
     </p>
 
-    <h3>Grid Selection API</h3>
+    <h3 id="gridSelectionApi">Grid Selection API</h3>
 
     <p>
         The grid API has the following methods for selection:
         <ul>
         <li><b>api.selectAll()</b>: Select all rows in the grid. This is independent to filtering, it will always
         select everything regardless of filtering.</li>
-        <li><b>api.deselectAll()</b>: Remove all grid selection, again regardless of filtering.</li>
+        <li><b>api.deselectAll()</b>: Un-select all rows, again regardless of filtering.</li>
+        <li><b>api.selectAllFiltered()</b>: Select all filtered rows in the grid.</li>
+        <li><b>api.deselectAllFiltered()</b>: Un-select all filtered rows.</li>
         <li><b>api.getSelectedNodes()</b>: Returns a list of all the selected row nodes. This again is regardless
         of what filters are set.</li>
     </ul>
@@ -222,7 +298,7 @@ api.forEachNodeAfterFilter( function(node) {
         data for selection purposes.
     </p>
 
-    <show-example example="example4" example-height="450px"></show-example>
+    <show-example example="example4"></show-example>
 
     <h3 id="selectionArrowKeys">Selection with Keyboard Arrow Keys</h3>
 

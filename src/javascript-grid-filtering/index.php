@@ -213,11 +213,11 @@ gridOptions: {
     </p>
 
 <pre>
-export interface IDateComponent {
+interface IDateComp {
     <span class="codeComment">// Callback received to signal the creation of this cellEditorRenderer,
     // placeholder to create the necessary logic to setup the component,
     // like initialising the gui, or any other part of your component</span>
-    init?(params: IDateComponentParams): void;
+    init?(params: IDateParams): void;
 
     <span class="codeComment">// Return the DOM element of your editor, this is what the grid puts into the DOM</span>
     getGui(): HTMLElement;
@@ -243,7 +243,7 @@ export interface IDateComponent {
     </p>
 
 <pre>
-export interface IDateComponentParams {
+export interface IDateCompParams {
     <span class="codeComment">// Method for component to tell ag-Grid that the date has changed</span>
     onDateChanged:()=>void
 }
@@ -298,7 +298,7 @@ export interface IDateComponentParams {
 
     <p>
         The example below shows external filters in action. There are two methods on gridOptions you
-        need to implement: <i>cbIsExternalFilterPresent()</i> and <i>cbDoesExternalFilterPass(node)</i>.
+        need to implement: <i>isExternalFilterPresent()</i> and <i>doesExternalFilterPass(node)</i>.
     </p>
     <ul>
 
@@ -403,7 +403,7 @@ export interface IDateComponentParams {
         can be any function / class that implements the following interface:
     </p>
 
-    <pre>interface IFilter {
+    <pre>interface IFilterComp {
 
     <span class="codeComment">// mandatory methods</span>
 
@@ -655,7 +655,6 @@ nameFilter.setModel(model);</pre>
     <p>You can reset all filters by doing the following:</p>
     <pre>
 gridOptions.api.setFilterModel(null);
-gridOptions.api.onFilterChanged();
 </pre>
 
     <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
@@ -685,422 +684,6 @@ gridOptions.api.onFilterChanged();
 
     <show-example example="exampleFilterModel"></show-example>
 
-    <h2 id="reactFiltering">
-        <img src="../images/react.png" height="20px"/>
-        React Filtering
-    </h2>
-
-    <p>
-        It is possible to provide a React filter for ag-Grid to use. All of the information above is
-        relevant to React filters. This section explains how to apply this logic to your React component.
-    </p>
-
-    <p>
-        For examples on React filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
-        In the example, 'Skills' , 'DOB' and 'Proficiency' columns use React filters.</p>
-    </p>
-
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Filter</h3>
-
-    <p>
-        If you are using the ag-grid-react component to create the ag-Grid instance,
-        then you will have the option of additionally specifying the filters
-        as React components.
-    </p>
-
-    <pre><span class="codeComment">// create your filter as a React component</span>
-class NameFilter extends React.Component {
-
-    <span class="codeComment">// put in render logic, build a nice gui in React</span>
-    render() {
-        return &lt;span>My Nice Little Filter Gui&lt;/span>;
-    }
-
-    <span class="codeComment">// implement the other Filter callbacks</span>
-    isFilterActive(params) {
-        <span class="codeComment">// do some filter logic</span>
-        return filterPass ? true : false;
-    }
-
-    <span class="codeComment">// etc etc, more logic, but leaving out for now</span>
-}
-
-<span class="codeComment">// then reference the Component in your colDef like this</span>
-colDef = {
-
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
-    filterFramework: NameFilter
-
-    <span class="codeComment">// specify all the other fields as normal</span>
-    headerName: 'Name',
-    field: 'firstName',
-    ...
-}</pre>
-
-    <p>
-        By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
-        will know it's a React component, based on the fact that you are using the React version of
-        ag-Grid.
-    </p>
-
-
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
-
-    <p>
-        The React component will get the 'filter Params' as described above as it's React Props.
-        Therefore you can access all the parameters as React Props.
-
-    <pre><span class="codeComment">// React filter Component</span>
-class NameFilter extends React.Component {
-
-    <span class="codeComment">// did you know that React passes props to your component constructor??</span>
-    constructor(props) {
-        super(props);
-        <span class="codeComment">// from here you can access any of the props!</span>
-        console.log('The field for this filter is ' + props.colDef.field);
-    }
-
-    <span class="codeComment">// maybe your filter has a button in it, and when it gets clicked...</span>
-    onButtonWasPressed() {
-        <span class="codeComment">// all the methods in the props can be called</span>
-        this.props.filterChangedCallback();
-    }
-}</pre>
-    </p>
-
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
-
-    <p>
-        All of the methods in the IFilter interface described above are applicable
-        to the React Component with the following exceptions:
-    <ul>
-        <li><i>init()</i> is not used. Instead use the React props passed to your Component.</li>
-        <li><i>destroy()</i> is not used. Instead use the React <i>componentWillUnmount()</i> method for
-            any cleanup you need to do.</li>
-        <li><i>getGui()</i> is not used. Instead do normal React magic in your <i>render()</i> method..</li>
-    </ul>
-
-    <p>
-        After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
-        same so put them directly onto your React Component.
-    </p>
-
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> Accessing the React Component Instance</h3>
-
-    <p>
-        ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
-        method. If your component is a React component, then this will give you a reference to the ag-Grid's
-        Component which wraps your React Component. Just like Russian Dolls. To get to the wrapped React instance
-        of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <pre><span class="codeComment">// lets assume a React component as follows</span>
-class NameFilter extends React.Component {
-
-    ... <span class="codeComment">// standard filter methods hidden</span>
-
-    <span class="codeComment">// put a custom method on the filter</span>
-    myMethod() {
-        <span class="codeComment">// does something</span>
-    }
-}
-
-<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
-laterOnInYourApplicationSomewhere() {
-
-    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
-    var agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
-
-    <span class="codeComment">// get React instance from the ag-Grid instance</span>
-    var reactFilterInstance = agGridFilter.getFrameworkComponentInstance();
-
-    <span class="codeComment">// now were sucking diesel!!!</span>
-    reactFilterInstance.myMethod();
-}</pre>
-    </p>
-
-<!--    <p>Again it's some magic to get them working. After this, all you need to do is follow the standard
-        ag-Grid custom filter interface in your React component. In other words, the methods in the ag-Grid
-        custom filter should appear on your components backing object. The example shows all of this in action.</p>
--->
-    <h2 id="ng2Filtering">
-        <img src="../images/angular2.png" height="20px"/>
-        Angular 2 Filtering
-    </h2>
-
-    <p>
-        It is possible to provide a Angular 2 Component filter for ag-Grid to use. All of the information above is
-        relevant to Angular 2 filters. This section explains how to apply this logic to your Angular 2 component.
-    </p>
-
-    <p>
-        For an example on Angular 2 filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.</p>
-    </p>
-
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular 2 Filter</h3>
-
-    <p>
-        If you are using the ag-grid-ng2 component to create the ag-Grid instance,
-        then you will have the option of additionally specifying the filters
-        as Angular 2 components.
-    </p>
-
-    <pre ng-non-bindable><span class="codeComment">// create your filter as a Angular 2 component</span>
-@Component({
-    selector: 'filter-cell',
-    template: `
-        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
-    `
-})
-class PartialMatchFilterComponent implements AgFilterComponent {
-    private params:IFilterParams;
-    private valueGetter:(rowNode:RowNode) => any;
-    private text:string = '';
-
-    @ViewChild('input', {read: ViewContainerRef}) private input;
-
-    agInit(params:IFilterParams):void {
-        this.params = params;
-        this.valueGetter = params.valueGetter;
-    }
-
-    isFilterActive():boolean {
-        return this.text !== null && this.text !== undefined && this.text !== '';
-    }
-
-    doesFilterPass(params:IDoesFilterPassParams):boolean {
-        return this.text.toLowerCase()
-            .split(" ")
-            .every((filterWord) => {
-                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
-            });
-    }
-
-    getModel():any {
-        return {value: this.text};
-    }
-
-    setModel(model:any):void {
-        this.text = model.value;
-    }
-
-    afterGuiAttached(params:IAfterFilterGuiAttachedParams):void {
-        this.input.element.nativeElement.focus();
-    }
-
-    componentMethod(message:string) : void {
-        alert(`Alert from PartialMatchFilterComponent ${message}`);
-    }
-
-    onChange(newValue):void {
-        if (this.text !== newValue) {
-            this.text = newValue;
-            this.params.filterChangedCallback();
-        }
-    }
-}
-
-<span class="codeComment">// then reference the Component in your colDef like this</span>
-colDef = {
-
-    <span class="codeComment">// we use cellRendererFramework instead of cellRenderer </span>
-    filterFramework: PartialMatchFilterComponent
-
-    <span class="codeComment">// specify all the other fields as normal</span>
-    headerName: 'Name',
-    field: 'firstName',
-    ...
-}</pre>
-
-    <p>Your Angular 2 components need to implement <code>AgFilterComponent</code>. The ag Framework expects to find the
-        mandatory methods on the interface on the created component (and will call optional methods if they're present).</p>
-
-    <p>
-        By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
-        will know it's a Angular 2 component, based on the fact that you are using the Angular 2 version of
-        ag-Grid.
-    </p>
-
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Params</h3>
-
-    <p>The ag Framework expects to find the <code>agInit</code> (on the <code>AgFilterComponent</code> interface) method on the created component, and uses it to supply the 'filter params'.</p>
-
-    <pre>
-agInit(params:IFilterParams):void {
-    this.params = params;
-    this.valueGetter = params.valueGetter;
-}</pre>
-    </p>
-
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular 2 Methods / Lifecycle</h3>
-
-    <p>
-        All of the methods in the IFilter interface described above are applicable
-        to the Angular 2 Component with the following exceptions:
-    <ul>
-        <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
-        <li><i>destroy()</i> is not used. Instead implement the Angular 2<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
-            any cleanup you need to do.</li>
-        <li><i>getGui()</i> is not used. Angular 2 will provide the Gui via the supplied template.</li>
-    </ul>
-
-    <p>
-        After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
-        same so put them directly onto your Angular 2 Component.
-    </p>
-
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Accessing the Angular 2 Component Instance</h3>
-
-    <p>
-        ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
-        method. If your component is a Angular 2 component, then this will give you a reference to the ag-Grid's
-        Component which wraps your Angular 2 Component. Just like Russian Dolls. To get to the wrapped Angular 2 instance
-        of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <pre><span class="codeComment">// lets assume a Angular 2 component as follows</span>
-@Component({
-    selector: 'filter-cell',
-    template: `
-        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
-    `
-})
-class PartialMatchFilterComponent implements AgFilterComponent {
-
-    ... <span class="codeComment">// standard filter methods hidden</span>
-
-    <span class="codeComment">// put a custom method on the filter</span>
-    myMethod() {
-        <span class="codeComment">// does something</span>
-    }
-}
-
-<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
-laterOnInYourApplicationSomewhere() {
-
-    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
-    let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
-
-    <span class="codeComment">// get Angular 2 instance from the ag-Grid instance</span>
-    let ng2FilterInstance = agGridFilter.getFrameworkComponentInstance();
-
-    <span class="codeComment">// now were sucking diesel!!!</span>
-    ng2FilterInstance.myMethod();
-}</pre>
-    </p>
-
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Example: Filtering using Angular 2 Components</h3>
-    <p>
-        Using Angular 2 Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
-    </p>
-    <show-example example="../ng2-example/index.html?example=filter-component"
-                  jsfile="../ng2-example/app/filter-component.component.ts"
-                  html="../ng2-example/app/filter-component.component.html"></show-example>
-
-    <h2 id="aureliaFiltering">
-        <img src="../images/aurelia.png" height="20px"/>
-        Aurelia Filtering
-    </h2>
-
-    <p>
-        All of the information above is relevant to Aurelia filters - this section explains how to apply this logic to your Aurelia component.
-    </p>
-
-    <p>
-        For an example on Aurelia filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
-    </p>
-
-    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Filter in an Aurelia project</h3>
-
-    <p>
-        If you are using the ag-grid-aurelia component to create the ag-Grid instance,
-        then you will have the option of additionally specifying the filters
-        as Aurelia components.
-    </p>
-
-    <pre><span class="codeComment">// create your filter as Filter Component</span>
-export default class PartialMatchFilter implements IFilter {
-  private params: IFilterParams;
-  private valueGetter: (rowNode: RowNode) => any;
-  private filterText: any;
-  private eGui: HTMLElement;
-  private eFilterText: any;
-
-  public init(params: IFilterParams): void {
-    this.params = params;
-    this.filterText = null;
-    this.valueGetter = params.valueGetter;
-  };
-
-  public getGui() {
-    this.eGui = document.createElement('div');
-    this.eGui.innerHTML =
-      '&lt;input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/>';
-
-    this.eFilterText = this.eGui.querySelector('#filterText');
-    this.eFilterText.addEventListener("changed", listener);
-    this.eFilterText.addEventListener("paste", listener);
-    this.eFilterText.addEventListener("input", listener);
-    // IE doesn't fire changed for special keys (eg delete, backspace), so need to
-    // listen for this further ones
-    this.eFilterText.addEventListener("keydown", listener);
-    this.eFilterText.addEventListener("keyup", listener);
-
-    var that = this;
-
-    function listener(event) {
-      that.filterText = event.target.value;
-      that.params.filterChangedCallback();
-    }
-
-    return this.eGui;
-  };
-
-  isFilterActive(): boolean {
-    return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
-  }
-
-  doesFilterPass(params: IDoesFilterPassParams): boolean {
-    // make sure each word passes separately, ie search for firstname, lastname
-    let passed = true;
-    this.filterText.toLowerCase().split(" ").forEach((filterWord) => {
-      let value = this.valueGetter(&lt;any>params);
-      if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-        passed = false;
-      }
-    });
-    return passed;
-  }
-
-  getModel(): any {
-    var model = {value: this.filterText.value};
-    return model;
-  }
-
-  setModel(model: any): void {
-    this.eFilterText.value = model.value;
-  }
-
-  afterGuiAttached(params: IAfterFilterGuiAttachedParams): void {
-    this.eGui.focus();
-  }
-}
-
-<span class="codeComment">// provide a method that returns the name of the class to use as a filter (in the parent component)</span>
-getPartialMatchFilter() {
-    return PartialMatchFilter;
-}
-
-<span class="codeComment">// then reference the Component in your column definitions like this</span>
-&lt;ag-grid-column header-name="Filter Component" field="name" width.bind="198" filter.bind="getPartialMatchFilter()"></ag-grid-column>
-</pre>
-
-    <h3><img src="../images/aurelia.png" height="20px"/> Example: Filtering in an  Aurelia Project</h3>
-    <p>
-        Using a Filter Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
-    </p>
-    <show-example example="../aurelia-example/#/filter/true"
-                  jsfile="../aurelia-example/components/filter-example/filter-example.ts"
-                  html="../aurelia-example/components/filter-example/filter-example.html"></show-example>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

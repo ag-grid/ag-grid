@@ -85,7 +85,7 @@
             <div class="container">
 
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-9">
 
                         <div style="padding: 5px 5px 6px 5px;">
 
@@ -127,13 +127,43 @@
                         </div>
 
                     </div>
+                    <div class="col-md-3">
+                        <a href="https://www.youtube.com/embed/tsuhoLiSWmU" class="videoLink pull-right text-right" data-toggle="modal" data-target="#videoModal"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                                                                                          	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                                                                                                                          <path style="fill:#D8362A;" d="M506.703,145.655c0,0-5.297-37.959-20.303-54.731c-19.421-22.069-41.49-22.069-51.2-22.952
+                                                                                                                          	C363.697,62.676,256,61.793,256,61.793l0,0c0,0-107.697,0.883-179.2,6.179c-9.71,0.883-31.779,1.766-51.2,22.952
+                                                                                                                          	C9.71,107.697,5.297,145.655,5.297,145.655S0,190.676,0,235.697v41.49c0,45.021,5.297,89.159,5.297,89.159
+                                                                                                                          	s5.297,37.959,20.303,54.731c19.421,22.069,45.021,21.186,56.497,23.835C122.703,449.324,256,450.207,256,450.207
+                                                                                                                          	s107.697,0,179.2-6.179c9.71-0.883,31.779-1.766,51.2-22.952c15.007-16.772,20.303-54.731,20.303-54.731S512,321.324,512,277.186
+                                                                                                                          	v-41.49C512,190.676,506.703,145.655,506.703,145.655"/>
+                                                                                                                          <polygon style="fill:#FFFFFF;" points="194.207,166.841 194.207,358.4 361.931,264.828 "/>
+                                                                                                                          </svg> Take video tour</a>
+                    </div>
                 </div>
 
             </div>
 
         </div>
 
+        <!-- The Video Modal -->
+        <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModal" aria-hidden="true">
+            <div class="modal-dialog" style="width: 887px;">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="close videoClose" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <div style="padding-top: 30px">
+                            <iframe width="853" height="480" id="videoIframe" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script inline src="/dist/frontend/frontend.js"></script>
 
     <?php include_once("includes/analytics.php"); ?>
 

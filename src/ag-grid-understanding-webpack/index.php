@@ -6,7 +6,10 @@ $pageKeyboards = "Webpack Tutorial";
 
 include('../includes/mediaHeader.php');
 ?>
+
 <link inline rel="stylesheet" href="../documentation-main/documentation.css">
+<script src="../documentation-main/documentation.js"></script>
+
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
@@ -14,8 +17,12 @@ include('../includes/mediaHeader.php');
     </div>
 </div>
 
-<div class="row">
+<div class="row" ng-app="documentation">
     <div class="col-md-9">
+
+        <note>A French translation of this blog can be found at
+            <a href="https://github.com/forresst/ityti_fr-FR/blob/master/ag-grid.com/ag-grid-understanding-webpack/README.md" target="_blank">GitHub</a>,
+        kindly provided by @forresst!</note>
 
         <h2>Motivation</h2>
 
@@ -814,7 +821,7 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 
         <p>We've achieved all this and we've only just scratched the surface of what Webpack can do. We can minify &
             uglify code, split code
-            into cache busting filename, process TypeScript and Angular 2+ - there are so many options!</p>
+            into cache busting filename, process TypeScript and Angular - there are so many options!</p>
 
         <p>Give Webpack a go - I'm sure you'll find it an indispensable tool in your developer toolkit.</p>
 

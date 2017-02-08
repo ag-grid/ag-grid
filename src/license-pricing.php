@@ -38,7 +38,7 @@
 <?php $navKey = "licenseAndPricing";
 include 'includes/navbar.php'; ?>
 
-<?php $headerTitle = "License and Pricing";
+<?php $headerTitle = "License and Pricing for ag-Grid Enterprise";
 include 'includes/headerRow.php'; ?>
 
 <div class="container info-page">
@@ -110,17 +110,36 @@ include 'includes/headerRow.php'; ?>
     <div class="row">
         <div class="col-md-8">
             <h2>
-                Choosing a License
+                Which License should you choose?
             </h2>
 
             <p style="margin-top: 20px;">
-                ag-Grid Free comes with standard features and is released under MIT. There is no warranty or support.
+                ag-Grid Enterprise is our commercial product that is designed for Enterprise development teams. This page covers the licenses available. For ag-Grid Free, click <a href="/javascript-grid-getting-started/"> here.</a>
             </p>
             
-            <p>    
-                ag-Grid Enterprise comes with a commercial license, extra Enterprise features, support and maintenance. If you want
-                to use ag-Grid Enterprise, you must purchase an ag-Grid Enterprise license.
+            <p>   
+                To pick the correct license, answer these simple questions:
             </p>
+            <p>   
+                <b>Are you using ag-Grid Enterprise in one application? </b>
+            </p>
+            <p>   
+                If it's a single application, an Application License is correct otherwise a Site License is best.
+            </p>
+            <p>   
+                <b>Is your application for an internal or external end-user?</b>
+            </p>
+            <p>
+                If external, then you also need SaaS or OEM licensing.
+            </p>
+
+            <p>   
+                <b>What's Included?</b>
+            </p>
+            <p>
+                ag-Grid Enterprise licenses are perpetual and include one year of support, maintenance and upgrades.
+            </p>
+
         </div>
         <div class="col-md-3 col-md-offset-1">
             
@@ -137,7 +156,7 @@ include 'includes/headerRow.php'; ?>
         <div class="col-md-12">
 
             <h2 class="text-center">
-                Free vs Enterprise Comparison and Pricing
+                Select the best license for your Application:
             </h2>
 
             <div class="row pricing-row">
@@ -149,16 +168,11 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price">&pound;495</span>
                                 <span class="price-sub">per Developer</span>
                             </div>
-                            <p class="pricing-plan-intro">Best for open source projects &amp; hobbyists.</p>
                             <div class="extra">
-                                <p>Released under <a href="https://github.com/ceolter/ag-grid/blob/master/LICENSE.txt">MIT</a></p>
+                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
-                                <li><span>Usage of ag-Grid in a single Application</span></li>
-                                <li><span>Access to the Enterprise Support Forum</span></li>
-                                <li><span>Perpetual License</span></li>
-                                <li><span>1 Year of Upgrades and Maintenance</span></li>
-                                <li><span>Feature Requests</span></li>
+                                <li><span>Usage of ag-Grid Enterprise in a single Application</span></li>
                             </ul>
                         </div>
                         <a class="btn large red" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-applicationDeveloper">Enquire</a>
@@ -174,16 +188,11 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price">&pound;795</span>
                                 <span class="price-sub">per Developer</span>
                             </div>
-                            <p class="pricing-plan-intro">Best for professional developers.</p>
                             <div class="extra">
                                 <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
-                                <li><span>Usage of ag-Grid in a multiple Applications</span></li>
-                                <li><span>Access to the Enterprise Support Forum</span></li>
-                                <li><span>Perpetual License</span></li>
-                                <li><span>1 Year of Upgrades and Maintenance</span></li>
-                                <li><span>Feature Requests</span></li>
+                                <li><span>Usage of ag-Grid Enterprise in multiple Applications</span></li>
                             </ul>
                         </div>
                         <a class="btn large red" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-siteDeveloper">Enquire</a>
@@ -198,16 +207,11 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price">POA</span>
                                 <span class="price-sub">price on asking</span>
                             </div>
-                            <p class="pricing-plan-intro">Best for professional developers.</p>
                             <div class="extra">
                                 <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
-                                <li><span>Usage of ag-Grid in SaaS/OEM Applications</span></li>
-                                <li><span>Access to the Enterprise Support Forum</span></li>
-                                <li><span>Perpetual License</span></li>
-                                <li><span>1 Year of Upgrades and Maintenance</span></li>
-                                <li><span>Feature Requests</span></li>
+                                <li><span>Usage of ag-Grid Enterprise in SaaS/OEM Applications</span></li>
                             </ul>
                         </div>
                         <a class="btn large red" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-saasAndOEM">Enquire</a>
@@ -226,7 +230,7 @@ include 'includes/headerRow.php'; ?>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h2 class="text-center">Testimonials</h2>
+            <h2 class="text-center">Testimonials from our Customers</h2>
         </div>
     </div>
 </div>
@@ -238,10 +242,10 @@ include 'includes/headerRow.php'; ?>
         <div class="col-md-6">
             <?php include("includes/commonQuestions.php"); ?>
         </div>
-        <div class="col-md-6">
+<!--         <div class="col-md-6">
             <h2>Our Customers</h2>
             <?php include("includes/customerLogos.php"); ?>
-        </div>
+        </div> -->
     </div>
 </div>
 

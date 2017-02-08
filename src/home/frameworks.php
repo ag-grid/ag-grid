@@ -14,9 +14,9 @@
                 </div>
             </div>
             <div class="col-md-2" style="text-align: center;">
-                <img src="images/angular2_large.png" title="Angular 2"/>
+                <img src="images/angular2_large.png" title="Angular"/>
                 <div class="framework-name">
-                    Angular 2
+                    Angular
                 </div>
             </div>
             <div class="col-md-2" style="text-align: center;">

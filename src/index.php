@@ -35,12 +35,9 @@
                     <div class="row text-center">
                         <h1 style="padding-bottom: 10px; padding-top: 10px;" class="big-logo">
                             <?php include 'images/logo-dark-hacked.svg'; ?>
-<!--                            <img inline alt="ag-grid" src="images/logo.png" style="width: 400px;"/>-->
                         </h1>
 
                         <h1 style="padding-bottom: 10px; padding-top: 10px;">The JavaScript Datagrid for Enterprise</h1>
-<!--                        <h2>'ag' stands for Agnostic - not bound to any framework but integrates with <a href="/best-javascript-data-grid/">JavaScript</a>, <a href="/best-react-data-grid/">React</a>, <a href="/best-angularjs-data-grid/">Angular</a>, <a href="/best-angular-2-data-grid/">Angular 2</a> &amp; <a href="/best-web-component-data-grid/">Web Components</a>.</h2>
--->
 
                         <h2>
                             <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/">

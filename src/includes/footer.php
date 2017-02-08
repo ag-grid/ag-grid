@@ -32,7 +32,8 @@
 		                    <li><a href="/best-javascript-data-grid/">JavaScript</a></li>
 		                    <li><a href="/best-react-data-grid/">React</a></li>
 		                    <li><a href="/best-angularjs-data-grid/">Angular 1.x</a></li>
-		                    <li><a href="/best-angular-2-data-grid/">Angular 2+</a></li>
+		                    <li><a href="/best-angular-2-data-grid/">Angular</a></li>
+		                    <li><a href="/best-vuejs-data-grid//">VueJS</a></li>
 		                    <li><a href="/best-web-component-data-grid/">Web Components</a></li>
 		                </ul>
 		            </div>

@@ -15,7 +15,17 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">30th January 2017</div>
+        <div class="news-header">XX February 2017</div>
+        <div class="news-header">ag-Grid 8.0.0 Released</div>
+        <div style="padding-top: 10px;">
+            ag-Grid 8.0.0 released with <a href="../best-vuejs-data-grid/">VueJS Support</a>
+            and many other Enhancements and Bug Fixes.
+            See the <a href="/ag-grid-changelog">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
+        <div class="news-header">6th February 2017</div>
         <div style="padding-top: 10px;">
             <a href="../ag-grid-fun-git-cmd-line/">
                 <img src="../images/agGridDaily.png"/>
@@ -376,7 +386,8 @@ include 'documentation_header.php';
     <a href="../best-javascript-data-grid/">Javascript</a>,
     <a href="../best-react-data-grid/">React</a>,
     <a href="../best-angularjs-data-grid/">Angular JS</a>,
-    <a href="../best-angular-2-data-grid/">Angular 2</a>,
+    <a href="../best-angular-2-data-grid/">Angular 2+</a>,
+    <a href="../best-vuejs-data-grid/">VueJS</a>,
     <a href="../best-web-component-data-grid/">Web Components</a> or
     <a href="../best-aurelia-data-grid/">Aurelia</a>) and try and get a simple example working
     yourself (you don't need to understand the grid, just how to install it into your application).
