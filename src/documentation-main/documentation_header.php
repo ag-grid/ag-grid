@@ -215,6 +215,12 @@ if (strcmp($version , 'latest') == 0) {
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/">Filtering</a>
                 <?php } ?>
 
+                <?php if ($key == "Filter Component") { ?>
+                    <span class="sidebarLinkSelected">Filter Components</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/">Filter Components</a>
+                <?php } ?>
+
                     <?php if ($key == "Filtering Angular") { ?>
                         <span class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
                     <?php } else { ?>
@@ -334,6 +340,12 @@ if (strcmp($version , 'latest') == 0) {
                     <span class="sidebarLinkSelected">Cell Editing</span>
                 <?php } else { ?>
                     <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/">Cell Editing</a>
+                <?php } ?>
+
+                <?php if ($key == "Cell Editor") { ?>
+                    <span class="sidebarLinkSelected">Cell Editor</span>
+                <?php } else { ?>
+                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/">Cell Editor</a>
                 <?php } ?>
 
                     <?php if ($key == "Cell Editing Angular") { ?>
