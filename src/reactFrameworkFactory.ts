@@ -1,4 +1,4 @@
-import {BaseFrameworkFactory, IFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, Utils, IFilterComp, GridOptions, ICellEditor} from 'ag-grid';
+import {BaseFrameworkFactory, IFrameworkFactory, IFilter, ColDef, ICellRendererComp, ICellRendererFunc, Utils, IFilterComp, GridOptions, ICellEditor} from 'ag-grid';
 import {reactCellRendererFactory} from "../lib/reactCellRendererFactory";
 import {reactCellEditorFactory} from "./reactCellEditorFactory";
 import {reactFilterFactory} from "./reactFilterFactory";
@@ -20,7 +20,7 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
         if (Utils.exists(colDef.floatingCellRendererFramework)) {
             return reactCellRendererFactory(colDef.floatingCellRendererFramework, this.agGridReact);
         } else {
@@ -28,7 +28,7 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public colDefCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
         if (Utils.exists(colDef.cellRendererFramework)) {
             return reactCellRendererFactory(colDef.cellRendererFramework, this.agGridReact);
         } else {
@@ -44,7 +44,7 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
         if (Utils.exists(gridOptions.fullWidthCellRendererFramework)) {
             return reactCellRendererFactory(gridOptions.fullWidthCellRendererFramework, this.agGridReact);
         } else {
@@ -52,7 +52,7 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
         if (Utils.exists(gridOptions.groupRowRendererFramework)) {
             return reactCellRendererFactory(gridOptions.groupRowRendererFramework, this.agGridReact);
         } else {
@@ -60,7 +60,7 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
         if (Utils.exists(gridOptions.groupRowInnerRendererFramework)) {
             return reactCellRendererFactory(gridOptions.groupRowInnerRendererFramework, this.agGridReact);
         } else {

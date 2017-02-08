@@ -1,9 +1,9 @@
-import {ICellRenderer, MethodNotImplementedException} from 'ag-grid';
+import {ICellRendererComp, MethodNotImplementedException} from 'ag-grid';
 import {AgReactComponent} from "./agReactComponent";
 
-export function reactCellRendererFactory(reactComponent: any, parentComponent?: any): {new(): ICellRenderer} {
+export function reactCellRendererFactory(reactComponent: any, parentComponent?: any): {new(): ICellRendererComp} {
 
-    class ReactCellRenderer extends AgReactComponent implements ICellRenderer {
+    class ReactCellRenderer extends AgReactComponent implements ICellRendererComp {
 
         constructor() {
             super(reactComponent, parentComponent);
