@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
         The interface for the cellEditor component is as follows:
     </p>
 
-    <pre>interface ICellEditor {
+    <pre>interface ICellEditorComp {
 
     <span class="codeComment">// gets called once after the editor is created</span>
     init?(params: ICellEditorParams): void;
