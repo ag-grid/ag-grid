@@ -39,3 +39,42 @@ npm i "file:../../ag-grid-enterprise"
 npm i "file:../../ag-grid-ng2"
 npm run clean
 npm run tsc
+
+cd ../webpack
+rm -rf dist
+rm -rf node_modules/ag-grid
+rm -rf node_modules/ag-grid-ng2
+rm -rf node_modules/ag-grid-enterprise
+npm i "file:../../ag-grid"
+npm i "file:../../ag-grid-enterprise"
+npm i "file:../../ag-grid-ng2"
+npm run clean
+npm run build
+
+cd ../angular-cli
+rm -rf dist
+rm -rf node_modules/ag-grid
+rm -rf node_modules/ag-grid-ng2
+rm -rf node_modules/ag-grid-enterprise
+npm i "file:../../ag-grid"
+npm i "file:../../ag-grid-enterprise"
+npm i "file:../../ag-grid-ng2"
+
+
+cd ../../ag-grid-react
+rm -rf dist
+rm -rf node_modules/ag-grid
+rm -rf node_modules/ag-grid-enterprise
+npm i "file:../ag-grid"
+npm i "file:../ag-grid-enterprise"
+gulp
+
+cd ../ag-grid-react-example
+rm -rf dist
+rm -rf node_modules/ag-grid
+rm -rf node_modules/ag-grid-enterprise
+rm -rf node_modules/ag-grid-react
+npm i "file:../ag-grid"
+npm i "file:../ag-grid-enterprise"
+npm i "file:../ag-grid-react"
+npm run large
