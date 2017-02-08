@@ -33,7 +33,8 @@ gulp.task('copyFromBootstrap', copyFromBootstrap);
 gulp.task('copyFromFontAwesome', copyFromFontAwesome);
 
 function watchTask() {
-    liveReload.listen();
+    // Listent for changes with a custom port
+    liveReload.listen(35000);
     gulp.watch(['../ag-grid/src/**/*','../ag-grid-enterprise/src/**/*'], ['webpack']);
     gulp.watch('../ag-grid-docs/src/**/*', ['liveReloadAfterCopyFromDocs']);
 }
