@@ -5,14 +5,9 @@ import {RowNode} from "../entities/rowNode";
 import {IComponent} from "./iComponent";
 
 export interface IFilter {
-
-}
-
-export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
-
-    // mandatory methods
     /** This is used to show the filter icon in the header. If true, the filter icon will be shown. */
     isFilterActive(): boolean;
+    // mandatory methods
     /** The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      filter fails, then the row will be excluded from the final set. The method is provided a
      params object with attributes node (the rodNode the grid creates that wraps the data) and data
@@ -29,6 +24,10 @@ export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
+
+}
+
+export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 
 export interface IDoesFilterPassParams {

@@ -4,8 +4,6 @@ export interface IAfterGuiAttachedParams {
 
 export interface IComponent<T> {
 
-    /** The init(params) method is called on the filter once. See below for details on the parameters. */
-    init?(params: T): void;
 
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
     getGui(): HTMLElement;
@@ -23,5 +21,7 @@ export interface IComponent<T> {
      after it is pressed. */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 
+    /** The init(params) method is called on the filter once. See below for details on the parameters. */
+    init?(params: T): void;
 
 }
