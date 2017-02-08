@@ -1,6 +1,6 @@
 import {ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} from "@angular/core";
 import {
-    ICellRenderer,
+    ICellRendererComp,
     ICellEditor,
     MethodNotImplementedException,
     IDoesFilterPassParams,
@@ -22,7 +22,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     public createRendererFromComponent(componentType: { new(...args: any[]): AgRendererComponent; },
-                                       viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
+                                       viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef);
     }
@@ -41,10 +41,10 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
 
     private adaptComponentToRenderer(componentType: { new(...args: any[]): AgRendererComponent; },
-                                     viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
+                                     viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
 
         let that = this;
-        class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRenderer {
+        class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRendererComp {
             init(params: any): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
