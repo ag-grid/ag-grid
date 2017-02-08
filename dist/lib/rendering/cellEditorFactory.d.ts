@@ -1,7 +1,7 @@
 // Type definitions for ag-grid v7.2.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { ICellEditorComp, ICellEditorParams } from "./cellEditors/iCellEditor";
+import { ICellEditor, ICellEditorParams } from "./cellEditors/iCellEditor";
 export declare class CellEditorFactory {
     private static TEXT;
     private static SELECT;
@@ -13,9 +13,9 @@ export declare class CellEditorFactory {
     private cellEditorMap;
     private init();
     addCellEditor(key: string, cellEditor: {
-        new (): ICellEditorComp;
+        new (): ICellEditor;
     }): void;
     createCellEditor(key: string | {
-        new (): ICellEditorComp;
-    }, params: ICellEditorParams): ICellEditorComp;
+        new (): ICellEditor;
+    }, params: ICellEditorParams): ICellEditor;
 }
