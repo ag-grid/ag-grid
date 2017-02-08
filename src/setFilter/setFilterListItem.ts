@@ -1,4 +1,12 @@
-import {Component, ICellRenderer, ICellRendererFunc, CellRendererService, Autowired, PostConstruct, GridOptionsWrapper, Utils as _} from "ag-grid/main";
+import {
+    Component,
+    ICellRendererFunc,
+    CellRendererService,
+    Autowired,
+    PostConstruct,
+    GridOptionsWrapper,
+    ICellRendererComp
+} from "ag-grid/main";
 
 export class SetFilterListItem extends Component {
 
@@ -16,9 +24,9 @@ export class SetFilterListItem extends Component {
     private eCheckbox: HTMLInputElement;
 
     private value: any;
-    private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 
-    constructor(value: any, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string) {
+    constructor(value: any, cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string) {
         super(SetFilterListItem.TEMPLATE);
         this.value = value;
         this.cellRenderer = cellRenderer;

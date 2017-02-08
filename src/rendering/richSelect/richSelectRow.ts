@@ -1,13 +1,13 @@
 
-import {Component, Utils, Autowired, CellRendererService, ICellRendererFunc, ICellRenderer} from "ag-grid/main";
+import {Component, Utils, Autowired, CellRendererService, ICellRendererFunc, ICellRendererComp} from "ag-grid/main";
 
 export class RichSelectRow extends Component {
 
     @Autowired('cellRendererService') cellRendererService: CellRendererService;
 
-    private cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 
-    constructor(cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string) {
+    constructor(cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string) {
         super('<div class="ag-rich-select-row"></div>');
         this.cellRenderer = cellRenderer;
     }

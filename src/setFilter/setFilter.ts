@@ -1,4 +1,4 @@
-import {IFilterComp, IFilterParams, IDoesFilterPassParams, Utils, ICellRenderer, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
+import {IFilterComp, IFilterParams, IDoesFilterPassParams, Utils, ICellRendererComp, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
@@ -7,7 +7,7 @@ interface ISetFilterParams extends IFilterParams {
     cellHeight: number;
     apply: boolean;
     suppressSorting: boolean;
-    cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
+    cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     newRowsAction: string;
 }
 
