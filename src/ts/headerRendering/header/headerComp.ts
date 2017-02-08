@@ -30,10 +30,6 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 
 }
 
-// class MyReactHeader extends React.Component implements IHeader {
-//
-// }
-
 var svgFactory = SvgFactory.getInstance();
 
 export class HeaderComp extends Component implements IHeaderComp {
