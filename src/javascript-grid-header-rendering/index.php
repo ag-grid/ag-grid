@@ -48,14 +48,27 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// floats this element to the right.</span>
     &lt;div class="ag-header-cell-resize"/>
 
+    <span class="codeComment">// checkbox for selection, if turned on.</span>
+    <span class="codeComment">// the grid usually floats this element to the left.</span>
+    &lt;div class="ag-header-select-all"/>
+
     <span class="codeComment">// the header component - this is the piece that you can customise</span>
     &lt;div class="ag-header-component"/>
 &lt;/div>
 </pre>
 
     <p>
-        The grid is always responsible for placing, moving and resizing columns. The header component
-        (your bit) will be responsible for the following:
+        The grid is always responsible for the following:
+        <ul>
+            <li><a href="../javascript-grid-resizing/"><b>Resizing:</b></a> When enabled, the grid will put an invisible widget to be grabbed by
+            the mouse for resizing.</li>
+            <li><a href="../javascript-grid-/"><b>Moving:</b></a> When enabled, the grid listens for mouse drag events for moving the column.</li>
+            <li><a href="../javascript-grid-resizing/"><b>Checkbox Selection:</b></a> When enabled, the grid puts a checkbox for 'select all' in the header.</li>
+        </ul>
+    </p>
+
+    <p>
+        The header component (your bit) will be responsible for the following:
         <ul>
         <li><b>Sorting:</b> You will need to process user interaction for sorting. The default grid
         component sorts when the user clicks the header with the mouse. You may also need to display
@@ -65,6 +78,8 @@ include '../documentation-main/documentation_header.php';
         <li><b>Menu:</b> If you want the user to be able to open the column menu, you will need to
         manage this user interaction. The default grid component provides a button for the user to click
         to show the menu.</li>
+        <li><b>Anything Else:</b> Whatever you want, you are probably creating a custom
+            header to add your own functionality in.</li>
     </ul>
     </p>
 
@@ -250,6 +265,8 @@ column.addEventListener('filterChanged', function() {
 
     <p>
         As with normal headers, ag-Grid will always handle resize and column moving.
+        The grid does not handle selection checkbox as this feature is only at the
+        non-grouped header level.
         The header group component (your bit) is responsible for the following:
     </p>
 
@@ -257,6 +274,7 @@ column.addEventListener('filterChanged', function() {
         <li><b>Group Open / Close:</b> If the group can expand (one or more columns visibility
         depends on the open / closed state of the group) then your header group component
         should handle the interaction with the user for opening and closing groups.</li>
+        <li><b>Anything Else:</b> Whatever you want, it's your component!</li>
     </ul>
 
     <h3>Header Group Component Interface</h3>
@@ -321,11 +339,26 @@ var oldValue = params.columnGroup.isExpanded();
 var newValue = !oldValue;
 params.setExpanded(newValue);</pre>
 
+    <p>
+        To know if a group is expanded or collapsed, listen for the <i>expandedChanged</i>
+        event on the column group.
+    </p>
+
+    <pre><span class="codeComment">// get a reference to the original column group</span>
+var columnGroup = params.columnGroup.getOriginalColumnGroup();
+<span class="codeComment">// create listener</span>
+var listener = function() { console.log('group was opened or closed'); };
+<span class="codeComment">// add listener</span>
+columnGroup.addEventListener('expandedChanged', listener);
+
+<span class="codeComment">// don't forget to remove the listener in your destroy method</span>
+columnGroup.removeEventListener('expandedChanged', listener);</pre>
+
     <h3>Example - Header Group Cells</h3>
 
     <show-example example="exampleHeaderGroupComponent"></show-example>
 
-    <!-- old bit, to be remove when we release v9 -->
+    <!-- old bit, to be removed when we release v9 -->
 
     <div style="border-left: 4px solid lightcoral; padding-left: 4px;">
         <h2><span style="color: darkred;">DEPRECATED -</span> Header Templates</h2>
