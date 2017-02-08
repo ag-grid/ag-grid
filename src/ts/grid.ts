@@ -67,6 +67,9 @@ export interface GridParams {
 
     // this allows the base frameworks (React, NG2, etc) to provide alternative cellRenderers and cellEditors
     frameworkFactory?: IFrameworkFactory;
+
+    //bean instances to add to the context
+    seedBeanInstances?: {[key:string]:any}
 }
 
 export class Grid {
@@ -125,18 +128,22 @@ export class Grid {
             overrideBeans = overrideBeans.concat(Grid.frameworkBeans);
         }
 
+        let seed = {
+            enterprise: enterprise,
+            gridOptions: gridOptions,
+            eGridDiv: eGridDiv,
+            $scope: params ? params.$scope : null,
+            $compile: params ? params.$compile : null,
+            quickFilterOnScope: params ? params.quickFilterOnScope : null,
+            globalEventListener: params ? params.globalEventListener : null,
+            frameworkFactory: frameworkFactory
+        };
+        if (params.seedBeanInstances) {
+            _.assign(seed, params.seedBeanInstances);
+        }
         this.context = new Context({
             overrideBeans: overrideBeans,
-            seed: {
-                enterprise: enterprise,
-                gridOptions: gridOptions,
-                eGridDiv: eGridDiv,
-                $scope: params ? params.$scope : null,
-                $compile: params ? params.$compile : null,
-                quickFilterOnScope: params ? params.quickFilterOnScope : null,
-                globalEventListener: params ? params.globalEventListener : null,
-                frameworkFactory: frameworkFactory
-            },
+            seed: seed,
             beans: [rowModelClass, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, RowRenderer,
