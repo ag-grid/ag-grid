@@ -2,11 +2,9 @@ import {NgModule,ModuleWithProviders} from '@angular/core';
 import {ANALYZE_FOR_ENTRY_COMPONENTS} from '@angular/core';
 
 import {AgGridNg2} from './agGridNg2';
-import {Ng2FrameworkFactory} from './ng2FrameworkFactory';
 import {Ng2ComponentFactory} from './ng2ComponentFactory';
 import {BaseComponentFactory} from "./baseComponentFactory";
 import {AgGridColumn} from "./agGridColumn";
-import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
 
 @NgModule({
     imports: [],

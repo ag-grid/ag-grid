@@ -1,19 +1,26 @@
-import {ComponentRef, ViewContainerRef, ComponentFactoryResolver} from "@angular/core";
-import {IComponent, Bean, IFilterParams}  from "ag-grid/main";
+import {ComponentRef, ViewContainerRef, Injectable, ComponentFactoryResolver} from "@angular/core";
+import {IComponent, Bean}  from "ag-grid/main";
 import {FrameworkComponentWrapper}  from 'ag-grid';
 import {AgFrameworkComponent} from "./interfaces";
 
-@Bean ("frameworkComponentWrapper")
-export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper {
-    constructor(
-        private viewContainerRef: ViewContainerRef,
-        private componentFactoryResolver: ComponentFactoryResolver
-    ){}
+@Injectable()
+@Bean("frameworkComponentWrapper")
+export class Ng2FrameworkComponentWrapper implements FrameworkComponentWrapper {
+    private viewContainerRef: ViewContainerRef;
+    private componentFactoryResolver: ComponentFactoryResolver;
 
-    wrap <A extends IComponent<any>>(Ng2Component: { new (): any}, methodList: string[]): A{
+    public setViewContainerRef(viewContainerRef: ViewContainerRef) {
+        this.viewContainerRef = viewContainerRef;
+    }
+
+    public setComponentFactoryResolver(componentFactoryResolver: ComponentFactoryResolver) {
+        this.componentFactoryResolver = componentFactoryResolver;
+    }
+
+    wrap <A extends IComponent<any>>(Ng2Component: {new (): any}, methodList: string[]): A {
         let that = this;
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> {
-            init(params: IFilterParams): void {
+            init(params: any): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
             }
@@ -25,14 +32,14 @@ export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper 
 
         }
 
-        let wrapper : DynamicAgNg2Component= new DynamicAgNg2Component ();
-        methodList.forEach((methodName=>{
-            let methodProxy: Function = function (){
+        let wrapper: DynamicAgNg2Component = new DynamicAgNg2Component();
+        methodList.forEach((methodName => {
+            let methodProxy: Function = function () {
                 if (wrapper.getFrameworkComponentInstance()[methodName]) {
                     var componentRef = this.getFrameworkComponentInstance();
-                    return wrapper.getFrameworkComponentInstance()[methodName].apply (componentRef, arguments)
+                    return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments)
                 } else {
-                    console.warn('ag-Grid: Angular dateComponent is missing the method ' + methodName + '()');
+                    console.warn('ag-Grid: Angular component is missing the method ' + methodName + '()');
                     return null;
                 }
             };
@@ -46,7 +53,7 @@ export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper 
 
     }
 
-    public createComponent<T>(componentType: { new(...args: any[]): T; },
+    public createComponent<T>(componentType: {new(...args: any[]): T;},
                               viewContainerRef: ViewContainerRef): ComponentRef<T> {
         // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
         // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
