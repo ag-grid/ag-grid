@@ -25,9 +25,7 @@ export class AgGridModule {
             ngModule: AgGridModule,
             providers: [
                 Ng2ComponentFactory,
-                Ng2FrameworkComponentWrapper,
                 {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory},
-                {provide: Ng2FrameworkComponentWrapper, useExisting: Ng2ComponentFactory},
                 {provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}
             ],
         };

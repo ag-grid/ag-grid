@@ -8,11 +8,8 @@ import {
     IFilterParams,
     IAfterGuiAttachedParams
 } from "ag-grid/main";
-import {AgRendererComponent} from "./agRendererComponent";
-import {AgEditorComponent} from "./agEditorComponent";
-import {AgFrameworkComponent} from "./agFrameworkComponent";
-import {AgFilterComponent} from "./agFilterComponent";
 import {BaseComponentFactory} from "./baseComponentFactory";
+import {ICellRendererAngularComp, ICellEditorAngularComp, IFilterAngularComp, AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
 export class Ng2ComponentFactory extends BaseComponentFactory {
@@ -21,30 +18,30 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
         super();
     }
 
-    public createRendererFromComponent(componentType: { new(...args: any[]): AgRendererComponent; },
+    public createRendererFromComponent(componentType: { new(...args: any[]): ICellRendererAngularComp; },
                                        viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef);
     }
 
-    public createEditorFromComponent(componentType: { new(...args: any[]): AgEditorComponent; },
+    public createEditorFromComponent(componentType: { new(...args: any[]): ICellEditorAngularComp; },
                                      viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
         return this.adaptComponentToEditor(componentType,
             viewContainerRef);
     }
 
-    public createFilterFromComponent(componentType: { new(...args: any[]): AgFilterComponent; },
+    public createFilterFromComponent(componentType: { new(...args: any[]): IFilterAngularComp; },
                                      viewContainerRef: ViewContainerRef) {
         return this.adaptComponentToFilter(componentType,
             viewContainerRef);
     }
 
 
-    private adaptComponentToRenderer(componentType: { new(...args: any[]): AgRendererComponent; },
+    private adaptComponentToRenderer(componentType: { new(...args: any[]): ICellRendererAngularComp; },
                                      viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
 
         let that = this;
-        class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRendererComp {
+        class CellRenderer extends BaseGuiComponent<any, ICellRendererAngularComp> implements ICellRendererComp {
             init(params: any): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
@@ -60,7 +57,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                 }
             }
 
-            protected createComponent(): ComponentRef<AgRendererComponent> {
+            protected createComponent(): ComponentRef<ICellRendererAngularComp> {
                 return that.createComponent(componentType,
                     viewContainerRef);
             }
@@ -70,11 +67,11 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
         return CellRenderer;
     }
 
-    private adaptComponentToEditor(componentType: { new(...args: any[]): AgEditorComponent; },
+    private adaptComponentToEditor(componentType: { new(...args: any[]): ICellEditorAngularComp; },
                                    viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
 
         let that = this;
-        class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditorComp {
+        class CellEditor extends BaseGuiComponent<any, ICellEditorAngularComp> implements ICellEditorComp {
 
             init(params: any): void {
                 super.init(params);
@@ -112,7 +109,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
             }
 
 
-            protected createComponent(): ComponentRef<AgEditorComponent> {
+            protected createComponent(): ComponentRef<ICellEditorAngularComp> {
                 return that.createComponent(componentType,
                     viewContainerRef);
             }
@@ -121,11 +118,11 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
         return CellEditor;
     }
 
-    private adaptComponentToFilter(componentType: { new(...args: any[]): AgFilterComponent; },
+    private adaptComponentToFilter(componentType: { new(...args: any[]): IFilterAngularComp; },
                                    viewContainerRef: ViewContainerRef): {new(): IFilterComp} {
 
         let that = this;
-        class Filter extends BaseGuiComponent<IFilterParams, AgFilterComponent> implements IFilterComp {
+        class Filter extends BaseGuiComponent<IFilterParams, IFilterAngularComp> implements IFilterComp {
             init(params: IFilterParams): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
@@ -157,7 +154,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                 return this._frameworkComponentInstance;
             }
 
-            protected createComponent(): ComponentRef<AgFilterComponent> {
+            protected createComponent(): ComponentRef<IFilterAngularComp> {
                 return that.createComponent(componentType,
                     viewContainerRef);
             }

@@ -50,8 +50,6 @@ export class AgGridNg2 implements AfterViewInit {
         // if the list of grid events change, we don't need to change this code.
         this.createComponentEvents();
 
-        Ng2FrameworkComponentWrapper._viewContainerRef = this.viewContainerRef;
-        Ng2FrameworkComponentWrapper._componentFactoryResolver = this._componentFactoryResolver;
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
     }
 
@@ -66,7 +64,10 @@ export class AgGridNg2 implements AfterViewInit {
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkFactory: this.ng2FrameworkFactory
+            frameworkFactory: this.ng2FrameworkFactory,
+            seedBeanInstances: {
+                frameworkComponentWrapper: new Ng2FrameworkComponentWrapper(this.viewContainerRef, this._componentFactoryResolver)
+            }
         };
 
         if (this.columns && this.columns.length > 0) {
@@ -76,7 +77,6 @@ export class AgGridNg2 implements AfterViewInit {
                 });
         }
 
-        Grid.setFrameworkBeans([Ng2FrameworkComponentWrapper]);
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
 
         if (this.gridOptions.api) {
