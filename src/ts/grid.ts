@@ -138,7 +138,7 @@ export class Grid {
             globalEventListener: params ? params.globalEventListener : null,
             frameworkFactory: frameworkFactory
         };
-        if (params.seedBeanInstances) {
+        if (params && params.seedBeanInstances) {
             _.assign(seed, params.seedBeanInstances);
         }
         this.context = new Context({
