@@ -1,7 +1,7 @@
 import {ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} from "@angular/core";
 import {
     ICellRendererComp,
-    ICellEditor,
+    ICellEditorComp,
     MethodNotImplementedException,
     IDoesFilterPassParams,
     IFilterComp,
@@ -28,7 +28,7 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     public createEditorFromComponent(componentType: { new(...args: any[]): AgEditorComponent; },
-                                     viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
+                                     viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
         return this.adaptComponentToEditor(componentType,
             viewContainerRef);
     }
@@ -71,10 +71,10 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     private adaptComponentToEditor(componentType: { new(...args: any[]): AgEditorComponent; },
-                                   viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
+                                   viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
 
         let that = this;
-        class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditor {
+        class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditorComp {
 
             init(params: any): void {
                 super.init(params);

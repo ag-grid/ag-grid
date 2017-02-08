@@ -1,7 +1,7 @@
 import {NgZone, ViewContainerRef, Injectable} from "@angular/core";
 import {
     ICellRendererComp,
-    ICellEditor,
+    ICellEditorComp,
     BaseFrameworkFactory,
     IFrameworkFactory,
     ICellRendererFunc,
@@ -47,7 +47,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
+    public colDefCellEditor(colDef: ColDef): {new(): ICellEditorComp} | string {
         if(colDef.cellEditorFramework && colDef.cellEditorFramework.component) {
             console.warn("colDef.cellEditorFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
             colDef.cellEditorFramework = colDef.cellEditorFramework.component;
