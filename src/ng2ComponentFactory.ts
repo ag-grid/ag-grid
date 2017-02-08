@@ -1,7 +1,7 @@
 import {ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} from "@angular/core";
 import {
-    ICellRenderer,
-    ICellEditor,
+    ICellRendererComp,
+    ICellEditorComp,
     MethodNotImplementedException,
     IDoesFilterPassParams,
     IFilterComp,
@@ -22,13 +22,13 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     public createRendererFromComponent(componentType: { new(...args: any[]): AgRendererComponent; },
-                                       viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
+                                       viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
         return this.adaptComponentToRenderer(componentType,
             viewContainerRef);
     }
 
     public createEditorFromComponent(componentType: { new(...args: any[]): AgEditorComponent; },
-                                     viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
+                                     viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
         return this.adaptComponentToEditor(componentType,
             viewContainerRef);
     }
@@ -41,10 +41,10 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
 
 
     private adaptComponentToRenderer(componentType: { new(...args: any[]): AgRendererComponent; },
-                                     viewContainerRef: ViewContainerRef): {new(): ICellRenderer} {
+                                     viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
 
         let that = this;
-        class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRenderer {
+        class CellRenderer extends BaseGuiComponent<any, AgRendererComponent> implements ICellRendererComp {
             init(params: any): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
@@ -71,10 +71,10 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
     }
 
     private adaptComponentToEditor(componentType: { new(...args: any[]): AgEditorComponent; },
-                                   viewContainerRef: ViewContainerRef): {new(): ICellEditor} {
+                                   viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
 
         let that = this;
-        class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditor {
+        class CellEditor extends BaseGuiComponent<any, AgEditorComponent> implements ICellEditorComp {
 
             init(params: any): void {
                 super.init(params);

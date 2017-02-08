@@ -19,7 +19,7 @@ export class Ng2FrameworkComponentWrapper implements  FrameworkComponentWrapper 
                 this._componentRef.changeDetectorRef.detectChanges();
             }
 
-            protected createComponent(): ComponentRef<AgFilterComponent> {
+            protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
                 return that.createComponent(Ng2Component,
                     Ng2FrameworkComponentWrapper._viewContainerRef);
             }

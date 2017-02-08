@@ -140,4 +140,9 @@ export class AgGridColumn {
         [key: string]: string;
     };
     @Input() public enableCellChangeFlash: boolean;
+
+    @Input() public headerGroupComponentFramework: {new ():any}
+    @Input() public headerGroupComponentParams: any;
+    @Input() public headerComponentFramework: {new ():any}
+    @Input() public headerComponentParams: any;
 }
