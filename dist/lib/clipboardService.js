@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67,10 +67,9 @@ var ClipboardService = (function () {
         this.iterateActiveRanges(true, rowCallback);
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
-        this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+        this.dispatchFlashCells(cellsToFlash);
     };
     ClipboardService.prototype.finishPasteFromClipboard = function (data) {
-        var _this = this;
         if (main_1.Utils.missingOrEmpty(data)) {
             return;
         }
@@ -92,14 +91,28 @@ var ClipboardService = (function () {
         var updatedRowNodes = [];
         var updatedColumnIds = [];
         var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        parsedData.forEach(function (values) {
+        var onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
+        if (onlyOneCellInRange) {
+            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
+        }
+        else {
+            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds);
+        }
+        // this is very heavy, should possibly just refresh the specific cells?
+        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
+        this.dispatchFlashCells(cellsToFlash);
+        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+    };
+    ClipboardService.prototype.multipleCellRange = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds) {
+        var _this = this;
+        clipboardGridData.forEach(function (clipboardRowData) {
             // if we have come to end of rows in grid, then skip
             if (!currentRow) {
                 return;
             }
             var rowNode = _this.getRowNode(currentRow);
             updatedRowNodes.push(rowNode);
-            values.forEach(function (value, index) {
+            clipboardRowData.forEach(function (value, index) {
                 var column = columnsToPasteInto[index];
                 if (main_1.Utils.missing(column)) {
                     return;
@@ -107,22 +120,37 @@ var ClipboardService = (function () {
                 if (!column.isCellEditable(rowNode)) {
                     return;
                 }
-                var processedValue = _this.processRangeCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
-                _this.valueService.setValue(rowNode, column, processedValue);
-                var gridCellDef = { rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column };
-                var cellId = new main_1.GridCell(gridCellDef).createId();
-                cellsToFlash[cellId] = true;
-                if (updatedColumnIds.indexOf(column.getId()) < 0) {
-                    updatedColumnIds.push(column.getId());
-                }
+                _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds);
             });
             // move to next row down for next set of values
             currentRow = _this.cellNavigationService.getRowBelow(currentRow);
         });
-        // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
-        this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
-        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        return currentRow;
+    };
+    ClipboardService.prototype.singleCellRange = function (parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds) {
+        var _this = this;
+        var value = parsedData[0][0];
+        var rowCallback = function (gridRow, rowNode, columns) {
+            updatedRowNodes.push(rowNode);
+            columns.forEach(function (column) {
+                _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds);
+            });
+        };
+        this.iterateActiveRanges(false, rowCallback);
+    };
+    ClipboardService.prototype.updateCellValue = function (rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds) {
+        var processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
+        this.valueService.setValue(rowNode, column, processedValue);
+        var gridCellDef = {
+            rowIndex: currentRow.rowIndex,
+            floating: currentRow.floating,
+            column: column
+        };
+        var cellId = new main_1.GridCell(gridCellDef).createId();
+        cellsToFlash[cellId] = true;
+        if (updatedColumnIds.indexOf(column.getId()) < 0) {
+            updatedColumnIds.push(column.getId());
+        }
     };
     ClipboardService.prototype.copyToClipboard = function (includeHeaders) {
         if (includeHeaders === void 0) { includeHeaders = false; }
@@ -137,10 +165,17 @@ var ClipboardService = (function () {
             // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
         }
-        else {
-            // then lastly, if no range or no row selection,
-            // then copy the focused cell
+        else if (this.focusedCellController.isAnyCellFocused()) {
+            // if there is a focused cell, copy this
             this.copyFocusedCellToClipboard();
+        }
+        else {
+            // lastly if no focused cell, try range again. this can happen
+            // if use has cellSelection turned off (so no focused cell)
+            // but has a cell clicked, so there exists a cell range
+            // of exactly one cell (hence the first 'if' above didn't
+            // get executed).
+            this.copySelectedRangeToClipboard(includeHeaders);
         }
     };
     ClipboardService.prototype.iterateActiveRanges = function (onlyFirst, rowCallback, columnCallback) {
@@ -219,7 +254,7 @@ var ClipboardService = (function () {
         };
         this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
-        this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+        this.dispatchFlashCells(cellsToFlash);
     };
     ClipboardService.prototype.copyFocusedCellToClipboard = function () {
         var focusedCell = this.focusedCellController.getFocusedCell();
@@ -241,18 +276,25 @@ var ClipboardService = (function () {
         var cellId = focusedCell.createId();
         var cellsToFlash = {};
         cellsToFlash[cellId] = true;
-        this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+        this.dispatchFlashCells(cellsToFlash);
+    };
+    ClipboardService.prototype.dispatchFlashCells = function (cellsToFlash) {
+        var _this = this;
+        setTimeout(function () {
+            _this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+        }, 0);
     };
     ClipboardService.prototype.processRangeCell = function (rowNode, column, value, func) {
         if (func) {
-            return func({
+            var params = {
                 column: column,
                 node: rowNode,
                 value: value,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
-            });
+            };
+            return func(params);
         }
         else {
             return value;

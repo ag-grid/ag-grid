@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18,7 +18,9 @@ var GroupStage = (function () {
         // with the other rows.
         this.groupIdSequence = new main_1.NumberSequence(1);
     }
-    GroupStage.prototype.execute = function (rowNode) {
+    GroupStage.prototype.execute = function (params) {
+        var rootNode = params.rowNode;
+        var newRowNodes = params.newRowNodes;
         var groupedCols = this.columnController.getRowGroupColumns();
         var expandByDefault;
         if (this.gridOptionsWrapper.isGroupSuppressRow()) {
@@ -28,11 +30,19 @@ var GroupStage = (function () {
             expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
         }
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.recursivelyGroup(rowNode, groupedCols, 0, expandByDefault, includeParents);
-        if (this.gridOptionsWrapper.isGroupRemoveSingleChildren()) {
-            this.recursivelyDeptFirstRemoveSingleChildren(rowNode, includeParents);
+        if (newRowNodes) {
+            this.insertRowNodes(newRowNodes, rootNode, groupedCols, expandByDefault, includeParents);
         }
-        this.recursivelySetLevelOnChildren(rowNode, 0);
+        else {
+            this.recursivelyGroup(rootNode, groupedCols, 0, expandByDefault, includeParents);
+            // remove single children only works when doing a new grouping, it is not compatible with
+            // inserting / removing rows, as the group which a new record may belong to may have already
+            // been snipped out.
+            if (this.gridOptionsWrapper.isGroupRemoveSingleChildren()) {
+                this.recursivelyDeptFirstRemoveSingleChildren(rootNode, includeParents);
+            }
+        }
+        this.recursivelySetLevelOnChildren(rootNode, 0);
     };
     GroupStage.prototype.recursivelySetLevelOnChildren = function (rowNode, level) {
         for (var i = 0; i < rowNode.childrenAfterGroup.length; i++) {
@@ -68,7 +78,7 @@ var GroupStage = (function () {
         rowNode.leafGroup = level === groupColumns.length;
         if (groupingThisLevel) {
             var groupColumn = groupColumns[level];
-            this.setChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level, includeParents);
+            this.bucketIntoChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level, includeParents);
             rowNode.childrenAfterGroup.forEach(function (child) {
                 _this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, includeParents);
             });
@@ -80,20 +90,34 @@ var GroupStage = (function () {
             });
         }
     };
-    GroupStage.prototype.setChildrenAfterGroup = function (rowNode, groupColumn, expandByDefault, level, includeParents) {
+    GroupStage.prototype.bucketIntoChildrenAfterGroup = function (rowNode, groupColumn, expandByDefault, level, includeParents) {
         var _this = this;
         rowNode.childrenAfterGroup = [];
         rowNode.childrenMapped = {};
         rowNode.allLeafChildren.forEach(function (child) {
-            var groupKey = _this.getKeyForNode(groupColumn, child);
-            var groupForChild = rowNode.childrenMapped[groupKey];
-            if (!groupForChild) {
-                groupForChild = _this.createGroup(groupColumn, groupKey, rowNode, expandByDefault, level, includeParents);
-                rowNode.childrenMapped[groupKey] = groupForChild;
-                rowNode.childrenAfterGroup.push(groupForChild);
-            }
-            groupForChild.allLeafChildren.push(child);
+            _this.placeNodeIntoNextGroup(rowNode, child, groupColumn, expandByDefault, level, includeParents);
         });
+    };
+    GroupStage.prototype.insertRowNodes = function (newRowNodes, rootNode, groupColumns, expandByDefault, includeParents) {
+        var _this = this;
+        newRowNodes.forEach(function (rowNode) {
+            var nextGroup = rootNode;
+            groupColumns.forEach(function (groupColumn, level) {
+                nextGroup = _this.placeNodeIntoNextGroup(nextGroup, rowNode, groupColumn, expandByDefault, level, includeParents);
+            });
+            rowNode.parent = nextGroup;
+        });
+    };
+    GroupStage.prototype.placeNodeIntoNextGroup = function (previousGroup, nodeToPlace, groupColumn, expandByDefault, level, includeParents) {
+        var groupKey = this.getKeyForNode(groupColumn, nodeToPlace);
+        var nextGroup = previousGroup.childrenMapped[groupKey];
+        if (!nextGroup) {
+            nextGroup = this.createGroup(groupColumn, groupKey, previousGroup, expandByDefault, level, includeParents);
+            previousGroup.childrenMapped[groupKey] = nextGroup;
+            previousGroup.childrenAfterGroup.push(nextGroup);
+        }
+        nextGroup.allLeafChildren.push(nodeToPlace);
+        return nextGroup;
     };
     GroupStage.prototype.getKeyForNode = function (groupColumn, rowNode) {
         var value = this.valueService.getValue(groupColumn, rowNode);

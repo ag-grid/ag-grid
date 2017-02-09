@@ -1,9 +1,9 @@
-// ag-grid-enterprise v7.2.4
-import { ICellEditor, ICellEditorParams, Component, Context, ICellRenderer, ICellRendererFunc, CellRendererService } from "ag-grid/main";
+// ag-grid-enterprise v8.0.0
+import { ICellEditor, ICellEditorParams, Component, Context, ICellRendererComp, ICellRendererFunc, CellRendererService } from "ag-grid/main";
 export interface IRichCellEditorParams extends ICellEditorParams {
     values: string[];
     cellRenderer: {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
 }
 export declare class RichSelectCellEditor extends Component implements ICellEditor {

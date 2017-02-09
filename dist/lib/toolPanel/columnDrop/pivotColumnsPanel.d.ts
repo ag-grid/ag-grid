@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 import { Column } from "ag-grid/main";
 import { AbstractColumnDropPanel } from "./abstractColumnDropPanel";
 export declare class PivotColumnsPanel extends AbstractColumnDropPanel {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -23,7 +23,7 @@ var ExcelXmlFactory = (function () {
         var documentProperties = this.documentProperties();
         var excelWorkbook = this.excelWorkbook();
         return this.excelXmlHeader() +
-            this.xmlFactory.createXml(this.workbook(documentProperties, excelWorkbook, styles, worksheets));
+            this.xmlFactory.createXml(this.workbook(documentProperties, excelWorkbook, styles, worksheets), function (boolean) { return boolean ? "1" : "0"; });
     };
     ExcelXmlFactory.prototype.workbook = function (documentProperties, excelWorkbook, styles, worksheets) {
         var _this = this;
@@ -40,13 +40,15 @@ var ExcelXmlFactory = (function () {
         return {
             name: "Workbook",
             properties: {
-                prefix: "xmlns:",
-                prefixedMap: {
-                    o: "urn:schemas-microsoft-com:office:office",
-                    x: "urn:schemas-microsoft-com:office:excel",
-                    ss: "urn:schemas-microsoft-com:office:spreadsheet",
-                    html: "http://www.w3.org/TR/REC-html40"
-                },
+                prefixedAttributes: [{
+                        prefix: "xmlns:",
+                        map: {
+                            o: "urn:schemas-microsoft-com:office:office",
+                            x: "urn:schemas-microsoft-com:office:excel",
+                            ss: "urn:schemas-microsoft-com:office:spreadsheet",
+                            html: "http://www.w3.org/TR/REC-html40"
+                        },
+                    }],
                 rawMap: {
                     xmlns: "urn:schemas-microsoft-com:office:spreadsheet"
                 }
@@ -83,13 +85,15 @@ var ExcelXmlFactory = (function () {
                 borders.push({
                     name: "Border",
                     properties: {
-                        prefix: "ss:",
-                        prefixedMap: {
-                            Position: current,
-                            LineStyle: it.lineStyle,
-                            Weight: it.weight,
-                            Color: it.color
-                        }
+                        prefixedAttributes: [{
+                                prefix: "ss:",
+                                map: {
+                                    Position: current,
+                                    LineStyle: it.lineStyle,
+                                    Weight: it.weight,
+                                    Color: it.color
+                                }
+                            }]
                     }
                 });
             });
@@ -99,11 +103,19 @@ var ExcelXmlFactory = (function () {
             children.push({
                 name: "Alignment",
                 properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Vertical: style.alignment.vertical,
-                        Horizontal: style.alignment.horizontal
-                    }
+                    prefixedAttributes: [{
+                            prefix: "ss:",
+                            map: {
+                                Vertical: style.alignment.vertical,
+                                Horizontal: style.alignment.horizontal,
+                                Indent: style.alignment.indent,
+                                ReadingOrder: style.alignment.readingOrder,
+                                Rotate: style.alignment.rotate,
+                                ShrinkToFit: style.alignment.shrinkToFit,
+                                VerticalText: style.alignment.verticalText,
+                                WrapText: style.alignment.wrapText
+                            }
+                        }]
                 }
             });
         }
@@ -117,10 +129,26 @@ var ExcelXmlFactory = (function () {
             children.push({
                 name: "Font",
                 properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Color: style.font.color
-                    }
+                    prefixedAttributes: [{
+                            prefix: "ss:",
+                            map: {
+                                Bold: style.font.bold,
+                                Italic: style.font.italic,
+                                Color: style.font.color,
+                                Outline: style.font.outline,
+                                Shadow: style.font.shadow,
+                                Size: style.font.size,
+                                StrikeThrough: style.font.strikeThrough,
+                                Underline: style.font.underline,
+                                VerticalAlign: style.font.verticalAlign
+                            }
+                        }, {
+                            prefix: "x:",
+                            map: {
+                                CharSet: style.font.charSet,
+                                Family: style.font.family
+                            }
+                        }]
                 }
             });
         }
@@ -128,22 +156,54 @@ var ExcelXmlFactory = (function () {
             children.push({
                 name: "Interior",
                 properties: {
-                    prefix: "ss:",
-                    prefixedMap: {
-                        Color: style.interior.color,
-                        Pattern: style.interior.pattern
-                    }
+                    prefixedAttributes: [{
+                            prefix: "ss:",
+                            map: {
+                                Color: style.interior.color,
+                                Pattern: style.interior.pattern,
+                                PatternColor: style.interior.patternColor
+                            }
+                        }]
+                }
+            });
+        }
+        if (style.protection) {
+            children.push({
+                name: "Protection",
+                properties: {
+                    prefixedAttributes: [{
+                            prefix: "ss:",
+                            map: {
+                                Protected: style.protection.protected,
+                                HideFormula: style.protection.hideFormula
+                            }
+                        }]
+                }
+            });
+        }
+        if (style.numberFormat) {
+            children.push({
+                name: "NumberFormat",
+                properties: {
+                    prefixedAttributes: [{
+                            prefix: "ss:",
+                            map: {
+                                Format: style.numberFormat.format
+                            }
+                        }]
                 }
             });
         }
         return {
             name: "Style",
             properties: {
-                prefix: "ss:",
-                prefixedMap: {
-                    ID: style.id,
-                    Name: (style.name) ? style.name : style.id
-                },
+                prefixedAttributes: [{
+                        prefix: "ss:",
+                        map: {
+                            ID: style.id,
+                            Name: (style.name) ? style.name : style.id
+                        }
+                    }]
             },
             children: children
         };
@@ -168,10 +228,12 @@ var ExcelXmlFactory = (function () {
                     children: children
                 }],
             properties: {
-                prefix: "ss:",
-                prefixedMap: {
-                    Name: worksheet.name
-                }
+                prefixedAttributes: [{
+                        prefix: "ss:",
+                        map: {
+                            Name: worksheet.name
+                        }
+                    }]
             }
         };
     };
@@ -179,10 +241,12 @@ var ExcelXmlFactory = (function () {
         return {
             name: "Column",
             properties: {
-                prefix: "ss:",
-                prefixedMap: {
-                    Width: column.width
-                }
+                prefixedAttributes: [{
+                        prefix: "ss:",
+                        map: {
+                            Width: column.width
+                        }
+                    }]
             }
         };
     };
@@ -206,16 +270,20 @@ var ExcelXmlFactory = (function () {
         return {
             name: "Cell",
             properties: {
-                prefix: "ss:",
-                prefixedMap: properties
+                prefixedAttributes: [{
+                        prefix: "ss:",
+                        map: properties
+                    }]
             },
             children: [{
                     name: "Data",
                     properties: {
-                        prefix: "ss:",
-                        prefixedMap: {
-                            Type: ExcelDataType[cell.data.type]
-                        }
+                        prefixedAttributes: [{
+                                prefix: "ss:",
+                                map: {
+                                    Type: ExcelDataType[cell.data.type]
+                                }
+                            }]
                     },
                     textNode: cell.data.value
                 }]
@@ -283,34 +351,3 @@ exports.ExcelXmlFactory = ExcelXmlFactory;
     ExcelDataType[ExcelDataType["Number"] = 1] = "Number";
 })(exports.ExcelDataType || (exports.ExcelDataType = {}));
 var ExcelDataType = exports.ExcelDataType;
-var HorizontalAlign = (function () {
-    function HorizontalAlign() {
-    }
-    HorizontalAlign.LEFT = 'Left';
-    HorizontalAlign.RIGHT = 'Right';
-    return HorizontalAlign;
-}());
-exports.HorizontalAlign = HorizontalAlign;
-var VerticalAlign = (function () {
-    function VerticalAlign() {
-    }
-    VerticalAlign.BOTTOM = 'BOTTOM';
-    VerticalAlign.TOP = 'TOP';
-    VerticalAlign.CENTER = 'CENTER';
-    return VerticalAlign;
-}());
-exports.VerticalAlign = VerticalAlign;
-var LineStyle = (function () {
-    function LineStyle() {
-    }
-    LineStyle.CONTINUOUS = 'CONTINUOUS';
-    return LineStyle;
-}());
-exports.LineStyle = LineStyle;
-var Pattern = (function () {
-    function Pattern() {
-    }
-    Pattern.SOLID = 'SOLID';
-    return Pattern;
-}());
-exports.Pattern = Pattern;

@@ -1,5 +1,5 @@
-// ag-grid-enterprise v7.2.4
-import { Component, ICellRenderer, ICellRendererFunc } from "ag-grid/main";
+// ag-grid-enterprise v8.0.0
+import { Component, ICellRendererFunc, ICellRendererComp } from "ag-grid/main";
 export declare class SetFilterListItem extends Component {
     static EVENT_SELECTED: string;
     private gridOptionsWrapper;
@@ -9,7 +9,7 @@ export declare class SetFilterListItem extends Component {
     private value;
     private cellRenderer;
     constructor(value: any, cellRenderer: {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string);
     private init();
     isSelected(): boolean;
