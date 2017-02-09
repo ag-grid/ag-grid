@@ -26,7 +26,7 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
     _createClass(VueComponentFactory, [{
         key: "createRendererFromComponent",
         value: function createRendererFromComponent(component) {
-            var componentType = this.getComponentType(component);
+            var componentType = VueComponentFactory.getComponentType(this.parent, component);
             if (!componentType) {
                 return;
             }
@@ -39,14 +39,7 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
                 _createClass(CellRendererComponent, [{
                     key: "init",
                     value: function init(params) {
-                        var details = {
-                            // parent: that.parent,
-                            data: {
-                                params: params
-                            }
-                        };
-                        this.component = new componentType(details);
-                        this.component.$mount();
+                        this.component = VueComponentFactory.createAndMountComponent(params, componentType);
                     }
                 }, {
                     key: "getGui",
@@ -68,7 +61,7 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
     }, {
         key: "createEditorFromComponent",
         value: function createEditorFromComponent(component) {
-            var componentType = this.getComponentType(component);
+            var componentType = VueComponentFactory.getComponentType(this.parent, component);
             if (!componentType) {
                 return;
             }
@@ -81,13 +74,7 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
                 _createClass(CellEditor, [{
                     key: "init",
                     value: function init(params) {
-                        var details = {
-                            data: {
-                                params: params
-                            }
-                        };
-                        this.component = new componentType(details);
-                        this.component.$mount();
+                        this.component = VueComponentFactory.createAndMountComponent(params, componentType);
                     }
                 }, {
                     key: "getValue",
@@ -143,7 +130,7 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
     }, {
         key: "createFilterFromComponent",
         value: function createFilterFromComponent(component) {
-            var componentType = this.getComponentType(component);
+            var componentType = VueComponentFactory.getComponentType(this.parent, component);
             if (!componentType) {
                 return;
             }
@@ -156,13 +143,7 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
                 _createClass(Filter, [{
                     key: "init",
                     value: function init(params) {
-                        var details = {
-                            data: {
-                                params: params
-                            }
-                        };
-                        this.component = new componentType(details);
-                        this.component.$mount();
+                        this.component = VueComponentFactory.createAndMountComponent(params, componentType);
                     }
                 }, {
                     key: "getGui",
@@ -213,11 +194,11 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
 
             return Filter;
         }
-    }, {
+    }], [{
         key: "getComponentType",
-        value: function getComponentType(component) {
+        value: function getComponentType(parent, component) {
             if (typeof component === 'string') {
-                var componentInstance = this.parent.$parent.$options.components[component];
+                var componentInstance = parent.$parent.$options.components[component];
                 if (!componentInstance) {
                     console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
                     return null;
@@ -227,6 +208,20 @@ var VueComponentFactory = exports.VueComponentFactory = function () {
                 // assume a type
                 return component;
             }
+        }
+    }, {
+        key: "createAndMountComponent",
+        value: function createAndMountComponent(params, componentType) {
+            var details = {
+                // parent: that.parent,
+                data: {
+                    params: params
+                }
+            };
+
+            var component = new componentType(details);
+            component.$mount();
+            return component;
         }
     }]);
 

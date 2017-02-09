@@ -12,6 +12,8 @@ var _main = require("ag-grid/main");
 
 var _vueFrameworkFactory = require("./vueFrameworkFactory");
 
+var _vueFrameworkComponentWrapper = require("./vueFrameworkComponentWrapper");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var watchedProperties = {};
@@ -63,13 +65,18 @@ exports.default = _vue2.default.extend({
         }
     },
     mounted: function mounted() {
+        var frameworkComponentWrapper = new _vueFrameworkComponentWrapper.VueFrameworkComponentWrapper(this);
         var vueFrameworkFactory = new _vueFrameworkFactory.VueFrameworkFactory(this.$el, this);
         var gridOptions = _main.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         var gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkFactory: vueFrameworkFactory
+            frameworkFactory: vueFrameworkFactory,
+            seedBeanInstances: {
+                frameworkComponentWrapper: frameworkComponentWrapper
+            }
         };
+
         new _main.Grid(this.$el, gridOptions, gridParams);
 
         if (this.gridOptions.api) {
