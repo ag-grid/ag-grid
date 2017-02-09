@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-ng2",
-  "version": "7.2.2",
+  "version": "8.0.0",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -44,7 +44,7 @@
     "typescript": "2.0.3"
   },
   "peerDependencies": {
-    "ag-grid": "7.2.x",
+    "ag-grid": "8.0.x",
     "@angular/compiler": ">=2.1.x",
     "@angular/compiler-cli": ">=2.1.x",
     "@angular/core": ">=2.1.x",

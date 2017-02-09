@@ -1,27 +1,25 @@
 import { ViewContainerRef } from "@angular/core";
-import { ICellRenderer, ICellEditor, IFilter } from "ag-grid/main";
-import { AgRendererComponent } from "./agRendererComponent";
-import { AgEditorComponent } from "./agEditorComponent";
-import { AgFilterComponent } from "./agFilterComponent";
+import { ICellRendererComp, ICellEditorComp, IFilterComp } from "ag-grid/main";
+import { ICellRendererAngularComp, ICellEditorAngularComp, IFilterAngularComp } from "./interfaces";
 export declare class BaseComponentFactory {
     createCellRendererFromComponent(componentType: {
-        new (...args: any[]): AgRendererComponent;
+        new (...args: any[]): ICellRendererAngularComp;
     }, viewContainerRef: ViewContainerRef): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     };
     createRendererFromComponent(componentType: {
-        new (...args: any[]): AgRendererComponent;
+        new (...args: any[]): ICellRendererAngularComp;
     }, viewContainerRef: ViewContainerRef): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     };
     createEditorFromComponent(componentType: {
-        new (...args: any[]): AgEditorComponent;
+        new (...args: any[]): ICellEditorAngularComp;
     }, viewContainerRef: ViewContainerRef): {
-        new (): ICellEditor;
+        new (): ICellEditorComp;
     };
     createFilterFromComponent(componentType: {
-        new (...args: any[]): AgFilterComponent;
+        new (...args: any[]): IFilterAngularComp;
     }, viewContainerRef: ViewContainerRef): {
-        new (): IFilter;
+        new (): IFilterComp;
     };
 }

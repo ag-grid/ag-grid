@@ -3,10 +3,13 @@ var core_1 = require("@angular/core");
 var main_1 = require("ag-grid/main");
 var ng2FrameworkFactory_1 = require("./ng2FrameworkFactory");
 var agGridColumn_1 = require("./agGridColumn");
+var ng2FrameworkComponentWrapper_1 = require("./ng2FrameworkComponentWrapper");
 var AgGridNg2 = (function () {
-    function AgGridNg2(elementDef, viewContainerRef, ng2FrameworkFactory) {
+    function AgGridNg2(elementDef, viewContainerRef, ng2FrameworkFactory, frameworkComponentWrapper, _componentFactoryResolver) {
         this.viewContainerRef = viewContainerRef;
         this.ng2FrameworkFactory = ng2FrameworkFactory;
+        this.frameworkComponentWrapper = frameworkComponentWrapper;
+        this._componentFactoryResolver = _componentFactoryResolver;
         this._initialised = false;
         this._destroyed = false;
         this.slaveGrids = undefined;
@@ -151,6 +154,8 @@ var AgGridNg2 = (function () {
         this.enableRtlSupport = undefined;
         this.excelStyles = undefined;
         this.dateComponent = undefined;
+        this.dateComponentFramework = undefined;
+        this.dateComponentParams = undefined;
         this.sendToClipboard = undefined;
         this.navigateToNextCell = undefined;
         this.tabToNextCell = undefined;
@@ -158,11 +163,14 @@ var AgGridNg2 = (function () {
         this.getDocument = undefined;
         this.enableGroupEdit = undefined;
         this.embedFullWidthRows = undefined;
+        this.suppressTabbing = undefined;
         this._nativeElement = elementDef.nativeElement;
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
         this.createComponentEvents();
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
+        this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
+        this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
     }
     AgGridNg2.prototype.createComponentEvents = function () {
         var _this = this;
@@ -174,7 +182,10 @@ var AgGridNg2 = (function () {
         this.gridOptions = main_1.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkFactory: this.ng2FrameworkFactory
+            frameworkFactory: this.ng2FrameworkFactory,
+            seedBeanInstances: {
+                frameworkComponentWrapper: this.frameworkComponentWrapper
+            }
         };
         if (this.columns && this.columns.length > 0) {
             this.gridOptions.columnDefs = this.columns
@@ -183,8 +194,12 @@ var AgGridNg2 = (function () {
             });
         }
         new main_1.Grid(this._nativeElement, this.gridOptions, this.gridParams);
-        this.api = this.gridOptions.api;
-        this.columnApi = this.gridOptions.columnApi;
+        if (this.gridOptions.api) {
+            this.api = this.gridOptions.api;
+        }
+        if (this.gridOptions.columnApi) {
+            this.columnApi = this.gridOptions.columnApi;
+        }
         this._initialised = true;
     };
     AgGridNg2.prototype.ngOnChanges = function (changes) {
@@ -219,6 +234,10 @@ var AgGridNg2 = (function () {
         { type: core_1.Component, args: [{
                     selector: 'ag-grid-ng2',
                     template: '',
+                    providers: [
+                        ng2FrameworkFactory_1.Ng2FrameworkFactory,
+                        ng2FrameworkComponentWrapper_1.Ng2FrameworkComponentWrapper
+                    ],
                     // tell angular we don't want view encapsulation, we don't want a shadow root
                     encapsulation: core_1.ViewEncapsulation.None
                 },] },
@@ -228,6 +247,8 @@ var AgGridNg2 = (function () {
         { type: core_1.ElementRef, },
         { type: core_1.ViewContainerRef, },
         { type: ng2FrameworkFactory_1.Ng2FrameworkFactory, },
+        { type: ng2FrameworkComponentWrapper_1.Ng2FrameworkComponentWrapper, },
+        { type: core_1.ComponentFactoryResolver, },
     ]; };
     AgGridNg2.propDecorators = {
         'columns': [{ type: core_1.ContentChildren, args: [agGridColumn_1.AgGridColumn,] },],
@@ -374,6 +395,8 @@ var AgGridNg2 = (function () {
         'enableRtlSupport': [{ type: core_1.Input },],
         'excelStyles': [{ type: core_1.Input },],
         'dateComponent': [{ type: core_1.Input },],
+        'dateComponentFramework': [{ type: core_1.Input },],
+        'dateComponentParams': [{ type: core_1.Input },],
         'sendToClipboard': [{ type: core_1.Input },],
         'navigateToNextCell': [{ type: core_1.Input },],
         'tabToNextCell': [{ type: core_1.Input },],
@@ -381,6 +404,7 @@ var AgGridNg2 = (function () {
         'getDocument': [{ type: core_1.Input },],
         'enableGroupEdit': [{ type: core_1.Input },],
         'embedFullWidthRows': [{ type: core_1.Input },],
+        'suppressTabbing': [{ type: core_1.Input },],
         'gridReady': [{ type: core_1.Output },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
@@ -444,6 +468,9 @@ var AgGridNg2 = (function () {
         'displayedColumnsWidthChanged': [{ type: core_1.Output },],
         'scrollVisibilityChanged': [{ type: core_1.Output },],
         'flashCells': [{ type: core_1.Output },],
+        'cellMouseOver': [{ type: core_1.Output },],
+        'cellMouseOut': [{ type: core_1.Output },],
+        'columnHoverChanged': [{ type: core_1.Output },],
     };
     return AgGridNg2;
 }());

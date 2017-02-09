@@ -89,4 +89,12 @@ export declare class AgGridColumn {
         [key: string]: string;
     };
     enableCellChangeFlash: boolean;
+    headerGroupComponentFramework: {
+        new (): any;
+    };
+    headerGroupComponentParams: any;
+    headerComponentFramework: {
+        new (): any;
+    };
+    headerComponentParams: any;
 }

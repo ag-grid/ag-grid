@@ -113,6 +113,10 @@ var AgGridColumn = (function () {
         'onCellContextMenu': [{ type: core_1.Input },],
         'icons': [{ type: core_1.Input },],
         'enableCellChangeFlash': [{ type: core_1.Input },],
+        'headerGroupComponentFramework': [{ type: core_1.Input },],
+        'headerGroupComponentParams': [{ type: core_1.Input },],
+        'headerComponentFramework': [{ type: core_1.Input },],
+        'headerComponentParams': [{ type: core_1.Input },],
     };
     return AgGridColumn;
 }());

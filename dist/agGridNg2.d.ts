@@ -1,10 +1,13 @@
-import { EventEmitter, ViewContainerRef, ElementRef, QueryList, AfterViewInit } from "@angular/core";
+import { EventEmitter, ViewContainerRef, ElementRef, QueryList, AfterViewInit, ComponentFactoryResolver } from "@angular/core";
 import { GridOptions, GridApi, ColumnApi } from "ag-grid/main";
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
 import { AgGridColumn } from "./agGridColumn";
+import { Ng2FrameworkComponentWrapper } from "./ng2FrameworkComponentWrapper";
 export declare class AgGridNg2 implements AfterViewInit {
     private viewContainerRef;
     private ng2FrameworkFactory;
+    private frameworkComponentWrapper;
+    private _componentFactoryResolver;
     private _nativeElement;
     private _initialised;
     private _destroyed;
@@ -12,7 +15,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     api: GridApi;
     columnApi: ColumnApi;
     columns: QueryList<AgGridColumn>;
-    constructor(elementDef: ElementRef, viewContainerRef: ViewContainerRef, ng2FrameworkFactory: Ng2FrameworkFactory);
+    constructor(elementDef: ElementRef, viewContainerRef: ViewContainerRef, ng2FrameworkFactory: Ng2FrameworkFactory, frameworkComponentWrapper: Ng2FrameworkComponentWrapper, _componentFactoryResolver: ComponentFactoryResolver);
     private createComponentEvents();
     ngAfterViewInit(): void;
     ngOnChanges(changes: any): void;
@@ -164,6 +167,8 @@ export declare class AgGridNg2 implements AfterViewInit {
     enableRtlSupport: any;
     excelStyles: any;
     dateComponent: any;
+    dateComponentFramework: any;
+    dateComponentParams: any;
     sendToClipboard: any;
     navigateToNextCell: any;
     tabToNextCell: any;
@@ -171,6 +176,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     getDocument: any;
     enableGroupEdit: any;
     embedFullWidthRows: any;
+    suppressTabbing: any;
     /**
      * Outputs
      */
@@ -237,4 +243,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     displayedColumnsWidthChanged: EventEmitter<any>;
     scrollVisibilityChanged: EventEmitter<any>;
     flashCells: EventEmitter<any>;
+    cellMouseOver: EventEmitter<any>;
+    cellMouseOut: EventEmitter<any>;
+    columnHoverChanged: EventEmitter<any>;
 }
