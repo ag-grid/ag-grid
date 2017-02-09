@@ -41,7 +41,7 @@ include('../includes/mediaHeader.php');
             deal. With a bit of colour we and a few icons we can, at a glance, get most of the information we commonly require
         from Git.</p>
 
-        <p>Do we have modified files? Check. Do we have files that are untracked? Check. What branch and I in at the moment? Got that
+        <p>Do we have modified files? Check. Do we have files that are untracked? Check. What branch am I in at the moment? Got that
         covered. And so on.</p>
 
         <p>At the end of my playing around this is what I now use day to day here at ag-Grid:</p>
