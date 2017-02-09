@@ -25,8 +25,8 @@ do
     git checkout -b $1
 
     case $module in
-        ##If it depends on ag-grid ONLY
-        "ag-grid-ng2-example"|"ag-grid-react-example"|"ag-grid-aurelia-example")
+        ##Examples
+        "ag-grid-ng2-example"|"ag-grid-react-example"|"ag-grid-aurelia-example"|"ag-grid-vue-example")
             echo =============================================================================================
             echo "MODULE  $module - THIS WILL GET SETUP AT THE END THROUGH release-prepare-examples $1 $2"
             echo =============================================================================================
@@ -37,6 +37,16 @@ do
     ## Replace version number
     sed -i .old -e 's/.*"version".*/  "version": "'$1'",/g' bower.json
     sed -i .old -e 's/.*"version".*/  "version": "'$1'",/g' package.json
+
+    case $module in
+        ##Examples
+        "ag-grid-dev"|"ag-grid-docs")
+            echo =============================================================================================
+            echo "MODULE  $module - WE ARE DONE WITH THESE ONES FOR THE TIME BEING"
+            echo =============================================================================================
+            cd ..
+            continue
+    esac
 
     case $module in
         ##If it depends on ag-grid ONLY
@@ -50,7 +60,7 @@ do
             npm install ../ag-grid/ag-grid-$1.tgz
             ;;
         ##If it depends on ag-grid AND OTHERS. THIS CAN BE REFACTORED FOR SURE!
-        "ag-grid-ng2")
+        "ag-grid-ng2"|"ag-grid-vue")
             echo =============================================================================================
             echo "ADDING AG-GRID DEPENDENCY TO:  $module"
             echo =============================================================================================
@@ -80,4 +90,4 @@ do
     cd ..
 done
 
-cd..
+cd ..

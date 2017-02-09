@@ -13,8 +13,18 @@ for module in "${ADDR[@]}"
 do
     cd "$1/$module"
 
+    case $module in
+        "ag-grid-ng2")
+            npm install @angular/compiler @angular/compiler @angular/compiler-cli @angular/core rxjs zone.js core-js
+            ;;
+        "ag-grid-aurelia")
+            npm install aurelia-framework
+            ;;
+        "ag-grid-vue")
+            npm install vue
+            ;;
+    esac
     npm install
-    npm-install-peers
 
     cd ../../
 done

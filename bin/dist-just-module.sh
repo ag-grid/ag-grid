@@ -18,13 +18,34 @@ do
             gulp release
             ;;
         "ag-grid-ng2")
-            npm run release
+            npm run clean-build
             ;;
         "ag-grid-react")
             gulp
             ;;
          "ag-grid-aurelia")
             npm i aurelia-framework
+            npm run build
+            ;;
+         "ag-grid-vue")
+            gulp
+            ;;
+        "ag-grid-docs")
+            gulp release
+            ;;
+        "ag-grid-react-example")
+            npm run build-standard
+            ;;
+        "ag-grid-vue-example")
+            npm run build
+            ;;
+        "ag-grid-aurelia-example")
+            gulp
+            ;;
+        "ag-grid-ng2-example/systemjs_aot")
+            npm run clean-build:aot
+            ;;
+        "ag-grid-ng2-example/webpack")
             npm run build
             ;;
     esac

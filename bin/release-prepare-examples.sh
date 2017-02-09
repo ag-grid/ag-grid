@@ -16,7 +16,7 @@ echo ===========================================================================
 echo "Preparing examples for " $1
 
 ## for all the package.json containers replace version number
-declare -a subfolders=("ag-grid-ng2-example/systemjs_aot" "ag-grid-ng2-example/webpack" "ag-grid-ng2-example/angular-cli" "ag-grid-react-example" "ag-grid-aurelia-example")
+declare -a subfolders=("ag-grid-ng2-example/systemjs_aot" "ag-grid-ng2-example/webpack" "ag-grid-ng2-example/angular-cli" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue-example")
 
 for subfolder in "${subfolders[@]}"
 do
@@ -33,6 +33,7 @@ do
     sed -i .old -e 's/.*"ag-grid-aurelia".*/    "ag-grid-aurelia": "'$2'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-ng2".*/    "ag-grid-ng2": "'$2'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-react".*/    "ag-grid-react": "'$2'"/g' package.json
+    sed -i .old -e 's/.*"ag-grid-vue".*/    "ag-grid-vue": "'$2'",/g' package.json
 
     rm package.json.old
 
@@ -50,11 +51,19 @@ do
         "ag-grid-aurelia-example")
             npm install "$current_dir/ag-grid-aurelia/ag-grid-aurelia-$1.tgz"
             ;;
+        "ag-grid-vue-example")
+            npm install "$current_dir/ag-grid-vue/ag-grid-vue-$1.tgz"
+            ;;
     esac
 
 
     npm-install-peers
     npm i
+
+    cd "$current_dir"
+    cd ..
+
+    dist-just-module.sh $1 $subfolder
 
     cd "$current_dir"
 done
@@ -63,7 +72,7 @@ done
 
 
 ## for all the modules commit the change
-declare -a modules=("ag-grid-ng2-example" "ag-grid-react-example" "ag-grid-aurelia-example")
+declare -a modules=("ag-grid-ng2-example" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue")
 
 for module in "${modules[@]}"
 do
