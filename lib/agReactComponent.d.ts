@@ -1,8 +1,9 @@
-// ag-grid-react v7.2.0
-export declare class AgReactComponent {
+// ag-grid-react v8.0.0
+import { AgReactFrameworkComponent } from "./interfaces";
+export declare class AgReactComponent implements AgReactFrameworkComponent<any> {
     private eParentElement;
     private componentRef;
-    private reactComponent;
+    reactComponent: any;
     private parentComponent;
     constructor(reactComponent: any, parentComponent?: any);
     getFrameworkComponentInstance(): any;
