@@ -1,29 +1,29 @@
-// ag-grid-react v7.2.0
-import { IFrameworkFactory, IFilter, ColDef, ICellRenderer, ICellRendererFunc, GridOptions, ICellEditor } from 'ag-grid';
+// ag-grid-react v8.0.0
+import { IFrameworkFactory, ColDef, ICellRendererComp, ICellRendererFunc, IFilterComp, GridOptions, ICellEditorComp } from 'ag-grid';
 export declare class ReactFrameworkFactory implements IFrameworkFactory {
     private agGridReact;
     private baseFrameworkFactory;
     constructor(agGridReact: any);
     colDefFilter(colDef: ColDef): {
-        new (): IFilter;
+        new (): IFilterComp;
     } | string;
     colDefFloatingCellRenderer(colDef: ColDef): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     colDefCellRenderer(colDef: ColDef): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     colDefCellEditor(colDef: ColDef): {
-        new (): ICellEditor;
+        new (): ICellEditorComp;
     } | string;
     gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     gridOptionsGroupRowRenderer(gridOptions: GridOptions): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     setTimeout(action: any, timeout?: any): void;
 }

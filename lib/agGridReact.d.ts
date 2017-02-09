@@ -1,2 +1,2 @@
-// ag-grid-react v7.2.0
+// ag-grid-react v8.0.0
 export declare var AgGridReact: any;
