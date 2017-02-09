@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     <h5>Using ag-Grid</h5>
     <pre><span class="codeComment">// package.json</span>
 "dependencies": {
-    "ag-grid": "7.1.x",
+    "ag-grid": "8.0.x",
 }
 
 <span class="codeComment">// index.html</span>
@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     <h5>Using ag-Grid-Enterprise</h5>
     <pre><span class="codeComment">// package.json</span>
 "dependencies": {
-    "ag-grid-enterprise": "7.1.x",
+    "ag-grid-enterprise": "8.0.x",
 }
 
 <span class="codeComment">// index.html</span>

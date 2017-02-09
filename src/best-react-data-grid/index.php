@@ -171,11 +171,11 @@ include '../documentation-main/documentation_header.php';
     some utils for React rendering.
         <pre><code>"dependencies": {
     <span class="codeComment">// ag-Grid and ag-Grid React projects</span>
-    "ag-grid": "7.1.x",
-    "ag-grid-react": "7.1.x",
+    "ag-grid": "8.0.x",
+    "ag-grid-react": "8.0.x",
 
     <span class="codeComment">// include this if using ag-Grid Enterprise</span>
-    "ag-grid-enterprise": "6.0.x"
+    "ag-grid-enterprise": "8.0.x"
 }</code></pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
