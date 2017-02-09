@@ -30,9 +30,16 @@
 
 	var videoCloseTag = document.getElementsByClassName('videoClose');
 	if (videoCloseTag[0]) {
-		videoCloseTag[0].addEventListener('click', function() {
-			document.getElementById("videoIframe").src = "";
-		}, false);
-	}	
+		videoCloseTag[0].addEventListener('click', resetVideoPopup, false);
+	}
+
+	var videoModal = document.getElementById('videoModal');
+    if (videoModal) {
+        videoModal.addEventListener('click', resetVideoPopup, false);
+    }
+
+	function resetVideoPopup(){
+        document.getElementById("videoIframe").src = "";
+	}
 
 })();
