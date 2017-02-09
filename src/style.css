@@ -633,6 +633,22 @@ h1, h2, h3, h4, h5 {
     margin-bottom: 30px;
 }
 
+.HomeSection-framworkContainer {
+    text-align: center;
+}
+
+.HomeSection-framework {
+    padding: 0 25px;
+    text-align: center;
+    display: inline-block;
+}
+
+.HomeSection-framework a, .HomeSection-framework a:hover {
+    color: #333;
+}
+
+
+
 // responsive video for mobile view
 @media only screen and (max-width : 768px) {
     .HomeIntro .HomeIntro-video {

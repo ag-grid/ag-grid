@@ -6,41 +6,47 @@
                 <h4>'AG' Stands For AGnostic - Supporting All Major JavaScript Frameworks</h4>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-2" style="text-align: center;">
-                <img src="images/angularjs_large.png" title="Angular 1"/>
+        <div class="row HomeSection-framworkContainer">
+            <div class="HomeSection-framework">
+                <a href="/best-vuejs-data-grid/"><img src="images/vue_large.png" title="VueJs"/></a>
                 <div class="framework-name">
-                    Angular 1
+                    <a href="/best-vuejs-data-grid/">VueJs</a>
                 </div>
             </div>
-            <div class="col-md-2" style="text-align: center;">
-                <img src="images/angular2_large.png" title="Angular"/>
+            <div class="HomeSection-framework">
+                <a href="/best-angularjs-data-grid/"><img src="images/angularjs_large.png" title="Angular 1"/></a>
                 <div class="framework-name">
-                    Angular
+                    <a href="/best-angularjs-data-grid/">Angular 1</a>
                 </div>
             </div>
-            <div class="col-md-2" style="text-align: center;">
-                <img src="images/react_large.png" title="React"/>
+            <div class="HomeSection-framework">
+                <a href="/best-angular-2-data-grid/"><img src="images/angular2_large.png" title="Angular"/></a>
                 <div class="framework-name">
-                    React
+                    <a href="/best-angular-2-data-grid/">Angular</a>
                 </div>
             </div>
-            <div class="col-md-2" style="text-align: center;">
-                <img src="images/aurelia_large.png" title="Aurelia"/>
+            <div class="HomeSection-framework">
+                <a href="/best-react-data-grid/"><img src="images/react_large.png" title="React"/></a>
                 <div class="framework-name">
-                    Aurelia
+                    <a href="/best-react-data-grid/">React</a>
                 </div>
             </div>
-            <div class="col-md-2" style="text-align: center;">
-                <img src="images/webComponents_large.png" title="Web Components"/>
+            <div class="HomeSection-framework">
+                <a href="/best-aurelia-data-grid/"><img src="images/aurelia_large.png" title="Aurelia"/></a>
                 <div class="framework-name">
-                    Web Components
+                    <a href="/best-aurelia-data-grid/">Aurelia</a>
                 </div>
             </div>
-            <div class="col-md-2" style="text-align: center;">
-                <img src="images/javascript_large.png" title="Vanilla JavaScript"/>
+            <div class="HomeSection-framework">
+                <a href="/best-web-component-data-grid/"><img src="images/webComponents_large.png" title="Web Components"/></a>
                 <div class="framework-name">
-                    JavaScript
+                    <a href="/best-web-component-data-grid/">Web Components</a>
+                </div>
+            </div>
+            <div class="HomeSection-framework">
+                <a href="/best-javascript-data-grid/"><img src="images/javascript_large.png" title="Vanilla JavaScript"/></a>
+                <div class="framework-name">
+                    <a href="/best-javascript-data-grid/">JavaScript</a>
                 </div>
             </div>
         </div>
