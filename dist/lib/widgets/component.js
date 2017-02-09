@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -147,6 +147,12 @@ var Component = (function (_super) {
             this.childComponents.push(childComponent);
         }
     };
+    Component.prototype.addFeature = function (context, feature) {
+        context.wireBean(feature);
+        if (feature.destroy) {
+            this.addDestroyFunc(feature.destroy.bind(feature));
+        }
+    };
     Component.prototype.isVisible = function () {
         return this.visible;
     };
@@ -174,6 +180,9 @@ var Component = (function (_super) {
     Component.prototype.addCssClass = function (className) {
         utils_1.Utils.addCssClass(this.getGui(), className);
     };
+    Component.prototype.removeCssClass = function (className) {
+        utils_1.Utils.removeCssClass(this.getGui(), className);
+    };
     Component.prototype.getAttribute = function (key) {
         var eGui = this.getGui();
         if (eGui) {
@@ -182,6 +191,9 @@ var Component = (function (_super) {
         else {
             return null;
         }
+    };
+    Component.prototype.getRefElement = function (refName) {
+        return this.queryForHtmlElement('[ref="' + refName + '"]');
     };
     Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
     return Component;

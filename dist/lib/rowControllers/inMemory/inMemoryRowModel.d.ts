@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
@@ -31,12 +31,16 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
         groupState?: any;
         keepRenderedRows?: boolean;
         animate?: boolean;
+        keepEditingRows?: boolean;
+        newRowNodes?: RowNode[];
     }): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     setDatasource(datasource: any): void;
     getTopLevelNodes(): RowNode[];
+    getRootNode(): RowNode;
     getRow(index: number): RowNode;
+    isRowPresent(rowNode: RowNode): boolean;
     getVirtualRowCount(): number;
     getRowCount(): number;
     getRowIndexAtPixel(pixelToMatch: number): number;
@@ -51,17 +55,17 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     doAggregate(): void;
     expandOrCollapseAll(expand: boolean): void;
     private doSort();
-    private doRowGrouping(groupState);
+    private doRowGrouping(groupState, newRowNodes);
     private restoreGroupState(groupState);
     private doFilter();
     private doPivot();
     private getGroupState();
     setRowData(rowData: any[], refresh: boolean, firstId?: number): void;
     private doRowsToDisplay();
-    insertItemsAtIndex(index: number, items: any[]): void;
+    insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;
     onRowHeightChanged(): void;
     resetRowHeights(): void;
-    removeItems(rowNodes: RowNode[]): void;
-    addItems(items: any[]): void;
+    removeItems(rowNodes: RowNode[], skipRefresh: boolean): void;
+    addItems(items: any[], skipRefresh: boolean): void;
     private refreshAndFireEvent(eventName, rowNodes, groupState);
 }

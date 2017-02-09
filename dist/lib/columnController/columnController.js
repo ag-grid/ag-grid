@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,6 +35,7 @@ var groupInstanceIdCreator_1 = require("./groupInstanceIdCreator");
 var functions_1 = require("../functions");
 var context_1 = require("../context/context");
 var gridPanel_1 = require("../gridPanel/gridPanel");
+var columnAnimationService_1 = require("../rendering/columnAnimationService");
 var ColumnApi = (function () {
     function ColumnApi() {
     }
@@ -592,6 +593,7 @@ var ColumnController = (function () {
         this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
     };
     ColumnController.prototype.moveColumns = function (columnsToMoveKeys, toIndex) {
+        this.columnAnimationService.start();
         if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
             console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
             console.warn('ag-Grid: remember that you should not count the moving columns when calculating the new index');
@@ -603,7 +605,6 @@ var ColumnController = (function () {
         if (failedRules) {
             return;
         }
-        this.gridPanel.turnOnAnimationForABit();
         utils_1.Utils.moveInArray(this.gridColumns, columnsToMove, toIndex);
         this.updateDisplayedColumns();
         var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_MOVED)
@@ -613,6 +614,7 @@ var ColumnController = (function () {
             event.withColumn(columnsToMove[0]);
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_MOVED, event);
+        this.columnAnimationService.finish();
     };
     ColumnController.prototype.doesMovePassRules = function (columnsToMove, toIndex) {
         var allColumnsCopy = this.gridColumns.slice();
@@ -746,19 +748,20 @@ var ColumnController = (function () {
         this.setColumnsVisible([key], visible);
     };
     ColumnController.prototype.setColumnsVisible = function (keys, visible) {
-        this.gridPanel.turnOnAnimationForABit();
+        this.columnAnimationService.start();
         this.actionOnGridColumns(keys, function (column) {
             column.setVisible(visible);
             return true;
         }, function () {
             return new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_VISIBLE).withVisible(visible);
         });
+        this.columnAnimationService.finish();
     };
     ColumnController.prototype.setColumnPinned = function (key, pinned) {
         this.setColumnsPinned([key], pinned);
     };
     ColumnController.prototype.setColumnsPinned = function (keys, pinned) {
-        this.gridPanel.turnOnAnimationForABit();
+        this.columnAnimationService.start();
         var actualPinned;
         if (pinned === true || pinned === column_1.Column.PINNED_LEFT) {
             actualPinned = column_1.Column.PINNED_LEFT;
@@ -775,6 +778,7 @@ var ColumnController = (function () {
         }, function () {
             return new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_PINNED).withPinned(actualPinned);
         });
+        this.columnAnimationService.finish();
     };
     // does an action on a set of columns. provides common functionality for looking up the
     // columns based on key, getting a list of effected columns, and then updated the event
@@ -1241,21 +1245,17 @@ var ColumnController = (function () {
     };
     // called by headerRenderer - when a header is opened or closed
     ColumnController.prototype.setColumnGroupOpened = function (passedGroup, newValue, instanceId) {
+        this.columnAnimationService.start();
         var groupToUse = this.getColumnGroup(passedGroup, instanceId);
         if (!groupToUse) {
             return;
         }
         this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
         groupToUse.setExpanded(newValue);
-        // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
-        // the animation moves all the row the the right rather than to the left (ie it's the static
-        // columns that actually get their coordinates updated)
-        if (!this.gridOptionsWrapper.isEnableRtl()) {
-            this.gridPanel.turnOnAnimationForABit();
-        }
         this.updateGroupsAndDisplayedColumns();
         var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
         this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_GROUP_OPENED, event);
+        this.columnAnimationService.finish();
     };
     // used by updateModel
     ColumnController.prototype.getColumnGroupState = function () {
@@ -1668,9 +1668,9 @@ var ColumnController = (function () {
             return column.getPinned() !== 'left' && column.getPinned() !== 'right';
         });
         var groupInstanceIdCreator = new groupInstanceIdCreator_1.GroupInstanceIdCreator();
-        this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator);
-        this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator);
-        this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator);
+        this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedLeftColumnTree);
+        this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedRightColumnTree);
+        this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedCentreColumnTree);
     };
     ColumnController.prototype.updateGroups = function () {
         var allGroups = this.getAllDisplayedColumnGroups();
@@ -1778,6 +1778,10 @@ var ColumnController = (function () {
         context_1.Autowired('context'), 
         __metadata('design:type', context_1.Context)
     ], ColumnController.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('columnAnimationService'), 
+        __metadata('design:type', columnAnimationService_1.ColumnAnimationService)
+    ], ColumnController.prototype, "columnAnimationService", void 0);
     __decorate([
         context_1.Optional('aggFuncService'), 
         __metadata('design:type', Object)

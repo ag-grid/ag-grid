@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -11,27 +11,29 @@ export declare class ColumnGroup implements ColumnGroupChild {
     static HEADER_GROUP_SHOW_OPEN: string;
     static HEADER_GROUP_SHOW_CLOSED: string;
     static EVENT_LEFT_CHANGED: string;
+    static EVENT_DISPLAYED_CHILDREN_CHANGED: string;
+    static createUniqueId(groupId: string, instanceId: number): string;
     gridOptionsWrapper: GridOptionsWrapper;
     private children;
     private displayedChildren;
     private groupId;
     private instanceId;
     private originalColumnGroup;
-    private moving;
     private left;
-    private eventService;
+    private oldLeft;
+    private localEventService;
     private parent;
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number);
+    reset(): void;
     getParent(): ColumnGroupChild;
     setParent(parent: ColumnGroupChild): void;
     getUniqueId(): string;
     checkLeft(): void;
     getLeft(): number;
+    getOldLeft(): number;
     setLeft(left: number): void;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
-    setMoving(moving: boolean): void;
-    isMoving(): boolean;
     getGroupId(): string;
     getInstanceId(): number;
     isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean;

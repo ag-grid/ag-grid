@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { IFilter, IFilterParams, IDoesFilterPassParams } from "../interfaces/iFilter";
+import { IFilterParams, IDoesFilterPassParams, IFilterComp } from "../interfaces/iFilter";
 import { Component } from "../widgets/component";
-import { IDateComponent, IDateComponentParams } from "../rendering/dateComponent";
+import { IDateParams, IDateComp } from "../rendering/dateComponent";
 export interface IDateFilterParams extends IFilterParams {
     comparator?: IDateComparatorFunc;
 }
@@ -15,7 +15,7 @@ export interface SerializedDateFilter {
     dateTo: string;
     type: string;
 }
-export declare class DateFilter extends Component implements IFilter {
+export declare class DateFilter extends Component implements IFilterComp {
     static EQUALS: string;
     static NOT_EQUAL: string;
     static LESS_THAN: string;
@@ -27,6 +27,7 @@ export declare class DateFilter extends Component implements IFilter {
     private dateToComponent;
     private dateFromComponent;
     private gridOptionsWrapper;
+    private componentProvider;
     private context;
     private eDateFromPanel;
     private eDateToPanel;
@@ -56,11 +57,11 @@ export declare class DateFilter extends Component implements IFilter {
     setModel(model: SerializedDateFilter): void;
     private removeTimezone(from);
 }
-export declare class DefaultDateComponent extends Component implements IDateComponent {
+export declare class DefaultDateComponent extends Component implements IDateComp {
     private eDateInput;
     private listener;
     constructor();
-    init(params: IDateComponentParams): void;
+    init(params: IDateParams): void;
     getDate(): Date;
     setDate(date: Date): void;
 }

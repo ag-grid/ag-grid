@@ -1,12 +1,12 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { ColDef, AbstractColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
-import { ICellRenderer, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
-import { ICellEditor } from "../rendering/cellEditors/iCellEditor";
+import { ICellRendererFunc, ICellRendererComp } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellEditorComp } from "../rendering/cellEditors/iCellEditor";
 import { IFilter } from "../interfaces/iFilter";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     static EVENT_MOVING_CHANGED: string;
@@ -33,6 +33,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private visible;
     private pinned;
     private left;
+    private oldLeft;
     private aggFunc;
     private sort;
     private sortedAt;
@@ -59,13 +60,13 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getParent(): ColumnGroupChild;
     initialise(): void;
     getCellRenderer(): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     getCellEditor(): {
-        new (): ICellEditor;
+        new (): ICellEditorComp;
     } | string;
     getFloatingCellRenderer(): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     getFilter(): {
         new (): IFilter;
@@ -93,6 +94,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     setAggFunc(aggFunc: string | IAggFunc): void;
     getAggFunc(): string | IAggFunc;
     getLeft(): number;
+    getOldLeft(): number;
     getRight(): number;
     setLeft(left: number): void;
     isFilterActive(): boolean;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,6 +24,7 @@ var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
+var componentProvider_1 = require("../componentProvider");
 var DateFilter = (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
@@ -41,15 +42,11 @@ var DateFilter = (function (_super) {
         else {
             this.getGui().removeChild(this.eApplyPanel);
         }
-        var UserDateComponent = this.gridOptionsWrapper.getDateComponent();
-        var DateComponent = UserDateComponent ? UserDateComponent : DefaultDateComponent;
-        this.dateToComponent = new DateComponent();
-        this.dateFromComponent = new DateComponent();
         var dateComponentParams = {
             onDateChanged: this.onDateChanged.bind(this)
         };
-        this.dateFromComponent.init(dateComponentParams);
-        this.dateToComponent.init(dateComponentParams);
+        this.dateToComponent = this.componentProvider.newDateComponent(dateComponentParams);
+        this.dateFromComponent = this.componentProvider.newDateComponent(dateComponentParams);
         this.addInDateComponents();
         this.setVisibilityOnDateToPanel();
         this.instantiate(this.context);
@@ -206,6 +203,10 @@ var DateFilter = (function (_super) {
         context_1.Autowired('gridOptionsWrapper'), 
         __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
     ], DateFilter.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('componentProvider'), 
+        __metadata('design:type', componentProvider_1.ComponentProvider)
+    ], DateFilter.prototype, "componentProvider", void 0);
     __decorate([
         context_1.Autowired('context'), 
         __metadata('design:type', context_1.Context)

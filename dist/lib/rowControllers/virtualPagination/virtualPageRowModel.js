@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -170,18 +170,22 @@ var VirtualPageRowModel = (function () {
     VirtualPageRowModel.prototype.getRowCount = function () {
         return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
     };
-    VirtualPageRowModel.prototype.insertItemsAtIndex = function (index, items) {
+    VirtualPageRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
         if (this.virtualPageCache) {
             this.virtualPageCache.insertItemsAtIndex(index, items);
         }
     };
-    VirtualPageRowModel.prototype.removeItems = function (rowNodes) {
+    VirtualPageRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
         console.log('ag-Grid: it is not possible to removeItems when using virtual pagination. Instead use the ' +
             'API to refresh the cache');
     };
-    VirtualPageRowModel.prototype.addItems = function (items) {
+    VirtualPageRowModel.prototype.addItems = function (items, skipRefresh) {
         console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
             'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
+    };
+    VirtualPageRowModel.prototype.isRowPresent = function (rowNode) {
+        console.log('ag-Grid: not supported.');
+        return false;
     };
     VirtualPageRowModel.prototype.refreshVirtualPageCache = function () {
         if (this.virtualPageCache) {

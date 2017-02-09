@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -147,10 +147,11 @@ var PaginationController = (function () {
         this.totalPages = Math.floor((this.rowCount - 1) / this.pageSize) + 1;
     };
     PaginationController.prototype.pageLoaded = function (rows, lastRowIndex) {
+        lastRowIndex = utils_1.Utils.cleanNumber(lastRowIndex);
         var firstId = this.currentPage * this.pageSize;
         this.inMemoryRowModel.setRowData(rows, true, firstId);
         // see if we hit the last row
-        if (!this.foundMaxRow && typeof lastRowIndex === 'number' && lastRowIndex >= 0) {
+        if (!this.foundMaxRow && lastRowIndex >= 0) {
             this.foundMaxRow = true;
             this.rowCount = lastRowIndex;
             this.calculateTotalPages();

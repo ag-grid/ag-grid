@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { IFilter, IFilterParams, IDoesFilterPassParams } from "../interfaces/iFilter";
-export declare class TextFilter implements IFilter {
+import { IFilterParams, IDoesFilterPassParams, IFilterComp } from "../interfaces/iFilter";
+export declare class TextFilter implements IFilterComp {
     static CONTAINS: string;
     static EQUALS: string;
     static NOT_EQUALS: string;

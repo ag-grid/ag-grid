@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -7,10 +7,9 @@ import { GridApi } from "./gridApi";
 import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { ICellRendererFunc, ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
+import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { IDatasource } from "./rowControllers/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
-import { IDateComponent } from "./rendering/dateComponent";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
@@ -27,16 +26,16 @@ export declare class GridOptionsWrapper {
     private agWire(gridApi, columnApi);
     private destroy();
     init(): void;
-    private setupCellRenderers();
+    private setupFrameworkComponents();
     getDomDataKey(): string;
     getFullWidthCellRenderer(): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     getGroupRowRenderer(): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     getGroupRowInnerRenderer(): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     isEnterprise(): boolean;
     isRowSelection(): boolean;
@@ -76,6 +75,7 @@ export declare class GridOptionsWrapper {
     getFloatingBottomRowData(): any[];
     isFunctionsPassive(): boolean;
     isSuppressRowHoverClass(): boolean;
+    isSuppressTabbing(): boolean;
     getQuickFilterText(): string;
     isUnSortIcon(): boolean;
     isSuppressMenuHide(): boolean;
@@ -101,9 +101,6 @@ export declare class GridOptionsWrapper {
     getPaginationOverflowSize(): number;
     getPaginationPageSize(): number;
     getPaginationInitialRowCount(): number;
-    getDateComponent(): {
-        new (): IDateComponent;
-    };
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
     isEnableRtl(): boolean;
@@ -150,7 +147,6 @@ export declare class GridOptionsWrapper {
     getGroupRowRendererParams(): any;
     getOverlayLoadingTemplate(): string;
     getOverlayNoRowsTemplate(): string;
-    getCheckboxSelection(): (params: any) => boolean;
     isSuppressAutoSize(): boolean;
     isSuppressParentsInRowNodes(): boolean;
     isEnableStatusBar(): boolean;

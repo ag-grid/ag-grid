@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -347,16 +347,7 @@ var FilterManager = (function () {
         var eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
         var guiFromFilter = filterWrapper.filter.getGui();
-        if (utils_1.Utils.isNodeOrElement(guiFromFilter)) {
-            //a dom node or element was returned, so add child
-            eFilterGui.appendChild(guiFromFilter);
-        }
-        else {
-            //otherwise assume it was html, so just insert
-            var eTextSpan = document.createElement('span');
-            eTextSpan.innerHTML = guiFromFilter;
-            eFilterGui.appendChild(eTextSpan);
-        }
+        eFilterGui.appendChild(guiFromFilter);
         if (filterWrapper.scope) {
             filterWrapper.gui = this.$compile(eFilterGui)(filterWrapper.scope)[0];
         }

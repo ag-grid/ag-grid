@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,16 +18,26 @@ var columnUtils_1 = require("./columnUtils");
 var columnGroup_1 = require("../entities/columnGroup");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var context_1 = require("../context/context");
+var utils_1 = require("../utils");
 var context_2 = require("../context/context");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var DisplayedGroupCreator = (function () {
     function DisplayedGroupCreator() {
     }
-    DisplayedGroupCreator.prototype.createDisplayedGroups = function (sortedVisibleColumns, balancedColumnTree, groupInstanceIdCreator) {
+    DisplayedGroupCreator.prototype.createDisplayedGroups = function (
+        // all displayed columns sorted - this is the columns the grid should show
+        sortedVisibleColumns, 
+        // the tree of columns, as provided by the users, used to know what groups columns roll up into
+        balancedColumnTree, 
+        // create's unique id's for the group
+        groupInstanceIdCreator, 
+        // we try to reuse old groups if we can, to allow gui to do animation
+        oldDisplayedGroups) {
         var _this = this;
         var result = [];
         var previousRealPath;
         var previousOriginalPath;
+        var oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups);
         // go through each column, then do a bottom up comparison to the previous column, and start
         // to share groups if they converge at any point.
         sortedVisibleColumns.forEach(function (currentColumn) {
@@ -37,11 +47,7 @@ var DisplayedGroupCreator = (function () {
             for (var i = 0; i < currentOriginalPath.length; i++) {
                 if (firstColumn || currentOriginalPath[i] !== previousOriginalPath[i]) {
                     // new group needed
-                    var originalGroup = currentOriginalPath[i];
-                    var groupId = originalGroup.getGroupId();
-                    var instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
-                    var newGroup = new columnGroup_1.ColumnGroup(originalGroup, groupId, instanceId);
-                    _this.context.wireBean(newGroup);
+                    var newGroup = _this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator, oldColumnsMapped);
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
                     if (i == 0) {
@@ -70,6 +76,44 @@ var DisplayedGroupCreator = (function () {
             previousOriginalPath = currentOriginalPath;
         });
         this.setupParentsIntoColumns(result, null);
+        return result;
+    };
+    DisplayedGroupCreator.prototype.createColumnGroup = function (originalGroup, groupInstanceIdCreator, oldColumnsMapped) {
+        var groupId = originalGroup.getGroupId();
+        var instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
+        var uniqueId = columnGroup_1.ColumnGroup.createUniqueId(groupId, instanceId);
+        var columnGroup = oldColumnsMapped[uniqueId];
+        // if the user is setting new colDefs, it is possible that the id's overlap, and we
+        // would have a false match from above. so we double check we are talking about the
+        // same original column group.
+        if (columnGroup && columnGroup.getOriginalColumnGroup() !== originalGroup) {
+            columnGroup = null;
+        }
+        if (utils_1.Utils.exists(columnGroup)) {
+            // clean out the old column group here, as we will be adding children into it again
+            columnGroup.reset();
+        }
+        else {
+            columnGroup = new columnGroup_1.ColumnGroup(originalGroup, groupId, instanceId);
+            this.context.wireBean(columnGroup);
+        }
+        return columnGroup;
+    };
+    // returns back a 2d map of ColumnGroup as follows: groupId -> instanceId -> ColumnGroup
+    DisplayedGroupCreator.prototype.mapOldGroupsById = function (displayedGroups) {
+        var result = {};
+        var recursive = function (columnsOrGroups) {
+            columnsOrGroups.forEach(function (columnOrGroup) {
+                if (columnOrGroup instanceof columnGroup_1.ColumnGroup) {
+                    var columnGroup = columnOrGroup;
+                    result[columnOrGroup.getUniqueId()] = columnGroup;
+                    recursive(columnGroup.getChildren());
+                }
+            });
+        };
+        if (displayedGroups) {
+            recursive(displayedGroups);
+        }
         return result;
     };
     DisplayedGroupCreator.prototype.setupParentsIntoColumns = function (columnsOrGroups, parent) {

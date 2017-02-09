@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -165,6 +165,7 @@ var VirtualPage = (function () {
             this.state = VirtualPage.STATE_LOADED;
             this.populateWithRowData(rows);
         }
+        lastRow = utils_1.Utils.cleanNumber(lastRow);
         // check here if lastrow should be set
         var event = { success: true, page: this, lastRow: lastRow };
         this.localEventService.dispatchEvent(VirtualPage.EVENT_LOAD_COMPLETE, event);

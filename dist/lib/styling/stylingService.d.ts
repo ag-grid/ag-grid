@@ -1,8 +1,10 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "../entities/colDef";
 export declare class StylingService {
     private expressionService;
+    processAllCellClasses(colDef: ColDef, params: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     processCellClassRules(colDef: ColDef, params: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
+    processStaticCellClasses(colDef: ColDef, params: any, onApplicableClass: (className: string) => void): void;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,7 @@ var cellRendererService_1 = require("./cellRendererService");
 var cellRendererFactory_1 = require("./cellRendererFactory");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var beanStub_1 = require("../context/beanStub");
+var columnAnimationService_1 = require("./columnAnimationService");
 var RenderedRow = (function (_super) {
     __extends(RenderedRow, _super);
     function RenderedRow(parentScope, rowRenderer, bodyContainerComp, fullWidthContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, node, animateIn) {
@@ -76,29 +77,6 @@ var RenderedRow = (function (_super) {
             this.setupNormalContainers(animateInRowTop);
         }
     };
-    /*    private createGroupSpanningEntireRowCell(padding: boolean): HTMLElement {
-            var eRow: HTMLElement = document.createElement('span');
-            // padding means we are on the right hand side of a pinned table, ie
-            // in the main body.
-            if (!padding) {
-    
-                var params = this.createFullWidthParams(eRow, null);
-    
-                var cellComponent = this.cellRendererService.useCellRenderer(this.fullWidthCellRenderer, eRow, params);
-    
-                if (cellComponent && cellComponent.destroy) {
-                    this.addDestroyFunc( () => cellComponent.destroy() );
-                }
-            }
-    
-            if (this.rowNode.footer) {
-                _.addCssClass(eRow, 'ag-footer-cell-entire-row');
-            } else {
-                _.addCssClass(eRow, 'ag-group-cell-entire-row');
-            }
-    
-            return eRow;
-        }*/
     // we clear so that the functions are never executed twice
     RenderedRow.prototype.getAndClearDelayedDestroyFunctions = function () {
         var result = this.delayedDestroyFunctions;
@@ -216,6 +194,18 @@ var RenderedRow = (function (_super) {
     RenderedRow.prototype.stopRowEditing = function (cancel) {
         this.stopEditing(cancel);
     };
+    RenderedRow.prototype.isEditing = function () {
+        if (this.gridOptionsWrapper.isFullRowEdit()) {
+            // if doing row editing, then the local variable is the one that is used
+            return this.editingRow;
+        }
+        else {
+            // if not doing row editing, then the renderedRow has no edit state, so
+            // we have to look at the individual cells
+            var editingCell = utils_1.Utils.find(this.renderedCells, function (renderedCell) { return renderedCell && renderedCell.isEditing(); });
+            return utils_1.Utils.exists(editingCell);
+        }
+    };
     RenderedRow.prototype.stopEditing = function (cancel) {
         if (cancel === void 0) { cancel = false; }
         this.forEachRenderedCell(function (renderedCell) {
@@ -314,20 +304,54 @@ var RenderedRow = (function (_super) {
         var allRenderedCellIds = Object.keys(this.renderedCells);
         this.removeRenderedCells(allRenderedCellIds);
     };
+    RenderedRow.prototype.isCellInWrongRow = function (renderedCell) {
+        var column = renderedCell.getColumn();
+        var rowWeWant = this.getRowForColumn(column);
+        // if in wrong container, remove it
+        var oldRow = renderedCell.getParentRow();
+        return oldRow !== rowWeWant;
+    };
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
     RenderedRow.prototype.refreshCellsIntoRow = function () {
         var _this = this;
-        var columns = this.columnController.getAllDisplayedVirtualColumns();
-        var renderedCellKeys = Object.keys(this.renderedCells);
-        columns.forEach(function (column) {
+        var displayedVirtualColumns = this.columnController.getAllDisplayedVirtualColumns();
+        var displayedColumns = this.columnController.getAllDisplayedColumns();
+        var cellsToRemove = Object.keys(this.renderedCells);
+        displayedVirtualColumns.forEach(function (column) {
             var renderedCell = _this.getOrCreateCell(column);
             _this.ensureCellInCorrectRow(renderedCell);
-            utils_1.Utils.removeFromArray(renderedCellKeys, column.getColId());
+            utils_1.Utils.removeFromArray(cellsToRemove, column.getColId());
+        });
+        // we never remove rendered ones, as this would cause the cells to loose their values while editing
+        // as the grid is scrolling horizontally
+        cellsToRemove = utils_1.Utils.filter(cellsToRemove, function (indexStr) {
+            var REMOVE_CELL = true;
+            var KEEP_CELL = false;
+            var renderedCell = _this.renderedCells[indexStr];
+            if (!renderedCell) {
+                return REMOVE_CELL;
+            }
+            // always remove the cell if it's in the wrong pinned location
+            if (_this.isCellInWrongRow(renderedCell)) {
+                return REMOVE_CELL;
+            }
+            // we want to try and keep editing and focused cells
+            var editing = renderedCell.isEditing();
+            var focused = _this.focusedCellController.isCellFocused(renderedCell.getGridCell());
+            var mightWantToKeepCell = editing || focused;
+            if (mightWantToKeepCell) {
+                var column = renderedCell.getColumn();
+                var cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+                return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
+            }
+            else {
+                return REMOVE_CELL;
+            }
         });
         // remove old cells from gui, but we don't destroy them, we might use them again
-        this.removeRenderedCells(renderedCellKeys);
+        this.removeRenderedCells(cellsToRemove);
     };
     RenderedRow.prototype.removeRenderedCells = function (colIds) {
         var _this = this;
@@ -337,29 +361,21 @@ var RenderedRow = (function (_super) {
             if (utils_1.Utils.missing(renderedCell)) {
                 return;
             }
-            if (renderedCell.getParentRow()) {
-                renderedCell.getParentRow().removeChild(renderedCell.getGui());
-                renderedCell.setParentRow(null);
-            }
             renderedCell.destroy();
             _this.renderedCells[key] = null;
         });
     };
+    RenderedRow.prototype.getRowForColumn = function (column) {
+        switch (column.getPinned()) {
+            case column_1.Column.PINNED_LEFT: return this.ePinnedLeftRow;
+            case column_1.Column.PINNED_RIGHT: return this.ePinnedRightRow;
+            default: return this.eBodyRow;
+        }
+    };
     RenderedRow.prototype.ensureCellInCorrectRow = function (renderedCell) {
         var eRowGui = renderedCell.getGui();
         var column = renderedCell.getColumn();
-        var rowWeWant;
-        switch (column.getPinned()) {
-            case column_1.Column.PINNED_LEFT:
-                rowWeWant = this.ePinnedLeftRow;
-                break;
-            case column_1.Column.PINNED_RIGHT:
-                rowWeWant = this.ePinnedRightRow;
-                break;
-            default:
-                rowWeWant = this.eBodyRow;
-                break;
-        }
+        var rowWeWant = this.getRowForColumn(column);
         // if in wrong container, remove it
         var oldRow = renderedCell.getParentRow();
         var inWrongRow = oldRow !== rowWeWant;
@@ -956,6 +972,10 @@ var RenderedRow = (function (_super) {
         context_1.Autowired('columnController'), 
         __metadata('design:type', columnController_1.ColumnController)
     ], RenderedRow.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('columnAnimationService'), 
+        __metadata('design:type', columnAnimationService_1.ColumnAnimationService)
+    ], RenderedRow.prototype, "columnAnimationService", void 0);
     __decorate([
         context_1.Autowired('$compile'), 
         __metadata('design:type', Object)

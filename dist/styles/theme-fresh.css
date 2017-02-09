@@ -28,27 +28,6 @@
 .ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {
   background-color: rgba(0,0,0,0.4);
 }
-.ag-fresh .ag-column-moving .ag-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
-.ag-fresh .ag-column-moving .ag-header-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
-.ag-fresh .ag-column-moving .ag-header-group-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
 .ag-fresh .ag-cell-focus {
   border: 1px solid #a9a9a9;
 }
@@ -133,6 +112,10 @@
 }
 .ag-fresh .ag-large-text {
   border: 1px solid #808080;
+}
+.ag-fresh .ag-header-select-all {
+  padding: 5px 0px 0px 3px;
+  line-height: 0;
 }
 .ag-fresh .ag-header {
   color: #000;

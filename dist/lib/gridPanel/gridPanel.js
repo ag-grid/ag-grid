@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -129,23 +129,7 @@ var GridPanel = (function (_super) {
         this.findElements();
     };
     GridPanel.prototype.getVerticalPixelRange = function () {
-        var container;
-        if (this.enableRtl) {
-            if (this.columnController.isPinningLeft()) {
-                container = this.ePinnedLeftColsViewport;
-            }
-            else {
-                container = this.eBodyViewport;
-            }
-        }
-        else {
-            if (this.columnController.isPinningRight()) {
-                container = this.ePinnedRightColsViewport;
-            }
-            else {
-                container = this.eBodyViewport;
-            }
-        }
+        var container = this.getPrimaryScrollViewport();
         var result = {
             top: container.scrollTop,
             bottom: container.scrollTop + container.offsetHeight
@@ -266,7 +250,7 @@ var GridPanel = (function (_super) {
     };
     GridPanel.prototype.addMouseEvents = function () {
         var _this = this;
-        var eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu'];
+        var eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu', 'mouseover', 'mouseout'];
         eventNames.forEach(function (eventName) {
             var listener = _this.processMouseEvent.bind(_this, eventName);
             _this.eAllCellContainers.forEach(function (container) {
@@ -317,16 +301,186 @@ var GridPanel = (function (_super) {
     };
     GridPanel.prototype.processKeyboardEvent = function (eventName, keyboardEvent) {
         var renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
-        if (renderedCell) {
-            switch (eventName) {
-                case 'keydown':
-                    renderedCell.onKeyDown(keyboardEvent);
-                    break;
-                case 'keypress':
-                    renderedCell.onKeyPress(keyboardEvent);
-                    break;
-            }
+        if (!renderedCell) {
+            return;
         }
+        switch (eventName) {
+            case 'keydown':
+                var pageScrollingKeys = [
+                    constants_1.Constants.DIAGONAL_SCROLL_KEYS,
+                    constants_1.Constants.HORIZONTAL_SCROLL_KEYS,
+                    constants_1.Constants.VERTICAL_SCROLL_KEYS
+                ];
+                var result = testKeyboardBindingGroups(pageScrollingKeys, keyboardEvent);
+                if (result) {
+                    this.handlePageScrollingKey(result.trappedKeyboardBindingGroup.id, result.trappedKeyboardBinding.id, keyboardEvent);
+                }
+                else {
+                    renderedCell.onKeyDown(keyboardEvent);
+                }
+                break;
+            case 'keypress':
+                renderedCell.onKeyPress(keyboardEvent);
+                break;
+        }
+    };
+    GridPanel.prototype.handlePageScrollingKey = function (pagingKeyGroup, pagingKey, keyboardEvent) {
+        switch (pagingKeyGroup) {
+            case constants_1.Constants.DIAGONAL_SCROLL_KEYS_ID:
+                this.pageDiagonally(pagingKey);
+                break;
+            case constants_1.Constants.VERTICAL_SCROLL_KEYS_ID:
+                this.pageVertically(pagingKey);
+                break;
+            case constants_1.Constants.HORIZONTAL_SCROLL_KEYS_ID:
+                this.pageHorizontally(pagingKey);
+                break;
+        }
+        //***************************************************************************
+        //Stop event defaults and propagation
+        keyboardEvent.preventDefault();
+    };
+    //Either CTL LEFT/RIGHT
+    GridPanel.prototype.pageHorizontally = function (pagingKey) {
+        //***************************************************************************
+        //column to select
+        var allColumns = this.columnController.getAllDisplayedColumns();
+        var columnToSelect = pagingKey === constants_1.Constants.KEY_CTRL_LEFT_NAME ?
+            allColumns[0] :
+            allColumns[allColumns.length - 1];
+        var horizontalScroll = {
+            type: ScrollType.HORIZONTAL,
+            columnToScrollTo: columnToSelect,
+            columnToFocus: columnToSelect
+        };
+        this.performScroll(horizontalScroll);
+    };
+    //Either HOME OR END
+    GridPanel.prototype.pageDiagonally = function (pagingKey) {
+        //***************************************************************************
+        //where to place the newly selected cell cursor after the scroll
+        var pageSize = this.getPrimaryScrollViewport().offsetHeight;
+        var selectionTopDelta = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME ?
+            0 :
+            pageSize;
+        //***************************************************************************
+        //where to scroll to
+        var rowIndexToScrollTo = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME ?
+            0 :
+            this.rowModel.getRowCount() - 1;
+        var rowToScrollTo = this.rowModel.getRow(rowIndexToScrollTo);
+        //***************************************************************************
+        //column to select
+        var allColumns = this.columnController.getAllDisplayedColumns();
+        var columnToSelect = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME ?
+            allColumns[0] :
+            allColumns[allColumns.length - 1];
+        var diagonalScroll = {
+            focusedRowTopDelta: selectionTopDelta,
+            type: ScrollType.DIAGONAL,
+            rowToScrollTo: rowToScrollTo,
+            columnToScrollTo: columnToSelect
+        };
+        this.performScroll(diagonalScroll);
+    };
+    //EITHER CTRL UP/DOWN or PAGE UP/DOWN
+    GridPanel.prototype.pageVertically = function (pagingKey) {
+        if (pagingKey === constants_1.Constants.KEY_CTRL_UP_NAME) {
+            this.performScroll({
+                rowToScrollTo: this.rowModel.getRow(0),
+                focusedRowTopDelta: 0,
+                type: ScrollType.VERTICAL
+            });
+            return;
+        }
+        if (pagingKey === constants_1.Constants.KEY_CTRL_DOWN_NAME) {
+            this.performScroll({
+                rowToScrollTo: this.rowModel.getRow(this.rowModel.getRowCount() - 1),
+                focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
+                type: ScrollType.VERTICAL
+            });
+            return;
+        }
+        //*********PAGING KEYS******************************************************
+        //***************************************************************************
+        //where to place the newly selected cell cursor after the scroll
+        //  before we move the scroll
+        //      a) find the top position of the current selected cell
+        //      b) find what is the delta of that compared to the current scroll
+        var focusedCell = this.focusedCellController.getFocusedCell();
+        var focusedRowNode = this.rowModel.getRow(focusedCell.rowIndex);
+        var focusedAbsoluteTop = focusedRowNode.rowTop;
+        var selectionTopDelta = focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop;
+        //***************************************************************************
+        //how much to scroll:
+        //  a) One entire page from or to
+        //  b) the top of the first row in the current view
+        //  c) then find what is the row that would appear the first one in the screen and adjust it to its top pos
+        //      this will avoid having half printed rows at the top
+        var pageSize = this.getPrimaryScrollViewport().offsetHeight;
+        var currentTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
+        var currentTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(currentTopmostPixel));
+        var currentTopmostRowTop = currentTopmostRow.rowTop;
+        var toScrollUnadjusted = pagingKey == constants_1.Constants.KEY_PAGE_DOWN_NAME ?
+            pageSize + currentTopmostRowTop :
+            currentTopmostRowTop - pageSize;
+        var nextScreenTopmostRow = this.rowModel.getRow(this.rowModel.getRowIndexAtPixel(toScrollUnadjusted));
+        var verticalScroll = {
+            rowToScrollTo: nextScreenTopmostRow,
+            focusedRowTopDelta: selectionTopDelta,
+            type: ScrollType.VERTICAL
+        };
+        this.performScroll(verticalScroll);
+    };
+    //Performs any scroll
+    GridPanel.prototype.performScroll = function (scroll) {
+        var verticalScroll;
+        var diagonalScroll;
+        var horizontalScroll;
+        var focusedCellBeforeScrolling = this.focusedCellController.getFocusedCell();
+        //***************************************************************************
+        // Scroll screen
+        switch (scroll.type) {
+            case ScrollType.VERTICAL:
+                verticalScroll = scroll;
+                this.getPrimaryScrollViewport().scrollTop = verticalScroll.rowToScrollTo.rowTop;
+                break;
+            case ScrollType.DIAGONAL:
+                diagonalScroll = scroll;
+                this.getPrimaryScrollViewport().scrollTop = diagonalScroll.rowToScrollTo.rowTop;
+                this.getPrimaryScrollViewport().scrollLeft = diagonalScroll.columnToScrollTo.getLeft();
+                break;
+            case ScrollType.HORIZONTAL:
+                horizontalScroll = scroll;
+                this.getPrimaryScrollViewport().scrollLeft = horizontalScroll.columnToScrollTo.getLeft();
+                break;
+        }
+        //***************************************************************************
+        // This is needed so that when we try to focus on the cell is actually rendered.
+        var refreshViewParams = {
+            onlyBody: true,
+            suppressKeepFocus: true
+        };
+        this.rowRenderer.refreshView(refreshViewParams);
+        //***************************************************************************
+        // New focused cell
+        var focusedRowIndex;
+        var focusedColumn;
+        switch (scroll.type) {
+            case ScrollType.VERTICAL:
+                focusedRowIndex = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + verticalScroll.focusedRowTopDelta);
+                focusedColumn = focusedCellBeforeScrolling.column;
+                break;
+            case ScrollType.DIAGONAL:
+                focusedRowIndex = this.rowModel.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + diagonalScroll.focusedRowTopDelta);
+                focusedColumn = diagonalScroll.columnToScrollTo;
+                break;
+            case ScrollType.HORIZONTAL:
+                focusedRowIndex = focusedCellBeforeScrolling.rowIndex;
+                focusedColumn = horizontalScroll.columnToScrollTo;
+                break;
+        }
+        this.focusedCellController.setFocusedCell(focusedRowIndex, focusedColumn, null, true);
     };
     GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent) {
         var renderedCell = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
@@ -706,8 +860,8 @@ var GridPanel = (function (_super) {
         // if pinning right, then the scroll bar can show, however for some reason
         // it overlays the grid and doesn't take space. so we are only interested
         // in the body scroll showing.
-        var removeScrollWidth = this.isBodyVerticalScrollShowing();
-        if (removeScrollWidth) {
+        var removeVerticalScrollWidth = this.isVerticalScrollShowing();
+        if (removeVerticalScrollWidth) {
             availableWidth -= this.scrollWidth;
         }
         return availableWidth;
@@ -1069,20 +1223,6 @@ var GridPanel = (function (_super) {
         var newScrollPosition = this.eBodyViewport.scrollLeft;
         return newScrollPosition - oldScrollPosition;
     };
-    GridPanel.prototype.turnOnAnimationForABit = function () {
-        var _this = this;
-        if (this.gridOptionsWrapper.isSuppressColumnMoveAnimation()) {
-            return;
-        }
-        this.animationThreadCount++;
-        var animationThreadCountCopy = this.animationThreadCount;
-        utils_1.Utils.addCssClass(this.eRoot, 'ag-column-moving');
-        setTimeout(function () {
-            if (_this.animationThreadCount === animationThreadCountCopy) {
-                utils_1.Utils.removeCssClass(_this.eRoot, 'ag-column-moving');
-            }
-        }, 300);
-    };
     GridPanel.prototype.addScrollListener = function () {
         var _this = this;
         // if printing, then no scrolling, so no point in listening for scroll events
@@ -1108,15 +1248,21 @@ var GridPanel = (function (_super) {
         if (this.enableRtl) {
             var pinnedScrollListener = wrapWithDebounce(onPinnedLeftVerticalScroll);
             this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', pinnedScrollListener);
-            var suppressScroll = function () { return _this.ePinnedRightColsViewport.scrollTop = 0; };
-            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', suppressScroll);
+            var suppressRightScroll = function () { return _this.ePinnedRightColsViewport.scrollTop = 0; };
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', suppressRightScroll);
         }
         else {
             var pinnedScrollListener = wrapWithDebounce(onPinnedRightVerticalScroll);
             this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', pinnedScrollListener);
-            var suppressScroll = function () { return _this.ePinnedLeftColsViewport.scrollTop = 0; };
-            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressScroll);
+            var suppressLeftScroll = function () { return _this.ePinnedLeftColsViewport.scrollTop = 0; };
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressLeftScroll);
         }
+        var suppressCenterScroll = function () {
+            if (_this.getPrimaryScrollViewport() !== _this.eBodyViewport) {
+                _this.eBodyViewport.scrollTop = 0;
+            }
+        };
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', suppressCenterScroll);
         this.addIEPinFix(onPinnedRightVerticalScroll, onPinnedLeftVerticalScroll);
     };
     GridPanel.prototype.onBodyScroll = function () {
@@ -1374,3 +1520,30 @@ var GridPanel = (function (_super) {
     return GridPanel;
 }(beanStub_1.BeanStub));
 exports.GridPanel = GridPanel;
+var ScrollType;
+(function (ScrollType) {
+    ScrollType[ScrollType["HORIZONTAL"] = 0] = "HORIZONTAL";
+    ScrollType[ScrollType["VERTICAL"] = 1] = "VERTICAL";
+    ScrollType[ScrollType["DIAGONAL"] = 2] = "DIAGONAL";
+})(ScrollType || (ScrollType = {}));
+function testKeyboardBindingGroups(keyboardBindingGroups, event) {
+    for (var i = 0; i < keyboardBindingGroups.length; i++) {
+        var keyboardBindingGroup = keyboardBindingGroups[i];
+        for (var j = 0; j < keyboardBindingGroup.bindings.length; j++) {
+            var keyboardBinding = keyboardBindingGroup.bindings[j];
+            if (testKeyboardBinding(keyboardBinding, event)) {
+                return {
+                    trappedKeyboardBinding: keyboardBinding,
+                    trappedKeyboardBindingGroup: keyboardBindingGroup
+                };
+            }
+        }
+    }
+    return null;
+}
+function testKeyboardBinding(keyboardBinding, event) {
+    var key = event.which || event.keyCode;
+    return (keyboardBinding.ctlRequired === event.ctrlKey) &&
+        (keyboardBinding.keyCode === key) &&
+        (keyboardBinding.altRequired === event.altKey);
+}

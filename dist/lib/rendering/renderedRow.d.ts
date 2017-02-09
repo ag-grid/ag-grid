@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RenderedCell } from "./renderedCell";
@@ -11,6 +11,7 @@ export declare class RenderedRow extends BeanStub {
     static EVENT_RENDERED_ROW_REMOVED: string;
     private gridOptionsWrapper;
     private columnController;
+    private columnAnimationService;
     private $compile;
     private mainEventService;
     private context;
@@ -50,6 +51,7 @@ export declare class RenderedRow extends BeanStub {
     private editingRow;
     private initialised;
     private animateIn;
+    private rowFocusedLastTime;
     constructor(parentScope: any, rowRenderer: RowRenderer, bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent, pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent, node: RowNode, animateIn: boolean);
     private setupRowContainers(animateInRowTop);
     getAndClearDelayedDestroyFunctions(): Function[];
@@ -62,6 +64,7 @@ export declare class RenderedRow extends BeanStub {
     private setupNormalContainers(animateInRowTop);
     init(): void;
     stopRowEditing(cancel: boolean): void;
+    isEditing(): boolean;
     stopEditing(cancel?: boolean): void;
     startRowEditing(keyPress?: number, charPress?: string, sourceRenderedCell?: RenderedCell): void;
     private setEditingRow(value);
@@ -71,8 +74,10 @@ export declare class RenderedRow extends BeanStub {
     private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged(event);
     private onGridColumnsChanged();
+    private isCellInWrongRow(renderedCell);
     private refreshCellsIntoRow();
     private removeRenderedCells(colIds);
+    private getRowForColumn(column);
     private ensureCellInCorrectRow(renderedCell);
     private getOrCreateCell(column);
     private onRowSelected();
@@ -80,7 +85,6 @@ export declare class RenderedRow extends BeanStub {
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     private addHoverFunctionality();
     private addHoverClass(hover);
-    private rowFocusedLastTime;
     private setRowFocusClasses();
     private addCellFocusedListener();
     forEachRenderedCell(callback: (renderedCell: RenderedCell) => void): void;

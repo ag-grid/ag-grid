@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -259,6 +259,12 @@ var GridApi = (function () {
     GridApi.prototype.deselectAll = function () {
         this.selectionController.deselectAllRowNodes();
     };
+    GridApi.prototype.selectAllFiltered = function () {
+        this.selectionController.selectAllRowNodes(true);
+    };
+    GridApi.prototype.deselectAllFiltered = function () {
+        this.selectionController.deselectAllRowNodes(true);
+    };
     GridApi.prototype.recomputeAggregates = function () {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {
             console.log('cannot call recomputeAggregates unless using normal row model');
@@ -470,7 +476,6 @@ var GridApi = (function () {
         if (!this.clipboardService) {
             console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise');
         }
-        var column = null;
         this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
     };
     GridApi.prototype.copySelectedRangeToClipboard = function (includeHeader) {
@@ -524,14 +529,17 @@ var GridApi = (function () {
             this.aggFuncService.clear();
         }
     };
-    GridApi.prototype.insertItemsAtIndex = function (index, items) {
-        this.rowModel.insertItemsAtIndex(index, items);
+    GridApi.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
+        if (skipRefresh === void 0) { skipRefresh = false; }
+        this.rowModel.insertItemsAtIndex(index, items, skipRefresh);
     };
-    GridApi.prototype.removeItems = function (rowNodes) {
-        this.rowModel.removeItems(rowNodes);
+    GridApi.prototype.removeItems = function (rowNodes, skipRefresh) {
+        if (skipRefresh === void 0) { skipRefresh = false; }
+        this.rowModel.removeItems(rowNodes, skipRefresh);
     };
-    GridApi.prototype.addItems = function (items) {
-        this.rowModel.addItems(items);
+    GridApi.prototype.addItems = function (items, skipRefresh) {
+        if (skipRefresh === void 0) { skipRefresh = false; }
+        this.rowModel.addItems(items, skipRefresh);
     };
     GridApi.prototype.refreshVirtualPageCache = function () {
         if (this.virtualPageRowModel) {

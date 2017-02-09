@@ -178,6 +178,18 @@ ag-grid-ng2 {
 .ag-rtl .ag-pinned-left-header .ag-header-cell-resize {
   float: right;
 }
+.ag-ltr .ag-header-select-all {
+  float: left;
+}
+.ag-ltr .ag-pinned-right-header .ag-header-select-all {
+  float: right;
+}
+.ag-rtl .ag-header-select-all {
+  float: right;
+}
+.ag-rtl .ag-pinned-left-header .ag-header-select-all {
+  float: left;
+}
 .ag-header-expand-icon {
   padding-left: 4px;
 }
@@ -445,6 +457,27 @@ ag-grid-ng2 {
 }
 .ag-no-scrolls .ag-row {
   position: relative;
+}
+.ag-column-moving .ag-cell {
+  -webkit-transition: left 0.2s;
+  -moz-transition: left 0.2s;
+  -o-transition: left 0.2s;
+  -ms-transition: left 0.2s;
+  transition: left 0.2s;
+}
+.ag-column-moving .ag-header-cell {
+  -webkit-transition: left 0.2s;
+  -moz-transition: left 0.2s;
+  -o-transition: left 0.2s;
+  -ms-transition: left 0.2s;
+  transition: left 0.2s;
+}
+.ag-column-moving .ag-header-group-cell {
+  -webkit-transition: left 0.2s, width 0.2s;
+  -moz-transition: left 0.2s, width 0.2s;
+  -o-transition: left 0.2s, width 0.2s;
+  -ms-transition: left 0.2s, width 0.2s;
+  transition: left 0.2s, width 0.2s;
 }
 .ag-column-drop {
   width: 100%;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,7 @@ var masterSlaveService_1 = require("./masterSlaveService");
 var eventService_1 = require("./eventService");
 var gridPanel_1 = require("./gridPanel/gridPanel");
 var gridApi_1 = require("./gridApi");
-var headerTemplateLoader_1 = require("./headerRendering/headerTemplateLoader");
+var headerTemplateLoader_1 = require("./headerRendering/deprecated/headerTemplateLoader");
 var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTreeBuilder");
 var displayedGroupCreator_1 = require("./columnController/displayedGroupCreator");
 var expressionService_1 = require("./expressionService");
@@ -57,6 +57,9 @@ var downloader_1 = require("./downloader");
 var xmlFactory_1 = require("./xmlFactory");
 var gridSerializer_1 = require("./gridSerializer");
 var stylingService_1 = require("./styling/stylingService");
+var columnHoverService_1 = require("./rendering/columnHoverService");
+var columnAnimationService_1 = require("./rendering/columnAnimationService");
+var componentProvider_1 = require("./componentProvider");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -71,28 +74,40 @@ var Grid = (function () {
         if (utils_1.Utils.missing(frameworkFactory)) {
             frameworkFactory = new baseFrameworkFactory_1.BaseFrameworkFactory();
         }
+        var overrideBeans = [];
+        if (Grid.enterpriseBeans) {
+            overrideBeans = overrideBeans.concat(Grid.enterpriseBeans);
+        }
+        if (Grid.frameworkBeans) {
+            overrideBeans = overrideBeans.concat(Grid.frameworkBeans);
+        }
+        var seed = {
+            enterprise: enterprise,
+            gridOptions: gridOptions,
+            eGridDiv: eGridDiv,
+            $scope: params ? params.$scope : null,
+            $compile: params ? params.$compile : null,
+            quickFilterOnScope: params ? params.quickFilterOnScope : null,
+            globalEventListener: params ? params.globalEventListener : null,
+            frameworkFactory: frameworkFactory
+        };
+        if (params && params.seedBeanInstances) {
+            utils_1.Utils.assign(seed, params.seedBeanInstances);
+        }
         this.context = new context_1.Context({
-            overrideBeans: Grid.enterpriseBeans,
-            seed: {
-                enterprise: enterprise,
-                gridOptions: gridOptions,
-                eGridDiv: eGridDiv,
-                $scope: params ? params.$scope : null,
-                $compile: params ? params.$compile : null,
-                quickFilterOnScope: params ? params.quickFilterOnScope : null,
-                globalEventListener: params ? params.globalEventListener : null,
-                frameworkFactory: frameworkFactory
-            },
-            beans: [rowModelClass, cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, floatingRowModel_1.FloatingRowModel, dragService_1.DragService,
+            overrideBeans: overrideBeans,
+            seed: seed,
+            beans: [rowModelClass, gridApi_1.GridApi, componentProvider_1.ComponentProvider, cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, floatingRowModel_1.FloatingRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
                 filterManager_1.FilterManager, columnController_1.ColumnController, rowRenderer_1.RowRenderer,
                 headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService, balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory,
                 gridSerializer_1.GridSerializer, templateService_1.TemplateService, gridPanel_1.GridPanel, popupService_1.PopupService, valueService_1.ValueService, masterSlaveService_1.MasterSlaveService,
-                logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, gridApi_1.GridApi,
+                logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator,
                 paginationController_1.PaginationController, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService,
-                cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService],
+                cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
+                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService],
             components: [
                 { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }
             ],
@@ -112,6 +127,9 @@ var Grid = (function () {
         this.enterpriseBeans = enterpriseBeans;
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
         utils_1.Utils.iterateObject(rowModelClasses, function (key, value) { return Grid.RowModelClasses[key] = value; });
+    };
+    Grid.setFrameworkBeans = function (frameworkBeans) {
+        this.frameworkBeans = frameworkBeans;
     };
     Grid.prototype.getRowModelClass = function (gridOptions) {
         var rowModelType = gridOptions.rowModelType;

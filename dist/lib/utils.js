@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -99,6 +99,18 @@ var Utils = (function () {
         }
         return scrollLeft;
     };
+    Utils.cleanNumber = function (value) {
+        if (typeof value === 'string') {
+            value = parseInt(value);
+        }
+        if (typeof value === 'number') {
+            value = Math.floor(value);
+        }
+        else {
+            value = null;
+        }
+        return value;
+    };
     Utils.setScrollLeft = function (element, value, rtl) {
         if (rtl) {
             // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
@@ -177,7 +189,7 @@ var Utils = (function () {
                 }
                 if (typeof currentValue === 'object') {
                     if (target) {
-                        this.mergeDeep(object[key], target);
+                        Utils.mergeDeep(object[key], target);
                     }
                 }
                 if (target) {
@@ -239,9 +251,14 @@ var Utils = (function () {
         if (collection === null || collection === undefined) {
             return null;
         }
+        if (!Array.isArray(collection)) {
+            var objToArray = this.values(collection);
+            return this.find(objToArray, predicate, value);
+        }
+        var collectionAsArray = collection;
         var firstMatchingItem;
-        for (var i = 0; i < collection.length; i++) {
-            var item = collection[i];
+        for (var i = 0; i < collectionAsArray.length; i++) {
+            var item = collectionAsArray[i];
             if (typeof predicate === 'string') {
                 if (item[predicate] === value) {
                     firstMatchingItem = item;
@@ -324,6 +341,16 @@ var Utils = (function () {
         else {
             return true;
         }
+    };
+    Utils.anyExists = function (values) {
+        if (values) {
+            for (var i = 0; i < values.length; i++) {
+                if (this.exists(values[i])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     };
     Utils.existsAndNotEmpty = function (value) {
         return this.exists(value) && value.length > 0;
@@ -945,3 +972,4 @@ var NumberSequence = (function () {
     return NumberSequence;
 }());
 exports.NumberSequence = NumberSequence;
+exports._ = Utils;

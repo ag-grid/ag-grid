@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class Constants {
@@ -26,6 +26,18 @@ export declare class Constants {
     static KEY_V: number;
     static KEY_D: number;
     static KEY_F2: number;
+    static KEY_PAGE_UP: number;
+    static KEY_PAGE_DOWN: number;
+    static KEY_PAGE_HOME: number;
+    static KEY_PAGE_END: number;
+    static KEY_PAGE_UP_NAME: string;
+    static KEY_PAGE_DOWN_NAME: string;
+    static KEY_PAGE_HOME_NAME: string;
+    static KEY_PAGE_END_NAME: string;
+    static KEY_CTRL_UP_NAME: string;
+    static KEY_CTRL_LEFT_NAME: string;
+    static KEY_CTRL_RIGHT_NAME: string;
+    static KEY_CTRL_DOWN_NAME: string;
     static ROW_MODEL_TYPE_PAGINATION: string;
     static ROW_MODEL_TYPE_VIRTUAL: string;
     static ROW_MODEL_TYPE_VIEWPORT: string;
@@ -34,4 +46,20 @@ export declare class Constants {
     static ONLY_WHEN_GROUPING: string;
     static FLOATING_TOP: string;
     static FLOATING_BOTTOM: string;
+    static VERTICAL_SCROLL_KEYS_ID: string;
+    static HORIZONTAL_SCROLL_KEYS_ID: string;
+    static DIAGONAL_SCROLL_KEYS_ID: string;
+    static VERTICAL_SCROLL_KEYS: KeyboardBindingGroup;
+    static HORIZONTAL_SCROLL_KEYS: KeyboardBindingGroup;
+    static DIAGONAL_SCROLL_KEYS: KeyboardBindingGroup;
+}
+export interface KeyboardBinding {
+    id: string;
+    ctlRequired: boolean;
+    altRequired: boolean;
+    keyCode: number;
+}
+export interface KeyboardBindingGroup {
+    id: string;
+    bindings: KeyboardBinding[];
 }

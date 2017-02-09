@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,18 +19,22 @@ var LINE_SEPARATOR = '\r\n';
 var XmlFactory = (function () {
     function XmlFactory() {
     }
-    XmlFactory.prototype.createXml = function (xmlElement) {
+    XmlFactory.prototype.createXml = function (xmlElement, booleanTransformer) {
         var _this = this;
         var props = "";
-        if (xmlElement.properties && xmlElement.properties.prefix && xmlElement.properties.prefixedMap) {
-            Object.keys(xmlElement.properties.prefixedMap).forEach(function (key) {
-                props += " " + xmlElement.properties.prefix + key + "=\"" + xmlElement.properties.prefixedMap[key] + "\"";
-            });
-        }
-        if (xmlElement.properties && xmlElement.properties.rawMap) {
-            Object.keys(xmlElement.properties.rawMap).forEach(function (key) {
-                props += " " + key + "=\"" + xmlElement.properties.rawMap[key] + "\"";
-            });
+        if (xmlElement.properties) {
+            if (xmlElement.properties.prefixedAttributes) {
+                xmlElement.properties.prefixedAttributes.forEach(function (prefixedSet) {
+                    Object.keys(prefixedSet.map).forEach(function (key) {
+                        props += _this.returnAttributeIfPopulated(prefixedSet.prefix + key, prefixedSet.map[key], booleanTransformer);
+                    });
+                });
+            }
+            if (xmlElement.properties.rawMap) {
+                Object.keys(xmlElement.properties.rawMap).forEach(function (key) {
+                    props += _this.returnAttributeIfPopulated(key, xmlElement.properties.rawMap[key], booleanTransformer);
+                });
+            }
         }
         var result = "<" + xmlElement.name + props;
         if (!xmlElement.children && !xmlElement.textNode) {
@@ -41,9 +45,22 @@ var XmlFactory = (function () {
         }
         result += ">" + LINE_SEPARATOR;
         xmlElement.children.forEach(function (it) {
-            result += _this.createXml(it);
+            result += _this.createXml(it, booleanTransformer);
         });
         return result + "</" + xmlElement.name + ">" + LINE_SEPARATOR;
+    };
+    XmlFactory.prototype.returnAttributeIfPopulated = function (key, value, booleanTransformer) {
+        if (!value) {
+            return "";
+        }
+        var xmlValue = value;
+        if ((typeof (value) === 'boolean')) {
+            if (booleanTransformer) {
+                xmlValue = booleanTransformer(value);
+            }
+        }
+        xmlValue = '"' + xmlValue + '"';
+        return " " + key + "=" + xmlValue;
     };
     XmlFactory = __decorate([
         context_1.Bean('xmlFactory'), 

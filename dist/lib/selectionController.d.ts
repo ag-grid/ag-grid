@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -28,8 +28,8 @@ export declare class SelectionController {
     getBestCostNodeSelection(): any;
     setRowModel(rowModel: any): void;
     isEmpty(): boolean;
-    deselectAllRowNodes(): void;
-    selectAllRowNodes(): void;
+    deselectAllRowNodes(justFiltered?: boolean): void;
+    selectAllRowNodes(justFiltered?: boolean): void;
     selectNode(rowNode: RowNode, tryMulti: boolean): void;
     deselectIndex(rowIndex: number): void;
     deselectNode(rowNode: RowNode): void;

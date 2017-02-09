@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,8 @@ var columnController_1 = require("../../columnController/columnController");
 var FlattenStage = (function () {
     function FlattenStage() {
     }
-    FlattenStage.prototype.execute = function (rootNode) {
+    FlattenStage.prototype.execute = function (params) {
+        var rootNode = params.rowNode;
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         var result = [];

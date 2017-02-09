@@ -1,8 +1,7 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../widgets/component";
-import { IRenderedHeaderElement } from "./iRenderedHeaderElement";
 import { DropTarget } from "../dragAndDrop/dragAndDropService";
 export declare class HeaderRowComp extends Component {
     private gridOptionsWrapper;
@@ -16,14 +15,17 @@ export declare class HeaderRowComp extends Component {
     private dropTarget;
     private showingGroups;
     constructor(dept: number, showingGroups: boolean, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget);
-    forEachHeaderElement(callback: (renderedHeaderElement: IRenderedHeaderElement) => void): void;
+    forEachHeaderElement(callback: (comp: Component) => void): void;
     destroy(): void;
     private removeAndDestroyChildComponents(idsToDestroy);
     private onRowHeightChanged();
     private init();
     private onColumnResized();
     private setWidth();
+    private onGridColumnsChanged();
+    private removeAndDestroyAllChildComponents();
     private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged();
+    private isUsingOldHeaderRenderer(column);
     private createHeaderElement(columnGroupChild);
 }

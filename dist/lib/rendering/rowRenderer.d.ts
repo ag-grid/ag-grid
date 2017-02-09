@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -42,7 +42,7 @@ export declare class RowRenderer {
     private onModelUpdated(refreshEvent);
     private getRenderedIndexesForRowNodes(rowNodes);
     refreshRows(rowNodes: RowNode[]): void;
-    refreshView(keepRenderedRows?: boolean, animate?: boolean): void;
+    refreshView(params?: RefreshViewParams): void;
     private getLockOnRefresh();
     private releaseLockOnRefresh();
     private restoreFocusedCell(gridCell);
@@ -64,7 +64,7 @@ export declare class RowRenderer {
     private ensureRowsRendered(oldRenderedRowsByNodeId?, animate?);
     private getOrCreateRenderedRow(rowNode, oldRowsByNodeId, animate);
     getRenderedNodes(): any[];
-    navigateToNextCell(key: number, rowIndex: number, column: Column, floating: string): void;
+    navigateToNextCell(event: KeyboardEvent, key: number, rowIndex: number, column: Column, floating: string): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell(gridCell);
     onTabKeyDown(previousRenderedCell: RenderedCell, keyboardEvent: KeyboardEvent): void;
@@ -73,4 +73,10 @@ export declare class RowRenderer {
     private moveEditToNextCell(previousRenderedCell, nextRenderedCell);
     private moveEditToNextRow(previousRenderedCell, nextRenderedCell);
     private findNextCellToFocusOn(gridCell, backwards, startEditing);
+}
+export interface RefreshViewParams {
+    keepRenderedRows?: boolean;
+    animate?: boolean;
+    suppressKeepFocus?: boolean;
+    onlyBody?: boolean;
 }

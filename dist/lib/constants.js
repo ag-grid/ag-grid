@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,18 @@ var Constants = (function () {
     Constants.KEY_V = 86;
     Constants.KEY_D = 68;
     Constants.KEY_F2 = 113;
+    Constants.KEY_PAGE_UP = 33;
+    Constants.KEY_PAGE_DOWN = 34;
+    Constants.KEY_PAGE_HOME = 36;
+    Constants.KEY_PAGE_END = 35;
+    Constants.KEY_PAGE_UP_NAME = 'pageUp';
+    Constants.KEY_PAGE_DOWN_NAME = 'pageDown';
+    Constants.KEY_PAGE_HOME_NAME = 'home';
+    Constants.KEY_PAGE_END_NAME = 'end';
+    Constants.KEY_CTRL_UP_NAME = 'ctrlUp';
+    Constants.KEY_CTRL_LEFT_NAME = 'ctrlLeft';
+    Constants.KEY_CTRL_RIGHT_NAME = 'ctrlRight';
+    Constants.KEY_CTRL_DOWN_NAME = 'ctrlDown';
     Constants.ROW_MODEL_TYPE_PAGINATION = 'pagination';
     Constants.ROW_MODEL_TYPE_VIRTUAL = 'virtual';
     Constants.ROW_MODEL_TYPE_VIEWPORT = 'viewport';
@@ -40,6 +52,61 @@ var Constants = (function () {
     Constants.ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
     Constants.FLOATING_TOP = 'top';
     Constants.FLOATING_BOTTOM = 'bottom';
+    Constants.VERTICAL_SCROLL_KEYS_ID = 'verticalScrollKeys';
+    Constants.HORIZONTAL_SCROLL_KEYS_ID = 'horizontalScrollKeys';
+    Constants.DIAGONAL_SCROLL_KEYS_ID = 'diagonalScrollKeys';
+    Constants.VERTICAL_SCROLL_KEYS = {
+        id: Constants.VERTICAL_SCROLL_KEYS_ID,
+        bindings: [{
+                id: Constants.KEY_PAGE_UP_NAME,
+                ctlRequired: false,
+                altRequired: false,
+                keyCode: Constants.KEY_PAGE_UP
+            }, {
+                id: Constants.KEY_PAGE_DOWN_NAME,
+                ctlRequired: false,
+                altRequired: false,
+                keyCode: Constants.KEY_PAGE_DOWN
+            }, {
+                id: Constants.KEY_CTRL_UP_NAME,
+                ctlRequired: true,
+                altRequired: false,
+                keyCode: Constants.KEY_UP
+            }, {
+                id: Constants.KEY_CTRL_DOWN_NAME,
+                ctlRequired: true,
+                altRequired: false,
+                keyCode: Constants.KEY_DOWN
+            }]
+    };
+    Constants.HORIZONTAL_SCROLL_KEYS = {
+        id: Constants.HORIZONTAL_SCROLL_KEYS_ID,
+        bindings: [{
+                id: Constants.KEY_CTRL_LEFT_NAME,
+                ctlRequired: true,
+                altRequired: false,
+                keyCode: Constants.KEY_LEFT
+            }, {
+                id: Constants.KEY_CTRL_RIGHT_NAME,
+                ctlRequired: true,
+                altRequired: false,
+                keyCode: Constants.KEY_RIGHT
+            }]
+    };
+    Constants.DIAGONAL_SCROLL_KEYS = {
+        id: Constants.DIAGONAL_SCROLL_KEYS_ID,
+        bindings: [{
+                id: Constants.KEY_PAGE_HOME_NAME,
+                ctlRequired: false,
+                altRequired: false,
+                keyCode: Constants.KEY_PAGE_HOME
+            }, {
+                id: Constants.KEY_PAGE_END_NAME,
+                ctlRequired: false,
+                altRequired: false,
+                keyCode: Constants.KEY_PAGE_END
+            }]
+    };
     return Constants;
 }());
 exports.Constants = Constants;

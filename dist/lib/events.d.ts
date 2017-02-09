@@ -1,6 +1,11 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
+import { RowNode } from "./entities/rowNode";
+import { Column } from "./entities/column";
+import { ColDef } from "./entities/colDef";
+import { GridApi } from "./gridApi";
+import { ColumnApi } from "./columnController/columnController";
 export declare class Events {
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
     static EVENT_COLUMN_EVERYTHING_CHANGED: string;
@@ -48,6 +53,9 @@ export declare class Events {
     static EVENT_CELL_FOCUSED: string;
     static EVENT_ROW_SELECTED: string;
     static EVENT_SELECTION_CHANGED: string;
+    static EVENT_CELL_MOUSE_OVER: string;
+    static EVENT_CELL_MOUSE_OUT: string;
+    static EVENT_COLUMN_HOVER_CHANGED: string;
     /** 3 events for filtering. The grid LISTENS for filterChanged, and does the filter here. The before and after
      * are for the client, if it wants to do something before or after the filter getting applied. */
     static EVENT_BEFORE_FILTER_CHANGED: string;
@@ -102,4 +110,17 @@ export interface ModelUpdatedEvent {
      * it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
     keepRenderedRows: boolean;
+}
+export interface CellEvent {
+    node: RowNode;
+    data: any;
+    value: any;
+    rowIndex: number;
+    column: Column;
+    colDef: ColDef;
+    $scope: any;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+    event: Event;
 }
