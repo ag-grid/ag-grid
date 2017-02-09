@@ -289,7 +289,7 @@ column.addEventListener('filterChanged', function() {
 
     <show-example example="exampleHeaderComponent"></show-example>
 
-    <h2>Header Group Rendering</h2>
+    <h2 id="headerGroupComponent">Header Group Component</h2>
 
     <p>
         This section details how to put a header group component into ag-Grid.

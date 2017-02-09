@@ -106,6 +106,14 @@ include '../documentation-main/documentation_header.php';
             <td>Clear all row selections.</td>
         </tr>
         <tr>
+            <th>selectAllFiltered()</th>
+            <td>Select all filtered rows.</td>
+        </tr>
+        <tr>
+            <th>deselectAllFiltered()</th>
+            <td>Clear all filtered selections.</td>
+        </tr>
+        <tr>
             <th>getSelectedNodes()</th>
             <td>Returns a list of selected nodes. Getting the underlying node (rather than the data) is useful
                 when working with tree / aggregated data, as the node can be traversed.</td>

@@ -15,7 +15,44 @@ include '../documentation-main/documentation_header.php';
 
     IFilter is now IFilterComp
 
-    gridOptions.checkboxSelection is now gone, use defaultColDef.checkboxSelection instead
+
+
+    <h2>Version 8.0.x</h2>
+
+    <b>Enhancements:</b>
+    <ul>
+        <li>Enhancement: <a href="../best-vuejs-data-grid/">VueJS</a> Framework Support! Big welcome to the VueJS community.</li>
+        <li>Enhancement: <a href="../javascript-grid-header-rendering/#headerComponent">Header Component</a> and <a href="../javascript-grid-header-rendering/#headerGroupComponent">Header Group Component</a>. Allowing full customisation of the headers.</li>
+        <li>Enhancement: <a href="../javascript-grid-excel/">Excel Export</a> now includes full support for all Excel XML properties.</li>
+        <li>Enhancement: New feature <a href="../javascript-grid-selection/#headerCheckboxSelection">Header Checkbox Selection</a>.</li>
+        <li>Enhancement: New CSS class <i>ag-column-hover</i> to allow highlighting of hovered column.</li>
+        <li>Enhancement: If one cell in clipboard, you can now select a range of cells to copy that one value into entire range.</li>
+        <li>Enhancement: Navigation support for Page Up, Page Down, Home, End, Ctrl+left, Ctrl+right.</li>
+        <li>Enhancement: New APIs <i>api.selectAllFiltered()</i> and <i>api.deselectAllFiltered()</i></li>
+        <li>Enhancement: Added <i>skipRefresh</i> to the add/remove row API's, so if you want to add / remove
+            lots of rows, you only refresh on the last update.</li>
+        <li>Enhancement: Property <i>groupDefaultExpanded</i> now works with flower nodes</li>
+        <li>Enhancement: New property <i>suppressTabbing</i> to disabled grids tabbing functionality.</li>
+    </ul>
+
+    <b>Small Breaking Changes:</b>
+    <ul>
+        <li>Breaking Change: TypeScript Users Only: Interfaces names changed for components.
+            Check the documentation for the names of the interfaces. Eg <i>ICellRenderer</i> is replaced
+            with <i>ICellRendererComp</i>. This is to position ag-Grid for supporting components from
+            other frameworks ('Comp' means an ag-Grid component, to differentiate from a cellRenderer
+            built in eg Angular or React).</li>
+        <li>Breaking Change: TypeScript Users Only: Interface names used in Angular 2 are also changed slightly. Again
+            check the documentation for the new names.</li>
+        <li>gridOptions.checkboxSelection is now gone, use defaultColDef.checkboxSelection instead</li>
+    </ul>
+
+    <b>Bug Fixes:</b>
+    <ul>
+        <li>Bug Fix: Editing works for off-screen cells - so if editing full rows, off screen cells don't get reset.</li>
+        <li>Bug Fix: ctrl+c now works, even if focus cell is scrolled out of view.</li>
+        <li>Bug Fix: Set Filter now supports null values when getting and setting the model.</li>
+    </ul>
 
     <h2>Version 7.2.x</h2>
 
