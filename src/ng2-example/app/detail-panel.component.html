@@ -1,0 +1,26 @@
+<div class="full-width-panel">
+    <div class="full-width-details">
+        <div class="full-width-detail"><img width="120px" src="../images/{{parentRecord.image}}.png"/></div>
+        <div class="full-width-detail"><b>Name: </b> {{parentRecord.name}}</div>
+        <div class="full-width-detail"><b>Account: </b> {{parentRecord.account}}</div>
+    </div>
+    <ag-grid-ng2 #agDetailGrid
+                 class="full-width-grid"
+                 [gridOptions]="gridOptions"
+
+                 enableSorting
+                 enableFilter
+                 enableColResize
+
+                 (mousewheel)="consumeMouseWheelOnDetailGrid($event)"
+                 (DOMMouseScroll)="consumeMouseWheelOnDetailGrid($event)">
+
+    </ag-grid-ng2>
+    <div class="full-width-grid-toolbar">
+        <img class="full-width-phone-icon" src="../images/phone.png"/>
+        <button (click)="onButtonClick()"><img src="../images/fire.png"/></button>
+        <button (click)="onButtonClick()"><img src="../images/frost.png"/></button>
+        <button (click)="onButtonClick()"><img src="../images/sun.png"/></button>
+        <input class="full-width-search" #box (keyup)="onSearchTextChange(box.value)" placeholder="Search..."/>
+    </div>
+</div>

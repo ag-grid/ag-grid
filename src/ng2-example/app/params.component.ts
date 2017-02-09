@@ -1,12 +1,12 @@
 import {Component, OnDestroy} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'params-cell',
     template: `Field: {{params.colDef.field}}, Value: {{params.value}}`
 })
-export class ParamsComponent implements AgRendererComponent {
+export class ParamsComponent implements ICellRendererAngularComp {
     public params: any;
 
     agInit(params: any): void {

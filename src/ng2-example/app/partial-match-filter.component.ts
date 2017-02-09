@@ -1,7 +1,7 @@
 import {Component, ViewChild, ViewContainerRef} from '@angular/core';
 
-import {IFilterParams, IDoesFilterPassParams, RowNode, IAfterFilterGuiAttachedParams} from 'ag-grid/main';
-import {AgFilterComponent} from 'ag-grid-ng2/main';
+import {IFilterParams, IDoesFilterPassParams, RowNode, IAfterGuiAttachedParams} from 'ag-grid/main';
+import {IFilterAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'filter-cell',
@@ -9,7 +9,7 @@ import {AgFilterComponent} from 'ag-grid-ng2/main';
         Filter: <input style="height: 20px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
     `
 })
-export class PartialMatchFilterComponent implements AgFilterComponent {
+export class PartialMatchFilterComponent implements IFilterAngularComp {
     private params: IFilterParams;
     private valueGetter: (rowNode: RowNode) => any;
     public text: string = '';
@@ -41,7 +41,7 @@ export class PartialMatchFilterComponent implements AgFilterComponent {
         this.text = model.value;
     }
 
-    afterGuiAttached(params: IAfterFilterGuiAttachedParams): void {
+    afterGuiAttached(params: IAfterGuiAttachedParams): void {
         this.input.element.nativeElement.focus();
     }
 

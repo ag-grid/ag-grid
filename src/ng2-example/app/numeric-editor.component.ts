@@ -1,12 +1,12 @@
 import {Component, ViewContainerRef, ViewChild, AfterViewInit} from '@angular/core';
 
-import {AgEditorComponent} from 'ag-grid-ng2/main';
+import {ICellEditorAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'numeric-cell',
     template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value">`
 })
-export class NumericEditorComponent implements AgEditorComponent, AfterViewInit {
+export class NumericEditorComponent implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
     public value: number;
     private cancelBeforeStart: boolean = false;

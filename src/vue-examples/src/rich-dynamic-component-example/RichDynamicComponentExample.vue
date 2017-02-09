@@ -4,7 +4,8 @@
         <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
                      :gridOptions="gridOptions"
                      :columnDefs="columnDefs"
-                     :rowData="rowData">
+                     :rowData="rowData"
+                     :enableSorting="true">
         </ag-grid-vue>
     </div>
 </template>
@@ -14,6 +15,7 @@
     import {AgGridVue} from "ag-grid-vue";
     import RatioParentComponent from './RatioParentComponent.vue'
     import ClickableParentComponent from './ClickableParentComponent'
+    import SimpsonsHeaderComponent from './SimponsHeaderComponent.vue'
 
     export default {
         data () {
@@ -46,7 +48,15 @@
             },
             createColumnDefs() {
                 this.columnDefs = [
-                    {headerName: "Name", field: "name", width: 200},
+                    {
+                        headerName: "Name",
+                        field: "name",
+                        width: 200,
+                        headerComponentFramework: SimpsonsHeaderComponent,
+                        headerComponentParams : {
+                            menuIcon: 'fa-bars'
+                        }
+                    },
                     {
                         headerName: "Ratio Component",
                         field: "ratios",

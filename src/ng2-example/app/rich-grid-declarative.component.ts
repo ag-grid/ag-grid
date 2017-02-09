@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component,ViewEncapsulation} from '@angular/core';
 
-import {GridOptions, IFilter} from 'ag-grid/main';
+import {GridOptions} from 'ag-grid/main';
 
 import ProficiencyFilter from './proficiencyFilter';
 import SkillFilter from './skillFilter';
@@ -8,12 +8,16 @@ import RefData from './refData';
 
 // only import this if you are using the ag-Grid-Enterprise
 import 'ag-grid-enterprise/main';
+import {HeaderGroupComponent} from "./header-group-component.component";
+import {DateComponent} from "./date-component.component";
+import {HeaderComponent} from "./header-component.component";
 
 @Component({
     moduleId: module.id,
     selector: 'ag-rich-grid-declarative',
     templateUrl: 'rich-grid-declarative.component.html',
-    styles: ['.toolbar button {margin: 2px; padding: 0;}'],
+    styleUrls: ['rich-grid.css', 'proficiency-renderer.css'],
+    encapsulation: ViewEncapsulation.None
 })
 export class RichGridDeclarativeComponent {
 
@@ -21,12 +25,22 @@ export class RichGridDeclarativeComponent {
     public showGrid:boolean;
     private rowData:any[];
     public rowCount:string;
+    public components = {
+        headerGroupComponent:HeaderGroupComponent
+    }
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
         this.gridOptions = <GridOptions>{};
         this.createRowData();
         this.showGrid = true;
+        this.gridOptions.dateComponentFramework = DateComponent;
+        this.gridOptions.defaultColDef = {
+            headerComponentFramework : <{new():HeaderComponent}>HeaderComponent,
+            headerComponentParams : {
+                menuIcon: 'fa-bars'
+            }
+        }
     }
 
     private createRowData() {
@@ -43,6 +57,7 @@ export class RichGridDeclarativeComponent {
                     windows: Math.random() < 0.4,
                     css: Math.random() < 0.4
                 },
+                dob: RefData.DOBs[i % RefData.DOBs.length],
                 address: RefData.addresses[i % RefData.addresses.length],
                 years: Math.round(Math.random() * 100),
                 proficiency: Math.round(Math.random() * 100),
@@ -152,5 +167,17 @@ export class RichGridDeclarativeComponent {
         }
         return result;
     }
+
+    public parseDate (params) {
+        return  pad(params.value.getDate(), 2) + '/' +
+            pad(params.value.getMonth() + 1, 2)+ '/' +
+            params.value.getFullYear();
+    }
 }
 
+//Utility function used to pad the date formatting.
+function pad(num, totalStringSize) {
+    let asString = num + "";
+    while (asString.length < totalStringSize) asString = "0" + asString;
+    return asString;
+}

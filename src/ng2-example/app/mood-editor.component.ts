@@ -1,13 +1,13 @@
 import {Component, ViewContainerRef, ViewChild, AfterViewInit} from '@angular/core';
 
-import {AgEditorComponent} from 'ag-grid-ng2/main';
+import {ICellEditorAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'editor-cell',
     template: `
         <div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
-            <img src="images/smiley.png" (click)="setHappy(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            <img src="images/smiley-sad.png" (click)="setHappy(false)" [ngClass]="{'selected' : !happy, 'default' : happy}">
+            <img src="images/smiley.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
+            <img src="images/smiley-sad.png" (click)="onClick(false)" [ngClass]="{'selected' : !happy, 'default' : happy}">
         </div>
     `,
     styles: [`
@@ -36,7 +36,7 @@ import {AgEditorComponent} from 'ag-grid-ng2/main';
         }
     `]
 })
-export class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
+export class MoodEditorComponent implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
 
     @ViewChild('container', {read: ViewContainerRef}) public container;
@@ -66,6 +66,11 @@ export class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
 
     toggleMood(): void {
         this.setHappy(!this.happy);
+    }
+
+    onClick(happy:boolean) {
+        this.setHappy(happy);
+        this.params.api.stopEditing();
     }
 
     onKeyDown(event): void {

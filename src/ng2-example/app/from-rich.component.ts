@@ -6,6 +6,7 @@ import {RatioComponent} from "./ratio.component";
 import {ClickableComponent} from "./clickable.component";
 import {RatioParentComponent} from "./ratio.parent.component";
 import {ClickableParentComponent} from "./clickable.parent.component";
+import {DateComponent} from "./date-component.component";
 
 @Component({
     moduleId: module.id,
