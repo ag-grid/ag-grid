@@ -1,7 +1,7 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { Column } from "../entities/column";
+import { Column } from "../../entities/column";
 export declare class HeaderTemplateLoader {
     private static HEADER_CELL_TEMPLATE;
     private gridOptionsWrapper;

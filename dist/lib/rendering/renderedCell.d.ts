@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -18,6 +18,7 @@ export declare class RenderedCell extends Component {
     private valueService;
     private eventService;
     private columnController;
+    private columnAnimationService;
     private rangeController;
     private focusedCellController;
     private contextMenuFactory;
@@ -28,6 +29,7 @@ export declare class RenderedCell extends Component {
     private cellRendererService;
     private valueFormatterService;
     private stylingService;
+    private columnHoverService;
     private static PRINTABLE_CHARACTERS;
     private eGridCell;
     private eSpanWithValue;
@@ -45,7 +47,7 @@ export declare class RenderedCell extends Component {
     private cellEditor;
     private cellRenderer;
     private value;
-    private checkboxSelection;
+    private usingWrapper;
     private renderedRow;
     private firstRightPinned;
     private lastLeftPinned;
@@ -59,7 +61,7 @@ export declare class RenderedCell extends Component {
     private setPinnedClasses();
     getParentRow(): HTMLElement;
     setParentRow(eParentRow: HTMLElement): void;
-    calculateCheckboxSelection(): boolean;
+    setupCheckboxSelection(): void;
     getColumn(): Column;
     private getValue();
     private getDataForRow();
@@ -73,6 +75,9 @@ export declare class RenderedCell extends Component {
     private checkCellFocused(event?);
     private setWidthOnCell();
     init(): void;
+    private addColumnHoverListener();
+    private onColumnHover();
+    private checkHoveringCell();
     private addDomData();
     private onEnterKeyDown();
     private onF2KeyDown();
@@ -101,6 +106,8 @@ export declare class RenderedCell extends Component {
     isSuppressNavigable(): boolean;
     isCellEditable(): boolean;
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
+    private onMouseOut(mouseEvent);
+    private onMouseOver(mouseEvent);
     private onContextMenu(mouseEvent);
     private onCellDoubleClicked(mouseEvent);
     private onMouseDown();

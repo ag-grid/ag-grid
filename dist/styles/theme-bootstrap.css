@@ -28,27 +28,6 @@
 .ag-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {
   background-color: rgba(0,0,0,0.4);
 }
-.ag-bootstrap .ag-column-moving .ag-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
-.ag-bootstrap .ag-column-moving .ag-header-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
-.ag-bootstrap .ag-column-moving .ag-header-group-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
 .ag-bootstrap .ag-cell-focus {
   border: 2px solid #217346;
 }
@@ -133,6 +112,10 @@
 }
 .ag-bootstrap .ag-large-text {
   border: none;
+}
+.ag-bootstrap .ag-header-select-all {
+  padding: 5px 0px 0px 5px;
+  line-height: 0;
 }
 .ag-bootstrap .ag-header {
   color: #000;

@@ -1,8 +1,9 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class XmlFactory {
-    createXml(xmlElement: XmlElement): string;
+    createXml(xmlElement: XmlElement, booleanTransformer?: (currentValue: boolean) => string): string;
+    private returnAttributeIfPopulated(key, value, booleanTransformer?);
 }
 export interface XmlElement {
     name: string;
@@ -11,7 +12,10 @@ export interface XmlElement {
     textNode?: string;
 }
 export interface XmlAttributes {
-    prefix?: string;
-    prefixedMap?: any;
+    prefixedAttributes?: PrefixedXmlAttributes[];
     rawMap?: any;
+}
+export interface PrefixedXmlAttributes {
+    prefix: string;
+    map: any;
 }

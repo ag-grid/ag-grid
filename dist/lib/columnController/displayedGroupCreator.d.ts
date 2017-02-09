@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -8,7 +8,9 @@ import { ColumnGroupChild } from "../entities/columnGroupChild";
 export declare class DisplayedGroupCreator {
     private columnUtils;
     private context;
-    createDisplayedGroups(sortedVisibleColumns: Column[], balancedColumnTree: OriginalColumnGroupChild[], groupInstanceIdCreator: GroupInstanceIdCreator): ColumnGroupChild[];
+    createDisplayedGroups(sortedVisibleColumns: Column[], balancedColumnTree: OriginalColumnGroupChild[], groupInstanceIdCreator: GroupInstanceIdCreator, oldDisplayedGroups?: ColumnGroupChild[]): ColumnGroupChild[];
+    private createColumnGroup(originalGroup, groupInstanceIdCreator, oldColumnsMapped);
+    private mapOldGroupsById(displayedGroups);
     private setupParentsIntoColumns(columnsOrGroups, parent);
     private createFakePath(balancedColumnTree);
     private getOriginalPathForColumn(balancedColumnTree, column);

@@ -1,7 +1,11 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../entities/rowNode";
+export interface StageExecuteParams {
+    rowNode: RowNode;
+    newRowNodes?: RowNode[];
+}
 export interface IRowNodeStage {
-    execute(rowNode: RowNode): any;
+    execute(params: StageExecuteParams): any;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,7 +21,8 @@ var filterManager_1 = require("../../filter/filterManager");
 var FilterStage = (function () {
     function FilterStage() {
     }
-    FilterStage.prototype.execute = function (rowNode) {
+    FilterStage.prototype.execute = function (params) {
+        var rowNode = params.rowNode;
         var filterActive;
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
             filterActive = false;

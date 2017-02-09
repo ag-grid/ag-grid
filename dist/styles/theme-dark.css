@@ -28,27 +28,6 @@
 .ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {
   background-color: rgba(100,250,250,0.4);
 }
-.ag-dark .ag-column-moving .ag-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
-.ag-dark .ag-column-moving .ag-header-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
-.ag-dark .ag-column-moving .ag-header-group-cell {
-  -webkit-transition: left 0.2s;
-  -moz-transition: left 0.2s;
-  -o-transition: left 0.2s;
-  -ms-transition: left 0.2s;
-  transition: left 0.2s;
-}
 .ag-dark .ag-cell-focus {
   border: 1px solid #a9a9a9;
 }
@@ -133,6 +112,10 @@
 }
 .ag-dark .ag-large-text {
   border: 1px solid #808080;
+}
+.ag-dark .ag-header-select-all {
+  padding: 5px 0px 0px 3px;
+  line-height: 0;
 }
 .ag-dark .ag-header {
   color: #e0e0e0;

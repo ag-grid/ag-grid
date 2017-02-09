@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { Column } from "../entities/column";
-import { DropTarget } from "../dragAndDrop/dragAndDropService";
-import { Component } from "../widgets/component";
+import { Column } from "../../entities/column";
+import { DropTarget } from "../../dragAndDrop/dragAndDropService";
+import { Component } from "../../widgets/component";
 export declare class RenderedHeaderCell extends Component {
     private context;
     private filterManager;

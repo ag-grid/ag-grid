@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,11 +36,10 @@ var mouseEventService_1 = require("./gridPanel/mouseEventService");
 var cssClassApplier_1 = require("./headerRendering/cssClassApplier");
 var headerContainer_1 = require("./headerRendering/headerContainer");
 var headerRenderer_1 = require("./headerRendering/headerRenderer");
-var headerTemplateLoader_1 = require("./headerRendering/headerTemplateLoader");
+var headerTemplateLoader_1 = require("./headerRendering/deprecated/headerTemplateLoader");
 var horizontalDragService_1 = require("./headerRendering/horizontalDragService");
 var moveColumnController_1 = require("./headerRendering/moveColumnController");
-var renderedHeaderCell_1 = require("./headerRendering/renderedHeaderCell");
-var renderedHeaderGroupCell_1 = require("./headerRendering/renderedHeaderGroupCell");
+var renderedHeaderCell_1 = require("./headerRendering/deprecated/renderedHeaderCell");
 var standardMenu_1 = require("./headerRendering/standardMenu");
 var borderLayout_1 = require("./layout/borderLayout");
 var tabbedLayout_1 = require("./layout/tabbedLayout");
@@ -162,7 +161,6 @@ function populateClientExports(exports) {
     exports.HorizontalDragService = horizontalDragService_1.HorizontalDragService;
     exports.MoveColumnController = moveColumnController_1.MoveColumnController;
     exports.RenderedHeaderCell = renderedHeaderCell_1.RenderedHeaderCell;
-    exports.RenderedHeaderGroupCell = renderedHeaderGroupCell_1.RenderedHeaderGroupCell;
     exports.StandardMenuFactory = standardMenu_1.StandardMenuFactory;
     // layout
     exports.BorderLayout = borderLayout_1.BorderLayout;

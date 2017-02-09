@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,11 +24,12 @@ var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnGroup_1 = require("../entities/columnGroup");
 var columnController_1 = require("../columnController/columnController");
-var renderedHeaderGroupCell_1 = require("./renderedHeaderGroupCell");
-var renderedHeaderCell_1 = require("./renderedHeaderCell");
+var renderedHeaderCell_1 = require("./deprecated/renderedHeaderCell");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var utils_1 = require("../utils");
+var headerWrapperComp_1 = require("./header/headerWrapperComp");
+var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var HeaderRowComp = (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, showingGroups, pinned, eRoot, dropTarget) {
@@ -66,6 +67,7 @@ var HeaderRowComp = (function (_super) {
         this.getGui().style.top = (this.dept * rowHeight) + 'px';
         this.getGui().style.height = rowHeight + 'px';
     };
+    //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
         this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
@@ -74,6 +76,7 @@ var HeaderRowComp = (function (_super) {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     };
     HeaderRowComp.prototype.onColumnResized = function () {
         this.setWidth();
@@ -82,15 +85,14 @@ var HeaderRowComp = (function (_super) {
         var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
         this.getGui().style.width = mainRowWidth;
     };
+    HeaderRowComp.prototype.onGridColumnsChanged = function () {
+        this.removeAndDestroyAllChildComponents();
+    };
+    HeaderRowComp.prototype.removeAndDestroyAllChildComponents = function () {
+        var idsOfAllChildren = Object.keys(this.headerElements);
+        this.removeAndDestroyChildComponents(idsOfAllChildren);
+    };
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
-        // because column groups are created and destroyed on the fly as groups are opened / closed and columns are moved,
-        // we have to throw away all of the components when columns are changed, as the references to the old groups
-        // are no longer value. this is not true for columns where columns do not get destroyed between open / close
-        // or moving actions.
-        if (this.showingGroups) {
-            var idsOfAllChildren = Object.keys(this.headerElements);
-            this.removeAndDestroyChildComponents(idsOfAllChildren);
-        }
         this.onVirtualColumnsChanged();
         this.setWidth();
     };
@@ -107,7 +109,8 @@ var HeaderRowComp = (function (_super) {
             }
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
-            // (PS niall note - i can't remember what i meant by the above exactly, what's a broken group???)
+            // (a broken group is one that is split, ie columns in the group have a non-group column
+            // in between them)
             if (child instanceof columnGroup_1.ColumnGroup && child.getDisplayedChildren().length === 0) {
                 return;
             }
@@ -118,13 +121,37 @@ var HeaderRowComp = (function (_super) {
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
         this.removeAndDestroyChildComponents(currentChildIds);
     };
+    // check if user is using the deprecated
+    HeaderRowComp.prototype.isUsingOldHeaderRenderer = function (column) {
+        var colDef = column.getColDef();
+        return utils_1.Utils.anyExists([
+            // header template
+            this.gridOptionsWrapper.getHeaderCellTemplateFunc(),
+            this.gridOptionsWrapper.getHeaderCellTemplate(),
+            colDef.headerCellTemplate,
+            // header cellRenderer
+            colDef.headerCellRenderer,
+            this.gridOptionsWrapper.getHeaderCellRenderer()
+        ]);
+    };
     HeaderRowComp.prototype.createHeaderElement = function (columnGroupChild) {
         var result;
         if (columnGroupChild instanceof columnGroup_1.ColumnGroup) {
-            result = new renderedHeaderGroupCell_1.RenderedHeaderGroupCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
         }
         else {
-            result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            if (this.isUsingOldHeaderRenderer(columnGroupChild)) {
+                ////// DEPRECATED - TAKE THIS OUT IN V9
+                if (!warningGiven) {
+                    console.warn('ag-Grid: since v8, custom headers are now done using components. Please refer to the documentation https://www.ag-grid.com/javascript-grid-header-rendering/. Support for the old way will be dropped in v9.');
+                    warningGiven = true;
+                }
+                result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            }
+            else {
+                // the future!!!
+                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+            }
         }
         this.context.wireBean(result);
         return result;
@@ -154,3 +181,5 @@ var HeaderRowComp = (function (_super) {
     return HeaderRowComp;
 }(component_1.Component));
 exports.HeaderRowComp = HeaderRowComp;
+// remove this in v9, when we take out support for the old headers
+var warningGiven = false;

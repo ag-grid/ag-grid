@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,10 @@ var expressionService_1 = require("../expressionService");
 var StylingService = (function () {
     function StylingService() {
     }
+    StylingService.prototype.processAllCellClasses = function (colDef, params, onApplicableClass, onNotApplicableClass) {
+        this.processCellClassRules(colDef, params, onApplicableClass, onNotApplicableClass);
+        this.processStaticCellClasses(colDef, params, onApplicableClass);
+    };
     StylingService.prototype.processCellClassRules = function (colDef, params, onApplicableClass, onNotApplicableClass) {
         var classRules = colDef.cellClassRules;
         if (typeof classRules === 'object' && classRules !== null) {
@@ -26,7 +30,7 @@ var StylingService = (function () {
             for (var i = 0; i < classNames.length; i++) {
                 var className = classNames[i];
                 var rule = classRules[className];
-                var resultOfRule;
+                var resultOfRule = void 0;
                 if (typeof rule === 'string') {
                     resultOfRule = this.expressionService.evaluate(rule, params);
                 }
@@ -39,6 +43,27 @@ var StylingService = (function () {
                 else if (onNotApplicableClass) {
                     onNotApplicableClass(className);
                 }
+            }
+        }
+    };
+    StylingService.prototype.processStaticCellClasses = function (colDef, params, onApplicableClass) {
+        var cellClass = colDef.cellClass;
+        if (cellClass) {
+            var classOrClasses;
+            if (typeof colDef.cellClass === 'function') {
+                var cellClassFunc = colDef.cellClass;
+                classOrClasses = cellClassFunc(params);
+            }
+            else {
+                classOrClasses = colDef.cellClass;
+            }
+            if (typeof classOrClasses === 'string') {
+                onApplicableClass(classOrClasses);
+            }
+            else if (Array.isArray(classOrClasses)) {
+                classOrClasses.forEach(function (cssClassItem) {
+                    onApplicableClass(cssClassItem);
+                });
             }
         }
     };

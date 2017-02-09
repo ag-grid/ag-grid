@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -22,6 +22,7 @@ export declare class Utils {
     }): T[];
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
     static getScrollLeft(element: HTMLElement, rtl: boolean): number;
+    static cleanNumber(value: any): number;
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
     static iterateObject(object: any, callback: (key: string, value: any) => void): void;
     static cloneObject<T>(object: T): T;
@@ -36,7 +37,9 @@ export declare class Utils {
     static pad(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
     static getFunctionParameters(func: any): any;
-    static find<T>(collection: T[], predicate: string | ((item: T) => void), value?: any): T;
+    static find<T>(collection: T[] | {
+        [id: string]: T;
+    }, predicate: string | ((item: T) => void), value?: any): T;
     static toStrings<T>(array: T[]): string[];
     static iterateArray<T>(array: T[], callback: (item: T, index: number) => void): void;
     static isNode(o: any): boolean;
@@ -48,6 +51,7 @@ export declare class Utils {
     static missingOrEmpty(value: any[] | string): boolean;
     static missingOrEmptyObject(value: any): boolean;
     static exists(value: any): boolean;
+    static anyExists(values: any[]): boolean;
     static existsAndNotEmpty(value: any[]): boolean;
     static removeAllChildren(node: HTMLElement): void;
     static removeElement(parent: HTMLElement, cssSelector: string): void;
@@ -209,3 +213,4 @@ export declare class NumberSequence {
     constructor(initValue?: number, step?: number);
     next(): number;
 }
+export declare let _: typeof Utils;

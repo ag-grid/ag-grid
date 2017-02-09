@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -195,10 +195,14 @@ var Column = (function () {
     Column.prototype.getLeft = function () {
         return this.left;
     };
+    Column.prototype.getOldLeft = function () {
+        return this.oldLeft;
+    };
     Column.prototype.getRight = function () {
         return this.left + this.actualWidth;
     };
     Column.prototype.setLeft = function (left) {
+        this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
             this.eventService.dispatchEvent(Column.EVENT_LEFT_CHANGED);

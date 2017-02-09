@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,21 +19,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var utils_1 = require("../utils");
-var column_1 = require("../entities/column");
-var filterManager_1 = require("../filter/filterManager");
-var columnController_1 = require("../columnController/columnController");
+var utils_1 = require("../../utils");
+var column_1 = require("../../entities/column");
+var filterManager_1 = require("../../filter/filterManager");
+var columnController_1 = require("../../columnController/columnController");
 var headerTemplateLoader_1 = require("./headerTemplateLoader");
-var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var horizontalDragService_1 = require("./horizontalDragService");
-var gridCore_1 = require("../gridCore");
-var context_1 = require("../context/context");
-var cssClassApplier_1 = require("./cssClassApplier");
-var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
-var sortController_1 = require("../sortController");
-var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
-var touchListener_1 = require("../widgets/touchListener");
-var component_1 = require("../widgets/component");
+var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
+var horizontalDragService_1 = require("../horizontalDragService");
+var gridCore_1 = require("../../gridCore");
+var context_1 = require("../../context/context");
+var cssClassApplier_1 = require("../cssClassApplier");
+var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
+var sortController_1 = require("../../sortController");
+var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
+var touchListener_1 = require("../../widgets/touchListener");
+var component_1 = require("../../widgets/component");
 var RenderedHeaderCell = (function (_super) {
     __extends(RenderedHeaderCell, _super);
     function RenderedHeaderCell(column, eRoot, dragSourceDropTarget, pinned) {
@@ -66,8 +66,7 @@ var RenderedHeaderCell = (function (_super) {
         this.setupFilterIcon();
         this.setupText();
         this.setupWidth();
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, eGui);
-        this.addDestroyFunc(function () { return setLeftFeature.destroy(); });
+        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, eGui));
     };
     RenderedHeaderCell.prototype.setupTooltip = function () {
         var colDef = this.column.getColDef();

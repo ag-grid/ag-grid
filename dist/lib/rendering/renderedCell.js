@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,6 +46,8 @@ var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
 var setLeftFeature_1 = require("./features/setLeftFeature");
 var methodNotImplementedException_1 = require("../misc/methodNotImplementedException");
 var stylingService_1 = require("../styling/stylingService");
+var columnHoverService_1 = require("./columnHoverService");
+var columnAnimationService_1 = require("./columnAnimationService");
 var RenderedCell = (function (_super) {
     __extends(RenderedCell, _super);
     function RenderedCell(column, node, scope, renderedRow) {
@@ -98,6 +100,10 @@ var RenderedCell = (function (_super) {
     };
     RenderedCell.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
+        if (this.eParentRow) {
+            this.eParentRow.removeChild(this.getGui());
+            this.eParentRow = null;
+        }
         if (this.cellEditor && this.cellEditor.destroy) {
             this.cellEditor.destroy();
         }
@@ -117,12 +123,8 @@ var RenderedCell = (function (_super) {
                 utils_1.Utils.addOrRemoveCssClass(_this.eGridCell, 'ag-cell-last-left-pinned', _this.lastLeftPinned);
             }
         };
-        this.column.addEventListener(column_1.Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
-        this.column.addEventListener(column_1.Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
-        this.addDestroyFunc(function () {
-            _this.column.removeEventListener(column_1.Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
-            _this.column.removeEventListener(column_1.Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
-        });
+        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstPinnedChangedListener);
+        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_LAST_LEFT_PINNED_CHANGED, firstPinnedChangedListener);
         firstPinnedChangedListener();
     };
     RenderedCell.prototype.getParentRow = function () {
@@ -131,30 +133,22 @@ var RenderedCell = (function (_super) {
     RenderedCell.prototype.setParentRow = function (eParentRow) {
         this.eParentRow = eParentRow;
     };
-    RenderedCell.prototype.calculateCheckboxSelection = function () {
-        // never allow selection on floating rows
-        if (this.node.floating) {
-            return false;
-        }
+    RenderedCell.prototype.setupCheckboxSelection = function () {
         // if boolean set, then just use it
         var colDef = this.column.getColDef();
-        if (typeof colDef.checkboxSelection === 'boolean') {
-            return colDef.checkboxSelection;
+        // never allow selection on floating rows
+        if (this.node.floating) {
+            this.usingWrapper = false;
         }
-        // if function, then call the function to find out. we first check colDef for
-        // a function, and if missing then check gridOptions, so colDef has precedence
-        var selectionFunc;
-        if (typeof colDef.checkboxSelection === 'function') {
-            selectionFunc = colDef.checkboxSelection;
+        else if (typeof colDef.checkboxSelection === 'boolean') {
+            this.usingWrapper = colDef.checkboxSelection;
         }
-        if (!selectionFunc && this.gridOptionsWrapper.getCheckboxSelection()) {
-            selectionFunc = this.gridOptionsWrapper.getCheckboxSelection();
+        else if (typeof colDef.checkboxSelection === 'function') {
+            this.usingWrapper = true;
         }
-        if (selectionFunc) {
-            var params = this.createParams();
-            return selectionFunc(params);
+        else {
+            this.usingWrapper = false;
         }
-        return false;
     };
     RenderedCell.prototype.getColumn = function () {
         return this.column;
@@ -300,17 +294,17 @@ var RenderedCell = (function (_super) {
     };
     RenderedCell.prototype.init = function () {
         this.value = this.getValue();
-        this.checkboxSelection = this.calculateCheckboxSelection();
+        this.setupCheckboxSelection();
         this.setWidthOnCell();
         this.setPinnedClasses();
         this.addRangeSelectedListener();
         this.addHighlightListener();
         this.addChangeListener();
         this.addCellFocusedListener();
+        this.addColumnHoverListener();
         this.addDomData();
         // this.addSuppressShortcutKeyListenersWhileEditing();
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.eGridCell);
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.eGridCell));
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
             this.eGridCell.setAttribute("tabindex", "-1");
@@ -320,6 +314,16 @@ var RenderedCell = (function (_super) {
         this.setInlineEditingClass();
         this.createParentOfValue();
         this.populateCell();
+    };
+    RenderedCell.prototype.addColumnHoverListener = function () {
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.onColumnHover();
+    };
+    RenderedCell.prototype.onColumnHover = function () {
+        var isHovered = this.columnHoverService.isHovered(this.column);
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+    };
+    RenderedCell.prototype.checkHoveringCell = function () {
     };
     RenderedCell.prototype.addDomData = function () {
         var domDataKey = this.gridOptionsWrapper.getDomDataKey();
@@ -370,6 +374,9 @@ var RenderedCell = (function (_super) {
         return this.editingCell;
     };
     RenderedCell.prototype.onTabKeyDown = function (event) {
+        if (this.gridOptionsWrapper.isSuppressTabbing()) {
+            return;
+        }
         this.rowRenderer.onTabKeyDown(this, event);
     };
     RenderedCell.prototype.onBackspaceOrDeleteKeyPressed = function (key) {
@@ -389,7 +396,7 @@ var RenderedCell = (function (_super) {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(key, this.gridCell.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.floating);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     };
@@ -598,7 +605,7 @@ var RenderedCell = (function (_super) {
         else {
             utils_1.Utils.removeAllChildren(this.eGridCell);
             // put the cell back the way it was before editing
-            if (this.checkboxSelection) {
+            if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
                 this.eGridCell.appendChild(this.eCellWrapper);
             }
@@ -662,7 +669,21 @@ var RenderedCell = (function (_super) {
             case 'contextmenu':
                 this.onContextMenu(mouseEvent);
                 break;
+            case 'mouseout':
+                this.onMouseOut(mouseEvent);
+                break;
+            case 'mouseover':
+                this.onMouseOver(mouseEvent);
+                break;
         }
+    };
+    RenderedCell.prototype.onMouseOut = function (mouseEvent) {
+        var agEvent = this.createEvent(mouseEvent);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_MOUSE_OUT, agEvent);
+    };
+    RenderedCell.prototype.onMouseOver = function (mouseEvent) {
+        var agEvent = this.createEvent(mouseEvent);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_MOUSE_OVER, agEvent);
     };
     RenderedCell.prototype.onContextMenu = function (mouseEvent) {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
@@ -784,43 +805,28 @@ var RenderedCell = (function (_super) {
     };
     RenderedCell.prototype.addClassesFromColDef = function () {
         var _this = this;
-        var colDef = this.column.getColDef();
-        if (colDef.cellClass) {
-            var classToUse;
-            if (typeof colDef.cellClass === 'function') {
-                var cellClassParams = {
-                    value: this.value,
-                    data: this.node.data,
-                    node: this.node,
-                    colDef: colDef,
-                    $scope: this.scope,
-                    context: this.gridOptionsWrapper.getContext(),
-                    api: this.gridOptionsWrapper.getApi()
-                };
-                var cellClassFunc = colDef.cellClass;
-                classToUse = cellClassFunc(cellClassParams);
-            }
-            else {
-                classToUse = colDef.cellClass;
-            }
-            if (typeof classToUse === 'string') {
-                utils_1.Utils.addCssClass(this.eGridCell, classToUse);
-            }
-            else if (Array.isArray(classToUse)) {
-                classToUse.forEach(function (cssClassItem) {
-                    utils_1.Utils.addCssClass(_this.eGridCell, cssClassItem);
-                });
-            }
-        }
+        this.stylingService.processStaticCellClasses(this.column.getColDef(), {
+            value: this.value,
+            data: this.node.data,
+            node: this.node,
+            colDef: this.column.getColDef(),
+            rowIndex: this.gridCell.rowIndex,
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
+        }, function (className) {
+            utils_1.Utils.addCssClass(_this.eGridCell, className);
+        });
     };
     RenderedCell.prototype.createParentOfValue = function () {
-        if (this.checkboxSelection) {
+        if (this.usingWrapper) {
             this.eCellWrapper = document.createElement('span');
             utils_1.Utils.addCssClass(this.eCellWrapper, 'ag-cell-wrapper');
             this.eGridCell.appendChild(this.eCellWrapper);
             var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
-            cbSelectionComponent.init({ rowNode: this.node });
+            var visibleFunc = this.column.getColDef().checkboxSelection;
+            visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
+            cbSelectionComponent.init({ rowNode: this.node, column: this.column, visibleFunc: visibleFunc });
             this.addDestroyFunc(function () { return cbSelectionComponent.destroy(); });
             // eventually we call eSpanWithValue.innerHTML = xxx, so cannot include the checkbox (above) in this span
             this.eSpanWithValue = document.createElement('span');
@@ -1046,6 +1052,10 @@ var RenderedCell = (function (_super) {
         __metadata('design:type', columnController_1.ColumnController)
     ], RenderedCell.prototype, "columnController", void 0);
     __decorate([
+        context_1.Autowired('columnAnimationService'), 
+        __metadata('design:type', columnAnimationService_1.ColumnAnimationService)
+    ], RenderedCell.prototype, "columnAnimationService", void 0);
+    __decorate([
         context_1.Optional('rangeController'), 
         __metadata('design:type', Object)
     ], RenderedCell.prototype, "rangeController", void 0);
@@ -1085,6 +1095,10 @@ var RenderedCell = (function (_super) {
         context_1.Autowired('stylingService'), 
         __metadata('design:type', stylingService_1.StylingService)
     ], RenderedCell.prototype, "stylingService", void 0);
+    __decorate([
+        context_1.Autowired('columnHoverService'), 
+        __metadata('design:type', columnHoverService_1.ColumnHoverService)
+    ], RenderedCell.prototype, "columnHoverService", void 0);
     __decorate([
         context_1.PostConstruct, 
         __metadata('design:type', Function), 

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -89,7 +89,7 @@ var InMemoryNodeManager = (function () {
             node.group = false;
             node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
             if (node.canFlower) {
-                node.expanded = false;
+                node.expanded = this.isExpanded(level);
             }
         }
         if (parent && !this.suppressParentsInRowNodes) {
@@ -99,6 +99,15 @@ var InMemoryNodeManager = (function () {
         node.setDataAndId(dataItem, this.nextId.toString());
         this.nextId++;
         return node;
+    };
+    InMemoryNodeManager.prototype.isExpanded = function (level) {
+        var expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+        if (expandByDefault === -1) {
+            return true;
+        }
+        else {
+            return level < expandByDefault;
+        }
     };
     InMemoryNodeManager.prototype.setLeafChildren = function (node) {
         node.allLeafChildren = [];

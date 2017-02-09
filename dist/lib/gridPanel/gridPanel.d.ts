@@ -1,8 +1,9 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
+import { KeyboardBinding, KeyboardBindingGroup } from "../constants";
 import { BeanStub } from "../context/beanStub";
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
 export interface RowContainerComponents {
@@ -99,6 +100,11 @@ export declare class GridPanel extends BeanStub {
     private addBodyViewportListener();
     private getRowForEvent(event);
     private processKeyboardEvent(eventName, keyboardEvent);
+    private handlePageScrollingKey(pagingKeyGroup, pagingKey, keyboardEvent);
+    private pageHorizontally(pagingKey);
+    private pageDiagonally(pagingKey);
+    private pageVertically(pagingKey);
+    private performScroll(scroll);
     private processMouseEvent(eventName, mouseEvent);
     private onContextMenu(mouseEvent);
     private preventDefaultOnContextMenu(mouseEvent);
@@ -155,7 +161,6 @@ export declare class GridPanel extends BeanStub {
     setBodyAndHeaderHeights(): void;
     setHorizontalScrollPosition(hScrollPosition: number): void;
     scrollHorizontally(pixels: number): number;
-    turnOnAnimationForABit(): void;
     private addScrollListener();
     private onBodyScroll();
     private onBodyHorizontalScroll();
@@ -172,4 +177,8 @@ export declare class GridPanel extends BeanStub {
     private fakeVerticalScroll(position);
     addScrollEventListener(listener: () => void): void;
     removeScrollEventListener(listener: () => void): void;
+}
+export interface TestKeyboardBindingGroupsResult {
+    trappedKeyboardBinding: KeyboardBinding;
+    trappedKeyboardBindingGroup: KeyboardBindingGroup;
 }

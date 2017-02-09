@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -93,6 +93,7 @@ export declare class ColumnController {
     private columnUtils;
     private gridPanel;
     private context;
+    private columnAnimationService;
     private aggFuncService;
     private primaryBalancedTree;
     private primaryHeaderRowCount;

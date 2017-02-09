@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -105,7 +105,11 @@ var RowRenderer = (function () {
         this.refreshView();
     };
     RowRenderer.prototype.onModelUpdated = function (refreshEvent) {
-        this.refreshView(refreshEvent.keepRenderedRows, refreshEvent.animate);
+        var params = {
+            keepRenderedRows: refreshEvent.keepRenderedRows,
+            animate: refreshEvent.animate
+        };
+        this.refreshView(params);
     };
     // if the row nodes are not rendered, no index is returned
     RowRenderer.prototype.getRenderedIndexesForRowNodes = function (rowNodes) {
@@ -131,14 +135,15 @@ var RowRenderer = (function () {
         // remove the rows
         this.removeVirtualRows(indexesToRemove);
         // add draw them again
-        this.refreshView(true, false);
+        this.refreshView({
+            keepRenderedRows: true
+        });
     };
-    RowRenderer.prototype.refreshView = function (keepRenderedRows, animate) {
-        if (keepRenderedRows === void 0) { keepRenderedRows = false; }
-        if (animate === void 0) { animate = false; }
+    RowRenderer.prototype.refreshView = function (params) {
+        if (params === void 0) { params = {}; }
         this.logger.log('refreshView');
         this.getLockOnRefresh();
-        var focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
+        var focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
         if (!this.gridOptionsWrapper.isForPrint()) {
             var containerHeight = this.rowModel.getRowCombinedHeight();
             // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
@@ -153,8 +158,10 @@ var RowRenderer = (function () {
             this.rowContainers.pinnedLeft.setHeight(containerHeight);
             this.rowContainers.pinnedRight.setHeight(containerHeight);
         }
-        this.refreshAllVirtualRows(keepRenderedRows, animate);
-        this.refreshAllFloatingRows();
+        this.refreshAllVirtualRows(params.keepRenderedRows, params.animate);
+        if (!params.onlyBody) {
+            this.refreshAllFloatingRows();
+        }
         this.restoreFocusedCell(focusedCell);
         this.releaseLockOnRefresh();
     };
@@ -352,7 +359,7 @@ var RowRenderer = (function () {
         for (var rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
-                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
+                utils_1.Utils.removeFromArray(rowsToRemove, rowIndex.toString());
                 continue;
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
@@ -367,6 +374,31 @@ var RowRenderer = (function () {
             delayedCreateFunctions.forEach(function (func) { return func(); });
         }, 0);
         // timer.print('creating template');
+        // check that none of the rows to remove are editing or focused as:
+        // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
+        //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
+        //    the edit is reset - so we want to keep it rendered.
+        // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
+        //    otherwise the user can range select and drag (with focus cell going out of the viewport)
+        //    and then ctrl+c, nothing will happen if cell is removed from dom.
+        rowsToRemove = utils_1.Utils.filter(rowsToRemove, function (indexStr) {
+            var REMOVE_ROW = true;
+            var KEEP_ROW = false;
+            var renderedRow = _this.renderedRows[indexStr];
+            var rowNode = renderedRow.getRowNode();
+            var rowHasFocus = _this.focusedCellController.isRowNodeFocused(rowNode);
+            var rowIsEditing = renderedRow.isEditing();
+            var mightWantToKeepRow = rowHasFocus || rowIsEditing;
+            // if we deffo don't want to keep it,
+            if (!mightWantToKeepRow) {
+                return REMOVE_ROW;
+            }
+            // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
+            // the reason we want to keep is if user is scrolling up and down, we don't want to loose
+            // the context of the editing in process.
+            var rowNodePresent = _this.rowModel.isRowPresent(rowNode);
+            return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
+        });
         // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
         this.removeVirtualRows(rowsToRemove);
         // and everything in our oldRenderedRowsByNodeId is an old row that is no longer used
@@ -412,7 +444,7 @@ var RowRenderer = (function () {
     };
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    RowRenderer.prototype.navigateToNextCell = function (key, rowIndex, column, floating) {
+    RowRenderer.prototype.navigateToNextCell = function (event, key, rowIndex, column, floating) {
         var previousCell = new gridCell_1.GridCell({ rowIndex: rowIndex, floating: floating, column: column });
         var nextCell = previousCell;
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
@@ -438,7 +470,8 @@ var RowRenderer = (function () {
             var params = {
                 key: key,
                 previousCellDef: previousCell,
-                nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+                nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
+                event: event
             };
             var nextCellDef = userFunc(params);
             if (utils_1.Utils.exists(nextCellDef)) {
@@ -597,7 +630,10 @@ var RowRenderer = (function () {
             if (cellIsNotFloating) {
                 this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
             }
-            this.gridPanel.ensureColumnVisible(nextCell.column);
+            // pinned columns don't scroll, so no need to ensure index visible
+            if (!nextCell.column.isPinned()) {
+                this.gridPanel.ensureColumnVisible(nextCell.column);
+            }
             // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
             // floating cell, the scrolls get out of sync
             this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();

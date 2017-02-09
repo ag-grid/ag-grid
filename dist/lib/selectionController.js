@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -209,12 +209,16 @@ var SelectionController = (function () {
         });
         return count === 0;
     };
-    SelectionController.prototype.deselectAllRowNodes = function () {
-        utils_1.Utils.iterateObject(this.selectedNodes, function (nodeId, rowNode) {
-            if (rowNode) {
-                rowNode.selectThisNode(false);
-            }
-        });
+    SelectionController.prototype.deselectAllRowNodes = function (justFiltered) {
+        if (justFiltered === void 0) { justFiltered = false; }
+        var inMemoryRowModel = this.rowModel;
+        var callback = function (rowNode) { return rowNode.selectThisNode(false); };
+        if (justFiltered) {
+            inMemoryRowModel.forEachNodeAfterFilter(callback);
+        }
+        else {
+            inMemoryRowModel.forEachNode(callback);
+        }
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
@@ -222,16 +226,28 @@ var SelectionController = (function () {
         // we should not have to do this, as deselecting the nodes fires events
         // that we pick up, however it's good to clean it down, as we are still
         // left with entries pointing to 'undefined'
-        this.selectedNodes = {};
+        if (!justFiltered) {
+            this.selectedNodes = {};
+        }
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };
-    SelectionController.prototype.selectAllRowNodes = function () {
+    SelectionController.prototype.selectAllRowNodes = function (justFiltered) {
+        if (justFiltered === void 0) { justFiltered = false; }
         if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
-            throw 'selectAll only available with normal row model, ie not virtual pagination';
+            throw "selectAll only available with normal row model, ie not " + this.rowModel.getType();
         }
-        this.rowModel.forEachNode(function (rowNode) {
-            rowNode.selectThisNode(true);
-        });
+        var inMemoryRowModel = this.rowModel;
+        var callback = function (rowNode) { return rowNode.selectThisNode(true); };
+        if (justFiltered) {
+            inMemoryRowModel.forEachNodeAfterFilter(callback);
+        }
+        else {
+            inMemoryRowModel.forEachNode(callback);
+        }
+        // the above does not clean up the parent rows if they are selected
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+            this.updateGroupsFromChildrenSelections();
+        }
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };
     // Deprecated method

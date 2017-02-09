@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./colDef";
@@ -85,8 +85,6 @@ export declare class RowNode {
     expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
     sibling: RowNode;
-    /** Not to be used, internal temporary map used by the grid when creating groups */
-    _childrenMap: {};
     /** The height, in pixels, of this row */
     rowHeight: number;
     /** The top pixel for this row */

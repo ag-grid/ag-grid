@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,8 +26,16 @@ var SortController = (function () {
     function SortController() {
     }
     SortController.prototype.progressSort = function (column, multiSort) {
+        var nextDirection = this.getNextSortDirection(column);
+        this.setSortForColumn(column, nextDirection, multiSort);
+    };
+    SortController.prototype.setSortForColumn = function (column, sort, multiSort) {
+        // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
+        if (sort !== column_1.Column.SORT_ASC && sort !== column_1.Column.SORT_DESC) {
+            sort = null;
+        }
         // update sort on current col
-        column.setSort(this.getNextSortDirection(column));
+        column.setSort(sort);
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.getSort()) {
             var sortedAt = Number(new Date().valueOf());

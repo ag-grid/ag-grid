@@ -1,17 +1,37 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
+import { IComponent } from "../../interfaces/iComponent";
+import { RowNode } from "../../entities/rowNode";
+import { ColDef } from "../../entities/colDef";
+import { Column } from "../../entities/column";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnController";
+export interface ICellRendererParams {
+    value: any;
+    valueFormatted: any;
+    valueGetter: () => any;
+    formatValue: (value: any) => any;
+    data: any;
+    node: RowNode;
+    colDef: ColDef;
+    column: Column;
+    $scope: any;
+    rowIndex: number;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+    refreshCell: () => void;
+    eGridCell: HTMLElement;
+    eParentOfValue: HTMLElement;
+    addRenderedRowListener: (eventType: string, listener: Function) => void;
+}
 export interface ICellRenderer {
-    /** Params for rendering. The same params that are passed to the cellRenderer function.
-     */
-    init?(params: any): void;
-    /** Return the DOM element of your editor, this is what the grid puts into the DOM */
-    getGui(): HTMLElement;
-    /** Gets called once by grid after editing is finished - if your editor needs to do any cleanup, do it here */
-    destroy?(): void;
     /** Get the cell to refresh. If this method is not provided, then when refresh is needed, the grid
      * will remove the component from the DOM and create a new component in it's place with the new values. */
     refresh?(params: any): void;
+}
+export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams> {
 }
 export interface ICellRendererFunc {
     (params: any): HTMLElement | string;

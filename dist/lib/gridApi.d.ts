@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
@@ -9,7 +9,7 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 import { GridCell } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IFilter } from "./interfaces/iFilter";
+import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exportParams";
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -89,6 +89,8 @@ export declare class GridApi {
     deselectNode(node: RowNode, suppressEvents?: boolean): void;
     selectAll(): void;
     deselectAll(): void;
+    selectAllFiltered(): void;
+    deselectAllFiltered(): void;
     recomputeAggregates(): void;
     sizeColumnsToFit(): void;
     showLoadingOverlay(): void;
@@ -111,8 +113,8 @@ export declare class GridApi {
     forEachNodeAfterFilter(callback: (rowNode: RowNode) => void): void;
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode) => void): void;
     getFilterApiForColDef(colDef: any): any;
-    getFilterInstance(key: string | Column | ColDef): IFilter;
-    getFilterApi(key: string | Column | ColDef): IFilter;
+    getFilterInstance(key: string | Column | ColDef): IFilterComp;
+    getFilterApi(key: string | Column | ColDef): IFilterComp;
     destroyFilter(key: string | Column | ColDef): void;
     getColumnDef(key: string | Column | ColDef): ColDef;
     onFilterChanged(): void;
@@ -158,9 +160,9 @@ export declare class GridApi {
         [key: string]: IAggFunc;
     }): void;
     clearAggFuncs(): void;
-    insertItemsAtIndex(index: number, items: any[]): void;
-    removeItems(rowNodes: RowNode[]): void;
-    addItems(items: any[]): void;
+    insertItemsAtIndex(index: number, items: any[], skipRefresh?: boolean): void;
+    removeItems(rowNodes: RowNode[], skipRefresh?: boolean): void;
+    addItems(items: any[], skipRefresh?: boolean): void;
     refreshVirtualPageCache(): void;
     purgeVirtualPageCache(): void;
     getVirtualRowCount(): number;

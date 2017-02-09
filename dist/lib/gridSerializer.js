@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -140,7 +140,7 @@ var GridSerializer = (function () {
             gridSerializingSession.addCustomHeader(params.customHeader);
         }
         // first pass, put in the header names of the cols
-        if (!skipHeader) {
+        if (!skipHeader || columnGroups) {
             var groupInstanceIdCreator = new groupInstanceIdCreator_1.GroupInstanceIdCreator();
             var displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, this.columnController.getGridBalancedTree(), groupInstanceIdCreator);
             if (columnGroups && displayedGroups.length > 0 && displayedGroups[0] instanceof columnGroup_1.ColumnGroup) {
@@ -151,10 +151,12 @@ var GridSerializer = (function () {
                     gridRowIterator_1.onColumn(casted.getDefinition().headerName, columnIndex_1++, casted.getChildren().length - 1);
                 });
             }
-            var gridRowIterator_2 = gridSerializingSession.onNewHeaderRow();
-            columnsToExport.forEach(function (column, index) {
-                gridRowIterator_2.onColumn(column, index, null);
-            });
+            if (!skipHeader) {
+                var gridRowIterator_2 = gridSerializingSession.onNewHeaderRow();
+                columnsToExport.forEach(function (column, index) {
+                    gridRowIterator_2.onColumn(column, index, null);
+                });
+            }
         }
         this.floatingRowModel.forEachFloatingTopRow(processRow);
         if (isPivotMode) {

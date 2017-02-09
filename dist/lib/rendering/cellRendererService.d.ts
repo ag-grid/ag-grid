@@ -1,7 +1,7 @@
-// Type definitions for ag-grid v7.2.2
+// Type definitions for ag-grid v8.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { ICellRenderer, ICellRendererFunc } from "./cellRenderers/iCellRenderer";
+import { ICellRendererFunc, ICellRendererComp } from "./cellRenderers/iCellRenderer";
 /** Class to use a cellRenderer. */
 export declare class CellRendererService {
     private cellRendererFactory;
@@ -13,8 +13,8 @@ export declare class CellRendererService {
      * @eTarget: The DOM element we will put the results of the html element into *
      * @return: If options a, it returns the created class instance */
     useCellRenderer(cellRendererKey: {
-        new (): ICellRenderer;
-    } | ICellRendererFunc | string, eTarget: HTMLElement, params: any): ICellRenderer;
+        new (): ICellRendererComp;
+    } | ICellRendererFunc | string, eTarget: HTMLElement, params: any): ICellRendererComp;
     private checkForDeprecatedItems(cellRenderer);
     private doesImplementICellRenderer(cellRenderer);
     private lookUpCellRenderer(cellRendererKey);

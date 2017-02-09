@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,8 +19,9 @@ var gridPanel_1 = require("../gridPanel/gridPanel");
 var context_1 = require("../context/context");
 var context_2 = require("../context/context");
 var headerRenderer_1 = require("../headerRendering/headerRenderer");
-var renderedHeaderCell_1 = require("../headerRendering/renderedHeaderCell");
+var renderedHeaderCell_1 = require("../headerRendering/deprecated/renderedHeaderCell");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var headerWrapperComp_1 = require("../headerRendering/header/headerWrapperComp");
 var AutoWidthCalculator = (function () {
     function AutoWidthCalculator() {
     }
@@ -29,9 +30,9 @@ var AutoWidthCalculator = (function () {
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
     AutoWidthCalculator.prototype.getPreferredWidthForColumn = function (column) {
-        var renderedHeaderCell = this.getHeaderCellForColumn(column);
+        var eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
-        if (!renderedHeaderCell) {
+        if (!eHeaderCell) {
             return -1;
         }
         var eDummyContainer = document.createElement('span');
@@ -48,7 +49,7 @@ var AutoWidthCalculator = (function () {
         // we only consider the lowest level cell, not the group cell. in 99% of the time, this
         // will be enough. if we consider groups, then it gets to complicated for what it's worth,
         // as the groups can span columns and this class only considers one column at a time.
-        this.cloneItemIntoDummy(renderedHeaderCell.getGui(), eDummyContainer);
+        this.cloneItemIntoDummy(eHeaderCell, eDummyContainer);
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
         var dummyContainerWidth = eDummyContainer.offsetWidth;
@@ -62,17 +63,23 @@ var AutoWidthCalculator = (function () {
         return dummyContainerWidth + autoSizePadding;
     };
     AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
-        var renderedHeaderCell = null;
+        var comp = null;
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement(function (headerElement) {
             if (headerElement instanceof renderedHeaderCell_1.RenderedHeaderCell) {
                 var currentCell = headerElement;
                 if (currentCell.getColumn() === column) {
-                    renderedHeaderCell = currentCell;
+                    comp = currentCell;
+                }
+            }
+            else if (headerElement instanceof headerWrapperComp_1.HeaderWrapperComp) {
+                var headerWrapperComp = headerElement;
+                if (headerWrapperComp.getColumn() === column) {
+                    comp = headerWrapperComp;
                 }
             }
         });
-        return renderedHeaderCell;
+        return comp ? comp.getGui() : null;
     };
     AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
         var _this = this;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v7.2.2
+ * @version v8.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,6 +54,9 @@ var Events = (function () {
     Events.EVENT_CELL_FOCUSED = 'cellFocused';
     Events.EVENT_ROW_SELECTED = 'rowSelected';
     Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
+    Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
+    Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
+    Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     /** 3 events for filtering. The grid LISTENS for filterChanged, and does the filter here. The before and after
      * are for the client, if it wants to do something before or after the filter getting applied. */
     Events.EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
