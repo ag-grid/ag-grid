@@ -12,7 +12,7 @@
     "clean-main": "rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts",
     "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main",
     "clean-build": "npm run clean && npm run build",
-    "release": "npm run clean-build && gulp"
+    "release": "npm run clean-build"
   },
   "repository": {
     "type": "git",
