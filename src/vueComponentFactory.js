@@ -7,7 +7,7 @@ export class VueComponentFactory {
     }
 
     createRendererFromComponent(component) {
-        let componentType = this.getComponentType(component);
+        let componentType = VueComponentFactory.getComponentType(this.parent, component);
         if (!componentType) {
             return;
         }
@@ -30,7 +30,7 @@ export class VueComponentFactory {
     }
 
     createEditorFromComponent(component) {
-        let componentType = this.getComponentType(component);
+        let componentType = VueComponentFactory.getComponentType(this.parent, component);
         if (!componentType) {
             return;
         }
@@ -84,7 +84,7 @@ export class VueComponentFactory {
     }
 
     createFilterFromComponent(component) {
-        let componentType = this.getComponentType(component);
+        let componentType = VueComponentFactory.getComponentType(this.parent, component);
         if (!componentType) {
             return;
         }
@@ -132,9 +132,9 @@ export class VueComponentFactory {
         return Filter;
     }
 
-    getComponentType(component) {
+    static getComponentType(parent, component) {
         if (typeof component === 'string') {
-            let componentInstance = this.parent.$parent.$options.components[component];
+            let componentInstance = parent.$parent.$options.components[component];
             if (!componentInstance) {
                 console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
                 return null;

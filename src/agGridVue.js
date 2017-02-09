@@ -1,6 +1,7 @@
 import Vue from "vue";
 import {Grid, ComponentUtil} from "ag-grid/main";
 import {VueFrameworkFactory} from "./vueFrameworkFactory";
+import {VueFrameworkComponentWrapper} from "./vueFrameworkComponentWrapper";
 
 const watchedProperties = {};
 const props = ['gridOptions'];
@@ -57,6 +58,9 @@ export default Vue.extend({
             globalEventListener: this.globalEventListener.bind(this),
             frameworkFactory: vueFrameworkFactory
         };
+
+        VueFrameworkComponentWrapper._parent = this;
+        Grid.setFrameworkBeans([VueFrameworkComponentWrapper]);
         new Grid(this.$el, gridOptions, gridParams);
 
         if (this.gridOptions.api) {
