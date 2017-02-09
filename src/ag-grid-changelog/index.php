@@ -6,6 +6,8 @@
     <title>ag-Grid Changelog</title>
     <meta name="description" content="ag-Grid - Changelog of Work.">
     <meta name="keywords" content="ag-Grid javascript grid changelog release notes"/>
+    <meta http-equiv="Cache-control" content="public">
+    <meta http-equiv="cache-control" content="max-age=86400" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
