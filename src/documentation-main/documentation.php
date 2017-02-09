@@ -29,7 +29,7 @@ include 'documentation_header.php';
     <div class="news-box">
         <div class="news-header">6th February 2017</div>
         <div style="padding-top: 10px;">
-            <a href="../ag-grid-fun-git-cmd-line/">
+            <a href="../git-color/">
                 <img src="../images/agGridDaily.png"/>
                 <br/>
                 Git on the Command Line - Improving the Experience
