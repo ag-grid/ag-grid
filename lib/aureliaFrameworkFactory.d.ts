@@ -1,6 +1,6 @@
-// ag-grid-aurelia v7.2.0
+// ag-grid-aurelia v8.0.0
 import { Container, ViewResources, ViewCompiler } from "aurelia-framework";
-import { ICellRenderer, ICellEditor, IFrameworkFactory, IFilter, ICellRendererFunc, ColDef, GridOptions } from "ag-grid/main";
+import { IFrameworkFactory, IFilterComp, ICellRendererFunc, ColDef, GridOptions, ICellRendererComp, ICellEditorComp } from "ag-grid/main";
 import { AureliaComponentFactory } from "./aureliaComponentFactory";
 export declare class AureliaFrameworkFactory implements IFrameworkFactory {
     private _componentFactory;
@@ -10,25 +10,25 @@ export declare class AureliaFrameworkFactory implements IFrameworkFactory {
     private _baseFrameworkFactory;
     constructor(_componentFactory: AureliaComponentFactory, _viewCompiler: ViewCompiler);
     colDefFloatingCellRenderer(colDef: ColDef): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     colDefCellRenderer(colDef: ColDef): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     colDefCellEditor(colDef: ColDef): {
-        new (): ICellEditor;
+        new (): ICellEditorComp;
     } | string;
     gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     gridOptionsGroupRowRenderer(gridOptions: GridOptions): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     colDefFilter(colDef: ColDef): {
-        new (): IFilter;
+        new (): IFilterComp;
     } | string;
     setContainer(container: Container): void;
     setViewResources(viewResources: ViewResources): void;
