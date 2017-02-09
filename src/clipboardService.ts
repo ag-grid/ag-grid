@@ -395,6 +395,7 @@ export class ClipboardService implements IClipboardService {
             columnKeys: columnKeys,
             skipHeader: skipHeader,
             skipFooters: true,
+            suppressQuotes: true,
             columnSeparator: '\t',
             onlySelected: true,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
