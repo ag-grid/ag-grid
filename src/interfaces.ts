@@ -27,3 +27,7 @@ export interface IDateAngularComp extends IDate, AgFrameworkComponent<IDateParam
 export interface IFilterAngularComp extends IFilter, AgFrameworkComponent<IFilterParams> {}
 export interface ICellRendererAngularComp extends ICellRenderer, AgFrameworkComponent<ICellRendererParams> {}
 export interface ICellEditorAngularComp extends ICellEditor, AgFrameworkComponent<ICellEditorParams> {}
+
+export interface AgRendererComponent extends ICellRendererAngularComp {}
+export interface AgEditorComponent extends ICellEditorAngularComp {}
+export interface AgFilterComponent extends IFilterAngularComp {}
