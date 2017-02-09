@@ -17,8 +17,8 @@ include '../documentation-main/documentation_header.php';
     <div class="note" style="margin-bottom: 20px">
         <img align="left" src="../images/note.png" style="margin-right: 10px;" />
         <p>This section explains how to utilise ag-Grid cellEditors using Aurelia. You should read about how
-        <a href="../javascript-grid-cell-editing">Cell Editing works in ag-Grid</a> first before trying to
-        understand this section.</p>
+            <a href="../javascript-grid-cell-editor/">Cell Editing</a> works in ag-Grid first before trying to
+            understand this section.</p>
     </div>
 
     <p>

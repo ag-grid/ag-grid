@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Header Rendering</h2>
+    <h2>Header Components</h2>
 
     <p>
         You can specify what header renderer to use at the column definition level.
