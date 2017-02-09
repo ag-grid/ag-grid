@@ -1,11 +1,11 @@
-// ag-grid-aurelia v7.2.0
+// ag-grid-aurelia v8.0.0
 import { Container, ViewFactory } from "aurelia-framework";
-import { ICellRenderer, ICellEditor } from "ag-grid/main";
+import { ICellRendererComp, ICellEditorComp } from "ag-grid/main";
 export declare class AureliaComponentFactory {
     createRendererFromTemplate(container: Container, viewFactory: ViewFactory): {
-        new (): ICellRenderer;
+        new (): ICellRendererComp;
     };
     createEditorFromTemplate(container: Container, viewFactory: ViewFactory): {
-        new (): ICellEditor;
+        new (): ICellEditorComp;
     };
 }
