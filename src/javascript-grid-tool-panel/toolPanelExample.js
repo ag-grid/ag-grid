@@ -20,7 +20,7 @@ function countryHeaderValueGetter(params) {
         case 'clipboard': return 'CLIP Country';
         case 'toolPanel': return 'TP Country';
         case 'columnDrop': return 'CD Country';
-        case 'header': return 'Country';
+        case 'header': return 'H Country';
         default: return 'Should never happen!';
     }
 }
