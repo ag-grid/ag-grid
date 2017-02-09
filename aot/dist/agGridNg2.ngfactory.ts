@@ -12,12 +12,16 @@ import * as import3 from '@angular/core/src/linker/view_utils';
 import * as import4 from '@angular/core/src/render/api';
 import * as import5 from '@angular/core/src/metadata/view';
 import * as import6 from '@angular/core/src/linker/view_container';
-import * as import7 from '@angular/core/src/linker/query_list';
-import * as import8 from '@angular/core/src/linker/view_type';
-import * as import9 from '@angular/core/src/change_detection/constants';
-import * as import10 from '@angular/core/src/linker/component_factory';
-import * as import11 from '@angular/core/src/linker/element_ref';
-import * as import12 from '../../dist/ng2FrameworkFactory';
+import * as import7 from '../../dist/ng2FrameworkFactory';
+import * as import8 from '../../dist/ng2FrameworkComponentWrapper';
+import * as import9 from '@angular/core/src/linker/query_list';
+import * as import10 from '@angular/core/src/linker/view_type';
+import * as import11 from '@angular/core/src/change_detection/constants';
+import * as import12 from '@angular/core/src/linker/component_factory';
+import * as import13 from '../../dist/baseComponentFactory';
+import * as import14 from '@angular/core/src/zone/ng_zone';
+import * as import15 from '@angular/core/src/linker/element_ref';
+import * as import16 from '@angular/core/src/linker/component_factory_resolver';
 export class Wrapper_AgGridNg2 {
   /*private*/ _eventHandler:Function;
   context:import0.AgGridNg2;
@@ -173,6 +177,9 @@ export class Wrapper_AgGridNg2 {
   /*private*/ _expr_147:any;
   /*private*/ _expr_148:any;
   /*private*/ _expr_149:any;
+  /*private*/ _expr_150:any;
+  /*private*/ _expr_151:any;
+  /*private*/ _expr_152:any;
   subscription0:any;
   subscription1:any;
   subscription2:any;
@@ -236,10 +243,13 @@ export class Wrapper_AgGridNg2 {
   subscription60:any;
   subscription61:any;
   subscription62:any;
-  constructor(p0:any,p1:any,p2:any) {
+  subscription63:any;
+  subscription64:any;
+  subscription65:any;
+  constructor(p0:any,p1:any,p2:any,p3:any,p4:any) {
     this._changed = false;
     this._changes = {};
-    this.context = new import0.AgGridNg2(p0,p1,p2);
+    this.context = new import0.AgGridNg2(p0,p1,p2,p3,p4);
     this._expr_0 = import1.UNINITIALIZED;
     this._expr_1 = import1.UNINITIALIZED;
     this._expr_2 = import1.UNINITIALIZED;
@@ -390,6 +400,9 @@ export class Wrapper_AgGridNg2 {
     this._expr_147 = import1.UNINITIALIZED;
     this._expr_148 = import1.UNINITIALIZED;
     this._expr_149 = import1.UNINITIALIZED;
+    this._expr_150 = import1.UNINITIALIZED;
+    this._expr_151 = import1.UNINITIALIZED;
+    this._expr_152 = import1.UNINITIALIZED;
   }
   ngOnDetach(view:import2.AppView<any>,componentView:import2.AppView<any>,el:any):void {
   }
@@ -458,6 +471,9 @@ export class Wrapper_AgGridNg2 {
     (this.subscription60 && this.subscription60.unsubscribe());
     (this.subscription61 && this.subscription61.unsubscribe());
     (this.subscription62 && this.subscription62.unsubscribe());
+    (this.subscription63 && this.subscription63.unsubscribe());
+    (this.subscription64 && this.subscription64.unsubscribe());
+    (this.subscription65 && this.subscription65.unsubscribe());
   }
   check_gridOptions(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_0,currValue))) {
@@ -1603,60 +1619,84 @@ export class Wrapper_AgGridNg2 {
       this._expr_142 = currValue;
     }
   }
-  check_sendToClipboard(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+  check_dateComponentFramework(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_143,currValue))) {
       this._changed = true;
-      this.context.sendToClipboard = currValue;
-      this._changes['sendToClipboard'] = new import1.SimpleChange(this._expr_143,currValue);
+      this.context.dateComponentFramework = currValue;
+      this._changes['dateComponentFramework'] = new import1.SimpleChange(this._expr_143,currValue);
       this._expr_143 = currValue;
     }
   }
-  check_navigateToNextCell(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+  check_dateComponentParams(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_144,currValue))) {
       this._changed = true;
-      this.context.navigateToNextCell = currValue;
-      this._changes['navigateToNextCell'] = new import1.SimpleChange(this._expr_144,currValue);
+      this.context.dateComponentParams = currValue;
+      this._changes['dateComponentParams'] = new import1.SimpleChange(this._expr_144,currValue);
       this._expr_144 = currValue;
     }
   }
-  check_tabToNextCell(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+  check_sendToClipboard(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_145,currValue))) {
       this._changed = true;
-      this.context.tabToNextCell = currValue;
-      this._changes['tabToNextCell'] = new import1.SimpleChange(this._expr_145,currValue);
+      this.context.sendToClipboard = currValue;
+      this._changes['sendToClipboard'] = new import1.SimpleChange(this._expr_145,currValue);
       this._expr_145 = currValue;
     }
   }
-  check_processCellFromClipboard(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+  check_navigateToNextCell(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_146,currValue))) {
       this._changed = true;
-      this.context.processCellFromClipboard = currValue;
-      this._changes['processCellFromClipboard'] = new import1.SimpleChange(this._expr_146,currValue);
+      this.context.navigateToNextCell = currValue;
+      this._changes['navigateToNextCell'] = new import1.SimpleChange(this._expr_146,currValue);
       this._expr_146 = currValue;
     }
   }
-  check_getDocument(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+  check_tabToNextCell(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_147,currValue))) {
       this._changed = true;
-      this.context.getDocument = currValue;
-      this._changes['getDocument'] = new import1.SimpleChange(this._expr_147,currValue);
+      this.context.tabToNextCell = currValue;
+      this._changes['tabToNextCell'] = new import1.SimpleChange(this._expr_147,currValue);
       this._expr_147 = currValue;
     }
   }
-  check_enableGroupEdit(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+  check_processCellFromClipboard(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_148,currValue))) {
       this._changed = true;
-      this.context.enableGroupEdit = currValue;
-      this._changes['enableGroupEdit'] = new import1.SimpleChange(this._expr_148,currValue);
+      this.context.processCellFromClipboard = currValue;
+      this._changes['processCellFromClipboard'] = new import1.SimpleChange(this._expr_148,currValue);
       this._expr_148 = currValue;
     }
   }
-  check_embedFullWidthRows(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+  check_getDocument(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
     if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_149,currValue))) {
       this._changed = true;
-      this.context.embedFullWidthRows = currValue;
-      this._changes['embedFullWidthRows'] = new import1.SimpleChange(this._expr_149,currValue);
+      this.context.getDocument = currValue;
+      this._changes['getDocument'] = new import1.SimpleChange(this._expr_149,currValue);
       this._expr_149 = currValue;
+    }
+  }
+  check_enableGroupEdit(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_150,currValue))) {
+      this._changed = true;
+      this.context.enableGroupEdit = currValue;
+      this._changes['enableGroupEdit'] = new import1.SimpleChange(this._expr_150,currValue);
+      this._expr_150 = currValue;
+    }
+  }
+  check_embedFullWidthRows(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_151,currValue))) {
+      this._changed = true;
+      this.context.embedFullWidthRows = currValue;
+      this._changes['embedFullWidthRows'] = new import1.SimpleChange(this._expr_151,currValue);
+      this._expr_151 = currValue;
+    }
+  }
+  check_suppressTabbing(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_152,currValue))) {
+      this._changed = true;
+      this.context.suppressTabbing = currValue;
+      this._changes['suppressTabbing'] = new import1.SimpleChange(this._expr_152,currValue);
+      this._expr_152 = currValue;
     }
   }
   ngDoCheck(view:import2.AppView<any>,el:any,throwOnChange:boolean):boolean {
@@ -1674,7 +1714,7 @@ export class Wrapper_AgGridNg2 {
     var result:boolean = true;
     return result;
   }
-  subscribe(view:import2.AppView<any>,_eventHandler:any,emit0:boolean,emit1:boolean,emit2:boolean,emit3:boolean,emit4:boolean,emit5:boolean,emit6:boolean,emit7:boolean,emit8:boolean,emit9:boolean,emit10:boolean,emit11:boolean,emit12:boolean,emit13:boolean,emit14:boolean,emit15:boolean,emit16:boolean,emit17:boolean,emit18:boolean,emit19:boolean,emit20:boolean,emit21:boolean,emit22:boolean,emit23:boolean,emit24:boolean,emit25:boolean,emit26:boolean,emit27:boolean,emit28:boolean,emit29:boolean,emit30:boolean,emit31:boolean,emit32:boolean,emit33:boolean,emit34:boolean,emit35:boolean,emit36:boolean,emit37:boolean,emit38:boolean,emit39:boolean,emit40:boolean,emit41:boolean,emit42:boolean,emit43:boolean,emit44:boolean,emit45:boolean,emit46:boolean,emit47:boolean,emit48:boolean,emit49:boolean,emit50:boolean,emit51:boolean,emit52:boolean,emit53:boolean,emit54:boolean,emit55:boolean,emit56:boolean,emit57:boolean,emit58:boolean,emit59:boolean,emit60:boolean,emit61:boolean,emit62:boolean):void {
+  subscribe(view:import2.AppView<any>,_eventHandler:any,emit0:boolean,emit1:boolean,emit2:boolean,emit3:boolean,emit4:boolean,emit5:boolean,emit6:boolean,emit7:boolean,emit8:boolean,emit9:boolean,emit10:boolean,emit11:boolean,emit12:boolean,emit13:boolean,emit14:boolean,emit15:boolean,emit16:boolean,emit17:boolean,emit18:boolean,emit19:boolean,emit20:boolean,emit21:boolean,emit22:boolean,emit23:boolean,emit24:boolean,emit25:boolean,emit26:boolean,emit27:boolean,emit28:boolean,emit29:boolean,emit30:boolean,emit31:boolean,emit32:boolean,emit33:boolean,emit34:boolean,emit35:boolean,emit36:boolean,emit37:boolean,emit38:boolean,emit39:boolean,emit40:boolean,emit41:boolean,emit42:boolean,emit43:boolean,emit44:boolean,emit45:boolean,emit46:boolean,emit47:boolean,emit48:boolean,emit49:boolean,emit50:boolean,emit51:boolean,emit52:boolean,emit53:boolean,emit54:boolean,emit55:boolean,emit56:boolean,emit57:boolean,emit58:boolean,emit59:boolean,emit60:boolean,emit61:boolean,emit62:boolean,emit63:boolean,emit64:boolean,emit65:boolean):void {
     this._eventHandler = _eventHandler;
     if (emit0) { (this.subscription0 = this.context.gridReady.subscribe(_eventHandler.bind(view,'gridReady'))); }
     if (emit1) { (this.subscription1 = this.context.columnEverythingChanged.subscribe(_eventHandler.bind(view,'columnEverythingChanged'))); }
@@ -1739,6 +1779,9 @@ export class Wrapper_AgGridNg2 {
     if (emit60) { (this.subscription60 = this.context.displayedColumnsWidthChanged.subscribe(_eventHandler.bind(view,'displayedColumnsWidthChanged'))); }
     if (emit61) { (this.subscription61 = this.context.scrollVisibilityChanged.subscribe(_eventHandler.bind(view,'scrollVisibilityChanged'))); }
     if (emit62) { (this.subscription62 = this.context.flashCells.subscribe(_eventHandler.bind(view,'flashCells'))); }
+    if (emit63) { (this.subscription63 = this.context.cellMouseOver.subscribe(_eventHandler.bind(view,'cellMouseOver'))); }
+    if (emit64) { (this.subscription64 = this.context.cellMouseOut.subscribe(_eventHandler.bind(view,'cellMouseOut'))); }
+    if (emit65) { (this.subscription65 = this.context.columnHoverChanged.subscribe(_eventHandler.bind(view,'columnHoverChanged'))); }
   }
 }
 var renderType_AgGridNg2_Host:import4.RenderComponentType = import3.createRenderComponentType('',0,import5.ViewEncapsulation.None,([] as any[]),{});
@@ -1746,42 +1789,48 @@ class View_AgGridNg2_Host0 extends import2.AppView<any> {
   _el_0:any;
   /*private*/ _vc_0:import6.ViewContainer;
   compView_0:import2.AppView<import0.AgGridNg2>;
-  _AgGridNg2_0_5:Wrapper_AgGridNg2;
-  _query_AgGridColumn_0_0:import7.QueryList<any>;
+  _Ng2FrameworkFactory_0_5:import7.Ng2FrameworkFactory;
+  _Ng2FrameworkComponentWrapper_0_6:import8.Ng2FrameworkComponentWrapper;
+  _AgGridNg2_0_7:Wrapper_AgGridNg2;
+  _query_AgGridColumn_0_0:import9.QueryList<any>;
   _el_1:any;
   constructor(viewUtils:import3.ViewUtils,parentView:import2.AppView<any>,parentIndex:number,parentElement:any) {
-    super(View_AgGridNg2_Host0,renderType_AgGridNg2_Host,import8.ViewType.HOST,viewUtils,parentView,parentIndex,parentElement,import9.ChangeDetectorStatus.CheckAlways);
+    super(View_AgGridNg2_Host0,renderType_AgGridNg2_Host,import10.ViewType.HOST,viewUtils,parentView,parentIndex,parentElement,import11.ChangeDetectorStatus.CheckAlways);
   }
-  createInternal(rootSelector:string):import10.ComponentRef<any> {
+  createInternal(rootSelector:string):import12.ComponentRef<any> {
     this._el_0 = import3.selectOrCreateRenderHostElement(this.renderer,'ag-grid-ng2',import3.EMPTY_INLINE_ARRAY,rootSelector,(null as any));
     this._vc_0 = new import6.ViewContainer(0,(null as any),this,this._el_0);
     this.compView_0 = new View_AgGridNg20(this.viewUtils,this,0,this._el_0);
-    this._AgGridNg2_0_5 = new Wrapper_AgGridNg2(new import11.ElementRef(this._el_0),this._vc_0.vcRef,this.injectorGet(import12.Ng2FrameworkFactory,this.parentIndex));
-    this._query_AgGridColumn_0_0 = new import7.QueryList<any>();
-    this.compView_0.create(this._AgGridNg2_0_5.context);
+    this._Ng2FrameworkFactory_0_5 = new import7.Ng2FrameworkFactory(this.injectorGet(import13.BaseComponentFactory,this.parentIndex),this.injectorGet(import14.NgZone,this.parentIndex));
+    this._Ng2FrameworkComponentWrapper_0_6 = new import8.Ng2FrameworkComponentWrapper();
+    this._AgGridNg2_0_7 = new Wrapper_AgGridNg2(new import15.ElementRef(this._el_0),this._vc_0.vcRef,this._Ng2FrameworkFactory_0_5,this._Ng2FrameworkComponentWrapper_0_6,this.injectorGet(import16.ComponentFactoryResolver,this.parentIndex));
+    this._query_AgGridColumn_0_0 = new import9.QueryList<any>();
+    this.compView_0.create(this._AgGridNg2_0_7.context);
     this._el_1 = this.renderer.createTemplateAnchor((null as any),(null as any));
     this.init(this._el_1,((<any>this.renderer).directRenderer? (null as any): [this._el_0]),(null as any));
-    return new import10.ComponentRef_<any>(0,this,this._el_0,this._AgGridNg2_0_5.context);
+    return new import12.ComponentRef_<any>(0,this,this._el_0,this._AgGridNg2_0_7.context);
   }
   injectorGetInternal(token:any,requestNodeIndex:number,notFoundResult:any):any {
-    if (((token === import0.AgGridNg2) && (0 === requestNodeIndex))) { return this._AgGridNg2_0_5.context; }
+    if (((token === import7.Ng2FrameworkFactory) && (0 === requestNodeIndex))) { return this._Ng2FrameworkFactory_0_5; }
+    if (((token === import8.Ng2FrameworkComponentWrapper) && (0 === requestNodeIndex))) { return this._Ng2FrameworkComponentWrapper_0_6; }
+    if (((token === import0.AgGridNg2) && (0 === requestNodeIndex))) { return this._AgGridNg2_0_7.context; }
     return notFoundResult;
   }
   detectChangesInternal(throwOnChange:boolean):void {
-    this._AgGridNg2_0_5.ngDoCheck(this,this._el_0,throwOnChange);
+    this._AgGridNg2_0_7.ngDoCheck(this,this._el_0,throwOnChange);
     this._vc_0.detectChangesInNestedViews(throwOnChange);
     if (!throwOnChange) { if (this._query_AgGridColumn_0_0.dirty) {
       this._query_AgGridColumn_0_0.reset(([] as any[]));
-      this._AgGridNg2_0_5.context.columns = this._query_AgGridColumn_0_0;
+      this._AgGridNg2_0_7.context.columns = this._query_AgGridColumn_0_0;
       this._query_AgGridColumn_0_0.notifyOnChanges();
     } }
     this.compView_0.internalDetectChanges(throwOnChange);
-    if (!throwOnChange) { if ((this.numberOfChecks === 0)) { this._AgGridNg2_0_5.context.ngAfterViewInit(); } }
+    if (!throwOnChange) { if ((this.numberOfChecks === 0)) { this._AgGridNg2_0_7.context.ngAfterViewInit(); } }
   }
   destroyInternal():void {
     this._vc_0.destroyNestedViews();
     this.compView_0.destroy();
-    this._AgGridNg2_0_5.ngOnDestroy();
+    this._AgGridNg2_0_7.ngOnDestroy();
   }
   visitRootNodesInternal(cb:any,ctx:any):void {
     cb(this._vc_0.nativeElement,ctx);
@@ -1789,14 +1838,14 @@ class View_AgGridNg2_Host0 extends import2.AppView<any> {
     cb(this._el_1,ctx);
   }
 }
-export const AgGridNg2NgFactory:import10.ComponentFactory<import0.AgGridNg2> = new import10.ComponentFactory<import0.AgGridNg2>('ag-grid-ng2',View_AgGridNg2_Host0,import0.AgGridNg2);
+export const AgGridNg2NgFactory:import12.ComponentFactory<import0.AgGridNg2> = new import12.ComponentFactory<import0.AgGridNg2>('ag-grid-ng2',View_AgGridNg2_Host0,import0.AgGridNg2);
 const styles_AgGridNg2:any[] = ([] as any[]);
 var renderType_AgGridNg2:import4.RenderComponentType = import3.createRenderComponentType('',0,import5.ViewEncapsulation.None,styles_AgGridNg2,{});
 export class View_AgGridNg20 extends import2.AppView<import0.AgGridNg2> {
   constructor(viewUtils:import3.ViewUtils,parentView:import2.AppView<any>,parentIndex:number,parentElement:any) {
-    super(View_AgGridNg20,renderType_AgGridNg2,import8.ViewType.COMPONENT,viewUtils,parentView,parentIndex,parentElement,import9.ChangeDetectorStatus.CheckAlways);
+    super(View_AgGridNg20,renderType_AgGridNg2,import10.ViewType.COMPONENT,viewUtils,parentView,parentIndex,parentElement,import11.ChangeDetectorStatus.CheckAlways);
   }
-  createInternal(rootSelector:string):import10.ComponentRef<any> {
+  createInternal(rootSelector:string):import12.ComponentRef<any> {
     const parentRenderNode:any = this.renderer.createViewRoot(this.parentElement);
     this.init((null as any),((<any>this.renderer).directRenderer? (null as any): ([] as any[])),(null as any));
     return (null as any);

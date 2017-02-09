@@ -90,6 +90,10 @@ export class Wrapper_AgGridColumn {
   /*private*/ _expr_68:any;
   /*private*/ _expr_69:any;
   /*private*/ _expr_70:any;
+  /*private*/ _expr_71:any;
+  /*private*/ _expr_72:any;
+  /*private*/ _expr_73:any;
+  /*private*/ _expr_74:any;
   constructor() {
     this._changed = false;
     this.context = new import0.AgGridColumn();
@@ -164,6 +168,10 @@ export class Wrapper_AgGridColumn {
     this._expr_68 = import1.UNINITIALIZED;
     this._expr_69 = import1.UNINITIALIZED;
     this._expr_70 = import1.UNINITIALIZED;
+    this._expr_71 = import1.UNINITIALIZED;
+    this._expr_72 = import1.UNINITIALIZED;
+    this._expr_73 = import1.UNINITIALIZED;
+    this._expr_74 = import1.UNINITIALIZED;
   }
   ngOnDetach(view:import2.AppView<any>,componentView:import2.AppView<any>,el:any):void {
   }
@@ -664,6 +672,34 @@ export class Wrapper_AgGridColumn {
       this._changed = true;
       this.context.enableCellChangeFlash = currValue;
       this._expr_70 = currValue;
+    }
+  }
+  check_headerGroupComponentFramework(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_71,currValue))) {
+      this._changed = true;
+      this.context.headerGroupComponentFramework = currValue;
+      this._expr_71 = currValue;
+    }
+  }
+  check_headerGroupComponentParams(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_72,currValue))) {
+      this._changed = true;
+      this.context.headerGroupComponentParams = currValue;
+      this._expr_72 = currValue;
+    }
+  }
+  check_headerComponentFramework(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_73,currValue))) {
+      this._changed = true;
+      this.context.headerComponentFramework = currValue;
+      this._expr_73 = currValue;
+    }
+  }
+  check_headerComponentParams(currValue:any,throwOnChange:boolean,forceUpdate:boolean):void {
+    if ((forceUpdate || import3.checkBinding(throwOnChange,this._expr_74,currValue))) {
+      this._changed = true;
+      this.context.headerComponentParams = currValue;
+      this._expr_74 = currValue;
     }
   }
   ngDoCheck(view:import2.AppView<any>,el:any,throwOnChange:boolean):boolean {
