@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <h2>
-    <img src="../images/angular2_large.png" style="width: 60px;"/>
+    <img src="../images/react_large.png.png" style="width: 60px;"/>
     React Header Rendering
 </h2>
 

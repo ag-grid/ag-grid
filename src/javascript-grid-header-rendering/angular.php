@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
 </h2>
 
 <p>
-    This section outlines how to use Angular 2 components inside the header. You should read about how
+    This section outlines how to use Angular components inside the header. You should read about how
     <a href="../javascript-grid-header-rendering/">Header Components</a> work in ag-Grid first before trying to
     understand this section. For a full working example of Header Components in Angular see
     <a href="https://github.com/ceolter/ag-grid-ng2-example">Angular Example</a>.
