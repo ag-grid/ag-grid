@@ -7,15 +7,6 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div style="padding: 20px;">
-    <!--
-    <note>
-        This page covers the Changelog for all items for 7.x and before. For the Changelog covering versions 8.x and above please go <a href="/ag-grid-changelog">here</a>.
-        </note>
-        -->
-
-    IFilter is now IFilterComp
-
-
 
     <h2>Version 8.0.x</h2>
 

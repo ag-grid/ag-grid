@@ -15,12 +15,14 @@ include 'documentation_header.php';
     </style>
 
     <div class="news-box">
-        <div class="news-header">XX February 2017</div>
+        <div class="news-header">9th February 2017</div>
         <div class="news-header">ag-Grid 8.0.0 Released</div>
         <div style="padding-top: 10px;">
-            ag-Grid 8.0.0 released with <a href="../best-vuejs-data-grid/">VueJS Support</a>
+            ag-Grid 8.0.0 released with <a href="../best-vuejs-data-grid/">VueJS Support</a>,
+            <a href="../javascript-grid-header-rendering/">Header Components</a>,
+            <a href="../javascript-grid-selection/#headerCheckboxSelection">Header Checkbox Selection</a>
             and many other Enhancements and Bug Fixes.
-            See the <a href="/ag-grid-changelog">Change Log</a> for full release details.
+            See the <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>
 
