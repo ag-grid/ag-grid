@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -100,20 +100,20 @@ var MenuItemMapper = (function () {
             case 'copy': return {
                 name: localeTextFunc('copy', 'Copy'),
                 shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                icon: svgFactory.createCopyIcon(),
+                icon: ag_grid_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
                 action: function () { return _this.clipboardService.copyToClipboard(false); }
             };
             case 'copyWithHeaders': return {
                 name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                 // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: svgFactory.createCopyIcon(),
+                icon: ag_grid_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
                 action: function () { return _this.clipboardService.copyToClipboard(true); }
             };
             case 'paste': return {
                 name: localeTextFunc('paste', 'Paste'),
                 shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                 disabled: true,
-                icon: svgFactory.createPasteIcon(),
+                icon: ag_grid_1.Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null, svgFactory.createPasteIcon),
                 action: function () { return _this.clipboardService.pasteFromClipboard(); }
             };
             case 'toolPanel': return {

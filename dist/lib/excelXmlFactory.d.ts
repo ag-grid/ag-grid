@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */
@@ -50,10 +50,25 @@ export interface ExcelStyle {
     borders?: ExcelBorders;
     font?: ExcelFont;
     interior?: ExcelInterior;
+    numberFormat?: ExcelNumberFormat;
+    protection?: ExcelProtection;
+}
+export interface ExcelProtection {
+    protected: boolean;
+    hideFormula: boolean;
+}
+export interface ExcelNumberFormat {
+    format: string;
 }
 export interface ExcelAlignment {
     vertical: string;
+    indent: number;
     horizontal: string;
+    readingOrder: string;
+    rotate: number;
+    shrinkToFit: boolean;
+    verticalText: boolean;
+    wrapText: boolean;
 }
 export interface ExcelBorders {
     borderBottom: ExcelBorder;
@@ -67,24 +82,21 @@ export interface ExcelBorder {
     color: string;
 }
 export interface ExcelFont {
+    bold: boolean;
     color: string;
+    fontName: string;
+    italic: boolean;
+    outline: boolean;
+    shadow: boolean;
+    size: number;
+    strikeThrough: boolean;
+    underline: string;
+    verticalAlign: string;
+    charSet: number;
+    family: string;
 }
 export interface ExcelInterior {
     color: string;
     pattern: string;
-}
-export declare class HorizontalAlign {
-    static LEFT: string;
-    static RIGHT: string;
-}
-export declare class VerticalAlign {
-    static BOTTOM: string;
-    static TOP: string;
-    static CENTER: string;
-}
-export declare class LineStyle {
-    static CONTINUOUS: string;
-}
-export declare class Pattern {
-    static SOLID: string;
+    patternColor: string;
 }

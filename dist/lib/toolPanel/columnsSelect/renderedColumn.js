@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -186,9 +186,9 @@ var RenderedColumn = (function (_super) {
         this.processingColumnStateChange = false;
     };
     RenderedColumn.TEMPLATE = '<div class="ag-column-select-column">' +
-        '  <span class="ag-column-select-indent"></span>' +
-        '  <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-        '  <span class="ag-column-select-label"></span>' +
+        '<span class="ag-column-select-indent"></span>' +
+        '<ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
+        '<span class="ag-column-select-label"></span>' +
         '</div>';
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 

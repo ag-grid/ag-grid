@@ -1,12 +1,12 @@
-// ag-grid-enterprise v7.2.4
-import { IRowNodeStage, RowNode } from "ag-grid/main";
+// ag-grid-enterprise v8.0.0
+import { IRowNodeStage, StageExecuteParams } from "ag-grid/main";
 export declare class AggregationStage implements IRowNodeStage {
     private gridOptionsWrapper;
     private columnController;
     private valueService;
     private pivotStage;
     private aggFuncService;
-    execute(rootNode: RowNode): any;
+    execute(params: StageExecuteParams): any;
     private recursivelyCreateAggData(rowNode, measureColumns, pivotColumns);
     private aggregateRowNode(rowNode, measureColumns, pivotColumns);
     private aggregateRowNodeUsingValuesAndPivot(rowNode);

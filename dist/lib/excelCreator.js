@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -199,7 +199,7 @@ var ExcelCreator = (function () {
             return it.id;
         });
         var applicableStyles = [];
-        this.stylingService.processCellClassRules(column.getColDef(), {
+        this.stylingService.processAllCellClasses(column.getColDef(), {
             value: value,
             data: node.data,
             node: node,

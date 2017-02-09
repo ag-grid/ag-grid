@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 import { IMenuFactory, Column } from "ag-grid";
 export declare class EnterpriseMenuFactory implements IMenuFactory {
     private context;

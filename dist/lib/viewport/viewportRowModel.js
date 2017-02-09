@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -169,14 +169,18 @@ var ViewportRowModel = (function () {
             this.eventService.dispatchEvent(main_1.Events.EVENT_MODEL_UPDATED);
         }
     };
-    ViewportRowModel.prototype.insertItemsAtIndex = function (index, items) {
+    ViewportRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
         console.log('not yet supported');
     };
-    ViewportRowModel.prototype.removeItems = function (rowNodes) {
+    ViewportRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
         console.log('not yet supported');
     };
-    ViewportRowModel.prototype.addItems = function (item) {
+    ViewportRowModel.prototype.addItems = function (item, skipRefresh) {
         console.log('not yet supported');
+    };
+    ViewportRowModel.prototype.isRowPresent = function (rowNode) {
+        console.log('not yet supported');
+        return false;
     };
     __decorate([
         main_1.Autowired('gridOptionsWrapper'), 

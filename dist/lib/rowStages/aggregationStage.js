@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17,7 +17,8 @@ var AggregationStage = (function () {
     }
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    AggregationStage.prototype.execute = function (rootNode) {
+    AggregationStage.prototype.execute = function (params) {
+        var rootNode = params.rowNode;
         // we don't do aggregation if user provided the groups
         var rowsAlreadyGrouped = main_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {

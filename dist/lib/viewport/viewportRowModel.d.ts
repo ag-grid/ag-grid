@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 import { IRowModel, RowNode, IViewportDatasource } from "ag-grid/main";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
@@ -30,7 +30,8 @@ export declare class ViewportRowModel implements IRowModel {
     private setRowData(rowData);
     private createBlankRowNode(rowIndex);
     setRowCount(rowCount: number): void;
-    insertItemsAtIndex(index: number, items: any[]): void;
-    removeItems(rowNodes: RowNode[]): void;
-    addItems(item: any[]): void;
+    insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;
+    removeItems(rowNodes: RowNode[], skipRefresh: boolean): void;
+    addItems(item: any[], skipRefresh: boolean): void;
+    isRowPresent(rowNode: RowNode): boolean;
 }

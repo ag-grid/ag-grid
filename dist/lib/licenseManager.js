@@ -1,4 +1,4 @@
-// ag-grid-enterprise v7.2.4
+// ag-grid-enterprise v8.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33,13 +33,13 @@ var LicenseManager = (function () {
             }
         }
         if (!valid) {
-            LicenseManager.outputMessage('********************************************* Invalid License **************************************************', '* Your license for ag-Grid Enterprise is not valid - please contact ag-Grid support to obtain a valid license. *');
+            LicenseManager.outputMessage('********************************************* Invalid License **************************************************', '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
         }
         else if (!current) {
             var formattedExpiryDate = LicenseManager.formatDate(expiry);
             var formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
             LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************', ("Your license for ag-Grid Enterprise expired on " + formattedExpiryDate + " but the version installed was released on " + formattedReleaseDate + ". Please ") +
-                'contact ag-Grid Support to renew your license');
+                'contact accounts@ag-grid.com to renew your license');
         }
     };
     LicenseManager.outputMessage = function (header, message) {
@@ -115,7 +115,7 @@ var LicenseManager = (function () {
     LicenseManager.setLicenseKey = function (licenseKey) {
         LicenseManager.licenseKey = licenseKey;
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTQ2ODM5ODkxNjg4MA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTQ4NTE3OTkyOTcwNw==';
     __decorate([
         main_1.Autowired('md5'), 
         __metadata('design:type', md5_1.MD5)
