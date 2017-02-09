@@ -1,16 +1,14 @@
 import {autoinject, transient, Container, ViewResources, ViewCompiler} from "aurelia-framework";
-
 import {
-    ICellRenderer,
-    ICellEditor,
     BaseFrameworkFactory,
     IFrameworkFactory,
-    IFilter,
+    IFilterComp,
     ICellRendererFunc,
     ColDef,
-    GridOptions
+    GridOptions,
+    ICellRendererComp,
+    ICellEditorComp
 } from "ag-grid/main";
-
 import {AureliaComponentFactory} from "./aureliaComponentFactory";
 
 @autoinject()
@@ -23,11 +21,11 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     constructor(private _componentFactory: AureliaComponentFactory, private _viewCompiler: ViewCompiler) {
     }
 
-    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefFloatingCellRenderer(colDef: ColDef): {new (): ICellRendererComp;} | ICellRendererFunc | string {
         return this._baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
     }
 
-    public colDefCellRenderer(colDef: ColDef): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public colDefCellRenderer(colDef: ColDef): {new (): ICellRendererComp;} | ICellRendererFunc | string {
         if (colDef.cellRendererFramework) {
             if (!colDef.cellRendererFramework.$viewFactory) {
                 colDef.cellRendererFramework.$viewFactory = this._viewCompiler.compile(colDef.cellRendererFramework.template, this._viewResources);
@@ -39,7 +37,7 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public colDefCellEditor(colDef: ColDef): {new(): ICellEditor} | string {
+    public colDefCellEditor(colDef: ColDef): {new (): ICellEditorComp;} | string {
         if (colDef.cellEditorFramework) {
             //cache the columnDef viewFactory
             if (!colDef.cellEditorFramework.$viewFactory) {
@@ -52,19 +50,21 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new (): ICellRendererComp;} | ICellRendererFunc | string {
         return this._baseFrameworkFactory.gridOptionsFullWidthCellRenderer(gridOptions);
     }
 
-    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {
+        new (): ICellRendererComp;
+    } | ICellRendererFunc | string {
         return this._baseFrameworkFactory.gridOptionsGroupRowRenderer(gridOptions);
     }
 
-    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRenderer} | ICellRendererFunc | string {
+    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new (): ICellRendererComp;} | ICellRendererFunc | string {
         return this._baseFrameworkFactory.gridOptionsGroupRowInnerRenderer(gridOptions);
     }
 
-    public colDefFilter(colDef: ColDef): {new (): IFilter;} | string {
+    public colDefFilter(colDef: ColDef): {new (): IFilterComp;} | string {
         return this._baseFrameworkFactory.colDefFilter(colDef);
     }
 

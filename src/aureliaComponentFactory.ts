@@ -1,14 +1,14 @@
 import {autoinject, Container, transient, View, ViewFactory} from "aurelia-framework";
 
-import {ICellRenderer, ICellEditor} from "ag-grid/main";
+import {ICellRendererComp, ICellEditorComp} from "ag-grid/main";
 
 import {IAureliaEditorViewModel} from "./editorViewModels";
 
 @autoinject()
 @transient()
 export class AureliaComponentFactory {
-    public createRendererFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellRenderer} {
-        class CellRendererComponent implements ICellRenderer {
+    public createRendererFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellRendererComp} {
+        class CellRendererComponent implements ICellRendererComp {
             private view: View;
 
             init(params: any) {
@@ -30,9 +30,9 @@ export class AureliaComponentFactory {
         return CellRendererComponent;
     }
 
-    public createEditorFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellEditor} {
+    public createEditorFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellEditorComp} {
 
-        class CellEditor implements ICellEditor {
+        class CellEditor implements ICellEditorComp {
 
             private view: View;
             private editorVm: IAureliaEditorViewModel;
