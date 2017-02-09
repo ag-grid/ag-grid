@@ -455,7 +455,7 @@ export class GridPanel extends BeanStub {
     private pageHorizontally (pagingKey:string): void{
         //***************************************************************************
         //column to select
-        let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
+        let allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         let columnToSelect : Column = pagingKey === Constants.KEY_CTRL_LEFT_NAME ?
             allColumns[0]:
             allColumns[allColumns.length - 1];
@@ -490,7 +490,7 @@ export class GridPanel extends BeanStub {
 
         //***************************************************************************
         //column to select
-        let allColumns: Column[] = this.columnController.getAllDisplayedVirtualColumns();
+        let allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         let columnToSelect : Column = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             allColumns[0]:
             allColumns[allColumns.length - 1];
