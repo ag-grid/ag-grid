@@ -1,8 +1,9 @@
+import {AgReactFrameworkComponent} from "./interfaces";
 var React = require('react');
 var ReactDOM = require('react-dom');
 var AgGrid = require('ag-grid');
 
-export class AgReactComponent {
+export class AgReactComponent implements AgReactFrameworkComponent<any>{
 
     private eParentElement: HTMLElement;
     private componentRef: any;
