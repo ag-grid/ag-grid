@@ -51,16 +51,18 @@ export default Vue.extend({
         }
     },
     mounted() {
+        let frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
         let vueFrameworkFactory = new VueFrameworkFactory(this.$el, this);
         let gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         let gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkFactory: vueFrameworkFactory
+            frameworkFactory: vueFrameworkFactory,
+            seedBeanInstances: {
+                frameworkComponentWrapper: frameworkComponentWrapper
+            }
         };
 
-        VueFrameworkComponentWrapper._parent = this;
-        Grid.setFrameworkBeans([VueFrameworkComponentWrapper]);
         new Grid(this.$el, gridOptions, gridParams);
 
         if (this.gridOptions.api) {

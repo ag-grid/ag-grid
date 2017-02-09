@@ -1,7 +1,7 @@
 import {VueComponentFactory} from "./vueComponentFactory";
 
 class VueFrameworkComponentWrapper {
-    set parent(parent) {
+    constructor(parent) {
         this._parent = parent;
     }
 
