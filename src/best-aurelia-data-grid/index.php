@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implementing the Aurelia Datagrid</h1>
+    <h1 id="implementing-the-aurelia-datagrid">Implementing the Aurelia Datagrid</h1>
 
     <p>
         If you are building an Aurelia application then you have the choice between A) using the plain JavaScript version
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-aurelia">ag-grid-aurelia</a>
         for feedback or issue reporting around ag-Grid's support for Aurelia.</note>
 
-    <h2>ag-Grid Aurelia Features</h2>
+    <h2 id="ag-grid-aurelia-features">ag-Grid Aurelia Features</h2>
 
     <p>
         Every feature of ag-Grid is available when using the ag-Grid Aurelia Component. The Aurelia Component wraps
@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         Aurelia ag-Grid when it comes to features.
     </p>
 
-    <h3>Aurelia Full Example</h3>
+    <h3 id="aurelia-full-example">Aurelia Full Example</h3>
 
     <p>
         This page goes through the
@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Dependencies</h3>
+    <h3 id="dependencies">Dependencies</h3>
 
     <p>
         In your package.json file, specify dependency on ag-grid AND ag-grid-aurelia.
@@ -123,7 +123,7 @@ include '../documentation-main/documentation_header.php';
         you in the right direction. If you need more information on this, please see the Aurelia documentation.
     </p>
 
-    <h2>Configuring ag-Grid in Aurelia</h2>
+    <h2 id="configuring-ag-grid-in-aurelia">Configuring ag-Grid in Aurelia</h2>
 
     <p>You can configure the grid in the following ways through Aurelia:</p>
     <ul>
@@ -227,7 +227,7 @@ include '../documentation-main/documentation_header.php';
         and custom filtering.
     </p>
 
-    <h3>Example: Rich Grid with Pure JavaScript</h3>
+    <h3 id="example-rich-grid-with-pure-javascript">Example: Rich Grid with Pure JavaScript</h3>
     <p>
         The example below shows a rich configuration of ag-Grid
     </p>
@@ -241,14 +241,14 @@ include '../documentation-main/documentation_header.php';
     <p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via declaratively with markup.</p>
     <p>The above section details how to specify the Grid itself. To declare columns you can specify them as follows:</p>
 
-    <h3>Column Definition</h3>
+    <h3 id="column-definition">Column Definition</h3>
 <pre>
 &lt;ag-grid-column header-name="Name" field="name" width.bind="150" pinned.bind="true"></ag-grid-column>
 </pre>
 
     <p>This example declares a simple Column Definition, specifying header name, field and width.</p>
 
-    <h3>Setting Column Properties</h3>
+    <h3 id="setting-column-properties">Setting Column Properties</h3>
     <p>There are some simple rules you should follow when setting column properties via Markup:</p>
 <pre ng-non-bindable>
 <span class="codeComment">// string value</span>
@@ -270,7 +270,7 @@ property-name.bind="functionName"
 property-name.bind="functionCallReturningAFunction()"
 </pre>
 
-    <h4>Setting a Class or a Complex Value:</h4>
+    <h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value:</h4>
     <p>You can set a Class or a Complex property in the following way:</p>
 <pre>
 <span class="codeComment">// return a Class definition for a Filter</span>
@@ -291,7 +291,7 @@ private getCountryFilterParams():any {
 }
 </pre>
 
-    <h3>Grouped Column Definition</h3>
+    <h3 id="grouped-column-definition">Grouped Column Definition</h3>
     <p>To specify a Grouped Column, you can nest a column defintion:</p>
 <pre>
 &lt;ag-grid-column header-name="IT Skills">
@@ -302,7 +302,7 @@ private getCountryFilterParams():any {
 </pre>
     <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
-    <h3>Example: Rich Grid using Markup</h3>
+    <h3 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h3>
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
@@ -311,7 +311,7 @@ private getCountryFilterParams():any {
                   html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
                   exampleHeight="525px"></show-example>
 
-    <h2>Cell Rendering & Cell Editing using Aurelia</h2>
+    <h2 id="cell-rendering-cell-editing-using-aurelia">Cell Rendering & Cell Editing using Aurelia</h2>
 
     <p>
         It is possible to build
@@ -331,7 +331,7 @@ private getCountryFilterParams():any {
         rendering etc) inside ag-Grid instead of creating Aurelia counterparts.
     </p>
 
-    <h2>Next Steps...</h2>
+    <h2 id="next-steps">Next Steps...</h2>
 
     <p>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>

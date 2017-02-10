@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implementing the Web Components Datagrid</h1>
+    <h1 id="implementing-the-web-components-datagrid">Implementing the Web Components Datagrid</h1>
 
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         yourself.
     </note>
 
-    <h4>Using ag-Grid Web Component</h4>
+    <h4 id="using-ag-grid-web-component">Using ag-Grid Web Component</h4>
 
 
     <p>
@@ -61,7 +61,7 @@ agGrid.initialiseAgGridWithWebComponents();</code></pre>
 myGrid.setGridOptions(gridOptions);</code></pre>
     </p>
 
-    <h2>Basic Web Components Example</h2>
+    <h2 id="basic-web-components-example">Basic Web Components Example</h2>
 
     <p>
         The example below shows a simple grid using Web Components.
@@ -69,7 +69,7 @@ myGrid.setGridOptions(gridOptions);</code></pre>
 
     <show-example example="example1" example-height="160px"></show-example>
 
-    <h2>Complex Web Components Example</h2>
+    <h2 id="complex-web-components-example">Complex Web Components Example</h2>
 
     <p>
         The complex example for Web Components is similar to that for Angular. This is on purpose as
@@ -115,14 +115,14 @@ myGrid.setGridOptions(gridOptions);</code></pre>
 
     <show-example example="webComponentDataGrid"></show-example>
 
-    <h2>Destroy</h2>
+    <h2 id="destroy">Destroy</h2>
 
     <p>
         To get the grid to release resources, call api.destroy(). If you do not do this, old grids will hang around
         and add to a memory leak problem in your application.
     </p>
 
-    <h2>Next Steps...</h2>
+    <h2 id="next-steps">Next Steps...</h2>
 
     <p>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>

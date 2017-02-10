@@ -356,7 +356,7 @@ include 'documentation_header.php';
     </div>
 </div>
 -->
-<h2>
+<h2 id="introduction">
     Introduction
 </h2>
 
@@ -378,7 +378,7 @@ include 'documentation_header.php';
     documented and demonstrated.
 </p>
 
-<h2>
+<h2 id="where-to-start">
     Where to start
 </h2>
 
@@ -398,7 +398,7 @@ include 'documentation_header.php';
     you need to the feature you are trying to implement.
 </p>
 
-<h2>
+<h2 id="sections">
     Sections
 </h2>
 
@@ -415,7 +415,7 @@ include 'documentation_header.php';
 </ul>
 </p>
 
-<h2>
+<h2 id="keeping-up-to-date">
     Keeping up to date
 </h2>
 
@@ -425,7 +425,7 @@ include 'documentation_header.php';
     list.
 </p>
 
-<h4>Twitter</h4>
+<h4 id="twitter">Twitter</h4>
 
 <div>
     <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>

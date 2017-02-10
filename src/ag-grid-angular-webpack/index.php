@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Angular - Building with Webpack</h1>
+    <h1 id="angular-building-with-webpack">Angular - Building with Webpack</h1>
 
     <p>We document the main steps required when using Webpack below, but please refer to
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub for a full working example of this.</p>
@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>We have 3 Webpack Configurations in the example project - a common configuration, and then a dev and prod configuration that both use the common one.</p>
 
-    <h3>Webpack Common (Shared) Configuration</h3>
+    <h3 id="webpack-common-shared-configuration">Webpack Common (Shared) Configuration</h3>
     <pre><span class="codeComment">// webpack.common.js</span>
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -112,7 +112,7 @@ module.exports = {
         <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us</li>
     </ul>
 
-    <h3>Webpack Development Configuration</h3>
+    <h3 id="webpack-development-configuration">Webpack Development Configuration</h3>
     <pre><span class="codeComment">// webpack.dev.js</span>
 var webpackMerge = require('webpack-merge');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -141,7 +141,7 @@ module.exports = webpackMerge(commonConfig, {
 
     <p>The dev configuration doesn't generate any files - it keeps all bundles in memory, so you won't find any artifacts in the dist directory (from this configuration).</p>
 
-    <h3>Webpack Production Configuration</h3>
+    <h3 id="webpack-production-configuration">Webpack Production Configuration</h3>
     <pre><span class="codeComment">// webpack.prod.js</span>
 var webpack = require('webpack');
 var webpackMerge = require('webpack-merge');

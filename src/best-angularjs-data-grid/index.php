@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implementing the AngularJS Datagrid</h1>
+    <h1 id="implementing-the-angularjs-datagrid">Implementing the AngularJS Datagrid</h1>
 
     <p>
         When using AngularJS, you have the choice of using the bundled version of ag-Grid
@@ -20,12 +20,12 @@ include '../documentation-main/documentation_header.php';
         want to use it.
     </p>
 
-    <h3>Pull in the ag-Grid Dependencies</h3>
+    <h3 id="pull-in-the-ag-grid-dependencies">Pull in the ag-Grid Dependencies</h3>
     <p>You'll need to ensure you refer to the ag-grid library correctly - this can be done in a number of ways, but
         but you'll need to ensure you refer to either the ag-grid or the ag-grid-enterprise
     dependency, depending on which feature set you're using (i.e. if you're using any Enterprise features you'll need ag-grid-enterprise)</p>
     <p>As an example we'll use NPM to manage our dependencies, and then refer to the dependencies in our HTML file:</p>
-    <h5>Using ag-Grid</h5>
+    <h5 id="using-ag-grid">Using ag-Grid</h5>
     <pre><span class="codeComment">// package.json</span>
 "dependencies": {
     "ag-grid": "8.0.x",
@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
     &lt;script src="&lt;your script>.js">&lt;/script>
 &lt;/head>
 </pre>
-    <h5>Using ag-Grid-Enterprise</h5>
+    <h5 id="using-ag-grid-enterprise">Using ag-Grid-Enterprise</h5>
     <pre><span class="codeComment">// package.json</span>
 "dependencies": {
     "ag-grid-enterprise": "8.0.x",
@@ -64,7 +64,7 @@ include '../documentation-main/documentation_header.php';
 &lt;/head>
 </pre>
 </p>
-    <h3>Creating the AngularJS Module</h3>
+    <h3 id="creating-the-angularjs-module">Creating the AngularJS Module</h3>
     Include ag-Grid as a dependency of your module like this:
     <p/>
     <pre>
@@ -78,7 +78,7 @@ agGrid.initialiseAgGridWithAngular1(angular);
 <span class="codeComment">// create your module with ag-Grid as a dependency</span>
 var module = angular.module("example", ["agGrid"]);</code></pre>
 
-    <h4>ag-Grid Div</h4>
+    <h4 id="ag-grid-div">ag-Grid Div</h4>
 
     <p>
         To include a grid in your html, add the <i>ag-grid</i> attribute to a div. The value
@@ -103,16 +103,16 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
         (note: a div by default has 100% width, so the width is not specified explicitly above).
     </p>
 
-    <h4>Grid Options</h4>
+    <h4 id="grid-options">Grid Options</h4>
     <p>
         The grid options provide ag-Grid with the details needed to render. At a
         minimum you should provide the columns (columnDefs) and the rows (rowData).
     </p>
 
-    <h2>Basic AngularJS 1.x Example</h2>
+    <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
     <show-example example="example1" example-height="200px"></show-example>
 
-    <h2>Advanced AngularJS 1.x Example</h2>
+    <h2 id="advanced-angularjs-1-x-example">Advanced AngularJS 1.x Example</h2>
 
     <p>
         The below example has much more details. The mechanism for setting up the grid
@@ -122,7 +122,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 
     <show-example example="basic"></show-example>
 
-    <h2>Angular Compiling</h2>
+    <h2 id="angular-compiling">Angular Compiling</h2>
 
     <p>
         Angular 1.x is great. It allows us to build large end-to-end single page web apps with relative ease.
@@ -149,7 +149,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
         for the renderer that will introduce a new scope.
     </p>
 
-    <h4>Turn On Angular Compile</h4>
+    <h4 id="turn-on-angular-compile">Turn On Angular Compile</h4>
     <p>
         Angular compiling is turned on by setting the grid options attribute angularCompileRows to true.
     </p>
@@ -162,7 +162,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 
     <p>The default is always to have Angular compiling off for performance reasons.</p>
 
-    <h4>Example using Angular Compile</h4>
+    <h4 id="example-using-angular-compile">Example using Angular Compile</h4>
 
     <p>
         Below then uses three columns rendered using custom Angular renderers.
@@ -182,7 +182,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
         prefers non-Angular rendering for large grids.
     </note>
 
-    <h2>Cell Templates</h2>
+    <h2 id="cell-templates">Cell Templates</h2>
 
     <p>
         Cell Templates allow you to specify templates to use to render your cells. This is handy
@@ -219,14 +219,14 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
     <show-example example="exampleCellTemplates"></show-example>
 
 
-    <h2>Destroy</h2>
+    <h2 id="destroy">Destroy</h2>
 
     <p>
         You do not need to manually clean up the grid. The grid ties in with the AngularJS 1 lifecycle
         and releases all resources when the directive is destroyed.
     </p>
 
-    <h2>Next Steps...</h2>
+    <h2 id="next-steps">Next Steps...</h2>
 
     <p>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
