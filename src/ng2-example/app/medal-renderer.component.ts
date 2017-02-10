@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'group-row-cell',
     template: `{{country}} Gold: {{gold}}, Silver: {{silver}}, Bronze: {{bronze}}`
 })
-export class MedalRendererComponent implements AgRendererComponent {
+export class MedalRendererComponent implements ICellRendererAngularComp {
     private params: any;
     public country: string;
     public gold: string;

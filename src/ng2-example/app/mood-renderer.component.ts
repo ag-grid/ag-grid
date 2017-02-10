@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'mood-cell',
     template: `<img width="20px" [src]="imgForMood" />`
 })
-export class MoodRendererComponent implements AgRendererComponent {
+export class MoodRendererComponent implements ICellRendererAngularComp {
     private params: any;
     private mood: string;
     public imgForMood: string;

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
 
 // both this and the parent component could be folded into one component as they're both simple, but it illustrates how
 // a fuller example could work
@@ -10,7 +10,7 @@ import {AgRendererComponent} from 'ag-grid-ng2/main';
     <ag-clickable (onClicked)="clicked($event)" [cell]="cell"></ag-clickable>
     `
 })
-export class ClickableParentComponent implements AgRendererComponent {
+export class ClickableParentComponent implements ICellRendererAngularComp {
     private params:any;
     public cell:any;
 

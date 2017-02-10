@@ -1,12 +1,12 @@
 import {Component,OnDestroy} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'currency-cell',
     template: `{{params.value | currency:'EUR'}}`
 })
-export class CurrencyComponent implements AgRendererComponent {
+export class CurrencyComponent implements ICellRendererAngularComp {
     public params:any;
 
     agInit(params:any):void {

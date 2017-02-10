@@ -55,7 +55,7 @@ export default {
         {country: "Uruguay", continent: "South America", language: "Spanish"}
     ],
 
-    DOB: [
+    DOBs: [
         new Date(2000, 0, 1),
         new Date(2001, 1, 2),
         new Date(2002, 2, 3),

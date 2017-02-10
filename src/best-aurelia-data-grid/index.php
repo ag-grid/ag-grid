@@ -71,8 +71,8 @@ include '../documentation-main/documentation_header.php';
         contains the Aurelia component.
         <pre>"dependencies": {
     ...
-    "ag-grid": "7.0.x",
-    "ag-grid-aurelia": "7.0.x"
+    "ag-grid": "8.0.x",
+    "ag-grid-aurelia": "8.0.x"
 }</pre>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However

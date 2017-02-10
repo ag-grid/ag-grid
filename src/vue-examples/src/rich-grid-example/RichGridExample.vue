@@ -90,6 +90,8 @@
 
     import {ProficiencyFilter} from './proficiencyFilter';
     import {SkillFilter} from './skillFilter';
+    import DateComponent from './DateComponent.vue';
+    import HeaderGroupComponent from './HeaderGroupComponent.vue';
     import RefData from './refData'
 
     export default {
@@ -121,6 +123,7 @@
                             windows: Math.random() < 0.4,
                             css: Math.random() < 0.4
                         },
+                        dob: RefData.DOBs[i % RefData.DOBs.length],
                         address: RefData.ADDRESSES[i % RefData.ADDRESSES.length],
                         years: Math.round(Math.random() * 100),
                         proficiency: Math.round(Math.random() * 100),
@@ -142,16 +145,31 @@
                     },
                     {
                         headerName: 'Employee',
+                        headerGroupComponentFramework: HeaderGroupComponent,
                         children: [
                             {
                                 headerName: "Name", field: "name",
-                                width: 150, pinned: true
+                                width: 150, pinned: true,
                             },
                             {
                                 headerName: "Country", field: "country", width: 150,
                                 cellRenderer: countryCellRenderer, pinned: true,
-                                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
+                                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
+                                columnGroupShow: 'open'
                             },
+                            {
+                                headerName: "DOB",
+                                field: "dob",
+                                width: 120,
+                                pinned: true,
+                                cellRenderer: (params) => {
+                                    return this.pad(params.value.getDate(), 2) + '/' +
+                                        this.pad(params.value.getMonth() + 1, 2) + '/' +
+                                        params.value.getFullYear();
+                                },
+                                filter: 'date',
+                                columnGroupShow: 'open'
+                            }
                         ]
                     },
                     {
@@ -183,6 +201,12 @@
                     }
                 ];
             },
+            pad(num, totalStringSize) {
+                let asString = num + "";
+                while (asString.length < totalStringSize) asString = "0" + asString;
+                return asString;
+            },
+
             calculateRowCount() {
                 if (this.gridOptions.api && this.rowData) {
                     let model = this.gridOptions.api.getModel();
@@ -273,6 +297,7 @@
         },
         beforeMount() {
             this.gridOptions = {};
+            this.gridOptions.dateComponentFramework = DateComponent;
             this.createRowData();
             this.createColumnDefs();
             this.showGrid = true;

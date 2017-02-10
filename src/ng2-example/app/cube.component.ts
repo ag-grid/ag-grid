@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'cube-cell',
     template: `{{valueCubed()}}`
 })
-export class CubeComponent implements AgRendererComponent {
+export class CubeComponent implements ICellRendererAngularComp {
     private params: any;
     private cubed: number;
 

@@ -18,9 +18,15 @@ include '../documentation-main/documentation_header.php';
     <h4>Navigation</h4>
 
     <p>
-        Use the arrow keys to move focus to the selection up, down, left and right. If the selected cell is
+        Use the <b>arrow keys</b> to move focus to the selection up, down, left and right. If the selected cell is
         already on the boundary for that position (eg if on the first column and the left key is pressed)
-        then the key press has no effect.
+        then the key press has no effect. User <b>ctrl + left and right</b> to move to start and end of the
+        line.
+    </p>
+
+    <p>
+        Use <b>page up</b> and <b>page down</b> to move the scroll up and down by one page.
+        Use <b>home</b> and <b>end</b> to go to the first and last rows.
     </p>
 
     <p>
@@ -31,7 +37,7 @@ include '../documentation-main/documentation_header.php';
     <h4>Groups</h4>
 
     <p>
-        If on a group element, hitting the Enter key will expand or collapse the group. This only works
+        If on a group element, hitting the <b>enter key</b> will expand or collapse the group. This only works
         when displaying groups in a column (<i>groupUseEntireRow=false</i>), as otherwise the group cell
         is not selectable.
     </p>
@@ -39,14 +45,14 @@ include '../documentation-main/documentation_header.php';
     <h4>Editing</h4>
 
     <p>
-        Pressing the Enter key on a cell will put the cell into edit mode, if editing is allowed on the cell.
+        Pressing the <b>enter key</b> on a cell will put the cell into edit mode, if editing is allowed on the cell.
         This will work for the default cell editor.
     </p>
 
     <h4>Selection</h4>
 
     <p>
-        Pressing the Space key on a cell will select the cells row, or deselect the row if already selected.
+        Pressing the <b>space key</b> on a cell will select the cells row, or deselect the row if already selected.
         If multi-select is enabled, then the selection will not remove any previous selections.
     </p>
 

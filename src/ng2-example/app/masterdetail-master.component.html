@@ -1,0 +1,16 @@
+<div style="width: 800px;">
+    <h1>Master-Detail Example</h1>
+    <ag-grid-ng2 #agGrid
+                 style="width: 100%; height: 350px;"
+                 class="ag-fresh"
+                 [gridOptions]="gridOptions"
+                 [isFullWidthCell]="isFullWidthCell"
+                 [getRowHeight]="getRowHeight"
+                 [getNodeChildDetails]="getNodeChildDetails"
+                 [fullWidthCellRendererFramework]="getFullWidthCellRenderer()"
+
+                 enableSorting
+                 enableColResize
+                 suppressMenuFilterPanel>
+    </ag-grid-ng2>
+</div>

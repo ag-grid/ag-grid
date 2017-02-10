@@ -1,7 +1,7 @@
 import Vue from "vue";
 
 export default Vue.extend({
-    template: `<button @click="click">Click Me</button>`,
+    template: `<button style="height: 21px" @click="click">Click Me</button>`,
     props: ["onClicked", "cell"],
     methods: {
         click() {

@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 
-import {AgRendererComponent} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
 
 @Component({
     selector: 'full-width-cell',
     template: `<span>Full Width Column! {{ values }}</span>`
 })
-export class NameAndAgeRendererComponent implements AgRendererComponent {
+export class NameAndAgeRendererComponent implements ICellRendererAngularComp {
     private params: any;
     public values: string;
 
