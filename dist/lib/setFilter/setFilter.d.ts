@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.0
+// ag-grid-enterprise v8.0.1
 import { IFilterComp, IFilterParams, IDoesFilterPassParams, Component } from "ag-grid/main";
 export declare class SetFilter extends Component implements IFilterComp {
     private gridOptionsWrapper;

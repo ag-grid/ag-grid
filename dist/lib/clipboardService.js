@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.0
+// ag-grid-enterprise v8.0.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -317,6 +317,7 @@ var ClipboardService = (function () {
             columnKeys: columnKeys,
             skipHeader: skipHeader,
             skipFooters: true,
+            suppressQuotes: true,
             columnSeparator: '\t',
             onlySelected: true,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
