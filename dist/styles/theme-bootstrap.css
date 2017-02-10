@@ -76,6 +76,7 @@
 }
 .ag-bootstrap .ag-value-change-value {
   background-color: transparent;
+  -webkit-border-radius: 1px;
   border-radius: 1px;
   padding-left: 1px;
   padding-right: 1px;
@@ -182,6 +183,7 @@
   margin-left: 1px;
   margin-right: 1px;
   border: 1px solid transparent;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
   -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
   -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;
@@ -221,6 +223,7 @@
 .ag-bootstrap .ag-overlay-loading-center {
   background-color: #fff;
   border: none;
+  -webkit-border-radius: 10px;
   border-radius: 10px;
   padding: 10px;
   color: #000;
@@ -228,6 +231,7 @@
 .ag-bootstrap .ag-overlay-no-rows-center {
   background-color: #fff;
   border: none;
+  -webkit-border-radius: 10px;
   border-radius: 10px;
   padding: 10px;
 }
@@ -406,6 +410,7 @@
   border: 1px solid transparent;
   padding-left: 2px;
   padding-right: 2px;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
 }
 .ag-bootstrap .ag-column-drop-cell-button:hover {
