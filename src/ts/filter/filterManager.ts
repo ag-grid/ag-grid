@@ -406,6 +406,15 @@ export class FilterManager {
         var eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
         var guiFromFilter = filterWrapper.filter.getGui();
+
+        // for backwards compatibility with Angular 1 - we
+        // used to allow providing back HTML from getGui().
+        // once we move away from supporting Angular 1
+        // directly, we can change this.
+        if (typeof guiFromFilter === 'string') {
+            guiFromFilter = _.loadTemplate(<string>guiFromFilter);
+        }
+
         eFilterGui.appendChild(guiFromFilter);
 
         if (filterWrapper.scope) {
