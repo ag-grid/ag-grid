@@ -149,8 +149,8 @@ export class CsvCreator {
                 this.columnController,
                 this.valueService,
                 this.gridOptionsWrapper,
-                params.processCellCallback,
-                params.processHeaderCallback,
+                params ? params.processCellCallback : null,
+                params ? params.processHeaderCallback : null,
                 params && params.suppressQuotes,
                 (params && params.columnSeparator) || ','
             ),
