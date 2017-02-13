@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h2>Grid API</h2>
+    <h2 id="grid-api">Grid API</h2>
 
     <p>
         The grid API exposes functions that go beyond events and properties that
@@ -70,7 +70,7 @@ include '../documentation-main/documentation_header.php';
         use api directly on the DOM element.
     </p>
 
-    <h2>List of API Functions</h2>
+    <h2 id="list-of-api-functions">List of API Functions</h2>
 
     <table class="table">
         <tr>
@@ -459,7 +459,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <h2>
+    <h2 id="api-functions">
         <?php include '../enterprise.php';?>
         &nbsp;
         API Functions

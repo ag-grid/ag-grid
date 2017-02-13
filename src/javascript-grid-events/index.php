@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Events</h2>
+    <h2 id="events">Events</h2>
 
 
     <p>
@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
         the following ways:
     <p>
 
-    <h4>
+    <h4 id="javascript-and-angularjs">
         <img src="/images/javascript.png" height="20"/>
         <img src="/images/angularjs.png" height="20px"/>
         Javascript and AngularJS 1.x
@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
         for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
     </note>
 
-    <h4>
+    <h4 id="react">
         <img src="/images/react.png" height="20px"/>
         React
     </h4>
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
         using React props in your JSX eg <i>eventName={this.myEventHandler.bind(this)}</i>.
     </p>
 
-    <h4>
+    <h4 id="angular">
         <img src="/images/angular2.png" height="20px"/>
         Angular
     </h4>
@@ -52,7 +52,7 @@ include '../documentation-main/documentation_header.php';
         using Angular event binding eg <i>(event-name)="myEventHandler"</i>.
     </p>
 
-    <h4>
+    <h4 id="vuejs">
         <img src="/images/vue_large.png" height="20px"/>
         VueJS
     </h4>
@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
         using VueJS event binding eg <i>:event-name="myEventHandler"</i>.
     </p>
 
-    <h4>
+    <h4 id="web-components">
         <img src="/images/webComponents.png" height="20px"/>
         Web Components
     </h4>
@@ -75,7 +75,7 @@ include '../documentation-main/documentation_header.php';
         DOM elements work.
     </p>
 
-    <h4>
+    <h4 id="aurelia-components">
         <img src="/images/aurelia.png" height="20px"/>
         Aurelia Components
     </h4>
@@ -88,7 +88,7 @@ include '../documentation-main/documentation_header.php';
         DOM elements work.
     </p>
 
-    <h2>ag-Grid Events</h2>
+    <h2 id="ag-grid-events">ag-Grid Events</h2>
 
     <table class="table">
         <tr>

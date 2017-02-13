@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Insert & Remove</h2>
+    <h2 id="insert-remove">Insert & Remove</h2>
 
     <p>
         If you want to add and remove rows into the grid, you have two choices. One is to maintain the data yourself,
@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
         to insert and remove the data. This section looks at the latter option, using the api.
     </p>
 
-    <h3>Supported Row Models</h3>
+    <h3 id="supported-row-models">Supported Row Models</h3>
 
     <p>
         This section covers adding and removing rows for the <code>normal</code> RowModel. For <code>pagination</code> and
@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
         grouped, then the add / remove features will not work.
     </p>
 
-    <h3>API Methods</h3>
+    <h3 id="api-methods">API Methods</h3>
 
     <p>
         The api methods for adding and removing are below. When the grid takes in new data, it creates a new list of
@@ -43,28 +43,28 @@ include '../documentation-main/documentation_header.php';
         the grid.
     </p>
 
-    <h4>&#8226; API insertItemsAtIndex(index, items, skipRefresh=false)</h4>
+    <h4 id="api-insert-items-at-index">&#8226; API insertItemsAtIndex(index, items, skipRefresh=false)</h4>
 
     <p>
         Inserts the data at the provided index. Provide items as raw data, not rowNodes (ie same as data in original
         rowData).
     </p>
 
-    <h4>&#8226; API removeItems(rowNodes, skipRefresh=false)</h4>
+    <h4 id="api-remove-items">&#8226; API removeItems(rowNodes, skipRefresh=false)</h4>
 
     <p>
         Removes the provided rowNodes from the grid. The rowNodes are used to identify the rows rather than indexes
         as this makes the method neutral to any sorting, filtering or grouping that may be active in the grid.
     </p>
 
-    <h4>&#8226; API addItems(items, skipRefresh=false)</h4>
+    <h4 id="api-add-items">&#8226; API addItems(items, skipRefresh=false)</h4>
 
     <p>
         Adds items to the end of the list. If the grid is sorted, then adding to the end of the list is fine, as
         the sorting will then sort the items anyway.
     </p>
 
-    <h4>Skip Refresh</h4>
+    <h4 id="skip-refresh">Skip Refresh</h4>
 
     <p>
         Each of the methods above has an optional parameter <i>skipRefresh</i>. This parameter is only used
@@ -74,7 +74,7 @@ include '../documentation-main/documentation_header.php';
         the grid will only group, sort and filter once when you are finished all the updates.
     </p>
 
-    <h3>Getting Data Out</h3>
+    <h3 id="getting-data-out">Getting Data Out</h3>
 
     <p>
         It's all good getting rows added and removed, but in the end, you will want to get the data out.
@@ -86,7 +86,7 @@ include '../documentation-main/documentation_header.php';
         <code>api.forEachNodeAfterFilterAndSort()</code>.
     </p>
 
-    <h3>Example - Adding & Removing Rows</h3>
+    <h3 id="example-adding-removing-rows">Example - Adding & Removing Rows</h3>
 
     <p>
         Below demonstrates the different api methods via the buttons. The example outputs a lot of debugging items
@@ -107,7 +107,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleInsertRemove"></show-example>
 
-    <h3>Example - Adding & Removing Rows with Groups</h3>
+    <h3 id="example-adding-removing-rows-with-groups">Example - Adding & Removing Rows with Groups</h3>
 
     <p>
         If you are displaying groups (either you provided your own groups, or you are using the ag-Grid Enterprise
