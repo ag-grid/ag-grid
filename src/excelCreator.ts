@@ -4,6 +4,7 @@ import {Column} from 'ag-grid/main';
 import {IExcelCreator} from 'ag-grid/main';
 import {Bean, Autowired} from 'ag-grid/main';
 import {Downloader} from 'ag-grid/main';
+import {_} from 'ag-grid/main';
 import {
     ExcelXmlFactory,
     ExcelDataType,
@@ -50,7 +51,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         baseExcelStyles:ExcelStyle[],
         private styleLinker:(rowType: RowType, rowIndex:number, colIndex:number, value:string, column:Column, node:RowNode)=> string[]
     ){
-        super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback);
+        super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, raw=>_.escape(raw));
         if (!baseExcelStyles) {
             this.styleIds = [];
             this.excelStyles = [];
