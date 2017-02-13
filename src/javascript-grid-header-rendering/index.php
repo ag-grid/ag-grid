@@ -96,8 +96,8 @@ var myColumns = {
         <ul>
             <li><a href="../javascript-grid-resizing/"><b>Resizing:</b></a> When enabled, the grid will put an invisible widget to be grabbed by
             the mouse for resizing.</li>
-            <li><a href="../javascript-grid-/"><b>Moving:</b></a> When enabled, the grid listens for mouse drag events for moving the column.</li>
-            <li><a href="../javascript-grid-resizing/"><b>Checkbox Selection:</b></a> When enabled, the grid puts a checkbox for 'select all' in the header.</li>
+            <li><a href="../javascript-grid-animation/"><b>Moving:</b></a> When enabled, the grid listens for mouse drag events for moving the column.</li>
+            <li><a href="../javascript-grid-selection/"><b>Checkbox Selection:</b></a> When enabled, the grid puts a checkbox for 'select all' in the header.</li>
         </ul>
     </p>
 
