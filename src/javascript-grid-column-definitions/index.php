@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Column Definitions";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2>Columns</h2>
+    <h2 id="columns">Columns</h2>
 
     <p>
         Each column in the grid is defined using a column definition. Below is the set off all the
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
     defaultColGroupDef: {}
 }</pre>
 
-    <h2>Properties for Column Groups & Columns</h2>
+    <h2 id="properties-for-column-groups-columns">Properties for Column Groups & Columns</h2>
 
     <table class="table">
         <tr>
@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <h2>Properties for Columns</h2>
+    <h2 id="properties-for-columns">Properties for Columns</h2>
 
     <table class="table">
         <tr>
@@ -301,7 +301,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <h2>Properties for Column Groups</h2>
+    <h2 id="properties-for-column-groups">Properties for Column Groups</h2>
 
     <table class="table">
         <tr>

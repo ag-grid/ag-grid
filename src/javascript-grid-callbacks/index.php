@@ -8,14 +8,14 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Callbacks</h2>
+    <h2 id="callbacks">Callbacks</h2>
 
     <p>
         Callbacks are used by the grid for contacting your client application and asking it questions.
         It is not intended to inform your application of anything.
     <p>
 
-    <h4>
+    <h4 id="javascript-angularjs">
         <img src="/images/javascript.png" height="20"/>
         <img src="/images/angularjs.png" height="20px"/>
         Javascript and AngularJS 1.x
@@ -64,7 +64,7 @@ include '../documentation-main/documentation_header.php';
         Add callbacks to the gridOptions or set as component properties.
     </p>
 
-    <h2>List of Callbacks</h2>
+    <h2 id="list-of-callbacks">List of Callbacks</h2>
 
     <table class="table">
         <tr>

@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Column API</h2>
+    <h2 id="column-api">Column API</h2>
 
     <p>
         The column api has methods for interacting with the columns of the grid. Using the column API, you
@@ -102,7 +102,7 @@ include '../documentation-main/documentation_header.php';
         use columnApi directly on the DOM element.
     </p>
 
-    <h2>Column Keys</h2>
+    <h2 id="column-keys">Column Keys</h2>
 
     <p>
         Some of the API methods take Column Key (named colKey). This means you can pass either a column object (that
@@ -111,7 +111,7 @@ include '../documentation-main/documentation_header.php';
         The grid also ensures column ID's are unique.
     </p>
 
-    <h2>List of Column API Functions</h2>
+    <h2 id="list-of-column-api-functions">List of Column API Functions</h2>
 
     <table class="table">
         <tr>
@@ -312,7 +312,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <h2>Deep Dive - Save / Restore Full State</h2>
+    <h2 id="deep-dive-save-restore-full-state">Deep Dive - Save / Restore Full State</h2>
 
     <p>
         It is also possible to store the entire state of the columns and restore them again via
@@ -364,7 +364,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="columnStateExample"></show-example>
 
-    <h2>Saving / Restoring State, Sort and Filter</h2>
+    <h2 id="saving-restoring-state-sort-and-filter">Saving / Restoring State, Sort and Filter</h2>
 
     <p>
     The above example shows how to store the state of the columns. This does not include filters or sorts.
