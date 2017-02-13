@@ -10,7 +10,7 @@ import {Autowired, PostConstruct, Context} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
 import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {IHeaderGroupParams} from "./headerGroupComp";
+import {IHeaderGroupParams, IHeaderGroupComp} from "./headerGroupComp";
 import {IComponent} from "../../interfaces/iComponent";
 import {ComponentProvider} from "../../componentProvider";
 
@@ -55,17 +55,17 @@ export class HeaderGroupWrapperComp extends Component {
 
         let displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
-        this.appendHeaderGroupComp(displayName);
+        let headerComponent: IHeaderGroupComp = this.appendHeaderGroupComp(displayName);
 
         this.setupResize();
         this.addClasses();
-        this.setupMove(displayName);
+        this.setupMove(headerComponent.getGui(), displayName);
         this.setupWidth();
 
         this.addFeature(this.context, new SetLeftFeature(this.columnGroup, this.getGui()));
     }
 
-    private appendHeaderGroupComp(displayName: string): IComponent<IHeaderGroupParams> {
+    private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
         let params = <IHeaderGroupParams> {
             displayName: displayName,
             columnGroup: this.columnGroup,
@@ -89,16 +89,15 @@ export class HeaderGroupWrapperComp extends Component {
         }
     }
 
-    private setupMove(displayName: string): void {
-        var eLabel = this.queryForHtmlElement('.ag-header-group-cell-label');
-        if (!eLabel) { return; }
+    private setupMove(eHeaderGroup: HTMLElement, displayName: string): void {
+        if (!eHeaderGroup) { return; }
 
         if (this.isSuppressMoving()) { return; }
 
-        if (eLabel) {
+        if (eHeaderGroup) {
             var dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
-                eElement: eLabel,
+                eElement: eHeaderGroup,
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
                 dragItem: this.getAllColumnsInThisGroup(),
