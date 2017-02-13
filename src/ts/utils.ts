@@ -17,6 +17,18 @@ export class Timer {
     
 }
 
+/** HTML Escapes. */
+const HTML_ESCAPES :{[id:string]:string}= {
+    '&': '&amp',
+    '<': '&lt',
+    '>': '&gt',
+    '"': '&quot',
+    "'": '&#39'
+};
+
+const reUnescapedHtml = /[&<>"']/g;
+
+
 export class Utils {
 
     // taken from:
@@ -863,6 +875,13 @@ export class Utils {
 
     static isNumeric (value:any): boolean {
         return !isNaN(parseFloat(value)) && isFinite(value);
+    }
+
+    static escape (toEscape:string):string {
+        if (!toEscape) return null;
+        if (!toEscape.replace) return null;
+
+        return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr])
     }
 
     // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js

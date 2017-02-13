@@ -60,7 +60,7 @@ import {SelectionController} from "./selectionController";
 import {SortController} from "./sortController";
 import {SvgFactory} from "./svgFactory";
 import {TemplateService} from "./templateService";
-import {Utils, NumberSequence} from "./utils";
+import {Utils, NumberSequence, _} from "./utils";
 import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
 import {GridRow} from "./entities/gridRow";
@@ -251,6 +251,7 @@ export function populateClientExports(exports: any): void {
     exports.SvgFactory = SvgFactory;
     exports.TemplateService = TemplateService;
     exports.Utils = Utils;
+    exports._ = _;
     exports.NumberSequence = NumberSequence;
     exports.ValueService = ValueService;
     exports.XmlFactory = XmlFactory;

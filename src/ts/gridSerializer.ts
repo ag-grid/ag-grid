@@ -83,7 +83,8 @@ export abstract class BaseGridSerializingSession implements GridSerializingSessi
         public valueService:ValueService,
         public gridOptionsWrapper:GridOptionsWrapper,
         public processCellCallback?:(params: ProcessCellForExportParams)=>string,
-        public processHeaderCallback?:(params: ProcessHeaderForExportParams)=>string
+        public processHeaderCallback?:(params: ProcessHeaderForExportParams)=>string,
+        public cellAndHeaderEscaper?:(rawValue:string)=>string
     ){}
 
     abstract prepare(columnsToExport: Column[]) : void;
@@ -105,7 +106,7 @@ export abstract class BaseGridSerializingSession implements GridSerializingSessi
             if (nameForCol === null || nameForCol === undefined) {
                 nameForCol = '';
             }
-            return nameForCol;
+        return this.cellAndHeaderEscaper? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     }
 
     public extractRowCellValue (column: Column, index: number, node?:RowNode){
@@ -122,7 +123,7 @@ export abstract class BaseGridSerializingSession implements GridSerializingSessi
             valueForCell = '';
         }
 
-        return valueForCell;
+        return this.cellAndHeaderEscaper? this.cellAndHeaderEscaper(valueForCell) : valueForCell;
     }
 
     private getHeaderName(callback: (params: ProcessHeaderForExportParams)=>string, column: Column): string {
