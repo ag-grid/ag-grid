@@ -34,6 +34,7 @@ function MyHeaderComponent() {
 MyHeaderComponent.prototype.init = function (params){
     this.params = params;
     this.eGui = document.createElement('div');
+    this.eGui.className = 'ag-header-group-cell-label';
     this.eGui.innerHTML = ''+
         '<div class="customHeaderLabel">' + this.params.displayName + '</div>' +
         '<div class="customExpandButton"><i class="fa fa-arrow-right"></i></div>';
