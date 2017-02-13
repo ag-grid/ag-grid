@@ -25,6 +25,8 @@ export class PopupService {
 
         var y = sourceRect.top - parentRect.top;
 
+        y = this.keepYWithinBounds(params, y);
+
         var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth: 200;
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
@@ -131,8 +133,6 @@ export class PopupService {
                         y: number,
                         keepWithinBounds?: boolean}): void {
 
-        var parentRect = this.getPopupParent().getBoundingClientRect();
-
         var x = params.x;
         var y = params.y;
 
@@ -145,49 +145,57 @@ export class PopupService {
 
         // if popup is overflowing to the bottom, move it up
         if (params.keepWithinBounds) {
-            checkHorizontalOverflow();
-            checkVerticalOverflow();
+            x = this.keepXWithinBounds(params, x);
+            y = this.keepYWithinBounds(params, y);
         }
 
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
 
-        function checkHorizontalOverflow(): void {
-            var minWidth: number;
-            if (params.minWidth > 0) {
-                minWidth = params.minWidth;
-            } else if (params.ePopup.clientWidth>0) {
-                minWidth = params.ePopup.clientWidth;
-            } else {
-                minWidth = 200;
-            }
+    }
 
-            var widthOfParent = parentRect.right - parentRect.left;
-            var maxX = widthOfParent - minWidth - 5;
-            if (x > maxX) { // move position left, back into view
-                x = maxX;
-            }
-            if (x < 0) { // in case the popup has a negative value
-                x = 0;
-            }
+    private keepYWithinBounds(params: {ePopup: HTMLElement}, y: number): number {
+        var parentRect = this.getPopupParent().getBoundingClientRect();
+
+        var minHeight: number;
+        if (params.ePopup.clientHeight > 0) {
+            minHeight = params.ePopup.clientHeight;
+        } else {
+            minHeight = 200;
         }
 
-        function checkVerticalOverflow(): void {
-            var minHeight: number;
-            if (params.ePopup.clientHeight > 0) {
-                minHeight = params.ePopup.clientHeight;
-            } else {
-                minHeight = 200;
-            }
+        var heightOfParent = parentRect.bottom - parentRect.top;
+        var maxY = heightOfParent - minHeight - 5;
+        if (y > maxY) { // move position left, back into view
+            return maxY;
+        } else if (y < 0) { // in case the popup has a negative value
+            return 0;
+        } else {
+            return y;
+        }
 
-            var heightOfParent = parentRect.bottom - parentRect.top;
-            var maxY = heightOfParent - minHeight - 5;
-            if (y > maxY) { // move position left, back into view
-                y = maxY;
-            }
-            if (y < 0) { // in case the popup has a negative value
-                y = 0;
-            }
+    }
+
+    private keepXWithinBounds(params: {minWidth?: number, ePopup: HTMLElement}, x: number): number {
+        var parentRect = this.getPopupParent().getBoundingClientRect();
+
+        var minWidth: number;
+        if (params.minWidth > 0) {
+            minWidth = params.minWidth;
+        } else if (params.ePopup.clientWidth>0) {
+            minWidth = params.ePopup.clientWidth;
+        } else {
+            minWidth = 200;
+        }
+
+        var widthOfParent = parentRect.right - parentRect.left;
+        var maxX = widthOfParent - minWidth - 5;
+        if (x > maxX) { // move position left, back into view
+            return maxX;
+        } else if (x < 0) { // in case the popup has a negative value
+            return 0;
+        } else {
+            return x;
         }
     }
 
