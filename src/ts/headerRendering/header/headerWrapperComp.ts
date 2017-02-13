@@ -18,6 +18,8 @@ import {ComponentProvider} from "../../componentProvider";
 import {AgCheckbox} from "../../widgets/agCheckbox";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {SelectAllFeature} from "./selectAllFeature";
+import {Events} from "../../events";
+import {ColumnHoverService} from "../../rendering/columnHoverService";
 
 export class HeaderWrapperComp extends Component {
 
@@ -38,6 +40,7 @@ export class HeaderWrapperComp extends Component {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
+    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
@@ -77,6 +80,7 @@ export class HeaderWrapperComp extends Component {
         this.setupResize();
         this.setupMove(headerComp.getGui(), displayName);
         this.setupSortableClass(enableSorting);
+        this.addColumnHoverListener();
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
@@ -86,6 +90,16 @@ export class HeaderWrapperComp extends Component {
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    }
+
+    private addColumnHoverListener(): void {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.onColumnHover();
+    }
+
+    private onColumnHover(): void {
+        var isHovered = this.columnHoverService.isHovered(this.column);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
     }
 
     private setupSortableClass(enableSorting:boolean):void{

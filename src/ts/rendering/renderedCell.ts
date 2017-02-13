@@ -398,11 +398,6 @@ export class RenderedCell extends Component {
     private onColumnHover(): void {
         var isHovered = this.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
-
-    }
-
-    private checkHoveringCell(): void {
-
     }
 
     private addDomData(): void {
