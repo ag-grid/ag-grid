@@ -58,4 +58,4 @@
 	</div>
 </footer>
 
-<script inline src="/dist/frontend/frontend.js"></script>
+<script inline src="/scripts/frontend/frontend.js"></script>

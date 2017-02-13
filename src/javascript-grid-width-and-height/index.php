@@ -8,9 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Width and Height</h2>
+    <h2 id="width-and-height">Width and Height</h2>
 
-    <h4>Fixed Width and Height</h4>
+    <h4 id="fixed-width-and-height">Fixed Width and Height</h4>
 
     <p>
         Set the width and height of the table by applying CSS to the containing div. Eg:
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre><code>style="width: 100px; height: 100px;"</code></pre>
 
-    <h4>Percent Width and Height</h4>
+    <h4 id="percent-width-and-height">Percent Width and Height</h4>
 
     <p>
         The width and / or height can also be set to a percentage. Eg:
@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
         you want, then you have a CSS layout issue to solve outside of the grid.
     </p>
 
-    <h4>Changing Width and Height</h4>
+    <h4 id="changing-width-and-height">Changing Width and Height</h4>
 
     <p>
         If the width and / or height change after the grid is initialised, the grid will

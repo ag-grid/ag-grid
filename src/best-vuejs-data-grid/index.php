@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implementing the VueJS Datagrid</h1>
+    <h1 id="implementing-the-vuejs-datagrid">Implementing the VueJS Datagrid</h1>
 
     <p>
         If you are building an VueJS application then you have the choice between A) using the plain JavaScript version
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-vuejs">ag-grid-vue</a>
         for feedback or issue reporting around ag-Grid's support for VueJS.</note>
 
-    <h2>ag-Grid VueJS Features</h2>
+    <h2 id="ag-grid-vuejs-features">ag-Grid VueJS Features</h2>
 
     <p>
         Every feature of ag-Grid is available when using the ag-Grid VueJS Component. The VueJS Component wraps
@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         VueJS ag-Grid when it comes to features.
     </p>
 
-    <h3>VueJS Full Example</h3>
+    <h3 id="vuejs-full-example">VueJS Full Example</h3>
 
     <p>
         This page goes through the
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Dependencies</h3>
+    <h3 id="dependencies">Dependencies</h3>
 
     <p>
         In your package.json file, specify dependency on ag-grid AND ag-grid-vue.
@@ -135,7 +135,7 @@ import "ag-grid-enterprise/main";
 
     <p>Importing of the CSS should be done before you use the ag-Grid Vue Component.</p>
 
-    <h2>Configuring ag-Grid in VueJS</h2>
+    <h2 id="configuring-ag-grid-in-vuejs">Configuring ag-Grid in VueJS</h2>
 
     <p>You can configure the grid in the following ways through VueJS:</p>
     <ul>
@@ -176,7 +176,7 @@ import "ag-grid-enterprise/main";
     <p>VueJS components can be provided to ag-Grid in the following ways (the section after documents how to then reference
         these components in your column definitions):</p>
 
-    <h4>Simple, Inline Components</h4>
+    <h4 id="simple-inline-components">Simple, Inline Components</h4>
 <pre>
 components: {
     'CubeComponent': {
@@ -201,7 +201,7 @@ components: {
     <p>Note here that we can define the property name either quoted or not - but note that in order to reference these
         components in your column definitions you'll need to provide them as case-sensitive strings (see referencing components below).</p>
 
-    <h4>Simple, Locally Declared Components</h4>
+    <h4 id="simple-locally-declared-components">Simple, Locally Declared Components</h4>
 <pre>
 let SquareComponent = Vue.extend({
     template: '<span>{{ valueSquared() }}</span>',
@@ -213,7 +213,7 @@ let SquareComponent = Vue.extend({
 });
 </pre>
 
-    <h4>External .js Components</h4>
+    <h4 id="external-js-components">External .js Components</h4>
 <pre>
 <span class="codeComment">// SquareComponent.js</span>
 export default Vue.extend({
@@ -229,7 +229,7 @@ export default Vue.extend({
 import SquareComponent from './SquareComponent'
 </pre>
     
-    <h4>More Complex, External Single File Components (.vue)</h4>
+    <h4 id="more-complex-external-single-file-components">More Complex, External Single File Components (.vue)</h4>
 <pre ng-non-bindable>
 &lt;template&gt;
     &lt;span class="currency"&gt;{{ params.value | currency('EUR') }}&lt;/span&gt;
@@ -389,12 +389,12 @@ this.params.context.componentParent
         <li><a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue" target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
     </ul>
 
-    <h3>Building & Bundling</h3>
+    <h3 id="building-bundling">Building & Bundling</h3>
     <p>There are many ways to build and/or bundle an VueJS Application. We provide fully working examples using a simplified
         Webpack build as part of the <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on GitHub.</p>
 
-    <h2>ag-Grid VueJS Examples</h2>
-    <h3>Example: Rich Grid without Components</h3>
+    <h2 id="ag-grid-vuejs-examples">ag-Grid VueJS Examples</h2>
+    <h3 id="example-rich-grid-without-components">Example: Rich Grid without Components</h3>
     <p>
         The example below shows a rich configuration of ag-Grid, with no VueJS Components.
     </p>
@@ -402,7 +402,7 @@ this.params.context.componentParent
                   jsfile="../vue-examples/src/rich-grid-example/RichGridExample.vue"
                   exampleHeight="525px"></show-example>
 
-    <h2>Cell Rendering & Cell Editing using VueJS</h2>
+    <h2 id="cell-rendering-cell-editing-using-vuej">Cell Rendering & Cell Editing using VueJS</h2>
 
     <p>
         It is possible to build
@@ -422,7 +422,7 @@ this.params.context.componentParent
         rendering etc) inside ag-Grid instead of creating VueJS counterparts.
     </p>
 
-    <h2>Next Steps...</h2>
+    <h2 id="next-steps">Next Steps...</h2>
 
     <p>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>

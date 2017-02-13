@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implementing the React Datagrid</h1>
+    <h1 id="implementing-the-react-datagrid">Implementing the React Datagrid</h1>
 
     <p>
         If you are building a React application then you have the choice between A) using the plain JavaScript version
@@ -148,7 +148,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <h2>ag-Grid React Features</h2>
+    <h2 id="ag-Grid-react-features">ag-Grid React Features</h2>
 
     <p>
         Every feature of ag-Grid is available when using the ag-Grid React Component. The React Component wraps the
@@ -156,7 +156,7 @@ include '../documentation-main/documentation_header.php';
         React ag-Grid when it comes to features.
     </p>
 
-    <h2>Dependencies</h2>
+    <h2 id="dependencies">Dependencies</h2>
     <p>
         Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
     <ul>
@@ -182,7 +182,7 @@ include '../documentation-main/documentation_header.php';
     for patch versions, the component will not be released.
     </p>
 
-    <h2>Configuring AgGridReact Component</h2>
+    <h2 id="configuring-aggridreact-component">Configuring AgGridReact Component</h2>
     <p>
         The root of the example application is MyApp.jsx. At the top of this file you can
         see the import the AgGridReact component as follows:
@@ -214,7 +214,7 @@ include '../documentation-main/documentation_header.php';
 /></code></pre>
     </p>
 
-    <h2>Loading CSS</h2>
+    <h2 id="loading-css">Loading CSS</h2>
 
     <p>You need 1) the core ag-Grid css and 2) a theme. These are stored in css files packaged
     in the core ag-Grid. To access them, first up we need to define an alias to use inside
@@ -228,7 +228,7 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
     You will also need to configure CSS loaders for Webpack.
     </p>
 
-    <h2>Applying Theme</h2>
+    <h2 id="applying-theme">Applying Theme</h2>
 
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
@@ -252,7 +252,7 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
         ...
 </pre>
 
-    <h2>Grid API</h2>
+    <h2 id="grid-api">Grid API</h2>
 
     <p>
         When the grid is initialised, it will fire the <i>gridReady</i> event. If you want to
@@ -284,7 +284,7 @@ somePointLater() {
         <i>api</i> and <i>columnApi</i> that way.
     </p>
 
-    <h2>Next Steps</h2>
+    <h2 id="next-steps">Next Steps</h2>
 
     <p>
         The above is all you need to get started using ag-Grid in a React application. Now would
@@ -293,7 +293,7 @@ somePointLater() {
         and custom filtering.
     </p>
 
-    <h2>Cell Rendering, Cell Editing and Filtering using React</h2>
+    <h2 id="cell-rendering-cell-editing-and-filtering-using-react">Cell Rendering, Cell Editing and Filtering using React</h2>
 
     <p>
         It is possible to build <a href="../javascript-grid-cell-rendering/#reactCellRendering">cellRenderers</a>,

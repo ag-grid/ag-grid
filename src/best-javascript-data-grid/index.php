@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implementing the JavaScript Datagrid</h1>
+    <h1 id="implementing-the-javascript-datagrid">Implementing the JavaScript Datagrid</h1>
 
     <p>
         When using no framework, you have the choice of using the bundled ag-Grid (which puts
@@ -60,7 +60,7 @@ include '../documentation-main/documentation_header.php';
 </pre>
     </p>
 
-    <h3>Using Bundled ag-Grid and Pure Javascript</h3>
+    <h3 id="using-bundled-ag-Grid-and-pure-javascript">Using Bundled ag-Grid and Pure Javascript</h3>
 
     <p>
         Reference the ag-Grid script from your
@@ -86,21 +86,21 @@ new agGrid.Grid(eGridDiv, gridOptions); //create a new grid</pre>
 
     <show-example example="html5grid"></show-example>
 
-    <h3>Using CommonJS and Pure Javascript</h3>
+    <h3 id="using-commonjs-and-pure-javascript">Using CommonJS and Pure Javascript</h3>
 
     <p>
         For an example of using the CommonJS and raw JavaScript version of ag-Grid, see
         the example <a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> on Github.
     </p>
 
-    <h3>Destroy</h3>
+    <h3 id="destroy">Destroy</h3>
 
     <p>
         To get the grid to release resources, call api.destroy(). If you do not do this, old grids will hang around
         and add to a memory leak problem in your application.
     </p>
 
-    <h3>Next Steps...</h3>
+    <h3 id="next-steps">Next Steps...</h3>
 
     <p>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>

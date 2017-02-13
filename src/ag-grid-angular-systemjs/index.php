@@ -8,12 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Angular - Building with SystemJS</h1>
+    <h1 id="angular-building-with-systemjs">Angular - Building with SystemJS</h1>
 
     <p>We document the main steps required when using SystemJS and SystemJS-Builder below, but please refer to
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub for a full working example of this.</p>
 
-    <h3>For Just in Time (JIT) Compilation</h3>
+    <h3 id="for-just-in-time-jit-compilation">For Just in Time (JIT) Compilation</h3>
     <p>
         You will need to configure SystemJS for ag-grid and ag-grid-component as follows:
     </p>

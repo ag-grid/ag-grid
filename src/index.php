@@ -92,9 +92,6 @@
 
         <?php $navKey = "home"; include './includes/footer.php'; ?>
 
-    </body>
-</html>
-
 <script inline src="dist/ag-grid-enterprise.js"></script>
 
 <link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
@@ -111,3 +108,6 @@
 <!--<script inline src="home/example-themes.js"></script>-->
 
 <?php include_once("includes/analytics.php"); ?>
+
+    </body>
+</html>

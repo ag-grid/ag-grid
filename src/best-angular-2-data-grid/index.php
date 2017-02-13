@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Implementing the Angular Datagrid</h1>
+    <h1 id="implementing-the-angular-datagrid">Implementing the Angular Datagrid</h1>
 
     <p>
         If you are building an Angular application then you have the choice between A) using the plain JavaScript version
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
         for feedback or issue reporting around ag-Grid's support for Angular.</note>
 
-    <h2>ag-Grid Angular Features</h2>
+    <h2 id="ag-grid-angular-features">ag-Grid Angular Features</h2>
 
     <p>
         Every feature of ag-Grid is available when using the ag-Grid Angular Component. The Angular Component wraps
@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         Angular ag-Grid when it comes to features.
     </p>
 
-    <h3>Angular Full Example</h3>
+    <h3 id="angular-full-axample">Angular Full Example</h3>
 
     <p>
         This page goes through the
@@ -74,7 +74,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Dependencies</h3>
+    <h3 id="dependencies">Dependencies</h3>
 
     <p>
         In your package.json file, specify dependency on ag-grid AND ag-grid-ng2.
@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
 &lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
 </pre>
 
-    <h2>Configuring ag-Grid in Angular</h2>
+    <h2 id="configuring-ag-grid-in-angular">Configuring ag-Grid in Angular</h2>
 
     <p>You can configure the grid in the following ways through Angular:</p>
     <ul>
@@ -164,7 +164,7 @@ include '../documentation-main/documentation_header.php';
         environment its safer to on you cannot safely rely on <code>AfterViewInit</code> instead before using the API
     </note>
 
-    <h3>Providing Angular Components to ag-Grid</h3>
+    <h3 id="providing-angular-components-to-ag-grid">Providing Angular Components to ag-Grid</h3>
     <p>In order for ag-Grid to be able to use your Angular Components, you need to provide them in the <strong>top level</strong> module:</p>
 <pre>
 @NgModule({
@@ -265,7 +265,7 @@ this.params.context.componentParent
         <li><a href="https://github.com/ceolter/ag-grid-ng2-example/blob/master/systemjs_aot/app/child-message.component.ts" target="_blank" class="fa fa-external-link"> Child Component</a></li>
     </ul>
 
-    <h3>Building & Bundling</h3>
+    <h3 id="building-bundling">Building & Bundling</h3>
     <p>There are many ways to build and/or bundle an Angular Application. We provide 3 full working examples using
         either SystemJS, Webpack or Angular-CLI as part of the <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub.</p>
     <p>We document the main parts of these tools here, but please refer to the examples for more detail.</p>
@@ -282,8 +282,8 @@ this.params.context.componentParent
         </li>
     </ul>
 
-    <h2>ag-Grid Angular Examples</h2>
-    <h3>Example: Rich Grid without Components</h3>
+    <h2 id="ag-grid-angular-examples">ag-Grid Angular Examples</h2>
+    <h3 id="example-rich-grid-without-components">Example: Rich Grid without Components</h3>
     <p>
         The example below shows a rich configuration of ag-Grid, with no Angular Components.
     </p>
@@ -297,14 +297,14 @@ this.params.context.componentParent
     <p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via declaratively with markup.</p>
     <p>The above section details how to specify the Grid itself. To declare columns you can specify them as follows:</p>
 
-    <h3>Column Definition</h3>
+    <h3 id="column-definition">Column Definition</h3>
 <pre>
 &lt;ag-grid-column headerName="Name" field="name" [width]="150">&lt;/ag-grid-column>
 </pre>
 
     <p>This example declares a simple Column Definition, specifying header name, field and width.</p>
 
-    <h3>Setting Column Properties</h3>
+    <h3 id="setting-column-properties">Setting Column Properties</h3>
     <p>There are some simple rules you should follow when setting column properties via Markup:</p>
 <pre ng-non-bindable>
 <span class="codeComment">// string value</span>
@@ -327,7 +327,7 @@ propertyName="String Value"
 [propertyName]="functionCallReturningAFunction()"
 </pre>
 
-    <h4>Setting a Class or a Complex Value:</h4>
+    <h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value:</h4>
     <p>You can set a Class or a Complex property in the following way:</p>
 <pre>
 <span class="codeComment">// return a Class definition for a Filter</span>
@@ -348,7 +348,7 @@ private getCountryFilterParams():any {
 }
 </pre>
 
-    <h3>Grouped Column Definition</h3>
+    <h3 id="grouped-column-definition">Grouped Column Definition</h3>
     <p>To specify a Grouped Column, you can nest a column defintion:</p>
 <pre ng-non-bindable>
 &lt;ag-grid-column headerName="IT Skills">
@@ -358,7 +358,7 @@ private getCountryFilterParams():any {
 </pre>
     <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
-    <h3>Example: Rich Grid using Markup</h3>
+    <h3 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h3>
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
@@ -368,7 +368,7 @@ private getCountryFilterParams():any {
             html="../ng2-example/app/rich-grid-declarative.component.html"
             exampleHeight="525px"></show-example>
 
-    <h2>Cell Rendering & Cell Editing using Angular</h2>
+    <h2 id="cell-rendering-cell-editing-using-angular">Cell Rendering & Cell Editing using Angular</h2>
 
     <p>
         It is possible to build
@@ -388,7 +388,7 @@ private getCountryFilterParams():any {
         rendering etc) inside ag-Grid instead of creating Angular counterparts.
     </p>
 
-    <h2>Next Steps...</h2>
+    <h2 id="next-steps">Next Steps...</h2>
 
     <p>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>

@@ -8,13 +8,13 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>Angular - Building with Angular CLI</h1>
+    <h1 id="angular-building-with-angular-cli">Angular - Building with Angular CLI</h1>
 
     <p>We document the main steps required when using Angular-CLI below, but please refer to
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub for a full working
         example of this.</p>
 
-    <h2>Pre-requisites</h2>
+    <h2 id="pre-requisites">Pre-requisites</h2>
     <p>
         This page assumes you already have Angular-CLI installed - if not please refer to the <a
                 href="https://github.com/angular/angular-cli">Angular CLI Documentation</a> for steps on how to do so.
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular.
     </p>
 
-    <h2>Creating a Angular Project with ag-Grid</h2>
+    <h2 id="creating-a-angular-project-with-ag-grid">Creating a Angular Project with ag-Grid</h2>
     <p>
         First we'll create a new project - lets call it <code>ag-grid-test</code>:
     </p>
