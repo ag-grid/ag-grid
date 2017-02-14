@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Floating Rows</h2>
+    <h2 id="floating-rows">Floating Rows</h2>
 
     <p>
         Floating rows hang either above or below the normal rows of a table. This feature is also called
@@ -25,13 +25,13 @@ include '../documentation-main/documentation_header.php';
         and <i>setFloatingBottomRowData(rows)</i>
     </p>
 
-    <h4>Cell Editing</h4>
+    <h4 id="cell-editing">Cell Editing</h4>
 
     <p>
         Cell editing can take place as normal on floating rows.
     </p>
 
-    <h4>Cell Rendering</h4>
+    <h4 id="cell-rendering">Cell Rendering</h4>
 
     <p>
         Cell rendering can take place as normal on floating rows. There is an additional <i>floatingCellRenderer</i>
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
         cellRenderer.
     </p>
 
-    <h3>Example</h3>
+    <h3 id="example">Example</h3>
 
     <p>
         Example below shows floating rows. To mix things up a bit, the example also has pinned left and right

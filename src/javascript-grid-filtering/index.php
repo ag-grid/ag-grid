@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
 
-    <h2>Filtering</h2>
+    <h2 id="filtering">Filtering</h2>
 
     <p>
         You have two options for filtering, one is use one of the default built-in filters (easy but restricted to
@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         <a href="/javascript-grid-virtual-paging/">virtual paging</a>
     </note>
 
-    <h3>Enable Filtering</h3>
+    <h3 id="enable-filtering">Enable Filtering</h3>
 
     <p>
         Enable filtering by setting grid property <i>enableFilter=true</i>. This turns on filtering on all columns.
@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         When a filter is active on a column, the filter icon appears before the column name in the header.
     </p>
 
-    <h3>Default Built-In Filters</h3>
+    <h3 id="default-built-in-filters">Default Built-In Filters</h3>
 
     <p>
         The following filter options can be set for a column definition:
@@ -69,7 +69,7 @@ include '../documentation-main/documentation_header.php';
         in which case the 'set' filter is the default).
     </p>
 
-    <h3>Filter Parameters</h3>
+    <h3 id="filter-parameters">Filter Parameters</h3>
 
     <p>
         As well as specifying the filter type, you can also provide setup parameters for the filters by setting
@@ -85,7 +85,7 @@ columnDefinition = {
     filterParams: {apply: true, newRowsAction: 'keep'}
 }</pre>
 
-    <h4>Text, Number and Date Filter Parameters</h4>
+    <h4 id="text-number-and-date-filter-parameters">Text, Number and Date Filter Parameters</h4>
     <p>
         The filter parameters for text, date and number filter have the following meaning:
         <ul>
@@ -105,7 +105,7 @@ columnDefinition = {
         </ul>
     </p>
 
-    <h3>Built In Filters Example</h3>
+    <h3 id="built-in-filters-example">Built In Filters Example</h3>
 
     <p>
         The example below demonstrates:
@@ -190,7 +190,7 @@ colDef = {
 }
 </pre>
 
-    <h4>Custom Date Component</h4>
+    <h4 id="custom-date-component">Custom Date Component</h4>
 
     <p>
         It is possible to specify your own component to be used as a date picker. By default the grid will us
@@ -261,7 +261,7 @@ export interface IDateCompParams {
 
     <show-example example="exampleCustomDate"></show-example>
 
-    <h3>Apply Function</h3>
+    <h3 id="apply-function">Apply Function</h3>
 
     <p>
         If you want the user to hit an 'Apply' button before the filter is actioned, add <i>apply=true</i>
@@ -282,7 +282,7 @@ export interface IDateCompParams {
 
     <show-example example="exampleFilterApply"></show-example>
 
-    <h3>Filtering Animation</h3>
+    <h3 id="filtering-animation">Filtering Animation</h3>
 
     <p>
         To enable animation of the rows after filtering, set grid property <i>animateRows=true</i>.
@@ -322,7 +322,7 @@ export interface IDateCompParams {
 
     <show-example example="exampleFilterExternal"></show-example>
 
-    <h3>Quick Filter</h3>
+    <h3 id="quick-filter">Quick Filter</h3>
 
     <p>
         In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
@@ -330,7 +330,7 @@ export interface IDateCompParams {
         to filter the data (which will include the new quick filter).
     </p>
 
-    <h4>How it Works</h4>
+    <h4 id="how-it-works">How it Works</h4>
 
     <p>
         Each node gets a <i>quick filter text</i> attached to it by concatenating all the values for each column.
@@ -361,7 +361,7 @@ export interface IDateCompParams {
         problem, you don't need to use it, quick filter will work 'out of the box' in most cases.
     </note>
 
-    <h4>Reset Quick Filters</h4>
+    <h4 id="reset-quick-filters">Reset Quick Filters</h4>
 
     <p>Quick filters can be reset in any of the following ways:
     <ul>
@@ -371,7 +371,7 @@ export interface IDateCompParams {
     </ul>
     </p>
 
-    <h4>Quick Filter Example</h4>
+    <h4 id="quick-filter-example">Quick Filter Example</h4>
 
     <p>
         The example below shows the quick filter working on different data types. Each column demonstrates something
@@ -391,7 +391,7 @@ export interface IDateCompParams {
     <show-example example="exampleQuickFilter"></show-example>
 
 
-    <h3>Accessing Filter Component Instances</h3>
+    <h3 id="accessing-filter-component-instances">Accessing Filter Component Instances</h3>
 
     <p>
         It is possible to access the filter components directly if you want to interact with the specific
@@ -408,7 +408,7 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
         customer filter and your application.
     </p>
 
-    <h3>Text Filter Component Methods</h3>
+    <h3 id="text-filter-component-methods">Text Filter Component Methods</h3>
     <p>
         In addition to implementing the IFilter interface, the text filter also provides the following
         API methods:

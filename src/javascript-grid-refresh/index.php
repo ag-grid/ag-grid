@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Refresh</h2>
+    <h2 id="refresh">Refresh</h2>
 
     <p>
         When the underlying data is changed for the grid, you can get the grid to refresh. The easiest way is to call
@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
         design the best.
     </note>
 
-    <h3>Refreshing Everything, Specific Rows or Specific Cells</h3>
+    <h3 id="refresh-everything">Refreshing Everything, Specific Rows or Specific Cells</h3>
 
     <p>
         To refresh the grid, you can choose between the following options:
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example3"></show-example>
 
-    <h3>Refresh via rowNode</h3>
+    <h3 id="refresh-via-rownode">Refresh via rowNode</h3>
 
     <p>
         Each data item in ag-Grid is wrapped by a rowNode. The rowNode has two methods for refreshing that
@@ -81,7 +81,7 @@ include '../documentation-main/documentation_header.php';
     Use the above if your code if working directly with the rowNode makes more sense for your code.
     </p>
 
-    <h3>Volatile Cells</h3>
+    <h3 id="volatile-cells">Volatile Cells</h3>
 
     <p>
         In addition to the <i>api.refreshView()</i> call, there is also a similar <i>api.softRefreshView()</i> call.
@@ -96,7 +96,7 @@ include '../documentation-main/documentation_header.php';
         Cells are marked as volatile by setting the attribute on the column definition.
     </p>
 
-    <h3>Volatile Cells Example</h3>
+    <h3 id="volatile-cells-example">Volatile Cells Example</h3>
 
     <p>
         The example below shows refreshing in action. The weekday columns are editable. As you edit the cells,
@@ -110,7 +110,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    <h3>Cell Refresh from Inside</h3>
+    <h3 id="cell-refresh-from-inside">Cell Refresh from Inside</h3>
 
     <p>
         You can request a cell to be refreshed from within by calling the <i>params.refreshCell()</i> function
@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         way to get the grid to rip the cell out and put it back again to the fresh 'non-editing' state.
     </p>
 
-    <h3>Refresh Headers and Footers</h3>
+    <h3 id="refresh-headers-and-footers">Refresh Headers and Footers</h3>
 
     <p>
         If you call <i>api.recomputeAggregates()</i>, all header and footer rows will subsequently get ripped
@@ -133,7 +133,7 @@ include '../documentation-main/documentation_header.php';
         for reasons other than the aggregates being recomputed.
     </p>
 
-    <h3>Headers, Footers and Cell Refresh Example</h3>
+    <h3 id="headers-footers-cell-refresh-example">Headers, Footers and Cell Refresh Example</h3>
 
     <p>
         The example below demonstrates the following features:

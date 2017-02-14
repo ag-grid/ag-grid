@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Row Height</h2>
+    <h2 id="row-height">Row Height</h2>
 
     <p>
         By default, the grid will display rows at 25px. You can change this for each row individually to give
@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         assume the row height is fixed.
     </note>
 
-    <h3>rowHeight Property</h3>
+    <h3 id="row-height-property">rowHeight Property</h3>
 
     <p>
         To change the row height for the whole grid, set the property <i>rowHeight</i> to a positive number.
@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
         Changing the property will set a new row height for all rows, including floating rows top and bottom.
     </p>
 
-    <h3>getRowHeight Callback</h3>
+    <h3 id="get-row-height-callback">getRowHeight Callback</h3>
 
     <p>
         To change the row height so that each row can have a different height,
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Row Height Simple Example</h3>
+    <h3 id="row-height-simple-example">Row Height Simple Example</h3>
 
     <p>
         The example below hows dynamic row height, specifying a different row height for each row.
@@ -70,7 +70,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleRowHeight"></show-example>
 
-    <h3>Row Height More Complex Example</h3>
+    <h3 id="row-height-more-complex-example">Row Height More Complex Example</h3>
 
     <p>
         Below shows a more complex example, where the row height is changed based on contents of
@@ -91,7 +91,7 @@ include '../documentation-main/documentation_header.php';
         <i>api.onRowHeightChanged()</i>.
     </p>
 
-    <h4>api.resetRowHeights()</h4>
+    <h4 id="api-reset-row-heights">api.resetRowHeights()</h4>
     <p>
         Call this API to have the grid clear all the row
         heights and work them all out again from scratch - if you provide a <i>getRowHeight()</i>
@@ -99,7 +99,7 @@ include '../documentation-main/documentation_header.php';
         reposition all rows again. This is the shotgun approach.
     </p>
 
-    <h4>rowNode.setRowHeight(height) and api.onRowHeightChanged()</h4>
+    <h4 id="row-node-set-row-height">rowNode.setRowHeight(height) and api.onRowHeightChanged()</h4>
 
     <p>
         You can call <i>rowNode.setRowHeight(height)</i> directly
@@ -120,7 +120,7 @@ include '../documentation-main/documentation_header.php';
         callback.
     </p>
 
-    <h3>Example Changing Row Height</h3>
+    <h3 id="example-changing-row-height">Example Changing Row Height</h3>
 
     <p>The example below changes the row height in the different ways described above.</p>
 
@@ -139,7 +139,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleRowHeightChange"></show-example>
 
-    <h3>Height for Floating Rows</h3>
+    <h3 id="height-for-floating-rows">Height for Floating Rows</h3>
 
     <p>
         Row height for floating rows works exactly as per normal rows with one difference - it

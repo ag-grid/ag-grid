@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Styling</h2>
+    <h2 id="styling">Styling</h2>
 
     ag-Grid is designed to have it's look and feel derived from a theme.
 
@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
     This section does not provide an example of building a theme as a number of themes
     are already provided with ag-Grid - these can be used as a basis for any additional themes you may wish to create.
 
-    <div class="bigTitle">When to Style via Themes</div>
+    <div class="bigTitle" id="when-to-style-via-themes">When to Style via Themes</div>
 
     Themes are intended to change the overall look and feel of a grid. If you want to style a particular
     column, or a particular header, consider using either cell and header renderers, or applying css
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
     Sometimes it is possible to achieve the same effect using custom renderers as it is with themes.
     If so, use whichever one makes more sense for you, there isn't a hard and fast rule.
 
-    <div class="bigTitle">What to Style via Themes</div>
+    <div class="bigTitle" id="what-to-style-via-themes">What to Style via Themes</div>
 
     Any of the CSS classes described below can have style associated with them.
 
@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
     with an element using your browsers developer tools. If still unsure, try it out, see what
     result you get.
 
-    <div class="bigTitle">Structure Example</div>
+    <div class="bigTitle" id="structure-example">Structure Example</div>
 
     The exact structure of the DOM within ag-Grid is dependent on it's configuration and what data is present.
     This page takes the below basic example grid, with one pinned column, as an example to demonstrate the DOM structure.
@@ -75,7 +75,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    <div class="bigTitle">High Level Overview</div>
+    <div class="bigTitle" id="high-level-overview">High Level Overview</div>
     <p/>
     The diagram below shows the hierarchy of the core div elements which form the four quadrants
     of the table. The four quadrants are as follows:
@@ -139,7 +139,7 @@ include '../documentation-main/documentation_header.php';
         </div>
     </div>
 
-    <div class="bigTitle">Detailed Breakdown</div>
+    <div class="bigTitle" id="detailed-breakdown">Detailed Breakdown</div>
 
     Below gives a detailed breakdown of the DOM for the example. In the example, the following is highlighted:
     <p/>
@@ -232,7 +232,7 @@ include '../documentation-main/documentation_header.php';
 &lt;/div>
 </pre>
 
-    <div class="bigTitle">Styling with No Scrolls</div>
+    <div class="bigTitle" id="styling-with-no-scrolls">Styling with No Scrolls</div>
 
     Styling with the option 'no scrolls' is similar to styling with scrolls, however the dom layout is much simpler.
     When no scrolls, there are no pinned columns and no viewports for scrolling.

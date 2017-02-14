@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Touch</h2>
+    <h2 id="touch">Touch</h2>
 
     <p>
         ag-Grid is designed to work on touch devices. By default, browsers convert tap events to mouse
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         gestures coded into the grid.
     </p>
 
-    <h4>Touch Gestures for ag-Grid Free</h4>
+    <h4 id="touch-gestures-for-ag-grid-free">Touch Gestures for ag-Grid Free</h4>
 
     <p>
         The following touch gestures are supported by ag-Grid free.
@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h4>Touch Gestures for ag-Grid Enterprise</h4>
+    <h4 id="touch-gestures-for-ag-grid-enterprise">Touch Gestures for ag-Grid Enterprise</h4>
 
     <p>
         The following touch gestures are support by ag-Grid Enterprise - these are in addition to the ag-Grid free
@@ -50,13 +50,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         <ul>
-        <li>
-            Drag columns out of the tool panel using drag.
-        </li>
-        <li>
-            Drag columns out of the row group and pivot drop zones by dragging.
-        </li>
-    </ul>
+            <li>
+                Drag columns out of the tool panel using drag.
+            </li>
+            <li>
+                Drag columns out of the row group and pivot drop zones by dragging.
+            </li>
+        </ul>
     </p>
 
 </div>

@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Master / Slave</h2>
+    <h2 id="master-slave">Master / Slave</h2>
 
     <p>
         Grids can be configured such that events that happen in one are propagated to happen in another.
@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         and you want the two of them to remain synced with regards their columns.
     </p>
 
-    <h4>Configuration</h4>
+    <h4 id="configuration">Configuration</h4>
 
     <p>
         To have on grid act as a slave to another, place it's grid options in the 'slaves' array of the first.
@@ -36,7 +36,7 @@ gridOptionsMaster = {
 }</code></pre>
     <p>It makes a bit more sense in the examples...</p>
 
-    <h4>Events</h4>
+    <h4 id="events">Events</h4>
     <p>
         The events which are fired as part of the master slave relationship are as follows:
         <ul>
@@ -49,7 +49,7 @@ gridOptionsMaster = {
     </ul>
     </p>
 
-    <h4>Event Propagation</h4>
+    <h4 id="event-propagation">Event Propagation</h4>
 
     <p>
         When a grid fires an event, it will be processed by all the slaves to that grid. However if
@@ -60,7 +60,7 @@ gridOptionsMaster = {
         between grids if two grids are acting as slaves to each other.
     </p>
 
-    <h4>Pivots</h4>
+    <h4 id="pivots">Pivots</h4>
 
     <p>
         The pivot functionality does not work with Master / Slave grids. This is because pivoting data changes
@@ -68,7 +68,7 @@ gridOptionsMaster = {
         the same set of columns.
     </p>
     
-    <h4>Demonstration Example</h4>
+    <h4 id="demonstration-example">Demonstration Example</h4>
 
     <p>
         Below shows two grids acting as master and slave to each other (ie both are registered as slaves
@@ -86,7 +86,7 @@ gridOptionsMaster = {
 
     <show-example example="exampleMasterSlave"></show-example>
 
-    <h4>A Wee More Useful Example</h4>
+    <h4 id="a-wee-more-useful-example">A Wee More Useful Example</h4>
 
     <p>
         So why the hell would you want to do this anyway??? It's great for aligning grids that have
@@ -104,7 +104,7 @@ gridOptionsMaster = {
 
     <show-example example="exampleFloatingFooter"></show-example>
 
-    <h4>Split Column Groups</h4>
+    <h4 id="split-column-groups">Split Column Groups</h4>
 
     <p>
         It is possible that you have column groups that are split because of pinning or the

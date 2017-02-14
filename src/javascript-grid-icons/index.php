@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Icons</h2>
+    <h2 id="icons">Icons</h2>
 
     <p>
         ag-Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.

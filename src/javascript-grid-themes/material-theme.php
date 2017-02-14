@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Material Theme</h2>
+    <h2 id="material-theme">Material Theme</h2>
 
     The Material Theme is one of the four themes supplied with ag-Grid.
 
@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
     }
 }</pre>
 
-    <div class="bigTitle">Material Theme Example</div>
+    <div class="bigTitle" id="material-theme-example">Material Theme Example</div>
 
     This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel
 

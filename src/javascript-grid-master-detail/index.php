@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Full Width Rows & Master Detail Grids</h2>
+    <h2 id="full-width-rows-master-detail-grids">Full Width Rows & Master Detail Grids</h2>
 
     <p>
         Under normal operation, ag-Grid will render each row as a horizontal list of cells. Each cell in the row
@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
         is sometimes referred to as Master Detail grids.
     </p>
 
-    <h3>
+    <h3 id="understanding-full-width">
         Understanding Full Width
     </h3>
 
@@ -57,14 +57,14 @@ include '../documentation-main/documentation_header.php';
         (use fullWidth) or false (do not use fullWidth and render as normal).
     </p>
 
-    <h3>Sorting and Filtering</h3>
+    <h3 id="sorting-filtering">Sorting and Filtering</h3>
 
     <p>
         Sorting and Filtering are NOT impacted by fullWidth. fullWidth is a rendering time feature. The sorting
         and filtering applied to the data is done before rending and is not impacted.
     </p>
 
-    <h3>Basic fullWidth Example</h3>
+    <h3 id="basic-fullwidth-example">Basic fullWidth Example</h3>
 
     <p>
         Below shows a basic fullWidth example. The example's data is minimalistic to focus on how
@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleFullWidth"></show-example>
 
-    <h3>Parent / Child Relationships</h3>
+    <h3 id="parent-child-relationships">Parent / Child Relationships</h3>
 
     <p>
         ag-Grid's fullWidth concept is not related to the grids expand / collapse feature, however it often makes
@@ -158,7 +158,7 @@ include '../documentation-main/documentation_header.php';
     <note>Why call them 'flowers'? Well the groupings are a tree structure. The tree structure contains
         leaf nodes, that is the bottom nodes of the tree. Leafs can then in turn have flowers.</note>
 
-    <h3>Example - Expanding to Child Panels</h3>
+    <h3 id="example-expanding-to-child-panels">Example - Expanding to Child Panels</h3>
 
     <p>
         Below shows using ag-Grid to show more information about a country when you click 'expand' on a country name.
@@ -186,7 +186,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleFullWidthComponent"></show-example>
 
-    <h3>Example - Master Detail Grids</h3>
+    <h3 id="example-master-detail-grids">Example - Master Detail Grids</h3>
 
     <p>
         A common requirement is to have a master / detail relationship between two grids where you have the
@@ -237,7 +237,7 @@ include '../documentation-main/documentation_header.php';
         here. They just have similar names.
     </note>
 
-    <h3>Server Requests for Additional Data</h3>
+    <h3 id="server-requests-for-additional-data">Server Requests for Additional Data</h3>
 
     <p>
         The examples on this page do not contact the server for more data to display in the fullWidth components.
@@ -246,7 +246,7 @@ include '../documentation-main/documentation_header.php';
         maybe you would consider showing a loading spinner icon while you fetch the data in the fullWidth component.
     </p>
 
-    <h3>Using fullWidth with Pagination, Virtual Pagination and Viewport</h3>
+    <h3 id="using-fullwidth-with-pagination">Using fullWidth with Pagination, Virtual Pagination and Viewport</h3>
 
     <p>
         It is possible to use fullWidth with any of the row models. However grouping (and / or parent child)

@@ -8,13 +8,13 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Resizing</h2>
+    <h2 id="resizing">Resizing</h2>
 
     <p>
         All columns can be resized by dragging the top right portion of the column.
     </p>
 
-    <h3>Enable Resizing</h3>
+    <h3 id="enable-resizing">Enable Resizing</h3>
 
     <p>
         Turn column resizing on for the grid by enabling resizing in the grid options.
@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         on the column definition.
     </p>
 
-    <h3>Size Columns to Fit</h3>
+    <h3 id="size-columns-to-fit">Size Columns to Fit</h3>
 
     <p>
         Call api.sizeColumnsToFit() to make the currently visible columns fit the screen.
@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
         columns to fill the width of the table.
     </p>
 
-    <h3>Auto-Size Columns</h3>
+    <h3 id="auto-size-columns">Auto-Size Columns</h3>
 
     <p>
         Just like Excel, each column can be 'auto resized' by double clicking the right side of the header
@@ -74,7 +74,7 @@ include '../documentation-main/documentation_header.php';
         </p>
     </note>
 
-    <h3>Resizing Example</h3>
+    <h3 id="resizing-example">Resizing Example</h3>
 
     <p>
         The example below shows resizing in action. Things to note are as follows:

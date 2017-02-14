@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Overlays</h2>
+    <h2 id="overlays">Overlays</h2>
 
     <p>
         At present, there are two overlays for the grid:
@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
         When the api function setRowData is called, the loading panel is hidden.
     </p>
 
-    <h4>Overlay API</h4>
+    <h4 id="overlay-api">Overlay API</h4>
 
     <p>
         At any point, you can show or hide any of the overlays using the methods below.
@@ -46,7 +46,7 @@ gridOptions.api.hideOverlay()</code></pre>
         The overlays are mutually exclusive, you cannot show more than one overlay at any given time.
     </p>
 
-    <h4>Custom Templates</h4>
+    <h4 id="custom-templates">Custom Templates</h4>
 
     <p>
         If your not happy with the provided overlay templates, you can provide your own. This is done with
@@ -54,7 +54,7 @@ gridOptions.api.hideOverlay()</code></pre>
         should be plain HTML.
     </p>
 
-    <h4>Example</h4>
+    <h4 id="example">Example</h4>
 
     <p>
         In the example below, the table is not provided with rows on initialisation, hence the loading icon is shown.
