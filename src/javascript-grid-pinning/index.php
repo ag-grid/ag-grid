@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Pinning</h2>
+    <h2 id="pinning">Pinning</h2>
 
     <p>
         You can pin columns by setting the pinned attribute on the column definition to either 'left' or 'right'.
@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
         columns such that when 'Country' is pinned, it jumps to the first position.
     </p>
 
-    <h3>Jump To & Pinning</h3>
+    <h3 id="jump-to-pinning">Jump To & Pinning</h3>
 
     <p>
         Below shows jumping to rows and cols via the API. Jumping to a pinned col makes no sense, as the pinned

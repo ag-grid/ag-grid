@@ -8,13 +8,13 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Internationalisation</h2>
+    <h2 id="internationalisation">Internationalisation</h2>
 
     <p>
         You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
         a <i>localeTextFunc</i> to the <i>gridOptions</i>.</p>
 
-    <h3>Using <i>localeText</i></h3>
+    <h3 id="using-locale-text">Using <i>localeText</i></h3>
 
     <p>
         The example below shows all the text that can be defined.
@@ -107,7 +107,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="internationalisation"></show-example>
 
-    <h3>Using <i>localeTextFunc</i></h3>
+    <h3 id="using-locale-text-func">Using <i>localeTextFunc</i></h3>
 
     <p>
         The example above works great if all you are translating is ag-Grid. However what if you want

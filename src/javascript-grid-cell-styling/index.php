@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Cell Styling</h2>
+    <h2 id="cell-styling">Cell Styling</h2>
 
     <p>
         Cell customisation is done a the column level via the column definition. You can mix and match any
@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         the column definition.
     </p>
 
-    <h3>Column Definition cellStyle</h3>
+    <h3 id="column-definition-cellstyle">Column Definition cellStyle</h3>
 
     <p>
         Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
@@ -93,7 +93,7 @@ var colDef4 = {
 
     </p>
 
-    <h3>Cell Style & Cell Class Params</h3>
+    <h3 id="cell-style-cell-class-params">Cell Style & Cell Class Params</h3>
 
     <p>
         Both cellClass and cellStyle functions take a params object with the following values:

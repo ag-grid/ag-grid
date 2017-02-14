@@ -8,14 +8,14 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>RTL - Right To Left</h2>
+    <h2 id="right-to-left">RTL - Right To Left</h2>
 
     <p>
         RTL is used for displaying languages that go from Right to Left, eg Hebrew and Arabic.
         To get ag-Grid to display in RTL format, set the property <i>enableRtl=true</i>.
     </p>
 
-    <h3>Simple Example</h3>
+    <h3 id="simple-example">Simple Example</h3>
 
     <p>
         Below shows a simple example of a grid using RTL. To make it look better we should really be using
@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleRtl"></show-example>
 
-    <h3>Complex Example</h3>
+    <h3 id="complex-example">Complex Example</h3>
 
     <p>
         Below shows a more complex example. It's the same example as used on the ag-Grid main demo page.
@@ -34,13 +34,13 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleRtlComplex"></show-example>
 
-    <h3>How it Works</h3>
+    <h3 id="how-it-works">How it Works</h3>
 
     <p>
         If you are creating your own theme, knowing how the RTL is implemented will be useful.
     </p>
 
-    <h4>CSS Styling</h4>
+    <h4 id="css-styling">CSS Styling</h4>
 
     <p>
         The following CSS classes are added to the grid when RTL is on and off:
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
 }
 </pre>
 
-    <h4>Pinning and Scroll Bars</h4>
+    <h4 id="pinning-and-scroll-bars">Pinning and Scroll Bars</h4>
 
     <p>
         Under normal operation, when columns are pinned to the right, the vertical scroll will appear
@@ -75,7 +75,7 @@ include '../documentation-main/documentation_header.php';
         when left pinning columns.
     </p>
 
-    <h4>
+    <h4 id="layout-of-columns">
         Layout of Columns
     </h4>
 

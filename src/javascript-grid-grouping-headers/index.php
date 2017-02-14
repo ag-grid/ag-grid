@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Grouping Columns</h2>
+    <h2 id="grouping-columns">Grouping Columns</h2>
 
     <p>
         Grouping columns allows you to have multiple levels of columns in your header and the ability,
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
     }
 ];</code></pre>
 
-    <h3>Column Definitions vs Column Group Definitions</h3>
+    <h3 id="column-definitions-vs-column-group-definitions">Column Definitions vs Column Group Definitions</h3>
 
     <p>
         The list of columns in <i>gridOptions.columnDefs</i> can be a mix of columns and column groups.
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h3>Showing / Hiding Columns</h3>
+    <h3 id="showing-hiding-columns">Showing / Hiding Columns</h3>
 
     <p>
         A group can have children initially hidden. If you want to show or hide children,
@@ -97,7 +97,7 @@ include '../documentation-main/documentation_header.php';
         at some point (ie all are set to 'open' or 'closed').
     </p>
 
-    <h3>Pinning and Groups</h3>
+    <h3 id="pinning-groups">Pinning and Groups</h3>
 
     <p>
         Pinned columns break groups. So if you have a group with 10 columns, 4 of which are
@@ -105,14 +105,14 @@ include '../documentation-main/documentation_header.php';
         with 6 (not pinned).
     </p>
 
-    <h3>Moving Columns and Groups</h3>
+    <h3 id="moving-columns-and-groups">Moving Columns and Groups</h3>
 
     <p>
         If you move columns so that columns in a group are no longer adjacent, then the group
         will again be broken and displayed as one or more groups in the grid.
     </p>
 
-    <h3>Resizing Groups</h3>
+    <h3 id="resizing-groups">Resizing Groups</h3>
 
     <p>
         If you grab the group resize bar, it resizes each child in the group evenly distributing
@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         <img src="headerResize.jpg"/>
     </p>
 
-    <h3>Coloring Groups</h3>
+    <h3 id="colouring-groups">Coloring Groups</h3>
 
     <p>
         The grid doesn't color the groups for you. However you can use the column definition
@@ -133,7 +133,7 @@ include '../documentation-main/documentation_header.php';
         to set the header name based on the group the column is inside.
     </p>
 
-    <h3>Grouping Example</h3>
+    <h3 id="grouping-example">Grouping Example</h3>
 
     <p>
         Here is a basic example of grouping in action.
@@ -141,7 +141,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    <h3>Grouping Example - with marryChildren set</h3>
+    <h3 id="grouping-example-with-marrychildren-set">Grouping Example - with marryChildren set</h3>
 
     <p>
         As above, here is a basic example of grouping in action, but this time we have
@@ -151,7 +151,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example2"></show-example>
 
-    <h3>Advanced Grouping Example</h3>
+    <h3 id="advanced-grouping-example">Advanced Grouping Example</h3>
 
     <p>
         And here, to hammer in the 'no limit to the number of levels or groups', we have a more

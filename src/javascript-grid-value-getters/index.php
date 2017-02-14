@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Value Getters</h2>
+    <h2 id="value-getters">Value Getters</h2>
 
     <p>
         The default way to get a value from a cell is provide a field value to the grid. However that may not always
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
         row - for example, the valueGetter could be called for a row that is not being rendered.
     </p>
 
-    <h3>Value Getter Functions</h3>
+    <h3 id="value-getter-functions">Value Getter Functions</h3>
 
     <p>
         Value getter functions are similar to value renderers in their operation, in that you
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         The example below uses a valueGetter function for calculating the 'Age Now' column.
     </p>
 
-    <h3>Value Getter Expressions</h3>
+    <h3 id="value-getter-expressions">Value Getter Expressions</h3>
 
     <p>
         Value getter expressions work in the same was as functions, except you pass an expression. The expression

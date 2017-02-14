@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Context</h2>
+    <h2 id="context">Context</h2>
 
     <p>
         The context object is passed to most of the callbacks used in ag-Grid, such as the cell renderers.
@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
         It's purpose is to allow the client application to pass details to custom callbacks.
     </p>
 
-    <h4>Example</h4>
+    <h4 id="example">Example</h4>
 
     In the example below, the drop down selects a reporting currency. This reporting currency selection
     is placed inside the context object, which is subsequently used by the a) cell renderer to calculate

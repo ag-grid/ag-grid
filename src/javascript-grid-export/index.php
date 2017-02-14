@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Data Export</h2>
+    <h2 id="data-export">Data Export</h2>
 
     <note>
         If you are looking to export your data formatted for Excel use the ag-Grid Enterprise feature
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
     </ul>
 
-    <h3>processCellCallback()</h3>
+    <h3 id="process-cell-callback">processCellCallback()</h3>
 
     <p>This callback allows you to format the cells for the export. The example below has an option 'Use Cell Callback'
     which puts all the items into upper case. This can be useful if, for example, you need to format date cells
@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
         The callback params has the following attributes: value, node, column, api, columnApi, context.
     </p>
 
-    <h3>processHeaderCallback()</h3>
+    <h3 id="process-header-callback">processHeaderCallback()</h3>
 
     <p>If you don't like the header names the grid provides, then you can provide your own header names. Maybe you
         have grouped columns and you want to include the columns parent groups.</p>
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
         The callback params has the following attributes: column, api, columnApi, context.
     </p>
 
-    <h3>
+    <h3 id="what-gets-exported">
         What Gets Exported
     </h3>
 
@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h3>
+    <h3 id="example">
         Example
     </h3>
     <p>

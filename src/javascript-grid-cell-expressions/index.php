@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Cell Expressions</h2>
+    <h2 id="cell-expressions">Cell Expressions</h2>
 
     <p>
         In the section on <a href="../javascript-grid-value-getters/">value getters</a>
@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
         from outside of the grid.
     </p>
 
-    <h3>Example</h3>
+    <h3 id="example">Example</h3>
 
     <p>
         The example blow shows cell expressions in action. The second column values in the LHS (Left Hand Side)

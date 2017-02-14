@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Blue Theme</h2>
+    <h2 id="blue-theme">Blue Theme</h2>
 
     The Blue Theme is one of the four themes supplied with ag-Grid.
 
@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     The following is an example of using the ag-blue theme:<br/>
     <pre>&lt;div ag-grid="gridOptions" class="ag-blue">&lt;/div></pre>
 
-    <div class="bigTitle">Blue Theme Example</div>
+    <div class="bigTitle" id="blue-theme-example">Blue Theme Example</div>
 
     This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel
     <p/>
