@@ -20,9 +20,9 @@ do
     echo "MODULE  $module"
     echo =============================================================================================
 
-    git clone https://github.com/ceolter/$module.git
-    cd $module
-    git checkout -b $1
+#    git clone https://github.com/ceolter/$module.git
+#    cd $module
+#    git checkout -b $1
 
     case $module in
         ##Examples
