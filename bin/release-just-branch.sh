@@ -8,8 +8,8 @@ fi
 
 
 echo "Releasing " $1
-mkdir $1
-cd $1
+#mkdir $1
+#cd $1
 
 ## for all the modules
 ## for all the modules
@@ -20,7 +20,7 @@ do
     echo "MODULE  $module"
     echo =============================================================================================
 
-    git clone https://github.com/ceolter/$module.git
+#    git clone https://github.com/ceolter/$module.git
     cd $module
     git checkout -b $1
 
@@ -75,10 +75,10 @@ do
     rm bower.json.old
     rm package.json.old
 
-    cd ../..
+    cd ../
     build-just-module.sh $1 $module
     dist-just-module.sh $1 $module
-    cd "$1/$module"
+    cd "$module"
 
     git add .
     git commit -m "$1"

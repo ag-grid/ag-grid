@@ -11,7 +11,7 @@ fi
 IFS=' ' read -ra ADDR <<< "${@:2}"
 for module in "${ADDR[@]}"
 do
-    cd "$1/$module"
+    cd "$module"
 
     case $module in
         "ag-grid-enterprise"|"ag-grid")
@@ -50,7 +50,7 @@ do
             ;;
     esac
 
-    cd ../../
+    cd ../
 done
 
 

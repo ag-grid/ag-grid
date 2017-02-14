@@ -11,7 +11,7 @@ fi
 IFS=' ' read -ra ADDR <<< "${@:2}"
 for module in "${ADDR[@]}"
 do
-    cd "$1/$module"
+    cd "$module"
 
     case $module in
         "ag-grid-ng2")
@@ -26,7 +26,7 @@ do
     esac
     npm install
 
-    cd ../../
+    cd ../
 done
 
 
