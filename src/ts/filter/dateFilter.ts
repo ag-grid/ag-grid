@@ -7,6 +7,9 @@ import {Utils} from "../utils";
 import {IDateParams, IDateComp} from "../rendering/dateComponent";
 import {ComponentProvider} from "../componentProvider";
 
+var HTMLElement:any = typeof HTMLElement === 'undefined' ? function(){} : HTMLElement;
+var HTMLSelectElement:any = typeof HTMLSelectElement === 'undefined' ? function(){} : HTMLSelectElement;
+
 export interface IDateFilterParams extends IFilterParams {
     comparator?: IDateComparatorFunc;
 }
