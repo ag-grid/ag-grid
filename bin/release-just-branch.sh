@@ -7,9 +7,9 @@ if [ "$#" -lt 3 ]
 fi
 
 
-echo "Releasing " $1
-mkdir $1
-cd $1
+#echo "Releasing " $1
+#mkdir $1
+#cd $1
 
 ## for all the modules
 ## for all the modules
@@ -21,9 +21,9 @@ do
     echo =============================================================================================
 
 #    git clone https://github.com/ceolter/$module.git
-#    cd $module
 #    git checkout -b $1
 
+    cd $module
     case $module in
         ##Examples
         "ag-grid-ng2-example"|"ag-grid-react-example"|"ag-grid-aurelia-example"|"ag-grid-vue-example")
