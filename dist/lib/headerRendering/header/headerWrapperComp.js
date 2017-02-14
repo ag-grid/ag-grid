@@ -36,6 +36,8 @@ var componentProvider_1 = require("../../componentProvider");
 var agCheckbox_1 = require("../../widgets/agCheckbox");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var selectAllFeature_1 = require("./selectAllFeature");
+var events_1 = require("../../events");
+var columnHoverService_1 = require("../../rendering/columnHoverService");
 var HeaderWrapperComp = (function (_super) {
     __extends(HeaderWrapperComp, _super);
     function HeaderWrapperComp(column, eRoot, dragSourceDropTarget, pinned) {
@@ -60,12 +62,21 @@ var HeaderWrapperComp = (function (_super) {
         this.setupResize();
         this.setupMove(headerComp.getGui(), displayName);
         this.setupSortableClass(enableSorting);
+        this.addColumnHoverListener();
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
         this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.getGui()));
         this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    };
+    HeaderWrapperComp.prototype.addColumnHoverListener = function () {
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.onColumnHover();
+    };
+    HeaderWrapperComp.prototype.onColumnHover = function () {
+        var isHovered = this.columnHoverService.isHovered(this.column);
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
@@ -249,6 +260,10 @@ var HeaderWrapperComp = (function (_super) {
         context_1.Autowired('componentProvider'), 
         __metadata('design:type', componentProvider_1.ComponentProvider)
     ], HeaderWrapperComp.prototype, "componentProvider", void 0);
+    __decorate([
+        context_1.Autowired('columnHoverService'), 
+        __metadata('design:type', columnHoverService_1.ColumnHoverService)
+    ], HeaderWrapperComp.prototype, "columnHoverService", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eResize'), 
         __metadata('design:type', HTMLElement)

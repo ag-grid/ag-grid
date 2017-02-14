@@ -26,19 +26,20 @@ var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTree
 var groupInstanceIdCreator_1 = require("./columnController/groupInstanceIdCreator");
 var columnGroup_1 = require("./entities/columnGroup");
 var BaseGridSerializingSession = (function () {
-    function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback) {
+    function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, cellAndHeaderEscaper) {
         this.columnController = columnController;
         this.valueService = valueService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
+        this.cellAndHeaderEscaper = cellAndHeaderEscaper;
     }
     BaseGridSerializingSession.prototype.extractHeaderValue = function (column) {
         var nameForCol = this.getHeaderName(this.processHeaderCallback, column);
         if (nameForCol === null || nameForCol === undefined) {
             nameForCol = '';
         }
-        return nameForCol;
+        return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     };
     BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, node) {
         var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
@@ -53,7 +54,7 @@ var BaseGridSerializingSession = (function () {
         if (valueForCell === null || valueForCell === undefined) {
             valueForCell = '';
         }
-        return valueForCell;
+        return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(valueForCell) : valueForCell;
     };
     BaseGridSerializingSession.prototype.getHeaderName = function (callback, column) {
         if (callback) {

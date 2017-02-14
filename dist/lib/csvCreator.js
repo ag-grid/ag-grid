@@ -131,7 +131,7 @@ var CsvCreator = (function () {
         return dataAsCsv;
     };
     CsvCreator.prototype.getDataAsCsv = function (params) {
-        return this.gridSerializer.serialize(new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params.processCellCallback, params.processHeaderCallback, params && params.suppressQuotes, (params && params.columnSeparator) || ','), params);
+        return this.gridSerializer.serialize(new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.suppressQuotes, (params && params.columnSeparator) || ','), params);
     };
     __decorate([
         context_1.Autowired('downloader'), 

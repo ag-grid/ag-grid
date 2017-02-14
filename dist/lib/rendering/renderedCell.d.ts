@@ -77,7 +77,6 @@ export declare class RenderedCell extends Component {
     init(): void;
     private addColumnHoverListener();
     private onColumnHover();
-    private checkHoveringCell();
     private addDomData();
     private onEnterKeyDown();
     private onF2KeyDown();

@@ -30,6 +30,7 @@ var PopupService = (function () {
         var sourceRect = params.eventSource.getBoundingClientRect();
         var parentRect = this.getPopupParent().getBoundingClientRect();
         var y = sourceRect.top - parentRect.top;
+        y = this.keepYWithinBounds(params, y);
         var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
@@ -102,7 +103,6 @@ var PopupService = (function () {
         });
     };
     PopupService.prototype.positionPopup = function (params) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
         var x = params.x;
         var y = params.y;
         if (params.nudgeX) {
@@ -113,47 +113,55 @@ var PopupService = (function () {
         }
         // if popup is overflowing to the bottom, move it up
         if (params.keepWithinBounds) {
-            checkHorizontalOverflow();
-            checkVerticalOverflow();
+            x = this.keepXWithinBounds(params, x);
+            y = this.keepYWithinBounds(params, y);
         }
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
-        function checkHorizontalOverflow() {
-            var minWidth;
-            if (params.minWidth > 0) {
-                minWidth = params.minWidth;
-            }
-            else if (params.ePopup.clientWidth > 0) {
-                minWidth = params.ePopup.clientWidth;
-            }
-            else {
-                minWidth = 200;
-            }
-            var widthOfParent = parentRect.right - parentRect.left;
-            var maxX = widthOfParent - minWidth - 5;
-            if (x > maxX) {
-                x = maxX;
-            }
-            if (x < 0) {
-                x = 0;
-            }
+    };
+    PopupService.prototype.keepYWithinBounds = function (params, y) {
+        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var minHeight;
+        if (params.ePopup.clientHeight > 0) {
+            minHeight = params.ePopup.clientHeight;
         }
-        function checkVerticalOverflow() {
-            var minHeight;
-            if (params.ePopup.clientHeight > 0) {
-                minHeight = params.ePopup.clientHeight;
-            }
-            else {
-                minHeight = 200;
-            }
-            var heightOfParent = parentRect.bottom - parentRect.top;
-            var maxY = heightOfParent - minHeight - 5;
-            if (y > maxY) {
-                y = maxY;
-            }
-            if (y < 0) {
-                y = 0;
-            }
+        else {
+            minHeight = 200;
+        }
+        var heightOfParent = parentRect.bottom - parentRect.top;
+        var maxY = heightOfParent - minHeight - 5;
+        if (y > maxY) {
+            return maxY;
+        }
+        else if (y < 0) {
+            return 0;
+        }
+        else {
+            return y;
+        }
+    };
+    PopupService.prototype.keepXWithinBounds = function (params, x) {
+        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var minWidth;
+        if (params.minWidth > 0) {
+            minWidth = params.minWidth;
+        }
+        else if (params.ePopup.clientWidth > 0) {
+            minWidth = params.ePopup.clientWidth;
+        }
+        else {
+            minWidth = 200;
+        }
+        var widthOfParent = parentRect.right - parentRect.left;
+        var maxX = widthOfParent - minWidth - 5;
+        if (x > maxX) {
+            return maxX;
+        }
+        else if (x < 0) {
+            return 0;
+        }
+        else {
+            return x;
         }
     };
     //adds an element to a div, but also listens to background checking for clicks,

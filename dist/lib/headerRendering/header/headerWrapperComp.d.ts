@@ -16,6 +16,7 @@ export declare class HeaderWrapperComp extends Component {
     private sortController;
     private eventService;
     private componentProvider;
+    private columnHoverService;
     private eResize;
     private cbSelectAll;
     private column;
@@ -26,6 +27,8 @@ export declare class HeaderWrapperComp extends Component {
     constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string);
     getColumn(): Column;
     init(): void;
+    private addColumnHoverListener();
+    private onColumnHover();
     private setupSortableClass(enableSorting);
     private onFilterChanged();
     private appendHeaderComp(displayName, enableSorting, enableMenu);

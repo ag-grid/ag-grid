@@ -45,10 +45,10 @@ var HeaderGroupWrapperComp = (function (_super) {
     HeaderGroupWrapperComp.prototype.postConstruct = function () {
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
         var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
-        this.appendHeaderGroupComp(displayName);
+        var headerComponent = this.appendHeaderGroupComp(displayName);
         this.setupResize();
         this.addClasses();
-        this.setupMove(displayName);
+        this.setupMove(headerComponent.getGui(), displayName);
         this.setupWidth();
         this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui()));
     };
@@ -76,19 +76,18 @@ var HeaderGroupWrapperComp = (function (_super) {
             this.addCssClass('ag-header-group-cell-with-group');
         }
     };
-    HeaderGroupWrapperComp.prototype.setupMove = function (displayName) {
+    HeaderGroupWrapperComp.prototype.setupMove = function (eHeaderGroup, displayName) {
         var _this = this;
-        var eLabel = this.queryForHtmlElement('.ag-header-group-cell-label');
-        if (!eLabel) {
+        if (!eHeaderGroup) {
             return;
         }
         if (this.isSuppressMoving()) {
             return;
         }
-        if (eLabel) {
+        if (eHeaderGroup) {
             var dragSource = {
                 type: dragAndDropService_1.DragSourceType.HeaderCell,
-                eElement: eLabel,
+                eElement: eHeaderGroup,
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
                 dragItem: this.getAllColumnsInThisGroup(),
