@@ -95,6 +95,7 @@ function ageBelow25() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setType('lessThan');
     ageFilterComponent.setFilter(25);
+    ageFilterComponent.setVisibilityOnDateToPanel();
     gridOptions.api.onFilterChanged();
 }
 
@@ -102,6 +103,16 @@ function ageAbove30() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setType('greaterThan');
     ageFilterComponent.setFilter(30);
+    ageFilterComponent.setVisibilityOnDateToPanel();
+    gridOptions.api.onFilterChanged();
+}
+
+function ageBetween25And30() {
+    var ageFilterComponent = gridOptions.api.getFilterInstance('age');
+    ageFilterComponent.setType('inRange');
+    ageFilterComponent.setFilter(25);
+    ageFilterComponent.setFilterTo(30);
+    ageFilterComponent.setVisibilityOnDateToPanel();
     gridOptions.api.onFilterChanged();
 }
 
