@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Pagination</h2>
+    <h2 id="pagination">Pagination</h2>
 
     <p>
         Pagination allows the grid to lazy load rows from the server and display the rows one page at a time. The page to display is selected
@@ -30,14 +30,14 @@ include '../documentation-main/documentation_header.php';
         the total rows and pages are displayed as 'more' at the bottom of the page, and the 'last' button is disabled.
     </p>
 
-    <h4>Aggregation and Grouping</h4>
+    <h4 id="aggregation-and-grouping">Aggregation and Grouping</h4>
 
     <p>
         Aggregation and grouping work exactly as when no paging, however their effect will be on the currently displayed page only. It is not
         posible to have the client aggregate or group on data that is not loaded from the server.
     </p>
 
-    <h4>Sorting & Filtering</h4>
+    <h4 id="sorting-filtering">Sorting & Filtering</h4>
 
     <p>
         You have two options for both sorting and filtering. Either you can allow the grid to do it on a particular page
@@ -57,7 +57,7 @@ include '../documentation-main/documentation_header.php';
         are doing in-grid sorting, you can do server side filtering, and vice versa.
     </p>
 
-    <h4>Example - In Grid Sorting and Filtering</h4>
+    <h4 id="example-in-grid-sorting-and-filtering">Example - In Grid Sorting and Filtering</h4>
 
     <p>
         The following example shows pagination. The sorting and filtering is all done in the grid.
@@ -65,7 +65,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="examplePaging"></show-example>
 
-    <h4>Example - Server Side Sorting and Filtering</h4>
+    <h4 id="example-server-side-sorting-and-filtering">Example - Server Side Sorting and Filtering</h4>
 
     <p>
         The following example extends the example above by adding server side filtering and sorting.
@@ -97,7 +97,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="examplePagingServerSide"></show-example>
 
-    <h4>Configuring A Bit Differently</h4>
+    <h4 id="configuring-a-bit-differently">Configuring A Bit Differently</h4>
 
     <p>
         The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
