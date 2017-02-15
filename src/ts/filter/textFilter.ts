@@ -6,6 +6,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 export class TextFilter implements IFilterComp {
 
     public static CONTAINS = 'contains';//1;
+    public static NOT_CONTAINS = 'notContains';//1;
     public static EQUALS = 'equals';//2;
     public static NOT_EQUALS = 'notEquals';//3;
     public static STARTS_WITH = 'startsWith';//4;
@@ -69,6 +70,8 @@ export class TextFilter implements IFilterComp {
         switch (this.filterType) {
             case TextFilter.CONTAINS:
                 return valueLowerCase.indexOf(this.filterText) >= 0;
+            case TextFilter.NOT_CONTAINS:
+                return valueLowerCase.indexOf(this.filterText) === -1;
             case TextFilter.EQUALS:
                 return valueLowerCase === this.filterText;
             case TextFilter.NOT_EQUALS:
@@ -100,6 +103,7 @@ export class TextFilter implements IFilterComp {
                     <div>
                         <select class="ag-filter-select" id="filterType">
                         <option value="${TextFilter.CONTAINS}">${translate('contains', 'Contains')}</option>
+                        <option value="${TextFilter.NOT_CONTAINS}">${translate('notContains', 'Not contains')}</option>
                         <option value="${TextFilter.EQUALS}">${translate('equals', 'Equals')}</option>
                         <option value="${TextFilter.NOT_EQUALS}">${translate('notEquals', 'Not equals')}</option>
                         <option value="${TextFilter.STARTS_WITH}">${translate('startsWith', 'Starts with')}</option>
