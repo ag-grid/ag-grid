@@ -264,6 +264,7 @@ export class DateFilter extends Component implements IFilterComp {
             this.setDateTo(null);
             this.setFilterType("equals");
         }
+        this.setVisibilityOnDateToPanel();
     }
 
     private removeTimezone (from:Date):Date{
