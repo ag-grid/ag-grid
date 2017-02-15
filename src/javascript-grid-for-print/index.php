@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>For Print</h2>
+    <h2 id="for-print">For Print</h2>
 
     <p>
         'For Print' renders the table without using any scrollbars. The grid will flow outside the
@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         to render the page.
     </p>
 
-    <h4>Why 'For Print'</h4>
+    <h4 id="why-for-print">Why 'For Print'</h4>
 
     <p>
         You will want to use 'for print' for printing. The table normally will have parts of the
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         the entire table, perfect for printing.
     </p>
 
-    <h3>Simple Example</h3>
+    <h3 id="simple-example">Simple Example</h3>
 
     <p>
         Below is an example table using 'for print'. The table is also fitted with a border, to
@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleForPrint"></show-example>
 
-    <h3>Complex Example</h3>
+    <h3 id="complex-example">Complex Example</h3>
 
     <p>
         The following example demonstrates for print when used in combination with floating rows,
@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleForPrintComplex"></show-example>
 
-    <h3>For Print and RTL</h3>
+    <h3 id="for-print-and-rtl">For Print and RTL</h3>
 
     <p>
         If you are using RTL (for Right to Left languages), it will work but you need to be careful. The

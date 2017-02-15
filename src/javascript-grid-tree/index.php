@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Tree Data</h2>
+    <h2 id="tree-data">Tree Data</h2>
 
     <p>It is possible to provide the data to ag-Grid in a tree structure. This can be used to provide a view of
     a tree (such as a file browser, this is what the <a href="../example-file-browser/">File Browser</a>
@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h2>Tree Data Example</h2>
+    <h2 id="tree-data-example">Tree Data Example</h2>
 
     <p>Below shows a simple example of providing already structured data. Notice that you can also provide
     data to the group level nodes (Sausage, Spaceman and Winklepicker) - this is where you would put aggregation
@@ -45,6 +45,14 @@ include '../documentation-main/documentation_header.php';
     <p>Also take a look at the <a href="../example-file-browser/">File Browser</a> example for a full example.</p>
 
     <show-example example="exampleTree"></show-example>
+
+    <h2 id="tree-data-vertical-scroll-location">Tree Data &amp; Vertical Scroll Location</h2>
+    <p>
+    <p>Depending on your scroll position the last item's group data may not be visible when clicking on the expand icon.</p>
+    <p>You can resolve this by using the function <strong>api.ensureIndexVisible()</strong>. This ensures the index is visible, scrolling the table if needed.</p>
+    <h3 id="example-ensure-index-visible">Example - api.ensureIndexVisible()</h3>
+
+    <show-example example="exampleTreeScroll"></show-example>
 
 </div>
 

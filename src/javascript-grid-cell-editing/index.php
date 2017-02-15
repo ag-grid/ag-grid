@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Cell Editors";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2>Cell Editing</h2>
+    <h2 id="cell-editing">Cell Editing</h2>
 
     <p>
         cellRenderers and cellEditors, the former for showing the data, the latter for editing the data.
@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Default Editing</h3>
+    <h3 id="default-editing">Default Editing</h3>
 
     <p>
         To get simple string editing, you do not need to provide an editor. The grid by default allows simple
@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
         not provide a cellEditor.
     </p>
 
-    <h3>Start Editing</h3>
+    <h3 id="start-editing">Start Editing</h3>
 
     <p>
         If you have <i>colDef.editable=true</i> set for a column then editing will start upon any of the following:
@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Stop / End Editing</h3>
+    <h3 id="stop-end-editing">Stop / End Editing</h3>
 
     <p>
         The grid will stop editing when any of the following happen:
@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Popup vs In Cell</h3>
+    <h3 id="popup-vs-in-cell">Popup vs In Cell</h3>
 
     <p>
         An editor can be in a popup or in cell.
@@ -117,7 +117,7 @@ include '../documentation-main/documentation_header.php';
         to be done within a cell, either return false or don't provide this method at all.
     </p>
 
-    <h3>Tab Navigation</h3>
+    <h3 id="tab-navigation">Tab Navigation</h3>
 
     <p>
         While editing, if you hit tab, the editing will stop on the current cell and start on the next cell.
@@ -131,7 +131,7 @@ include '../documentation-main/documentation_header.php';
         successful, otherwise false.
     </p>
 
-    <h3>Provided cellEditors</h3>
+    <h3 id="provided-celleditors">Provided cellEditors</h3>
 
     <p>
         The grid, out of the box, comes with the following editors:
@@ -178,7 +178,7 @@ colDef.cellEditorParams = {
 
     <p>If you have many instances of a grid, you must register the cellEditors with each one.</p>
 
-    <h4>Callback: New Value Handlers</h4>
+    <h4 id="callback-new-value-handlers">Callback: New Value Handlers</h4>
 
     <p>
         If you want to use the simple text editing, but want to format the result in some way
@@ -199,7 +199,7 @@ colDef.cellEditorParams = {
         <b>api: </b>A reference to the ag-Grid API.<br/>
     </p>
 
-    <h4>Event: Cell Value Changed</h4>
+    <h4 id="event-cell-value-changed">Event: Cell Value Changed</h4>
 
     <p>
         After a cell has been changed with default editing (ie not your own custom cell renderer),
@@ -215,7 +215,7 @@ colDef.cellEditorParams = {
         newValue for onCellValueChanged will have the number.
     </p>
 
-    <h3>Editing API</h3>
+    <h3 id="editing-api">Editing API</h3>
 
     <p>
         There are two api methods for editing, <code>startEditingCell()</code> and <code>stopEditing(params)</code>.
@@ -239,7 +239,7 @@ colDef.cellEditorParams = {
         Pass true to cancel editing, i.e. revert any changes.
     </p>
 
-    <h3>Start / Stop Editing Events</h3>
+    <h3 id="start-stop-editing-events">Start / Stop Editing Events</h3>
 
     <p>
         The following events are fired as editing starts and stops:
@@ -251,7 +251,7 @@ colDef.cellEditorParams = {
     </ul>
     </p>
 
-    <h3>Cell Editing Example</h3>
+    <h3 id="cell-editing-example">Cell Editing Example</h3>
 
     <p>
         The example below illustrates different parts of the editing API using the buttons at the top.
@@ -259,7 +259,7 @@ colDef.cellEditorParams = {
 
     <show-example example="exampleCellEditing"></show-example>
 
-    <h3>Datepicker Cell Editing Example</h3>
+    <h3 id="datepicker-cell-editing-example">Datepicker Cell Editing Example</h3>
 
     <p>The example below illustrates:
     <ul>
@@ -294,7 +294,7 @@ colDef.cellEditorParams = {
     </ul>
     </p>
 
-    <h4>Full Row Edit and Popup Editors</h4>
+    <h4 id="full-row-edit-and-popup-editors">Full Row Edit and Popup Editors</h4>
 
     <p>
         Full row editing is not compatible with popup editors. This is because a) the grid would look
@@ -370,13 +370,13 @@ colDef.cellEditorParams = {
 
     <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 
-    <h4>
+    <h4 id="double-click-editing">
         Double Click Editing
     </h4>
     <p>
         The default is for the grid to enter editing when you double click on a cell.
     </p>
-    <h4>
+    <h4 id="single-click-editing">
         Single Click Editing
     </h4>
     <p>
@@ -384,7 +384,7 @@ colDef.cellEditorParams = {
         This is useful when you want a cell to enter edit mode as soon as you click on it, similar to the experience
         you get when inside Excel.
     </p>
-    <h4>
+    <h4 id="no-click-editing">
         No Click Editing
     </h4>
     <p>
@@ -393,7 +393,7 @@ colDef.cellEditorParams = {
         such as including a button in your cellRenderer.
     </p>
 
-    <h3>Single Click and No Click Example</h3>
+    <h3 id="single-click-and-no-click-example">Single Click and No Click Example</h3>
 
     <show-example example="exampleSingleClickEditing"></show-example>
 

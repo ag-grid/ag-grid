@@ -14,6 +14,18 @@ include 'documentation_header.php';
         .separator { text-align: center; }
     </style>
 
+
+    <div class="news-box">
+        <div class="news-header">15th February 2017</div>
+        <div style="padding-top: 10px;">
+            <a href="../review-of-angularjs-grids/">
+                <img src="../images/agGridDaily.png"/>
+                <br/>
+                From Hater to Fan – How I fell in Love with ag-Grid
+            </a>
+        </div>
+    </div>
+
     <div class="news-box">
         <div class="news-header">9th February 2017</div>
         <div class="news-header">ag-Grid 8.0.0 Released</div>

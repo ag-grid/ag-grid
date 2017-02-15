@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Row Model</h2>
+    <h2 id="row-model">Row Model</h2>
 
     <p>
         You pass row data to the grid. The grid will not modify the array you pass it, ie the grid may apply
@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         You do not need to know this. However it is helpful to understand what's going on inside the grid sometimes.
     </note>
 
-    <h2>Row Models</h2>
+    <h2 id="row-models">Row Models</h2>
 
     <p>
         There are three row row models used in the grid:
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
 
     </p>
 
-    <h2>In Memory Row Model</h2>
+    <h2 id="in-memory-row-model">In Memory Row Model</h2>
 
     <p>
         The in memory row model is responsible for working out how to display the rows inside the grid.
@@ -64,7 +64,7 @@ include '../documentation-main/documentation_header.php';
         The following is an example to help explain each of these steps.
     </p>
 
-    <h4>State 1: Row Data</h4>
+    <h4 id="state-1-row-data">State 1: Row Data</h4>
 
     <p>
         The data as provided by the application. The grid never modifies this array. It just takes the rowData
@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> There is no API to get this data. However it was provided by the application so you should already have it.</p>
 
-    <h4>State 2: All Rows</h4>
+    <h4 id="state-2-all-rows">State 2: All Rows</h4>
 
     <p>
         allRows is similar to rowData except a new array is created which contains rowNodes, each rowNode
@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> There is no API to get this data. However there is no benefit over the rowsAfterGroup data.</p>
 
-    <h4>State 3: Rows After Group</h4>
+    <h4 id="state-3-rows-after-group">State 3: Rows After Group</h4>
 
     <p>
         rowsAfterGroup takes the allRows, and if grouping, groups the data. If no grouping is done, then
@@ -110,7 +110,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> Use api.forEachNode() to access this structure.</p>
 
-    <h4>State 4: Rows After Filter</h4>
+    <h4 id="state-4-rows-after-filter">State 4: Rows After Filter</h4>
 
     <p>
         rowsAfterFilter goes through rowsAfterGroup and filters the data. The example shows filtering
@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> Use api.forEachNodeAfterFilter() to access this structure.</p>
 
-    <h4>State 5: Rows After Sort</h4>
+    <h4 id="state-5-rows-after-sort">State 5: Rows After Sort</h4>
 
     <p>
         rowsAfterSort goes through rowsAfterFilter and sorts the data. The example shows sorting on
@@ -140,7 +140,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> Use api.forEachNodeAfterFilterAndSort() to access this structure.</p>
 
-    <h4>State 6: Rows After Map</h4>
+    <h4 id="state-6-rows-after-map">State 6: Rows After Map</h4>
 
     <p>
         rowsAfterMap maps the data to what should be drawn inside the grid, taking into account
@@ -172,7 +172,7 @@ include '../documentation-main/documentation_header.php';
         rowNode contains attributes. Additional attributes are used if the node is a group.
     </p>
 
-    <h4>All Node Attributes</h4>
+    <h4 id="all-node-attributes">All Node Attributes</h4>
 
     <p>
         <ul>
@@ -189,7 +189,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h4>Group Node Attributes</h4>
+    <h4 id="group-node-attributes">Group Node Attributes</h4>
 
     <p>
     <ul>
@@ -206,7 +206,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h4>Node Methods</h4>
+    <h4 id="node-methods">Node Methods</h4>
 
     <p>
     <ul>
@@ -254,7 +254,7 @@ include '../documentation-main/documentation_header.php';
 }</pre>
     </p>
 
-    <h2>Example API</h2>
+    <h2 id="example-api">Example API</h2>
 
     <p>
         The example below shows the difference between the three forEach api methods.

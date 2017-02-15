@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Selection</h2>
+    <h2 id="selection">Selection</h2>
 
     <p>
         When you pass data to the grid, it wraps each data item in an node. This is explained
@@ -181,7 +181,7 @@ colDef = {
         time there is a change to the displayed columns, to check for changes.
     </p>
 
-    <h4>Select Everything or just Filtered</h4>
+    <h4 id="select-everything-or-just-filtered">Select Everything or just Filtered</h4>
 
     <p>
         The header checkbox has two modes of operation, 'normal' and 'filtered only'.
@@ -289,7 +289,7 @@ api.forEachNodeAfterFilter( function(node) {
 });</pre>
     </p>
 
-    <h3>Deep Dive Example - Using <i>forEachNode</i></h3>
+    <h3 id="deep-dive-example-using-for-each-node">Deep Dive Example - Using <i>forEachNode</i></h3>
 
     <p>
         There is an api function <i>forEachNode</i>. This is useful for doing group selections
