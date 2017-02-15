@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Cell Editor Component";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2>Cell Editors</h2>
+<h2 id="cell-editors">Cell Editors</h2>
 
 <p>
     Create your own cellEditor by providing a cellEditor component.
@@ -98,7 +98,7 @@ MyCellEditor.prototype.isPopup = function() {
 };</code></pre>
 
 
-<h3>
+<h3 id="cell-editor-params">
     cellEditor Params
 </h3>
 
@@ -172,7 +172,7 @@ MyCellEditor.prototype.isPopup = function() {
     </tr>
 </table>
 
-<h3>Complementing cellEditor Params</h3>
+<h3 id="complementing-cell-editor-params">Complementing cellEditor Params</h3>
 
 <p>
     Again like cellRenderers, cellEditors can also be provided with additional parameters.
@@ -190,7 +190,7 @@ colDef.cellEditorParams = {
 }
 </code></pre>
 
-<h3>Cell Editing Example</h3>
+<h3 id="cell-editing-example">Cell Editing Example</h3>
 
 <p>The example below illustrates:
 <ul>

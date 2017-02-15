@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
     uses a standard ag-Grid cellRenderer, to demonstrate both working side by side.</p>
 </p>
 
-<h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React cellRenderer</h3>
+<h3 id="specifying-a-react-cell-renderer"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React cellRenderer</h3>
 
 <p>
     If you are using the ag-grid-react component to create the ag-Grid instance,
@@ -79,7 +79,7 @@ in the property of the same name excepting ending 'Framework'. As long as you ar
 the grid will know the framework to use is React.
 </p>
 
-<h3><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
+<h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
 <p>
     The React component will get the 'cellRenderer Params' as described above as it's React Props.
@@ -104,7 +104,7 @@ class NameCellRenderer extends React.Component {
 }</pre>
 </p>
 
-<h3><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
+<h3 id="react-methods-lifecycle"><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
 
 <p>
     All of the methods in the ICellRenderer interface described above are applicable
@@ -116,7 +116,7 @@ class NameCellRenderer extends React.Component {
     <li><i>getGui()</i> is not used. Instead do normal React magic in your <i>render()</i> method..</li>
 </ul>
 
-<h3><img src="../images/react_large.png" style="width: 20px;"/> Handling Refresh</h3>
+<h3 id="handling-refresh"><img src="../images/react_large.png" style="width: 20px;"/> Handling Refresh</h3>
 
 <p>
     You have the option of handling refresh or not by either providing a <i>refresh()</i> method on
@@ -126,4 +126,3 @@ class NameCellRenderer extends React.Component {
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
-

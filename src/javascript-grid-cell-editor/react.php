@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         In the example, the 'name' column uses a React cellEditor.</p>
     </p>
 
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React cellEditor</h3>
+    <h3 id="specifying-a-react-cell-editor"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React cellEditor</h3>
 
     <p>
         If you are using the ag-grid-react component to create the ag-Grid instance,
@@ -76,13 +76,13 @@ colDef = {
     </p>
 
 
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
+    <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
     <p>
         The React component will get the 'cellEditor Params' as described above as it's React Props.
         Therefore you can access all the parameters as React Props.
 
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
+    <h3 id="react-methods-lifecycle"><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the ICellEditor interface described above are applicable

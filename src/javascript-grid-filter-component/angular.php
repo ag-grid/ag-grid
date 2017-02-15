@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.</p>
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Filter</h3>
+    <h3 id="specifying-a-angular-filter"><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Filter</h3>
 
     <p>
         If you are using the ag-grid-ng2 component to create the ag-Grid instance,
@@ -115,7 +115,7 @@ colDef = {
         ag-Grid.
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Params</h3>
+    <h3 id="angular-params"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Params</h3>
 
     <p>The ag Framework expects to find the <code>agInit</code> (on the <code>AgFilterComponent</code> interface) method on the created component, and uses it to supply the 'filter params'.</p>
 
@@ -126,7 +126,7 @@ agInit(params:IFilterParams):void {
 }</pre>
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
+    <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the IFilter interface described above are applicable
@@ -143,7 +143,7 @@ agInit(params:IFilterParams):void {
         same so put them directly onto your Angular Component.
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Accessing the Angular Component Instance</h3>
+    <h3 id="accessing-the-angular-component-instance"><img src="../images/angular2_large.png" style="width: 20px;"/> Accessing the Angular Component Instance</h3>
 
     <p>
         ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
@@ -181,7 +181,7 @@ laterOnInYourApplicationSomewhere() {
 }</pre>
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Example: Filtering using Angular Components</h3>
+    <h3 id="example-filtering-using-angular-components"><img src="../images/angular2_large.png" style="width: 20px;"/> Example: Filtering using Angular Components</h3>
     <p>
         Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>

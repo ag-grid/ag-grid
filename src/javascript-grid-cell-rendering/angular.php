@@ -30,14 +30,14 @@ include '../documentation-main/documentation_header.php';
     Angular Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
 </p>
 
-<h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular cellRenderer</h3>
+<h3 id="specifying-a-angular-cell-renderer"><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular cellRenderer</h3>
 
 <p>
     If you are using the ag-grid-ng2 component to create the ag-Grid instance,
     then you will have the option of additionally specifying the cellRenderers
     as Angular components.
 
-<h3><img src="../images/angular2_large.png" style="width: 20px;"/> cellRenderers from Angular Components</h3>
+<h3 id="cell-renderers-from-angular-components"><img src="../images/angular2_large.png" style="width: 20px;"/> cellRenderers from Angular Components</h3>
 <pre><span class="codeComment">// create your cellRenderer as a Angular component</span>
 @Component({
     selector: 'square-cell',
@@ -92,7 +92,7 @@ in the property of the same name excepting ending 'Framework'. As long as you ar
 the grid will know the framework to use is Angular.
 </p>
 
-<h3>Example: Rendering using Angular Components</h3>
+<h3 id="example-rendering-using-angular-components">Example: Rendering using Angular Components</h3>
 <p>
     Using Angular Components in the Cell Renderers
 </p>
@@ -100,7 +100,7 @@ the grid will know the framework to use is Angular.
               jsfile="../ng2-example/app/from-component.component.ts"
               html="../ng2-example/app/from-component.component.html"></show-example>
 
-<h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
+<h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
 
 <p>
     All of the methods in the ICellRenderer interface described above are applicable
@@ -112,11 +112,11 @@ the grid will know the framework to use is Angular.
     <li><i>getGui()</i> is not used. Instead do normal Angular magic in your Component via the Angular template.</li>
 </ul>
 
-<h3><img src="../images/angular2_large.png" style="width: 20px;"/> Handling Refresh</h3>
+<h3 id="handling-refresh"><img src="../images/angular2_large.png" style="width: 20px;"/> Handling Refresh</h3>
 
 <p>To receive update (for example, after an edit) you should implement the optional <code>refresh</code> method on the <code>AgRendererComponent</code> interface.</p>
 
-<h3>Example: Rendering using more complex Angular Components</h3>
+<h3 id="example-rendering-using-more-complex-angular-components">Example: Rendering using more complex Angular Components</h3>
 <p>
     Using more complex Angular Components in the Cell Renderers
 </p>

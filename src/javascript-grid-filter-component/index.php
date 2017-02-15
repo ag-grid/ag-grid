@@ -6,7 +6,7 @@ $pageKeyboards = "JavaScript Grid Filtering";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2>Filter Component</h2>
+<h2 id="filter-component">Filter Component</h2>
 
 
 <p>
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
     destroy?(): void;
 }</pre>
 
-<h4>IFilterParams</h4>
+<h4 id="ifilter-params">IFilterParams</h4>
 
 <p>
     The method init(params) takes a params object with the items listed below. If the user provides
@@ -123,7 +123,7 @@ include '../documentation-main/documentation_header.php';
     $scope: any;
 }</pre>
 
-<h4>IDoesFilterPassParams</h4>
+<h4 id="i-does-filter-pass-params">IDoesFilterPassParams</h4>
 
 <p>
     The method doesFilterPass(params) takes the following as a parameter:
@@ -138,7 +138,7 @@ include '../documentation-main/documentation_header.php';
     data: any
 }</pre>
 
-<h3>Custom Filter Example</h3>
+<h3 id="custom-filter-example">Custom Filter Example</h3>
 
 <p>
     The example below shows two custom filters. The first is on the Athlete column and the

@@ -143,7 +143,7 @@ this.colDefs = [
         ag-Grid.
     </p>
 
-    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Parameters</h3>
+    <h3 id="vue-js-parameters"><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Parameters</h3>
 
     <p>The Grid cell's value will be made available implicitly in a data value names <code>params</code>. This value will be available to
         you from the <code>created</code> VueJS lifecycle hook.</p>
@@ -161,7 +161,7 @@ export default {
 
     <p>but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.</p>
 
-    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
+    <h3 id="vuejs-methods-lifecycle"><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the ICellEditor interface described above are applicable
@@ -177,7 +177,7 @@ export default {
         should be put onto your VueJS component and will work as normal.
     </p>
 
-    <h3>Example: Cell Editing using VueJS Components</h3>
+    <h3 id="example-cell-editing-using-vuejs-components">Example: Cell Editing using VueJS Components</h3>
     <p>
         Using VueJS Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>

@@ -135,12 +135,12 @@ colDef = {
     </p>
 
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Parameters</h3>
+    <h3 id="angular-parameters"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Parameters</h3>
 
     <p>Your Angular components need to implement <code>AgEditorComponent</code>.
         The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the cell <code>params</code>.</p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
+    <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the ICellEditor interface described above are applicable
@@ -158,7 +158,7 @@ colDef = {
         should be put onto your Angular component and will work as normal.
     </p>
 
-    <h3>Example: Cell Editing using Angular Components</h3>
+    <h3 id="example-cell-editing-using-angular-components">Example: Cell Editing using Angular Components</h3>
     <p>
         Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>

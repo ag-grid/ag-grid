@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Header Components</h2>
+    <h2 id="header-components">Header Components</h2>
 
     <p>
         You can specify what header renderer to use at the column definition level.
@@ -65,7 +65,7 @@ var myColumns = {
         is explained in the next section.
     </p>
 
-    <h3>Grid vs Your Responsibilities</h3>
+    <h3 id="grid-vs-your-responsibilities">Grid vs Your Responsibilities</h3>
 
     <p>
         A Header Component allows customising the inside part of the header. The component is wrapped
@@ -116,7 +116,7 @@ var myColumns = {
     </ul>
     </p>
 
-    <h3>Header Component Interface</h3>
+    <h3 id="header-component-interface">Header Component Interface</h3>
 
     <p>
         Header components work similar to other component types in ag-Grid in which they should
@@ -169,7 +169,7 @@ var myColumns = {
     showColumnMenu(menuButton: HTMLElement): void;
 }</pre>
 
-    <h3>Sorting</h3>
+    <h3 id="sorting">Sorting</h3>
 
     <p>
         How you interact with the user for sorting (eg do you listen for mouse clicks?) is up to you.
@@ -225,7 +225,7 @@ column.addEventListener('sortChanged', function() {
 <span class="codeComment">// don't forget to remove your listener in your destroy code</span>
 </pre>
 
-    <h3>Filtering</h3>
+    <h3 id="filtering">Filtering</h3>
 
     <p>
         The header doesn't normally initiate filtering. If it does, use the standard grid API to
@@ -243,7 +243,7 @@ column.addEventListener('filterChanged', function() {
 </pre>
 
 
-    <h3>Menu</h3>
+    <h3 id="menu">Menu</h3>
 
     <p>
         How you get the user to ask for the column menu is up to you. When you want to display
@@ -256,7 +256,7 @@ column.addEventListener('filterChanged', function() {
     params.showColumnMenu(myMenuButton);
 });</pre>
 
-    <h3>Complementing Params</h3>
+    <h3 id="complementing-params">Complementing Params</h3>
 
     <p>
         On top of the parameters provided by the grid, you can also provide your own parameters.
@@ -273,7 +273,7 @@ column.addEventListener('filterChanged', function() {
 }
 </pre>
 
-    <h3>Example - Header Component</h3>
+    <h3 id="example-header-component">Example - Header Component</h3>
 
     <p>
         The example below shows a header component in action. The following can be observed
@@ -294,7 +294,7 @@ column.addEventListener('filterChanged', function() {
         This section details how to put a header group component into ag-Grid.
     </p>
 
-    <h3>Grid vs Your Responsibilities</h3>
+    <h3 id="grid-vs-your-responsibilities">Grid vs Your Responsibilities</h3>
 
     <p>
         As with normal headers, ag-Grid will always handle resize and column moving.
@@ -310,7 +310,7 @@ column.addEventListener('filterChanged', function() {
         <li><b>Anything Else:</b> Whatever you want, it's your component!</li>
     </ul>
 
-    <h3>Header Group Component Interface</h3>
+    <h3 id="header-group-component-interface">Header Group Component Interface</h3>
 
     <p>
         The header group component interface is almost identical to the above header component.
@@ -345,7 +345,7 @@ column.addEventListener('filterChanged', function() {
     setExpanded(expanded: boolean): void;
 }</pre>
 
-    <h3>Opening / Closing Groups</h3>
+    <h3 id="opening-closing-groups">Opening / Closing Groups</h3>
 
     <p>
         Not all column groups can open and close, so you should display open / close
@@ -387,7 +387,7 @@ columnGroup.addEventListener('expandedChanged', listener);
 <span class="codeComment">// don't forget to remove the listener in your destroy method</span>
 columnGroup.removeEventListener('expandedChanged', listener);</pre>
 
-    <h3>Example - Header Group Cells</h3>
+    <h3 id="example-header-group-cells">Example - Header Group Cells</h3>
 
     <show-example example="exampleHeaderGroupComponent"></show-example>
 
@@ -467,7 +467,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
             any leading or trailing spaces before the start and end tags.
         </note>
 
-        <h4>Grid API</h4>
+        <h4 id="grid-api">Grid API</h4>
 
         <p>There are two methods useful in the API for showing the column menu if you don't like the provided logic:</p>
         <ul>
@@ -478,7 +478,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
         </ul>
         <p>It is unusual to use these methods, only use them if you can't get what you want from the normal behaviour.</p>
 
-        <h4>Example Header Template</h4>
+        <h4 id="example-header-template">Example Header Template</h4>
         <p>
             The example below shows defining header templates in different ways. The <i>gridOptions.headerCellTemplate</i>
             is provided with a string of HTML that is used for all the columns bar 'Athlete' and 'Country'.
@@ -506,7 +506,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
         &lt;/div>
     &lt;/div></code></pre>
 
-        <h4>Header Templates and Custom Icons</h4>
+        <h4 id="header-templates-and-custom-icons">Header Templates and Custom Icons</h4>
 
         <p>
             If you are providing your own header template, then any custom icons you specify in the
@@ -516,7 +516,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
     </div>
 
     <div style="border-left: 4px solid lightcoral; padding-left: 4px;">
-        <h2><span style="color: darkred;">DEPRECATED -</span> Header Rendering</h2>
+        <h2 id="deprecated-header-rendering"><span style="color: darkred;">DEPRECATED -</span> Header Rendering</h2>
 
         <note>Header components (explained above) replace the need for header rendering. If using header rendering,
             you should refactor your code to use header components instead. Support for header rendering will be

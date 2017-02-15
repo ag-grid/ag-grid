@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Header Rendering React";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2>
+<h2 id="react-header-rendering">
     <img src="../images/react_large.png.png" style="width: 60px;"/>
     React Header Rendering
 </h2>
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     <a href="https://github.com/ceolter/ag-grid-react-example">React Example</a>.
 </p>
 
-<h3>Header Component</h3>
+<h3 id="header-component">Header Component</h3>
 
 <p>
     Implementing a header component in React differs from the standard header component in the following ways:
@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 
-<h3>Header Group Component</h3>
+<h3 id="header-group-component">Header Group Component</h3>
 
 <p>
     Implementing a header group component in React differs from the standard header group component in the following ways:

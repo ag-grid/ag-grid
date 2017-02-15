@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     <a href="https://github.com/ceolter/ag-grid-vue-example">VueJS Example</a>.
 </p>
 
-<h3>Header Component</h3>
+<h3 id="header-component">Header Component</h3>
 
 <p>
     Implementing a header component in VueJS differs from the standard header component in it's much easier!

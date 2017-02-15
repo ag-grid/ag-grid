@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         In the example, 'Skills' , 'DOB' and 'Proficiency' columns use React filters.</p>
     </p>
 
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Filter</h3>
+    <h3 id="specifying-a-react-filter"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Filter</h3>
 
     <p>
         If you are using the ag-grid-react component to create the ag-Grid instance,
@@ -75,7 +75,7 @@ colDef = {
     </p>
 
 
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
+    <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
     <p>
         The React component will get the 'filter Params' as described above as it's React Props.
@@ -99,7 +99,7 @@ class NameFilter extends React.Component {
 }</pre>
     </p>
 
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
+    <h3 id="react-methods-lifecycle"><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the IFilter interface described above are applicable
@@ -116,7 +116,7 @@ class NameFilter extends React.Component {
         same so put them directly onto your React Component.
     </p>
 
-    <h3><img src="../images/react_large.png" style="width: 20px;"/> Accessing the React Component Instance</h3>
+    <h3 id="accessing-the-react-component-instance"><img src="../images/react_large.png" style="width: 20px;"/> Accessing the React Component Instance</h3>
 
     <p>
         ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
