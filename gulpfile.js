@@ -13,7 +13,7 @@ var headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 var bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['webpack-all']);
 gulp.task('release', ['webpack-all']);
 
 gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
@@ -22,17 +22,10 @@ gulp.task('webpack-minify-noStyle', ['tsc'], webpackTask.bind(null, true, false)
 gulp.task('webpack-noStyle', ['tsc'], webpackTask.bind(null, false, false));
 gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
-gulp.task('webpack-dev', ['tsc-dev'], webpackTask.bind(null, false, true));
 
 gulp.task('tsc', ['cleanDist'], tscTask);
 
-gulp.task('tsc-dev', ['copy-from-ag-grid'], tscTask);
-
 gulp.task('cleanDist', cleanDist);
-
-gulp.task('watch', ['webpack-dev'], watchTask);
-
-gulp.task('copy-from-ag-grid', copyFromAgGrid);
 
 function cleanDist() {
     return gulp
@@ -41,17 +34,12 @@ function cleanDist() {
 }
 
 function tscTask() {
+    var project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
+
     var tsResult = gulp
         .src('src/**/*.ts')
-        .pipe(gulpTypescript({
-            typescript: typescript,
-            module: 'commonjs',
-            experimentalDecorators: true,
-            emitDecoratorMetadata: true,
-            declarationFiles: true,
-            target: 'es5',
-            noImplicitAny: true
-        }));
+        //.pipe(sourcemaps.init())
+        .pipe(gulpTypescript(project));
 
     return merge([
         tsResult.dts
@@ -97,19 +85,4 @@ function webpackTask(minify, styles) {
         }))
         .pipe(header(bundleTemplate, { pkg : pkg }))
         .pipe(gulp.dest('./dist/'));
-}
-
-function copyFromAgGrid() {
-    return gulp.src(['../ag-grid/*', '../ag-grid/dist/**/*'], {base: '../ag-grid'})
-        .pipe(gulp.dest('./node_modules/ag-grid'));
-}
-
-// 1. copy files -> webpack
-// 2. webpack <- copy files
-
-function watchTask() {
-    gulp.watch([
-        '../ag-grid/dist/ag-grid.js',
-        './src/**/*'
-    ], ['webpack-dev']);
 }
