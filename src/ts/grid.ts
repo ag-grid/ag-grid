@@ -96,8 +96,6 @@ export class Grid {
 
     public static setFrameworkBeans(frameworkBeans: any[]): void {
         this.frameworkBeans = frameworkBeans;
-
-
     }
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
