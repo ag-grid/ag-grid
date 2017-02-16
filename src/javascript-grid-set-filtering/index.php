@@ -176,6 +176,19 @@ columnDefinition = {
     </ul>
     </p>
 
+    <p>
+        Is important to note that when updating the set filter through the API is up to the developer to call
+        gridOptions.api.onFilterChanged() at the end of the interaction with the filter.
+
+        If no call to gridOptions.api.onFilterChanged() is provided the grid will still show the data relevant to the filter
+        before it was updated through the API.
+
+        In the example below, you can see how the filter for the Athlete column is modified through the API and how at the
+        end of the interaction a call to gridOptions.api.onFilterChanged() is performed.
+    </p>
+
+    <show-example example="exampleSetFilterApi"></show-example>
+
 <!--    <p>
         To use the
     </p>
