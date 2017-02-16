@@ -1,8 +1,6 @@
-var irishAthletes = ['John Joe Nevin','Katie Taylor','Paddy Barnes','Kenny Egan','Darren Sutherland', 'Margaret Thatcher', 'Tony Blair', 'Ronald Regan', 'Barack Obama'];
-
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'set',
-        filterParams: { cellHeight: 20, values: irishAthletes} },
+        filterParams: { cellHeight: 20} },
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 140,
         cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator},
@@ -72,6 +70,21 @@ function clearAthleteFilterModel(){
     var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
     athleteFilterComponent.setModel(null);
     gridOptions.api.onFilterChanged();
+}
+
+var changeTo = '../alternativeData.json';
+
+function changeData(){
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', changeTo);
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            setDataIntoGrid(httpResult);
+        }
+    };
+    changeTo = changeTo === '../olympicWinners.json' ? '../alternativeData.json' : '../olympicWinners.json';
 }
 
 // setup the grid after the page has finished loading
