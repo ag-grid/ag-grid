@@ -63,6 +63,8 @@ columnDefinition = {
             also not provided, the default (agGrid provided) comparator is used.</li>
         <li><b>suppressSorting:</b> If true, sorting will not be done on the set filter values. Use this is providing
             your own values and don't want them sorted as you are providing in the order you want.</li>
+        <li><b>suppressMiniFilter:</b> Set to false(default)/true to show/hide the input text box to filter the set
+            entries displayed in the filter .</li>
     </ul>
     </p>
 
@@ -109,6 +111,11 @@ columnDefinition = {
         The example also demonstrates using the <i>ag-header-cell-filtered</i> class, which is applied to the header
         cell when the header is filtered. By default, no style is applied to this class, the example shows
         applying a different color background to this style.
+    </p>
+
+    <p>
+        The column sport has also the property <i>suppressMiniFilter</i> set to true, hiding the text input box for the
+        set filter in this column (compare this set filter with athlete which suppressMiniFilter is the default = false).
     </p>
 
     <show-example example="exampleSetFilter"></show-example>
