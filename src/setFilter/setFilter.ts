@@ -3,13 +3,17 @@ import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
-interface ISetFilterParams extends IFilterParams {
+export interface ISetFilterParams extends IFilterParams {
+    suppressRemoveEntries ?: boolean;
+    values ?: any;
     cellHeight: number;
     apply: boolean;
     suppressSorting: boolean;
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     newRowsAction: string;
     suppressMiniFilter:boolean;
+    selectAllOnMiniFilter:boolean;
+    comparator?: (a: any, b: any) => number;
 }
 
 export class SetFilter extends Component implements IFilterComp {
@@ -202,6 +206,7 @@ export class SetFilter extends Component implements IFilterComp {
         if (miniFilterChanged) {
             this.virtualList.refresh();
         }
+        this.updateSelectAll();
     }
 
     private onSelectAll() {

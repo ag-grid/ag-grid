@@ -1,6 +1,7 @@
 import {Utils} from "ag-grid/main";
 import {ColDef} from "ag-grid/main";
 import {SetFilterParameters} from "ag-grid/main";
+import {ISetFilterParams} from "./setFilter";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -10,7 +11,7 @@ const NULL_VALUE = '___NULL___';
 export class SetFilterModel {
 
     private colDef: ColDef;
-    private filterParams: SetFilterParameters;
+    private filterParams: ISetFilterParams;
 
     private rowModel: any;
     private valueGetter: any;
@@ -36,7 +37,7 @@ export class SetFilterModel {
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
 
-        this.filterParams = <SetFilterParameters> this.colDef.filterParams;
+        this.filterParams = <ISetFilterParams> this.colDef.filterParams;
         if (Utils.exists(this.filterParams)) {
             this.usingProvidedSet = Utils.exists(this.filterParams.values);
             this.showingAvailableOnly = this.filterParams.suppressRemoveEntries!==true;
@@ -210,9 +211,17 @@ export class SetFilterModel {
     }
 
     public selectEverything() {
-        var count = this.allUniqueValues.length;
+        if (!this.filterParams.selectAllOnMiniFilter){
+            this.selectOn(this.allUniqueValues);
+        } else {
+            this.selectOn(this.displayedValues);
+        }
+    }
+
+    private selectOn(toSelectOn: any) {
+        var count = toSelectOn.length;
         for (var i = 0; i < count; i++) {
-            var key = this.allUniqueValues[i];
+            var key = toSelectOn[i];
             let safeKey = this.valueToKey(key);
             this.selectedValuesMap[safeKey] = null;
         }
@@ -240,8 +249,12 @@ export class SetFilterModel {
     }
 
     public selectNothing() {
-        this.selectedValuesMap = {};
-        this.selectedValuesCount = 0;
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
+            this.selectedValuesMap = {};
+            this.selectedValuesCount = 0;
+        }else {
+            this.displayedValues.forEach(it=>this.unselectValue(it));
+        }
     }
 
     public getUniqueValueCount() {
@@ -274,11 +287,19 @@ export class SetFilterModel {
     }
 
     public isEverythingSelected() {
-        return this.allUniqueValues.length === this.selectedValuesCount;
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
+            return this.allUniqueValues.length === this.selectedValuesCount;
+        }else {
+            return this.displayedValues.filter(it=>this.isValueSelected(it)).length === this.displayedValues.length;
+        }
     }
 
     public isNothingSelected() {
-        return this.selectedValuesCount === 0;
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
+            return this.selectedValuesCount === 0;
+        }else {
+            return this.displayedValues.filter(it=>this.isValueSelected(it)).length === 0;
+        }
     }
 
     public getModel() {
