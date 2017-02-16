@@ -5,7 +5,7 @@ var columnDefs = [
         filterParams: { cellHeight: 20, values: irishAthletes} },
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 140,
-        cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator},
+        cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator, filter: 'set', filterParams:{selectAllOnMiniFilter:true}},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110, filter: 'set', filterParams:{suppressMiniFilter:true}},
