@@ -66,21 +66,22 @@ export class TextFilter implements IFilterComp {
                 return false;
             }
         }
+        var filterTextLoweCase = this.filterText.toLowerCase();
         var valueLowerCase = value.toString().toLowerCase();
         switch (this.filterType) {
             case TextFilter.CONTAINS:
-                return valueLowerCase.indexOf(this.filterText) >= 0;
+                return valueLowerCase.indexOf(filterTextLoweCase) >= 0;
             case TextFilter.NOT_CONTAINS:
-                return valueLowerCase.indexOf(this.filterText) === -1;
+                return valueLowerCase.indexOf(filterTextLoweCase) === -1;
             case TextFilter.EQUALS:
-                return valueLowerCase === this.filterText;
+                return valueLowerCase === filterTextLoweCase;
             case TextFilter.NOT_EQUALS:
-                return valueLowerCase != this.filterText;
+                return valueLowerCase != filterTextLoweCase;
             case TextFilter.STARTS_WITH:
-                return valueLowerCase.indexOf(this.filterText) === 0;
+                return valueLowerCase.indexOf(filterTextLoweCase) === 0;
             case TextFilter.ENDS_WITH:
-                var index = valueLowerCase.lastIndexOf(this.filterText);
-                return index >= 0 && index === (valueLowerCase.length - this.filterText.length);
+                var index = valueLowerCase.lastIndexOf(filterTextLoweCase);
+                return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
             default:
                 // should never happen
                 console.warn('invalid filter type ' + this.filterType);
@@ -150,15 +151,14 @@ export class TextFilter implements IFilterComp {
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
-        var newFilterText: string;
-        if (filterText!==null && filterText!==undefined) {
-            newFilterText = filterText.toLowerCase();
-        } else {
-            newFilterText = null;
-        }
-        if (this.filterText !== newFilterText) {
-            this.filterText = newFilterText;
-            this.filterChanged();
+
+        if (this.filterText !== filterText) {
+            let newLowerCase = filterText ? filterText.toLowerCase() : null;
+            let previousLowerCase = this.filterText ? this.filterText.toLowerCase() : null;
+            this.filterText = filterText;
+            if (previousLowerCase !== newLowerCase) {
+                this.filterChanged();
+            }
         }
     }
 
@@ -178,7 +178,7 @@ export class TextFilter implements IFilterComp {
         filter = _.makeNull(filter);
 
         if (filter) {
-            this.filterText = filter.toLowerCase();
+            this.filterText = filter;
             this.eFilterTextField.value = filter;
         } else {
             this.filterText = null;
