@@ -1,4 +1,4 @@
-import {IFilterComp, IFilterParams, IDoesFilterPassParams, Utils, ICellRendererComp, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
+import {IFilterComp, IFilterParams, IDoesFilterPassParams, Utils, _, ICellRendererComp, ICellRendererFunc, Component, Context, Autowired, PostConstruct, GridOptionsWrapper} from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
@@ -9,6 +9,7 @@ interface ISetFilterParams extends IFilterParams {
     suppressSorting: boolean;
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     newRowsAction: string;
+    suppressMiniFilter:boolean;
 }
 
 export class SetFilter extends Component implements IFilterComp {
@@ -57,6 +58,7 @@ export class SetFilter extends Component implements IFilterComp {
 
         this.model = new SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter, this.suppressSorting);
         this.virtualList.setModel(new ModelWrapper(this.model));
+        _.setVisible(<HTMLElement>this.getGui().querySelector('#ag-mini-filter'), !this.params.suppressMiniFilter);
 
         this.createGui();
     }
@@ -133,7 +135,7 @@ export class SetFilter extends Component implements IFilterComp {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div>
-                    <div class="ag-filter-header-container">
+                    <div class="ag-filter-header-container" id="ag-mini-filter">
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
                     </div>
                     <div class="ag-filter-header-container">
