@@ -36,28 +36,27 @@ var dtsHeaderTemplate =
     '// Project: <%= pkg.homepage %>\n' +
     '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n';
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['webpack-all']);
 gulp.task('release', ['webpack-all']);
 
 gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
-
-gulp.task('tsc', ['cleanDist'], tscTask);
-gulp.task('tsc-dev', tscTask);
 
 gulp.task('webpack-minify-noStyle', ['tsc','stylus'], webpackTask.bind(null, true, false));
 gulp.task('webpack-noStyle', ['tsc','stylus'], webpackTask.bind(null, false, false));
 gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false, true));
 
-gulp.task('webpack-dev', ['tsc-dev','stylus-dev'], webpackTask.bind(null, false, true));
+gulp.task('stylus-watch', ['stylus-no-clean'], stylusWatch);
+gulp.task('stylus-no-clean', stylusTask);
 
-gulp.task('watch', ['webpack-dev'], watchTask);
-
+gulp.task('tsc', ['cleanDist'], tscTask);
 gulp.task('stylus', ['cleanDist'], stylusTask);
-gulp.task('stylus-dev', stylusTask);
 
 gulp.task('cleanDist', cleanDist);
-gulp.task('cleanDocs', cleanDocs);
+
+function stylusWatch() {
+    gulp.watch('./src/styles/!**/!*', ['stylus-no-clean']);
+}
 
 function cleanDist() {
     return gulp
@@ -65,29 +64,9 @@ function cleanDist() {
         .pipe(clean());
 }
 
-function cleanDocs() {
-    return gulp
-        .src('docs/dist', {read: false})
-        .pipe(clean());
-}
-
-//function tsdTask(callback) {
-//    tsd({
-//        command: 'reinstall',
-//        config: './tsd.json'
-//    }, callback);
-//}
-
-//function tsTestTask() {
-//    return gulp.src('./spec/**/*.js')
-//        .pipe(jasmine({
-//            verbose: false
-//        }));
-//}
-
-
-var project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 function tscTask() {
+    var project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
+
     var tsResult = gulp
         .src('src/ts/**/*.ts')
         //.pipe(sourcemaps.init())
@@ -151,7 +130,3 @@ function stylusTask() {
         .pipe(gulp.dest('dist/styles'));
 }
 
-function watchTask() {
-    gulp.watch('./src/ts/**/*', ['webpack-dev']);
-    gulp.watch('./src/styles/**/*', ['webpack-dev']);
-}

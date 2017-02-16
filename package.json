@@ -48,10 +48,10 @@
     "nib": "^1.1.0",
     "stylus": "0.53.0",
     "vinyl-buffer": "1.0.0",
-    "typescript": "2.0.10",
+    "typescript": "2.1.6",
     "merge2": "0.3.6",
     "webpack-stream": "3.1.0",
-    "webpack": "1.12.12",
+    "webpack": "2.2.1",
     "gulp-replace": "0.5.4",
     "gulp-if": "2.0.1"
   }

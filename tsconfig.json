@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "typescript": "typescript",
     "module": "commonjs",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "declarationFiles": true,
+    "declaration": true,
     "target": "es5",
-    "noImplicitAny": true
-  }
+    "noImplicitAny": true,
+    "outDir": "dist/lib"
+  },
+  "include": ["src/ts/**/*"]
 }
