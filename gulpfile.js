@@ -4,7 +4,9 @@ var htmlmin = require('gulp-htmlmin');
 var uncss  = require('gulp-uncss');
 
 gulp.task('copy-from-docs', copyFromDocs);
-gulp.task('uncss', ['copy-from-docs'], uncssTask);
+gulp.task('copy-from-ag-grid', copyFromAgGrid);
+gulp.task('copy-from-ag-grid-enterprise', copyFromAgGridEnterprise);
+gulp.task('uncss', ['copy-from-docs','copy-from-ag-grid','copy-from-ag-grid-enterprise'], uncssTask);
 gulp.task('inline-into-php', ['uncss'], inlineIntoPhp);
 
 gulp.task('default', ['inline-into-php']);
@@ -18,9 +20,20 @@ function uncssTask() {
         .pipe(gulp.dest('./dist/dist/bootstrap/css'));
 }
 
+// the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
 function copyFromDocs() {
-    return gulp.src(['./src/**/*'])
+    return gulp.src(['./src/**/*','!./src/dist/ag-grid/','!./src/dist/ag-grid-enterprise/'])
         .pipe(gulp.dest('./dist'));
+}
+
+function copyFromAgGrid() {
+    return gulp.src(['../ag-grid/dist/ag-grid.js'])
+        .pipe(gulp.dest('./dist/dist/ag-grid/'));
+}
+
+function copyFromAgGridEnterprise() {
+    return gulp.src(['../ag-grid-enterprise/dist/ag-grid-enterprise/ag-grid-enterprise.js'])
+        .pipe(gulp.dest('./dist/dist'));
 }
 
 function inlineIntoPhp() {
