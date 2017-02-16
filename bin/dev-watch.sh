@@ -8,4 +8,3 @@ cd ../ag-grid
 cd ../ag-grid-enterprise
 ./node_modules/.bin/webpack --watch &
 # ./node_modules/.bin/tsc --watch &
-
