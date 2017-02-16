@@ -92,7 +92,7 @@
 
         <?php $navKey = "home"; include './includes/footer.php'; ?>
 
-<script inline src="dist/ag-grid-enterprise.js"></script>
+<script inline src="dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
 
 <link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
 <link inline href="best-angularjs-data-grid/basic.css" rel="stylesheet">
