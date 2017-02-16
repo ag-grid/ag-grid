@@ -8,7 +8,7 @@ var columnDefs = [
         cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Sport", field: "sport", width: 110, filter: 'set', filterParams:{suppressMiniFilter:true}},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
