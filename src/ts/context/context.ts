@@ -1,5 +1,5 @@
 import {Utils as _} from "../utils";
-import {Logger} from "../logger";
+import {ILogger} from "../iLogger";
 import {Component} from "../widgets/component";
 
 // steps in booting up:
@@ -34,13 +34,13 @@ export class Context {
 
     private beans: {[key: string]: BeanEntry} = {};
     private contextParams: ContextParams;
-    private logger: Logger;
+    private logger: ILogger;
 
     private componentsMappedByName: {[key: string]: any} = {};
 
     private destroyed = false;
     
-    public constructor(params: ContextParams) {
+    public constructor(params: ContextParams, logger: ILogger) {
 
         if (!params || !params.beans) {
             return;
@@ -48,7 +48,7 @@ export class Context {
 
         this.contextParams = params;
 
-        this.logger = new Logger('Context', this.contextParams.debug);
+        this.logger = logger;
         this.logger.log('>> creating ag-Application Context');
 
         this.setupComponents();

@@ -18,7 +18,7 @@ import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {ExpressionService} from "./expressionService";
 import {TemplateService} from "./templateService";
 import {PopupService} from "./widgets/popupService";
-import {LoggerFactory} from "./logger";
+import {LoggerFactory, Logger} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
@@ -141,7 +141,7 @@ export class Grid {
         if (params && params.seedBeanInstances) {
             _.assign(seed, params.seedBeanInstances);
         }
-        this.context = new Context({
+        let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
             beans: [rowModelClass, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
@@ -159,7 +159,9 @@ export class Grid {
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],
             debug: !!gridOptions.debug
-        });
+        };
+
+        this.context = new Context(contextParams, new Logger('Context', contextParams.debug));
 
         var eventService = this.context.getBean('eventService');
         var readyEvent = {
