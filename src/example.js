@@ -342,7 +342,10 @@ var defaultCols = [
                 },
                 // pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
-                filterParams: {newRowsAction: 'keep'},
+                filterParams: {
+                    selectAllOnMiniFilter: true,
+                    newRowsAction: 'keep'
+                },
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -367,7 +370,8 @@ var defaultCols = [
                 filterParams: {
                     cellRenderer: CountryCellRenderer,
                     cellHeight: 20,
-                    newRowsAction: 'keep'
+                    newRowsAction: 'keep',
+                    selectAllOnMiniFilter: true
                 },
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -380,31 +384,41 @@ var defaultCols = [
         // column group 'Game of Choice'
         headerName: 'Game of Choice',
         children: [
-            {headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
+            {
+                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
                 tooltipField: 'game.name',
-        cellClass: function () {
-            return 'alphabet';
-        },
-        enableRowGroup: true,
-        enablePivot: true,
-        // pinned: 'right',
-        // rowGroupIndex: 1,
-        icons: {
-            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-        }
-    },
-    {
-        headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
-        // pinned: 'right',
-        // rowGroupIndex: 2,
-        // pivotIndex: 1,
-        enableRowGroup: true,
-        enablePivot: true,
-        enableValue: true,
-        cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
-        floatCell: true,
-                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
+                cellClass: function () {
+                    return 'alphabet';
+                },
+                filterParams: {
+                    selectAllOnMiniFilter: true,
+                    newRowsAction: 'keep'
+                },
+                enableRowGroup: true,
+                enablePivot: true,
+                // pinned: 'right',
+                // rowGroupIndex: 1,
+                icons: {
+                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                }
+            },
+            {
+                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
+                // pinned: 'right',
+                // rowGroupIndex: 2,
+                // pivotIndex: 1,
+                enableRowGroup: true,
+                enablePivot: true,
+                enableValue: true,
+                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                floatCell: true,
+                filterParams: {
+                    cellRenderer: booleanFilterCellRenderer,
+                    selectAllOnMiniFilter: true,
+                    newRowsAction: 'keep'
+                }
+            }
         ]
     },
     {
@@ -434,7 +448,7 @@ var defaultCols = [
                 suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
                 cellRenderer: function() { return '...cadabra!'; }
             }
-        ],
+        ]
     },
     {
         headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
