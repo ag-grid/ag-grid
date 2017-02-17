@@ -1,0 +1,19 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused40"></script>
+    <script src="exampleSetFilterApi.js"></script>
+</head>
+<body>
+    <div>
+        <button onClick="setAthleteFilterModel()">Set Athlete Filter Model (John Joe Nevin, Kenny Egan)</button>
+        <button onClick="saveAthleteFilterModel()">Save Athlete Filter Model</button>
+        <button onClick="restoreAthleteFilterModel()">Restore Athlete Filter Model</button>
+        <button onClick="clearAthleteFilterModel()">Clear Athlete Filter Model</button>
+    </div>
+    <div>
+        <button onClick="changeData()">Change data</button>
+    </div>
+    <div id="myGrid" class="ag-fresh" style="height: 100%; margin-top: 4px;"></div>
+</body>
+</html>

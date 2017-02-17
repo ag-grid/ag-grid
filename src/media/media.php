@@ -21,6 +21,31 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../review-of-angularjs-grids/">
+            <img src="../images/agGridDaily.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../review-of-angularjs-grids/">
+                From Hater to Fan – How I fell in Love with ag-Grid
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            15th February 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Amit Moryossef
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        This is a guest blog from one of our users, Amit Moryossef, who describes his experience in working with ag-Grid.
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../git-color/">
             <img src="../images/agGridDaily.png" style="width: 225px;"/>
         </a>

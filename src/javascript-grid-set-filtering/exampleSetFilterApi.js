@@ -1,14 +1,12 @@
-var irishAthletes = ['John Joe Nevin','Katie Taylor','Paddy Barnes','Kenny Egan','Darren Sutherland', 'Margaret Thatcher', 'Tony Blair', 'Ronald Regan', 'Barack Obama'];
-
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'set',
-        filterParams: { cellHeight: 20, values: irishAthletes} },
+        filterParams: { cellHeight: 20} },
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 140,
-        cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator, filter: 'set', filterParams:{selectAllOnMiniFilter:true}},
+        cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, filter: 'set', filterParams:{suppressMiniFilter:true}},
+    {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
@@ -47,6 +45,46 @@ function setDataIntoGrid(data) {
         };
     });
     gridOptions.api.setRowData(data);
+}
+
+var athleteFilterModel = null;
+
+function setAthleteFilterModel(){
+    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
+    athleteFilterComponent.setModel (['John Joe Nevin', 'Kenny Egan']);
+    gridOptions.api.onFilterChanged();
+}
+
+function saveAthleteFilterModel(){
+    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
+    athleteFilterModel = athleteFilterComponent.getModel();
+}
+
+function restoreAthleteFilterModel(){
+    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
+    athleteFilterComponent.setModel(athleteFilterModel);
+    gridOptions.api.onFilterChanged();
+}
+
+function clearAthleteFilterModel(){
+    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
+    athleteFilterComponent.setModel(null);
+    gridOptions.api.onFilterChanged();
+}
+
+var changeTo = '../alternativeData.json';
+
+function changeData(){
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', changeTo);
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            setDataIntoGrid(httpResult);
+        }
+    };
+    changeTo = changeTo === '../olympicWinners.json' ? '../alternativeData.json' : '../olympicWinners.json';
 }
 
 // setup the grid after the page has finished loading
