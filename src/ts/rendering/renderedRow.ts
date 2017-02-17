@@ -18,6 +18,7 @@ import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
+import {ColDef} from "../entities/colDef";
 
 export class RenderedRow extends BeanStub {
 
@@ -1009,11 +1010,11 @@ export class RenderedRow extends BeanStub {
         return this.rowNode;
     }
 
-    public refreshCells(colIds: string[], animate: boolean): void {
-        if (!colIds) {
+    public refreshCells(cols: (string|ColDef|Column)[], animate: boolean): void {
+        if (!cols) {
             return;
         }
-        var columnsToRefresh = this.columnController.getGridColumns(colIds);
+        var columnsToRefresh = this.columnController.getGridColumns(cols);
 
         this.forEachRenderedCell( renderedCell => {
             var colForCel = renderedCell.getColumn();

@@ -180,8 +180,8 @@ export class GridApi {
         this.rowRenderer.refreshRows(rowNodes);
     }
 
-    public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
-        this.rowRenderer.refreshCells(rowNodes, colIds, animate);
+    public refreshCells(rowNodes: RowNode[], cols: (string|ColDef|Column)[], animate = false): void {
+        this.rowRenderer.refreshCells(rowNodes, cols, animate);
     }
 
     public rowDataChanged(rows:any) {

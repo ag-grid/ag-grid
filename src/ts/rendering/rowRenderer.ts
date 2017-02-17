@@ -23,6 +23,7 @@ import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
 import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOptions";
 import {RowContainerComponent} from "./rowContainerComponent";
+import {ColDef} from "../entities/colDef";
 
 @Bean('rowRenderer')
 export class RowRenderer {
@@ -286,7 +287,7 @@ export class RowRenderer {
         renderedRow.addEventListener(eventName, callback);
     }
 
-    public refreshCells(rowNodes: RowNode[], colIds: string[], animate = false): void {
+    public refreshCells(rowNodes: RowNode[], cols: (string|ColDef|Column)[], animate = false): void {
         if (!rowNodes || rowNodes.length==0) {
             return;
         }
@@ -295,7 +296,7 @@ export class RowRenderer {
         _.iterateObject(this.renderedRows, (key: string, renderedRow: RenderedRow)=> {
             var rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode)>=0) {
-                renderedRow.refreshCells(colIds, animate);
+                renderedRow.refreshCells(cols, animate);
             }
         });
     }
