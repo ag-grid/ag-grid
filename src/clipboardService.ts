@@ -233,7 +233,7 @@ export class ClipboardService implements IClipboardService {
             this.copySelectedRowsToClipboard(includeHeaders);
         } else if (this.focusedCellController.isAnyCellFocused()) {
             // if there is a focused cell, copy this
-            this.copyFocusedCellToClipboard();
+            this.copyFocusedCellToClipboard(includeHeaders);
         } else {
             // lastly if no focused cell, try range again. this can happen
             // if use has cellSelection turned off (so no focused cell)
@@ -331,7 +331,7 @@ export class ClipboardService implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
     }
 
-    private copyFocusedCellToClipboard(): void {
+    private copyFocusedCellToClipboard(includeHeaders = false): void {
         let focusedCell = this.focusedCellController.getFocusedCell();
         if (Utils.missing(focusedCell)) { return; }
 
@@ -342,7 +342,13 @@ export class ClipboardService implements IClipboardService {
 
         let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
         if (Utils.exists(processedValue)) {
-            var data = processedValue.toString();
+
+            let data = '';
+            if (includeHeaders) {
+                data = this.columnController.getDisplayNameForColumn(column, 'clipboard', true) + '\r\n';
+            }
+            data += processedValue.toString();
+
             this.copyDataToClipboard(data);
         } else {
             this.copyDataToClipboard('');
