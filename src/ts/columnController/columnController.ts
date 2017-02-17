@@ -1202,14 +1202,14 @@ export class ColumnController {
         }
     }
 
-    public getGridColumns(keys: any[]): Column[] {
+    public getGridColumns(keys: (string|ColDef|Column)[]): Column[] {
         return this.getColumns(keys, this.getGridColumn.bind(this));
     }
 
-    private getColumns(keys: any[], columnLookupCallback: (key: string|ColDef|Column)=>Column ): Column[] {
+    private getColumns(keys: (string|ColDef|Column)[], columnLookupCallback: (key: string|ColDef|Column)=>Column ): Column[] {
         var foundColumns: Column[] = [];
         if (keys) {
-            keys.forEach( (key: any) => {
+            keys.forEach( (key: (string|ColDef|Column)) => {
                 var column = columnLookupCallback(key);
                 if (column) {
                     foundColumns.push(column);
