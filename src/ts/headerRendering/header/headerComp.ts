@@ -97,15 +97,21 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
         let touchListener = new TouchListener(this.getGui());
-        let tapListener = ()=> {
-            this.sortController.progressSort(this.params.column, false);
-        };
-        let longTapListener = (touch: Touch)=> {
-            this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.params.column, touch);
-        };
 
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        if (this.params.enableMenu) {
+            let longTapListener = (touch: Touch)=> {
+                this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.params.column, touch);
+            };
+            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        }
+
+        if (this.params.enableSorting) {
+            let tapListener = ()=> {
+                this.sortController.progressSort(this.params.column, false);
+            };
+
+            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+        }
 
         this.addDestroyFunc( ()=> touchListener.destroy() );
     }
