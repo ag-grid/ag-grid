@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <note>
-        For a detailed breakdown of items please refer to the <a href="/ag-grid-changelog/">changelog</a>
+        For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
     <h2>Version 8.0.x</h2>
