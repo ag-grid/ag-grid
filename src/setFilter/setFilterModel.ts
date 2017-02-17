@@ -37,7 +37,7 @@ export class SetFilterModel {
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
 
-        this.filterParams = <ISetFilterParams> this.colDef.filterParams;
+        this.filterParams = this.colDef.filterParams ? <ISetFilterParams> this.colDef.filterParams : <ISetFilterParams>{};
         if (Utils.exists(this.filterParams)) {
             this.usingProvidedSet = Utils.exists(this.filterParams.values);
             this.showingAvailableOnly = this.filterParams.suppressRemoveEntries!==true;

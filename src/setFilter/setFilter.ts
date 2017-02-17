@@ -49,7 +49,7 @@ export class SetFilter extends Component implements IFilterComp {
     }
 
     public init(params: IFilterParams): void {
-        this.params = <ISetFilterParams> params;
+        this.params =  params ? <ISetFilterParams> params : <ISetFilterParams> {};
         this.applyActive = this.params.apply === true;
         this.suppressSorting = this.params.suppressSorting === true;
         this.newRowsActionKeep = this.params.newRowsAction === 'keep';
@@ -95,11 +95,11 @@ export class SetFilter extends Component implements IFilterComp {
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
 
         // if no filter, always pass
-        if (this.model.isEverythingSelected()) {
+        if (this.model.isEverythingSelected() && !this.params.selectAllOnMiniFilter) {
             return true;
         }
         // if nothing selected in filter, always fail
-        if (this.model.isNothingSelected()) {
+        if (this.model.isNothingSelected() && !this.params.selectAllOnMiniFilter) {
             return false;
         }
 
