@@ -16,7 +16,7 @@ ag-Grid
 + Push to by running 'npm publish ./'
 
 Now if a new major version, go update and release:
-ag-grid-enterprise, ag-grid-react, ag-grid-ng2, ag-grid-react-example, ag-grid-ng2-example, ag-grid-commonjs-example
+ag-grid-enterprise, ag-grid-react, ag-grid-angular, ag-grid-react-example, ag-grid-angular-example, ag-grid-commonjs-example
 
 ag-Grid-Enterprise
 
@@ -47,8 +47,8 @@ ag-Grid-React-Example
 + Release in GitHub
 + No npm publish
 
-+ then ng2 & aurelia (ng2 publish too)
-+ ng2 'npm run release' (updates docs)
++ then angular & aurelia (angular publish too)
++ angular 'npm run release' (updates docs)
 + then aurelia (aurelia publish too)
 + aurelia 'npm run release' (updates docs)
 
