@@ -8,16 +8,16 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>ag-Grid Angular 2 Beta Release (ag-grid-ng2 7.0.0-beta.x)</h1>
+    <h1>ag-Grid Angular 2 Beta Release (ag-grid-angular 7.0.0-beta.x)</h1>
 
     <p>
-        Prior releases of ag-grid-ng2 allowed for either AOT (ahead-of-time) compilation <strong>or</strong> Dynamic Angular 2 Components.
+        Prior releases of ag-grid-angular allowed for either AOT (ahead-of-time) compilation <strong>or</strong> Dynamic Angular 2 Components.
         This beta release allows for both to be used together, but does drop the ability to define use cell templates.
-        This is a breaking change - the API is very different (out of necessity) so please try this beta and provide feedback to <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a>
+        This is a breaking change - the API is very different (out of necessity) so please try this beta and provide feedback to <a href="https://github.com/ceolter/ag-grid-angular">ag-grid-angular</a>
     </p>
 
-    <note>The beta is in a fork of the core ng2 code - this is deliberate due the breaking nature of this release. The beta is available at <a href="https://github.com/seanlandsman/ag-grid-ng2">forked ag-grid-ng2</a>
-        and <a href="https://github.com/seanlandsman/ag-grid-ng2-example">forked ag-grid-ng2-example</a>, but please provide feedback at <a href="https://github.com/ceolter/ag-grid-ng2">ag-grid-ng2</a></note>
+    <note>The beta is in a fork of the core ng2 code - this is deliberate due the breaking nature of this release. The beta is available at <a href="https://github.com/seanlandsman/ag-grid-angular">forked ag-grid-angular</a>
+        and <a href="https://github.com/seanlandsman/ag-grid-angular-example">forked ag-grid-angular-example</a>, but please provide feedback at <a href="https://github.com/ceolter/ag-grid-angular">ag-grid-angular</a></note>
 
     <h2>Some History</h2>
 
@@ -87,7 +87,7 @@ export class AppModule {
     <h3>ag-Grid Angular 2 Examples</h3>
 
     <p>
-        The <a href="https://github.com/seanlandsman/ag-grid-ng2-example">examples project</a> provides two ways to build and run the examples:
+        The <a href="https://github.com/seanlandsman/ag-grid-angular-example">examples project</a> provides two ways to build and run the examples:
         <ul>
             <li>JIT</li>
             <li>AOT</li>

@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h1 id="angular-building-with-systemjs">Angular - Building with SystemJS</h1>
 
     <p>We document the main steps required when using SystemJS and SystemJS-Builder below, but please refer to
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub for a full working example of this.</p>
+        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
     <h3 id="for-just-in-time-jit-compilation">For Just in Time (JIT) Compilation</h3>
     <p>
@@ -35,12 +35,12 @@ System.config({
         'rxjs': 'node_modules/rxjs',
         'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
         // ag libraries
-        'ag-grid-ng2' : 'node_modules/ag-grid-ng2',
+        'ag-grid-angular' : 'node_modules/ag-grid-angular',
         'ag-grid' : 'node_modules/ag-grid',
         'ag-grid-enterprise' : 'node_modules/ag-grid-enterprise'
     },
     packages: {
-        'ag-grid-ng2': {
+        'ag-grid-angular': {
             defaultExtension: "js"
         },
         'ag-grid': {
@@ -92,7 +92,7 @@ System.config({
             'rxjs': 'node_modules/rxjs',
             // 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
             // ag libraries
-            'ag-grid-ng2' : 'node_modules/ag-grid-ng2',
+            'ag-grid-angular' : 'node_modules/ag-grid-angular',
             'ag-grid' : 'node_modules/ag-grid',
             'ag-grid-enterprise' : 'node_modules/ag-grid-enterprise'
         },

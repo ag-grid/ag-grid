@@ -250,9 +250,9 @@ include 'documentation_header.php';
 
     <div class="news-box">
         <div class="news-header">5th October 2016</div>
-        <div class="news-header">ag-grid-ng2 6.1.1 Released</div>
+        <div class="news-header">ag-grid-angular 6.1.1 Released</div>
         <div style="padding-top: 10px;">
-            ag-grid-ng2 6.1.1 released with <a href="../best-angular-2-data-grid/#aot">AOT support</a>.
+            ag-grid-angular 6.1.1 released with <a href="../best-angular-2-data-grid/#aot">AOT support</a>.
             See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>

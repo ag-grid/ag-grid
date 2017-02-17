@@ -26,14 +26,14 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     For examples on Angular cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.
+    <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
     Angular Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
 </p>
 
 <h3 id="specifying-a-angular-cell-renderer"><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular cellRenderer</h3>
 
 <p>
-    If you are using the ag-grid-ng2 component to create the ag-Grid instance,
+    If you are using the ag-grid-angular component to create the ag-Grid instance,
     then you will have the option of additionally specifying the cellRenderers
     as Angular components.
 
@@ -124,7 +124,7 @@ the grid will know the framework to use is Angular.
               jsfile="../ng2-example/app/from-rich.component.ts"
               html="../ng2-example/app/from-rich.component.html"></show-example>
 
-<note>The full <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
+<note>The full <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using Angular Components with both CellEditors and Filters</note>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -27,13 +27,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         For an example of Angular cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.
+        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
     </p>
 
     <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular cellEditor</h3>
 
     <p>
-        If you are using the ag-grid-ng2 component to create the ag-Grid instance,
+        If you are using the ag-grid-angular component to create the ag-Grid instance,
         then you will have the option of additionally specifying the cellEditors
         as Angular components.
     </p>

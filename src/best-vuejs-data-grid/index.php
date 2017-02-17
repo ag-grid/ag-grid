@@ -365,7 +365,7 @@ this.columnDefs = [
     the simplest route is to use the <code>gridOptions.context</code> to hold a reference to the parent, which the child can then access.</p>
 
 <pre>
-<span class="codeComment">// in the parent component - the component that hosts ag-grid-ng2 and specifies which angular components to use in the grid</span>
+<span class="codeComment">// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid</span>
 beforeMount() {
     this.gridOptions = {
         context: {

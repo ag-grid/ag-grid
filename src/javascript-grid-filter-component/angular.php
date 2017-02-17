@@ -28,13 +28,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         For an example on Angular filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on Github.</p>
+        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on Github.</p>
     </p>
 
     <h3 id="specifying-a-angular-filter"><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Filter</h3>
 
     <p>
-        If you are using the ag-grid-ng2 component to create the ag-Grid instance,
+        If you are using the ag-grid-angular component to create the ag-Grid instance,
         then you will have the option of additionally specifying the filters
         as Angular components.
     </p>
