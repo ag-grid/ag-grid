@@ -37,7 +37,7 @@ gulp.task('clean-nm-ag-grid-enterprise', () => {
 });
 
 gulp.task('copy-nm-dirs', (callback) => {
-    return runSequence('copy-from-ag-grid', 'copy-from-ag-grid-enterprise', 'copy-from-ag-grid-ng2', callback);
+    return runSequence('copy-from-ag-grid', 'copy-from-ag-grid-enterprise', 'copy-from-ag-grid-vue', callback);
 });
 
 gulp.task('copy-from-ag-grid', () => {
