@@ -65,6 +65,8 @@ columnDefinition = {
             your own values and don't want them sorted as you are providing in the order you want.</li>
         <li><b>suppressMiniFilter:</b> Set to false(default)/true to show/hide the input text box to filter the set
             entries displayed in the filter .</li>
+        <li><b>selectAllOnMiniFilter:</b> Set to false(default)/true so that the checkbox "select all" applies to:
+            all the filters items/just the ones filtered by the mini filter . </li>
     </ul>
     </p>
 
@@ -116,6 +118,11 @@ columnDefinition = {
     <p>
         The column sport has also the property <i>suppressMiniFilter</i> set to true, hiding the text input box for the
         set filter in this column (compare this set filter with athlete which suppressMiniFilter is the default = false).
+    </p>
+
+    <p>
+        The column country has the property <i>selectAllOnMiniFilter</i> set to true, you can see how the select all only
+        applies to the items filtered by the mini filter search box.
     </p>
 
     <show-example example="exampleSetFilter"></show-example>
