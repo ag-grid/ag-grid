@@ -444,11 +444,12 @@ export class ClipboardService implements IClipboardService {
             this.logger.log('Browser doesn\t support document.execComment(\'copy\') for clipboard operations');
         }
 
+        //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...
         if (callbackAfter) {
             setTimeout( ()=> {
                 callbackAfter(eTempInput);
                 guiRoot.removeChild(eTempInput);
-            }, 0);
+            }, 100);
         } else {
             guiRoot.removeChild(eTempInput);
         }
