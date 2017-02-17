@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
     VueJS Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
 </p>
 
-<h3><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS cellRenderer</h3>
+<h3 id="specifying-a-vuejs-cell-renderer"><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS cellRenderer</h3>
 
 <p>
     If you are using the ag-grid-vue component to create the ag-Grid instance,
@@ -116,7 +116,7 @@ in the property of the same name excepting ending 'Framework'. As long as you ar
 the grid will know the framework to use is VueJS.
 </p>
 
-<h3>Example: Rendering using VueJS Components</h3>
+<h3 id="example-rendering-using-vuejs-components">Example: Rendering using VueJS Components</h3>
 <p>
     Using VueJS Components in the Cell Renderers
 </p>
@@ -124,7 +124,7 @@ the grid will know the framework to use is VueJS.
               jsfile="../vue-examples/src/dynamic-component-example/DynamicComponentExample.vue"
               exampleHeight="525px"></show-example>
 
-<h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
+<h3 id="vuejs-methods-lifecycle"><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
 
 <p>
     All of the methods in the ICellRenderer interface described above are applicable
@@ -134,11 +134,11 @@ the grid will know the framework to use is VueJS.
     <li><i>getGui()</i> is not used. Instead do normal VueJS magic in your Component via the VueJS template.</li>
 </ul>
 
-<h3><img src="../images/vue_large.png" style="width: 20px;"/> Handling Refresh</h3>
+<h3 id="handling-refresh"><img src="../images/vue_large.png" style="width: 20px;"/> Handling Refresh</h3>
 
 <p>To receive update (for example, after an edit) you should implement the optional <code>refresh</code> method on the <code>AgRendererComponent</code> interface.</p>
 
-<h3>Example: Rendering using more complex VueJS Components</h3>
+<h3 id="example-rendering-using-more-complex-vuejs-components">Example: Rendering using more complex VueJS Components</h3>
 <p>
     Using more complex VueJS Components in the Cell Renderers
 </p>
@@ -150,4 +150,3 @@ the grid will know the framework to use is VueJS.
     and so on, as well as examples on using VueJS Components with both CellEditors and Filters</note>
 
 <?php include '../documentation-main/documentation_footer.php';?>
-

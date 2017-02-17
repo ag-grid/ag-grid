@@ -8,14 +8,14 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Datasource</h2>
+    <h2 id="datasource">Datasource</h2>
 
     <p>
         A datasource is used when using row models a) pagination and b) virtual paging. This section explains the
         datasource used in each fo these row models.
     </p>
 
-    <h4>Setting up a Datasource</h4>
+    <h4 id="setting-up-a-datasource">Setting up a Datasource</h4>
 
     <p>
         The datasource is set either as a grid property or by calling setDatasource API method.
@@ -33,7 +33,7 @@ gridOptions.api.setDatasource(myDatasource);</pre>
         to the gridOptions yet by the grid. To get around this, set the datasource in the 'ready()' method.
     </note>
 
-    <h4>Changing a Datasource</h4>
+    <h4 id="changing-a-datasource">Changing a Datasource</h4>
 
     <p>
         Changing the datasource after the grid is initialised will reset the paging in the grid. This is useful if the context of your
@@ -49,7 +49,7 @@ gridOptions.api.setDatasource(myDatasource);</pre>
         instance. In this case, just call setDatasource() and pass the same datasource in again.
     </p>
 
-    <h4>The Datasource Object</h4>
+    <h4 id="the-datasource-object">The Datasource Object</h4>
 
     <p>
         The datasource you provide should implement the following interface:
@@ -66,7 +66,7 @@ interface IDatasource {
 }
 </pre>
 
-    <h4>Row Count</h4>
+    <h4 id="row-count">Row Count</h4>
     <p>
         The total number of rows, if known, is set using the attribute rowCount. If it's unknown, do not set, or set to -1. This
         will put the grid into <i>infinite scrolling</i> mode until the last row is reached. The definition of infinite scrolling
@@ -75,7 +75,7 @@ interface IDatasource {
         data comes back from the server, provide this info as the second parameter of the <i>successCallback</i>
     </p>
 
-    <h4>Function getRows()</h4>
+    <h4 id="function-get-rows">Function getRows()</h4>
 
     <p>
         getRows is called by the grid to load pages into the browser side cache of pages. It takes parameter, called
@@ -148,7 +148,7 @@ interface IGetRowsParams {
         that the datasource then has access to.
     </p>
 
-    <h4>Page Size</h4>
+    <h4 id="page-size">Page Size</h4>
 
     <p>
         The page size is set using the grid property <i>paginationPageSize</i>. This is how large the 'pages' should be.
@@ -157,7 +157,7 @@ interface IGetRowsParams {
         grids page cache.
     </p>
 
-    <h4>Next Steps</h4>
+    <h4 id="next-steps">Next Steps</h4>
 
     <p>
         Now that you can create a datasource, go onto the next sections to set up a datasource

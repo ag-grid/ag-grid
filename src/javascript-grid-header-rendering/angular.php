@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Cell Editors Angular";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2>
+<h2 id="angular-header-component">
     <img src="../images/angular2_large.png" style="width: 60px;"/>
     Angular Header Component
 </h2>
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     <a href="https://github.com/ceolter/ag-grid-ng2-example">Angular Example</a>.
 </p>
 
-<h3>Header Component</h3>
+<h3 id="header-component">Header Component</h3>
 
 <p>
     Implementing a header component in Angular differs from the standard header component in the following ways:
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
 }</pre>
 
 <!-- Header Component -->
-<h3>Header Group Component</h3>
+<h3 id="header-group-component">Header Group Component</h3>
 
 <p>
     Implementing a header group component in Angular differs from the standard header group component in the following ways:

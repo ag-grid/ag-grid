@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.
     </p>
 
-    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellEditor</h3>
+    <h3 id="specifying-a-aurelia-cell-editor"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellEditor</h3>
 
 
     <pre><span class="codeComment">// Create your cellEditor as a Aurelia component</span>
@@ -108,14 +108,14 @@ export class NumericEditor extends BaseAureliaEditor {
     <p>Your Aurelia components should implement <code>BaseAureliaEditor</code>.</p>
 
 
-    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Parameters</h3>
+    <h3 id="aurelia-parameters"><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Parameters</h3>
 
     <p>
         All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
         should be put onto your Aurelia component and will work as normal.
     </p>
 
-    <h3>Example: Cell Editing using Aurelia Components</h3>
+    <h3 id="example-cell-editing-using-aurelia-components">Example: Cell Editing using Aurelia Components</h3>
     <p>
         Using Aurelia Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>

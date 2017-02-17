@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Virtual Paging / Infinite Scrolling</h2>
+    <h2 id="virtual-paging-infinite-scrolling">Virtual Paging / Infinite Scrolling</h2>
 
     <p>
         Virtual paging allows the grid to lazy load rows from the server depending on what the scroll position is of the grid.
@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
         This feature is known in other grids as <b>infinite scrolling</b>.
     </p>
 
-    <h3>How it Works</h3>
+    <h3 id="how-it-works">How it Works</h3>
 
     <p>
         The following diagram is a high level overview:
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
         the datasource is getting the rows from a database in a remote server.
     </p>
 
-    <h3>Turning On Virtual Paging</h3>
+    <h3 id="turning-on-virtual-paging">Turning On Virtual Paging</h3>
 
     <p>
         To turn on virtual paging, you must a) set the grid property rowModelType to virtual and b) provide a datasource.
@@ -56,14 +56,14 @@ gridOptions.datasource = myDataSource;
 // after grid initialised, you can set or change the datasource
 gridOptions.api.setDatasource(myDataSource);</pre>
 
-    <h3>Aggregation and Grouping</h3>
+    <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
 
     <p>
         Aggregation and grouping are not available in virtual paging. This is because to do such would require the grid knowing
         the entire data set, which is not possible when virtualising the pages.
     </p>
 
-    <h3>Sorting & Filtering</h3>
+    <h3 id="sorting-filtering">Sorting & Filtering</h3>
 
     <p>
         Client side sorting & filtering does not make sense in virtual paging and is just not supported.
@@ -73,13 +73,13 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         Server side sorting & filtering is supported.
     </p>
 
-    <h3>Simple Example - No Sorting or Filtering</h3>
+    <h3 id="simple-example-no-sorting-or-filtering">Simple Example - No Sorting or Filtering</h3>
 
     The example below shows virtual paging. The example makes use of infinite scrolling and caching.
 
     <show-example example="virtualPaging"></show-example>
 
-    <h3>Selection</h3>
+    <h3 id="selection">Selection</h3>
 
     <p>
         Selection works on the rows in virtual pagination by using the ID of the row node. If you do not
@@ -103,7 +103,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         Once you have <i>getRowNodeId</i> implemented, selection will persist across sorts and filters.
     </p>
 
-    <h3>Example - Sorting, Filtering and Selection</h3>
+    <h3 id="example-sorting-filtering-and-selection">Example - Sorting, Filtering and Selection</h3>
 
     <p>
         The following example extends the example above by adding server side sorting, filtering and
@@ -135,7 +135,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
 
     <show-example example="virtualPagingServerSide"></show-example>
 
-    <h3>Configuring A Bit Differently</h3>
+    <h3 id="configuring-a-bit-differently">Configuring A Bit Differently</h3>
 
     <p>
         The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
@@ -144,7 +144,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
 
     <show-example example="exampleVirtualPagingMadeUpData"></show-example>
 
-    <h3>Loading Spinner</h3>
+    <h3 id="loading-spinner">Loading Spinner</h3>
 
     <p>
         The examples on this page use a loading spinner to show if the row is waiting for it's data to be loaded. The
@@ -164,27 +164,27 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <p>Refer to section <a href="../javascript-grid-cell-rendering/">Cell Rendering</a> for how to build
     cell renderers.</p>
 
-    <h3>More Control via Properties and API</h3>
+    <h3 id="more-control-via-properties-and-api">More Control via Properties and API</h3>
 
     <p>
         Virtual pagination has a cache working behind the scenes. The following properties and API are provided
         to allow you control of the cache.
     </p>
 
-    <h4>&#8226; Property overflowSize</h4>
+    <h4 id="property-overflow-size">&#8226; Property overflowSize</h4>
     <p>
         When infinite scrolling is active, this says how many rows beyond the current last row
         the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
         and overflowSize is 50, the scroll will allow scrolling to row 250. Default is 1.
     </p>
 
-    <h4>&#8226; Property maxConcurrentRequests</h4>
+    <h4 id="property-max-concurrent-requests">&#8226; Property maxConcurrentRequests</h4>
     <p>
         How many requests to hit the server with concurrently. If the max is reached, requests are queued.
         Default is 1, thus by default, only one request will be active at any given time.
     </p>
 
-    <h4>&#8226; Property maxPagesInCache</h4>
+    <h4 id="property-max-pages-in-cache">&#8226; Property maxPagesInCache</h4>
     <p>
         How many pages to cache in the client. Default is no limit, so every requested
         page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
@@ -192,54 +192,54 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         otherwise it won't work and an infinite loop of requesting pages will happen.
     </p>
 
-    <h4>&#8226; Property paginationInitialRowCount</h4>
+    <h4 id="property-pagination-initial-row-count">&#8226; Property paginationInitialRowCount</h4>
     <p>
         How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
         and you want the scrollbar to cover many pages before it has to start readjusting for the loading of
         additional data.
     </p>
 
-    <h4>&#8226; API refreshVirtualPageCache()</h4>
+    <h4 id="api-refresh-virtual-page-cache">&#8226; API refreshVirtualPageCache()</h4>
     <p>
         Marks all the currently loaded page caches for reload. If you have 10 pages in the cache, all 10 will be
         marked for reload. The old data will continue to be displayed until the new data is loaded.
     </p>
 
-    <h4>&#8226; API purgeVirtualPageCache()</h4>
+    <h4 id="api-purge-virtual-page-cache">&#8226; API purgeVirtualPageCache()</h4>
     <p>
         Purges the cache. The grid is then told to refresh. Only the pages required to display the current
         data on screen are fetched (typically no more than two). The grid will display nothing while the new
         pages are loaded. Use this to immediately remove the old data from the user.
     </p>
 
-    <h4>&#8226; API getVirtualRowCount()</h4>
+    <h4 id="api-get-virtual-row-count">&#8226; API getVirtualRowCount()</h4>
     <p>
         The virtual row count defines how many rows the grid allows scrolling to.
     </p>
 
-    <h4>&#8226; API isMaxRowFound()</h4>
+    <h4 id="api-is-max-row-found">&#8226; API isMaxRowFound()</h4>
     <p>
         The property maxRowFound is a boolean, true or false. When false, then the grid will allow scrolling beyond
         the virtualRowCount looking for more rows. When the last row is found, maxRowFound becomes true, and the
         grid will only scroll to the last available row as it has finished looking for more data.
     </p>
 
-    <h4>&#8226; API setVirtualRowCount(rowCount, maxRowFound)</h4>
+    <h4 id="api-set-virtual-row-count">&#8226; API setVirtualRowCount(rowCount, maxRowFound)</h4>
     <p>
         Sets the virtualRowCount and maxRowFound properties. The second parameter, maxRowFound, is optional and if
         left out, only rowCount is set. Set rowCount to adjust the height of the vertical scroll. Set maxRowFound
         to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset
         and need to reset the number of rows or put the data back into 'look for data' mode.</p>
 
-    <h4>&#8226; API getVirtualPageState()</h4>
+    <h4 id="api-get-virtual-page-state">&#8226; API getVirtualPageState()</h4>
     <p>
         Returns an object representing the state of the cache. This is useful for debugging and understanding
         how the cache is working.
     </p>
 
-    <h3>Inserting / Removing Rows</h3>
+    <h3 id="inserting-removing-rows">Inserting / Removing Rows</h3>
 
-    <h4>&#8226; API insertItemsAtIndex(index, items)</h4>
+    <h4 id="api-insert-items-at-index">&#8226; API insertItemsAtIndex(index, items)</h4>
     <p>
         Inserts items at the provided location inside the grid. If you use this, you MUST ensure that the data
         store you are sourcing from (eg the database) is also updated, as the subsequent cache page loads will
@@ -256,19 +256,19 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         don't use the insertItemsAtIndex() method, rather you update the source and then refresh the cache.
     </p>
 
-    <h4>&#8226; API removeItems(rowNodes)</h4>
+    <h4 id="api-remove-items">&#8226; API removeItems(rowNodes)</h4>
     <p>
         This method is not supported by virtual pagination. It is not supported as the grid has no way of knowing
         the index of the rowNodes to be removed if the data is not currently loaded into the cache.
     </p>
 
-    <h4>&#8226; API addItems(dataItems)</h4>
+    <h4 id="api-add-items">&#8226; API addItems(dataItems)</h4>
     <p>
         This method is not supported by virtual pagination. It is not supported as the grid has no way of knowing
         the end of the data dataset to be appended to if the data is not currently loaded into the cache.
     </p>
 
-    <h4>&#8226; Adding / Removing Summary</h4>
+    <h4 id="adding-removing-summary">&#8226; Adding / Removing Summary</h4>
 
     <p>
         Adding / removing rows directly in the grid for virtual pagination is in general bad news as you are
@@ -276,7 +276,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         data on the server and refresh the virtual page cache.
     </p>
 
-    <h3>Example - Using Cache API Methods</h3>
+    <h3 id="example-using-cache-api-methods">Example - Using Cache API Methods</h3>
 
     <p>
         Below demonstrates the different api methods via the buttons. The example outputs a lot of debugging items

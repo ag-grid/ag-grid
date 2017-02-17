@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
         <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
     </p>
 
-    <h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Filter in an Aurelia project</h3>
+    <h3 id="specifying-a-filter-in-an-aurelia-project"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Filter in an Aurelia project</h3>
 
     <p>
         If you are using the ag-grid-aurelia component to create the ag-Grid instance,
@@ -114,7 +114,7 @@ getPartialMatchFilter() {
 &lt;ag-grid-column header-name="Filter Component" field="name" width.bind="198" filter.bind="getPartialMatchFilter()"></ag-grid-column>
 </pre>
 
-    <h3><img src="../images/aurelia.png" height="20px"/> Example: Filtering in an  Aurelia Project</h3>
+    <h3 id="example-filtering-in-an-aurelia-project"><img src="../images/aurelia.png" height="20px"/> Example: Filtering in an Aurelia Project</h3>
     <p>
         Using a Filter Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>

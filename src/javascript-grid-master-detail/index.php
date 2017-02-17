@@ -151,9 +151,9 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <p>
+    <note>
         Flower nodes work with inMemory row model only. They do not work with virtual pagination or viewport.
-    </p>
+    </note>
 
     <note>Why call them 'flowers'? Well the groupings are a tree structure. The tree structure contains
         leaf nodes, that is the bottom nodes of the tree. Leafs can then in turn have flowers.</note>

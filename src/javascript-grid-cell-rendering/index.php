@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Cell Renderers";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2>Cell Rendering</h2>
+<h2 id="cell-rendering">Cell Rendering</h2>
 
 <p>
     Cell Rendering - this is a very powerful feature in ag-Grid. With this, you can put whatever
@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<h3>cellRenderer Function</h3>
+<h3 id="cell-renderer-function">cellRenderer Function</h3>
 
 <p>
     The easiest (but not as flexible) way to provide your own cellRenderer is to provide a function.
@@ -69,7 +69,7 @@ colDef.cellRenderer = function(params) {
     See further below for the set of parameters passed to the rendering function.
 </p>
 
-<h3>cellRenderer Component</h3>
+<h3 id="cell-renderer-component">cellRenderer Component</h3>
 
 <p>
     The most flexible (but a little more tricky) way to provide a cellRenderer is to provide a component class.
@@ -152,7 +152,7 @@ MyCellRenderer.prototype.destroy = function() {
     this.eButton.removeEventListener('click', this.eventListener);
 };</code></pre>
 
-<h3>cellRenderer Component Refresh</h3>
+<h3 id="cell-renderer-component-refresh">cellRenderer Component Refresh</h3>
 
 <p>
     The grid is constantly refreshing rows and cells into the browser, but not every refresh of the grid
@@ -196,7 +196,7 @@ the component will be destroyed and replaced.
 All of the above will result in the component getting destrotyed and recreated.
 </p>
 
-<h3>
+<h3 id="cell-renderer-component-lifecycle">
     cellRenderer Component Lifecycle
 </h3>
 
@@ -219,7 +219,7 @@ In other words, <i>new(), init(), getGui()</i> and <i>destroy()</i> are always c
     again to get a new version of the GUI.
 </p>
 
-<h3>cellRenderer Params</h3>
+<h3 id="cell-renderer-params">cellRenderer Params</h3>
 
 <p>
     The cellRenderer function and cellRenderer component take parameters as follows:
@@ -311,7 +311,7 @@ The parameters are identical regardless of which cellRenderer type you use and c
 
 </table>
 
-<h3>Complementing cellRenderer Params</h3>
+<h3 id="complementing-cell-renderer-params">Complementing cellRenderer Params</h3>
 
 <p>
     On top of the parameters provided by the grid, you can also provide your own parameters. This is useful if
@@ -340,7 +340,7 @@ colDef.cellRendererParams = {
     color: 'irishGreen'
 }</code></pre>
 
-<h3>Provided cellRenderers</h3>
+<h3 id="provided-cell-renderers">Provided cellRenderers</h3>
 
 <p>Instead of providing a cellRenderer function or component, you can select from ones that come with the
     grid or install your own into the grid.</p>
@@ -365,7 +365,7 @@ colDef.cellRendererParams = {
 
 <p>Usage of animateShowChange and animateSlide is demonstrated in the section <a href="../javascript-grid-viewport/">Viewport</a>.</p>
 
-<h3>Example: Using cellRenderers</h3>
+<h3 id="example-using-cell-renderers">Example: Using cellRenderers</h3>
 
 <p>
     The example below shows five columns formatted, demonstrating each of the
@@ -380,7 +380,7 @@ colDef.cellRendererParams = {
 
 <show-example example="example2"></show-example>
 
-<h3>Cell Renderers and Row Groups</h3>
+<h3 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h3>
 
 <p>
     If you are mixing cellRenderers and row grouping, then you need to understand that the value and / or data

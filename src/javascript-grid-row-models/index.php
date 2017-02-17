@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Row Models</h2>
+    <h2 id="row-models">Row Models</h2>
 
     <p>
         ag-Grid can be configured to retrieve rows from the server in different ways. You should choose the way
@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
         }
     </style>
 
-    <h3>Row Model Summary</h3>
+    <h3 id="row-model-summary">Row Model Summary</h3>
 
     <table>
         <tr class="first-row">
@@ -96,14 +96,14 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <h3>Setting Row Model</h3>
+    <h3 id="setting-row-model">Setting Row Model</h3>
 
     <p>
         What row model you use is set as a grid property. Set it to one of <i>{normal, pagination, virtual, viewport}</i>.
         The default is <i>normal</i>.
     </p>
 
-    <h3>When to Use</h3>
+    <h3 id="when-to-use">When to Use</h3>
 
     <p>
         Which row model you use will depend on your application. Here are some rules of thumb:
@@ -122,7 +122,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>Next Steps</h3>
+    <h3 id="next-steps">Next Steps</h3>
 
     <p>
         For <b>In Memory</b> (ie normal) there is nothing else to do. This is the default for the grid and

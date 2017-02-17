@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
         <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on Github.</p>
     </p>
 
-    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS Filter</h3>
+    <h3 id="specifying-a-vuejs-filter"><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS Filter</h3>
 
     <p>
         If you are using the ag-grid-vue component to create the ag-Grid instance,
@@ -116,7 +116,7 @@ colDef = {
         ag-Grid.
     </p>
 
-    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Params</h3>
+    <h3 id="vuejs-params"><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Params</h3>
 
 <p>The 'filter params'  will be made available implicitly in a data value names <code>params</code>. This value will be available to
     you from the <code>created</code> VueJS lifecycle hook.</p>
@@ -136,7 +136,7 @@ export default {
 
     </p>
 
-    <h3><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
+    <h3 id="vuejs-methods-lifecycle"><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the IFilter interface described above are applicable
@@ -151,7 +151,7 @@ export default {
         same so put them directly onto your VueJS Component.
     </p>
 
-    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Accessing the VueJS Component Instance</h3>
+    <h3 id="accessing-the-vuejs-component-instance"><img src="../images/vue_large.png" style="width: 20px;"/> Accessing the VueJS Component Instance</h3>
 
     <p>
         ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
@@ -184,7 +184,7 @@ laterOnInYourApplicationSomewhere() {
 }</pre>
     </p>
 
-    <h3><img src="../images/vue_large.png" style="width: 20px;"/> Example: Filtering using VueJS Components</h3>
+    <h3 id="example-filtering-using-vuejs-components"><img src="../images/vue_large.png" style="width: 20px;"/> Example: Filtering using VueJS Components</h3>
     <p>
         Using VueJS Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>

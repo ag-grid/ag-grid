@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
     <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-aurelia-example</a> on Github.</p>
 </p>
 
-<h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellRenderer</h3>
+<h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellRenderer</h3>
 
 <p>
     If you are using the ag-grid-aurelia component to create the ag-Grid instance,
@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 
-<h3><img src="../images/aurelia_large.png" style="width: 20px;"/> cellRenderers from Templates</h3>
+<h3 id="cell-renderers-from-templates"><img src="../images/aurelia_large.png" style="width: 20px;"/> cellRenderers from Templates</h3>
 <pre><span class="codeComment">// create your cellRenderer as an Aurelia template</span>
 &lt;ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-fresh"
                  grid-options.bind="gridOptions">
@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>The advantage of using Templates for your renderers is that you have the ability to use Aurelia's dynamic data binding facilties.</p>
 
-<h3>Example: Rendering using Templates</h3>
+<h3 id="example-rendering-using-templates">Example: Rendering using Templates</h3>
 <p>
     Using Templates in the Cell Renderers - here we're using a Template (<code>ag-cell-template</code>) to render the Mood column depending on the underlying value
     of the "mood" field.
@@ -69,10 +69,10 @@ include '../documentation-main/documentation_header.php';
               jsfile="../aurelia-example/components/editor-example/editor-example.ts"
               html="../aurelia-example/components/editor-example/editor-example.html"></show-example>
 
-<h3><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Methods / Lifecycle</h3>
+<h3 id="aurelia-methods-lifecycle"><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Methods / Lifecycle</h3>
 
 
-<h3>Example: Rendering using regular cellRenderer Components</h3>
+<h3 id="example-rendering-using-regular-cell-renderer-components">Example: Rendering using regular cellRenderer Components</h3>
 <p>
     A Rich Grid leveraging regular Cell Renderer Components
 </p>
@@ -86,4 +86,3 @@ include '../documentation-main/documentation_header.php';
 <note>The full <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>
 
 <?php include '../documentation-main/documentation_footer.php';?>
-
