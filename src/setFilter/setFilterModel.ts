@@ -218,7 +218,7 @@ export class SetFilterModel {
         }
     }
 
-    private selectOn(toSelectOn: any) {
+    private selectOn(toSelectOn: any[]) {
         var count = toSelectOn.length;
         for (var i = 0; i < count; i++) {
             var key = toSelectOn[i];
@@ -289,7 +289,7 @@ export class SetFilterModel {
     public isEverythingSelected() {
         if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
             return this.allUniqueValues.length === this.selectedValuesCount;
-        }else {
+        } else {
             return this.displayedValues.filter(it=>this.isValueSelected(it)).length === this.displayedValues.length;
         }
     }
