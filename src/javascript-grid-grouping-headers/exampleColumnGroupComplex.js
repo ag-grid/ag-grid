@@ -76,8 +76,8 @@ var gridOptions = {
     defaultColGroupDef: {headerClass: headerClassFunc},
     defaultColDef: {headerClass: headerClassFunc},
     icons: {
-        columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-        columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
+        columnGroupOpened: '<i class="fa fa-plus-square-o"/>',
+        columnGroupClosed: '<i class="fa fa-minus-square-o"/>'
     }
 };
 
