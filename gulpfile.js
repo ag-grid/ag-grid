@@ -19,7 +19,7 @@ gulp.task('webpackEnterprise', ['tscEnterprise'], webpackEnterprise);
 gulp.task('webpackGrid', ['stylusGrid','tscGrid'], webpackGrid);
 
 gulp.task('tscGrid', tscGrid);
-gulp.task('tscEnterprise', tscEnterprise);
+gulp.task('tscEnterprise', ['tscGrid'], tscEnterprise);
 
 gulp.task('stylusGrid', stylusGrid);
 
