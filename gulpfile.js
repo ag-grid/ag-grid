@@ -32,8 +32,8 @@ function copyFromAgGrid() {
 }
 
 function copyFromAgGridEnterprise() {
-    return gulp.src(['../ag-grid-enterprise/dist/ag-grid-enterprise/ag-grid-enterprise.js'])
-        .pipe(gulp.dest('./dist/dist'));
+    return gulp.src(['../ag-grid-enterprise/dist/ag-grid-enterprise.js'])
+        .pipe(gulp.dest('./dist/dist/ag-grid-enterprise'));
 }
 
 function inlineIntoPhp() {
