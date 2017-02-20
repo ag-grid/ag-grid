@@ -72,6 +72,8 @@ var groupColumn = {
     },
     comparator: agGrid.defaultGroupComparator,
     cellRenderer: 'group',
+    headerCheckboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
     cellRendererParams: {
         checkbox: true
     }
@@ -190,6 +192,11 @@ var firstColumn = {
         // we put checkbox on the name if we are not doing no grouping
         return params.columnApi.getRowGroupColumns().length === 0;
     },
+    headerCheckboxSelection: function (params) {
+        // we put checkbox on the name if we are not doing grouping
+        return params.columnApi.getRowGroupColumns().length === 0;
+    },
+    headerCheckboxSelectionFilteredOnly: true,
     icons: {
         sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
         sortDescending: '<i class="fa fa-sort-alpha-desc"/>'

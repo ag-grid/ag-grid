@@ -220,7 +220,7 @@ import 'ag-grid-enterprise/main';
             <td>Angular</td>
             <td>No</td>
             <td>Yes</td>
-            <td>ag-grid-ng2</td>
+            <td>ag-grid-angular</td>
         </tr>
         <tr>
             <td>VueJS</td>
@@ -251,7 +251,7 @@ import 'ag-grid-enterprise/main';
     <ul>
         <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> - Project on Github</li>
         <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project on Github</li>
-        <li><a href="https://github.com/ceolter/ag-grid-ng2-example">Angular & Typescript - with examples using SystemJS, Webpack and Angular-CLI</a> - Project on Github</li>
+        <li><a href="https://github.com/ceolter/ag-grid-angular-example">Angular & Typescript - with examples using SystemJS, Webpack and Angular-CLI</a> - Project on Github</li>
     </ul>
 
     <h3>Documentation Examples</h3>

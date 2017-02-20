@@ -9,7 +9,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    animateRows: true,
+    animateRows: false,
     groupUseEntireRow: true,
     onRowGroupOpened: function (event) {
         var rowNodeIndex = event.node.rowIndex;

@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     For examples on Aurelia cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-aurelia-example</a> on Github.</p>
+    <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
 </p>
 
 <h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellRenderer</h3>

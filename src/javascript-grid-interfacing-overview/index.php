@@ -201,7 +201,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         some bindings:
     </p>
 
-    <pre><code>&lt;ag-grid-ng2
+    <pre><code>&lt;ag-grid-angular
     <span class="codeComment">// give an AngularJS ID to the grid</span>
     #myGrid
 
@@ -225,7 +225,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     <span class="codeComment">// these are registering event callbacks</span>
     (cell-clicked)="onCellClicked($event)"
     (column-resized)="onColumnEvent($event)">
-&lt;/ag-grid-ng2></code></pre>
+&lt;/ag-grid-angular></code></pre>
 
     <p>
         The API's are accessible through the component. This is useful in two situations.
@@ -337,7 +337,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         to Angular, however no binding of properties or event handling.
     </p>
 
-    <pre><code>&lt;ag-grid-ng2
+    <pre><code>&lt;ag-grid-angular
     <span class="codeComment">// normal id for CSS selector inside Javascript</span>
     id="myGrid"
 
@@ -348,7 +348,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     <span class="codeComment">// these are attributes, not bound, give explicit values here</span>
     row-height="22"
     row-selection="multiple"
-&lt;/ag-grid-ng2></code></pre>
+&lt;/ag-grid-angular></code></pre>
 
     <p>
         Then the callbacks and event handling are done in the Javascript as follows:

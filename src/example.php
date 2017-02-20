@@ -95,7 +95,7 @@
                                        oninput="onFilterChanged(this.value)"
                                        ondblclick="filterDoubleClicked(event)"
                                        class="hide-when-small"
-                                       style="color: #333;"
+                                       style="color: #333; width: 150px;"
                                 />
 
                                 <span style="padding-left: 20px;">Data Size:</span>

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <div style="padding: 20px;">
 
     <note>
-        For a detailed breakdown of items please refer to the <a href="/ag-grid-changelog/">changelog</a>
+        For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
     <h2>Version 8.0.x</h2>
@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Documentation: Angular 2 Examples Project now has examples for both SystemJS & SystemJS-Builder, Webpack and Angular-CLI</li>
 
-    <h4>ag-grid-ng2-7.1.2</h4>
+    <h4>ag-grid-angular-7.1.2</h4>
     <h4>Bug Fixes</h4>
     <ul>
         <li>Bug Fix: TypeScript was incorrectly trying to compile main.ts (when under node_modules) - exclude main.ts from npm publish for now</li>
@@ -163,7 +163,7 @@ include '../documentation-main/documentation_header.php';
 
     <li>Enhancement - column group / pivot panels don't try and do anything if user rearranges, but leaves things in same order as the start.</li>
 
-    <h4>ag-grid-6.4.0, ag-grid-enterprise-6.4.0, ag-grid-ng2-6.4.0, ag-grid-react-6.4.0, </h4>
+    <h4>ag-grid-6.4.0, ag-grid-enterprise-6.4.0, ag-grid-angular-6.4.0, ag-grid-react-6.4.0, </h4>
 
     <h4>Enhancements</h4>
     <li>Big Enhancement - for grouping, pivoting and values, now you can reorder the columns in the drop zones.</li>
@@ -253,9 +253,9 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 6.1.1</h2>
 
-    <h4>ag-grid-ng2 6.1.1</h4>
+    <h4>ag-grid-angular 6.1.1</h4>
 
-    <li><a href="../best-angular-2-data-grid/#aot">AOT support</a> - AOT is now an option when using ag-grid-ng2.</li>
+    <li><a href="../best-angular-2-data-grid/#aot">AOT support</a> - AOT is now an option when using ag-grid-angular.</li>
 
     <h2>Version 6.1.x</h2>
 
@@ -264,11 +264,11 @@ include '../documentation-main/documentation_header.php';
     <li>New Property - colDef.suppressNavigable - set to true (or function to return true) to stop the cell getting
         focus when tabbing around.</li>
     <li>New Event - <i>rowValueChanged</i> - gets fired after a full row is updated.</li>
-    <li>ag-grid-ng2 - Upgrade to Typescript 2</li>
+    <li>ag-grid-angular - Upgrade to Typescript 2</li>
 
     <h2>Version 6.0.x</h2>
 
-    <h4>ag-Grid 6.0.1, ag-Grid-Enterprise 6.0.1, ag-Grid-React 6.0.1, , ag-Grid-NG2 6.0.1</h4>
+    <h4>ag-Grid 6.0.1, ag-Grid-Enterprise 6.0.1, ag-Grid-React 6.0.1, , ag-grid-angular 6.0.1</h4>
 
     <p>
         Version 6.0.x brings the following changes:
@@ -409,7 +409,7 @@ params = {
 
     <h3>Version 5.4.x</h3>
 
-    <h4>ag-Grid 5.4.0, ag-Grid-Enterprise 5.4.0, ag-Grid-React 5.4.0, , ag-Grid-NG2 5.4.0</h4>
+    <h4>ag-Grid 5.4.0, ag-Grid-Enterprise 5.4.0, ag-Grid-React 5.4.0, , ag-grid-angular 5.4.0</h4>
 
     <li>Enhancement: added API for startEditing().</li>
     <li>Enhancement: now rememberGroupStateWhenNewData works when inserting/removing rows, ie group open/closed state is now kept when updating rows.</li>
@@ -442,7 +442,7 @@ params = {
 
     <h3>Version 5.2.x</h3>
 
-    <h4>ag-Grid 5.2.0, ag-Grid-Enterprise 5.2.0, ag-Grid-ng2 5.2.0</h4>
+    <h4>ag-Grid 5.2.0, ag-Grid-Enterprise 5.2.0, ag-grid-angular 5.2.0</h4>
 
     <h4>Bug Fixes and Angular 2 Cell Rendering</h4>
 

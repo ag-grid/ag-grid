@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h1 id="angular-building-with-angular-cli">Angular - Building with Angular CLI</h1>
 
     <p>We document the main steps required when using Angular-CLI below, but please refer to
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub for a full working
+        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working
         example of this.</p>
 
     <h2 id="pre-requisites">Pre-requisites</h2>
@@ -38,10 +38,10 @@ include '../documentation-main/documentation_header.php';
     <pre>ng new ag-grid-test
 cd ag-grid-test</pre>
 
-    <p>Let's update our dependencies - first let's install <code>ag-grid</code> and <code>ag-grid-ng2</code>:</p>
+    <p>Let's update our dependencies - first let's install <code>ag-grid</code> and <code>ag-grid-angular</code>:</p>
     <pre>
 npm i ag-grid --save
-npm i ag-grid-ng2 --save</pre>
+npm i ag-grid-angular --save</pre>
 
     <p>We are also going to assume an Angular version of 2.3.1 for this example - you can use a higher (or lower)
         version here,
@@ -58,7 +58,7 @@ npm i ag-grid-ng2 --save</pre>
     "@angular/platform-browser": "^2.3.1",
     "@angular/platform-browser-dynamic": "^2.3.1",
     "ag-grid": "^7.2.2",
-    "ag-grid-ng2": "^7.2.2",
+    "ag-grid-angular": "^7.2.2",
     "core-js": "^2.4.1",
     "rxjs": "5.0.0-beta.12",
     "ts-helpers": "^1.1.1",
@@ -145,9 +145,9 @@ export class MyGridApplicationComponent {
 
 <span class="codeComment">// src/app/my-grid-application/my-grid-application.component.html</span>
 &lt;div style="width: 200px;"&gt;
-    &lt;ag-grid-ng2 #agGrid style="width: 100%; height: 200px;" class="ag-fresh"
+    &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-fresh"
                  [gridOptions]="gridOptions"&gt;
-    &lt;/ag-grid-ng2&gt;
+    &lt;/ag-grid-angular&gt;
 &lt;/div&gt;
 </pre>
 
@@ -156,7 +156,7 @@ export class MyGridApplicationComponent {
     <pre>
 import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
-import {AgGridModule} from "ag-grid-ng2/main";
+import {AgGridModule} from "ag-grid-angular/main";
 import {AppComponent} from "./app.component";
 import {MyGridApplicationComponent} from "./my-grid-application/my-grid-application.component";
 import {RedComponentComponent} from "./red-component/red-component.component";

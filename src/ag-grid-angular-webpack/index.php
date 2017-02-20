@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h1 id="angular-building-with-webpack">Angular - Building with Webpack</h1>
 
     <p>We document the main steps required when using Webpack below, but please refer to
-        <a href="https://github.com/ceolter/ag-grid-ng2-example">ag-grid-ng2-example</a> on GitHub for a full working example of this.</p>
+        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
     <p>Refer to the <a href="https://angular.io/docs/ts/latest/guide/webpack.html">Angular Site</a> on this topic for more information - it was used as the basis for our offering below.</p>
 

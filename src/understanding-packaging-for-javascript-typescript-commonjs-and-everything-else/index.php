@@ -339,7 +339,7 @@ import {Grid} from 'ag-grid/main';</pre>
         <ul>
             <li>Your project will force these dependencies on your client. This would be bad if, for example, your client
                 uses Angular 2 and has no desire to have React as a dependency. ag-Grid supports this by separating
-                out the dependent parts into separate Github projects (eg ag-grid-react and ag-grid-ng2 projects).
+                out the dependent parts into separate Github projects (eg ag-grid-react and ag-grid-angular projects).
                 The client then only includes ag-Grid and the additional project that it wants, thus only bringing in
                 the framework dependency that is relevant.</li>
             <li>The dependent projects cannot be part of the Self Contained JavaScript Bundles described above

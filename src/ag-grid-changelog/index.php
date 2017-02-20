@@ -7,7 +7,7 @@
     <meta name="description" content="ag-Grid - Changelog of Work.">
     <meta name="keywords" content="ag-Grid javascript grid changelog release notes"/>
     <meta http-equiv="Cache-control" content="public">
-    <meta http-equiv="cache-control" content="max-age=86400" />
+    <meta http-equiv="cache-control" content="max-age=86400"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -62,9 +62,11 @@ include '../includes/headerRow.php'; ?>
 <div class="container info-page">
     <div class="row">
         <div class="col-md-12">
-            <note>This page covers the Changelog for all items for 8.x and above. For the Changelog covering versions
-                7.x and above before go <a href="/change-log/changeLogIndex.php">here</a>.
-            </note> <?php
+            <note>This page covers the full Changelog for all items for 8.x and above. For the Summary Changelog, or
+                the legacy changelog covering versions 7.x and above before go <a href="/change-log/changeLogIndex.php">here</a>.
+            </note>
+
+            <?php
             function mapIssueType($issueType)
             {
                 switch ($issueType) {
