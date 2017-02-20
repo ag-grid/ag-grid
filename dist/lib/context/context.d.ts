@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
+import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 export interface ContextParams {
     seed: any;
@@ -19,7 +20,7 @@ export declare class Context {
     private logger;
     private componentsMappedByName;
     private destroyed;
-    constructor(params: ContextParams);
+    constructor(params: ContextParams, logger: ILogger);
     private setupComponents();
     private addComponent(componentMeta);
     createComponent(element: Element): Component;

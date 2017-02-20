@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,9 +17,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var gridOptionsWrapper_1 = require('../gridOptionsWrapper');
-var logger_1 = require('../logger');
-var columnUtils_1 = require('../columnController/columnUtils');
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var logger_1 = require("../logger");
+var columnUtils_1 = require("../columnController/columnUtils");
 var columnKeyCreator_1 = require("./columnKeyCreator");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var column_1 = require("../entities/column");
@@ -169,28 +169,27 @@ var BalancedColumnTreeBuilder = (function () {
     BalancedColumnTreeBuilder.prototype.isColumnGroup = function (abstractColDef) {
         return abstractColDef.children !== undefined;
     };
-    __decorate([
-        context_3.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], BalancedColumnTreeBuilder.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_3.Autowired('columnUtils'), 
-        __metadata('design:type', columnUtils_1.ColumnUtils)
-    ], BalancedColumnTreeBuilder.prototype, "columnUtils", void 0);
-    __decorate([
-        context_3.Autowired('context'), 
-        __metadata('design:type', context_4.Context)
-    ], BalancedColumnTreeBuilder.prototype, "context", void 0);
-    __decorate([
-        __param(0, context_2.Qualifier('loggerFactory')), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
-        __metadata('design:returntype', void 0)
-    ], BalancedColumnTreeBuilder.prototype, "setBeans", null);
-    BalancedColumnTreeBuilder = __decorate([
-        context_1.Bean('balancedColumnTreeBuilder'), 
-        __metadata('design:paramtypes', [])
-    ], BalancedColumnTreeBuilder);
     return BalancedColumnTreeBuilder;
 }());
+__decorate([
+    context_3.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], BalancedColumnTreeBuilder.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_3.Autowired('columnUtils'),
+    __metadata("design:type", columnUtils_1.ColumnUtils)
+], BalancedColumnTreeBuilder.prototype, "columnUtils", void 0);
+__decorate([
+    context_3.Autowired('context'),
+    __metadata("design:type", context_4.Context)
+], BalancedColumnTreeBuilder.prototype, "context", void 0);
+__decorate([
+    __param(0, context_2.Qualifier('loggerFactory')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+    __metadata("design:returntype", void 0)
+], BalancedColumnTreeBuilder.prototype, "setBeans", null);
+BalancedColumnTreeBuilder = __decorate([
+    context_1.Bean('balancedColumnTreeBuilder')
+], BalancedColumnTreeBuilder);
 exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;

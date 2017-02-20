@@ -1,3 +1,6 @@
+ag-grid-angular {
+  display: inline-block;
+}
 ag-grid-ng2 {
   display: inline-block;
 }
@@ -181,14 +184,8 @@ ag-grid-ng2 {
 .ag-ltr .ag-header-select-all {
   float: left;
 }
-.ag-ltr .ag-pinned-right-header .ag-header-select-all {
-  float: right;
-}
 .ag-rtl .ag-header-select-all {
   float: right;
-}
-.ag-rtl .ag-pinned-left-header .ag-header-select-all {
-  float: left;
 }
 .ag-header-expand-icon {
   padding-left: 4px;
@@ -634,6 +631,9 @@ ag-grid-ng2 {
 }
 .ag-rich-select {
   outline: none;
+}
+.ag-rich-select-row {
+  white-space: nowrap;
 }
 .ag-rich-select-list {
   width: 200px;

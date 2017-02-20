@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -311,44 +311,43 @@ var PaginationController = (function () {
             that.onBtLast();
         });
     };
-    __decorate([
-        context_1.Autowired('filterManager'), 
-        __metadata('design:type', filterManager_1.FilterManager)
-    ], PaginationController.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'), 
-        __metadata('design:type', gridPanel_1.GridPanel)
-    ], PaginationController.prototype, "gridPanel", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], PaginationController.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], PaginationController.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.Autowired('sortController'), 
-        __metadata('design:type', sortController_1.SortController)
-    ], PaginationController.prototype, "sortController", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], PaginationController.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], PaginationController.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], PaginationController.prototype, "init", null);
-    PaginationController = __decorate([
-        context_1.Bean('paginationController'), 
-        __metadata('design:paramtypes', [])
-    ], PaginationController);
     return PaginationController;
 }());
+__decorate([
+    context_1.Autowired('filterManager'),
+    __metadata("design:type", filterManager_1.FilterManager)
+], PaginationController.prototype, "filterManager", void 0);
+__decorate([
+    context_1.Autowired('gridPanel'),
+    __metadata("design:type", gridPanel_1.GridPanel)
+], PaginationController.prototype, "gridPanel", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], PaginationController.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('selectionController'),
+    __metadata("design:type", selectionController_1.SelectionController)
+], PaginationController.prototype, "selectionController", void 0);
+__decorate([
+    context_1.Autowired('sortController'),
+    __metadata("design:type", sortController_1.SortController)
+], PaginationController.prototype, "sortController", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], PaginationController.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], PaginationController.prototype, "rowModel", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PaginationController.prototype, "init", null);
+PaginationController = __decorate([
+    context_1.Bean('paginationController')
+], PaginationController);
 exports.PaginationController = PaginationController;

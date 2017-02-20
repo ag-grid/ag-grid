@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -86,18 +86,17 @@ var CellRendererService = (function () {
             return cellRendererKey;
         }
     };
-    __decorate([
-        context_1.Autowired('cellRendererFactory'), 
-        __metadata('design:type', cellRendererFactory_1.CellRendererFactory)
-    ], CellRendererService.prototype, "cellRendererFactory", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], CellRendererService.prototype, "context", void 0);
-    CellRendererService = __decorate([
-        context_1.Bean('cellRendererService'), 
-        __metadata('design:paramtypes', [])
-    ], CellRendererService);
     return CellRendererService;
 }());
+__decorate([
+    context_1.Autowired('cellRendererFactory'),
+    __metadata("design:type", cellRendererFactory_1.CellRendererFactory)
+], CellRendererService.prototype, "cellRendererFactory", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], CellRendererService.prototype, "context", void 0);
+CellRendererService = __decorate([
+    context_1.Bean('cellRendererService')
+], CellRendererService);
 exports.CellRendererService = CellRendererService;

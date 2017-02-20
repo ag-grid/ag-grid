@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,10 +18,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var logger_1 = require("./logger");
-var utils_1 = require('./utils');
+var utils_1 = require("./utils");
 var context_1 = require("./context/context");
 var context_2 = require("./context/context");
-var EventService = (function () {
+var EventService = EventService_1 = (function () {
     function EventService() {
         this.allListeners = {};
         this.globalListeners = [];
@@ -51,7 +51,7 @@ var EventService = (function () {
     // as the model may need to update before the view works on the info. if you register
     // via this method, you get notified before the view parts
     EventService.prototype.addModalPriorityEventListener = function (eventType, listener) {
-        this.addEventListener(eventType + EventService.PRIORITY, listener);
+        this.addEventListener(eventType + EventService_1.PRIORITY, listener);
     };
     EventService.prototype.addGlobalListener = function (listener) {
         this.globalListeners.push(listener);
@@ -71,7 +71,7 @@ var EventService = (function () {
         }
         // console.log(`dispatching ${eventType}: ${event}`);
         // this allows the columnController to get events before anyone else
-        var p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY);
+        var p1ListenerList = this.getListenerList(eventType + EventService_1.PRIORITY);
         p1ListenerList.forEach(function (listener) {
             listener(event);
         });
@@ -83,20 +83,21 @@ var EventService = (function () {
             listener(eventType, event);
         });
     };
-    // this is an old idea niall had, should really take it out, was to do with ordering who gets to process
-    // events first, to give model and service objects preference over the view
-    EventService.PRIORITY = '-P1';
-    __decorate([
-        __param(0, context_2.Qualifier('loggerFactory')),
-        __param(1, context_2.Qualifier('globalEventListener')), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [logger_1.LoggerFactory, Function]), 
-        __metadata('design:returntype', void 0)
-    ], EventService.prototype, "agWire", null);
-    EventService = __decorate([
-        context_1.Bean('eventService'), 
-        __metadata('design:paramtypes', [])
-    ], EventService);
     return EventService;
 }());
+// this is an old idea niall had, should really take it out, was to do with ordering who gets to process
+// events first, to give model and service objects preference over the view
+EventService.PRIORITY = '-P1';
+__decorate([
+    __param(0, context_2.Qualifier('loggerFactory')),
+    __param(1, context_2.Qualifier('globalEventListener')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [logger_1.LoggerFactory,
+        Function]),
+    __metadata("design:returntype", void 0)
+], EventService.prototype, "agWire", null);
+EventService = EventService_1 = __decorate([
+    context_1.Bean('eventService')
+], EventService);
 exports.EventService = EventService;
+var EventService_1;

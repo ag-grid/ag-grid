@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -161,28 +161,27 @@ var FocusedCellController = (function () {
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_FOCUSED, event);
     };
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], FocusedCellController.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], FocusedCellController.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], FocusedCellController.prototype, "columnController", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], FocusedCellController.prototype, "init", null);
-    FocusedCellController = __decorate([
-        context_1.Bean('focusedCellController'), 
-        __metadata('design:paramtypes', [])
-    ], FocusedCellController);
     return FocusedCellController;
 }());
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], FocusedCellController.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], FocusedCellController.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], FocusedCellController.prototype, "columnController", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], FocusedCellController.prototype, "init", null);
+FocusedCellController = __decorate([
+    context_1.Bean('focusedCellController')
+], FocusedCellController);
 exports.FocusedCellController = FocusedCellController;

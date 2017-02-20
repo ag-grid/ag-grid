@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var HeaderComp = (function (_super) {
     __extends(HeaderComp, _super);
     function HeaderComp() {
-        _super.call(this, HeaderComp.TEMPLATE);
+        return _super.call(this, HeaderComp.TEMPLATE) || this;
     }
     HeaderComp.prototype.init = function (params) {
         this.params = params;
@@ -63,14 +63,18 @@ var HeaderComp = (function (_super) {
             return;
         }
         var touchListener = new touchListener_1.TouchListener(this.getGui());
-        var tapListener = function () {
-            _this.sortController.progressSort(_this.params.column, false);
-        };
-        var longTapListener = function (touch) {
-            _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, touch);
-        };
-        this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
-        this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
+        if (this.params.enableMenu) {
+            var longTapListener = function (touch) {
+                _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, touch);
+            };
+            this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
+        }
+        if (this.params.enableSorting) {
+            var tapListener = function () {
+                _this.sortController.progressSort(_this.params.column, false);
+            };
+            this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
+        }
         this.addDestroyFunc(function () { return touchListener.destroy(); });
     };
     HeaderComp.prototype.setupMenu = function () {
@@ -144,56 +148,56 @@ var HeaderComp = (function (_super) {
         var filterPresent = this.params.column.isFilterActive();
         utils_1.Utils.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     };
-    HeaderComp.TEMPLATE = '<div>' +
-        '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-        '  <div ref="eLabel" class="ag-header-cell-label">' +
-        '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-        '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-        '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-        '    <span ref="eText" class="ag-header-cell-text"></span>' +
-        '  </div>' +
-        '</div>';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], HeaderComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('sortController'), 
-        __metadata('design:type', sortController_1.SortController)
-    ], HeaderComp.prototype, "sortController", void 0);
-    __decorate([
-        context_1.Autowired('menuFactory'), 
-        __metadata('design:type', Object)
-    ], HeaderComp.prototype, "menuFactory", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eFilter'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderComp.prototype, "eFilter", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eSortAsc'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderComp.prototype, "eSortAsc", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eSortDesc'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderComp.prototype, "eSortDesc", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eSortNone'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderComp.prototype, "eSortNone", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eMenu'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderComp.prototype, "eMenu", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eLabel'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderComp.prototype, "eLabel", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eText'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderComp.prototype, "eText", void 0);
     return HeaderComp;
 }(component_1.Component));
+HeaderComp.TEMPLATE = '<div>' +
+    '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+    '  <div ref="eLabel" class="ag-header-cell-label">' +
+    '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+    '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+    '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
+    '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
+    '    <span ref="eText" class="ag-header-cell-text"></span>' +
+    '  </div>' +
+    '</div>';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], HeaderComp.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('sortController'),
+    __metadata("design:type", sortController_1.SortController)
+], HeaderComp.prototype, "sortController", void 0);
+__decorate([
+    context_1.Autowired('menuFactory'),
+    __metadata("design:type", Object)
+], HeaderComp.prototype, "menuFactory", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eFilter'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eFilter", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eSortAsc'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eSortAsc", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eSortDesc'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eSortDesc", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eSortNone'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eSortNone", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eMenu'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eMenu", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eLabel'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eLabel", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eText'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eText", void 0);
 exports.HeaderComp = HeaderComp;

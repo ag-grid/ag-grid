@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,11 +37,12 @@ var component_1 = require("../../widgets/component");
 var RenderedHeaderCell = (function (_super) {
     __extends(RenderedHeaderCell, _super);
     function RenderedHeaderCell(column, eRoot, dragSourceDropTarget, pinned) {
-        _super.call(this);
-        this.column = column;
-        this.eRoot = eRoot;
-        this.dragSourceDropTarget = dragSourceDropTarget;
-        this.pinned = pinned;
+        var _this = _super.call(this) || this;
+        _this.column = column;
+        _this.eRoot = eRoot;
+        _this.dragSourceDropTarget = dragSourceDropTarget;
+        _this.pinned = pinned;
+        return _this;
     }
     RenderedHeaderCell.prototype.getColumn = function () {
         return this.column;
@@ -338,60 +339,60 @@ var RenderedHeaderCell = (function (_super) {
         var newWidth = this.startWidth + dragChangeNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, finished);
     };
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], RenderedHeaderCell.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('filterManager'), 
-        __metadata('design:type', filterManager_1.FilterManager)
-    ], RenderedHeaderCell.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], RenderedHeaderCell.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('$compile'), 
-        __metadata('design:type', Object)
-    ], RenderedHeaderCell.prototype, "$compile", void 0);
-    __decorate([
-        context_1.Autowired('gridCore'), 
-        __metadata('design:type', gridCore_1.GridCore)
-    ], RenderedHeaderCell.prototype, "gridCore", void 0);
-    __decorate([
-        context_1.Autowired('headerTemplateLoader'), 
-        __metadata('design:type', headerTemplateLoader_1.HeaderTemplateLoader)
-    ], RenderedHeaderCell.prototype, "headerTemplateLoader", void 0);
-    __decorate([
-        context_1.Autowired('horizontalDragService'), 
-        __metadata('design:type', horizontalDragService_1.HorizontalDragService)
-    ], RenderedHeaderCell.prototype, "horizontalDragService", void 0);
-    __decorate([
-        context_1.Autowired('menuFactory'), 
-        __metadata('design:type', Object)
-    ], RenderedHeaderCell.prototype, "menuFactory", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], RenderedHeaderCell.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', dragAndDropService_1.DragAndDropService)
-    ], RenderedHeaderCell.prototype, "dragAndDropService", void 0);
-    __decorate([
-        context_1.Autowired('sortController'), 
-        __metadata('design:type', sortController_1.SortController)
-    ], RenderedHeaderCell.prototype, "sortController", void 0);
-    __decorate([
-        context_1.Autowired('$scope'), 
-        __metadata('design:type', Object)
-    ], RenderedHeaderCell.prototype, "$scope", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], RenderedHeaderCell.prototype, "init", null);
     return RenderedHeaderCell;
 }(component_1.Component));
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], RenderedHeaderCell.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('filterManager'),
+    __metadata("design:type", filterManager_1.FilterManager)
+], RenderedHeaderCell.prototype, "filterManager", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], RenderedHeaderCell.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('$compile'),
+    __metadata("design:type", Object)
+], RenderedHeaderCell.prototype, "$compile", void 0);
+__decorate([
+    context_1.Autowired('gridCore'),
+    __metadata("design:type", gridCore_1.GridCore)
+], RenderedHeaderCell.prototype, "gridCore", void 0);
+__decorate([
+    context_1.Autowired('headerTemplateLoader'),
+    __metadata("design:type", headerTemplateLoader_1.HeaderTemplateLoader)
+], RenderedHeaderCell.prototype, "headerTemplateLoader", void 0);
+__decorate([
+    context_1.Autowired('horizontalDragService'),
+    __metadata("design:type", horizontalDragService_1.HorizontalDragService)
+], RenderedHeaderCell.prototype, "horizontalDragService", void 0);
+__decorate([
+    context_1.Autowired('menuFactory'),
+    __metadata("design:type", Object)
+], RenderedHeaderCell.prototype, "menuFactory", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], RenderedHeaderCell.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('dragAndDropService'),
+    __metadata("design:type", dragAndDropService_1.DragAndDropService)
+], RenderedHeaderCell.prototype, "dragAndDropService", void 0);
+__decorate([
+    context_1.Autowired('sortController'),
+    __metadata("design:type", sortController_1.SortController)
+], RenderedHeaderCell.prototype, "sortController", void 0);
+__decorate([
+    context_1.Autowired('$scope'),
+    __metadata("design:type", Object)
+], RenderedHeaderCell.prototype, "$scope", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], RenderedHeaderCell.prototype, "init", null);
 exports.RenderedHeaderCell = RenderedHeaderCell;

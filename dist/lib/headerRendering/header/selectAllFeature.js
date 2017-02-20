@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,13 +31,14 @@ var selectionController_1 = require("../../selectionController");
 var SelectAllFeature = (function (_super) {
     __extends(SelectAllFeature, _super);
     function SelectAllFeature(cbSelectAll, column) {
-        _super.call(this);
-        this.cbSelectAllVisible = false;
-        this.processingEventFromCheckbox = false;
-        this.cbSelectAll = cbSelectAll;
-        this.column = column;
+        var _this = _super.call(this) || this;
+        _this.cbSelectAllVisible = false;
+        _this.processingEventFromCheckbox = false;
+        _this.cbSelectAll = cbSelectAll;
+        _this.column = column;
         var colDef = column.getColDef();
-        this.filteredOnly = colDef ? !!colDef.headerCheckboxSelectionFilteredOnly : false;
+        _this.filteredOnly = colDef ? !!colDef.headerCheckboxSelectionFilteredOnly : false;
+        return _this;
     }
     SelectAllFeature.prototype.postConstruct = function () {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
@@ -153,32 +154,32 @@ var SelectAllFeature = (function (_super) {
         }
         return false;
     };
-    __decorate([
-        context_1.Autowired('gridApi'), 
-        __metadata('design:type', gridApi_1.GridApi)
-    ], SelectAllFeature.prototype, "gridApi", void 0);
-    __decorate([
-        context_1.Autowired('columnApi'), 
-        __metadata('design:type', columnController_1.ColumnApi)
-    ], SelectAllFeature.prototype, "columnApi", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], SelectAllFeature.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], SelectAllFeature.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], SelectAllFeature.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], SelectAllFeature.prototype, "postConstruct", null);
     return SelectAllFeature;
 }(beanStub_1.BeanStub));
+__decorate([
+    context_1.Autowired('gridApi'),
+    __metadata("design:type", gridApi_1.GridApi)
+], SelectAllFeature.prototype, "gridApi", void 0);
+__decorate([
+    context_1.Autowired('columnApi'),
+    __metadata("design:type", columnController_1.ColumnApi)
+], SelectAllFeature.prototype, "columnApi", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], SelectAllFeature.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], SelectAllFeature.prototype, "rowModel", void 0);
+__decorate([
+    context_1.Autowired('selectionController'),
+    __metadata("design:type", selectionController_1.SelectionController)
+], SelectAllFeature.prototype, "selectionController", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SelectAllFeature.prototype, "postConstruct", null);
 exports.SelectAllFeature = SelectAllFeature;

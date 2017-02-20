@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -399,43 +399,43 @@ var RowNode = (function () {
     RowNode.prototype.onMouseLeave = function () {
         this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
     };
-    RowNode.EVENT_ROW_SELECTED = 'rowSelected';
-    RowNode.EVENT_DATA_CHANGED = 'dataChanged';
-    RowNode.EVENT_CELL_CHANGED = 'cellChanged';
-    RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
-    RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
-    RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
-    RowNode.EVENT_TOP_CHANGED = 'topChanged';
-    RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
-    RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], RowNode.prototype, "mainEventService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], RowNode.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], RowNode.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], RowNode.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('valueService'), 
-        __metadata('design:type', valueService_1.ValueService)
-    ], RowNode.prototype, "valueService", void 0);
-    __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], RowNode.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], RowNode.prototype, "context", void 0);
     return RowNode;
 }());
+RowNode.EVENT_ROW_SELECTED = 'rowSelected';
+RowNode.EVENT_DATA_CHANGED = 'dataChanged';
+RowNode.EVENT_CELL_CHANGED = 'cellChanged';
+RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
+RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
+RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
+RowNode.EVENT_TOP_CHANGED = 'topChanged';
+RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
+RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], RowNode.prototype, "mainEventService", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], RowNode.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('selectionController'),
+    __metadata("design:type", selectionController_1.SelectionController)
+], RowNode.prototype, "selectionController", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], RowNode.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('valueService'),
+    __metadata("design:type", valueService_1.ValueService)
+], RowNode.prototype, "valueService", void 0);
+__decorate([
+    context_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], RowNode.prototype, "rowModel", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], RowNode.prototype, "context", void 0);
 exports.RowNode = RowNode;

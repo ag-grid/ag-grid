@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,14 +44,13 @@ var ValueFormatterService = (function () {
         }
         return result;
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
-    ValueFormatterService = __decorate([
-        context_1.Bean('valueFormatterService'), 
-        __metadata('design:paramtypes', [])
-    ], ValueFormatterService);
     return ValueFormatterService;
 }());
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
+ValueFormatterService = __decorate([
+    context_1.Bean('valueFormatterService')
+], ValueFormatterService);
 exports.ValueFormatterService = ValueFormatterService;

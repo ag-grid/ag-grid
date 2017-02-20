@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var context_1 = require("../context/context");
 var context_2 = require("../context/context");
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var MouseEventService = (function () {
     function MouseEventService() {
@@ -38,14 +38,13 @@ var MouseEventService = (function () {
         var renderedCell = this.getRenderedCellForEvent(event);
         return renderedCell ? renderedCell.getGridCell() : null;
     };
-    __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], MouseEventService.prototype, "gridOptionsWrapper", void 0);
-    MouseEventService = __decorate([
-        context_1.Bean('mouseEventService'), 
-        __metadata('design:paramtypes', [])
-    ], MouseEventService);
     return MouseEventService;
 }());
+__decorate([
+    context_2.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], MouseEventService.prototype, "gridOptionsWrapper", void 0);
+MouseEventService = __decorate([
+    context_1.Bean('mouseEventService')
+], MouseEventService);
 exports.MouseEventService = MouseEventService;

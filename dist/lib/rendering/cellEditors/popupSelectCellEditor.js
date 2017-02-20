@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,7 +14,7 @@ var selectCellEditor_1 = require("./selectCellEditor");
 var PopupSelectCellEditor = (function (_super) {
     __extends(PopupSelectCellEditor, _super);
     function PopupSelectCellEditor() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     PopupSelectCellEditor.prototype.isPopup = function () {
         return true;

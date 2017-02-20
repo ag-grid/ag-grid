@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -109,26 +109,25 @@ var AutoWidthCalculator = (function () {
         eCloneParent.appendChild(eCellClone);
         eDummyContainer.appendChild(eCloneParent);
     };
-    __decorate([
-        context_2.Autowired('rowRenderer'), 
-        __metadata('design:type', rowRenderer_1.RowRenderer)
-    ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-    __decorate([
-        context_2.Autowired('headerRenderer'), 
-        __metadata('design:type', headerRenderer_1.HeaderRenderer)
-    ], AutoWidthCalculator.prototype, "headerRenderer", void 0);
-    __decorate([
-        context_2.Autowired('gridPanel'), 
-        __metadata('design:type', gridPanel_1.GridPanel)
-    ], AutoWidthCalculator.prototype, "gridPanel", void 0);
-    __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], AutoWidthCalculator.prototype, "gridOptionsWrapper", void 0);
-    AutoWidthCalculator = __decorate([
-        context_1.Bean('autoWidthCalculator'), 
-        __metadata('design:paramtypes', [])
-    ], AutoWidthCalculator);
     return AutoWidthCalculator;
 }());
+__decorate([
+    context_2.Autowired('rowRenderer'),
+    __metadata("design:type", rowRenderer_1.RowRenderer)
+], AutoWidthCalculator.prototype, "rowRenderer", void 0);
+__decorate([
+    context_2.Autowired('headerRenderer'),
+    __metadata("design:type", headerRenderer_1.HeaderRenderer)
+], AutoWidthCalculator.prototype, "headerRenderer", void 0);
+__decorate([
+    context_2.Autowired('gridPanel'),
+    __metadata("design:type", gridPanel_1.GridPanel)
+], AutoWidthCalculator.prototype, "gridPanel", void 0);
+__decorate([
+    context_2.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], AutoWidthCalculator.prototype, "gridOptionsWrapper", void 0);
+AutoWidthCalculator = __decorate([
+    context_1.Bean('autoWidthCalculator')
+], AutoWidthCalculator);
 exports.AutoWidthCalculator = AutoWidthCalculator;

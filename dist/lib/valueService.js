@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -155,32 +155,31 @@ var ValueService = (function () {
             return null;
         }
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], ValueService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('expressionService'), 
-        __metadata('design:type', expressionService_1.ExpressionService)
-    ], ValueService.prototype, "expressionService", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], ValueService.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], ValueService.prototype, "eventService", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ValueService.prototype, "init", null);
-    ValueService = __decorate([
-        context_1.Bean('valueService'), 
-        __metadata('design:paramtypes', [])
-    ], ValueService);
     return ValueService;
 }());
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], ValueService.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('expressionService'),
+    __metadata("design:type", expressionService_1.ExpressionService)
+], ValueService.prototype, "expressionService", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], ValueService.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], ValueService.prototype, "eventService", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ValueService.prototype, "init", null);
+ValueService = __decorate([
+    context_1.Bean('valueService')
+], ValueService);
 exports.ValueService = ValueService;

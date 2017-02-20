@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,13 +33,14 @@ var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var HeaderRowComp = (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, showingGroups, pinned, eRoot, dropTarget) {
-        _super.call(this, "<div class=\"ag-header-row\"/>");
-        this.headerElements = {};
-        this.dept = dept;
-        this.showingGroups = showingGroups;
-        this.pinned = pinned;
-        this.eRoot = eRoot;
-        this.dropTarget = dropTarget;
+        var _this = _super.call(this, "<div class=\"ag-header-row\"/>") || this;
+        _this.headerElements = {};
+        _this.dept = dept;
+        _this.showingGroups = showingGroups;
+        _this.pinned = pinned;
+        _this.eRoot = eRoot;
+        _this.dropTarget = dropTarget;
+        return _this;
     }
     HeaderRowComp.prototype.forEachHeaderElement = function (callback) {
         var _this = this;
@@ -156,30 +157,30 @@ var HeaderRowComp = (function (_super) {
         this.context.wireBean(result);
         return result;
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], HeaderRowComp.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], HeaderRowComp.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], HeaderRowComp.prototype, "eventService", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], HeaderRowComp.prototype, "init", null);
     return HeaderRowComp;
 }(component_1.Component));
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], HeaderRowComp.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], HeaderRowComp.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], HeaderRowComp.prototype, "eventService", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], HeaderRowComp.prototype, "init", null);
 exports.HeaderRowComp = HeaderRowComp;
 // remove this in v9, when we take out support for the old headers
 var warningGiven = false;

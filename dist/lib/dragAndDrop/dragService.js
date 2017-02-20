@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -215,34 +215,33 @@ var DragService = (function () {
         this.dragEndFunctions.forEach(function (func) { return func(); });
         this.dragEndFunctions.length = 0;
     };
-    __decorate([
-        context_1.Autowired('loggerFactory'), 
-        __metadata('design:type', logger_1.LoggerFactory)
-    ], DragService.prototype, "loggerFactory", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], DragService.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], DragService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], DragService.prototype, "init", null);
-    __decorate([
-        context_1.PreDestroy, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], DragService.prototype, "destroy", null);
-    DragService = __decorate([
-        context_1.Bean('dragService'), 
-        __metadata('design:paramtypes', [])
-    ], DragService);
     return DragService;
 }());
+__decorate([
+    context_1.Autowired('loggerFactory'),
+    __metadata("design:type", logger_1.LoggerFactory)
+], DragService.prototype, "loggerFactory", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], DragService.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], DragService.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], DragService.prototype, "init", null);
+__decorate([
+    context_1.PreDestroy,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], DragService.prototype, "destroy", null);
+DragService = __decorate([
+    context_1.Bean('dragService')
+], DragService);
 exports.DragService = DragService;

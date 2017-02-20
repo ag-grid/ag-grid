@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,10 +29,11 @@ var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var AgCheckbox = (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
-        _super.call(this);
-        this.selected = false;
-        this.readOnly = false;
-        this.passive = false;
+        var _this = _super.call(this) || this;
+        _this.selected = false;
+        _this.readOnly = false;
+        _this.passive = false;
+        return _this;
     }
     AgCheckbox.prototype.postConstruct = function () {
         this.setTemplate(AgCheckbox.TEMPLATE);
@@ -117,45 +118,45 @@ var AgCheckbox = (function (_super) {
         utils_1.Utils.setVisible(this.eUnchecked, this.selected === false);
         utils_1.Utils.setVisible(this.eIndeterminate, this.selected === undefined);
     };
-    AgCheckbox.EVENT_CHANGED = 'change';
-    AgCheckbox.TEMPLATE = '<span class="ag-checkbox">' +
-        '  <span class="ag-checkbox-checked"></span>' +
-        '  <span class="ag-checkbox-unchecked"></span>' +
-        '  <span class="ag-checkbox-indeterminate"></span>' +
-        '  <span class="ag-checkbox-label"></span>' +
-        '</span>';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-checked'), 
-        __metadata('design:type', HTMLElement)
-    ], AgCheckbox.prototype, "eChecked", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-unchecked'), 
-        __metadata('design:type', HTMLElement)
-    ], AgCheckbox.prototype, "eUnchecked", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-indeterminate'), 
-        __metadata('design:type', HTMLElement)
-    ], AgCheckbox.prototype, "eIndeterminate", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-label'), 
-        __metadata('design:type', HTMLElement)
-    ], AgCheckbox.prototype, "eLabel", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], AgCheckbox.prototype, "postConstruct", null);
-    __decorate([
-        componentAnnotations_1.Listener('click'), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], AgCheckbox.prototype, "onClick", null);
     return AgCheckbox;
 }(component_1.Component));
+AgCheckbox.EVENT_CHANGED = 'change';
+AgCheckbox.TEMPLATE = '<span class="ag-checkbox">' +
+    '  <span class="ag-checkbox-checked"></span>' +
+    '  <span class="ag-checkbox-unchecked"></span>' +
+    '  <span class="ag-checkbox-indeterminate"></span>' +
+    '  <span class="ag-checkbox-label"></span>' +
+    '</span>';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('.ag-checkbox-checked'),
+    __metadata("design:type", HTMLElement)
+], AgCheckbox.prototype, "eChecked", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('.ag-checkbox-unchecked'),
+    __metadata("design:type", HTMLElement)
+], AgCheckbox.prototype, "eUnchecked", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('.ag-checkbox-indeterminate'),
+    __metadata("design:type", HTMLElement)
+], AgCheckbox.prototype, "eIndeterminate", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('.ag-checkbox-label'),
+    __metadata("design:type", HTMLElement)
+], AgCheckbox.prototype, "eLabel", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AgCheckbox.prototype, "postConstruct", null);
+__decorate([
+    componentAnnotations_1.Listener('click'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AgCheckbox.prototype, "onClick", null);
 exports.AgCheckbox = AgCheckbox;

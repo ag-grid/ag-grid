@@ -1,11 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var CssClassApplier = (function () {
     function CssClassApplier() {
     }

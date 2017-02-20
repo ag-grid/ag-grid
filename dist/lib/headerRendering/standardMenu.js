@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -70,26 +70,25 @@ var StandardMenuFactory = (function () {
         // for standard, we show menu if filter is enabled, and he menu is not suppressed
         return this.gridOptionsWrapper.isEnableFilter() && column.isFilterAllowed();
     };
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], StandardMenuFactory.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('filterManager'), 
-        __metadata('design:type', filterManager_1.FilterManager)
-    ], StandardMenuFactory.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('popupService'), 
-        __metadata('design:type', popupService_1.PopupService)
-    ], StandardMenuFactory.prototype, "popupService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], StandardMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    StandardMenuFactory = __decorate([
-        context_1.Bean('menuFactory'), 
-        __metadata('design:paramtypes', [])
-    ], StandardMenuFactory);
     return StandardMenuFactory;
 }());
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], StandardMenuFactory.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('filterManager'),
+    __metadata("design:type", filterManager_1.FilterManager)
+], StandardMenuFactory.prototype, "filterManager", void 0);
+__decorate([
+    context_1.Autowired('popupService'),
+    __metadata("design:type", popupService_1.PopupService)
+], StandardMenuFactory.prototype, "popupService", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], StandardMenuFactory.prototype, "gridOptionsWrapper", void 0);
+StandardMenuFactory = __decorate([
+    context_1.Bean('menuFactory')
+], StandardMenuFactory);
 exports.StandardMenuFactory = StandardMenuFactory;
