@@ -81,6 +81,7 @@ include '../documentation-main/documentation_header.php';
         The ag-grid package contains the core ag-grid engine and the ag-grid-angular
         contains the Angular component.
         <pre>"dependencies": {
+    ...
     "ag-grid": "8.1.x",
     "ag-grid-angular": "8.1.x"
 }</pre>
