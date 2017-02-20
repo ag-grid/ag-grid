@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -113,14 +113,13 @@ var PivotColDefService = (function () {
             }
         }
     };
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], PivotColDefService.prototype, "columnController", void 0);
-    PivotColDefService = __decorate([
-        main_1.Bean('pivotColDefService'), 
-        __metadata('design:paramtypes', [])
-    ], PivotColDefService);
     return PivotColDefService;
 }());
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], PivotColDefService.prototype, "columnController", void 0);
+PivotColDefService = __decorate([
+    main_1.Bean('pivotColDefService')
+], PivotColDefService);
 exports.PivotColDefService = PivotColDefService;

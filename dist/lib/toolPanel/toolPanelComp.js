@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -20,11 +20,12 @@ var rowGroupColumnsPanel_1 = require("./columnDrop/rowGroupColumnsPanel");
 var pivotColumnsPanel_1 = require("./columnDrop/pivotColumnsPanel");
 var pivotModePanel_1 = require("./columnDrop/pivotModePanel");
 var valueColumnsPanel_1 = require("./columnDrop/valueColumnsPanel");
-var ToolPanelComp = (function (_super) {
+var ToolPanelComp = ToolPanelComp_1 = (function (_super) {
     __extends(ToolPanelComp, _super);
     function ToolPanelComp() {
-        _super.call(this, ToolPanelComp.TEMPLATE);
-        this.initialised = false;
+        var _this = _super.call(this, ToolPanelComp_1.TEMPLATE) || this;
+        _this.initialised = false;
+        return _this;
     }
     // lazy initialise the toolPanel
     ToolPanelComp.prototype.setVisible = function (visible) {
@@ -56,19 +57,20 @@ var ToolPanelComp = (function (_super) {
             component.destroy();
         });
     };
-    ToolPanelComp.TEMPLATE = '<div class="ag-tool-panel"></div>';
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], ToolPanelComp.prototype, "context", void 0);
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], ToolPanelComp.prototype, "gridOptionsWrapper", void 0);
-    ToolPanelComp = __decorate([
-        main_1.Bean('toolPanel'), 
-        __metadata('design:paramtypes', [])
-    ], ToolPanelComp);
     return ToolPanelComp;
 }(main_1.Component));
+ToolPanelComp.TEMPLATE = '<div class="ag-tool-panel"></div>';
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], ToolPanelComp.prototype, "context", void 0);
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], ToolPanelComp.prototype, "gridOptionsWrapper", void 0);
+ToolPanelComp = ToolPanelComp_1 = __decorate([
+    main_1.Bean('toolPanel'),
+    __metadata("design:paramtypes", [])
+], ToolPanelComp);
 exports.ToolPanelComp = ToolPanelComp;
+var ToolPanelComp_1;

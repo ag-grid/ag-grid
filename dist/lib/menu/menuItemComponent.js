@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -19,8 +19,9 @@ var svgFactory = ag_grid_1.SvgFactory.getInstance();
 var MenuItemComponent = (function (_super) {
     __extends(MenuItemComponent, _super);
     function MenuItemComponent(params) {
-        _super.call(this, MenuItemComponent.TEMPLATE);
-        this.params = params;
+        var _this = _super.call(this, MenuItemComponent.TEMPLATE) || this;
+        _this.params = params;
+        return _this;
     }
     MenuItemComponent.prototype.init = function () {
         if (this.params.checked) {
@@ -77,24 +78,24 @@ var MenuItemComponent = (function (_super) {
         // console.log('MenuItemComponent->destroy() ' + this.instance);
         _super.prototype.destroy.call(this);
     };
-    // private instance = Math.random();
-    MenuItemComponent.TEMPLATE = '<div class="ag-menu-option">' +
-        '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
-        '  <span id="eName" class="ag-menu-option-text"></span>' +
-        '  <span id="eShortcut" class="ag-menu-option-shortcut"></span>' +
-        '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
-        '</div>';
-    MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
-    __decorate([
-        ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
-    ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        ag_grid_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
 }(ag_grid_1.Component));
+// private instance = Math.random();
+MenuItemComponent.TEMPLATE = '<div class="ag-menu-option">' +
+    '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
+    '  <span id="eName" class="ag-menu-option-text"></span>' +
+    '  <span id="eShortcut" class="ag-menu-option-shortcut"></span>' +
+    '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
+    '</div>';
+MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
+__decorate([
+    ag_grid_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    ag_grid_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], MenuItemComponent.prototype, "init", null);
 exports.MenuItemComponent = MenuItemComponent;

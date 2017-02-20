@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -155,34 +155,33 @@ var GroupStage = (function () {
             return level < expandByDefault;
         }
     };
-    __decorate([
-        main_1.Autowired('selectionController'), 
-        __metadata('design:type', main_1.SelectionController)
-    ], GroupStage.prototype, "selectionController", void 0);
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], GroupStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], GroupStage.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('valueService'), 
-        __metadata('design:type', main_1.ValueService)
-    ], GroupStage.prototype, "valueService", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], GroupStage.prototype, "eventService", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], GroupStage.prototype, "context", void 0);
-    GroupStage = __decorate([
-        main_1.Bean('groupStage'), 
-        __metadata('design:paramtypes', [])
-    ], GroupStage);
     return GroupStage;
 }());
+__decorate([
+    main_1.Autowired('selectionController'),
+    __metadata("design:type", main_1.SelectionController)
+], GroupStage.prototype, "selectionController", void 0);
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], GroupStage.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], GroupStage.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('valueService'),
+    __metadata("design:type", main_1.ValueService)
+], GroupStage.prototype, "valueService", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], GroupStage.prototype, "eventService", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], GroupStage.prototype, "context", void 0);
+GroupStage = __decorate([
+    main_1.Bean('groupStage')
+], GroupStage);
 exports.GroupStage = GroupStage;

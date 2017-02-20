@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -20,12 +20,13 @@ var aggFuncService_1 = require("../../aggregation/aggFuncService");
 var ColumnComponent = (function (_super) {
     __extends(ColumnComponent, _super);
     function ColumnComponent(column, dragSourceDropTarget, ghost, valueColumn) {
-        _super.call(this);
-        this.popupShowing = false;
-        this.valueColumn = valueColumn;
-        this.column = column;
-        this.dragSourceDropTarget = dragSourceDropTarget;
-        this.ghost = ghost;
+        var _this = _super.call(this) || this;
+        _this.popupShowing = false;
+        _this.valueColumn = valueColumn;
+        _this.column = column;
+        _this.dragSourceDropTarget = dragSourceDropTarget;
+        _this.ghost = ghost;
+        return _this;
     }
     ColumnComponent.prototype.init = function () {
         this.setTemplate(ColumnComponent.TEMPLATE);
@@ -133,64 +134,65 @@ var ColumnComponent = (function (_super) {
         var comp = new AggItemComp(itemSelected, value.toString());
         return comp;
     };
-    ColumnComponent.EVENT_COLUMN_REMOVE = 'columnRemove';
-    ColumnComponent.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
-    __decorate([
-        main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
-    ], ColumnComponent.prototype, "dragAndDropService", void 0);
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], ColumnComponent.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('gridPanel'), 
-        __metadata('design:type', main_1.GridPanel)
-    ], ColumnComponent.prototype, "gridPanel", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], ColumnComponent.prototype, "context", void 0);
-    __decorate([
-        main_1.Autowired('popupService'), 
-        __metadata('design:type', main_1.PopupService)
-    ], ColumnComponent.prototype, "popupService", void 0);
-    __decorate([
-        main_1.Autowired('aggFuncService'), 
-        __metadata('design:type', aggFuncService_1.AggFuncService)
-    ], ColumnComponent.prototype, "aggFuncService", void 0);
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], ColumnComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], ColumnComponent.prototype, "eventService", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-column-drop-cell-text'), 
-        __metadata('design:type', HTMLElement)
-    ], ColumnComponent.prototype, "eText", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-column-drop-cell-button'), 
-        __metadata('design:type', HTMLElement)
-    ], ColumnComponent.prototype, "btRemove", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ColumnComponent.prototype, "init", null);
     return ColumnComponent;
 }(main_1.Component));
+ColumnComponent.EVENT_COLUMN_REMOVE = 'columnRemove';
+ColumnComponent.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
+__decorate([
+    main_1.Autowired('dragAndDropService'),
+    __metadata("design:type", main_1.DragAndDropService)
+], ColumnComponent.prototype, "dragAndDropService", void 0);
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], ColumnComponent.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('gridPanel'),
+    __metadata("design:type", main_1.GridPanel)
+], ColumnComponent.prototype, "gridPanel", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], ColumnComponent.prototype, "context", void 0);
+__decorate([
+    main_1.Autowired('popupService'),
+    __metadata("design:type", main_1.PopupService)
+], ColumnComponent.prototype, "popupService", void 0);
+__decorate([
+    main_1.Autowired('aggFuncService'),
+    __metadata("design:type", aggFuncService_1.AggFuncService)
+], ColumnComponent.prototype, "aggFuncService", void 0);
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], ColumnComponent.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], ColumnComponent.prototype, "eventService", void 0);
+__decorate([
+    main_1.QuerySelector('.ag-column-drop-cell-text'),
+    __metadata("design:type", HTMLElement)
+], ColumnComponent.prototype, "eText", void 0);
+__decorate([
+    main_1.QuerySelector('.ag-column-drop-cell-button'),
+    __metadata("design:type", HTMLElement)
+], ColumnComponent.prototype, "btRemove", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ColumnComponent.prototype, "init", null);
 exports.ColumnComponent = ColumnComponent;
 var AggItemComp = (function (_super) {
     __extends(AggItemComp, _super);
     function AggItemComp(itemSelected, value) {
-        _super.call(this, '<div class="ag-select-agg-func-item"/>');
-        this.getGui().innerText = value;
-        this.value = value;
-        this.addGuiEventListener('click', itemSelected);
+        var _this = _super.call(this, '<div class="ag-select-agg-func-item"/>') || this;
+        _this.getGui().innerText = value;
+        _this.value = value;
+        _this.addGuiEventListener('click', itemSelected);
+        return _this;
     }
     return AggItemComp;
 }(main_1.Component));

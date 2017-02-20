@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -19,9 +19,10 @@ var menuItemComponent_1 = require("./menuItemComponent");
 var MenuList = (function (_super) {
     __extends(MenuList, _super);
     function MenuList() {
-        _super.call(this, MenuList.TEMPLATE);
-        this.timerCount = 0;
-        this.removeChildFuncs = [];
+        var _this = _super.call(this, MenuList.TEMPLATE) || this;
+        _this.timerCount = 0;
+        _this.removeChildFuncs = [];
+        return _this;
         // console.log('MenuList->constructor() ' + this.instance);
     }
     MenuList.prototype.clearActiveItem = function () {
@@ -134,22 +135,22 @@ var MenuList = (function (_super) {
         this.removeChildPopup();
         _super.prototype.destroy.call(this);
     };
-    // private instance = Math.random();
-    MenuList.TEMPLATE = '<div class="ag-menu-list"></div>';
-    MenuList.SEPARATOR_TEMPLATE = '<div class="ag-menu-separator">' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '</div>';
-    __decorate([
-        ag_grid_1.Autowired('context'), 
-        __metadata('design:type', ag_grid_1.Context)
-    ], MenuList.prototype, "context", void 0);
-    __decorate([
-        ag_grid_1.Autowired('popupService'), 
-        __metadata('design:type', ag_grid_1.PopupService)
-    ], MenuList.prototype, "popupService", void 0);
     return MenuList;
 }(ag_grid_1.Component));
+// private instance = Math.random();
+MenuList.TEMPLATE = '<div class="ag-menu-list"></div>';
+MenuList.SEPARATOR_TEMPLATE = '<div class="ag-menu-separator">' +
+    '  <span class="ag-menu-separator-cell"></span>' +
+    '  <span class="ag-menu-separator-cell"></span>' +
+    '  <span class="ag-menu-separator-cell"></span>' +
+    '  <span class="ag-menu-separator-cell"></span>' +
+    '</div>';
+__decorate([
+    ag_grid_1.Autowired('context'),
+    __metadata("design:type", ag_grid_1.Context)
+], MenuList.prototype, "context", void 0);
+__decorate([
+    ag_grid_1.Autowired('popupService'),
+    __metadata("design:type", ag_grid_1.PopupService)
+], MenuList.prototype, "popupService", void 0);
 exports.MenuList = MenuList;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -18,9 +18,10 @@ var main_1 = require("ag-grid/main");
 var VirtualList = (function (_super) {
     __extends(VirtualList, _super);
     function VirtualList() {
-        _super.call(this, null);
-        this.rowsInBodyContainer = {};
-        this.rowHeight = 20;
+        var _this = _super.call(this, null) || this;
+        _this.rowsInBodyContainer = {};
+        _this.rowHeight = 20;
+        return _this;
     }
     VirtualList.prototype.init = function () {
         this.setTemplate(VirtualList.TEMPLATE);
@@ -135,16 +136,16 @@ var VirtualList = (function (_super) {
     VirtualList.prototype.setModel = function (model) {
         this.model = model;
     };
-    VirtualList.TEMPLATE = '<div class="ag-virtual-list-viewport">' +
-        '<div class="ag-virtual-list-container">' +
-        '</div>' +
-        '</div>';
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], VirtualList.prototype, "init", null);
     return VirtualList;
 }(main_1.Component));
+VirtualList.TEMPLATE = '<div class="ag-virtual-list-viewport">' +
+    '<div class="ag-virtual-list-container">' +
+    '</div>' +
+    '</div>';
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], VirtualList.prototype, "init", null);
 exports.VirtualList = VirtualList;

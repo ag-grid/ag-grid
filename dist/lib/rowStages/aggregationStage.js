@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -162,30 +162,29 @@ var AggregationStage = (function () {
         var result = aggFunction(values);
         return result;
     };
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], AggregationStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], AggregationStage.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('valueService'), 
-        __metadata('design:type', main_1.ValueService)
-    ], AggregationStage.prototype, "valueService", void 0);
-    __decorate([
-        main_1.Autowired('pivotStage'), 
-        __metadata('design:type', pivotStage_1.PivotStage)
-    ], AggregationStage.prototype, "pivotStage", void 0);
-    __decorate([
-        main_1.Autowired('aggFuncService'), 
-        __metadata('design:type', aggFuncService_1.AggFuncService)
-    ], AggregationStage.prototype, "aggFuncService", void 0);
-    AggregationStage = __decorate([
-        main_1.Bean('aggregationStage'), 
-        __metadata('design:paramtypes', [])
-    ], AggregationStage);
     return AggregationStage;
 }());
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], AggregationStage.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], AggregationStage.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('valueService'),
+    __metadata("design:type", main_1.ValueService)
+], AggregationStage.prototype, "valueService", void 0);
+__decorate([
+    main_1.Autowired('pivotStage'),
+    __metadata("design:type", pivotStage_1.PivotStage)
+], AggregationStage.prototype, "pivotStage", void 0);
+__decorate([
+    main_1.Autowired('aggFuncService'),
+    __metadata("design:type", aggFuncService_1.AggFuncService)
+], AggregationStage.prototype, "aggFuncService", void 0);
+AggregationStage = __decorate([
+    main_1.Bean('aggregationStage')
+], AggregationStage);
 exports.AggregationStage = AggregationStage;

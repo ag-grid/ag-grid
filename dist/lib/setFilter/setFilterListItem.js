@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -18,9 +18,10 @@ var main_1 = require("ag-grid/main");
 var SetFilterListItem = (function (_super) {
     __extends(SetFilterListItem, _super);
     function SetFilterListItem(value, cellRenderer) {
-        _super.call(this, SetFilterListItem.TEMPLATE);
-        this.value = value;
-        this.cellRenderer = cellRenderer;
+        var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
+        _this.value = value;
+        _this.cellRenderer = cellRenderer;
+        return _this;
     }
     SetFilterListItem.prototype.init = function () {
         var _this = this;
@@ -51,25 +52,25 @@ var SetFilterListItem = (function (_super) {
             valueElement.innerHTML = displayNameOfValue;
         }
     };
-    SetFilterListItem.EVENT_SELECTED = 'selected';
-    SetFilterListItem.TEMPLATE = '<label class="ag-set-filter-item">' +
-        '<input type="checkbox" class="ag-filter-checkbox"/>' +
-        '<span class="ag-filter-value"></span>' +
-        '</label>';
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('cellRendererService'), 
-        __metadata('design:type', main_1.CellRendererService)
-    ], SetFilterListItem.prototype, "cellRendererService", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], SetFilterListItem.prototype, "init", null);
     return SetFilterListItem;
 }(main_1.Component));
+SetFilterListItem.EVENT_SELECTED = 'selected';
+SetFilterListItem.TEMPLATE = '<label class="ag-set-filter-item">' +
+    '<input type="checkbox" class="ag-filter-checkbox"/>' +
+    '<span class="ag-filter-value"></span>' +
+    '</label>';
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('cellRendererService'),
+    __metadata("design:type", main_1.CellRendererService)
+], SetFilterListItem.prototype, "cellRendererService", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SetFilterListItem.prototype, "init", null);
 exports.SetFilterListItem = SetFilterListItem;

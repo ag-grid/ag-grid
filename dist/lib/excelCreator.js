@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -14,34 +14,35 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var main_1 = require('ag-grid/main');
-var main_2 = require('ag-grid/main');
-var main_3 = require('ag-grid/main');
-var main_4 = require('ag-grid/main');
+var main_1 = require("ag-grid/main");
+var main_2 = require("ag-grid/main");
+var main_3 = require("ag-grid/main");
+var main_4 = require("ag-grid/main");
 var excelXmlFactory_1 = require("./excelXmlFactory");
-var main_5 = require('ag-grid/main');
-var main_6 = require('ag-grid/main');
-var main_7 = require('ag-grid/main');
-var main_8 = require('ag-grid/main');
+var main_5 = require("ag-grid/main");
+var main_6 = require("ag-grid/main");
+var main_7 = require("ag-grid/main");
+var main_8 = require("ag-grid/main");
 var ExcelGridSerializingSession = (function (_super) {
     __extends(ExcelGridSerializingSession, _super);
     function ExcelGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, excelXmlFactory, baseExcelStyles, styleLinker) {
-        _super.call(this, columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback);
-        this.excelXmlFactory = excelXmlFactory;
-        this.styleLinker = styleLinker;
-        this.mixedStyles = {};
-        this.mixedStyleCounter = 0;
-        this.rows = [];
+        var _this = _super.call(this, columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, function (raw) { return main_6.Utils.escape(raw); }) || this;
+        _this.excelXmlFactory = excelXmlFactory;
+        _this.styleLinker = styleLinker;
+        _this.mixedStyles = {};
+        _this.mixedStyleCounter = 0;
+        _this.rows = [];
         if (!baseExcelStyles) {
-            this.styleIds = [];
-            this.excelStyles = [];
+            _this.styleIds = [];
+            _this.excelStyles = [];
         }
         else {
-            this.styleIds = baseExcelStyles.map(function (it) {
+            _this.styleIds = baseExcelStyles.map(function (it) {
                 return it.id;
             });
-            this.excelStyles = baseExcelStyles.slice();
+            _this.excelStyles = baseExcelStyles.slice();
         }
+        return _this;
     }
     ExcelGridSerializingSession.prototype.addCustomHeader = function (customHeader) {
         throw new Error("Custom header not supported for Excel serialization");
@@ -216,42 +217,41 @@ var ExcelCreator = (function () {
             return (styleIds.indexOf(left) < styleIds.indexOf(right)) ? -1 : 1;
         });
     };
-    __decorate([
-        main_3.Autowired('excelXmlFactory'), 
-        __metadata('design:type', excelXmlFactory_1.ExcelXmlFactory)
-    ], ExcelCreator.prototype, "excelXmlFactory", void 0);
-    __decorate([
-        main_3.Autowired('downloader'), 
-        __metadata('design:type', main_4.Downloader)
-    ], ExcelCreator.prototype, "downloader", void 0);
-    __decorate([
-        main_3.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], ExcelCreator.prototype, "columnController", void 0);
-    __decorate([
-        main_3.Autowired('valueService'), 
-        __metadata('design:type', main_2.ValueService)
-    ], ExcelCreator.prototype, "valueService", void 0);
-    __decorate([
-        main_3.Autowired('gridSerializer'), 
-        __metadata('design:type', main_5.GridSerializer)
-    ], ExcelCreator.prototype, "gridSerializer", void 0);
-    __decorate([
-        main_3.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_7.GridOptionsWrapper)
-    ], ExcelCreator.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_3.Autowired('gridOptions'), 
-        __metadata('design:type', Object)
-    ], ExcelCreator.prototype, "gridOptions", void 0);
-    __decorate([
-        main_3.Autowired('stylingService'), 
-        __metadata('design:type', main_8.StylingService)
-    ], ExcelCreator.prototype, "stylingService", void 0);
-    ExcelCreator = __decorate([
-        main_3.Bean('excelCreator'), 
-        __metadata('design:paramtypes', [])
-    ], ExcelCreator);
     return ExcelCreator;
 }());
+__decorate([
+    main_3.Autowired('excelXmlFactory'),
+    __metadata("design:type", excelXmlFactory_1.ExcelXmlFactory)
+], ExcelCreator.prototype, "excelXmlFactory", void 0);
+__decorate([
+    main_3.Autowired('downloader'),
+    __metadata("design:type", main_4.Downloader)
+], ExcelCreator.prototype, "downloader", void 0);
+__decorate([
+    main_3.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], ExcelCreator.prototype, "columnController", void 0);
+__decorate([
+    main_3.Autowired('valueService'),
+    __metadata("design:type", main_2.ValueService)
+], ExcelCreator.prototype, "valueService", void 0);
+__decorate([
+    main_3.Autowired('gridSerializer'),
+    __metadata("design:type", main_5.GridSerializer)
+], ExcelCreator.prototype, "gridSerializer", void 0);
+__decorate([
+    main_3.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_7.GridOptionsWrapper)
+], ExcelCreator.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_3.Autowired('gridOptions'),
+    __metadata("design:type", Object)
+], ExcelCreator.prototype, "gridOptions", void 0);
+__decorate([
+    main_3.Autowired('stylingService'),
+    __metadata("design:type", main_8.StylingService)
+], ExcelCreator.prototype, "stylingService", void 0);
+ExcelCreator = __decorate([
+    main_3.Bean('excelCreator')
+], ExcelCreator);
 exports.ExcelCreator = ExcelCreator;

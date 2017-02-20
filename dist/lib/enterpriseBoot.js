@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13,37 +13,37 @@ var main_1 = require("ag-grid/main");
 var setFilter_1 = require("./setFilter/setFilter");
 var richSelectCellEditor_1 = require("./rendering/richSelect/richSelectCellEditor");
 var licenseManager_1 = require("./licenseManager");
-var EnterpriseBoot = (function () {
+var EnterpriseBoot = EnterpriseBoot_1 = (function () {
     function EnterpriseBoot() {
     }
     EnterpriseBoot.prototype.init = function () {
         this.filterManager.registerFilter('set', setFilter_1.SetFilter);
-        this.cellEditorFactory.addCellEditor(EnterpriseBoot.RICH_SELECT, richSelectCellEditor_1.RichSelectCellEditor);
+        this.cellEditorFactory.addCellEditor(EnterpriseBoot_1.RICH_SELECT, richSelectCellEditor_1.RichSelectCellEditor);
         this.licenseManager.validateLicense();
     };
-    EnterpriseBoot.RICH_SELECT = 'richSelect';
-    __decorate([
-        main_1.Autowired('filterManager'), 
-        __metadata('design:type', main_1.FilterManager)
-    ], EnterpriseBoot.prototype, "filterManager", void 0);
-    __decorate([
-        main_1.Autowired('cellEditorFactory'), 
-        __metadata('design:type', main_1.CellEditorFactory)
-    ], EnterpriseBoot.prototype, "cellEditorFactory", void 0);
-    __decorate([
-        main_1.Autowired('licenseManager'), 
-        __metadata('design:type', licenseManager_1.LicenseManager)
-    ], EnterpriseBoot.prototype, "licenseManager", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], EnterpriseBoot.prototype, "init", null);
-    EnterpriseBoot = __decorate([
-        main_1.Bean('enterpriseBoot'), 
-        __metadata('design:paramtypes', [])
-    ], EnterpriseBoot);
     return EnterpriseBoot;
 }());
+EnterpriseBoot.RICH_SELECT = 'richSelect';
+__decorate([
+    main_1.Autowired('filterManager'),
+    __metadata("design:type", main_1.FilterManager)
+], EnterpriseBoot.prototype, "filterManager", void 0);
+__decorate([
+    main_1.Autowired('cellEditorFactory'),
+    __metadata("design:type", main_1.CellEditorFactory)
+], EnterpriseBoot.prototype, "cellEditorFactory", void 0);
+__decorate([
+    main_1.Autowired('licenseManager'),
+    __metadata("design:type", licenseManager_1.LicenseManager)
+], EnterpriseBoot.prototype, "licenseManager", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EnterpriseBoot.prototype, "init", null);
+EnterpriseBoot = EnterpriseBoot_1 = __decorate([
+    main_1.Bean('enterpriseBoot')
+], EnterpriseBoot);
 exports.EnterpriseBoot = EnterpriseBoot;
+var EnterpriseBoot_1;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -18,8 +18,9 @@ var main_1 = require("ag-grid/main");
 var RichSelectRow = (function (_super) {
     __extends(RichSelectRow, _super);
     function RichSelectRow(cellRenderer) {
-        _super.call(this, '<div class="ag-rich-select-row"></div>');
-        this.cellRenderer = cellRenderer;
+        var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
+        _this.cellRenderer = cellRenderer;
+        return _this;
     }
     RichSelectRow.prototype.setState = function (value, selected) {
         if (main_1.Utils.exists(this.cellRenderer)) {
@@ -47,10 +48,10 @@ var RichSelectRow = (function (_super) {
             this.addDestroyFunc(childComponent.destroy.bind(childComponent));
         }
     };
-    __decorate([
-        main_1.Autowired('cellRendererService'), 
-        __metadata('design:type', main_1.CellRendererService)
-    ], RichSelectRow.prototype, "cellRendererService", void 0);
     return RichSelectRow;
 }(main_1.Component));
+__decorate([
+    main_1.Autowired('cellRendererService'),
+    __metadata("design:type", main_1.CellRendererService)
+], RichSelectRow.prototype, "cellRendererService", void 0);
 exports.RichSelectRow = RichSelectRow;

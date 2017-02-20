@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,9 +9,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var main_1 = require('ag-grid/main');
-var main_2 = require('ag-grid/main');
-var main_3 = require('ag-grid/main');
+var main_1 = require("ag-grid/main");
+var main_2 = require("ag-grid/main");
+var main_3 = require("ag-grid/main");
 var LINE_SEPARATOR = '\r\n';
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
@@ -335,19 +335,18 @@ var ExcelXmlFactory = (function () {
                 }]
         };
     };
-    __decorate([
-        main_2.Autowired('xmlFactory'), 
-        __metadata('design:type', main_1.XmlFactory)
-    ], ExcelXmlFactory.prototype, "xmlFactory", void 0);
-    ExcelXmlFactory = __decorate([
-        main_2.Bean('excelXmlFactory'), 
-        __metadata('design:paramtypes', [])
-    ], ExcelXmlFactory);
     return ExcelXmlFactory;
 }());
+__decorate([
+    main_2.Autowired('xmlFactory'),
+    __metadata("design:type", main_1.XmlFactory)
+], ExcelXmlFactory.prototype, "xmlFactory", void 0);
+ExcelXmlFactory = __decorate([
+    main_2.Bean('excelXmlFactory')
+], ExcelXmlFactory);
 exports.ExcelXmlFactory = ExcelXmlFactory;
+var ExcelDataType;
 (function (ExcelDataType) {
     ExcelDataType[ExcelDataType["String"] = 0] = "String";
     ExcelDataType[ExcelDataType["Number"] = 1] = "Number";
-})(exports.ExcelDataType || (exports.ExcelDataType = {}));
-var ExcelDataType = exports.ExcelDataType;
+})(ExcelDataType = exports.ExcelDataType || (exports.ExcelDataType = {}));

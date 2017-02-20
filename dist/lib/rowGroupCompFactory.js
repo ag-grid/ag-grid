@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19,14 +19,13 @@ var RowGroupCompFactory = (function () {
         this.context.wireBean(rowGroupComp);
         return rowGroupComp;
     };
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], RowGroupCompFactory.prototype, "context", void 0);
-    RowGroupCompFactory = __decorate([
-        main_1.Bean('rowGroupCompFactory'), 
-        __metadata('design:paramtypes', [])
-    ], RowGroupCompFactory);
     return RowGroupCompFactory;
 }());
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], RowGroupCompFactory.prototype, "context", void 0);
+RowGroupCompFactory = __decorate([
+    main_1.Bean('rowGroupCompFactory')
+], RowGroupCompFactory);
 exports.RowGroupCompFactory = RowGroupCompFactory;

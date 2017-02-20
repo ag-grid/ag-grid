@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -167,7 +167,7 @@ var ClipboardService = (function () {
         }
         else if (this.focusedCellController.isAnyCellFocused()) {
             // if there is a focused cell, copy this
-            this.copyFocusedCellToClipboard();
+            this.copyFocusedCellToClipboard(includeHeaders);
         }
         else {
             // lastly if no focused cell, try range again. this can happen
@@ -256,7 +256,8 @@ var ClipboardService = (function () {
         this.copyDataToClipboard(data);
         this.dispatchFlashCells(cellsToFlash);
     };
-    ClipboardService.prototype.copyFocusedCellToClipboard = function () {
+    ClipboardService.prototype.copyFocusedCellToClipboard = function (includeHeaders) {
+        if (includeHeaders === void 0) { includeHeaders = false; }
         var focusedCell = this.focusedCellController.getFocusedCell();
         if (main_1.Utils.missing(focusedCell)) {
             return;
@@ -267,7 +268,11 @@ var ClipboardService = (function () {
         var value = this.valueService.getValue(column, rowNode);
         var processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
         if (main_1.Utils.exists(processedValue)) {
-            var data = processedValue.toString();
+            var data = '';
+            if (includeHeaders) {
+                data = this.columnController.getDisplayNameForColumn(column, 'clipboard', true) + '\r\n';
+            }
+            data += processedValue.toString();
             this.copyDataToClipboard(data);
         }
         else {
@@ -357,11 +362,12 @@ var ClipboardService = (function () {
         catch (err) {
             this.logger.log('Browser doesn\t support document.execComment(\'copy\') for clipboard operations');
         }
+        //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...
         if (callbackAfter) {
             setTimeout(function () {
                 callbackAfter(eTempInput);
                 guiRoot.removeChild(eTempInput);
-            }, 0);
+            }, 100);
         }
         else {
             guiRoot.removeChild(eTempInput);
@@ -422,72 +428,71 @@ var ClipboardService = (function () {
         // Return the parsed data.
         return arrData;
     };
-    __decorate([
-        main_1.Autowired('csvCreator'), 
-        __metadata('design:type', main_1.CsvCreator)
-    ], ClipboardService.prototype, "csvCreator", void 0);
-    __decorate([
-        main_1.Autowired('loggerFactory'), 
-        __metadata('design:type', main_1.LoggerFactory)
-    ], ClipboardService.prototype, "loggerFactory", void 0);
-    __decorate([
-        main_1.Autowired('selectionController'), 
-        __metadata('design:type', main_1.SelectionController)
-    ], ClipboardService.prototype, "selectionController", void 0);
-    __decorate([
-        main_1.Autowired('rangeController'), 
-        __metadata('design:type', rangeController_1.RangeController)
-    ], ClipboardService.prototype, "rangeController", void 0);
-    __decorate([
-        main_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], ClipboardService.prototype, "rowModel", void 0);
-    __decorate([
-        main_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', main_1.FloatingRowModel)
-    ], ClipboardService.prototype, "floatingRowModel", void 0);
-    __decorate([
-        main_1.Autowired('valueService'), 
-        __metadata('design:type', main_1.ValueService)
-    ], ClipboardService.prototype, "valueService", void 0);
-    __decorate([
-        main_1.Autowired('focusedCellController'), 
-        __metadata('design:type', main_1.FocusedCellController)
-    ], ClipboardService.prototype, "focusedCellController", void 0);
-    __decorate([
-        main_1.Autowired('rowRenderer'), 
-        __metadata('design:type', main_1.RowRenderer)
-    ], ClipboardService.prototype, "rowRenderer", void 0);
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], ClipboardService.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], ClipboardService.prototype, "eventService", void 0);
-    __decorate([
-        main_1.Autowired('cellNavigationService'), 
-        __metadata('design:type', main_1.CellNavigationService)
-    ], ClipboardService.prototype, "cellNavigationService", void 0);
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], ClipboardService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('gridCore'), 
-        __metadata('design:type', main_1.GridCore)
-    ], ClipboardService.prototype, "gridCore", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ClipboardService.prototype, "init", null);
-    ClipboardService = __decorate([
-        main_1.Bean('clipboardService'), 
-        __metadata('design:paramtypes', [])
-    ], ClipboardService);
     return ClipboardService;
 }());
+__decorate([
+    main_1.Autowired('csvCreator'),
+    __metadata("design:type", main_1.CsvCreator)
+], ClipboardService.prototype, "csvCreator", void 0);
+__decorate([
+    main_1.Autowired('loggerFactory'),
+    __metadata("design:type", main_1.LoggerFactory)
+], ClipboardService.prototype, "loggerFactory", void 0);
+__decorate([
+    main_1.Autowired('selectionController'),
+    __metadata("design:type", main_1.SelectionController)
+], ClipboardService.prototype, "selectionController", void 0);
+__decorate([
+    main_1.Autowired('rangeController'),
+    __metadata("design:type", rangeController_1.RangeController)
+], ClipboardService.prototype, "rangeController", void 0);
+__decorate([
+    main_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], ClipboardService.prototype, "rowModel", void 0);
+__decorate([
+    main_1.Autowired('floatingRowModel'),
+    __metadata("design:type", main_1.FloatingRowModel)
+], ClipboardService.prototype, "floatingRowModel", void 0);
+__decorate([
+    main_1.Autowired('valueService'),
+    __metadata("design:type", main_1.ValueService)
+], ClipboardService.prototype, "valueService", void 0);
+__decorate([
+    main_1.Autowired('focusedCellController'),
+    __metadata("design:type", main_1.FocusedCellController)
+], ClipboardService.prototype, "focusedCellController", void 0);
+__decorate([
+    main_1.Autowired('rowRenderer'),
+    __metadata("design:type", main_1.RowRenderer)
+], ClipboardService.prototype, "rowRenderer", void 0);
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], ClipboardService.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], ClipboardService.prototype, "eventService", void 0);
+__decorate([
+    main_1.Autowired('cellNavigationService'),
+    __metadata("design:type", main_1.CellNavigationService)
+], ClipboardService.prototype, "cellNavigationService", void 0);
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], ClipboardService.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('gridCore'),
+    __metadata("design:type", main_1.GridCore)
+], ClipboardService.prototype, "gridCore", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ClipboardService.prototype, "init", null);
+ClipboardService = __decorate([
+    main_1.Bean('clipboardService')
+], ClipboardService);
 exports.ClipboardService = ClipboardService;

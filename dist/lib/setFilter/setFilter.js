@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -21,7 +21,7 @@ var virtualList_1 = require("../rendering/virtualList");
 var SetFilter = (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     SetFilter.prototype.postConstruct = function () {
         this.setTemplate(this.createTemplate());
@@ -30,7 +30,7 @@ var SetFilter = (function (_super) {
         this.getGui().querySelector('#richList').appendChild(this.virtualList.getGui());
     };
     SetFilter.prototype.init = function (params) {
-        this.params = params;
+        this.params = params ? params : {};
         this.applyActive = this.params.apply === true;
         this.suppressSorting = this.params.suppressSorting === true;
         this.newRowsActionKeep = this.params.newRowsAction === 'keep';
@@ -40,6 +40,7 @@ var SetFilter = (function (_super) {
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
         this.model = new setFilterModel_1.SetFilterModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter, this.suppressSorting);
         this.virtualList.setModel(new ModelWrapper(this.model));
+        main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.params.suppressMiniFilter);
         this.createGui();
     };
     SetFilter.prototype.createSetListItem = function (value) {
@@ -64,11 +65,11 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.doesFilterPass = function (params) {
         // if no filter, always pass
-        if (this.model.isEverythingSelected()) {
+        if (this.model.isEverythingSelected() && !this.params.selectAllOnMiniFilter) {
             return true;
         }
         // if nothing selected in filter, always fail
-        if (this.model.isNothingSelected()) {
+        if (this.model.isNothingSelected() && !this.params.selectAllOnMiniFilter) {
             return false;
         }
         var value = this.params.valueGetter(params.node);
@@ -102,7 +103,7 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.createTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div>\n                    <div class=\"ag-filter-header-container\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo', 'Search...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label>\n                            <input id=\"selectAll\" type=\"checkbox\" class=\"ag-filter-checkbox\"/>\n                            <span class=\"ag-filter-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
+        return "<div>\n                    <div class=\"ag-filter-header-container\" id=\"ag-mini-filter\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo', 'Search...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label>\n                            <input id=\"selectAll\" type=\"checkbox\" class=\"ag-filter-checkbox\"/>\n                            <span class=\"ag-filter-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
     };
     SetFilter.prototype.createGui = function () {
         var _this = this;
@@ -153,6 +154,7 @@ var SetFilter = (function (_super) {
         if (miniFilterChanged) {
             this.virtualList.refresh();
         }
+        this.updateSelectAll();
     };
     SetFilter.prototype.onSelectAll = function () {
         var checked = this.eSelectAll.checked;
@@ -224,22 +226,22 @@ var SetFilter = (function (_super) {
         this.updateSelectAll();
         this.virtualList.refresh();
     };
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], SetFilter.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], SetFilter.prototype, "context", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], SetFilter.prototype, "postConstruct", null);
     return SetFilter;
 }(main_1.Component));
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], SetFilter.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], SetFilter.prototype, "context", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SetFilter.prototype, "postConstruct", null);
 exports.SetFilter = SetFilter;
 var ModelWrapper = (function () {
     function ModelWrapper(model) {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 import { ColDef, IClipboardService, Column } from "ag-grid/main";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
@@ -27,7 +27,7 @@ export declare class ClipboardService implements IClipboardService {
     private iterateActiveRanges(onlyFirst, rowCallback, columnCallback?);
     private iterateActiveRange(range, rowCallback, columnCallback?);
     copySelectedRangeToClipboard(includeHeaders?: boolean): void;
-    private copyFocusedCellToClipboard();
+    private copyFocusedCellToClipboard(includeHeaders?);
     private dispatchFlashCells(cellsToFlash);
     private processRangeCell(rowNode, column, value, func);
     private getRowNode(gridRow);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -61,24 +61,23 @@ var EnterpriseMenuFactory = (function () {
         var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel() && column.isFilterAllowed();
         return showColumnPanel || showMainPanel || showFilterPanel;
     };
-    __decorate([
-        ag_grid_1.Autowired('context'), 
-        __metadata('design:type', ag_grid_1.Context)
-    ], EnterpriseMenuFactory.prototype, "context", void 0);
-    __decorate([
-        ag_grid_1.Autowired('popupService'), 
-        __metadata('design:type', ag_grid_1.PopupService)
-    ], EnterpriseMenuFactory.prototype, "popupService", void 0);
-    __decorate([
-        ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
-    ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    EnterpriseMenuFactory = __decorate([
-        ag_grid_1.Bean('menuFactory'), 
-        __metadata('design:paramtypes', [])
-    ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
 }());
+__decorate([
+    ag_grid_1.Autowired('context'),
+    __metadata("design:type", ag_grid_1.Context)
+], EnterpriseMenuFactory.prototype, "context", void 0);
+__decorate([
+    ag_grid_1.Autowired('popupService'),
+    __metadata("design:type", ag_grid_1.PopupService)
+], EnterpriseMenuFactory.prototype, "popupService", void 0);
+__decorate([
+    ag_grid_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
+EnterpriseMenuFactory = __decorate([
+    ag_grid_1.Bean('menuFactory')
+], EnterpriseMenuFactory);
 exports.EnterpriseMenuFactory = EnterpriseMenuFactory;
 var EnterpriseMenu = (function () {
     function EnterpriseMenu(column, initialSelection) {
@@ -276,45 +275,45 @@ var EnterpriseMenu = (function () {
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
     };
-    EnterpriseMenu.EVENT_TAB_SELECTED = 'tabSelected';
-    EnterpriseMenu.TAB_FILTER = 'filter';
-    EnterpriseMenu.TAB_GENERAL = 'general';
-    EnterpriseMenu.TAB_COLUMNS = 'columns';
-    EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
-    __decorate([
-        ag_grid_1.Autowired('columnController'), 
-        __metadata('design:type', ag_grid_1.ColumnController)
-    ], EnterpriseMenu.prototype, "columnController", void 0);
-    __decorate([
-        ag_grid_1.Autowired('filterManager'), 
-        __metadata('design:type', ag_grid_1.FilterManager)
-    ], EnterpriseMenu.prototype, "filterManager", void 0);
-    __decorate([
-        ag_grid_1.Autowired('context'), 
-        __metadata('design:type', ag_grid_1.Context)
-    ], EnterpriseMenu.prototype, "context", void 0);
-    __decorate([
-        ag_grid_1.Autowired('gridApi'), 
-        __metadata('design:type', ag_grid_1.GridApi)
-    ], EnterpriseMenu.prototype, "gridApi", void 0);
-    __decorate([
-        ag_grid_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', ag_grid_1.GridOptionsWrapper)
-    ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        ag_grid_1.Autowired('eventService'), 
-        __metadata('design:type', ag_grid_1.EventService)
-    ], EnterpriseMenu.prototype, "eventService", void 0);
-    __decorate([
-        ag_grid_1.Autowired('menuItemMapper'), 
-        __metadata('design:type', menuItemMapper_1.MenuItemMapper)
-    ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
-    __decorate([
-        ag_grid_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
 }());
+EnterpriseMenu.EVENT_TAB_SELECTED = 'tabSelected';
+EnterpriseMenu.TAB_FILTER = 'filter';
+EnterpriseMenu.TAB_GENERAL = 'general';
+EnterpriseMenu.TAB_COLUMNS = 'columns';
+EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
+__decorate([
+    ag_grid_1.Autowired('columnController'),
+    __metadata("design:type", ag_grid_1.ColumnController)
+], EnterpriseMenu.prototype, "columnController", void 0);
+__decorate([
+    ag_grid_1.Autowired('filterManager'),
+    __metadata("design:type", ag_grid_1.FilterManager)
+], EnterpriseMenu.prototype, "filterManager", void 0);
+__decorate([
+    ag_grid_1.Autowired('context'),
+    __metadata("design:type", ag_grid_1.Context)
+], EnterpriseMenu.prototype, "context", void 0);
+__decorate([
+    ag_grid_1.Autowired('gridApi'),
+    __metadata("design:type", ag_grid_1.GridApi)
+], EnterpriseMenu.prototype, "gridApi", void 0);
+__decorate([
+    ag_grid_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    ag_grid_1.Autowired('eventService'),
+    __metadata("design:type", ag_grid_1.EventService)
+], EnterpriseMenu.prototype, "eventService", void 0);
+__decorate([
+    ag_grid_1.Autowired('menuItemMapper'),
+    __metadata("design:type", menuItemMapper_1.MenuItemMapper)
+], EnterpriseMenu.prototype, "menuItemMapper", void 0);
+__decorate([
+    ag_grid_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EnterpriseMenu.prototype, "init", null);
 exports.EnterpriseMenu = EnterpriseMenu;

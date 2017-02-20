@@ -1,5 +1,19 @@
-// ag-grid-enterprise v8.0.1
-import { IFilterComp, IFilterParams, IDoesFilterPassParams, Component } from "ag-grid/main";
+// ag-grid-enterprise v8.1.0
+import { IFilterComp, IFilterParams, IDoesFilterPassParams, ICellRendererComp, ICellRendererFunc, Component } from "ag-grid/main";
+export interface ISetFilterParams extends IFilterParams {
+    suppressRemoveEntries?: boolean;
+    values?: any;
+    cellHeight: number;
+    apply: boolean;
+    suppressSorting: boolean;
+    cellRenderer: {
+        new (): ICellRendererComp;
+    } | ICellRendererFunc | string;
+    newRowsAction: string;
+    suppressMiniFilter: boolean;
+    selectAllOnMiniFilter: boolean;
+    comparator?: (a: any, b: any) => number;
+}
 export declare class SetFilter extends Component implements IFilterComp {
     private gridOptionsWrapper;
     private context;

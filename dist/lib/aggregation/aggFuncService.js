@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var main_1 = require("ag-grid/main");
-var AggFuncService = (function () {
+var AggFuncService = AggFuncService_1 = (function () {
     function AggFuncService() {
         this.aggFuncsMap = {};
         this.initialised = false;
@@ -24,18 +24,18 @@ var AggFuncService = (function () {
         this.addAggFuncs(this.gridOptionsWrapper.getAggFuncs());
     };
     AggFuncService.prototype.initialiseWithDefaultAggregations = function () {
-        this.aggFuncsMap[AggFuncService.AGG_SUM] = aggSum;
-        this.aggFuncsMap[AggFuncService.AGG_FIRST] = aggFirst;
-        this.aggFuncsMap[AggFuncService.AGG_LAST] = aggLast;
-        this.aggFuncsMap[AggFuncService.AGG_MIN] = aggMin;
-        this.aggFuncsMap[AggFuncService.AGG_MAX] = aggMax;
-        this.aggFuncsMap[AggFuncService.AGG_COUNT] = aggCount;
-        this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
+        this.aggFuncsMap[AggFuncService_1.AGG_SUM] = aggSum;
+        this.aggFuncsMap[AggFuncService_1.AGG_FIRST] = aggFirst;
+        this.aggFuncsMap[AggFuncService_1.AGG_LAST] = aggLast;
+        this.aggFuncsMap[AggFuncService_1.AGG_MIN] = aggMin;
+        this.aggFuncsMap[AggFuncService_1.AGG_MAX] = aggMax;
+        this.aggFuncsMap[AggFuncService_1.AGG_COUNT] = aggCount;
+        this.aggFuncsMap[AggFuncService_1.AGG_AVG] = aggAvg;
     };
     AggFuncService.prototype.getDefaultAggFunc = function () {
-        if (this.aggFuncsMap[AggFuncService.AGG_SUM]) {
+        if (this.aggFuncsMap[AggFuncService_1.AGG_SUM]) {
             // use 'sum' if it's still there (ie user has not removed it)
-            return AggFuncService.AGG_SUM;
+            return AggFuncService_1.AGG_SUM;
         }
         else {
             var allKeys = this.getFuncNames();
@@ -64,29 +64,28 @@ var AggFuncService = (function () {
     AggFuncService.prototype.clear = function () {
         this.aggFuncsMap = {};
     };
-    AggFuncService.AGG_SUM = 'sum';
-    AggFuncService.AGG_FIRST = 'first';
-    AggFuncService.AGG_LAST = 'last';
-    AggFuncService.AGG_MIN = 'min';
-    AggFuncService.AGG_MAX = 'max';
-    AggFuncService.AGG_COUNT = 'count';
-    AggFuncService.AGG_AVG = 'avg';
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], AggFuncService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], AggFuncService.prototype, "init", null);
-    AggFuncService = __decorate([
-        main_1.Bean('aggFuncService'), 
-        __metadata('design:paramtypes', [])
-    ], AggFuncService);
     return AggFuncService;
 }());
+AggFuncService.AGG_SUM = 'sum';
+AggFuncService.AGG_FIRST = 'first';
+AggFuncService.AGG_LAST = 'last';
+AggFuncService.AGG_MIN = 'min';
+AggFuncService.AGG_MAX = 'max';
+AggFuncService.AGG_COUNT = 'count';
+AggFuncService.AGG_AVG = 'avg';
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], AggFuncService.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AggFuncService.prototype, "init", null);
+AggFuncService = AggFuncService_1 = __decorate([
+    main_1.Bean('aggFuncService')
+], AggFuncService);
 exports.AggFuncService = AggFuncService;
 function aggSum(input) {
     var result = null;
@@ -214,3 +213,4 @@ function aggAvg(input) {
     };
     return result;
 }
+var AggFuncService_1;

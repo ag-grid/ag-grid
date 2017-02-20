@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -21,8 +21,9 @@ var ColumnSelectPanel = (function (_super) {
     __extends(ColumnSelectPanel, _super);
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     function ColumnSelectPanel(allowDragging) {
-        _super.call(this, ColumnSelectPanel.TEMPLATE);
-        this.allowDragging = allowDragging;
+        var _this = _super.call(this, ColumnSelectPanel.TEMPLATE) || this;
+        _this.allowDragging = allowDragging;
+        return _this;
     }
     ColumnSelectPanel.prototype.init = function () {
         this.addDestroyableEventListener(this.globalEventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
@@ -111,25 +112,25 @@ var ColumnSelectPanel = (function (_super) {
     ColumnSelectPanel.prototype.onGroupExpanded = function () {
         this.recursivelySetVisibility(this.columnTree, true);
     };
-    ColumnSelectPanel.TEMPLATE = '<div class="ag-column-select-panel"></div>';
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], ColumnSelectPanel.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], ColumnSelectPanel.prototype, "globalEventService", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], ColumnSelectPanel.prototype, "context", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ColumnSelectPanel.prototype, "init", null);
     return ColumnSelectPanel;
 }(main_1.Component));
+ColumnSelectPanel.TEMPLATE = '<div class="ag-column-select-panel"></div>';
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], ColumnSelectPanel.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], ColumnSelectPanel.prototype, "globalEventService", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], ColumnSelectPanel.prototype, "context", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ColumnSelectPanel.prototype, "init", null);
 exports.ColumnSelectPanel = ColumnSelectPanel;
