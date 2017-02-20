@@ -232,7 +232,7 @@ var AgGridNg2 = (function () {
     };
     AgGridNg2.decorators = [
         { type: core_1.Component, args: [{
-                    selector: 'ag-grid-ng2',
+                    selector: 'ag-grid-angular',
                     template: '',
                     providers: [
                         ng2FrameworkFactory_1.Ng2FrameworkFactory,

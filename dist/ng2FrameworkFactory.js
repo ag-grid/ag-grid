@@ -96,10 +96,9 @@ var Ng2FrameworkFactory = (function () {
         this._viewContainerRef = viewContainerRef;
     };
     Ng2FrameworkFactory.prototype.setTimeout = function (action, timeout) {
-        var _this = this;
         this._ngZone.runOutsideAngular(function () {
             setTimeout(function () {
-                _this._ngZone.run(action);
+                action();
             }, timeout);
         });
     };
