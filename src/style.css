@@ -693,6 +693,12 @@ h1, h2, h3, h4, h5 {
     width: 33%;
 }
 
+.HomeIntro-videoContainer {
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+
 @media only screen and (max-width : 768px) {
     .HomeFeatures li {
         margin: 5px 0;
@@ -1251,4 +1257,64 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .videoLink:hover {
     color: #FFF;
     text-decoration: none;
+}
+
+
+/*
+* === Cookie Consent ===
+*/
+
+.cookie-container {
+    transition: opacity 0.5s ease-in-out;
+}
+
+.cookie-container .navbar-default {
+    background-color: #9c3636;
+    background-image: none;
+    border-color: transparent;
+    color: #FFF;
+    padding: 10px 0px;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    height: 54px;
+    line-height: 54px;
+    height: auto;
+    line-height: normal;
+}
+
+.cookie-container .navbar-default .credit a, .cookie-container .navbar-default .credit a:visited {
+    text-decoration: underline;
+    color: #FFF;
+}
+
+.cookie-container .navbar-default .credit a:hover {
+    text-decoration: none;
+    color: #ffff99
+}
+
+.cookie-container .navbar-default p {
+    margin: 0;
+    position: relative;
+    padding: 7px 0 0 0px;
+    line-height: 1.5;
+}
+
+.cookie-container .navbar-inner {
+    padding: 0;
+}
+
+.cookie-container .navbar-inner .btn {
+    margin: 11px 0 0 0;
+}
+
+@media only screen and (min-width : 768px) {
+    .cookie-container .navbar-inner .btn {
+        margin: 0px 0 0 0;
+    }
+}
+
+.cookie-container .navbar-inner .warning-icon {
+    position: absolute;
+    top: 5px;
+    left: 0;
 }
