@@ -16,11 +16,18 @@ include 'documentation_header.php';
 
 
     <div class="news-box">
+        <div class="news-header">20th February 2017</div>
+        <div class="news-header">ag-Grid 8.1.0 Released</div>
+        <div style="padding-top: 10px;">
+            ag-Grid 8.1.0 released with minor Enhancements and Bug Fixes.
+            See the <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        </div>
+    </div>
+
+    <div class="news-box">
         <div class="news-header">15th February 2017</div>
         <div style="padding-top: 10px;">
             <a href="../review-of-angularjs-grids/">
-                <img src="../images/agGridDaily.png"/>
-                <br/>
                 From Hater to Fan – How I fell in Love with ag-Grid
             </a>
         </div>
