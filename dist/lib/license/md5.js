@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -170,16 +170,15 @@ var MD5 = (function () {
         var lsw = (x & 0xFFFF) + (y & 0xFFFF), msw = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
     };
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], MD5.prototype, "init", null);
-    MD5 = __decorate([
-        main_1.Bean('md5'), 
-        __metadata('design:paramtypes', [])
-    ], MD5);
     return MD5;
 }());
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], MD5.prototype, "init", null);
+MD5 = __decorate([
+    main_1.Bean('md5')
+], MD5);
 exports.MD5 = MD5;

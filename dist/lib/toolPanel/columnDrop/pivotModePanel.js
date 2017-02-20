@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -18,7 +18,7 @@ var main_1 = require("ag-grid/main");
 var PivotModePanel = (function (_super) {
     __extends(PivotModePanel, _super);
     function PivotModePanel() {
-        _super.call(this);
+        return _super.call(this) || this;
     }
     PivotModePanel.prototype.createTemplate = function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -42,32 +42,32 @@ var PivotModePanel = (function (_super) {
         var pivotModeActive = this.columnController.isPivotMode();
         this.cbPivotMode.setSelected(pivotModeActive);
     };
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], PivotModePanel.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], PivotModePanel.prototype, "eventService", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], PivotModePanel.prototype, "context", void 0);
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], PivotModePanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-pivot-mode-select'), 
-        __metadata('design:type', main_1.AgCheckbox)
-    ], PivotModePanel.prototype, "cbPivotMode", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], PivotModePanel.prototype, "init", null);
     return PivotModePanel;
 }(main_1.Component));
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], PivotModePanel.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], PivotModePanel.prototype, "eventService", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], PivotModePanel.prototype, "context", void 0);
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], PivotModePanel.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.QuerySelector('.ag-pivot-mode-select'),
+    __metadata("design:type", main_1.AgCheckbox)
+], PivotModePanel.prototype, "cbPivotMode", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PivotModePanel.prototype, "init", null);
 exports.PivotModePanel = PivotModePanel;

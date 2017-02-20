@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -18,11 +18,12 @@ var main_1 = require("ag-grid/main");
 var RenderedColumn = (function (_super) {
     __extends(RenderedColumn, _super);
     function RenderedColumn(column, columnDept, allowDragging) {
-        _super.call(this);
-        this.processingColumnStateChange = false;
-        this.column = column;
-        this.columnDept = columnDept;
-        this.allowDragging = allowDragging;
+        var _this = _super.call(this) || this;
+        _this.processingColumnStateChange = false;
+        _this.column = column;
+        _this.columnDept = columnDept;
+        _this.allowDragging = allowDragging;
+        return _this;
     }
     RenderedColumn.prototype.init = function () {
         this.setTemplate(RenderedColumn.TEMPLATE);
@@ -185,53 +186,53 @@ var RenderedColumn = (function (_super) {
         this.cbSelect.setPassive(checkboxPassive);
         this.processingColumnStateChange = false;
     };
-    RenderedColumn.TEMPLATE = '<div class="ag-column-select-column">' +
-        '<span class="ag-column-select-indent"></span>' +
-        '<ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-        '<span class="ag-column-select-label"></span>' +
-        '</div>';
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], RenderedColumn.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], RenderedColumn.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], RenderedColumn.prototype, "eventService", void 0);
-    __decorate([
-        main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
-    ], RenderedColumn.prototype, "dragAndDropService", void 0);
-    __decorate([
-        main_1.Autowired('gridPanel'), 
-        __metadata('design:type', main_1.GridPanel)
-    ], RenderedColumn.prototype, "gridPanel", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], RenderedColumn.prototype, "context", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-column-select-label'), 
-        __metadata('design:type', HTMLElement)
-    ], RenderedColumn.prototype, "eText", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-column-select-indent'), 
-        __metadata('design:type', HTMLElement)
-    ], RenderedColumn.prototype, "eIndent", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-column-select-checkbox'), 
-        __metadata('design:type', main_1.AgCheckbox)
-    ], RenderedColumn.prototype, "cbSelect", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], RenderedColumn.prototype, "init", null);
     return RenderedColumn;
 }(main_1.Component));
+RenderedColumn.TEMPLATE = '<div class="ag-column-select-column">' +
+    '<span class="ag-column-select-indent"></span>' +
+    '<ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
+    '<span class="ag-column-select-label"></span>' +
+    '</div>';
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], RenderedColumn.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], RenderedColumn.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], RenderedColumn.prototype, "eventService", void 0);
+__decorate([
+    main_1.Autowired('dragAndDropService'),
+    __metadata("design:type", main_1.DragAndDropService)
+], RenderedColumn.prototype, "dragAndDropService", void 0);
+__decorate([
+    main_1.Autowired('gridPanel'),
+    __metadata("design:type", main_1.GridPanel)
+], RenderedColumn.prototype, "gridPanel", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], RenderedColumn.prototype, "context", void 0);
+__decorate([
+    main_1.QuerySelector('.ag-column-select-label'),
+    __metadata("design:type", HTMLElement)
+], RenderedColumn.prototype, "eText", void 0);
+__decorate([
+    main_1.QuerySelector('.ag-column-select-indent'),
+    __metadata("design:type", HTMLElement)
+], RenderedColumn.prototype, "eIndent", void 0);
+__decorate([
+    main_1.QuerySelector('.ag-column-select-checkbox'),
+    __metadata("design:type", main_1.AgCheckbox)
+], RenderedColumn.prototype, "cbSelect", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], RenderedColumn.prototype, "init", null);
 exports.RenderedColumn = RenderedColumn;

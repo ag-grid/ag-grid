@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -20,7 +20,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var PivotColumnsPanel = (function (_super) {
     __extends(PivotColumnsPanel, _super);
     function PivotColumnsPanel(horizontal) {
-        _super.call(this, horizontal, false, 'pivot');
+        return _super.call(this, horizontal, false, 'pivot') || this;
     }
     PivotColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
@@ -98,36 +98,36 @@ var PivotColumnsPanel = (function (_super) {
     PivotColumnsPanel.prototype.getExistingColumns = function () {
         return this.columnController.getPivotColumns();
     };
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], PivotColumnsPanel.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], PivotColumnsPanel.prototype, "eventService", void 0);
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], PivotColumnsPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], PivotColumnsPanel.prototype, "context", void 0);
-    __decorate([
-        main_1.Autowired('loggerFactory'), 
-        __metadata('design:type', main_1.LoggerFactory)
-    ], PivotColumnsPanel.prototype, "loggerFactory", void 0);
-    __decorate([
-        main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
-    ], PivotColumnsPanel.prototype, "dragAndDropService", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], PivotColumnsPanel.prototype, "passBeansUp", null);
     return PivotColumnsPanel;
 }(abstractColumnDropPanel_1.AbstractColumnDropPanel));
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], PivotColumnsPanel.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], PivotColumnsPanel.prototype, "eventService", void 0);
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], PivotColumnsPanel.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], PivotColumnsPanel.prototype, "context", void 0);
+__decorate([
+    main_1.Autowired('loggerFactory'),
+    __metadata("design:type", main_1.LoggerFactory)
+], PivotColumnsPanel.prototype, "loggerFactory", void 0);
+__decorate([
+    main_1.Autowired('dragAndDropService'),
+    __metadata("design:type", main_1.DragAndDropService)
+], PivotColumnsPanel.prototype, "dragAndDropService", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PivotColumnsPanel.prototype, "passBeansUp", null);
 exports.PivotColumnsPanel = PivotColumnsPanel;

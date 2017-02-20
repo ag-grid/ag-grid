@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -20,7 +20,7 @@ var svgFactory = main_1.SvgFactory.getInstance();
 var RowGroupColumnsPanel = (function (_super) {
     __extends(RowGroupColumnsPanel, _super);
     function RowGroupColumnsPanel(horizontal) {
-        _super.call(this, horizontal, false, 'row-group');
+        return _super.call(this, horizontal, false, 'row-group') || this;
     }
     RowGroupColumnsPanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {
@@ -67,36 +67,36 @@ var RowGroupColumnsPanel = (function (_super) {
     RowGroupColumnsPanel.prototype.getExistingColumns = function () {
         return this.columnController.getRowGroupColumns();
     };
-    __decorate([
-        main_1.Autowired('columnController'), 
-        __metadata('design:type', main_1.ColumnController)
-    ], RowGroupColumnsPanel.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('eventService'), 
-        __metadata('design:type', main_1.EventService)
-    ], RowGroupColumnsPanel.prototype, "eventService", void 0);
-    __decorate([
-        main_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', main_1.GridOptionsWrapper)
-    ], RowGroupColumnsPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('context'), 
-        __metadata('design:type', main_1.Context)
-    ], RowGroupColumnsPanel.prototype, "context", void 0);
-    __decorate([
-        main_1.Autowired('loggerFactory'), 
-        __metadata('design:type', main_1.LoggerFactory)
-    ], RowGroupColumnsPanel.prototype, "loggerFactory", void 0);
-    __decorate([
-        main_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', main_1.DragAndDropService)
-    ], RowGroupColumnsPanel.prototype, "dragAndDropService", void 0);
-    __decorate([
-        main_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], RowGroupColumnsPanel.prototype, "passBeansUp", null);
     return RowGroupColumnsPanel;
 }(abstractColumnDropPanel_1.AbstractColumnDropPanel));
+__decorate([
+    main_1.Autowired('columnController'),
+    __metadata("design:type", main_1.ColumnController)
+], RowGroupColumnsPanel.prototype, "columnController", void 0);
+__decorate([
+    main_1.Autowired('eventService'),
+    __metadata("design:type", main_1.EventService)
+], RowGroupColumnsPanel.prototype, "eventService", void 0);
+__decorate([
+    main_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", main_1.GridOptionsWrapper)
+], RowGroupColumnsPanel.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    main_1.Autowired('context'),
+    __metadata("design:type", main_1.Context)
+], RowGroupColumnsPanel.prototype, "context", void 0);
+__decorate([
+    main_1.Autowired('loggerFactory'),
+    __metadata("design:type", main_1.LoggerFactory)
+], RowGroupColumnsPanel.prototype, "loggerFactory", void 0);
+__decorate([
+    main_1.Autowired('dragAndDropService'),
+    __metadata("design:type", main_1.DragAndDropService)
+], RowGroupColumnsPanel.prototype, "dragAndDropService", void 0);
+__decorate([
+    main_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], RowGroupColumnsPanel.prototype, "passBeansUp", null);
 exports.RowGroupColumnsPanel = RowGroupColumnsPanel;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -10,12 +10,13 @@ var columnComponent_1 = require("./columnComponent");
 var AbstractColumnDropPanel = (function (_super) {
     __extends(AbstractColumnDropPanel, _super);
     function AbstractColumnDropPanel(horizontal, valueColumn, name) {
-        _super.call(this, "<div class=\"ag-column-drop ag-font-style ag-column-drop-" + (horizontal ? 'horizontal' : 'vertical') + " ag-column-drop-" + name + "\"></div>");
-        this.state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
-        this.guiDestroyFunctions = [];
-        this.childColumnComponents = [];
-        this.horizontal = horizontal;
-        this.valueColumn = valueColumn;
+        var _this = _super.call(this, "<div class=\"ag-column-drop ag-font-style ag-column-drop-" + (horizontal ? 'horizontal' : 'vertical') + " ag-column-drop-" + name + "\"></div>") || this;
+        _this.state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
+        _this.guiDestroyFunctions = [];
+        _this.childColumnComponents = [];
+        _this.horizontal = horizontal;
+        _this.valueColumn = valueColumn;
+        return _this;
     }
     AbstractColumnDropPanel.prototype.isHorizontal = function () {
         return this.horizontal;
@@ -312,11 +313,11 @@ var AbstractColumnDropPanel = (function (_super) {
             this.getGui().appendChild(eArrow);
         }
     };
-    AbstractColumnDropPanel.STATE_NOT_DRAGGING = 'notDragging';
-    AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
-    AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
-    AbstractColumnDropPanel.CHAR_LEFT_ARROW = '&#8592;';
-    AbstractColumnDropPanel.CHAR_RIGHT_ARROW = '&#8594;';
     return AbstractColumnDropPanel;
 }(main_1.Component));
+AbstractColumnDropPanel.STATE_NOT_DRAGGING = 'notDragging';
+AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
+AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
+AbstractColumnDropPanel.CHAR_LEFT_ARROW = '&#8592;';
+AbstractColumnDropPanel.CHAR_RIGHT_ARROW = '&#8594;';
 exports.AbstractColumnDropPanel = AbstractColumnDropPanel;

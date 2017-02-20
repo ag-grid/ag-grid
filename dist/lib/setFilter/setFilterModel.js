@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.0.1
+// ag-grid-enterprise v8.1.0
 "use strict";
 var main_1 = require("ag-grid/main");
 // we cannot have 'null' as a key in a JavaScript map,
@@ -12,7 +12,7 @@ var SetFilterModel = (function () {
         this.rowModel = rowModel;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
-        this.filterParams = this.colDef.filterParams;
+        this.filterParams = this.colDef.filterParams ? this.colDef.filterParams : {};
         if (main_1.Utils.exists(this.filterParams)) {
             this.usingProvidedSet = main_1.Utils.exists(this.filterParams.values);
             this.showingAvailableOnly = this.filterParams.suppressRemoveEntries !== true;
@@ -164,9 +164,17 @@ var SetFilterModel = (function () {
         return this.displayedValues[index];
     };
     SetFilterModel.prototype.selectEverything = function () {
-        var count = this.allUniqueValues.length;
+        if (!this.filterParams.selectAllOnMiniFilter) {
+            this.selectOn(this.allUniqueValues);
+        }
+        else {
+            this.selectOn(this.displayedValues);
+        }
+    };
+    SetFilterModel.prototype.selectOn = function (toSelectOn) {
+        var count = toSelectOn.length;
         for (var i = 0; i < count; i++) {
-            var key = this.allUniqueValues[i];
+            var key = toSelectOn[i];
             var safeKey = this.valueToKey(key);
             this.selectedValuesMap[safeKey] = null;
         }
@@ -192,8 +200,14 @@ var SetFilterModel = (function () {
         return this.allUniqueValues.length !== this.selectedValuesCount;
     };
     SetFilterModel.prototype.selectNothing = function () {
-        this.selectedValuesMap = {};
-        this.selectedValuesCount = 0;
+        var _this = this;
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
+            this.selectedValuesMap = {};
+            this.selectedValuesCount = 0;
+        }
+        else {
+            this.displayedValues.forEach(function (it) { return _this.unselectValue(it); });
+        }
     };
     SetFilterModel.prototype.getUniqueValueCount = function () {
         return this.allUniqueValues.length;
@@ -220,10 +234,22 @@ var SetFilterModel = (function () {
         return this.selectedValuesMap[safeKey] !== undefined;
     };
     SetFilterModel.prototype.isEverythingSelected = function () {
-        return this.allUniqueValues.length === this.selectedValuesCount;
+        var _this = this;
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
+            return this.allUniqueValues.length === this.selectedValuesCount;
+        }
+        else {
+            return this.displayedValues.filter(function (it) { return _this.isValueSelected(it); }).length === this.displayedValues.length;
+        }
     };
     SetFilterModel.prototype.isNothingSelected = function () {
-        return this.selectedValuesCount === 0;
+        var _this = this;
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
+            return this.selectedValuesCount === 0;
+        }
+        else {
+            return this.displayedValues.filter(function (it) { return _this.isValueSelected(it); }).length === 0;
+        }
     };
     SetFilterModel.prototype.getModel = function () {
         var _this = this;
