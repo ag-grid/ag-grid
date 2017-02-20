@@ -24,7 +24,9 @@
                 </div>
                 <div class="col-md-8 col-sm-8 col-xs-12 HomeIntro-video">
                     <h3>Watch a demo of our features</h3>
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/tsuhoLiSWmU" frameborder="0" allowfullscreen></iframe>
+                    <div class="HomeIntro-videoContainer">
+                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/tsuhoLiSWmU" frameborder="0" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
 
