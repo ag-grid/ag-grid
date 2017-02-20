@@ -4,7 +4,7 @@
         <div class="full-width-detail"><b>Name: </b> {{parentRecord.name}}</div>
         <div class="full-width-detail"><b>Account: </b> {{parentRecord.account}}</div>
     </div>
-    <ag-grid-ng2 #agDetailGrid
+    <ag-grid-angular #agDetailGrid
                  class="full-width-grid"
                  [gridOptions]="gridOptions"
 
@@ -15,7 +15,7 @@
                  (mousewheel)="consumeMouseWheelOnDetailGrid($event)"
                  (DOMMouseScroll)="consumeMouseWheelOnDetailGrid($event)">
 
-    </ag-grid-ng2>
+    </ag-grid-angular>
     <div class="full-width-grid-toolbar">
         <img class="full-width-phone-icon" src="../images/phone.png"/>
         <button (click)="onButtonClick()"><img src="../images/fire.png"/></button>
