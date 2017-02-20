@@ -58,4 +58,6 @@
 	</div>
 </footer>
 
+<?php include(dirname(__FILE__).'/cookieConsent.php'); ?>
+
 <script inline src="/scripts/frontend/frontend.js"></script>
