@@ -25,6 +25,8 @@ var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
 var componentProvider_1 = require("../componentProvider");
+var HTMLElement = typeof HTMLElement === 'undefined' ? function () { } : HTMLElement;
+var HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () { } : HTMLSelectElement;
 var DateFilter = (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
@@ -213,23 +215,23 @@ var DateFilter = (function (_super) {
     ], DateFilter.prototype, "context", void 0);
     __decorate([
         componentAnnotations_1.QuerySelector('#filterDateFromPanel'), 
-        __metadata('design:type', HTMLElement)
+        __metadata('design:type', Object)
     ], DateFilter.prototype, "eDateFromPanel", void 0);
     __decorate([
         componentAnnotations_1.QuerySelector('#filterDateToPanel'), 
-        __metadata('design:type', HTMLElement)
+        __metadata('design:type', Object)
     ], DateFilter.prototype, "eDateToPanel", void 0);
     __decorate([
         componentAnnotations_1.QuerySelector('#applyPanel'), 
-        __metadata('design:type', HTMLElement)
+        __metadata('design:type', Object)
     ], DateFilter.prototype, "eApplyPanel", void 0);
     __decorate([
         componentAnnotations_1.QuerySelector('#applyButton'), 
-        __metadata('design:type', HTMLElement)
+        __metadata('design:type', Object)
     ], DateFilter.prototype, "eApplyButton", void 0);
     __decorate([
         componentAnnotations_1.QuerySelector('#filterType'), 
-        __metadata('design:type', HTMLSelectElement)
+        __metadata('design:type', Object)
     ], DateFilter.prototype, "eTypeSelector", void 0);
     return DateFilter;
 }(component_1.Component));

@@ -25,7 +25,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private postConstruct();
     private appendHeaderGroupComp(displayName);
     private addClasses();
-    private setupMove(displayName);
+    private setupMove(eHeaderGroup, displayName);
     getAllColumnsInThisGroup(): Column[];
     private isSuppressMoving();
     private setupWidth();

@@ -238,6 +238,7 @@ function populateClientExports(exports) {
     exports.SvgFactory = svgFactory_1.SvgFactory;
     exports.TemplateService = templateService_1.TemplateService;
     exports.Utils = utils_1.Utils;
+    exports._ = utils_1._;
     exports.NumberSequence = utils_1.NumberSequence;
     exports.ValueService = valueService_1.ValueService;
     exports.XmlFactory = xmlFactory_1.XmlFactory;

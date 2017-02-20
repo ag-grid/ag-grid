@@ -323,8 +323,6 @@ var RenderedCell = (function (_super) {
         var isHovered = this.columnHoverService.isHovered(this.column);
         utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
-    RenderedCell.prototype.checkHoveringCell = function () {
-    };
     RenderedCell.prototype.addDomData = function () {
         var domDataKey = this.gridOptionsWrapper.getDomDataKey();
         var gridCellNoType = this.eGridCell;

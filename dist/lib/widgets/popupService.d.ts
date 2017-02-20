@@ -30,5 +30,7 @@ export declare class PopupService {
         keepWithinBounds?: boolean;
     }): void;
     private positionPopup(params);
+    private keepYWithinBounds(params, y);
+    private keepXWithinBounds(params, x);
     addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void): (event?: any) => void;
 }

@@ -62,7 +62,8 @@ export declare abstract class BaseGridSerializingSession implements GridSerializ
     gridOptionsWrapper: GridOptionsWrapper;
     processCellCallback: (params: ProcessCellForExportParams) => string;
     processHeaderCallback: (params: ProcessHeaderForExportParams) => string;
-    constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback?: (params: ProcessCellForExportParams) => string, processHeaderCallback?: (params: ProcessHeaderForExportParams) => string);
+    cellAndHeaderEscaper: (rawValue: string) => string;
+    constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback?: (params: ProcessCellForExportParams) => string, processHeaderCallback?: (params: ProcessHeaderForExportParams) => string, cellAndHeaderEscaper?: (rawValue: string) => string);
     abstract prepare(columnsToExport: Column[]): void;
     abstract addCustomHeader(customHeader: string): void;
     abstract addCustomFooter(customFooter: string): void;

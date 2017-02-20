@@ -306,6 +306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    exports.SvgFactory = svgFactory_1.SvgFactory;
 	    exports.TemplateService = templateService_1.TemplateService;
 	    exports.Utils = utils_1.Utils;
+	    exports._ = utils_1._;
 	    exports.NumberSequence = utils_1.NumberSequence;
 	    exports.ValueService = valueService_1.ValueService;
 	    exports.XmlFactory = xmlFactory_1.XmlFactory;
@@ -1474,6 +1475,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Timer;
 	}());
 	exports.Timer = Timer;
+	/** HTML Escapes. */
+	var HTML_ESCAPES = {
+	    '&': '&amp',
+	    '<': '&lt',
+	    '>': '&gt',
+	    '"': '&quot',
+	    "'": '&#39'
+	};
+	var reUnescapedHtml = /[&<>"']/g;
 	var Utils = (function () {
 	    function Utils() {
 	    }
@@ -2248,6 +2258,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    Utils.isNumeric = function (value) {
 	        return !isNaN(parseFloat(value)) && isFinite(value);
+	    };
+	    Utils.escape = function (toEscape) {
+	        if (!toEscape)
+	            return null;
+	        if (!toEscape.replace)
+	            return null;
+	        return toEscape.replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
 	    };
 	    // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
 	    /**
@@ -3738,7 +3755,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return dataAsCsv;
 	    };
 	    CsvCreator.prototype.getDataAsCsv = function (params) {
-	        return this.gridSerializer.serialize(new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params.processCellCallback, params.processHeaderCallback, params && params.suppressQuotes, (params && params.columnSeparator) || ','), params);
+	        return this.gridSerializer.serialize(new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.suppressQuotes, (params && params.columnSeparator) || ','), params);
 	    };
 	    __decorate([
 	        context_1.Autowired('downloader'), 
@@ -3801,19 +3818,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	var groupInstanceIdCreator_1 = __webpack_require__(95);
 	var columnGroup_1 = __webpack_require__(15);
 	var BaseGridSerializingSession = (function () {
-	    function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback) {
+	    function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, cellAndHeaderEscaper) {
 	        this.columnController = columnController;
 	        this.valueService = valueService;
 	        this.gridOptionsWrapper = gridOptionsWrapper;
 	        this.processCellCallback = processCellCallback;
 	        this.processHeaderCallback = processHeaderCallback;
+	        this.cellAndHeaderEscaper = cellAndHeaderEscaper;
 	    }
 	    BaseGridSerializingSession.prototype.extractHeaderValue = function (column) {
 	        var nameForCol = this.getHeaderName(this.processHeaderCallback, column);
 	        if (nameForCol === null || nameForCol === undefined) {
 	            nameForCol = '';
 	        }
-	        return nameForCol;
+	        return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
 	    };
 	    BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, node) {
 	        var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
@@ -3828,7 +3846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (valueForCell === null || valueForCell === undefined) {
 	            valueForCell = '';
 	        }
-	        return valueForCell;
+	        return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(valueForCell) : valueForCell;
 	    };
 	    BaseGridSerializingSession.prototype.getHeaderName = function (callback, column) {
 	        if (callback) {
@@ -13643,8 +13661,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var isHovered = this.columnHoverService.isHovered(this.column);
 	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
 	    };
-	    RenderedCell.prototype.checkHoveringCell = function () {
-	    };
 	    RenderedCell.prototype.addDomData = function () {
 	        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
 	        var gridCellNoType = this.eGridCell;
@@ -15983,6 +15999,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var sourceRect = params.eventSource.getBoundingClientRect();
 	        var parentRect = this.getPopupParent().getBoundingClientRect();
 	        var y = sourceRect.top - parentRect.top;
+	        y = this.keepYWithinBounds(params, y);
 	        var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
 	        var widthOfParent = parentRect.right - parentRect.left;
 	        var maxX = widthOfParent - minWidth;
@@ -16055,7 +16072,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    PopupService.prototype.positionPopup = function (params) {
-	        var parentRect = this.getPopupParent().getBoundingClientRect();
 	        var x = params.x;
 	        var y = params.y;
 	        if (params.nudgeX) {
@@ -16066,47 +16082,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        // if popup is overflowing to the bottom, move it up
 	        if (params.keepWithinBounds) {
-	            checkHorizontalOverflow();
-	            checkVerticalOverflow();
+	            x = this.keepXWithinBounds(params, x);
+	            y = this.keepYWithinBounds(params, y);
 	        }
 	        params.ePopup.style.left = x + "px";
 	        params.ePopup.style.top = y + "px";
-	        function checkHorizontalOverflow() {
-	            var minWidth;
-	            if (params.minWidth > 0) {
-	                minWidth = params.minWidth;
-	            }
-	            else if (params.ePopup.clientWidth > 0) {
-	                minWidth = params.ePopup.clientWidth;
-	            }
-	            else {
-	                minWidth = 200;
-	            }
-	            var widthOfParent = parentRect.right - parentRect.left;
-	            var maxX = widthOfParent - minWidth - 5;
-	            if (x > maxX) {
-	                x = maxX;
-	            }
-	            if (x < 0) {
-	                x = 0;
-	            }
+	    };
+	    PopupService.prototype.keepYWithinBounds = function (params, y) {
+	        var parentRect = this.getPopupParent().getBoundingClientRect();
+	        var minHeight;
+	        if (params.ePopup.clientHeight > 0) {
+	            minHeight = params.ePopup.clientHeight;
 	        }
-	        function checkVerticalOverflow() {
-	            var minHeight;
-	            if (params.ePopup.clientHeight > 0) {
-	                minHeight = params.ePopup.clientHeight;
-	            }
-	            else {
-	                minHeight = 200;
-	            }
-	            var heightOfParent = parentRect.bottom - parentRect.top;
-	            var maxY = heightOfParent - minHeight - 5;
-	            if (y > maxY) {
-	                y = maxY;
-	            }
-	            if (y < 0) {
-	                y = 0;
-	            }
+	        else {
+	            minHeight = 200;
+	        }
+	        var heightOfParent = parentRect.bottom - parentRect.top;
+	        var maxY = heightOfParent - minHeight - 5;
+	        if (y > maxY) {
+	            return maxY;
+	        }
+	        else if (y < 0) {
+	            return 0;
+	        }
+	        else {
+	            return y;
+	        }
+	    };
+	    PopupService.prototype.keepXWithinBounds = function (params, x) {
+	        var parentRect = this.getPopupParent().getBoundingClientRect();
+	        var minWidth;
+	        if (params.minWidth > 0) {
+	            minWidth = params.minWidth;
+	        }
+	        else if (params.ePopup.clientWidth > 0) {
+	            minWidth = params.ePopup.clientWidth;
+	        }
+	        else {
+	            minWidth = 200;
+	        }
+	        var widthOfParent = parentRect.right - parentRect.left;
+	        var maxX = widthOfParent - minWidth - 5;
+	        if (x > maxX) {
+	            return maxX;
+	        }
+	        else if (x < 0) {
+	            return 0;
+	        }
+	        else {
+	            return x;
 	        }
 	    };
 	    //adds an element to a div, but also listens to background checking for clicks,
@@ -16610,6 +16634,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var gridOptionsWrapper_1 = __webpack_require__(3);
 	var utils_1 = __webpack_require__(7);
 	var componentProvider_1 = __webpack_require__(54);
+	var HTMLElement = typeof HTMLElement === 'undefined' ? function () { } : HTMLElement;
+	var HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () { } : HTMLSelectElement;
 	var DateFilter = (function (_super) {
 	    __extends(DateFilter, _super);
 	    function DateFilter() {
@@ -16798,23 +16824,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ], DateFilter.prototype, "context", void 0);
 	    __decorate([
 	        componentAnnotations_1.QuerySelector('#filterDateFromPanel'), 
-	        __metadata('design:type', HTMLElement)
+	        __metadata('design:type', Object)
 	    ], DateFilter.prototype, "eDateFromPanel", void 0);
 	    __decorate([
 	        componentAnnotations_1.QuerySelector('#filterDateToPanel'), 
-	        __metadata('design:type', HTMLElement)
+	        __metadata('design:type', Object)
 	    ], DateFilter.prototype, "eDateToPanel", void 0);
 	    __decorate([
 	        componentAnnotations_1.QuerySelector('#applyPanel'), 
-	        __metadata('design:type', HTMLElement)
+	        __metadata('design:type', Object)
 	    ], DateFilter.prototype, "eApplyPanel", void 0);
 	    __decorate([
 	        componentAnnotations_1.QuerySelector('#applyButton'), 
-	        __metadata('design:type', HTMLElement)
+	        __metadata('design:type', Object)
 	    ], DateFilter.prototype, "eApplyButton", void 0);
 	    __decorate([
 	        componentAnnotations_1.QuerySelector('#filterType'), 
-	        __metadata('design:type', HTMLSelectElement)
+	        __metadata('design:type', Object)
 	    ], DateFilter.prototype, "eTypeSelector", void 0);
 	    return DateFilter;
 	}(component_1.Component));
@@ -21565,6 +21591,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var agCheckbox_1 = __webpack_require__(88);
 	var componentAnnotations_1 = __webpack_require__(53);
 	var selectAllFeature_1 = __webpack_require__(89);
+	var events_1 = __webpack_require__(10);
+	var columnHoverService_1 = __webpack_require__(77);
 	var HeaderWrapperComp = (function (_super) {
 	    __extends(HeaderWrapperComp, _super);
 	    function HeaderWrapperComp(column, eRoot, dragSourceDropTarget, pinned) {
@@ -21589,12 +21617,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setupResize();
 	        this.setupMove(headerComp.getGui(), displayName);
 	        this.setupSortableClass(enableSorting);
+	        this.addColumnHoverListener();
 	        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
 	        this.onFilterChanged();
 	        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.getGui()));
 	        this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
 	        this.addAttributes();
 	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+	    };
+	    HeaderWrapperComp.prototype.addColumnHoverListener = function () {
+	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+	        this.onColumnHover();
+	    };
+	    HeaderWrapperComp.prototype.onColumnHover = function () {
+	        var isHovered = this.columnHoverService.isHovered(this.column);
+	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
 	    };
 	    HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
 	        if (enableSorting) {
@@ -21778,6 +21815,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        context_1.Autowired('componentProvider'), 
 	        __metadata('design:type', componentProvider_1.ComponentProvider)
 	    ], HeaderWrapperComp.prototype, "componentProvider", void 0);
+	    __decorate([
+	        context_1.Autowired('columnHoverService'), 
+	        __metadata('design:type', columnHoverService_1.ColumnHoverService)
+	    ], HeaderWrapperComp.prototype, "columnHoverService", void 0);
 	    __decorate([
 	        componentAnnotations_1.RefSelector('eResize'), 
 	        __metadata('design:type', HTMLElement)
@@ -22205,10 +22246,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    HeaderGroupWrapperComp.prototype.postConstruct = function () {
 	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
 	        var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
-	        this.appendHeaderGroupComp(displayName);
+	        var headerComponent = this.appendHeaderGroupComp(displayName);
 	        this.setupResize();
 	        this.addClasses();
-	        this.setupMove(displayName);
+	        this.setupMove(headerComponent.getGui(), displayName);
 	        this.setupWidth();
 	        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui()));
 	    };
@@ -22236,19 +22277,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.addCssClass('ag-header-group-cell-with-group');
 	        }
 	    };
-	    HeaderGroupWrapperComp.prototype.setupMove = function (displayName) {
+	    HeaderGroupWrapperComp.prototype.setupMove = function (eHeaderGroup, displayName) {
 	        var _this = this;
-	        var eLabel = this.queryForHtmlElement('.ag-header-group-cell-label');
-	        if (!eLabel) {
+	        if (!eHeaderGroup) {
 	            return;
 	        }
 	        if (this.isSuppressMoving()) {
 	            return;
 	        }
-	        if (eLabel) {
+	        if (eHeaderGroup) {
 	            var dragSource = {
 	                type: dragAndDropService_1.DragSourceType.HeaderCell,
-	                eElement: eLabel,
+	                eElement: eHeaderGroup,
 	                dragItemName: displayName,
 	                // we add in the original group leaf columns, so we move both visible and non-visible items
 	                dragItem: this.getAllColumnsInThisGroup(),
