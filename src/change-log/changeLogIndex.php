@@ -12,6 +12,28 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>Version 8.1.x</h2>
+
+    <li>Enhancement: Angular repository renamed (used to be ag-grid-ng2, is not ag-grid-angular). This is because
+    Google want to call Angular 2 just Angular now.</li>
+    <li>Enhancement: CSS class 'ag-column-hover' now added to headers when mouse over column.</li>
+    <li>Enhancement: Text Filter now has 'not contains' option.</li>
+    <li>Enhancement: Text Filter no longer applies lower case to model.</li>
+    <li>Enhancement: Set Filter has option to hide the mini search.</li>
+    <li>Enhancement: Number Filter now has range.</li>
+    <li>Enhancement: Added suppress quotes option for copySelectedRowsToClipboard.</li>
+
+    <li>Bugfix: Angular 2 - angular directive was causing too many dirty checks</li>
+    <li>Bugfix: AMD - Removed circular dependency in context.js which impacted AMD.</li>
+    <li>Bugfix: api.getDataAsCsv() parameters are now optional.</li>
+    <li>Bugfix: Mouse can now drag(ie movable) custom header groups.</li>
+    <li>Bugfix: Context sub-menu no longer gets clipped when to large.</li>
+    <li>Bugfix: suppressSorting now works on mobile (ie touch).</li>
+    <li>Bugfix: Now when you ungroup, the sort state will be removed if you are sorting by the group column.</li>
+    <li>Bugfix: processCellFromClipboard was not getting called.</li>
+    <li>Bugfix: Excel Export was not working for Open Office.</li>
+    <li>Bugfix: Checkbox was in wrong position when pinning the column.</li>
+
     <h2>Version 8.0.x</h2>
 
     <b>Enhancements:</b>
