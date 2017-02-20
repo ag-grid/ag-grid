@@ -693,6 +693,12 @@ h1, h2, h3, h4, h5 {
     width: 33%;
 }
 
+.HomeIntro-videoContainer {
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+
 @media only screen and (max-width : 768px) {
     .HomeFeatures li {
         margin: 5px 0;
@@ -1289,7 +1295,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .cookie-container .navbar-default p {
     margin: 0;
     position: relative;
-    padding: 7px 0 0 38px;
+    padding: 7px 0 0 0px;
     line-height: 1.5;
 }
 
