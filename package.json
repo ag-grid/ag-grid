@@ -1,5 +1,5 @@
 {
-  "name": "ag-grid-ng2",
+  "name": "ag-grid-angular",
   "version": "8.0.0",
   "description": "ag-Grid Angular 2 Component",
   "main": "main.js",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ceolter/ag-grid-ng2.git"
+    "url": "https://github.com/ceolter/ag-grid-angular.git"
   },
   "keywords": [
     "grid",
@@ -27,7 +27,7 @@
   "author": "Niall Crosby <niall.crosby@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ceolter/ag-grid-ng2/issues"
+    "url": "https://github.com/ceolter/ag-grid-angular/issues"
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {

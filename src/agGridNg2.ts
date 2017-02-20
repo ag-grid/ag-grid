@@ -17,7 +17,7 @@ import {AgGridColumn} from "./agGridColumn";
 import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
 
 @Component({
-    selector: 'ag-grid-ng2',
+    selector: 'ag-grid-angular',
     template: '',
     providers: [
         Ng2FrameworkFactory,
