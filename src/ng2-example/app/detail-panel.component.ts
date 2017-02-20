@@ -1,6 +1,6 @@
 import {Component, AfterViewInit} from "@angular/core";
 import {GridOptions} from "ag-grid/main";
-import {ICellRendererAngularComp} from "ag-grid-ng2/main";
+import {ICellRendererAngularComp} from "ag-grid-angular/main";
 
 @Component({
     moduleId: module.id,

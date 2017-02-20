@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {IHeaderGroupParams} from "ag-grid/main";
-import {IHeaderGroupAngularComp} from "ag-grid-ng2/main";
+import {IHeaderGroupAngularComp} from "ag-grid-angular/main";
 
 @Component({
     moduleId: module.id,

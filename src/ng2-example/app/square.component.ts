@@ -1,6 +1,6 @@
 import {Component,OnDestroy} from '@angular/core';
 
-import {ICellRendererAngularComp} from 'ag-grid-ng2/main';
+import {ICellRendererAngularComp} from 'ag-grid-angular/main';
 
 @Component({
     selector: 'square-cell',

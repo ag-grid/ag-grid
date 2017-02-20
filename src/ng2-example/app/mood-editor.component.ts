@@ -1,6 +1,6 @@
 import {Component, ViewContainerRef, ViewChild, AfterViewInit} from '@angular/core';
 
-import {ICellEditorAngularComp} from 'ag-grid-ng2/main';
+import {ICellEditorAngularComp} from 'ag-grid-angular/main';
 
 @Component({
     selector: 'editor-cell',
