@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -105,6 +105,7 @@ export declare class Utils {
     static setCheckboxState(eCheckbox: any, state: any): void;
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void;
     static isNumeric(value: any): boolean;
+    static escape(toEscape: string): string;
     /**
      * Mouse wheel (and 2-finger trackpad) support on the web sucks.  It is
      * complicated, thus this doc is long and (hopefully) detailed enough to answer

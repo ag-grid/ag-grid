@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
@@ -65,7 +65,7 @@ export declare class GridApi {
     getFloatingBottomRow(index: number): RowNode;
     setColumnDefs(colDefs: (ColDef | ColGroupDef)[]): void;
     refreshRows(rowNodes: RowNode[]): void;
-    refreshCells(rowNodes: RowNode[], colIds: string[], animate?: boolean): void;
+    refreshCells(rowNodes: RowNode[], cols: (string | ColDef | Column)[], animate?: boolean): void;
     rowDataChanged(rows: any): void;
     refreshView(): void;
     setFunctionsReadOnly(readOnly: boolean): void;

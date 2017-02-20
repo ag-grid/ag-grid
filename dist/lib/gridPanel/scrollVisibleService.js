@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -67,18 +67,17 @@ var ScrollVisibleService = (function () {
         }
         return result;
     };
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], ScrollVisibleService.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], ScrollVisibleService.prototype, "columnController", void 0);
-    ScrollVisibleService = __decorate([
-        context_1.Bean('scrollVisibleService'), 
-        __metadata('design:paramtypes', [])
-    ], ScrollVisibleService);
     return ScrollVisibleService;
 }());
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], ScrollVisibleService.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], ScrollVisibleService.prototype, "columnController", void 0);
+ScrollVisibleService = __decorate([
+    context_1.Bean('scrollVisibleService')
+], ScrollVisibleService);
 exports.ScrollVisibleService = ScrollVisibleService;

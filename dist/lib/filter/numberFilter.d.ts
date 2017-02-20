@@ -1,21 +1,26 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { IFilterParams, IDoesFilterPassParams, IFilterComp } from "../interfaces/iFilter";
-export declare class NumberFilter implements IFilterComp {
+import { Component } from "../widgets/component";
+export declare class NumberFilter extends Component implements IFilterComp {
     static EQUALS: string;
     static NOT_EQUAL: string;
     static LESS_THAN: string;
     static LESS_THAN_OR_EQUAL: string;
     static GREATER_THAN: string;
     static GREATER_THAN_OR_EQUAL: string;
+    static IN_RANGE: string;
     private filterParams;
+    private context;
     private gridOptionsWrapper;
+    private eNumberToPanel;
     private filterNumber;
+    private filterNumberTo;
     private filterType;
     private applyActive;
     private newRowsActionKeep;
-    private eGui;
+    private eFilterToTextField;
     private eFilterTextField;
     private eTypeSelect;
     private eApplyButton;
@@ -23,7 +28,6 @@ export declare class NumberFilter implements IFilterComp {
     onNewRowsLoaded(): void;
     afterGuiAttached(): void;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
-    getGui(): HTMLElement;
     isFilterActive(): boolean;
     private createTemplate();
     private createGui();
@@ -31,9 +35,12 @@ export declare class NumberFilter implements IFilterComp {
     private onTypeChanged();
     private filterChanged();
     private onFilterChanged();
+    private stringToFloat(value);
     setType(type: string): void;
     setFilter(filter: any): void;
+    setFilterTo(filter: any): void;
     getFilter(): any;
     getModel(): any;
     setModel(model: any): void;
+    private setVisibilityOnDateToPanel();
 }

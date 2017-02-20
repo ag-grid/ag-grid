@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RenderedCell } from "./renderedCell";
@@ -7,6 +7,7 @@ import { RowRenderer } from "./rowRenderer";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 import { RowContainerComponent } from "./rowContainerComponent";
+import { ColDef } from "../entities/colDef";
 export declare class RenderedRow extends BeanStub {
     static EVENT_RENDERED_ROW_REMOVED: string;
     private gridOptionsWrapper;
@@ -117,7 +118,7 @@ export declare class RenderedRow extends BeanStub {
     private onRowDblClick(event);
     onRowClick(event: MouseEvent): void;
     getRowNode(): any;
-    refreshCells(colIds: string[], animate: boolean): void;
+    refreshCells(cols: (string | ColDef | Column)[], animate: boolean): void;
     private addClassesFromRowClassFunc();
     private addGridClasses();
     private addExpandedAndContractedClasses();

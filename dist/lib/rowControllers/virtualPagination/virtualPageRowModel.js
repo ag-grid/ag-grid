@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -223,46 +223,45 @@ var VirtualPageRowModel = (function () {
             return null;
         }
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], VirtualPageRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('filterManager'), 
-        __metadata('design:type', filterManager_1.FilterManager)
-    ], VirtualPageRowModel.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('sortController'), 
-        __metadata('design:type', sortController_1.SortController)
-    ], VirtualPageRowModel.prototype, "sortController", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], VirtualPageRowModel.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], VirtualPageRowModel.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], VirtualPageRowModel.prototype, "context", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], VirtualPageRowModel.prototype, "init", null);
-    __decorate([
-        context_1.PreDestroy, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], VirtualPageRowModel.prototype, "destroy", null);
-    VirtualPageRowModel = __decorate([
-        context_1.Bean('rowModel'), 
-        __metadata('design:paramtypes', [])
-    ], VirtualPageRowModel);
     return VirtualPageRowModel;
 }());
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], VirtualPageRowModel.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('filterManager'),
+    __metadata("design:type", filterManager_1.FilterManager)
+], VirtualPageRowModel.prototype, "filterManager", void 0);
+__decorate([
+    context_1.Autowired('sortController'),
+    __metadata("design:type", sortController_1.SortController)
+], VirtualPageRowModel.prototype, "sortController", void 0);
+__decorate([
+    context_1.Autowired('selectionController'),
+    __metadata("design:type", selectionController_1.SelectionController)
+], VirtualPageRowModel.prototype, "selectionController", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], VirtualPageRowModel.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], VirtualPageRowModel.prototype, "context", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], VirtualPageRowModel.prototype, "init", null);
+__decorate([
+    context_1.PreDestroy,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], VirtualPageRowModel.prototype, "destroy", null);
+VirtualPageRowModel = __decorate([
+    context_1.Bean('rowModel')
+], VirtualPageRowModel);
 exports.VirtualPageRowModel = VirtualPageRowModel;

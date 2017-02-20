@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,14 +36,17 @@ var componentProvider_1 = require("../../componentProvider");
 var agCheckbox_1 = require("../../widgets/agCheckbox");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var selectAllFeature_1 = require("./selectAllFeature");
+var events_1 = require("../../events");
+var columnHoverService_1 = require("../../rendering/columnHoverService");
 var HeaderWrapperComp = (function (_super) {
     __extends(HeaderWrapperComp, _super);
     function HeaderWrapperComp(column, eRoot, dragSourceDropTarget, pinned) {
-        _super.call(this, HeaderWrapperComp.TEMPLATE);
-        this.column = column;
-        this.eRoot = eRoot;
-        this.dragSourceDropTarget = dragSourceDropTarget;
-        this.pinned = pinned;
+        var _this = _super.call(this, HeaderWrapperComp.TEMPLATE) || this;
+        _this.column = column;
+        _this.eRoot = eRoot;
+        _this.dragSourceDropTarget = dragSourceDropTarget;
+        _this.pinned = pinned;
+        return _this;
     }
     HeaderWrapperComp.prototype.getColumn = function () {
         return this.column;
@@ -60,12 +63,21 @@ var HeaderWrapperComp = (function (_super) {
         this.setupResize();
         this.setupMove(headerComp.getGui(), displayName);
         this.setupSortableClass(enableSorting);
+        this.addColumnHoverListener();
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
         this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.getGui()));
         this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    };
+    HeaderWrapperComp.prototype.addColumnHoverListener = function () {
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.onColumnHover();
+    };
+    HeaderWrapperComp.prototype.onColumnHover = function () {
+        var isHovered = this.columnHoverService.isHovered(this.column);
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
@@ -204,65 +216,69 @@ var HeaderWrapperComp = (function (_super) {
         }
         return result;
     };
-    HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell">' +
-        '<div ref="eResize" class="ag-header-cell-resize"></div>' +
-        '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all"></ag-checkbox>' +
-        // <inner component goes here>
-        '</div>';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], HeaderWrapperComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('dragAndDropService'), 
-        __metadata('design:type', dragAndDropService_1.DragAndDropService)
-    ], HeaderWrapperComp.prototype, "dragAndDropService", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], HeaderWrapperComp.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('horizontalDragService'), 
-        __metadata('design:type', horizontalDragService_1.HorizontalDragService)
-    ], HeaderWrapperComp.prototype, "horizontalDragService", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], HeaderWrapperComp.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('menuFactory'), 
-        __metadata('design:type', Object)
-    ], HeaderWrapperComp.prototype, "menuFactory", void 0);
-    __decorate([
-        context_1.Autowired('gridApi'), 
-        __metadata('design:type', gridApi_1.GridApi)
-    ], HeaderWrapperComp.prototype, "gridApi", void 0);
-    __decorate([
-        context_1.Autowired('sortController'), 
-        __metadata('design:type', sortController_1.SortController)
-    ], HeaderWrapperComp.prototype, "sortController", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], HeaderWrapperComp.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('componentProvider'), 
-        __metadata('design:type', componentProvider_1.ComponentProvider)
-    ], HeaderWrapperComp.prototype, "componentProvider", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eResize'), 
-        __metadata('design:type', HTMLElement)
-    ], HeaderWrapperComp.prototype, "eResize", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('cbSelectAll'), 
-        __metadata('design:type', agCheckbox_1.AgCheckbox)
-    ], HeaderWrapperComp.prototype, "cbSelectAll", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], HeaderWrapperComp.prototype, "init", null);
     return HeaderWrapperComp;
 }(component_1.Component));
+HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell">' +
+    '<div ref="eResize" class="ag-header-cell-resize"></div>' +
+    '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all"></ag-checkbox>' +
+    // <inner component goes here>
+    '</div>';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], HeaderWrapperComp.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('dragAndDropService'),
+    __metadata("design:type", dragAndDropService_1.DragAndDropService)
+], HeaderWrapperComp.prototype, "dragAndDropService", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], HeaderWrapperComp.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('horizontalDragService'),
+    __metadata("design:type", horizontalDragService_1.HorizontalDragService)
+], HeaderWrapperComp.prototype, "horizontalDragService", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], HeaderWrapperComp.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('menuFactory'),
+    __metadata("design:type", Object)
+], HeaderWrapperComp.prototype, "menuFactory", void 0);
+__decorate([
+    context_1.Autowired('gridApi'),
+    __metadata("design:type", gridApi_1.GridApi)
+], HeaderWrapperComp.prototype, "gridApi", void 0);
+__decorate([
+    context_1.Autowired('sortController'),
+    __metadata("design:type", sortController_1.SortController)
+], HeaderWrapperComp.prototype, "sortController", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], HeaderWrapperComp.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('componentProvider'),
+    __metadata("design:type", componentProvider_1.ComponentProvider)
+], HeaderWrapperComp.prototype, "componentProvider", void 0);
+__decorate([
+    context_1.Autowired('columnHoverService'),
+    __metadata("design:type", columnHoverService_1.ColumnHoverService)
+], HeaderWrapperComp.prototype, "columnHoverService", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eResize'),
+    __metadata("design:type", HTMLElement)
+], HeaderWrapperComp.prototype, "eResize", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('cbSelectAll'),
+    __metadata("design:type", agCheckbox_1.AgCheckbox)
+], HeaderWrapperComp.prototype, "cbSelectAll", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], HeaderWrapperComp.prototype, "init", null);
 exports.HeaderWrapperComp = HeaderWrapperComp;

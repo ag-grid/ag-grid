@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,8 +17,9 @@ var ARROW_DOWN = '&#65516;';
 var AnimateShowChangeCellRenderer = (function (_super) {
     __extends(AnimateShowChangeCellRenderer, _super);
     function AnimateShowChangeCellRenderer() {
-        _super.call(this, AnimateShowChangeCellRenderer.TEMPLATE);
-        this.refreshCount = 0;
+        var _this = _super.call(this, AnimateShowChangeCellRenderer.TEMPLATE) || this;
+        _this.refreshCount = 0;
+        return _this;
     }
     AnimateShowChangeCellRenderer.prototype.init = function (params) {
         this.params = params;
@@ -86,10 +87,10 @@ var AnimateShowChangeCellRenderer = (function (_super) {
         this.setTimerToRemoveDelta();
         this.lastValue = value;
     };
-    AnimateShowChangeCellRenderer.TEMPLATE = '<span>' +
-        '<span class="ag-value-change-delta"></span>' +
-        '<span class="ag-value-change-value"></span>' +
-        '</span>';
     return AnimateShowChangeCellRenderer;
 }(component_1.Component));
+AnimateShowChangeCellRenderer.TEMPLATE = '<span>' +
+    '<span class="ag-value-change-delta"></span>' +
+    '<span class="ag-value-change-value"></span>' +
+    '</span>';
 exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;

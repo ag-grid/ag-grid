@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,8 +28,9 @@ var componentProvider_1 = require("../componentProvider");
 var DateFilter = (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
-        _super.apply(this, arguments);
-        this.filter = 'equals';
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.filter = 'equals';
+        return _this;
     }
     DateFilter.prototype.init = function (params) {
         this.filterParams = params;
@@ -188,56 +189,57 @@ var DateFilter = (function (_super) {
             this.setDateTo(null);
             this.setFilterType("equals");
         }
+        this.setVisibilityOnDateToPanel();
     };
     DateFilter.prototype.removeTimezone = function (from) {
         if (!from)
             return null;
         return new Date(from.getFullYear(), from.getMonth(), from.getDate());
     };
-    DateFilter.EQUALS = 'equals';
-    DateFilter.NOT_EQUAL = 'notEqual';
-    DateFilter.LESS_THAN = 'lessThan';
-    DateFilter.GREATER_THAN = 'greaterThan';
-    DateFilter.IN_RANGE = 'inRange';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], DateFilter.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('componentProvider'), 
-        __metadata('design:type', componentProvider_1.ComponentProvider)
-    ], DateFilter.prototype, "componentProvider", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], DateFilter.prototype, "context", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('#filterDateFromPanel'), 
-        __metadata('design:type', HTMLElement)
-    ], DateFilter.prototype, "eDateFromPanel", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('#filterDateToPanel'), 
-        __metadata('design:type', HTMLElement)
-    ], DateFilter.prototype, "eDateToPanel", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('#applyPanel'), 
-        __metadata('design:type', HTMLElement)
-    ], DateFilter.prototype, "eApplyPanel", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('#applyButton'), 
-        __metadata('design:type', HTMLElement)
-    ], DateFilter.prototype, "eApplyButton", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('#filterType'), 
-        __metadata('design:type', HTMLSelectElement)
-    ], DateFilter.prototype, "eTypeSelector", void 0);
     return DateFilter;
 }(component_1.Component));
+DateFilter.EQUALS = 'equals';
+DateFilter.NOT_EQUAL = 'notEqual';
+DateFilter.LESS_THAN = 'lessThan';
+DateFilter.GREATER_THAN = 'greaterThan';
+DateFilter.IN_RANGE = 'inRange';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], DateFilter.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('componentProvider'),
+    __metadata("design:type", componentProvider_1.ComponentProvider)
+], DateFilter.prototype, "componentProvider", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], DateFilter.prototype, "context", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('#filterDateFromPanel'),
+    __metadata("design:type", HTMLElement)
+], DateFilter.prototype, "eDateFromPanel", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('#filterDateToPanel'),
+    __metadata("design:type", HTMLElement)
+], DateFilter.prototype, "eDateToPanel", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('#applyPanel'),
+    __metadata("design:type", HTMLElement)
+], DateFilter.prototype, "eApplyPanel", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('#applyButton'),
+    __metadata("design:type", HTMLElement)
+], DateFilter.prototype, "eApplyButton", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('#filterType'),
+    __metadata("design:type", HTMLSelectElement)
+], DateFilter.prototype, "eTypeSelector", void 0);
 exports.DateFilter = DateFilter;
 var DefaultDateComponent = (function (_super) {
     __extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
-        _super.call(this, "<input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\">");
+        return _super.call(this, "<input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\">") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
         this.eDateInput = this.getGui();

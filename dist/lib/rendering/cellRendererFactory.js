@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,21 +15,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var context_1 = require("../context/context");
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var eventService_1 = require("../eventService");
 var expressionService_1 = require("../expressionService");
 var animateSlideCellRenderer_1 = require("./cellRenderers/animateSlideCellRenderer");
 var animateShowChangeCellRenderer_1 = require("./cellRenderers/animateShowChangeCellRenderer");
 var groupCellRenderer_1 = require("./cellRenderers/groupCellRenderer");
-var CellRendererFactory = (function () {
+var CellRendererFactory = CellRendererFactory_1 = (function () {
     function CellRendererFactory() {
         this.cellRendererMap = {};
     }
     CellRendererFactory.prototype.init = function () {
-        this.cellRendererMap[CellRendererFactory.ANIMATE_SLIDE] = animateSlideCellRenderer_1.AnimateSlideCellRenderer;
-        this.cellRendererMap[CellRendererFactory.ANIMATE_SHOW_CHANGE] = animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer;
-        this.cellRendererMap[CellRendererFactory.GROUP] = groupCellRenderer_1.GroupCellRenderer;
+        this.cellRendererMap[CellRendererFactory_1.ANIMATE_SLIDE] = animateSlideCellRenderer_1.AnimateSlideCellRenderer;
+        this.cellRendererMap[CellRendererFactory_1.ANIMATE_SHOW_CHANGE] = animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer;
+        this.cellRendererMap[CellRendererFactory_1.GROUP] = groupCellRenderer_1.GroupCellRenderer;
         // this.registerRenderersFromGridOptions();
     };
     // private registerRenderersFromGridOptions(): void {
@@ -49,31 +49,31 @@ var CellRendererFactory = (function () {
         }
         return result;
     };
-    CellRendererFactory.ANIMATE_SLIDE = 'animateSlide';
-    CellRendererFactory.ANIMATE_SHOW_CHANGE = 'animateShowChange';
-    CellRendererFactory.GROUP = 'group';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], CellRendererFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('expressionService'), 
-        __metadata('design:type', expressionService_1.ExpressionService)
-    ], CellRendererFactory.prototype, "expressionService", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], CellRendererFactory.prototype, "eventService", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], CellRendererFactory.prototype, "init", null);
-    CellRendererFactory = __decorate([
-        context_1.Bean('cellRendererFactory'), 
-        __metadata('design:paramtypes', [])
-    ], CellRendererFactory);
     return CellRendererFactory;
 }());
+CellRendererFactory.ANIMATE_SLIDE = 'animateSlide';
+CellRendererFactory.ANIMATE_SHOW_CHANGE = 'animateShowChange';
+CellRendererFactory.GROUP = 'group';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], CellRendererFactory.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('expressionService'),
+    __metadata("design:type", expressionService_1.ExpressionService)
+], CellRendererFactory.prototype, "expressionService", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], CellRendererFactory.prototype, "eventService", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], CellRendererFactory.prototype, "init", null);
+CellRendererFactory = CellRendererFactory_1 = __decorate([
+    context_1.Bean('cellRendererFactory')
+], CellRendererFactory);
 exports.CellRendererFactory = CellRendererFactory;
+var CellRendererFactory_1;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "./entities/column";
@@ -62,7 +62,8 @@ export declare abstract class BaseGridSerializingSession implements GridSerializ
     gridOptionsWrapper: GridOptionsWrapper;
     processCellCallback: (params: ProcessCellForExportParams) => string;
     processHeaderCallback: (params: ProcessHeaderForExportParams) => string;
-    constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback?: (params: ProcessCellForExportParams) => string, processHeaderCallback?: (params: ProcessHeaderForExportParams) => string);
+    cellAndHeaderEscaper: (rawValue: string) => string;
+    constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback?: (params: ProcessCellForExportParams) => string, processHeaderCallback?: (params: ProcessHeaderForExportParams) => string, cellAndHeaderEscaper?: (rawValue: string) => string);
     abstract prepare(columnsToExport: Column[]): void;
     abstract addCustomHeader(customHeader: string): void;
     abstract addCustomFooter(customFooter: string): void;

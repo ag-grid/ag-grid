@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -67,14 +67,13 @@ var StylingService = (function () {
             }
         }
     };
-    __decorate([
-        context_1.Autowired('expressionService'), 
-        __metadata('design:type', expressionService_1.ExpressionService)
-    ], StylingService.prototype, "expressionService", void 0);
-    StylingService = __decorate([
-        context_1.Bean('stylingService'), 
-        __metadata('design:paramtypes', [])
-    ], StylingService);
     return StylingService;
 }());
+__decorate([
+    context_1.Autowired('expressionService'),
+    __metadata("design:type", expressionService_1.ExpressionService)
+], StylingService.prototype, "expressionService", void 0);
+StylingService = __decorate([
+    context_1.Bean('stylingService')
+], StylingService);
 exports.StylingService = StylingService;

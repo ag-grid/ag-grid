@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -84,28 +84,27 @@ var ComponentProvider = (function () {
     ComponentProvider.prototype.newHeaderGroupComponent = function (params) {
         return this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", params);
     };
-    __decorate([
-        context_1.Autowired("gridOptions"), 
-        __metadata('design:type', Object)
-    ], ComponentProvider.prototype, "gridOptions", void 0);
-    __decorate([
-        context_1.Autowired("context"), 
-        __metadata('design:type', context_1.Context)
-    ], ComponentProvider.prototype, "context", void 0);
-    __decorate([
-        context_1.Optional("frameworkComponentWrapper"), 
-        __metadata('design:type', Object)
-    ], ComponentProvider.prototype, "frameworkComponentWrapper", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ComponentProvider.prototype, "postContruct", null);
-    ComponentProvider = __decorate([
-        context_1.Bean('componentProvider'), 
-        __metadata('design:paramtypes', [])
-    ], ComponentProvider);
     return ComponentProvider;
 }());
+__decorate([
+    context_1.Autowired("gridOptions"),
+    __metadata("design:type", Object)
+], ComponentProvider.prototype, "gridOptions", void 0);
+__decorate([
+    context_1.Autowired("context"),
+    __metadata("design:type", context_1.Context)
+], ComponentProvider.prototype, "context", void 0);
+__decorate([
+    context_1.Optional("frameworkComponentWrapper"),
+    __metadata("design:type", Object)
+], ComponentProvider.prototype, "frameworkComponentWrapper", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ComponentProvider.prototype, "postContruct", null);
+ComponentProvider = __decorate([
+    context_1.Bean('componentProvider')
+], ComponentProvider);
 exports.ComponentProvider = ComponentProvider;

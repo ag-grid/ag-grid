@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,9 +28,10 @@ var columnAnimationService_1 = require("../columnAnimationService");
 var SetLeftFeature = (function (_super) {
     __extends(SetLeftFeature, _super);
     function SetLeftFeature(columnOrGroup, eCell) {
-        _super.call(this);
-        this.columnOrGroup = columnOrGroup;
-        this.eCell = eCell;
+        var _this = _super.call(this) || this;
+        _this.columnOrGroup = columnOrGroup;
+        _this.eCell = eCell;
+        return _this;
     }
     SetLeftFeature.prototype.init = function () {
         this.addDestroyableEventListener(this.columnOrGroup, column_1.Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
@@ -67,20 +68,20 @@ var SetLeftFeature = (function (_super) {
             this.eCell.style.left = value + 'px';
         }
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], SetLeftFeature.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('columnAnimationService'), 
-        __metadata('design:type', columnAnimationService_1.ColumnAnimationService)
-    ], SetLeftFeature.prototype, "columnAnimationService", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], SetLeftFeature.prototype, "init", null);
     return SetLeftFeature;
 }(beanStub_1.BeanStub));
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], SetLeftFeature.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('columnAnimationService'),
+    __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
+], SetLeftFeature.prototype, "columnAnimationService", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SetLeftFeature.prototype, "init", null);
 exports.SetLeftFeature = SetLeftFeature;

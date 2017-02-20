@@ -1,10 +1,15 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,8 +22,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var NumberFilter = (function () {
+var componentAnnotations_1 = require("../widgets/componentAnnotations");
+var component_1 = require("../widgets/component");
+var NumberFilter = (function (_super) {
+    __extends(NumberFilter, _super);
     function NumberFilter() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     NumberFilter.prototype.init = function (params) {
         this.filterParams = params;
@@ -27,6 +36,7 @@ var NumberFilter = (function () {
         this.filterNumber = null;
         this.filterType = NumberFilter.EQUALS;
         this.createGui();
+        this.instantiate(this.context);
     };
     NumberFilter.prototype.onNewRowsLoaded = function () {
         if (!this.newRowsActionKeep) {
@@ -65,44 +75,51 @@ var NumberFilter = (function () {
                 return valueAsNumber >= this.filterNumber;
             case NumberFilter.NOT_EQUAL:
                 return valueAsNumber != this.filterNumber;
+            case NumberFilter.IN_RANGE:
+                return valueAsNumber >= this.filterNumber && valueAsNumber <= this.filterNumberTo;
             default:
                 // should never happen
                 console.warn('invalid filter type ' + this.filterType);
                 return false;
         }
     };
-    NumberFilter.prototype.getGui = function () {
-        return this.eGui;
-    };
     NumberFilter.prototype.isFilterActive = function () {
-        return this.filterNumber !== null;
+        if (this.filterType === NumberFilter.IN_RANGE) {
+            return this.filterNumber != null && this.filterNumberTo != null;
+        }
+        else {
+            return this.filterNumber != null;
+        }
     };
     NumberFilter.prototype.createTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div>\n                    <div>\n                        <select class=\"ag-filter-select\" id=\"filterType\">\n                            <option value=\"" + NumberFilter.EQUALS + "\">" + translate('equals', 'Equals') + "</option>\n                            <option value=\"" + NumberFilter.NOT_EQUAL + "\">" + translate('notEqual', 'Not equal') + "</option>\n                            <option value=\"" + NumberFilter.LESS_THAN + "\">" + translate('lessThan', 'Less than') + "</option>\n                            <option value=\"" + NumberFilter.LESS_THAN_OR_EQUAL + "\">" + translate('lessThanOrEqual', 'Less than or equal') + "</option>\n                            <option value=\"" + NumberFilter.GREATER_THAN + "\">" + translate('greaterThan', 'Greater than') + "</option>\n                            <option value=\"" + NumberFilter.GREATER_THAN_OR_EQUAL + "\">" + translate('greaterThanOrEqual', 'Greater than or equal') + "</option>\n                        </select>\n                    </div>\n                    <div>\n                        <input class=\"ag-filter-filter\" id=\"filterText\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
+        return "<div>\n                    <div>\n                        <select class=\"ag-filter-select\" id=\"filterType\">\n                            <option value=\"" + NumberFilter.EQUALS + "\">" + translate('equals', 'Equals') + "</option>\n                            <option value=\"" + NumberFilter.NOT_EQUAL + "\">" + translate('notEqual', 'Not equal') + "</option>\n                            <option value=\"" + NumberFilter.LESS_THAN + "\">" + translate('lessThan', 'Less than') + "</option>\n                            <option value=\"" + NumberFilter.LESS_THAN_OR_EQUAL + "\">" + translate('lessThanOrEqual', 'Less than or equal') + "</option>\n                            <option value=\"" + NumberFilter.GREATER_THAN + "\">" + translate('greaterThan', 'Greater than') + "</option>\n                            <option value=\"" + NumberFilter.GREATER_THAN_OR_EQUAL + "\">" + translate('greaterThanOrEqual', 'Greater than or equal') + "</option>\n                            <option value=\"" + NumberFilter.IN_RANGE + "\">" + translate('inRange', 'In range') + "</option>\n                        </select>\n                    </div>\n                    <div>\n                        <input class=\"ag-filter-filter\" id=\"filterText\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n                    </div>\n                     <div class=\"ag-filter-number-to\" id=\"filterNumberToPanel\">\n                        <input class=\"ag-filter-filter\" id=\"filterToText\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
     };
     NumberFilter.prototype.createGui = function () {
-        this.eGui = utils_1.Utils.loadTemplate(this.createTemplate());
-        this.eFilterTextField = this.eGui.querySelector("#filterText");
-        this.eTypeSelect = this.eGui.querySelector("#filterType");
-        utils_1.Utils.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
-        this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
+        this.setTemplate(this.createTemplate());
+        this.eFilterTextField = this.getGui().querySelector("#filterText");
+        this.eTypeSelect = this.getGui().querySelector("#filterType");
+        this.addDestroyableEventListener(this.eFilterTextField, "input", this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eFilterToTextField, "input", this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eTypeSelect, "change", this.onTypeChanged.bind(this));
         this.setupApply();
+        this.setVisibilityOnDateToPanel();
     };
     NumberFilter.prototype.setupApply = function () {
         var _this = this;
         if (this.applyActive) {
-            this.eApplyButton = this.eGui.querySelector('#applyButton');
+            this.eApplyButton = this.getGui().querySelector('#applyButton');
             this.eApplyButton.addEventListener('click', function () {
                 _this.filterParams.filterChangedCallback();
             });
         }
         else {
-            utils_1.Utils.removeElement(this.eGui, '#applyPanel');
+            utils_1.Utils.removeElement(this.getGui(), '#applyPanel');
         }
     };
     NumberFilter.prototype.onTypeChanged = function () {
         this.filterType = this.eTypeSelect.value;
+        this.setVisibilityOnDateToPanel();
         this.filterChanged();
     };
     NumberFilter.prototype.filterChanged = function () {
@@ -112,7 +129,17 @@ var NumberFilter = (function () {
         }
     };
     NumberFilter.prototype.onFilterChanged = function () {
-        var filterText = utils_1.Utils.makeNull(this.eFilterTextField.value);
+        var newFilter = this.stringToFloat(this.eFilterTextField.value);
+        var newFilterTo = this.stringToFloat(this.eFilterToTextField.value);
+        if (this.filterNumber !== newFilter || this.filterNumberTo !== newFilterTo) {
+            this.filterNumber = newFilter;
+            this.filterNumberTo = newFilterTo;
+            this.filterChanged();
+            this.setVisibilityOnDateToPanel();
+        }
+    };
+    NumberFilter.prototype.stringToFloat = function (value) {
+        var filterText = utils_1.Utils.makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
@@ -123,10 +150,7 @@ var NumberFilter = (function () {
         else {
             newFilter = null;
         }
-        if (this.filterNumber !== newFilter) {
-            this.filterNumber = newFilter;
-            this.filterChanged();
-        }
+        return newFilter;
     };
     NumberFilter.prototype.setType = function (type) {
         this.filterType = type;
@@ -140,6 +164,14 @@ var NumberFilter = (function () {
         this.filterNumber = filter;
         this.eFilterTextField.value = filter;
     };
+    NumberFilter.prototype.setFilterTo = function (filter) {
+        filter = utils_1.Utils.makeNull(filter);
+        if (filter !== null && !(typeof filter === 'number')) {
+            filter = parseFloat(filter);
+        }
+        this.filterNumberTo = filter;
+        this.eFilterToTextField.value = filter;
+    };
     NumberFilter.prototype.getFilter = function () {
         return this.filterNumber;
     };
@@ -147,7 +179,8 @@ var NumberFilter = (function () {
         if (this.isFilterActive()) {
             return {
                 type: this.filterType,
-                filter: this.filterNumber
+                filter: this.filterNumber,
+                filterTo: this.filterNumberTo
             };
         }
         else {
@@ -158,21 +191,42 @@ var NumberFilter = (function () {
         if (model) {
             this.setType(model.type);
             this.setFilter(model.filter);
+            this.setFilterTo(model.filterTo);
         }
         else {
+            this.setType(NumberFilter.EQUALS);
             this.setFilter(null);
+            this.setFilterTo(null);
         }
+        this.setVisibilityOnDateToPanel();
     };
-    NumberFilter.EQUALS = 'equals'; // 1;
-    NumberFilter.NOT_EQUAL = 'notEqual'; //2;
-    NumberFilter.LESS_THAN = 'lessThan'; //3;
-    NumberFilter.LESS_THAN_OR_EQUAL = 'lessThanOrEqual'; //4;
-    NumberFilter.GREATER_THAN = 'greaterThan'; //5;
-    NumberFilter.GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual'; //6;
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], NumberFilter.prototype, "gridOptionsWrapper", void 0);
+    NumberFilter.prototype.setVisibilityOnDateToPanel = function () {
+        var visible = this.filterType === NumberFilter.IN_RANGE;
+        utils_1.Utils.setVisible(this.eNumberToPanel, visible);
+    };
     return NumberFilter;
-}());
+}(component_1.Component));
+NumberFilter.EQUALS = 'equals'; // 1;
+NumberFilter.NOT_EQUAL = 'notEqual'; //2;
+NumberFilter.LESS_THAN = 'lessThan'; //3;
+NumberFilter.LESS_THAN_OR_EQUAL = 'lessThanOrEqual'; //4;
+NumberFilter.GREATER_THAN = 'greaterThan'; //5;
+NumberFilter.GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual'; //6;
+NumberFilter.IN_RANGE = 'inRange';
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], NumberFilter.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], NumberFilter.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
+    __metadata("design:type", HTMLElement)
+], NumberFilter.prototype, "eNumberToPanel", void 0);
+__decorate([
+    componentAnnotations_1.QuerySelector('#filterToText'),
+    __metadata("design:type", HTMLInputElement)
+], NumberFilter.prototype, "eFilterToTextField", void 0);
 exports.NumberFilter = NumberFilter;

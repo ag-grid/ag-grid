@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -164,18 +164,17 @@ var ColumnApi = (function () {
         console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
         return this.getDisplayNameForColumn(column, null);
     };
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', ColumnController)
-    ], ColumnApi.prototype, "_columnController", void 0);
-    ColumnApi = __decorate([
-        context_1.Bean('columnApi'), 
-        __metadata('design:paramtypes', [])
-    ], ColumnApi);
     return ColumnApi;
 }());
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", ColumnController)
+], ColumnApi.prototype, "_columnController", void 0);
+ColumnApi = __decorate([
+    context_1.Bean('columnApi')
+], ColumnApi);
 exports.ColumnApi = ColumnApi;
-var ColumnController = (function () {
+var ColumnController = ColumnController_1 = (function () {
     function ColumnController() {
         // header row count, based on user provided columns
         this.primaryHeaderRowCount = 0;
@@ -1690,33 +1689,45 @@ var ColumnController = (function () {
         this.groupAutoColumnActive = needAGroupColumn;
         // lazy create group auto-column
         if (needAGroupColumn && !this.groupAutoColumn) {
-            // if one provided by user, use it, otherwise create one
-            var autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
-            if (!autoColDef) {
-                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                autoColDef = {
-                    headerName: localeTextFunc('group', 'Group'),
-                    comparator: functions_1.defaultGroupComparator,
-                    valueGetter: function (params) {
-                        if (params.node.group) {
-                            return params.node.key;
-                        }
-                        else if (params.data && params.colDef.field) {
-                            return params.data[params.colDef.field];
-                        }
-                        else {
-                            return null;
-                        }
-                    },
-                    cellRenderer: 'group'
-                };
-            }
-            // we never allow moving the group column
-            autoColDef.suppressMovable = true;
-            var colId = ColumnController.GROUP_AUTO_COLUMN_ID;
-            this.groupAutoColumn = new column_1.Column(autoColDef, colId, true);
-            this.context.wireBean(this.groupAutoColumn);
+            this.createAutoGroupColumn();
         }
+        // if grouping was removed, clan up the auto group column
+        if (!needAGroupColumn && this.groupAutoColumn) {
+            if (!this.groupAutoColumn.isSortNone()) {
+                // this results in column firing a sort event, which only updates
+                // the column header. it doesn't get the row model to update (which
+                // is good).
+                this.groupAutoColumn.setSort(null);
+            }
+        }
+    };
+    ColumnController.prototype.createAutoGroupColumn = function () {
+        // if one provided by user, use it, otherwise create one
+        var autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
+        if (!autoColDef) {
+            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            autoColDef = {
+                headerName: localeTextFunc('group', 'Group'),
+                comparator: functions_1.defaultGroupComparator,
+                valueGetter: function (params) {
+                    if (params.node.group) {
+                        return params.node.key;
+                    }
+                    else if (params.data && params.colDef.field) {
+                        return params.data[params.colDef.field];
+                    }
+                    else {
+                        return null;
+                    }
+                },
+                cellRenderer: 'group'
+            };
+        }
+        // we never allow moving the group column
+        autoColDef.suppressMovable = true;
+        var colId = ColumnController_1.GROUP_AUTO_COLUMN_ID;
+        this.groupAutoColumn = new column_1.Column(autoColDef, colId, true);
+        this.context.wireBean(this.groupAutoColumn);
     };
     ColumnController.prototype.createValueColumns = function () {
         this.valueColumns.forEach(function (column) { return column.setValueActive(false); });
@@ -1741,67 +1752,67 @@ var ColumnController = (function () {
     ColumnController.prototype.getGridBalancedTree = function () {
         return this.gridBalancedTree;
     };
-    ColumnController.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], ColumnController.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('expressionService'), 
-        __metadata('design:type', expressionService_1.ExpressionService)
-    ], ColumnController.prototype, "expressionService", void 0);
-    __decorate([
-        context_1.Autowired('balancedColumnTreeBuilder'), 
-        __metadata('design:type', balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
-    ], ColumnController.prototype, "balancedColumnTreeBuilder", void 0);
-    __decorate([
-        context_1.Autowired('displayedGroupCreator'), 
-        __metadata('design:type', displayedGroupCreator_1.DisplayedGroupCreator)
-    ], ColumnController.prototype, "displayedGroupCreator", void 0);
-    __decorate([
-        context_1.Autowired('autoWidthCalculator'), 
-        __metadata('design:type', autoWidthCalculator_1.AutoWidthCalculator)
-    ], ColumnController.prototype, "autoWidthCalculator", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], ColumnController.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('columnUtils'), 
-        __metadata('design:type', columnUtils_1.ColumnUtils)
-    ], ColumnController.prototype, "columnUtils", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'), 
-        __metadata('design:type', gridPanel_1.GridPanel)
-    ], ColumnController.prototype, "gridPanel", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], ColumnController.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('columnAnimationService'), 
-        __metadata('design:type', columnAnimationService_1.ColumnAnimationService)
-    ], ColumnController.prototype, "columnAnimationService", void 0);
-    __decorate([
-        context_1.Optional('aggFuncService'), 
-        __metadata('design:type', Object)
-    ], ColumnController.prototype, "aggFuncService", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], ColumnController.prototype, "init", null);
-    __decorate([
-        __param(0, context_1.Qualifier('loggerFactory')), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
-        __metadata('design:returntype', void 0)
-    ], ColumnController.prototype, "setBeans", null);
-    ColumnController = __decorate([
-        context_1.Bean('columnController'), 
-        __metadata('design:paramtypes', [])
-    ], ColumnController);
     return ColumnController;
 }());
+ColumnController.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], ColumnController.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('expressionService'),
+    __metadata("design:type", expressionService_1.ExpressionService)
+], ColumnController.prototype, "expressionService", void 0);
+__decorate([
+    context_1.Autowired('balancedColumnTreeBuilder'),
+    __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
+], ColumnController.prototype, "balancedColumnTreeBuilder", void 0);
+__decorate([
+    context_1.Autowired('displayedGroupCreator'),
+    __metadata("design:type", displayedGroupCreator_1.DisplayedGroupCreator)
+], ColumnController.prototype, "displayedGroupCreator", void 0);
+__decorate([
+    context_1.Autowired('autoWidthCalculator'),
+    __metadata("design:type", autoWidthCalculator_1.AutoWidthCalculator)
+], ColumnController.prototype, "autoWidthCalculator", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], ColumnController.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('columnUtils'),
+    __metadata("design:type", columnUtils_1.ColumnUtils)
+], ColumnController.prototype, "columnUtils", void 0);
+__decorate([
+    context_1.Autowired('gridPanel'),
+    __metadata("design:type", gridPanel_1.GridPanel)
+], ColumnController.prototype, "gridPanel", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], ColumnController.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('columnAnimationService'),
+    __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
+], ColumnController.prototype, "columnAnimationService", void 0);
+__decorate([
+    context_1.Optional('aggFuncService'),
+    __metadata("design:type", Object)
+], ColumnController.prototype, "aggFuncService", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ColumnController.prototype, "init", null);
+__decorate([
+    __param(0, context_1.Qualifier('loggerFactory')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+    __metadata("design:returntype", void 0)
+], ColumnController.prototype, "setBeans", null);
+ColumnController = ColumnController_1 = __decorate([
+    context_1.Bean('columnController')
+], ColumnController);
 exports.ColumnController = ColumnController;
+var ColumnController_1;

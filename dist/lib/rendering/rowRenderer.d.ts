@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -6,6 +6,7 @@ import { RowNode } from "../entities/rowNode";
 import { RenderedCell } from "./renderedCell";
 import { LoggerFactory } from "../logger";
 import { GridCell } from "../entities/gridCell";
+import { ColDef } from "../entities/colDef";
 export declare class RowRenderer {
     private columnController;
     private gridOptionsWrapper;
@@ -51,7 +52,7 @@ export declare class RowRenderer {
     forEachRenderedCell(callback: (renderedCell: RenderedCell) => void): void;
     private forEachRenderedRow(callback);
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
-    refreshCells(rowNodes: RowNode[], colIds: string[], animate?: boolean): void;
+    refreshCells(rowNodes: RowNode[], cols: (string | ColDef | Column)[], animate?: boolean): void;
     private destroy();
     private refreshAllVirtualRows(keepRenderedRows, animate);
     refreshGroupRows(): void;

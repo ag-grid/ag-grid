@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -300,26 +300,26 @@ var VirtualPageCache = (function () {
         }
         this.dispatchModelUpdated();
     };
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], VirtualPageCache.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], VirtualPageCache.prototype, "context", void 0);
-    __decorate([
-        __param(0, context_1.Qualifier('loggerFactory')), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
-        __metadata('design:returntype', void 0)
-    ], VirtualPageCache.prototype, "setBeans", null);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], VirtualPageCache.prototype, "init", null);
     return VirtualPageCache;
 }());
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], VirtualPageCache.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], VirtualPageCache.prototype, "context", void 0);
+__decorate([
+    __param(0, context_1.Qualifier('loggerFactory')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+    __metadata("design:returntype", void 0)
+], VirtualPageCache.prototype, "setBeans", null);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], VirtualPageCache.prototype, "init", null);
 exports.VirtualPageCache = VirtualPageCache;

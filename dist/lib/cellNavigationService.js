@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -216,26 +216,25 @@ var CellNavigationService = (function () {
         var gridCellDef = { rowIndex: newRowIndex, column: newColumn, floating: newFloating };
         return new gridCell_1.GridCell(gridCellDef);
     };
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], CellNavigationService.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], CellNavigationService.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', floatingRowModel_1.FloatingRowModel)
-    ], CellNavigationService.prototype, "floatingRowModel", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], CellNavigationService.prototype, "gridOptionsWrapper", void 0);
-    CellNavigationService = __decorate([
-        context_1.Bean('cellNavigationService'), 
-        __metadata('design:paramtypes', [])
-    ], CellNavigationService);
     return CellNavigationService;
 }());
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], CellNavigationService.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], CellNavigationService.prototype, "rowModel", void 0);
+__decorate([
+    context_1.Autowired('floatingRowModel'),
+    __metadata("design:type", floatingRowModel_1.FloatingRowModel)
+], CellNavigationService.prototype, "floatingRowModel", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], CellNavigationService.prototype, "gridOptionsWrapper", void 0);
+CellNavigationService = __decorate([
+    context_1.Bean('cellNavigationService')
+], CellNavigationService);
 exports.CellNavigationService = CellNavigationService;

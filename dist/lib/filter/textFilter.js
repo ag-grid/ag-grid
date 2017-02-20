@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,19 +55,22 @@ var TextFilter = (function () {
                 return false;
             }
         }
+        var filterTextLoweCase = this.filterText.toLowerCase();
         var valueLowerCase = value.toString().toLowerCase();
         switch (this.filterType) {
             case TextFilter.CONTAINS:
-                return valueLowerCase.indexOf(this.filterText) >= 0;
+                return valueLowerCase.indexOf(filterTextLoweCase) >= 0;
+            case TextFilter.NOT_CONTAINS:
+                return valueLowerCase.indexOf(filterTextLoweCase) === -1;
             case TextFilter.EQUALS:
-                return valueLowerCase === this.filterText;
+                return valueLowerCase === filterTextLoweCase;
             case TextFilter.NOT_EQUALS:
-                return valueLowerCase != this.filterText;
+                return valueLowerCase != filterTextLoweCase;
             case TextFilter.STARTS_WITH:
-                return valueLowerCase.indexOf(this.filterText) === 0;
+                return valueLowerCase.indexOf(filterTextLoweCase) === 0;
             case TextFilter.ENDS_WITH:
-                var index = valueLowerCase.lastIndexOf(this.filterText);
-                return index >= 0 && index === (valueLowerCase.length - this.filterText.length);
+                var index = valueLowerCase.lastIndexOf(filterTextLoweCase);
+                return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
             default:
                 // should never happen
                 console.warn('invalid filter type ' + this.filterType);
@@ -82,7 +85,7 @@ var TextFilter = (function () {
     };
     TextFilter.prototype.createTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div>\n                    <div>\n                        <select class=\"ag-filter-select\" id=\"filterType\">\n                        <option value=\"" + TextFilter.CONTAINS + "\">" + translate('contains', 'Contains') + "</option>\n                        <option value=\"" + TextFilter.EQUALS + "\">" + translate('equals', 'Equals') + "</option>\n                        <option value=\"" + TextFilter.NOT_EQUALS + "\">" + translate('notEquals', 'Not equals') + "</option>\n                        <option value=\"" + TextFilter.STARTS_WITH + "\">" + translate('startsWith', 'Starts with') + "</option>\n                        <option value=\"" + TextFilter.ENDS_WITH + "\">" + translate('endsWith', 'Ends with') + "</option>\n                        </select>\n                    </div>\n                    <div>\n                        <input class=\"ag-filter-filter\" id=\"filterText\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
+        return "<div>\n                    <div>\n                        <select class=\"ag-filter-select\" id=\"filterType\">\n                        <option value=\"" + TextFilter.CONTAINS + "\">" + translate('contains', 'Contains') + "</option>\n                        <option value=\"" + TextFilter.NOT_CONTAINS + "\">" + translate('notContains', 'Not contains') + "</option>\n                        <option value=\"" + TextFilter.EQUALS + "\">" + translate('equals', 'Equals') + "</option>\n                        <option value=\"" + TextFilter.NOT_EQUALS + "\">" + translate('notEquals', 'Not equals') + "</option>\n                        <option value=\"" + TextFilter.STARTS_WITH + "\">" + translate('startsWith', 'Starts with') + "</option>\n                        <option value=\"" + TextFilter.ENDS_WITH + "\">" + translate('endsWith', 'Ends with') + "</option>\n                        </select>\n                    </div>\n                    <div>\n                        <input class=\"ag-filter-filter\" id=\"filterText\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
     };
     TextFilter.prototype.createGui = function () {
         this.eGui = utils_1.Utils.loadTemplate(this.createTemplate());
@@ -113,16 +116,13 @@ var TextFilter = (function () {
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
-        var newFilterText;
-        if (filterText !== null && filterText !== undefined) {
-            newFilterText = filterText.toLowerCase();
-        }
-        else {
-            newFilterText = null;
-        }
-        if (this.filterText !== newFilterText) {
-            this.filterText = newFilterText;
-            this.filterChanged();
+        if (this.filterText !== filterText) {
+            var newLowerCase = filterText ? filterText.toLowerCase() : null;
+            var previousLowerCase = this.filterText ? this.filterText.toLowerCase() : null;
+            this.filterText = filterText;
+            if (previousLowerCase !== newLowerCase) {
+                this.filterChanged();
+            }
         }
     };
     TextFilter.prototype.filterChanged = function () {
@@ -138,7 +138,7 @@ var TextFilter = (function () {
     TextFilter.prototype.setFilter = function (filter) {
         filter = utils_1.Utils.makeNull(filter);
         if (filter) {
-            this.filterText = filter.toLowerCase();
+            this.filterText = filter;
             this.eFilterTextField.value = filter;
         }
         else {
@@ -172,15 +172,16 @@ var TextFilter = (function () {
             this.setFilter(null);
         }
     };
-    TextFilter.CONTAINS = 'contains'; //1;
-    TextFilter.EQUALS = 'equals'; //2;
-    TextFilter.NOT_EQUALS = 'notEquals'; //3;
-    TextFilter.STARTS_WITH = 'startsWith'; //4;
-    TextFilter.ENDS_WITH = 'endsWith'; //5;
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], TextFilter.prototype, "gridOptionsWrapper", void 0);
     return TextFilter;
 }());
+TextFilter.CONTAINS = 'contains'; //1;
+TextFilter.NOT_CONTAINS = 'notContains'; //1;
+TextFilter.EQUALS = 'equals'; //2;
+TextFilter.NOT_EQUALS = 'notEquals'; //3;
+TextFilter.STARTS_WITH = 'startsWith'; //4;
+TextFilter.ENDS_WITH = 'endsWith'; //5;
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], TextFilter.prototype, "gridOptionsWrapper", void 0);
 exports.TextFilter = TextFilter;
