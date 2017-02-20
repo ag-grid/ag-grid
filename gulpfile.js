@@ -12,94 +12,61 @@ var liveReload = require('gulp-livereload');
 var replace = require('gulp-replace');
 var gulpIf = require('gulp-if');
 
-gulp.task('default', ['copyFromDocs','copyFromBootstrap','copyFromFontAwesome','webpack'], watchTask);
-
-gulp.task('copyFromGrid', copyFromGrid);
-gulp.task('tscGrid', ['copyFromGrid'], tscGrid);
-gulp.task('stylusGrid', ['copyFromGrid'], stylusGrid);
-
-gulp.task('copyFromEnterprise', copyFromEnterprise);
-gulp.task('copyGridToEnterprise', ['webpackGrid'], copyGridToEnterprise);
-gulp.task('tscEnterprise', ['copyFromEnterprise','copyGridToEnterprise','stylusGrid','tscGrid'], tscEnterprise);
+gulp.task('default', ['webpack'], watchTask);
 
 gulp.task('webpack', ['webpackEnterprise','webpackGrid'], liveReloadTask);
 gulp.task('webpackEnterprise', ['tscEnterprise'], webpackEnterprise);
 gulp.task('webpackGrid', ['stylusGrid','tscGrid'], webpackGrid);
 
+gulp.task('tscGrid', tscGrid);
+gulp.task('tscEnterprise', ['tscGrid'], tscEnterprise);
 
-gulp.task('liveReloadAfterCopyFromDocs', ['copyFromDocs'], liveReloadTask);
-gulp.task('copyFromDocs', copyFromDocs);
-gulp.task('copyFromBootstrap', copyFromBootstrap);
-gulp.task('copyFromFontAwesome', copyFromFontAwesome);
+gulp.task('stylusGrid', stylusGrid);
 
 function watchTask() {
-    // Listent for changes with a custom port
+    // listen for changes with a custom port
     liveReload.listen(35000);
     gulp.watch(['../ag-grid/src/**/*','../ag-grid-enterprise/src/**/*'], ['webpack']);
-    gulp.watch('../ag-grid-docs/src/**/*', ['liveReloadAfterCopyFromDocs']);
-}
-
-function copyFromGrid() {
-    return gulp.src(['../ag-grid/*', '../ag-grid/src/**/*'], {base: '../ag-grid'})
-        .pipe(gulp.dest('./node_modules/ag-grid'));
-}
-
-function copyFromEnterprise() {
-    return gulp.src(['../ag-grid-enterprise/*', '../ag-grid-enterprise/src/**/*'], {base: '../ag-grid-enterprise'})
-        .pipe(gulp.dest('./node_modules/ag-grid-enterprise'));
-}
-
-function copyGridToEnterprise() {
-    return gulp.src('./node_modules/ag-grid/**/*')
-        .pipe(gulp.dest('../ag-grid-enterprise/node_modules/ag-grid'));
 }
 
 function tscGrid() {
+    var project = gulpTypescript.createProject('../ag-grid/tsconfig.json', {typescript: typescript});
+
     var tsResult = gulp
-        .src('./node_modules/ag-grid/src/ts/**/*.ts')
-        .pipe(gulpTypescript({
-            typescript: typescript,
-            module: 'commonjs',
-            experimentalDecorators: true,
-            emitDecoratorMetadata: true,
-            declarationFiles: true,
-            target: 'es5',
-            noImplicitAny: true
-        }));
+        .src('../ag-grid/src/ts/**/*.ts')
+        //.pipe(sourcemaps.init())
+        .pipe(gulpTypescript(project));
 
     return merge([
         tsResult.dts
-            .pipe(gulp.dest('./node_modules/ag-grid/dist/lib')),
+            .pipe(gulp.dest('../ag-grid/dist/lib')),
         tsResult.js
-            .pipe(gulp.dest('./node_modules/ag-grid/dist/lib'))
-    ])
+        // .pipe(sourcemaps.init({loadMaps: true}))
+        // .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest('../ag-grid/dist/lib'))
+    ]);
 }
 
 function tscEnterprise() {
+
+    var project = gulpTypescript.createProject('../ag-grid-enterprise/tsconfig.json', {typescript: typescript});
+
     var tsResult = gulp
-        .src('./node_modules/ag-grid-enterprise/src/**/*.ts')
-        .pipe(gulpTypescript({
-            typescript: typescript,
-            module: 'commonjs',
-            experimentalDecorators: true,
-            emitDecoratorMetadata: true,
-            declarationFiles: true,
-            target: 'es5',
-            noImplicitAny: true
-        }));
+        .src('../ag-grid-enterprise/src/**/*.ts')
+        //.pipe(sourcemaps.init())
+        .pipe(gulpTypescript(project));
 
     return merge([
         tsResult.dts
-            .pipe(gulp.dest('./node_modules/ag-grid-enterprise/dist/lib')),
+            .pipe(gulp.dest('../ag-grid-enterprise/dist/lib')),
         tsResult.js
-            .pipe(gulp.dest('./node_modules/ag-grid-enterprise/dist/lib'))
-    ])
+            .pipe(gulp.dest('../ag-grid-enterprise/dist/lib'))
+    ]);
 }
-
 
 function stylusGrid() {
     // Uncompressed
-    gulp.src(['./node_modules/ag-grid/src/styles/*.styl', '!./node_modules/ag-grid/src/styles/theme-common.styl'])
+    gulp.src(['../ag-grid/src/styles/*.styl', '!../ag-grid/src/styles/theme-common.styl'])
         .pipe(foreach(function(stream, file) {
             var currentTheme = path.basename(file.path, '.styl');
             var themeName = currentTheme.replace('theme-','');
@@ -109,7 +76,7 @@ function stylusGrid() {
                     compress: false
                 }))
                 .pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)))
-                .pipe(gulp.dest('./node_modules/ag-grid/dist/styles/'));
+                .pipe(gulp.dest('../ag-grid/dist/styles/'));
         }));
 }
 
@@ -119,7 +86,7 @@ function liveReloadTask() {
 
 function webpackEnterprise() {
 
-    var mainFile = './node_modules/ag-grid-enterprise/webpack-with-styles.js';
+    var mainFile = '../ag-grid-enterprise/webpack-with-styles.js';
     var fileName = 'ag-grid-enterprise.js';
 
     return gulp.src('src/entry.js')
@@ -139,12 +106,12 @@ function webpackEnterprise() {
                 ]
             }
         }))
-        .pipe(gulp.dest('./web-root/dist'));
+        .pipe(gulp.dest('../ag-grid-enterprise/dist'));
 }
 
 function webpackGrid() {
 
-    var mainFile = './node_modules/ag-grid/main-with-styles.js';
+    var mainFile = '../ag-grid/main-with-styles.js';
     var fileName = 'ag-grid.js';
 
     return gulp.src('src/entry.js')
@@ -164,29 +131,5 @@ function webpackGrid() {
                 ]
             }
         }))
-        .pipe(gulp.dest('./web-root/dist'));
-}
-
-function copyFromDocs() {
-    return gulp.src(['../ag-grid-docs/src/**/*'])
-        .pipe(gulp.dest('./web-root'));
-}
-
-function copyFromBootstrap() {
-    return gulp.src([
-            './node_modules/bootstrap/dist/js/bootstrap.js',
-            './node_modules/bootstrap/dist/css/bootstrap.css',
-            './node_modules/bootstrap/dist/css/bootstrap-theme.css'
-        ])
-        .pipe(gulp.dest('./web-root/dist'));
-}
-
-function copyFromFontAwesome() {
-    return gulp.src([
-            './node_modules/font-awesome/css/font-awesome.css',
-            './node_modules/font-awesome/fonts/*'
-        ]
-        , {base: './node_modules/font-awesome'}
-        )
-        .pipe(gulp.dest('./web-root/font-awesome'));
+        .pipe(gulp.dest('../ag-grid/dist'));
 }
