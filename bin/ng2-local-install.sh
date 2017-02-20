@@ -22,7 +22,7 @@ npm i "file:../ag-grid"
 gulp release
 
 
-cd ../ag-grid-ng2
+cd ../ag-grid-angular
 rm -rf dist
 npm install
 rm -rf node_modules/ag-grid
@@ -32,15 +32,15 @@ npm i "file:../ag-grid-enterprise"
 npm run clean
 npm run build
 
-cd ../ag-grid-ng2-example/systemjs_aot
+cd ../ag-grid-angular-example/systemjs_aot
 rm -rf dist
 npm install
 rm -rf node_modules/ag-grid
-rm -rf node_modules/ag-grid-ng2
+rm -rf node_modules/ag-grid-angular
 rm -rf node_modules/ag-grid-enterprise
 npm i "file:../../ag-grid"
 npm i "file:../../ag-grid-enterprise"
-npm i "file:../../ag-grid-ng2"
+npm i "file:../../ag-grid-angular"
 npm run clean
 npm run tsc
 
@@ -48,11 +48,11 @@ cd ../webpack
 rm -rf dist
 npm install
 rm -rf node_modules/ag-grid
-rm -rf node_modules/ag-grid-ng2
+rm -rf node_modules/ag-grid-angular
 rm -rf node_modules/ag-grid-enterprise
 npm i "file:../../ag-grid"
 npm i "file:../../ag-grid-enterprise"
-npm i "file:../../ag-grid-ng2"
+npm i "file:../../ag-grid-angular"
 npm run clean
 npm run build
 
@@ -60,11 +60,11 @@ cd ../angular-cli
 rm -rf dist
 npm install
 rm -rf node_modules/ag-grid
-rm -rf node_modules/ag-grid-ng2
+rm -rf node_modules/ag-grid-angular
 rm -rf node_modules/ag-grid-enterprise
 npm i "file:../../ag-grid"
 npm i "file:../../ag-grid-enterprise"
-npm i "file:../../ag-grid-ng2"
+npm i "file:../../ag-grid-angular"
 
 
 cd ../../ag-grid-react

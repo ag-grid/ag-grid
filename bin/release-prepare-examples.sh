@@ -16,7 +16,7 @@ echo ===========================================================================
 echo "Preparing examples for " $1
 
 ## for all the package.json containers replace version number
-declare -a subfolders=("ag-grid-ng2-example/systemjs_aot" "ag-grid-ng2-example/webpack" "ag-grid-ng2-example/angular-cli" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue-example")
+declare -a subfolders=("ag-grid-angular-example/systemjs_aot" "ag-grid-angular-example/webpack" "ag-grid-angular-example/angular-cli" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue-example")
 
 for subfolder in "${subfolders[@]}"
 do
@@ -31,7 +31,7 @@ do
     sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-enterprise".*/    "ag-grid-enterprise": "'$2'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-aurelia".*/    "ag-grid-aurelia": "'$2'",/g' package.json
-    sed -i .old -e 's/.*"ag-grid-ng2".*/    "ag-grid-ng2": "'$2'",/g' package.json
+    sed -i .old -e 's/.*"ag-grid-angular".*/    "ag-grid-angular": "'$2'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-react".*/    "ag-grid-react": "'$2'"/g' package.json
     sed -i .old -e 's/.*"ag-grid-vue".*/    "ag-grid-vue": "'$2'",/g' package.json
 
@@ -42,8 +42,8 @@ do
 
 
     case $subfolder in
-        "ag-grid-ng2-example/systemjs_aot"|"ag-grid-ng2-example/webpack"|"ag-grid-ng2-example/angular-cli")
-            npm install "$current_dir/ag-grid-ng2/ag-grid-ng2-$1.tgz"
+        "ag-grid-angular-example/systemjs_aot"|"ag-grid-angular-example/webpack"|"ag-grid-angular-example/angular-cli")
+            npm install "$current_dir/ag-grid-angular/ag-grid-angular-$1.tgz"
             ;;
         "ag-grid-react-example")
             npm install "$current_dir/ag-grid-react/ag-grid-react-$1.tgz"
@@ -72,7 +72,7 @@ done
 
 
 ## for all the modules commit the change
-declare -a modules=("ag-grid-ng2-example" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue")
+declare -a modules=("ag-grid-angular-example" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue")
 
 for module in "${modules[@]}"
 do

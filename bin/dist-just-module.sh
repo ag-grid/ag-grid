@@ -17,7 +17,7 @@ do
         "ag-grid-enterprise"|"ag-grid")
             gulp release
             ;;
-        "ag-grid-ng2")
+        "ag-grid-angular")
             npm run clean-build
             ;;
         "ag-grid-react")
@@ -42,10 +42,10 @@ do
         "ag-grid-aurelia-example")
             gulp
             ;;
-        "ag-grid-ng2-example/systemjs_aot")
+        "ag-grid-angular-example/systemjs_aot")
             npm run clean-build:aot
             ;;
-        "ag-grid-ng2-example/webpack")
+        "ag-grid-angular-example/webpack")
             npm run build
             ;;
     esac

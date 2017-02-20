@@ -26,7 +26,7 @@ do
 
     case $module in
         ##Examples
-        "ag-grid-ng2-example"|"ag-grid-react-example"|"ag-grid-aurelia-example"|"ag-grid-vue-example")
+        "ag-grid-angular-example"|"ag-grid-react-example"|"ag-grid-aurelia-example"|"ag-grid-vue-example")
             echo =============================================================================================
             echo "MODULE  $module - THIS WILL GET SETUP AT THE END THROUGH release-prepare-examples $1 $2"
             echo =============================================================================================
@@ -60,7 +60,7 @@ do
             npm install ../ag-grid/ag-grid-$1.tgz
             ;;
         ##If it depends on ag-grid AND OTHERS. THIS CAN BE REFACTORED FOR SURE!
-        "ag-grid-ng2"|"ag-grid-vue")
+        "ag-grid-angular"|"ag-grid-vue")
             echo =============================================================================================
             echo "ADDING AG-GRID DEPENDENCY TO:  $module"
             echo =============================================================================================

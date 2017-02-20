@@ -14,7 +14,7 @@ do
     cd "$1/$module"
 
     case $module in
-        "ag-grid-ng2")
+        "ag-grid-angular")
             npm install @angular/compiler @angular/compiler @angular/compiler-cli @angular/core rxjs zone.js core-js
             ;;
         "ag-grid-aurelia")

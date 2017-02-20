@@ -11,7 +11,7 @@ current_dir=$(pwd)
 
 
 ## for all the package.json containers replace version number
-declare -a subfolders=("ag-grid-ng2-example/systemjs_aot" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue-example")
+declare -a subfolders=("ag-grid-angular-example/systemjs_aot" "ag-grid-react-example" "ag-grid-aurelia-example" "ag-grid-vue-example")
 
 for subfolder in "${subfolders[@]}"
 do
@@ -23,7 +23,7 @@ do
 
     ## Replace version number
     case $subfolder in
-        "ag-grid-ng2-example/systemjs_aot")
+        "ag-grid-angular-example/systemjs_aot")
             gulp build-and-copy-to-ag-docs
             ;;
 
