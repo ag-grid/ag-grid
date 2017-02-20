@@ -1798,7 +1798,7 @@ class View_AgGridNg2_Host0 extends import2.AppView<any> {
     super(View_AgGridNg2_Host0,renderType_AgGridNg2_Host,import10.ViewType.HOST,viewUtils,parentView,parentIndex,parentElement,import11.ChangeDetectorStatus.CheckAlways);
   }
   createInternal(rootSelector:string):import12.ComponentRef<any> {
-    this._el_0 = import3.selectOrCreateRenderHostElement(this.renderer,'ag-grid-ng2',import3.EMPTY_INLINE_ARRAY,rootSelector,(null as any));
+    this._el_0 = import3.selectOrCreateRenderHostElement(this.renderer,'ag-grid-angular',import3.EMPTY_INLINE_ARRAY,rootSelector,(null as any));
     this._vc_0 = new import6.ViewContainer(0,(null as any),this,this._el_0);
     this.compView_0 = new View_AgGridNg20(this.viewUtils,this,0,this._el_0);
     this._Ng2FrameworkFactory_0_5 = new import7.Ng2FrameworkFactory(this.injectorGet(import13.BaseComponentFactory,this.parentIndex),this.injectorGet(import14.NgZone,this.parentIndex));
@@ -1838,7 +1838,7 @@ class View_AgGridNg2_Host0 extends import2.AppView<any> {
     cb(this._el_1,ctx);
   }
 }
-export const AgGridNg2NgFactory:import12.ComponentFactory<import0.AgGridNg2> = new import12.ComponentFactory<import0.AgGridNg2>('ag-grid-ng2',View_AgGridNg2_Host0,import0.AgGridNg2);
+export const AgGridNg2NgFactory:import12.ComponentFactory<import0.AgGridNg2> = new import12.ComponentFactory<import0.AgGridNg2>('ag-grid-angular',View_AgGridNg2_Host0,import0.AgGridNg2);
 const styles_AgGridNg2:any[] = ([] as any[]);
 var renderType_AgGridNg2:import4.RenderComponentType = import3.createRenderComponentType('',0,import5.ViewEncapsulation.None,styles_AgGridNg2,{});
 export class View_AgGridNg20 extends import2.AppView<import0.AgGridNg2> {
