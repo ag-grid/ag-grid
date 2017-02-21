@@ -20,25 +20,29 @@ include '../documentation-main/documentation_header.php';
     </p>
     <ul>
         <li><b>Properties</b>: Properties are for changing the state inside the grid. These are
-        analogous to properties on a DOM object.</li>
+            analogous to properties on a DOM object.
+        </li>
         <li><b>Events</b>: Events are for handling changes from the grid. These are analogous
-        to events in the DOM.</li>
+            to events in the DOM.
+        </li>
         <li><b>Callbacks</b>: Functions that you provide that the grid calls, as a way of
-        modifying behaviour of the grid. This is the grid asking the application a question
-        such as 'what color should this cell be', it is not a means to pass state into or
-        out of the grid.</li>
+            modifying behaviour of the grid. This is the grid asking the application a question
+            such as 'what color should this cell be', it is not a means to pass state into or
+            out of the grid.
+        </li>
         <li><b>API</b>: API into the grid, to provide features that are not representable
-        via properties and events.</li>
+            via properties and events.
+        </li>
     </ul>
 
     <h2>
         <img src="/images/javascript.png" height="50"/>
-        <img src="/images/react.png" height="50px"/>
-        <img src="/images/angularjs.png" height="50px"/>
-        <img src="/images/angular2.png" height="50px"/>
-        <img src="/images/vue_large.png" height="50px"/>
-        <img src="/images/webComponents.png" height="50px"/>
-        <img src="/images/aurelia.png" height="50px"/>
+        <img ng-if="isFramework('react')" src="/images/react.png" height="50px"/>
+        <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="50px"/>
+        <img ng-if="isFramework('angular')" src="/images/angular2.png" height="50px"/>
+        <img ng-if="isFramework('vue')" src="/images/vue_large.png" height="50px"/>
+        <img ng-if="isFramework('webcomponents')" src="/images/webComponents.png" height="50px"/>
+        <img ng-if="isFramework('aurelia')" src="/images/aurelia.png" height="50px"/>
         Grid Options
     </h2>
 
@@ -110,40 +114,45 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         selection to be turned on.
     </p>
 
-    <h2>
-        <img src="/images/javascript.png" height="50"/><img src="/images/angularjs.png" height="50px"/>
-        Native Javascript and AngularJS 1.x
-    </h2>
+    <div ng-if="isFramework(['javascript','angularjs'])">
+        <h2>
+            <img src="/images/javascript.png" height="50"/><img ng-if="isFramework('angularjs')"
+                                                                src="/images/angularjs.png"
+                                                                height="50px"/>
+            Native Javascript<span ng-if="isFramework('angularjs')"> and AngularJS 1.x</span>
+        </h2>
 
-    <p>
-        If you are using plain Javascript or AngularJS 1.x, then all of your interaction
-        with ag-Grid will be through the gridOptions.
-    </p>
+        <p>
+            If you are using plain Javascript <span ng-if="isFramework('angularjs')">or AngularJS 1.x</span> then all of
+            your interaction
+            with ag-Grid will be through the gridOptions.
+        </p>
+    </div>
 
+    <div ng-if="isFramework('react')">
+        <h2>
+            <img src="/images/react.png" height="50px"/>
+            React
+        </h2>
 
-    <h2>
-        <img src="/images/react.png" height="50px"/>
-        React
-    </h2>
+        <p>
+            The gridOptions are fully available as stated above for React. However you can take
+            advantage of React's properties and events provided by ag-Grids React Component.
+            This is done as follows:
+        </p>
 
-    <p>
-        The gridOptions are fully available as stated above for React. However you can take
-        advantage of React's properties and events provided by ag-Grids React Component.
-        This is done as follows:
-    </p>
+        <ul>
+            <li><b>Properties</b>: Properties are defined by passing React props down to ag-Grid.</li>
+            <li><b>Callbacks</b>: Callbacks are also placed as React Props.</li>
+            <li><b>Event Handlers</b>: Event handlers are again placed as React Props.</li>
+            <li><b>API</b>: The grid API and column API are provided to you via the onGridReady() event callback.</li>
+        </ul>
 
-    <ul>
-        <li><b>Properties</b>: Properties are defined by passing React props down to ag-Grid.</li>
-        <li><b>Callbacks</b>: Callbacks are also placed as React Props.</li>
-        <li><b>Event Handlers</b>: Event handlers are again placed as React Props.</li>
-        <li><b>API</b>: The grid API and column API are provided to you via the onGridReady() event callback.</li>
-    </ul>
+        <p>
+            So in summary, in React, everything is done via React Props. Here is an example:
+        </p>
 
-    <p>
-        So in summary, in React, everything is done via React Props. Here is an example:
-    </p>
-
-    <pre><code>&lt;ag-grid-react-component
+        <pre><code>&lt;ag-grid-react-component
 
     <span class="codeComment">// these are simple attributes, not bound to any state or prop</span>
     rowHeight="22"
@@ -162,46 +171,51 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     onGridReady={this.onGridReady.bind(this)}" <span class="codeComment">// inside onGridReady, you receive the grid API's if you want them</span>
 /></code></pre>
 
-    <p>
-        The API's are accessible through the component. This is useful in two situations.
-        The first us by using an Angular ID. In the example above, the ID is given
-        as '#myGrid' which then allows something like this:
-    </p>
+        <p>
+            The API's are accessible through the component. This is useful in two situations.
+            The first us by using an ID. In the example above, the ID is given
+            as '#myGrid' which then allows something like this:
+        </p>
 
-    <pre><code>&lt;button (click)="<b>agGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+        <pre><code>&lt;button (click)="<b>agGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+    </div>
 
-    <h2>
-        <img src="/images/angular2.png" height="50px"/>
-        Angular
-    </h2>
+    <div ng-if="isFramework('angular')">
+        <h2>
+            <img src="/images/angular2.png" height="50px"/>
+            Angular
+        </h2>
 
-    <p>
-        The gridOptions are fully available as stated above for Angular. However you can take
-        advantage of Angular's properties and events provided by ag-Grids Angular Component.
-        This is done as follows:
-    </p>
+        <p>
+            The gridOptions are fully available as stated above for Angular. However you can take
+            advantage of Angular's properties and events provided by ag-Grids Angular Component.
+            This is done as follows:
+        </p>
 
-    <ul>
-        <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
-        <li><b>Properties</b>: Properties are defined as HTML attributes enclosed in square
-            brackets and are Angular bound values.</li>
-        <li><b>Callbacks</b>: Callbacks are actually a type of property, but by convention they are
-            always functions and are not for relaying event information. They are bound as properties
-            using square brackets. As callbacks are not events, they do not impact the Angular
-            event cycle, and as such should not change the state of anything.</li>
-        <li><b>Event Handlers</b>: Event handlers are defined as HTML attributes enclosed in
-            normal brackets and are Angular bound functions.</li>
-        <li><b>API</b>: The grid API and column API are accessible through the component.</li>
-    </ul>
+        <ul>
+            <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
+            <li><b>Properties</b>: Properties are defined as HTML attributes enclosed in square
+                brackets and are Angular bound values.
+            </li>
+            <li><b>Callbacks</b>: Callbacks are actually a type of property, but by convention they are
+                always functions and are not for relaying event information. They are bound as properties
+                using square brackets. As callbacks are not events, they do not impact the Angular
+                event cycle, and as such should not change the state of anything.
+            </li>
+            <li><b>Event Handlers</b>: Event handlers are defined as HTML attributes enclosed in
+                normal brackets and are Angular bound functions.
+            </li>
+            <li><b>API</b>: The grid API and column API are accessible through the component.</li>
+        </ul>
 
-    <p>
-        All of the above (attributes, properties, callbacks and event handlers) are registered
-        using their 'dash' syntax and not camelcase. For example, the property enableSorting
-        is bound using enable-sorting. <i>enable-sorting</i>. The following example shows
-        some bindings:
-    </p>
+        <p>
+            All of the above (attributes, properties, callbacks and event handlers) are registered
+            using their 'dash' syntax and not camelcase. For example, the property enableSorting
+            is bound using enable-sorting. <i>enable-sorting</i>. The following example shows
+            some bindings:
+        </p>
 
-    <pre><code>&lt;ag-grid-angular
+        <pre><code>&lt;ag-grid-angular
     <span class="codeComment">// give an AngularJS ID to the grid</span>
     #myGrid
 
@@ -227,46 +241,52 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     (column-resized)="onColumnEvent($event)">
 &lt;/ag-grid-angular></code></pre>
 
-    <p>
-        The API's are accessible through the component. This is useful in two situations.
-        The first us by using an Angular ID. In the example above, the ID is given
-        as '#myGrid' which then allows something like this:
-    </p>
+        <p>
+            The API's are accessible through the component. This is useful in two situations.
+            The first us by using an Angular ID. In the example above, the ID is given
+            as '#myGrid' which then allows something like this:
+        </p>
 
-    <pre><code>&lt;button (click)="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+        <pre><code>&lt;button (click)="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+    </div>
 
-    <h2>
-        <img src="/images/vue_large.png" height="50px"/>
-        VueJS
-    </h2>
+    <div ng-if="isFramework('vue')">
+        <h2>
+            <img src="/images/vue_large.png" height="50px"/>
+            VueJS
+        </h2>
 
-    <p>
-        The gridOptions are fully available as stated above for VueJS. However you can take
-        advantage of VueJS's properties and events provided by ag-Grids VueJS Component.
-        This is done as follows:
-    </p>
+        <p>
+            The gridOptions are fully available as stated above for VueJS. However you can take
+            advantage of VueJS's properties and events provided by ag-Grids VueJS Component.
+            This is done as follows:
+        </p>
 
-    <ul>
-        <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
-        <li><b>Properties</b>: Properties are defined as HTML attributes prefixed with a colon <code>:</code>
-            and are VueJS bound values.</li>
-        <li><b>Callbacks</b>: Callbacks are actually a type of property, but by convention they are
-            always functions and are not for relaying event information. They are bound as properties
-            prefixed with a colon <code>:</code>. As callbacks are not events, they do not impact the VueJS
-            event cycle, and as such should not change the state of anything.</li>
-        <li><b>Event Handlers</b>: Event handlers are defined as HTML attributes prefixed with a colon <code>:</code>
-            and are VueJS bound functions.</li>
-        <li><b>API</b>: The grid API and column API are accessible through the component.</li>
-    </ul>
+        <ul>
+            <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
+            <li><b>Properties</b>: Properties are defined as HTML attributes prefixed with a colon <code>:</code>
+                and are VueJS bound values.
+            </li>
+            <li><b>Callbacks</b>: Callbacks are actually a type of property, but by convention they are
+                always functions and are not for relaying event information. They are bound as properties
+                prefixed with a colon <code>:</code>. As callbacks are not events, they do not impact the VueJS
+                event cycle, and as such should not change the state of anything.
+            </li>
+            <li><b>Event Handlers</b>: Event handlers are defined as HTML attributes prefixed with a colon
+                <code>:</code>
+                and are VueJS bound functions.
+            </li>
+            <li><b>API</b>: The grid API and column API are accessible through the component.</li>
+        </ul>
 
-    <p>
-        All of the above (attributes, properties, callbacks and event handlers) are registered
-        using their 'dash' syntax and not camelcase. For example, the property enableSorting
-        is bound using enable-sorting. <i>enable-sorting</i>. The following example shows
-        some bindings:
-    </p>
+        <p>
+            All of the above (attributes, properties, callbacks and event handlers) are registered
+            using their 'dash' syntax and not camelcase. For example, the property enableSorting
+            is bound using enable-sorting. <i>enable-sorting</i>. The following example shows
+            some bindings:
+        </p>
 
-    <pre>
+        <pre>
 <&lt;ag-grid-vue
     <span class="codeComment">// these are attributes, not bound, give explicit values here</span>
     rowHeight="22"
@@ -289,55 +309,59 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     :cellClicked="onCellClicked"
 &lt;/ag-grid-vue></code></pre>
 
-    <p>
-        The API's are accessible through the component. This is useful in two situations.
-        The first us by using an Angular ID. In the example above, the ID is given
-        as '#myGrid' which then allows something like this:
-    </p>
+        <p>
+            The API's are accessible through the component. This is useful in two situations.
+            The first us by using an ID. In the example above, the ID is given
+            as '#myGrid' which then allows something like this:
+        </p>
 
-    <pre><code>&lt;button @click="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+        <pre><code>&lt;button @click="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
 
-    <h2>
-        <img src="/images/webComponents.png" height="50px"/>
-        Web Components
-    </h2>
+    </div>
+    <div ng-if="isFramework('webcomponents')">
+        <h2>
+            <img src="/images/webComponents.png" height="50px"/>
+            Web Components
+        </h2>
 
-    <p>
-        The gridOptions are fully available as stated above for Web Components. However you can take
-        advantage of Web Components attributes for setting properties and also directly accessing
-        the Web Components DOM object for interacting with the component. This is done as follows:
-    </p>
+        <p>
+            The gridOptions are fully available as stated above for Web Components. However you can take
+            advantage of Web Components attributes for setting properties and also directly accessing
+            the Web Components DOM object for interacting with the component. This is done as follows:
+        </p>
 
-    <ul>
-        <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
-        <li><b>Properties</b>: Properties are set directly onto the DOM object using javascript.</li>
-        <li><b>Callbacks</b>: Callbacks, like properties, are also set directly on the DOM object using javascript.</li>
-        <li><b>Event Handlers</b>: Event handlers are registered as normal DOM event handlers, using
-            either addEventListener(eventName, handler) or assigning an onXXX method on the DOM object.</li>
-        <li><b>API</b>: The grid API and column API are accessible through the DOM object.</li>
-    </ul>
+        <ul>
+            <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
+            <li><b>Properties</b>: Properties are set directly onto the DOM object using javascript.</li>
+            <li><b>Callbacks</b>: Callbacks, like properties, are also set directly on the DOM object using javascript.
+            </li>
+            <li><b>Event Handlers</b>: Event handlers are registered as normal DOM event handlers, using
+                either addEventListener(eventName, handler) or assigning an onXXX method on the DOM object.
+            </li>
+            <li><b>API</b>: The grid API and column API are accessible through the DOM object.</li>
+        </ul>
 
-    <p>
-        Bindings are registered using their 'dash' syntax and not camelcase. For example,
-        the property enableSorting is bound using <i>enable-sorting</i>.
-    </p>
+        <p>
+            Bindings are registered using their 'dash' syntax and not camelcase. For example,
+            the property enableSorting is bound using <i>enable-sorting</i>.
+        </p>
 
-    <p>
-        Properties and callbacks are set using standard camelcase, no changes are done.
-    </p>
+        <p>
+            Properties and callbacks are set using standard camelcase, no changes are done.
+        </p>
 
-    <p>
-        <b>Web Components Events are all done using lowercase</b>. This keeps the event
-        handling consistent with native DOM elements, however breaks away from the camel case
-        of how events are managed by the other frameworks ag-Grid supports.
-    </p>
+        <p>
+            <b>Web Components Events are all done using lowercase</b>. This keeps the event
+            handling consistent with native DOM elements, however breaks away from the camel case
+            of how events are managed by the other frameworks ag-Grid supports.
+        </p>
 
-    <p>
-        This example shows setting up as a Web Component in HTML. Notice it's simliar
-        to Angular, however no binding of properties or event handling.
-    </p>
+        <p>
+            This example shows setting up as a Web Component in HTML. Notice it's simliar
+            to Angular, however no binding of properties or event handling.
+        </p>
 
-    <pre><code>&lt;ag-grid-angular
+        <pre><code>&lt;ag-grid-angular
     <span class="codeComment">// normal id for CSS selector inside Javascript</span>
     id="myGrid"
 
@@ -350,11 +374,11 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     row-selection="multiple"
 &lt;/ag-grid-angular></code></pre>
 
-    <p>
-        Then the callbacks and event handling are done in the Javascript as follows:
-    </p>
+        <p>
+            Then the callbacks and event handling are done in the Javascript as follows:
+        </p>
 
-<pre><code>
+        <pre><code>
 var myGrid = document.querySelector('#myGrid');
 
 <span class="codeComment">// calling a method directly on the ag-Grid DOM element.</span>
@@ -387,50 +411,53 @@ myGrid.quickFilterText = 'sandy';
 myGrid.showToolPanel = true;
 </code></pre>
 
-    <h2>
-        <img src="/images/aurelia.png" height="50px"/>
-        Aurelia
-    </h2>
-    <p>The gridOptions are fully available as stated above for Aurelia. However you can take advantage of Aurelia's
-        properties and events provided by ag-Grids Aurelia Component. This is done as follows:</p>
-    <ul>
-        <li><b>Events:</b> All data out of the grid comes through events. These use
-            Aurelia event bindings eg <i>model-updated.call="onModelUpdated()"</i>.
-            As you interact with the grid, the different events are fixed and
-            output text to the console (open the dev tools to see the console).
-        </li>
-        <li><b>Properties:</b> All the data is provided to the grid as Aurelia
-            bindings. These are bound onto the ag-Grid properties bypassing the
-            elements attributes. The values for the bindings come from the parent
-            controller.
-        </li>
-        <li><b>Attributes:</b> When the property is just a simple string value, then
-            no binding is necessary, just the value is placed as an attribute
-            eg <i>row-height.bind="22"</i>.
-        </li>
-        <li><b>Grid API via IDs:</b> The grid in the example is created with an id
-            by marking it with <i>#agGrid</i>. This in turn turns into a variable
-            which can be used to access the grid's controller. The buttons
-            Grid API and Column API buttons use this variable to access the grids
-            API (the API's are attributes on the controller).
-        </li>
-        <li><b>Changing Properties:</b> When a property changes value, Aurelia
-            automatically passes the new value onto the grid. This is used in
-            the following locations:<br/>
-            a) The 'quickFilter' on the top right updates the quick filter of
-            the grid.
-            b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
-            property of the grid.
-            c) The 'Refresh Data' generates new data for the grid and updates the
-            <i>rowData</i> property.
-        </li>
-    </ul>
+    </div>
 
-    <p>
-        The example has ag-Grid configured through the template in the following ways:
-    </p>
+    <div ng-if="isFramework('aurelia')">
+        <h2>
+            <img src="/images/aurelia.png" height="50px"/>
+            Aurelia
+        </h2>
+        <p>The gridOptions are fully available as stated above for Aurelia. However you can take advantage of Aurelia's
+            properties and events provided by ag-Grids Aurelia Component. This is done as follows:</p>
+        <ul>
+            <li><b>Events:</b> All data out of the grid comes through events. These use
+                Aurelia event bindings eg <i>model-updated.call="onModelUpdated()"</i>.
+                As you interact with the grid, the different events are fixed and
+                output text to the console (open the dev tools to see the console).
+            </li>
+            <li><b>Properties:</b> All the data is provided to the grid as Aurelia
+                bindings. These are bound onto the ag-Grid properties bypassing the
+                elements attributes. The values for the bindings come from the parent
+                controller.
+            </li>
+            <li><b>Attributes:</b> When the property is just a simple string value, then
+                no binding is necessary, just the value is placed as an attribute
+                eg <i>row-height.bind="22"</i>.
+            </li>
+            <li><b>Grid API via IDs:</b> The grid in the example is created with an id
+                by marking it with <i>#agGrid</i>. This in turn turns into a variable
+                which can be used to access the grid's controller. The buttons
+                Grid API and Column API buttons use this variable to access the grids
+                API (the API's are attributes on the controller).
+            </li>
+            <li><b>Changing Properties:</b> When a property changes value, Aurelia
+                automatically passes the new value onto the grid. This is used in
+                the following locations:<br/>
+                a) The 'quickFilter' on the top right updates the quick filter of
+                the grid.
+                b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+                property of the grid.
+                c) The 'Refresh Data' generates new data for the grid and updates the
+                <i>rowData</i> property.
+            </li>
+        </ul>
 
-    <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
+        <p>
+            The example has ag-Grid configured through the template in the following ways:
+        </p>
+
+        <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
 &lt;g-grid-aurelia #agGrid class="ag-fresh"
     <span class="codeComment">// items bound to properties on the controller</span>
     grid-options.bind="gridOptions"
@@ -480,7 +507,7 @@ myGrid.showToolPanel = true;
     column-pinned-count-changed.call="onColumnEvent($event)">
 &lt;/ag-grid-aurelia></pre>
 
-
+    </div>
 
     <h2>Next Steps...</h2>
 
@@ -492,4 +519,4 @@ myGrid.showToolPanel = true;
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

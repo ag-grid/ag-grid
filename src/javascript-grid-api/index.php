@@ -15,15 +15,19 @@ include '../documentation-main/documentation_header.php';
         can be accessed.
     </p>
 
+<div ng-if="isFramework(['javascript','angularjs'])">
     <h4>
         <img src="/images/javascript.png" height="20"/>
-        <img src="/images/angularjs.png" height="20px"/>
-        Javascript and AngularJS 1.x
+        <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
+        Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
     </h4>
     <p>
         Use api placed inside gridOptions by the grid during initialisation.
     </p>
 
+</div>
+
+<div ng-if="isFramework('react')">
     <h4>
         <img src="/images/react.png" height="20px"/>
         React
@@ -34,6 +38,9 @@ include '../documentation-main/documentation_header.php';
         to this after the grid has initialised.
     </p>
 
+</div>
+
+<div ng-if="isFramework('angular')">
     <h4>
         <img src="/images/angular2.png" height="20px"/>
         Angular
@@ -42,7 +49,9 @@ include '../documentation-main/documentation_header.php';
         Use api placed inside gridOptions by the grid during initialisation. You can also
         use api directly on the Angular grid component.
     </p>
+</div>
 
+<div ng-if="isFramework('vue')">
     <h4>
         <img src="/images/vue_large.png" height="20px"/>
         VueJS
@@ -51,7 +60,9 @@ include '../documentation-main/documentation_header.php';
         Use api placed inside gridOptions by the grid during initialisation. You can also
         use api directly on the VueJS grid component.
     </p>
+</div>
 
+<div ng-if="isFramework('webcomponents')">
     <h4>
         <img src="/images/webComponents.png" height="20px"/>
         Web Components
@@ -60,7 +71,9 @@ include '../documentation-main/documentation_header.php';
         Use api placed inside gridOptions by the grid during initialisation. You can also
         use api directly on the DOM element.
     </p>
+</div>
 
+<div ng-if="isFramework('aurelia')">
     <h4>
         <img src="/images/aurelia.png" height="20px"/>
         Aurelia Components
@@ -70,6 +83,7 @@ include '../documentation-main/documentation_header.php';
         use api directly on the DOM element.
     </p>
 
+</div>
     <h2 id="list-of-api-functions">List of API Functions</h2>
 
     <table class="table">

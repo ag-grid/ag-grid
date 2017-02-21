@@ -1,6 +1,33 @@
 (function () {
 
-    var module = angular.module("documentation", []);
+    var module = angular.module("documentation", ['ngCookies']);
+
+    module.controller('DocumentationController', ['$scope','$cookies', function($scope, $cookies) {
+        var frameworkContext = $cookies['frameworkContext'];
+        if(!frameworkContext) {
+            $cookies['frameworkContext'] = 'all';
+        }
+        $scope.frameworkContext = frameworkContext;
+
+        $scope.onFrameworkContextChanged = function () {
+            $cookies['frameworkContext'] = $scope.frameworkContext;
+        };
+
+        $scope.isFramework = function (framework) {
+            if($scope.frameworkContext ==='all') {
+                return true;
+            }
+
+            var frameworks = [].concat(framework);
+            for (var test of frameworks) {
+                if($scope.frameworkContext === test) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }]);
 
     /*
      * Show Example directive
