@@ -25,7 +25,7 @@ gulp.task('stylusGrid', stylusGrid);
 
 function watchTask() {
     // listen for changes with a custom port
-    liveReload.listen(35000);
+    liveReload.listen();
     gulp.watch(['../ag-grid/src/**/*','../ag-grid-enterprise/src/**/*'], ['webpack']);
 }
 
