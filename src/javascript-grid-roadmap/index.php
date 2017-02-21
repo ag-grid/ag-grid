@@ -3,6 +3,7 @@ $key = "Roadmap";
 $pageTitle = "ag-Grid Feature Roadmap";
 $pageDescription = "Summary of items we will be implementing into ag-Grid over the new few months and year.";
 $pageKeyboards = "ag-Grid Roadmap";
+$pageGroup = "misc";
 include '../documentation-main/documentation_header.php';
 ?>
 

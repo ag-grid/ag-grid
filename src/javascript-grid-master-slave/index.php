@@ -3,6 +3,7 @@ $key = "Master / Slave";
 $pageTitle = "ag-Grid Master Slave";
 $pageDescription = "ag-Grid Sorting";
 $pageKeyboards = "ag-Grid Sorting";
+$pageGroup = "free";
 include '../documentation-main/documentation_header.php';
 ?>
 

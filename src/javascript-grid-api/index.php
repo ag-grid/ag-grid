@@ -3,6 +3,7 @@ $key = "Grid API";
 $pageTitle = "ag-Grid API";
 $pageDescription = "ag-Grid API";
 $pageKeyboards = "ag-Grid API";
+$pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 

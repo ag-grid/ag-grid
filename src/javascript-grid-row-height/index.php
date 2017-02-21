@@ -3,6 +3,7 @@ $key = "Row Height";
 $pageTitle = "ag-Grid Row Height";
 $pageDescription = "Learn how configure ag-Grid so it can have variable or fixed row height.";
 $pageKeyboards = "ag-Grid ag grid javascript Row Height";
+$pageGroup = "free";
 include '../documentation-main/documentation_header.php';
 ?>
 

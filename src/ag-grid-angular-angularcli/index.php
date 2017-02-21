@@ -3,6 +3,7 @@ $key = "Angular CLI";
 $pageTitle = "Angular Datagrid using Angular CLI";
 $pageDescription = "Demonstrate the best Angular datagrid using Angular CLI.";
 $pageKeyboards = "Angular Grid Angular CLI";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 

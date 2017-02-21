@@ -3,6 +3,7 @@ $key = "Cell Expressions";
 $pageTitle = "ag-Grid Cell Expressions";
 $pageDescription = "ag-Grid provides the ability to have expressions as cell values, just like in Excel. This page describes how to do this.";
 $pageKeyboards = "ag-Grid Cell Expressions";
+$pageGroup = "free";
 include '../documentation-main/documentation_header.php';
 ?>
 

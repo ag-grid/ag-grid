@@ -3,6 +3,7 @@ $key = "Getting Started";
 $pageTitle = "Getting Started";
 $pageDescription = "Getting Started Angular JS 1";
 $pageKeyboards = "Getting Started Angular JS 1";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 <!--include '../documentation-main/documentation_header.php';-->

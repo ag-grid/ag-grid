@@ -3,6 +3,7 @@ $key = "Properties";
 $pageTitle = "ag-Grid Properties";
 $pageDescription = "Learn how each property impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid properties";
+$pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 
