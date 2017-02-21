@@ -3,6 +3,7 @@ $key = "Column Definitions";
 $pageTitle = "Column Definitions";
 $pageDescription = "ag-Grid Column Definitions";
 $pageKeyboards = "ag-Grid Column Definitions";
+$pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 

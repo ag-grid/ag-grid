@@ -3,6 +3,7 @@ $key = "Change Log";
 $pageTitle = "ag-Grid Change Log";
 $pageDescription = "ag-Grid change log. Details the items that have change between each release.";
 $pageKeyboards = "ag-Grid Change Log";
+$pageGroup = "misc";
 include '../documentation-main/documentation_header.php';
 ?>
 

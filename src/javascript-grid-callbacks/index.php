@@ -3,6 +3,7 @@ $key = "Callbacks";
 $pageTitle = "ag-Grid Callbacks";
 $pageDescription = "Learn how each callbacks impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid Callbacks";
+$pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 

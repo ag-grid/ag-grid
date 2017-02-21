@@ -3,6 +3,7 @@ $key = "Interfacing Overview";
 $pageTitle = "Interfacing Overview";
 $pageDescription = "Learn how to interface with ag-Grid using events, functions and the API.";
 $pageKeyboards = "html5 data grid ag-Grid interfacing events functions api";
+$pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 

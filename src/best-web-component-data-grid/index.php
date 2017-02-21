@@ -3,6 +3,7 @@ $key = "Getting Started Web Components";
 $pageTitle = "Web Component Datagrid";
 $pageDescription = "Demonstrates the best Web Component Datagrid. Shows how to use ag-Grid to build a Javascript grid using Web Components and without using any framework";
 $pageKeyboards = "Best Javascript Web Component Datagrid";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 

@@ -3,6 +3,7 @@ $key = "RTL";
 $pageTitle = "ag-Grid RTL";
 $pageDescription = "ag-Grid RTL";
 $pageKeyboards = "ag-Grid RTL";
+$pageGroup = "free";
 include '../documentation-main/documentation_header.php';
 ?>
 

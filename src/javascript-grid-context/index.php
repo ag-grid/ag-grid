@@ -3,6 +3,7 @@ $key = "Context";
 $pageTitle = "ag-Grid Context";
 $pageDescription = "ag-Grid provides the ability to pass down values to the renderers or use in the rendering process. These are stored in the context in the grid options.";
 $pageKeyboards = "ag-Grid Context";
+$pageGroup = "free";
 include '../documentation-main/documentation_header.php';
 ?>
 

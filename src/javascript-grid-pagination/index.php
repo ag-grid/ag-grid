@@ -3,6 +3,7 @@ $key = "Pagination";
 $pageTitle = "ag-Grid Pagination";
 $pageDescription = "You can load data in pages from the server, delegating filtering and sorting to the server also. This page explains how to do this with ag-Grid.";
 $pageKeyboards = "ag-Grid Paging Pagination";
+$pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 

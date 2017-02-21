@@ -3,6 +3,7 @@ $key = "Styled Report";
 $pageTitle = "ag-Grid as a Styled Report";
 $pageDescription = "How to make a Styled Report using ag-Grid. This page gives you an example you can follow.";
 $pageKeyboards = "ag-Grid Styled Report";
+$pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
 ?>
 

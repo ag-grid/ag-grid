@@ -1,0 +1,1023 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a640e5c1-cbc5-4f13-9ed3-94da663a68cd" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ag-grid-angular-angularcli/index.php" afterPath="$PROJECT_DIR$/src/ag-grid-angular-angularcli/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ag-grid-angular-systemjs/index.php" afterPath="$PROJECT_DIR$/src/ag-grid-angular-systemjs/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ag-grid-angular-webpack/index.php" afterPath="$PROJECT_DIR$/src/ag-grid-angular-webpack/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ag-grid-tutorials/index.php" afterPath="$PROJECT_DIR$/src/ag-grid-tutorials/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/best-angular-2-data-grid/index.php" afterPath="$PROJECT_DIR$/src/best-angular-2-data-grid/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/best-angularjs-data-grid/index.php" afterPath="$PROJECT_DIR$/src/best-angularjs-data-grid/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/best-aurelia-data-grid/index.php" afterPath="$PROJECT_DIR$/src/best-aurelia-data-grid/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/best-javascript-data-grid/index.php" afterPath="$PROJECT_DIR$/src/best-javascript-data-grid/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/best-react-data-grid/index.php" afterPath="$PROJECT_DIR$/src/best-react-data-grid/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/best-vuejs-data-grid/index.php" afterPath="$PROJECT_DIR$/src/best-vuejs-data-grid/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/best-web-component-data-grid/index.php" afterPath="$PROJECT_DIR$/src/best-web-component-data-grid/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/change-log/changeLogIndex.php" afterPath="$PROJECT_DIR$/src/change-log/changeLogIndex.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/documentation-main/documentation.css" afterPath="$PROJECT_DIR$/src/documentation-main/documentation.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/documentation-main/documentation_header.php" afterPath="$PROJECT_DIR$/src/documentation-main/documentation_header.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/example-account-report/index.php" afterPath="$PROJECT_DIR$/src/example-account-report/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/example-expressions-and-context/index.php" afterPath="$PROJECT_DIR$/src/example-expressions-and-context/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/example-file-browser/index.php" afterPath="$PROJECT_DIR$/src/example-file-browser/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-aggregation/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-aggregation/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-animation/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-animation/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-api/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-api/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-callbacks/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-callbacks/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-cell-editor/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-cell-editor/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-cell-expressions/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-cell-expressions/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-cell-styling/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-cell-styling/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-clipboard/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-clipboard/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-column-api/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-column-api/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-column-definitions/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-column-definitions/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-column-menu/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-column-menu/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-context-menu/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-context-menu/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-context/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-context/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-data-functions/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-data-functions/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-datasource/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-datasource/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-events/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-events/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-excel/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-excel/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-export/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-export/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-filtering/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-filtering/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-floating/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-floating/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-for-print/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-for-print/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-getting-started/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-getting-started/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-grouping-headers/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-grouping-headers/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-grouping/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-grouping/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-icons/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-icons/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-insert-remove/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-insert-remove/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-interfacing-overview/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-interfacing-overview/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-internationalisation/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-internationalisation/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-keyboard-navigation/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-keyboard-navigation/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-master-detail/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-master-detail/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-master-slave/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-master-slave/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-model/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-model/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-overlays/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-overlays/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-pagination/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-pagination/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-pinning/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-pinning/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-pivoting/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-pivoting/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-properties/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-properties/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-range-selection/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-range-selection/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-refresh/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-refresh/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-resizing/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-resizing/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-roadmap/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-roadmap/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-row-height/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-row-height/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-row-models/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-row-models/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-rtl/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-rtl/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-selection/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-selection/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-set-filtering/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-set-filtering/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-set-license/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-set-license/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-sorting/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-sorting/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-status-bar/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-status-bar/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-styling/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-styling/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-themes/blue-theme.php" afterPath="$PROJECT_DIR$/src/javascript-grid-themes/blue-theme.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-themes/bootstrap-theme.php" afterPath="$PROJECT_DIR$/src/javascript-grid-themes/bootstrap-theme.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-themes/dark-theme.php" afterPath="$PROJECT_DIR$/src/javascript-grid-themes/dark-theme.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-themes/fresh-theme.php" afterPath="$PROJECT_DIR$/src/javascript-grid-themes/fresh-theme.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-themes/material-theme.php" afterPath="$PROJECT_DIR$/src/javascript-grid-themes/material-theme.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-tool-panel/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-tool-panel/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-touch/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-touch/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-tree/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-tree/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-value-getters/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-value-getters/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-viewport/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-viewport/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-virtual-paging/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-virtual-paging/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/javascript-grid-width-and-height/index.php" afterPath="$PROJECT_DIR$/src/javascript-grid-width-and-height/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/style.css" afterPath="$PROJECT_DIR$/src/style.css" />
+    </list>
+    <ignored path="$PROJECT_DIR$/.tmp/" />
+    <ignored path="$PROJECT_DIR$/temp/" />
+    <ignored path="$PROJECT_DIR$/tmp/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="documentation_header.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/documentation-main/documentation_header.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="541">
+              <caret line="77" column="31" lean-forward="false" selection-start-line="77" selection-start-column="31" selection-end-line="77" selection-end-column="47" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="headerRow.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/includes/headerRow.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="documentation.css" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/documentation-main/documentation.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="831">
+              <caret line="174" column="43" lean-forward="false" selection-start-line="174" selection-start-column="43" selection-end-line="174" selection-end-column="43" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/style.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="124">
+              <caret line="1031" column="0" lean-forward="true" selection-start-line="1031" selection-start-column="0" selection-end-line="1031" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>components</find>
+      <find>Components</find>
+      <find>Free Feat</find>
+      <find>sideb</find>
+      <find>Searc</find>
+      <find>sidebarLink</find>
+      <find>col-sm-</find>
+      <find>180</find>
+      <find>search</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/javascript-grid-cell-expressions/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-cell-styling/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-cell-editor/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-context/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-insert-remove/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-refresh/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-animation/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-keyboard-navigation/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-internationalisation/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-master-detail/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-master-slave/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-touch/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-model/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-export/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-styling/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-themes/material-theme.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-themes/fresh-theme.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-themes/dark-theme.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-themes/bootstrap-theme.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-themes/blue-theme.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-rtl/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-icons/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-overlays/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-for-print/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-row-models/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-datasource/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-pagination/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-virtual-paging/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-excel/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-viewport/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-data-functions/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-grouping/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-aggregation/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-pivoting/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-tool-panel/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-clipboard/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-column-menu/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-context-menu/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-range-selection/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-status-bar/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-set-filtering/index.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-set-license/index.php" />
+        <option value="$PROJECT_DIR$/src/example-account-report/index.php" />
+        <option value="$PROJECT_DIR$/src/example-file-browser/index.php" />
+        <option value="$PROJECT_DIR$/src/example-expressions-and-context/index.php" />
+        <option value="$PROJECT_DIR$/src/ag-grid-tutorials/index.php" />
+        <option value="$PROJECT_DIR$/src/change-log/changeLogIndex.php" />
+        <option value="$PROJECT_DIR$/src/javascript-grid-roadmap/index.php" />
+        <option value="$PROJECT_DIR$/src/documentation-main/documentation_header.php" />
+        <option value="$PROJECT_DIR$/src/style.css" />
+        <option value="$PROJECT_DIR$/src/documentation-main/documentation.css" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <gulpfiles>
+      <GulpfileState>
+        <gulpfile-path>$PROJECT_DIR$/gulpfile.js</gulpfile-path>
+      </GulpfileState>
+    </gulpfiles>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-1808" />
+    <option name="y" value="-430" />
+    <option name="width" value="1699" />
+    <option name="height" value="1042" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-tool-panel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-status-bar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-set-license" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-set-filtering" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-roadmap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-range-selection" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-data-functions" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-context-menu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-column-menu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javascript-grid-clipboard" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="includes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ag-grid-docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="documentation-main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.file-colors" />
+    <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
+      <method />
+    </configuration>
+    <configuration default="true" type="DartTestRunConfigurationType" factoryName="Dart Test">
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="cucumber.js" factoryName="Cucumber.js">
+      <option name="cucumberJsArguments" value="" />
+      <option name="executablePath" />
+      <option name="filePath" />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory />
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui />
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a640e5c1-cbc5-4f13-9ed3-94da663a68cd" name="Default" comment="" />
+      <created>1487679469413</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1487679469413</updated>
+      <workItem from="1487679470534" duration="4827000" />
+      <workItem from="1487692942765" duration="3633000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="8460000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-1808" y="-430" width="1699" height="1042" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Gulp" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24955857" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="processedProjectFiles" value="true" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-cell-styling/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-cell-editor/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-context/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-insert-remove/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-refresh/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-animation/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-keyboard-navigation/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-internationalisation/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-master-detail/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-master-slave/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-touch/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-export/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-styling/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-model/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-themes/fresh-theme.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-themes/dark-theme.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-themes/bootstrap-theme.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-themes/blue-theme.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-themes/material-theme.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-overlays/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-for-print/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="54" column="78" lean-forward="false" selection-start-line="54" selection-start-column="78" selection-end-line="54" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-icons/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-rtl/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-row-models/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="5" lean-forward="true" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-datasource/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-pagination/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-virtual-paging/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-excel/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-viewport/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-data-functions/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-grouping/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-aggregation/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-pivoting/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-tool-panel/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-clipboard/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-range-selection/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-status-bar/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-set-filtering/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-set-license/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-context-menu/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-column-menu/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="26" lean-forward="false" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/example-file-browser/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="24" lean-forward="false" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/example-expressions-and-context/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="24" lean-forward="false" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ag-grid-tutorials/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/change-log/changeLogIndex.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="18" lean-forward="false" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/javascript-grid-roadmap/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="18" lean-forward="false" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/example-account-report/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/includes/headerRow.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/documentation-main/documentation_header.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="541">
+          <caret line="77" column="31" lean-forward="false" selection-start-line="77" selection-start-column="31" selection-end-line="77" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="1031" column="0" lean-forward="true" selection-start-line="1031" selection-start-column="0" selection-end-line="1031" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/documentation-main/documentation.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="831">
+          <caret line="174" column="43" lean-forward="false" selection-start-line="174" selection-start-column="43" selection-end-line="174" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

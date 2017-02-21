@@ -3,6 +3,7 @@ $key = "Angular Webpack";
 $pageTitle = "Angular Datagrid using Webpack";
 $pageDescription = "Demonstrate the best Angular  datagrid using Webpack.";
 $pageKeyboards = "Angular  Grid Webpack";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
