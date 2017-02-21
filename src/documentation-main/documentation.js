@@ -1,32 +1,51 @@
 (function () {
 
     var module = angular.module("documentation", ['ngCookies']);
-
-    module.controller('DocumentationController', ['$scope','$cookies', function($scope, $cookies) {
-        var frameworkContext = $cookies['frameworkContext'];
-        if(!frameworkContext) {
-            $cookies['frameworkContext'] = 'all';
-        }
-        $scope.frameworkContext = frameworkContext;
+    module.controller('DocumentationController', ['$scope', '$cookies', function ($scope, $cookies) {
+        $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
 
         $scope.onFrameworkContextChanged = function () {
-            $cookies['frameworkContext'] = $scope.frameworkContext;
+            setCookie('frameworkContext', $scope.frameworkContext ? $scope.frameworkContext : 'all');
         };
 
         $scope.isFramework = function (framework) {
-            if($scope.frameworkContext ==='all') {
+            $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
+
+            if ($scope.frameworkContext === 'all') {
                 return true;
             }
 
             var frameworks = [].concat(framework);
             for (var test of frameworks) {
-                if($scope.frameworkContext === test) {
+                if ($scope.frameworkContext === test) {
                     return true;
                 }
             }
 
             return false;
         };
+
+        function setCookie(name, value) {
+            var n = new Date();
+            var expires = new Date(n.getFullYear() + 1, n.getMonth(), n.getDate());
+            $cookies.put(name,
+                value,
+                {
+                    path: "/",
+                    expires: expires
+                });
+        };
+
+        function getFrameworkFromCookieAndDefaultIfNotDefined() {
+            var frameworkContext = $cookies.get('frameworkContext');
+            console.log("4:" + frameworkContext);
+            if (!frameworkContext) {
+                frameworkContext = 'all';
+                setCookie('frameworkContext', frameworkContext);
+            }
+            $scope.frameworkContext = frameworkContext;
+            return $scope.frameworkContext;
+        }
     }]);
 
     /*

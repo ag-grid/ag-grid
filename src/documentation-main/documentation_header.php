@@ -71,7 +71,7 @@ if (strcmp($version , 'latest') == 0) {
 
             <div class="col-sm-2">
 
-                <h4>Context</h4>
+                <h4>Framework</h4>
                 <select name="frameworkContext" id="frameworkContext" ng-change="onFrameworkContextChanged()" ng-model="frameworkContext">
                     <option value="all">All</option>
                     <option value="javascript">JavaScript</option>
