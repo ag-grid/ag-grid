@@ -5,7 +5,7 @@
   "authors": [
     "Niall Crosby <niall.crosby@ag-grid.com>"
   ],
-  "description": "ag-Grid Angular 2 Component",
+  "description": "ag-Grid Angular Component",
   "main": [
     "./main.js"
   ],

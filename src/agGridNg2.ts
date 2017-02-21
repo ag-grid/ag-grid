@@ -111,8 +111,8 @@ export class AgGridNg2 implements AfterViewInit {
     }
 
     private globalEventListener(eventType: string, event: any): void {
-        // if we are tearing down, don't emit angular 2 events, as this causes
-        // problems with the angular 2 router
+        // if we are tearing down, don't emit angular events, as this causes
+        // problems with the angular router
         if (this._destroyed) {
             return;
         }
