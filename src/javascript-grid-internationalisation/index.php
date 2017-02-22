@@ -3,7 +3,7 @@ $key = "Internationalisation";
 $pageTitle = "ag-Grid Internationalisation";
 $pageDescription = "You can change text used in different parts of the grid for Internationalisation. This page explains how to change languages via the grid options.";
 $pageKeyboards = "ag-Grid Internationalisation";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

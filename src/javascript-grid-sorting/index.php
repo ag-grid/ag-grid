@@ -3,7 +3,7 @@ $key = "Sorting";
 $pageTitle = "ag-Grid Sorting";
 $pageDescription = "ag-Grid Sorting";
 $pageKeyboards = "ag-Grid Sorting";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

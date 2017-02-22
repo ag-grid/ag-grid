@@ -3,7 +3,7 @@ $key = "Excel Export";
 $pageTitle = "Javascript Excel Export";
 $pageDescription = "We are now supporting JavaScript Export to Excel. This page explains how to use this new feature to Export to Excel along with properties you can set to get the configure the exports.";
 $pageKeyboards = "JavaScript Export to Excel";
-$pageGroup = "enterprise";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

@@ -3,7 +3,7 @@ $key = "Selection";
 $pageTitle = "ag-Grid Selection";
 $pageDescription = "ag-Grid Selection";
 $pageKeyboards = "ag-Grid Selection";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

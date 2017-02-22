@@ -3,7 +3,7 @@ $key = "Fresh Theme";
 $pageTitle = "ag-Grid Fresh Theme Data Grid";
 $pageDescription = "ag-Grid Fresh Theme Data Grid";
 $pageKeyboards = "ag-Grid Fresh Theme Data Grid";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
