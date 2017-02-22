@@ -3,7 +3,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Why the world needed another AngularJS grid</title>
+    <title>Why the world needed another AngularJS 1.x grid</title>
     <meta name="description" content="A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid">
     <meta name="keywords" content="angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,7 +52,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h2>Why The World Needed Another AngularJS Grid</h2>
+            <h2>Why The World Needed Another AngularJS 1.x Grid</h2>
         </div>
     </div>
 
@@ -65,13 +65,13 @@
                 the question 'which grid should we use' came up and each time
                 there was debate. Each grid had it's merits, no grid fit
                 well. We were on our third project in three years to be using
-                <a href="https://angularjs.org/">AngularJS</a>, having tested 5 different grids that 'worked' with
-                <a href="https://angularjs.org/">AngularJS</a>.
+                <a href="https://angularjs.org/">AngularJS 1.x</a>, having tested 5 different grids that 'worked' with
+                <a href="https://angularjs.org/">AngularJS 1.x</a>.
             </p>
             <p>
-                In the beginning we were new to <a href="https://angularjs.org/">AngularJS</a>, so we decided to use
+                In the beginning we were new to <a href="https://angularjs.org/">AngularJS 1.x</a>, so we decided to use
                 <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a>. We found the basic interface into <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> nice and simple,
-                an <a href="https://angularjs.org/">AngularJS</a> directive that took a list of columns and a list
+                an <a href="https://angularjs.org/">AngularJS 1.x</a> directive that took a list of columns and a list
                 of rows. However we also needed to have checkbox selection and grouping,
                 and found to get these items from <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> required using plugins,
                 looking at <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> source code and hacking around. These we could
@@ -84,21 +84,21 @@
             <p>
                 So for our more complex tables we went with <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a>. <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> performed
                 much better with large data-sets, but we still found it lacking. It behaved
-                a bit clunky, was tricky to extend and customise, and wasn't native to <a href="https://angularjs.org/">AngularJS</a>
-                (making it not 'natural' for the <a href="https://angularjs.org/">AngularJS</a> developer). We stuck with <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a>,
+                a bit clunky, was tricky to extend and customise, and wasn't native to <a href="https://angularjs.org/">AngularJS 1.x</a>
+                (making it not 'natural' for the <a href="https://angularjs.org/">AngularJS 1.x</a> developer). We stuck with <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a>,
                 taking it as the 'best choice for now'.
             </p>
             <p>
                 We also considered <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a>. It's widely adopted, free, and performed
                 very well. However it didn't support pinned columns (unless you went
-                with a branch) and it wasn't written with <a href="https://angularjs.org/">AngularJS</a> in mind.
+                with a branch) and it wasn't written with <a href="https://angularjs.org/">AngularJS 1.x</a> in mind.
             </p>
             <p>
                 I realised in 2014 that <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> was been rewritten, that <a href="http://ui-grid.info/">ui-grid</a> was
                 going to be the new <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a> and solve the performance problems.
                 So I kept a close eye on <a href="http://ui-grid.info/">ui-grid</a> and was excited in late in 2014 when
                 I could download a release candidate of <a href="http://ui-grid.info/">ui-grid</a>. Finally I could say
-                goodbye to <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> and move back into the pure-<a href="https://angularjs.org/">AngularJS</a> world...
+                goodbye to <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> and move back into the pure-<a href="https://angularjs.org/">AngularJS 1.x</a> world...
                 I really wanted <a href="http://ui-grid.info/">ui-grid</a> to be my answer...
             </p>
             <p>
@@ -113,12 +113,12 @@
             <p>
                 So <a href="http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxgrid/">jqxGrid</a> was again our grid of choice and I went home for Christmas to mull over it all.
                 <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> showed Javascript was capable of a great fast grid. But I liked the interface
-                and native <a href="https://angularjs.org/">AngularJS</a> feel of <a href="http://ui-grid.info/">ui-grid</a>. How hard would it be to match
-                <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> for performance, but keep the <a href="https://angularjs.org/">AngularJS</a> interface??? Can it really
+                and native <a href="https://angularjs.org/">AngularJS 1.x</a> feel of <a href="http://ui-grid.info/">ui-grid</a>. How hard would it be to match
+                <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> for performance, but keep the <a href="https://angularjs.org/">AngularJS 1.x</a> interface??? Can it really
                 be that difficult to write a grid that gave me this?
             </p>
             <p>
-                So I began my Christmas break pet project entitled <i>"How do you build a lightning fast grid for <a href="https://angularjs.org/">AngularJS</a>"</i>.
+                So I began my Christmas break pet project entitled <i>"How do you build a lightning fast grid for <a href="https://angularjs.org/">AngularJS 1.x</a>"</i>.
             </p>
             <p>
                 First step was technology choice. I wrote the following prototypes, wanting to consider every possibility:
@@ -142,15 +142,15 @@
                     cannot attach native browser events to your own <a href="http://www.w3.org/TR/2dcontext/">canvas</a> objects) and c) like <a href="http://www.w3.org/Graphics/SVG/">SVG</a> this option
                     pushed the technology out of reach of the ordinary Javascript
                     developer (unless like me you like programming games).
-                    <li><b>Pure AngularJS:</b></li> Next up was what <a href="http://ui-grid.info/">ui-grid</a>
+                    <li><b>Pure AngularJS 1.x:</b></li> Next up was what <a href="http://ui-grid.info/">ui-grid</a>
                     did, use Angular JS for everything - almost using the
-                    project to showcase <a href="https://angularjs.org/">AngularJS</a>. So I created a grid
+                    project to showcase <a href="https://angularjs.org/">AngularJS 1.x</a>. So I created a grid
                     using about eight directives, one for a cell, one for a row, one for a
                     column header e.t.c. and create my own 'ng-repeat' to virtualise
                     the rows (I did not virtualise the columns, I do not believe this should be
                     done as it is not normal to have a table with hundreds of columns).
                     This created a lot of Angular scopes and some extra levels of div's
-                    than I wanted (unnecessary baggage). The result was very AngularJS-esque,
+                    than I wanted (unnecessary baggage). The result was very AngularJS 1.x-esque,
                     performed fine
                     (better than <a href="http://ui-grid.info/">ui-grid</a>, but unfair to make a comparison at this point
                     as I didn't have any complex features in) but didn't perform as well
@@ -160,15 +160,15 @@
                     for web applications. However the 'free stuff' you get costs CPU
                     processing and redraw lags (waiting for the digest cycle), and grids
                     require fast redraw when been scrolled and virtualised, so the extra
-                    logic that <a href="https://angularjs.org/">AngularJS</a> puts in behind the scenes doesn't work in your
+                    logic that <a href="https://angularjs.org/">AngularJS 1.x</a> puts in behind the scenes doesn't work in your
                     favour when building something like a complex grid. So my journey
-                    continued, how can a grid be an <a href="https://angularjs.org/">AngularJS</a> component
-                    but yet not use <a href="https://angularjs.org/">AngularJS</a>???
-                    <li><b>Hybrid AngularJS:</b></li> The final prototype offering, use <a href="https://angularjs.org/">AngularJS</a>
-                    to present the grid (so has an <a href="https://angularjs.org/">AngularJS</a> interface like <a href="http://ui-grid.info/">ui-grid</a>) but doesn't
-                    use <a href="https://angularjs.org/">AngularJS</a> itself to draw the grid. This incidentally became the
+                    continued, how can a grid be an <a href="https://angularjs.org/">AngularJS 1.x</a> component
+                    but yet not use <a href="https://angularjs.org/">AngularJS 1.x</a>???
+                    <li><b>Hybrid AngularJS 1.x:</b></li> The final prototype offering, use <a href="https://angularjs.org/">AngularJS 1.x</a>
+                    to present the grid (so has an <a href="https://angularjs.org/">AngularJS 1.x</a> interface like <a href="http://ui-grid.info/">ui-grid</a>) but doesn't
+                    use <a href="https://angularjs.org/">AngularJS 1.x</a> itself to draw the grid. This incidentally became the
                     evolutionary prototype of what is now ag-Grid. When drawing the grid, not
-                    using <a href="https://angularjs.org/">AngularJS</a> means you don't get two-way-binding. However in my
+                    using <a href="https://angularjs.org/">AngularJS 1.x</a> means you don't get two-way-binding. However in my
                     experience, the vast majority of grids don't require this, so supporting
                     it is slowing down everything to cater for the few. The performance,
                     to my surprise, was up to <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a>. I say 'to my surprise' as I was
@@ -176,20 +176,20 @@
                     inkling I wouldn't of bothered with my <a href="http://www.w3.org/Graphics/SVG/">SVG</a> and <a href="http://www.w3.org/TR/2dcontext/">canvas</a> experiments,
                     but they were fun, if you consider alone on your laptop writing code
                     that will never be used 'fun').
-                    But what about <a href="https://angularjs.org/">AngularJS</a>, what if someone did want two-way-binding,
-                    or use <a href="https://angularjs.org/">AngularJS</a> to customise a cell? Easy - we can add that as an option!
-                    If you want to use <a href="https://angularjs.org/">AngularJS</a> you can, just turn it on and have your rows
-                    compiled <a href="https://angularjs.org/">AngularJS</a> style!!!
+                    But what about <a href="https://angularjs.org/">AngularJS 1.x</a>, what if someone did want two-way-binding,
+                    or use <a href="https://angularjs.org/">AngularJS 1.x</a> to customise a cell? Easy - we can add that as an option!
+                    If you want to use <a href="https://angularjs.org/">AngularJS 1.x</a> you can, just turn it on and have your rows
+                    compiled <a href="https://angularjs.org/">AngularJS 1.x</a> style!!!
                 </ul>
             </p>
             <p>
-                The Hybrid <a href="https://angularjs.org/">AngularJS</a> was the clear winner. The SVG and canvas experiments
+                The Hybrid <a href="https://angularjs.org/">AngularJS 1.x</a> was the clear winner. The SVG and canvas experiments
                 were fun but ended up in my 'home office software graveyard'. With the prototype
                 under my belt, I felt I had the workings of a grid worthy of investing more time in,
                 so I came up with a list of all the things I wanted in a grid. My list was
                 as follows (otherwise known as requirements):
                 <ul>
-                    <li><a href="https://angularjs.org/">AngularJS</a> Interface</li> - Influenced by <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a>. I wanted it to be simple to
+                    <li><a href="https://angularjs.org/">AngularJS 1.x</a> Interface</li> - Influenced by <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a>. I wanted it to be simple to
                     pop in a list of rows and columns and off you go. The default settings
                     would cater for everything else.
                     <li>Customisable Cell Editors and Renderers</li> - Influenced by Java Swings JTable.
@@ -216,7 +216,7 @@
                 </ul>
                 So I coded up the new grid in time for getting back to work in 2015. I introduced ag-Grid
                 to the 'troubled' application. What a breath of fresh air! For the first time we had
-                a grid that performed as well as <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> and had a programming interface native to <a href="https://angularjs.org/">AngularJS</a>.
+                a grid that performed as well as <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a> and had a programming interface native to <a href="https://angularjs.org/">AngularJS 1.x</a>.
                 The styling and customising worked a treat.
                 The grid made our application more responsive than any of the grids that we had used.
                 For the first time I felt our grid choice was without compromise.
@@ -229,8 +229,8 @@
             <p>
                 And that is the story of ag-Grid. I hope my contribution back to the community
                 can help out if you are suffering the same frustration I used to with the grid choices
-                for <a href="https://angularjs.org/">AngularJS</a>. I intend continuing with ag-Grid, making it a great choice
-                for <a href="https://angularjs.org/">AngularJS</a>, or even non-<a href="https://angularjs.org/">AngularJS</a> web development. So please spread the word,
+                for <a href="https://angularjs.org/">AngularJS 1.x</a>. I intend continuing with ag-Grid, making it a great choice
+                for <a href="https://angularjs.org/">AngularJS 1.x</a>, or even non-<a href="https://angularjs.org/">AngularJS 1.x</a> web development. So please spread the word,
                 the more people who use it, the better it will become.
             </p>
             <p>
@@ -257,7 +257,7 @@
                 <p>
                     I have been writing software all my life! Starting with Assembly, C++ and MFC,
                     moving onto full stack Java / JSP / GWT and now focusing on full stack
-                    Java / Javascript / AngularJS.
+                    Java / Javascript / AngularJS 1.x.
                 </p>
                 <p>
                     Consultant working in the financial industry, specialising in web based reporting applications.
@@ -355,7 +355,7 @@
 
                 <div class="quote-block">
                     <div class="quote">
-                        "I found ag-Grid on the AngularJS subreddit and it's working out great!   I love the speed and the built-in features."
+                        "I found ag-Grid on the AngularJS 1.x subreddit and it's working out great!   I love the speed and the built-in features."
                     </div>
                     <div class="under-quote">
                         Charles 14 Apr 2015 via Email
@@ -423,7 +423,7 @@
 
                 <div class="quote-block">
                     <div class="quote">
-                        "I've showed the demo of angular-grid to about 420 developers last weekend at our Spring into Code workshop and all agreed that this WILL become the de facto grid for AngularJS."
+                        "I've showed the demo of angular-grid to about 420 developers last weekend at our Spring into Code workshop and all agreed that this WILL become the de facto grid for AngularJS 1.x."
                     </div>
                     <div class="under-quote">
                         Jqravois 13th April 2015 via ag-Grid Froum

@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         Angular
     </h4>
     <p>
-        Add callbacks to the gridOptions or set as AngularJS properties.
+        Add callbacks to the gridOptions or set as AngularJS 1.x properties.
     </p>
 
 </div>
@@ -85,11 +85,6 @@ include '../documentation-main/documentation_header.php';
     <h2 id="list-of-callbacks">List of Callbacks</h2>
 
     <table class="table">
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-        </tr>
-
         <tr>
             <th>isExternalFilterPresent()</th>
             <td>Grid calls this method to know if external filter is present.</td>
@@ -170,19 +165,6 @@ include '../documentation-main/documentation_header.php';
             <td>Allows overriding what document is used. Currently used by Drag and Drop (may extend to other places
                 in the future). Use this when you want the grid to use a different document than the one available
                 on the global scope. This can happen if docking out components (something which Electron supports).</td>
-        </tr>
-    </table>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        The callbacks below are available in the Enterprise version of ag-Grid.
-    </p>
-
-    <table class="table">
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
         </tr>
         <tr>
             <th>getContextMenuItems(params)</th>

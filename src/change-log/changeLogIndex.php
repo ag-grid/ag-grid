@@ -560,7 +560,7 @@ params = {
     <li>Enhancement: new property colDef.openByDefault - set to true on column groups to have them open be default if expandable </li>
     <li>Enhancement: new grid property functionsReadOnly - makes the gui for group, pivot and values read only</li>
     <li>Enhancement: added suppressFilter to colDef, to allow turning filtering off for a particular column</li>
-    <li>Bugfix: AngularJS bindings were not getting cells updated when columns added and removed</li>
+    <li>Bugfix: AngularJS 1.x bindings were not getting cells updated when columns added and removed</li>
     <li>Bugfix: Popups were triggering a scrollbar to flicker on and off when showing (eg show column menu, a scrollbar appeard and then dissappeared in the grid)</li>
     <li>Bugfix: rowSelectionChanged was not firing on shift select</li>
     <li>Bugfix: isCancelBeforeStart and isCancelAfterEnd were not working for popup editors</li>
@@ -890,7 +890,7 @@ params = {
     </ul>
 
     <h3>Version 2.3.7</h3>
-    <li>Minor: Updated AngularJS 2 to version Beta 0. Example updated to show changes.</li>
+    <li>Minor: Updated AngularJS 1.x 2 to version Beta 0. Example updated to show changes.</li>
 
     <h3>Version 2.3.5</h3>
     <li>Minor: Overlays can now be disabled via new properties suppressLoadingOverlay and suppressNoRowsOverlay.</li>
@@ -918,14 +918,14 @@ params = {
     <h3>Version 2.3.0</h3>
     <li>Major - Introduced 'no rows' message for when grid is empty.</li>
     <li>Major - Introduced custom overlays for 'no rows' and 'loading', so now they can be what you like.</li>
-    <li>Major - Moved to AngularJS 2 alpha 38.</li>
-    <li>Major - Took out auto loading of AngularJS 2 module with JSPM.</li>
+    <li>Major - Moved to AngularJS 1.x 2 alpha 38.</li>
+    <li>Major - Took out auto loading of AngularJS 1.x 2 module with JSPM.</li>
     <li>Minor - Exposed global function for initialising Angular 1.x, to use if Angular not available on the global scope, eg using JSPM</li>
     <li>Minor - Bugfix - rowRenderer was not working when useEntireRow=true</li>
 
     <h3>Version 2.2.0</h3>
     <li>Major - Implemented 'destroy' API method, to release grids resources. Needed for Web Components and native
-        Javascript (AngularJS lifecycle manages this for you).</li>
+        Javascript (AngularJS 1.x lifecycle manages this for you).</li>
     <li>Major - Column resize events now have 'finished' flag, so if resizing, you know which event from a stream of
         'dragging' events is the final one.</li>
     <li>Major - New event: rowDeselected.</li>
@@ -941,13 +941,13 @@ params = {
     <hr/>
 
     <p>
-        <b>23rd Sep</b> ag-Grid 2.0 released - AngularJS 2 and Web Components supported
+        <b>23rd Sep</b> ag-Grid 2.0 released - AngularJS 1.x 2 and Web Components supported
     </p>
 
     <hr/>
 
     <p>
-        <b>13th Sep</b> First pass on AngularJS 2
+        <b>13th Sep</b> First pass on AngularJS 1.x 2
     </p>
 
     <hr/>

@@ -92,12 +92,12 @@ if (strcmp($version , 'latest') == 0) {
 
             <div class="col-sm-2">
 
-                <h4>Context</h4>
+                <h4>Framework</h4>
                 <select name="frameworkContext" id="frameworkContext" ng-change="onFrameworkContextChanged()" ng-model="frameworkContext">
                     <option value="all">All</option>
                     <option value="javascript">JavaScript</option>
                     <option value="angular">Angular</option>
-                    <option value="angularjs">AngularJS</option>
+                    <option value="angularjs">AngularJS 1.x</option>
                     <option value="react">ReactJS</option>
                     <option value="vue">VueJS</option>
                     <option value="aurelia">AureliaJS</option>
@@ -417,9 +417,9 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
 
                     <?php if ($key == "Viewport") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Viewport</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Viewport</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/"><i class="fa fa-star" aria-hidden="true"></i> Viewport</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/"><img src="../images/enterprise.png"/> Viewport</a>
                     <?php } ?>
 
                     <?php if ($key == "Data Functions") { ?>

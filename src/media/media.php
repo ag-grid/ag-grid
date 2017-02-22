@@ -392,7 +392,7 @@ include('../includes/mediaHeader.php');
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
             <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
-                Building Performant components for AngularJS
+                Building Performant components for AngularJS 1.x
             </a>
         </div>
         <div style="float: right;  color: #767676;">
@@ -477,7 +477,7 @@ include('../includes/mediaHeader.php');
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
             <a href="/why-the-world-needed-another-angularjs-grid/">
-                Why The World Needed Another AngularJS Grid
+                Why The World Needed Another AngularJS 1.x Grid
             </a>
         </div>
         <div style="float: right;  color: #767676;">

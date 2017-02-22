@@ -217,7 +217,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         </p>
 
         <pre><code>&lt;ag-grid-angular
-    <span class="codeComment">// give an AngularJS ID to the grid</span>
+    <span class="codeComment">// give an AngularJS 1.x ID to the grid</span>
     #myGrid
 
     <span class="codeComment">// these are boolean values, which if included without a value, default to true</span>
@@ -229,7 +229,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     row-height="22"
     row-selection="multiple"
 
-    <span class="codeComment">// these are bound properties, bound to the AngularJS current context (that's what a</span>
+    <span class="codeComment">// these are bound properties, bound to the AngularJS 1.x current context (that's what a</span>
     <span class="codeComment">// scope is called in Angular JS 2)</span>
     [column-defs]="columnDefs"
     [show-tool-panel]="showToolPanel"

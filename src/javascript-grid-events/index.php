@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         via api.addEventListener(eventName, handler).
     </p>
 
-    <note ng-if="isFramework('angularjs')">For AngularJS - ag-Grid does not not fire events inside an Angular JS digest
+    <note ng-if="isFramework('angularjs')">For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest
         cycle. This is done on purpose
         for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
         cycle
@@ -103,24 +103,13 @@ include '../documentation-main/documentation_header.php';
 </p>
 </div>
 
-<h2 id="ag-grid-events">ag-Grid Events</h2>
+<table id="ag-grid-events" class="table">
 
-<table class="table">
+    <!------------------->
+    <!-- Selection -->
+    <!------------------->
     <tr>
-        <th>Event</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <th>rowSelected</th>
-        <td>Row is selected or deselected.</td>
-    </tr>
-    <tr>
-        <th>rowClicked</th>
-        <td>Row is clicked.</td>
-    </tr>
-    <tr>
-        <th>rowDoubleClicked</th>
-        <td>Row is double clicked.</td>
+        <th colspan="2"><h2>Selection</h2></th>
     </tr>
     <tr>
         <th>cellClicked</th>
@@ -131,12 +120,44 @@ include '../documentation-main/documentation_header.php';
         <td>Cell is double clicked.</td>
     </tr>
     <tr>
+        <th>cellFocused</th>
+        <td>Cell is focused.</td>
+    </tr>
+    <tr>
+        <th>rowClicked</th>
+        <td>Row is clicked.</td>
+    </tr>
+    <tr>
+        <th>rowDoubleClicked</th>
+        <td>Row is double clicked.</td>
+    </tr>
+    <tr>
+        <th>rowSelected</th>
+        <td>Row is selected or deselected.</td>
+    </tr>
+    <tr>
+        <th>selectionChanged</th>
+        <td>Row selection is changed. Use the grid API to get the new row selected.</td>
+    </tr>
+    <tr>
         <th>cellContextMenu</th>
         <td>Cell is right clicked.</td>
     </tr>
     <tr>
-        <th>cellFocused</th>
-        <td>Cell is focused.</td>
+        <th>rangeSelectionChanged</th>
+        <td>A change to range selection has occurred.</td>
+    </tr>
+
+    <!------------------->
+    <!-- Editing -->
+    <!------------------->
+    <tr>
+        <th colspan="2"><h2>Editing</h2></th>
+    </tr>
+
+    <tr>
+        <th>cellValueChanged</th>
+        <td>Value has changed after editing.</td>
     </tr>
     <tr>
         <th>rowValueChanged</th>
@@ -163,9 +184,21 @@ include '../documentation-main/documentation_header.php';
         <td>Editing a cell has stopped.</td>
     </tr>
     <tr>
-        <th>modelUpdated</th>
-        <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
+        <th>itemsAdded</th>
+        <td>Client added a new row.</td>
     </tr>
+    <tr>
+        <th>itemsRemoved</th>
+        <td>Client removed a row.</td>
+    </tr>
+
+    <!------------------->
+    <!-- Sort & Filter -->
+    <!------------------->
+    <tr>
+        <th colspan="2"><h2>Sort & Filter</h2></th>
+    </tr>
+
     <tr>
         <th>sortChanged<br/>beforeSortChanged<br/>afterSortChanged</th>
         <td>
@@ -184,34 +217,23 @@ include '../documentation-main/documentation_header.php';
             using an apply button inside the filter.<br/>
         </td>
     </tr>
+
+    <!------------------->
+    <!-- Columns -->
+    <!------------------->
     <tr>
-        <th>gridReady</th>
-        <td>ag-Grid has initialised. The name 'ready'
-            was influenced by the authors time programming the Commodore 64. Use this event if,
-            for example, you need to use the grid's API to fix the columns to size.
-        </td>
+        <th colspan="2"><h2>Columns</h2></th>
     </tr>
-    <tr>
-        <th>selectionChanged</th>
-        <td>Row selection is changed. Use the grid API to get the new row selected.</td>
-    </tr>
-    <tr>
-        <th>cellValueChanged</th>
-        <td>Value has changed after editing.</td>
-    </tr>
-    <tr>
-        <th>gridSizeChanged</th>
-        <td>The grid had to lay out again because it changed size.</td>
-    </tr>
-    <tr>
-        <th>rowGroupOpened</th>
-        <td>A row group was opened or closed.</td>
-    </tr>
+
     <tr>
         <th>columnEverythingChanged</th>
         <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so
             everything has changed.
         </td>
+    </tr>
+    <tr>
+        <th>rowGroupOpened</th>
+        <td>A row group was opened or closed.</td>
     </tr>
     <tr>
         <th>columnVisible</th>
@@ -249,20 +271,6 @@ include '../documentation-main/documentation_header.php';
         </td>
     </tr>
     <tr>
-        <th>viewportChanged</th>
-        <td>Informs when rows rendered into the DOM changes.</td>
-    </tr>
-    <tr>
-        <th>bodyScroll</th>
-        <td>Informs when the body is scrolled horizontally or vertically.</td>
-    </tr>
-    <tr>
-        <th>dragStarted, dragStopped</th>
-        <td>When column dragging starts or stops. Useful if you want to wait until after a drag
-            event before doing an action.
-        </td>
-    </tr>
-    <tr>
         <th>newColumnsLoaded</th>
         <td>User has set in new columns.</td>
     </tr>
@@ -288,9 +296,27 @@ include '../documentation-main/documentation_header.php';
             group, etc
         </td>
     </tr>
+
+    <!------------------->
+    <!-- Miscellaneous -->
+    <!------------------->
     <tr>
-        <th>rowDataChanged</th>
-        <td>The client has set new data into the grid</td>
+        <th colspan="2"><h2>Miscellaneous</h2></th>
+    </tr>
+    <tr>
+        <th>gridReady</th>
+        <td>ag-Grid has initialised. The name 'ready'
+            was influenced by the authors time programming the Commodore 64. Use this event if,
+            for example, you need to use the grid's API to fix the columns to size.
+        </td>
+    </tr>
+    <tr>
+        <th>gridSizeChanged</th>
+        <td>The grid had to lay out again because it changed size.</td>
+    </tr>
+    <tr>
+        <th>modelUpdated</th>
+        <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
     </tr>
     <tr>
         <th>floatingRowDataChanged</th>
@@ -301,30 +327,22 @@ include '../documentation-main/documentation_header.php';
         <td>A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row.</td>
     </tr>
     <tr>
-        <th>itemsAdded</th>
-        <td>Client added a new row.</td>
+        <th>viewportChanged</th>
+        <td>Informs when rows rendered into the DOM changes.</td>
     </tr>
     <tr>
-        <th>itemsRemoved</th>
-        <td>Client removed a row.</td>
-    </tr>
-
-</table>
-
-<p>
-    <?php include '../enterprise.php'; ?>
-    &nbsp;
-    The below events are available in the Enterprise version of ag-Grid.
-</p>
-
-<table class="table">
-    <tr>
-        <th>Event</th>
-        <th>Description</th>
+        <th>bodyScroll</th>
+        <td>Informs when the body is scrolled horizontally or vertically.</td>
     </tr>
     <tr>
-        <th>rangeSelectionChanged</th>
-        <td>A change to range selection has occurred.</td>
+        <th>dragStarted, dragStopped</th>
+        <td>When column dragging starts or stops. Useful if you want to wait until after a drag
+            event before doing an action.
+        </td>
+    </tr>
+    <tr>
+        <th>rowDataChanged</th>
+        <td>The client has set new data into the grid</td>
     </tr>
 </table>
 </div>

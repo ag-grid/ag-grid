@@ -64,7 +64,7 @@ function setRowData(allOfTheData) {
         rowCount: null, // behave as infinite scroll
         getRows: function (params) {
             console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-            // At this point in your code, you would call the server, using $http if in AngularJS.
+            // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
             // To make the demo look real, wait for 500ms before returning
             setTimeout(function () {
                 // take a slice of the total rows
