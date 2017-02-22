@@ -27,7 +27,8 @@ export class TextFilter extends ComparableBaseFilter <string, IFilterParams, Ser
     }
 
     public initialiseFilterBodyUi() {
-        this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextFieldChanged.bind(this))
+        this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextFieldChanged.bind(this));
+        this.setType(BaseFilter.CONTAINS);
     }
 
     public refreshFilterBodyUi() {}

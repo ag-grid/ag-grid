@@ -3,6 +3,7 @@ import {IFilterComp, IDoesFilterPassParams, IFilterParams} from "../interfaces/i
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {_} from "../utils";
 
 
 export interface Comparator<T>{
@@ -24,7 +25,8 @@ const DEFAULT_TRANSLATIONS : {[name:string]:string}= {
     endsWith: 'Ends with',
     searchOoo: 'Search...',
     selectAll: 'Select All',
-    applyFilter: 'Apply Filter'
+    applyFilter: 'Apply Filter',
+    clearFilter: 'Clear Filter'
 };
 
 /**
@@ -51,15 +53,19 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
 
     filterParams: P;
+    clearActive: boolean;
     applyActive: boolean;
     private newRowsActionKeep: boolean;
     filter:string = 'equals';
 
     @QuerySelector('#applyPanel')
-    private eApplyPanel: HTMLElement;
+    private eButtonsPanel: HTMLElement;
 
     @QuerySelector('#applyButton')
     private eApplyButton: HTMLElement;
+
+    @QuerySelector('#clearButton')
+    private eClearButton: HTMLElement;
 
     @Autowired('context')
     public context: Context;
@@ -69,20 +75,36 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
     public init(params: P): void {
         this.filterParams = params;
-        this.applyActive = (<any>params).apply === true;
-        this.newRowsActionKeep = (<any>params).newRowsAction === 'keep';
+        this.clearActive = params.clearButton === true;
+        //Allowing for old param property apply, even though is not advertised through the interface
+        this.applyActive = ((params.applyButton === true) || ((<any>params).apply === true));
+        this.newRowsActionKeep = params.newRowsAction === 'keep';
 
         this.setTemplate(this.generateTemplate());
 
+        _.setVisible(this.eApplyButton, this.applyActive);
         if (this.applyActive) {
             this.addDestroyableEventListener(this.eApplyButton, "click", this.filterParams.filterChangedCallback);
-        } else {
-            this.getGui().removeChild(this.eApplyPanel);
         }
+
+        _.setVisible(this.eClearButton, this.clearActive);
+        if (this.clearActive) {
+            this.addDestroyableEventListener(this.eClearButton, "click", this.onClearButton.bind(this));
+        }
+
+
+        let anyButtonVisible: boolean = this.applyActive || this.clearActive;
+        _.setVisible(this.eButtonsPanel, anyButtonVisible);
+
 
         this.instantiate(this.context);
         this.initialiseFilterBodyUi();
         this.refreshFilterBodyUi();
+    }
+
+    public onClearButton (){
+        this.setModel(null);
+        this.onFilterChanged();
     }
 
 
@@ -139,6 +161,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
                     ${this.generateFilterHeader()}
                     ${body}
                     <div class="ag-filter-apply-panel" id="applyPanel">
+                        <button type="button" id="clearButton">${translate('clearFilter')}</button>
                         <button type="button" id="applyButton">${translate('applyFilter')}</button>
                     </div>
                 </div>`;

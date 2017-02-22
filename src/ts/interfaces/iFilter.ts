@@ -36,6 +36,9 @@ export interface IDoesFilterPassParams {
 }
 
 export interface IFilterParams {
+    clearButton?: boolean;
+    applyButton?: boolean;
+    newRowsAction?: string
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;
