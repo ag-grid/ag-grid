@@ -302,11 +302,11 @@ export class SetFilterModel {
         }
     }
 
-    public getModel() {
+    public getModel():string[] {
         if (!this.isFilterActive()) {
             return null;
         }
-        var selectedValues = <any>[];
+        let selectedValues:string[] = [];
         Utils.iterateObject(this.selectedValuesMap, (key: string) => {
             let value = this.keyToValue(key);
             selectedValues.push(value);
@@ -314,11 +314,11 @@ export class SetFilterModel {
         return selectedValues;
     }
 
-    public setModel(model: any, isSelectAll = false) {
+    public setModel(model: string[], isSelectAll = false) {
         if (model && !isSelectAll) {
             this.selectNothing();
-            for (var i = 0; i < model.length; i++) {
-                var value = model[i];
+            for (let i = 0; i < model.length; i++) {
+                let value = model[i];
                 if (this.allUniqueValues.indexOf(value) >= 0) {
                     this.selectValue(value);
                 }
