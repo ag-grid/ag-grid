@@ -48,13 +48,13 @@ function irelandAndUk() {
     countryFilterComponent.selectNothing();
     countryFilterComponent.selectValue('Ireland');
     countryFilterComponent.selectValue('Great Britain');
-    gridOptions.api.onFilterChanged();
+    countryFilterComponent.onFilterChanged();
 }
 
 function clearCountryFilter() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     countryFilterComponent.selectEverything();
-    gridOptions.api.onFilterChanged();
+    countryFilterComponent.onFilterChanged();
 }
 
 function destroyCountryFilter() {
@@ -71,14 +71,14 @@ function endingStan() {
             countryFilterComponent.selectValue(value);
         }
     }
-    gridOptions.api.onFilterChanged();
+    countryFilterComponent.onFilterChanged();
 }
 
 function setCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = ['Algeria','Argentina'];
     countryFilterComponent.setModel(model);
-    gridOptions.api.onFilterChanged();
+    countryFilterComponent.onFilterChanged();
 }
 
 function printCountryModel() {
@@ -95,16 +95,14 @@ function ageBelow25() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setType('lessThan');
     ageFilterComponent.setFilter(25);
-    ageFilterComponent.setVisibilityOnDateToPanel();
-    gridOptions.api.onFilterChanged();
+    ageFilterComponent.onFilterChanged();
 }
 
 function ageAbove30() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setType('greaterThan');
     ageFilterComponent.setFilter(30);
-    ageFilterComponent.setVisibilityOnDateToPanel();
-    gridOptions.api.onFilterChanged();
+    ageFilterComponent.onFilterChanged();
 }
 
 function ageBetween25And30() {
@@ -112,34 +110,33 @@ function ageBetween25And30() {
     ageFilterComponent.setType('inRange');
     ageFilterComponent.setFilter(25);
     ageFilterComponent.setFilterTo(30);
-    ageFilterComponent.setVisibilityOnDateToPanel();
-    gridOptions.api.onFilterChanged();
+    ageFilterComponent.onFilterChanged();
 }
 
 function clearAgeFilter() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setFilter(null);
-    gridOptions.api.onFilterChanged();
+    ageFilterComponent.onFilterChanged();
 }
 
 function after2010(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setFilterType('greaterThan');
     dateFilterComponent.setDateFrom('2010-01-01');
-    gridOptions.api.onFilterChanged();
+    dateFilterComponent.onFilterChanged();
 }
 
 function before2012(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setFilterType('lessThan');
     dateFilterComponent.setDateFrom('2012-01-01');
-    gridOptions.api.onFilterChanged();
+    dateFilterComponent.onFilterChanged();
 }
 
 function clearDateFilter(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setDateFrom(null);
-    gridOptions.api.onFilterChanged();
+    dateFilterComponent.onFilterChanged();
 }
 
 // setup the grid after the page has finished loading
