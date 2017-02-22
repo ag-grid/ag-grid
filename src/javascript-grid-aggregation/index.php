@@ -3,7 +3,7 @@ $key = "Aggregation";
 $pageTitle = "ag-Grid Aggregation";
 $pageDescription = "One of the most powerful features of ag-Grid is it's ability to aggregate data. Learn how to aggregate using ag-Grid";
 $pageKeyboards = "ag-Grid JavaScript Grid Aggregation";
-$pageGroup = "enterprise";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

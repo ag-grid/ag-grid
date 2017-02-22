@@ -3,7 +3,7 @@ $key = "Touch";
 $pageTitle = "JavaScript DataGrid Touch";
 $pageDescription = "Learn how to interact with ag-Grid on a touch device.";
 $pageKeyboards = "JavaScript DataGrid Touch";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

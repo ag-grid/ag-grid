@@ -3,7 +3,7 @@ $key = "Floating";
 $pageTitle = "ag-Grid Floating Header & Floating Footer";
 $pageDescription = "ag-Grid Floating Header & Floating Footer";
 $pageKeyboards = "ag-Grid Floating Header & Floating Footer";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

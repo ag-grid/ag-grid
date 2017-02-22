@@ -3,7 +3,7 @@ $key = "Styling";
 $pageTitle = "ag-Grid Styling";
 $pageDescription = "ag-Grid Styling";
 $pageKeyboards = "ag-Grid Styling";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

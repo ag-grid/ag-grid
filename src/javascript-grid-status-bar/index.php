@@ -3,7 +3,7 @@ $key = "Status Bar";
 $pageTitle = "ag-Grid JavaScript Grid Status Bar";
 $pageDescription = "The status bar provides details about the grid for example aggregation details for the selected range.";
 $pageKeyboards = "ag-Grid JavaScript Grid Status Bar";
-$pageGroup = "enterprise";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

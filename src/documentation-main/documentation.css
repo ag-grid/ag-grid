@@ -97,7 +97,7 @@ h4 {
     color: #999;
 }
 .docsMenu-header.active .fa {
-    transform: rotate(180deg)
+    transform: rotate(90deg)
 }
 .docsMenu-header + div{
     max-height: 0;
@@ -107,8 +107,8 @@ h4 {
 .docsMenu-header.active + div{
     max-height: 500px;
 }
-.docsMenu-header.freeFeatures.active + div{
-    max-height: 1000px;
+.docsMenu-header.docsMenu-header_feature.active + div{
+    max-height: 2000px;
 }
 .docsMenu-content {
 
@@ -135,7 +135,7 @@ h4 {
     #documentationSearch {
         width: 250px;
         height: 25px;
-        padding-bottom: 30px;
+        padding: 11px 0 0 0px;
     }
 }
 

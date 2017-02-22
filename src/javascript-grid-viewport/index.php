@@ -3,7 +3,7 @@ $key = "Viewport";
 $pageTitle = "ag-Grid Providing Tree Data";
 $pageDescription = "You can provide the data to your grid in a tree format. This page explains how to set this up.";
 $pageKeyboards = "ag-Grid Javascript Tree";
-$pageGroup = "enterprise";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
