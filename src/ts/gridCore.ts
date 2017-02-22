@@ -1,7 +1,7 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {PaginationController} from "./rowControllers/paginationController";
+import {PaginationController} from "./rowModels/paginationController";
 import {ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";

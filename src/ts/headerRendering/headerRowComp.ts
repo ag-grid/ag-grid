@@ -13,6 +13,11 @@ import {Events} from "../events";
 import {Utils as _} from "../utils";
 import {HeaderWrapperComp} from "./header/headerWrapperComp";
 import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
+import {SetLeftFeature} from "../rendering/features/setLeftFeature";
+
+export enum HeaderRowType {
+    COLUMN_GROUP, COLUMN, FLOATING_FILTER
+}
 
 export class HeaderRowComp extends Component {
 
@@ -29,13 +34,12 @@ export class HeaderRowComp extends Component {
     private eRoot: HTMLElement;
     private dropTarget: DropTarget;
     
-    // if bottom row, this is false, otherwise true
-    private showingGroups: boolean;
+    private type: HeaderRowType;
 
-    constructor(dept: number, showingGroups: boolean, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget) {
+    constructor(dept: number, type: HeaderRowType, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget) {
         super(`<div class="ag-header-row"/>`);
         this.dept = dept;
-        this.showingGroups = showingGroups;
+        this.type = type;
         this.pinned = pinned;
         this.eRoot = eRoot;
         this.dropTarget = dropTarget;
@@ -111,9 +115,9 @@ export class HeaderRowComp extends Component {
 
         var currentChildIds = Object.keys(this.headerElements);
 
-        var nodesAtDept = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.dept);
+        var itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.dept);
 
-        nodesAtDept.forEach( (child: ColumnGroupChild) => {
+        itemsAtDepth.forEach( (child: ColumnGroupChild) => {
             var idOfChild = child.getUniqueId();
 
             // if we already have this cell rendered, do nothing
@@ -156,28 +160,64 @@ export class HeaderRowComp extends Component {
     }
 
     private createHeaderElement(columnGroupChild:ColumnGroupChild): Component {
-        var result:Component;
 
-        if (columnGroupChild instanceof ColumnGroup) {
-            result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
-        } else {
-            if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
-                ////// DEPRECATED - TAKE THIS OUT IN V9
-                if (!warningGiven) {
-                    console.warn('ag-Grid: since v8, custom headers are now done using components. Please refer to the documentation https://www.ag-grid.com/javascript-grid-header-rendering/. Support for the old way will be dropped in v9.');
-                    warningGiven = true;
+        var result: Component;
+
+        switch (this.type) {
+            case HeaderRowType.COLUMN :
+                if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
+                    ////// DEPRECATED - TAKE THIS OUT IN V9
+                    if (!warningGiven) {
+                        console.warn('ag-Grid: since v8, custom headers are now done using components. Please refer to the documentation https://www.ag-grid.com/javascript-grid-header-rendering/. Support for the old way will be dropped in v9.');
+                        warningGiven = true;
+                    }
+                    result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                } else {
+                    // the future!!!
+                    result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 }
-                result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
-            } else {
-                // the future!!!
-                result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
-            }
+                break;
+            case HeaderRowType.COLUMN_GROUP :
+                result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                break;
+            case HeaderRowType.FLOATING_FILTER :
+                result = new FloatingFilterComp(<Column> columnGroupChild);
+                break;
         }
 
         this.context.wireBean(result);
         return result;
     }
 
+}
+
+class FloatingFilterComp extends Component {
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('context') private context: Context;
+
+    private column: Column;
+
+    constructor(column: Column) {
+        super('<div class="ag-floating-filter">YEA!!!!!</div>');
+        this.column = column;
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.setupWidth();
+        this.addFeature(this.context, new SetLeftFeature(this.column, this.getGui()));
+    }
+
+    private setupWidth(): void {
+        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
+        this.onColumnWidthChanged();
+    }
+
+    private onColumnWidthChanged(): void {
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
+    }
 }
 
 // remove this in v9, when we take out support for the old headers

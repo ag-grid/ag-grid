@@ -21,7 +21,7 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
-import {IDatasource} from "./rowControllers/iDatasource";
+import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 
 var DEFAULT_ROW_HEIGHT = 25;
@@ -227,6 +227,7 @@ export class GridOptionsWrapper {
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
+    public isFloatingFilter(): boolean { return false; }
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
     public getDefaultColGroupDef(): ColGroupDef { return this.gridOptions.defaultColGroupDef; }

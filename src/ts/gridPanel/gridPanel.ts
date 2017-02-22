@@ -3,7 +3,7 @@ import {MasterSlaveService} from "../masterSlaveService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
-import {FloatingRowModel} from "../rowControllers/floatingRowModel";
+import {FloatingRowModel} from "../rowModels/floatingRowModel";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy} from "../context/context";
@@ -1447,6 +1447,11 @@ export class GridPanel extends BeanStub {
         var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         var numberOfRowsInHeader = this.columnController.getHeaderRowCount();
         var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
+
+        if (this.gridOptionsWrapper.isFloatingFilter()) {
+            totalHeaderHeight += 20;
+        }
+
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
 
         // padding top covers the header and the floating rows on top

@@ -12,7 +12,7 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
-import {InMemoryRowModel} from "./rowControllers/inMemory/inMemoryRowModel";
+import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 
 @Bean('selectionController')
 export class SelectionController {
