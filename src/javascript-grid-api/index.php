@@ -219,7 +219,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>setQuickFilter(quickFilter)</th>
             <td>Pass a quick filter text into ag-Grid for filtering. If using Angular, the grid watched the 'quickFilterText'
-                attribute of the gridOptions. If you won't want to use quickFilterText (ie if not using AngularJS) then you can
+                attribute of the gridOptions. If you won't want to use quickFilterText (ie if not using AngularJS 1.x) then you can
                 call this method instead to apply a quick filter.
             </td>
         </tr>
@@ -428,7 +428,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>destroy()</th>
             <td>Gets the grid to destroy and release resources. If you are using Angular (version 1 or 2)
-            you do not need to call this, as the grid links in with the AngularJS lifecycle. However if you
+            you do not need to call this, as the grid links in with the AngularJS 1.x lifecycle. However if you
             are using Web Components or native Javascript, you do need to call this, to avoid a memory
             leak in your application.</td>
         </tr>

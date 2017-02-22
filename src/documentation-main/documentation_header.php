@@ -98,7 +98,7 @@ if (strcmp($version , 'latest') == 0) {
                     <option value="all">All</option>
                     <option value="javascript">JavaScript</option>
                     <option value="angular">Angular</option>
-                    <option value="angularjs">AngularJS</option>
+                    <option value="angularjs">AngularJS 1.x</option>
                     <option value="react">ReactJS</option>
                     <option value="vue">VueJS</option>
                     <option value="aurelia">AureliaJS</option>

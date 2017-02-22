@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         Angular
     </h4>
     <p>
-        Add callbacks to the gridOptions or set as AngularJS properties.
+        Add callbacks to the gridOptions or set as AngularJS 1.x properties.
     </p>
 
 </div>

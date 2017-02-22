@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Review of AngularJS Grids";
-$pageDescription = "Review of AngularJS Grids - a User's perspective";
+$pageTitle = "Review of AngularJS 1.x Grids";
+$pageDescription = "Review of AngularJS 1.x Grids - a User's perspective";
 $pageKeyboards = "Review angularjs grid";
 
 include('../includes/mediaHeader.php');
@@ -28,13 +28,13 @@ include('../includes/mediaHeader.php');
 
         <h2>A little bit of history:</h2>
 
-        <p>In the fall of 2015, I started working for a company who just started using AngularJS 1, to continue the development of a CRM (Customer Relationship Management) system.</p>
+        <p>In the fall of 2015, I started working for a company who just started using AngularJS 1.x, to continue the development of a CRM (Customer Relationship Management) system.</p>
 
-        <p>As with every management system, we needed to choose a grid to show our data and my predecessor had already used two grids inside the app - ag-Grid (v2.7) and Ng-Table (v0.8.3) – and I passionately hated the former. In retrospect, I realize I only hated it because of my predecessor’s lack of knowledge of AngularJS and of Ag-Grid. And so was born The Grid Project.</p>
+        <p>As with every management system, we needed to choose a grid to show our data and my predecessor had already used two grids inside the app - ag-Grid (v2.7) and Ng-Table (v0.8.3) – and I passionately hated the former. In retrospect, I realize I only hated it because of my predecessor’s lack of knowledge of AngularJS 1.x and of Ag-Grid. And so was born The Grid Project.</p>
 
         <p>The Grid Project had a single goal: To make a grid to replace all my grids and to make it awesome. As with most developers who like something and want to work with it for their own usage, I forked Ng-Table, and extended that grid with many features I needed, at that time. Not thinking about the future, not even considering it as a big project, but boy I was wrong. I created this bug filled monster that instead of solving The Grid Project, just added lots of monkey-patches to my code base. I was young and stupid.</p>
 
-        <p>So the goal changed. I needed to look for the best grid for everyone – that has options for every user and use case - to replace with all my grids. I reviewed multiple grid projects for AngularJS, none as active as ag-Grid, and when I casually followed a link chain, I landed on the ag-Grid example page. My predecessor was doing it all wrong! I promptly checked the source code and found out that ag-Grid has a column definition field with everything that I really needed. This comes along with sorting, filtering, pinning and -most importantly – grouping, aggregation and the ability to have as many rows as I want. I am a really proud developer, so it was hard to accept that I was wrong, but when I finally accepted it, my life became so much easier, thanks to ag-Grid.</p>
+        <p>So the goal changed. I needed to look for the best grid for everyone – that has options for every user and use case - to replace with all my grids. I reviewed multiple grid projects for AngularJS 1.x, none as active as ag-Grid, and when I casually followed a link chain, I landed on the ag-Grid example page. My predecessor was doing it all wrong! I promptly checked the source code and found out that ag-Grid has a column definition field with everything that I really needed. This comes along with sorting, filtering, pinning and -most importantly – grouping, aggregation and the ability to have as many rows as I want. I am a really proud developer, so it was hard to accept that I was wrong, but when I finally accepted it, my life became so much easier, thanks to ag-Grid.</p>
 
         <h2>My journey:</h2>
 
@@ -56,7 +56,7 @@ include('../includes/mediaHeader.php');
 
         <p>So I fell in love with this grid because it is awesome and because it was there for me at the right time. I knew I messed up before, I stopped and realized I needed to change things. Now I couldn’t be happier with it.</p>
 
-        <p>I am often asked by web development beginners that I know “Do you know data-tables?” or “Do you know smart-table?”. Even “Do you know “INSERT_GRID_NAME_HERE? It’s superior to anything else!”. Now, educated and experienced with data grids for JavaScript in general, and AngularJS in particular, I just laugh and teach them about ag-Grid. ag-Grid gives the foundations to make everything you want to make, and that is a winner for me.</p>
+        <p>I am often asked by web development beginners that I know “Do you know data-tables?” or “Do you know smart-table?”. Even “Do you know “INSERT_GRID_NAME_HERE? It’s superior to anything else!”. Now, educated and experienced with data grids for JavaScript in general, and AngularJS 1.x in particular, I just laugh and teach them about ag-Grid. ag-Grid gives the foundations to make everything you want to make, and that is a winner for me.</p>
 
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button"

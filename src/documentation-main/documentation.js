@@ -26,6 +26,7 @@
         };
 
         function setCookie(name, value) {
+            $cookies.remove(name);
             var n = new Date();
             var expires = new Date(n.getFullYear() + 1, n.getMonth(), n.getDate());
             $cookies.put(name,
@@ -38,7 +39,6 @@
 
         function getFrameworkFromCookieAndDefaultIfNotDefined() {
             var frameworkContext = $cookies.get('frameworkContext');
-            console.log("4:" + frameworkContext);
             if (!frameworkContext) {
                 frameworkContext = 'all';
                 setCookie('frameworkContext', frameworkContext);

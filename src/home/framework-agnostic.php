@@ -28,7 +28,7 @@
             <div class="col-md-2" style="text-align: center;">
                 <a href="/best-angularjs-data-grid/">
                     <div>
-                        <img inline src="images/angularjs_small.png" alt="Best AngularJS Data Grid" title="Best AngularJS Data Grid"/>
+                        <img inline src="images/angularjs_small.png" alt="Best AngularJS 1.x Data Grid" title="Best AngularJS 1.x Data Grid"/>
                     </div>
                     Angular 1
                 </a>

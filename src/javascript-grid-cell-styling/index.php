@@ -127,7 +127,7 @@ gridOptions.getRowClass = function(params) {
     <h3 id="cellClassRules">Column Definition cellClassRules</h3>
 
     <p>
-        ag-Grid allows rules to be applied to include certain classes. If you use AngularJS, then
+        ag-Grid allows rules to be applied to include certain classes. If you use AngularJS 1.x, then
         this is similar to ng-class, where you specify classes as Javascript object keys, and rules
         as object values.
     </p>

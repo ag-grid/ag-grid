@@ -136,7 +136,7 @@ import {Grid} from 'ag-grid/main';
     </ul>
     </p>
 
-    <p>Even if you are using React, AngularJS, Angular, VueJS or Web Components, the above is all you need to do.
+    <p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need to do.
     Any grid you create will be an enterprise grid once you load the library.</p>
 
     <h4>CommonJS</h4>
@@ -279,7 +279,7 @@ import 'ag-grid-enterprise/main';
 
     <p>
         ag-Grid does not favor any framework. It's agnostic. It doesn't have a preference what framework you use. ag-Grid supports
-        5 flavours: React, AngularJS, Angular, VueJS, Web Components and Native Javascript. Every ag-Grid
+        5 flavours: React, AngularJS 1.x, Angular, VueJS, Web Components and Native Javascript. Every ag-Grid
         feature is fully available in each framework, there is no bias. You choose which framework you
         want. So continue now to the section on the framework you are interested in, then jump to the
         details of how to use the grid.

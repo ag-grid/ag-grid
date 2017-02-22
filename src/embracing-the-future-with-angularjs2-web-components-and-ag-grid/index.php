@@ -17,20 +17,20 @@ include('../includes/mediaHeader.php');
     <div class="col-md-9">
 
         <p>
-            The first release of ag-Grid (www.ag-grid.com) broke the ‘usual thinking’ for AngularJS developers. It provided a high performance grid to the AngularJS community, but it didn’t use AngularJS underneath the hood. Instead it used AngularJS where appropriate, and then native Javascript and DOM manipulation at all other times. A wolf-fast grid in AngularJS clothing! This approach was novel, building a bridge between native Javascript and AngularJS without the client AngularJS application realising it was using a non-AngularJS component.
+            The first release of ag-Grid (www.ag-grid.com) broke the ‘usual thinking’ for AngularJS 1.x developers. It provided a high performance grid to the AngularJS 1.x community, but it didn’t use AngularJS 1.x underneath the hood. Instead it used AngularJS 1.x where appropriate, and then native Javascript and DOM manipulation at all other times. A wolf-fast grid in AngularJS 1.x clothing! This approach was novel, building a bridge between native Javascript and AngularJS 1.x without the client AngularJS 1.x application realising it was using a non-AngularJS 1.x component.
         </p>
 
         <p>
-            AngularJS 1.x had some shortcomings, which is understandable given its evolutionary development. What AngularJS is being used for today is probably beyond the intentions of Misko when he wrote those first lines of code, which is probably why the guys at Google decided to do a complete redesign for Angular 2. One of the shortcomings that particularly bothered me was the closed nature of the platform: AngularJS applications could not seamlessly use non-AngularJS components. For AngularJS to use a non-AngularJS component, it had to wrap the component with AngularJS code. This led to a sea of non-functional components whose only purpose was to wrap non-AngularJS components – a component wrapping a component.
+            AngularJS 1.x had some shortcomings, which is understandable given its evolutionary development. What AngularJS 1.x is being used for today is probably beyond the intentions of Misko when he wrote those first lines of code, which is probably why the guys at Google decided to do a complete redesign for Angular 2. One of the shortcomings that particularly bothered me was the closed nature of the platform: AngularJS 1.x applications could not seamlessly use non-AngularJS 1.x components. For AngularJS 1.x to use a non-AngularJS 1.x component, it had to wrap the component with AngularJS 1.x code. This led to a sea of non-functional components whose only purpose was to wrap non-AngularJS 1.x components – a component wrapping a component.
         </p>
 
         <p>
-            In ag-Grid, this wrapping code is done for you, thus the AngularJS application had no idea it was talking to a non-AngularJS component.
+            In ag-Grid, this wrapping code is done for you, thus the AngularJS 1.x application had no idea it was talking to a non-AngularJS 1.x component.
         </p>
 
         <p>
-            Angular 2 turns this problem right around. Rather than having a closed system for modularising AngularJS applications,
-            Angular 2’s foundations lie on the emerging Web Components standard. What this means is that AngularJS will be able to
+            Angular 2 turns this problem right around. Rather than having a closed system for modularising AngularJS 1.x applications,
+            Angular 2’s foundations lie on the emerging Web Components standard. What this means is that AngularJS 1.x will be able to
             directly use, without any wrapper coding, any component written as a Web Component.
             That is easy to understand - when I first heard it I understood technically what it meant - but it took me some time to really appreciate the implications of what it meant.
         </p>
@@ -44,7 +44,7 @@ include('../includes/mediaHeader.php');
                 Right now AngularJS 1.x has a large following. It is probable that a large majority of that following will migrate onto Angular 2 when it is ready.
             </li>
             <li>
-                This migration of followers will start hunting for Web Components to include in their AngularJS applications.
+                This migration of followers will start hunting for Web Components to include in their AngularJS 1.x applications.
             </li>
             <li>
                 Web Components will receive a significant wave of interest from these followers.
@@ -68,14 +68,14 @@ include('../includes/mediaHeader.php');
         </ul>
 
         <p>
-            This is excellent news for Web Component developers, regardless of whether you are an AngularJS advocate or not. This added surge of interest will provide Web Components with additional traction.
+            This is excellent news for Web Component developers, regardless of whether you are an AngularJS 1.x advocate or not. This added surge of interest will provide Web Components with additional traction.
         </p>
 
         <p>
             So in the future, when Angular 2 is out, it will bring more choice. Component developers will
-            have the choice to provide Web Components that work with AngularJS as well as with other platforms.
-            AngularJS developers will have wider choice when selecting components for their application, not
-            being restricted with ‘only AngularJS’ components. The binding between application technology choice
+            have the choice to provide Web Components that work with AngularJS 1.x as well as with other platforms.
+            AngularJS 1.x developers will have wider choice when selecting components for their application, not
+            being restricted with ‘only AngularJS 1.x’ components. The binding between application technology choice
             and component technology choice will dissolve. The AngularJS 1.x components that came into existence
             as a result of it's dependency shortcoming will disappear.
         </p>
