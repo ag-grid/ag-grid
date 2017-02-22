@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,7 +39,7 @@ function positiveNumberOrZero(value, defaultValue) {
         return defaultValue;
     }
 }
-var GridOptionsWrapper = (function () {
+var GridOptionsWrapper = GridOptionsWrapper_1 = (function () {
     function GridOptionsWrapper() {
         this.propertyEventService = new eventService_1.EventService();
         this.domDataKey = '__AG_' + Math.random().toString();
@@ -276,15 +276,15 @@ var GridOptionsWrapper = (function () {
         }
     };
     GridOptionsWrapper.prototype.getMinColWidth = function () {
-        if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
+        if (this.gridOptions.minColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
         }
         else {
-            return GridOptionsWrapper.MIN_COL_WIDTH;
+            return GridOptionsWrapper_1.MIN_COL_WIDTH;
         }
     };
     GridOptionsWrapper.prototype.getMaxColWidth = function () {
-        if (this.gridOptions.maxColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
+        if (this.gridOptions.maxColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
             return this.gridOptions.maxColWidth;
         }
         else {
@@ -292,7 +292,7 @@ var GridOptionsWrapper = (function () {
         }
     };
     GridOptionsWrapper.prototype.getColWidth = function () {
-        if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < GridOptionsWrapper.MIN_COL_WIDTH) {
+        if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < GridOptionsWrapper_1.MIN_COL_WIDTH) {
             return 200;
         }
         else {
@@ -418,51 +418,50 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isNumeric = function (value) {
         return !isNaN(value) && typeof value === 'number';
     };
-    GridOptionsWrapper.MIN_COL_WIDTH = 10;
-    GridOptionsWrapper.PROP_HEADER_HEIGHT = 'headerHeight';
-    __decorate([
-        context_1.Autowired('gridOptions'), 
-        __metadata('design:type', Object)
-    ], GridOptionsWrapper.prototype, "gridOptions", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], GridOptionsWrapper.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], GridOptionsWrapper.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('enterprise'), 
-        __metadata('design:type', Boolean)
-    ], GridOptionsWrapper.prototype, "enterprise", void 0);
-    __decorate([
-        context_1.Autowired('frameworkFactory'), 
-        __metadata('design:type', Object)
-    ], GridOptionsWrapper.prototype, "frameworkFactory", void 0);
-    __decorate([
-        __param(0, context_1.Qualifier('gridApi')),
-        __param(1, context_1.Qualifier('columnApi')), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [gridApi_1.GridApi, columnController_1.ColumnApi]), 
-        __metadata('design:returntype', void 0)
-    ], GridOptionsWrapper.prototype, "agWire", null);
-    __decorate([
-        context_1.PreDestroy, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], GridOptionsWrapper.prototype, "destroy", null);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], GridOptionsWrapper.prototype, "init", null);
-    GridOptionsWrapper = __decorate([
-        context_1.Bean('gridOptionsWrapper'), 
-        __metadata('design:paramtypes', [])
-    ], GridOptionsWrapper);
     return GridOptionsWrapper;
 }());
+GridOptionsWrapper.MIN_COL_WIDTH = 10;
+GridOptionsWrapper.PROP_HEADER_HEIGHT = 'headerHeight';
+__decorate([
+    context_1.Autowired('gridOptions'),
+    __metadata("design:type", Object)
+], GridOptionsWrapper.prototype, "gridOptions", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], GridOptionsWrapper.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], GridOptionsWrapper.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('enterprise'),
+    __metadata("design:type", Boolean)
+], GridOptionsWrapper.prototype, "enterprise", void 0);
+__decorate([
+    context_1.Autowired('frameworkFactory'),
+    __metadata("design:type", Object)
+], GridOptionsWrapper.prototype, "frameworkFactory", void 0);
+__decorate([
+    __param(0, context_1.Qualifier('gridApi')), __param(1, context_1.Qualifier('columnApi')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gridApi_1.GridApi, columnController_1.ColumnApi]),
+    __metadata("design:returntype", void 0)
+], GridOptionsWrapper.prototype, "agWire", null);
+__decorate([
+    context_1.PreDestroy,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], GridOptionsWrapper.prototype, "destroy", null);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], GridOptionsWrapper.prototype, "init", null);
+GridOptionsWrapper = GridOptionsWrapper_1 = __decorate([
+    context_1.Bean('gridOptionsWrapper')
+], GridOptionsWrapper);
 exports.GridOptionsWrapper = GridOptionsWrapper;
+var GridOptionsWrapper_1;

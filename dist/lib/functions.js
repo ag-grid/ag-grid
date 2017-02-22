@@ -1,11 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
-var utils_1 = require('./utils');
+var utils_1 = require("./utils");
 function defaultGroupComparator(valueA, valueB, nodeA, nodeB) {
     var nodeAIsGroup = utils_1.Utils.exists(nodeA) && nodeA.group;
     var nodeBIsGroup = utils_1.Utils.exists(nodeB) && nodeB.group;

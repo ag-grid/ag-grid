@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -110,13 +110,14 @@ var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_
 var GridPanel = (function (_super) {
     __extends(GridPanel, _super);
     function GridPanel() {
-        _super.apply(this, arguments);
-        this.requestAnimationFrameExists = typeof requestAnimationFrame === 'function';
-        this.scrollLagCounter = 0;
-        this.scrollLagTicking = false;
-        this.lastLeftPosition = -1;
-        this.lastTopPosition = -1;
-        this.animationThreadCount = 0;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.requestAnimationFrameExists = typeof requestAnimationFrame === 'function';
+        _this.scrollLagCounter = 0;
+        _this.scrollLagTicking = false;
+        _this.lastLeftPosition = -1;
+        _this.lastTopPosition = -1;
+        _this.animationThreadCount = 0;
+        return _this;
     }
     GridPanel.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create('GridPanel');
@@ -1008,7 +1009,8 @@ var GridPanel = (function (_super) {
             this.eFloatingBottomFullWidthCellContainer = this.queryHtmlElement('.ag-floating-bottom-full-width-container');
             this.eAllCellContainers = [
                 this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
-                this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer];
+                this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer
+            ];
             this.rowContainerComponents = {
                 body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, useDocumentFragment: true }),
                 fullWidth: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport }),
@@ -1423,102 +1425,101 @@ var GridPanel = (function (_super) {
     GridPanel.prototype.removeScrollEventListener = function (listener) {
         this.eBodyViewport.removeEventListener('scroll', listener);
     };
-    __decorate([
-        context_1.Autowired('masterSlaveService'), 
-        __metadata('design:type', masterSlaveService_1.MasterSlaveService)
-    ], GridPanel.prototype, "masterSlaveService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], GridPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], GridPanel.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('rowRenderer'), 
-        __metadata('design:type', rowRenderer_1.RowRenderer)
-    ], GridPanel.prototype, "rowRenderer", void 0);
-    __decorate([
-        context_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', floatingRowModel_1.FloatingRowModel)
-    ], GridPanel.prototype, "floatingRowModel", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], GridPanel.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], GridPanel.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Optional('rangeController'), 
-        __metadata('design:type', Object)
-    ], GridPanel.prototype, "rangeController", void 0);
-    __decorate([
-        context_1.Autowired('dragService'), 
-        __metadata('design:type', dragService_1.DragService)
-    ], GridPanel.prototype, "dragService", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], GridPanel.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.Optional('clipboardService'), 
-        __metadata('design:type', Object)
-    ], GridPanel.prototype, "clipboardService", void 0);
-    __decorate([
-        context_1.Autowired('csvCreator'), 
-        __metadata('design:type', csvCreator_1.CsvCreator)
-    ], GridPanel.prototype, "csvCreator", void 0);
-    __decorate([
-        context_1.Autowired('mouseEventService'), 
-        __metadata('design:type', mouseEventService_1.MouseEventService)
-    ], GridPanel.prototype, "mouseEventService", void 0);
-    __decorate([
-        context_1.Autowired('focusedCellController'), 
-        __metadata('design:type', focusedCellController_1.FocusedCellController)
-    ], GridPanel.prototype, "focusedCellController", void 0);
-    __decorate([
-        context_1.Autowired('$scope'), 
-        __metadata('design:type', Object)
-    ], GridPanel.prototype, "$scope", void 0);
-    __decorate([
-        context_1.Autowired('scrollVisibleService'), 
-        __metadata('design:type', scrollVisibleService_1.ScrollVisibleService)
-    ], GridPanel.prototype, "scrollVisibleService", void 0);
-    __decorate([
-        context_1.Optional('contextMenuFactory'), 
-        __metadata('design:type', Object)
-    ], GridPanel.prototype, "contextMenuFactory", void 0);
-    __decorate([
-        context_1.Autowired('frameworkFactory'), 
-        __metadata('design:type', Object)
-    ], GridPanel.prototype, "frameworkFactory", void 0);
-    __decorate([
-        __param(0, context_1.Qualifier('loggerFactory')), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
-        __metadata('design:returntype', void 0)
-    ], GridPanel.prototype, "agWire", null);
-    __decorate([
-        context_1.PreDestroy, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], GridPanel.prototype, "destroy", null);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], GridPanel.prototype, "init", null);
-    GridPanel = __decorate([
-        context_1.Bean('gridPanel'), 
-        __metadata('design:paramtypes', [])
-    ], GridPanel);
     return GridPanel;
 }(beanStub_1.BeanStub));
+__decorate([
+    context_1.Autowired('masterSlaveService'),
+    __metadata("design:type", masterSlaveService_1.MasterSlaveService)
+], GridPanel.prototype, "masterSlaveService", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], GridPanel.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], GridPanel.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('rowRenderer'),
+    __metadata("design:type", rowRenderer_1.RowRenderer)
+], GridPanel.prototype, "rowRenderer", void 0);
+__decorate([
+    context_1.Autowired('floatingRowModel'),
+    __metadata("design:type", floatingRowModel_1.FloatingRowModel)
+], GridPanel.prototype, "floatingRowModel", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], GridPanel.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], GridPanel.prototype, "rowModel", void 0);
+__decorate([
+    context_1.Optional('rangeController'),
+    __metadata("design:type", Object)
+], GridPanel.prototype, "rangeController", void 0);
+__decorate([
+    context_1.Autowired('dragService'),
+    __metadata("design:type", dragService_1.DragService)
+], GridPanel.prototype, "dragService", void 0);
+__decorate([
+    context_1.Autowired('selectionController'),
+    __metadata("design:type", selectionController_1.SelectionController)
+], GridPanel.prototype, "selectionController", void 0);
+__decorate([
+    context_1.Optional('clipboardService'),
+    __metadata("design:type", Object)
+], GridPanel.prototype, "clipboardService", void 0);
+__decorate([
+    context_1.Autowired('csvCreator'),
+    __metadata("design:type", csvCreator_1.CsvCreator)
+], GridPanel.prototype, "csvCreator", void 0);
+__decorate([
+    context_1.Autowired('mouseEventService'),
+    __metadata("design:type", mouseEventService_1.MouseEventService)
+], GridPanel.prototype, "mouseEventService", void 0);
+__decorate([
+    context_1.Autowired('focusedCellController'),
+    __metadata("design:type", focusedCellController_1.FocusedCellController)
+], GridPanel.prototype, "focusedCellController", void 0);
+__decorate([
+    context_1.Autowired('$scope'),
+    __metadata("design:type", Object)
+], GridPanel.prototype, "$scope", void 0);
+__decorate([
+    context_1.Autowired('scrollVisibleService'),
+    __metadata("design:type", scrollVisibleService_1.ScrollVisibleService)
+], GridPanel.prototype, "scrollVisibleService", void 0);
+__decorate([
+    context_1.Optional('contextMenuFactory'),
+    __metadata("design:type", Object)
+], GridPanel.prototype, "contextMenuFactory", void 0);
+__decorate([
+    context_1.Autowired('frameworkFactory'),
+    __metadata("design:type", Object)
+], GridPanel.prototype, "frameworkFactory", void 0);
+__decorate([
+    __param(0, context_1.Qualifier('loggerFactory')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+    __metadata("design:returntype", void 0)
+], GridPanel.prototype, "agWire", null);
+__decorate([
+    context_1.PreDestroy,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], GridPanel.prototype, "destroy", null);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], GridPanel.prototype, "init", null);
+GridPanel = __decorate([
+    context_1.Bean('gridPanel')
+], GridPanel);
 exports.GridPanel = GridPanel;
 var ScrollType;
 (function (ScrollType) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,9 +10,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var context_1 = require("./context/context");
 var LINE_SEPARATOR = '\r\n';
@@ -62,10 +59,9 @@ var XmlFactory = (function () {
         xmlValue = '"' + xmlValue + '"';
         return " " + key + "=" + xmlValue;
     };
-    XmlFactory = __decorate([
-        context_1.Bean('xmlFactory'), 
-        __metadata('design:paramtypes', [])
-    ], XmlFactory);
     return XmlFactory;
 }());
+XmlFactory = __decorate([
+    context_1.Bean('xmlFactory')
+], XmlFactory);
 exports.XmlFactory = XmlFactory;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -172,18 +172,17 @@ var DisplayedGroupCreator = (function () {
             }
         }
     };
-    __decorate([
-        context_2.Autowired('columnUtils'), 
-        __metadata('design:type', columnUtils_1.ColumnUtils)
-    ], DisplayedGroupCreator.prototype, "columnUtils", void 0);
-    __decorate([
-        context_2.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], DisplayedGroupCreator.prototype, "context", void 0);
-    DisplayedGroupCreator = __decorate([
-        context_1.Bean('displayedGroupCreator'), 
-        __metadata('design:paramtypes', [])
-    ], DisplayedGroupCreator);
     return DisplayedGroupCreator;
 }());
+__decorate([
+    context_2.Autowired('columnUtils'),
+    __metadata("design:type", columnUtils_1.ColumnUtils)
+], DisplayedGroupCreator.prototype, "columnUtils", void 0);
+__decorate([
+    context_2.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], DisplayedGroupCreator.prototype, "context", void 0);
+DisplayedGroupCreator = __decorate([
+    context_1.Bean('displayedGroupCreator')
+], DisplayedGroupCreator);
 exports.DisplayedGroupCreator = DisplayedGroupCreator;

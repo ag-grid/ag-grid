@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -216,7 +216,7 @@ var RowRenderer = (function () {
         var renderedRow = this.renderedRows[rowIndex];
         renderedRow.addEventListener(eventName, callback);
     };
-    RowRenderer.prototype.refreshCells = function (rowNodes, colIds, animate) {
+    RowRenderer.prototype.refreshCells = function (rowNodes, cols, animate) {
         if (animate === void 0) { animate = false; }
         if (!rowNodes || rowNodes.length == 0) {
             return;
@@ -226,7 +226,7 @@ var RowRenderer = (function () {
         utils_1.Utils.iterateObject(this.renderedRows, function (key, renderedRow) {
             var rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode) >= 0) {
-                renderedRow.refreshCells(colIds, animate);
+                renderedRow.refreshCells(cols, animate);
             }
         });
     };
@@ -657,96 +657,95 @@ var RowRenderer = (function () {
             return nextRenderedCell;
         }
     };
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], RowRenderer.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], RowRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('gridCore'), 
-        __metadata('design:type', gridCore_1.GridCore)
-    ], RowRenderer.prototype, "gridCore", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'), 
-        __metadata('design:type', gridPanel_1.GridPanel)
-    ], RowRenderer.prototype, "gridPanel", void 0);
-    __decorate([
-        context_1.Autowired('$compile'), 
-        __metadata('design:type', Object)
-    ], RowRenderer.prototype, "$compile", void 0);
-    __decorate([
-        context_1.Autowired('$scope'), 
-        __metadata('design:type', Object)
-    ], RowRenderer.prototype, "$scope", void 0);
-    __decorate([
-        context_1.Autowired('expressionService'), 
-        __metadata('design:type', expressionService_1.ExpressionService)
-    ], RowRenderer.prototype, "expressionService", void 0);
-    __decorate([
-        context_1.Autowired('templateService'), 
-        __metadata('design:type', templateService_1.TemplateService)
-    ], RowRenderer.prototype, "templateService", void 0);
-    __decorate([
-        context_1.Autowired('valueService'), 
-        __metadata('design:type', valueService_1.ValueService)
-    ], RowRenderer.prototype, "valueService", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], RowRenderer.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', floatingRowModel_1.FloatingRowModel)
-    ], RowRenderer.prototype, "floatingRowModel", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], RowRenderer.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('loggerFactory'), 
-        __metadata('design:type', logger_1.LoggerFactory)
-    ], RowRenderer.prototype, "loggerFactory", void 0);
-    __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], RowRenderer.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Autowired('focusedCellController'), 
-        __metadata('design:type', focusedCellController_1.FocusedCellController)
-    ], RowRenderer.prototype, "focusedCellController", void 0);
-    __decorate([
-        context_1.Optional('rangeController'), 
-        __metadata('design:type', Object)
-    ], RowRenderer.prototype, "rangeController", void 0);
-    __decorate([
-        context_1.Autowired('cellNavigationService'), 
-        __metadata('design:type', cellNavigationService_1.CellNavigationService)
-    ], RowRenderer.prototype, "cellNavigationService", void 0);
-    __decorate([
-        __param(0, context_1.Qualifier('loggerFactory')), 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [logger_1.LoggerFactory]), 
-        __metadata('design:returntype', void 0)
-    ], RowRenderer.prototype, "agWire", null);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], RowRenderer.prototype, "init", null);
-    __decorate([
-        context_1.PreDestroy, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], RowRenderer.prototype, "destroy", null);
-    RowRenderer = __decorate([
-        context_1.Bean('rowRenderer'), 
-        __metadata('design:paramtypes', [])
-    ], RowRenderer);
     return RowRenderer;
 }());
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], RowRenderer.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], RowRenderer.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('gridCore'),
+    __metadata("design:type", gridCore_1.GridCore)
+], RowRenderer.prototype, "gridCore", void 0);
+__decorate([
+    context_1.Autowired('gridPanel'),
+    __metadata("design:type", gridPanel_1.GridPanel)
+], RowRenderer.prototype, "gridPanel", void 0);
+__decorate([
+    context_1.Autowired('$compile'),
+    __metadata("design:type", Object)
+], RowRenderer.prototype, "$compile", void 0);
+__decorate([
+    context_1.Autowired('$scope'),
+    __metadata("design:type", Object)
+], RowRenderer.prototype, "$scope", void 0);
+__decorate([
+    context_1.Autowired('expressionService'),
+    __metadata("design:type", expressionService_1.ExpressionService)
+], RowRenderer.prototype, "expressionService", void 0);
+__decorate([
+    context_1.Autowired('templateService'),
+    __metadata("design:type", templateService_1.TemplateService)
+], RowRenderer.prototype, "templateService", void 0);
+__decorate([
+    context_1.Autowired('valueService'),
+    __metadata("design:type", valueService_1.ValueService)
+], RowRenderer.prototype, "valueService", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], RowRenderer.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('floatingRowModel'),
+    __metadata("design:type", floatingRowModel_1.FloatingRowModel)
+], RowRenderer.prototype, "floatingRowModel", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], RowRenderer.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('loggerFactory'),
+    __metadata("design:type", logger_1.LoggerFactory)
+], RowRenderer.prototype, "loggerFactory", void 0);
+__decorate([
+    context_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], RowRenderer.prototype, "rowModel", void 0);
+__decorate([
+    context_1.Autowired('focusedCellController'),
+    __metadata("design:type", focusedCellController_1.FocusedCellController)
+], RowRenderer.prototype, "focusedCellController", void 0);
+__decorate([
+    context_1.Optional('rangeController'),
+    __metadata("design:type", Object)
+], RowRenderer.prototype, "rangeController", void 0);
+__decorate([
+    context_1.Autowired('cellNavigationService'),
+    __metadata("design:type", cellNavigationService_1.CellNavigationService)
+], RowRenderer.prototype, "cellNavigationService", void 0);
+__decorate([
+    __param(0, context_1.Qualifier('loggerFactory')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+    __metadata("design:returntype", void 0)
+], RowRenderer.prototype, "agWire", null);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], RowRenderer.prototype, "init", null);
+__decorate([
+    context_1.PreDestroy,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], RowRenderer.prototype, "destroy", null);
+RowRenderer = __decorate([
+    context_1.Bean('rowRenderer')
+], RowRenderer);
 exports.RowRenderer = RowRenderer;

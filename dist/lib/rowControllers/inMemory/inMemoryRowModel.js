@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -406,68 +406,67 @@ var InMemoryRowModel = (function () {
             this.eventService.dispatchEvent(eventName, { rowNodes: rowNodes });
         }
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], InMemoryRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], InMemoryRowModel.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('filterManager'), 
-        __metadata('design:type', filterManager_1.FilterManager)
-    ], InMemoryRowModel.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('$scope'), 
-        __metadata('design:type', Object)
-    ], InMemoryRowModel.prototype, "$scope", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], InMemoryRowModel.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], InMemoryRowModel.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], InMemoryRowModel.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('filterStage'), 
-        __metadata('design:type', Object)
-    ], InMemoryRowModel.prototype, "filterStage", void 0);
-    __decorate([
-        context_1.Autowired('sortStage'), 
-        __metadata('design:type', Object)
-    ], InMemoryRowModel.prototype, "sortStage", void 0);
-    __decorate([
-        context_1.Autowired('flattenStage'), 
-        __metadata('design:type', Object)
-    ], InMemoryRowModel.prototype, "flattenStage", void 0);
-    __decorate([
-        context_1.Optional('groupStage'), 
-        __metadata('design:type', Object)
-    ], InMemoryRowModel.prototype, "groupStage", void 0);
-    __decorate([
-        context_1.Optional('aggregationStage'), 
-        __metadata('design:type', Object)
-    ], InMemoryRowModel.prototype, "aggregationStage", void 0);
-    __decorate([
-        context_1.Optional('pivotStage'), 
-        __metadata('design:type', Object)
-    ], InMemoryRowModel.prototype, "pivotStage", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], InMemoryRowModel.prototype, "init", null);
-    InMemoryRowModel = __decorate([
-        context_1.Bean('rowModel'), 
-        __metadata('design:paramtypes', [])
-    ], InMemoryRowModel);
     return InMemoryRowModel;
 }());
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], InMemoryRowModel.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], InMemoryRowModel.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('filterManager'),
+    __metadata("design:type", filterManager_1.FilterManager)
+], InMemoryRowModel.prototype, "filterManager", void 0);
+__decorate([
+    context_1.Autowired('$scope'),
+    __metadata("design:type", Object)
+], InMemoryRowModel.prototype, "$scope", void 0);
+__decorate([
+    context_1.Autowired('selectionController'),
+    __metadata("design:type", selectionController_1.SelectionController)
+], InMemoryRowModel.prototype, "selectionController", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], InMemoryRowModel.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], InMemoryRowModel.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('filterStage'),
+    __metadata("design:type", Object)
+], InMemoryRowModel.prototype, "filterStage", void 0);
+__decorate([
+    context_1.Autowired('sortStage'),
+    __metadata("design:type", Object)
+], InMemoryRowModel.prototype, "sortStage", void 0);
+__decorate([
+    context_1.Autowired('flattenStage'),
+    __metadata("design:type", Object)
+], InMemoryRowModel.prototype, "flattenStage", void 0);
+__decorate([
+    context_1.Optional('groupStage'),
+    __metadata("design:type", Object)
+], InMemoryRowModel.prototype, "groupStage", void 0);
+__decorate([
+    context_1.Optional('aggregationStage'),
+    __metadata("design:type", Object)
+], InMemoryRowModel.prototype, "aggregationStage", void 0);
+__decorate([
+    context_1.Optional('pivotStage'),
+    __metadata("design:type", Object)
+], InMemoryRowModel.prototype, "pivotStage", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], InMemoryRowModel.prototype, "init", null);
+InMemoryRowModel = __decorate([
+    context_1.Bean('rowModel')
+], InMemoryRowModel);
 exports.InMemoryRowModel = InMemoryRowModel;

@@ -1016,6 +1016,9 @@ export class RenderedCell extends Component {
             this.animateCellWithDataChanged();
         }
 
+        // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
+        this.addClassesFromRules();
+
         function doRefresh(): void {
             // if the cell renderer has a refresh method, we call this instead of doing a refresh
             // note: should pass in params here instead of value?? so that client has formattedValue
@@ -1023,9 +1026,6 @@ export class RenderedCell extends Component {
             var cellRendererParams = that.column.getColDef().cellRendererParams;
             var params = that.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
             that.cellRenderer.refresh(params);
-
-            // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
-            that.addClassesFromRules();
         }
 
         function doReplace(): void {

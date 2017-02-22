@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,7 @@ var context_2 = require("../context/context");
 var events_1 = require("../events");
 var context_3 = require("../context/context");
 var constants_1 = require("../constants");
-var utils_1 = require('../utils');
+var utils_1 = require("../utils");
 var FloatingRowModel = (function () {
     function FloatingRowModel() {
     }
@@ -125,28 +125,27 @@ var FloatingRowModel = (function () {
             return lastNode.rowTop + lastNode.rowHeight;
         }
     };
-    __decorate([
-        context_2.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], FloatingRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_2.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], FloatingRowModel.prototype, "eventService", void 0);
-    __decorate([
-        context_2.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], FloatingRowModel.prototype, "context", void 0);
-    __decorate([
-        context_3.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], FloatingRowModel.prototype, "init", null);
-    FloatingRowModel = __decorate([
-        context_1.Bean('floatingRowModel'), 
-        __metadata('design:paramtypes', [])
-    ], FloatingRowModel);
     return FloatingRowModel;
 }());
+__decorate([
+    context_2.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], FloatingRowModel.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_2.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], FloatingRowModel.prototype, "eventService", void 0);
+__decorate([
+    context_2.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], FloatingRowModel.prototype, "context", void 0);
+__decorate([
+    context_3.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], FloatingRowModel.prototype, "init", null);
+FloatingRowModel = __decorate([
+    context_1.Bean('floatingRowModel')
+], FloatingRowModel);
 exports.FloatingRowModel = FloatingRowModel;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,9 +15,10 @@ var component_1 = require("../../widgets/component");
 var AnimateSlideCellRenderer = (function (_super) {
     __extends(AnimateSlideCellRenderer, _super);
     function AnimateSlideCellRenderer() {
-        _super.call(this, AnimateSlideCellRenderer.TEMPLATE);
-        this.refreshCount = 0;
-        this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
+        var _this = _super.call(this, AnimateSlideCellRenderer.TEMPLATE) || this;
+        _this.refreshCount = 0;
+        _this.eCurrent = _this.queryForHtmlElement('.ag-value-slide-current');
+        return _this;
     }
     AnimateSlideCellRenderer.prototype.init = function (params) {
         this.params = params;
@@ -74,9 +75,9 @@ var AnimateSlideCellRenderer = (function (_super) {
             this.eCurrent.innerHTML = '';
         }
     };
-    AnimateSlideCellRenderer.TEMPLATE = '<span>' +
-        '<span class="ag-value-slide-current"></span>' +
-        '</span>';
     return AnimateSlideCellRenderer;
 }(component_1.Component));
+AnimateSlideCellRenderer.TEMPLATE = '<span>' +
+    '<span class="ag-value-slide-current"></span>' +
+    '</span>';
 exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;

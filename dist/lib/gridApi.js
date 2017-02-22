@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -133,9 +133,9 @@ var GridApi = (function () {
     GridApi.prototype.refreshRows = function (rowNodes) {
         this.rowRenderer.refreshRows(rowNodes);
     };
-    GridApi.prototype.refreshCells = function (rowNodes, colIds, animate) {
+    GridApi.prototype.refreshCells = function (rowNodes, cols, animate) {
         if (animate === void 0) { animate = false; }
-        this.rowRenderer.refreshCells(rowNodes, colIds, animate);
+        this.rowRenderer.refreshCells(rowNodes, cols, animate);
     };
     GridApi.prototype.rowDataChanged = function (rows) {
         console.log('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node');
@@ -592,116 +592,115 @@ var GridApi = (function () {
     GridApi.prototype.checkGridSize = function () {
         this.gridPanel.setBodyAndHeaderHeights();
     };
-    __decorate([
-        context_1.Autowired('csvCreator'), 
-        __metadata('design:type', csvCreator_1.CsvCreator)
-    ], GridApi.prototype, "csvCreator", void 0);
-    __decorate([
-        context_1.Optional('excelCreator'), 
-        __metadata('design:type', Object)
-    ], GridApi.prototype, "excelCreator", void 0);
-    __decorate([
-        context_1.Autowired('gridCore'), 
-        __metadata('design:type', gridCore_1.GridCore)
-    ], GridApi.prototype, "gridCore", void 0);
-    __decorate([
-        context_1.Autowired('rowRenderer'), 
-        __metadata('design:type', rowRenderer_1.RowRenderer)
-    ], GridApi.prototype, "rowRenderer", void 0);
-    __decorate([
-        context_1.Autowired('headerRenderer'), 
-        __metadata('design:type', headerRenderer_1.HeaderRenderer)
-    ], GridApi.prototype, "headerRenderer", void 0);
-    __decorate([
-        context_1.Autowired('filterManager'), 
-        __metadata('design:type', filterManager_1.FilterManager)
-    ], GridApi.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('columnController'), 
-        __metadata('design:type', columnController_1.ColumnController)
-    ], GridApi.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('selectionController'), 
-        __metadata('design:type', selectionController_1.SelectionController)
-    ], GridApi.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], GridApi.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'), 
-        __metadata('design:type', gridPanel_1.GridPanel)
-    ], GridApi.prototype, "gridPanel", void 0);
-    __decorate([
-        context_1.Autowired('valueService'), 
-        __metadata('design:type', valueService_1.ValueService)
-    ], GridApi.prototype, "valueService", void 0);
-    __decorate([
-        context_1.Autowired('masterSlaveService'), 
-        __metadata('design:type', masterSlaveService_1.MasterSlaveService)
-    ], GridApi.prototype, "masterSlaveService", void 0);
-    __decorate([
-        context_1.Autowired('eventService'), 
-        __metadata('design:type', eventService_1.EventService)
-    ], GridApi.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('floatingRowModel'), 
-        __metadata('design:type', floatingRowModel_1.FloatingRowModel)
-    ], GridApi.prototype, "floatingRowModel", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], GridApi.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('rowModel'), 
-        __metadata('design:type', Object)
-    ], GridApi.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Autowired('sortController'), 
-        __metadata('design:type', sortController_1.SortController)
-    ], GridApi.prototype, "sortController", void 0);
-    __decorate([
-        context_1.Autowired('paginationController'), 
-        __metadata('design:type', paginationController_1.PaginationController)
-    ], GridApi.prototype, "paginationController", void 0);
-    __decorate([
-        context_1.Autowired('focusedCellController'), 
-        __metadata('design:type', focusedCellController_1.FocusedCellController)
-    ], GridApi.prototype, "focusedCellController", void 0);
-    __decorate([
-        context_1.Optional('rangeController'), 
-        __metadata('design:type', Object)
-    ], GridApi.prototype, "rangeController", void 0);
-    __decorate([
-        context_1.Optional('clipboardService'), 
-        __metadata('design:type', Object)
-    ], GridApi.prototype, "clipboardService", void 0);
-    __decorate([
-        context_1.Optional('aggFuncService'), 
-        __metadata('design:type', Object)
-    ], GridApi.prototype, "aggFuncService", void 0);
-    __decorate([
-        context_1.Autowired('menuFactory'), 
-        __metadata('design:type', Object)
-    ], GridApi.prototype, "menuFactory", void 0);
-    __decorate([
-        context_1.Autowired('cellRendererFactory'), 
-        __metadata('design:type', cellRendererFactory_1.CellRendererFactory)
-    ], GridApi.prototype, "cellRendererFactory", void 0);
-    __decorate([
-        context_1.Autowired('cellEditorFactory'), 
-        __metadata('design:type', cellEditorFactory_1.CellEditorFactory)
-    ], GridApi.prototype, "cellEditorFactory", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], GridApi.prototype, "init", null);
-    GridApi = __decorate([
-        context_1.Bean('gridApi'), 
-        __metadata('design:paramtypes', [])
-    ], GridApi);
     return GridApi;
 }());
+__decorate([
+    context_1.Autowired('csvCreator'),
+    __metadata("design:type", csvCreator_1.CsvCreator)
+], GridApi.prototype, "csvCreator", void 0);
+__decorate([
+    context_1.Optional('excelCreator'),
+    __metadata("design:type", Object)
+], GridApi.prototype, "excelCreator", void 0);
+__decorate([
+    context_1.Autowired('gridCore'),
+    __metadata("design:type", gridCore_1.GridCore)
+], GridApi.prototype, "gridCore", void 0);
+__decorate([
+    context_1.Autowired('rowRenderer'),
+    __metadata("design:type", rowRenderer_1.RowRenderer)
+], GridApi.prototype, "rowRenderer", void 0);
+__decorate([
+    context_1.Autowired('headerRenderer'),
+    __metadata("design:type", headerRenderer_1.HeaderRenderer)
+], GridApi.prototype, "headerRenderer", void 0);
+__decorate([
+    context_1.Autowired('filterManager'),
+    __metadata("design:type", filterManager_1.FilterManager)
+], GridApi.prototype, "filterManager", void 0);
+__decorate([
+    context_1.Autowired('columnController'),
+    __metadata("design:type", columnController_1.ColumnController)
+], GridApi.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('selectionController'),
+    __metadata("design:type", selectionController_1.SelectionController)
+], GridApi.prototype, "selectionController", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], GridApi.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('gridPanel'),
+    __metadata("design:type", gridPanel_1.GridPanel)
+], GridApi.prototype, "gridPanel", void 0);
+__decorate([
+    context_1.Autowired('valueService'),
+    __metadata("design:type", valueService_1.ValueService)
+], GridApi.prototype, "valueService", void 0);
+__decorate([
+    context_1.Autowired('masterSlaveService'),
+    __metadata("design:type", masterSlaveService_1.MasterSlaveService)
+], GridApi.prototype, "masterSlaveService", void 0);
+__decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], GridApi.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('floatingRowModel'),
+    __metadata("design:type", floatingRowModel_1.FloatingRowModel)
+], GridApi.prototype, "floatingRowModel", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], GridApi.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('rowModel'),
+    __metadata("design:type", Object)
+], GridApi.prototype, "rowModel", void 0);
+__decorate([
+    context_1.Autowired('sortController'),
+    __metadata("design:type", sortController_1.SortController)
+], GridApi.prototype, "sortController", void 0);
+__decorate([
+    context_1.Autowired('paginationController'),
+    __metadata("design:type", paginationController_1.PaginationController)
+], GridApi.prototype, "paginationController", void 0);
+__decorate([
+    context_1.Autowired('focusedCellController'),
+    __metadata("design:type", focusedCellController_1.FocusedCellController)
+], GridApi.prototype, "focusedCellController", void 0);
+__decorate([
+    context_1.Optional('rangeController'),
+    __metadata("design:type", Object)
+], GridApi.prototype, "rangeController", void 0);
+__decorate([
+    context_1.Optional('clipboardService'),
+    __metadata("design:type", Object)
+], GridApi.prototype, "clipboardService", void 0);
+__decorate([
+    context_1.Optional('aggFuncService'),
+    __metadata("design:type", Object)
+], GridApi.prototype, "aggFuncService", void 0);
+__decorate([
+    context_1.Autowired('menuFactory'),
+    __metadata("design:type", Object)
+], GridApi.prototype, "menuFactory", void 0);
+__decorate([
+    context_1.Autowired('cellRendererFactory'),
+    __metadata("design:type", cellRendererFactory_1.CellRendererFactory)
+], GridApi.prototype, "cellRendererFactory", void 0);
+__decorate([
+    context_1.Autowired('cellEditorFactory'),
+    __metadata("design:type", cellEditorFactory_1.CellEditorFactory)
+], GridApi.prototype, "cellEditorFactory", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], GridApi.prototype, "init", null);
+GridApi = __decorate([
+    context_1.Bean('gridApi')
+], GridApi);
 exports.GridApi = GridApi;

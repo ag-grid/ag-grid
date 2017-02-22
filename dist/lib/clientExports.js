@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -238,6 +238,7 @@ function populateClientExports(exports) {
     exports.SvgFactory = svgFactory_1.SvgFactory;
     exports.TemplateService = templateService_1.TemplateService;
     exports.Utils = utils_1.Utils;
+    exports._ = utils_1._;
     exports.NumberSequence = utils_1.NumberSequence;
     exports.ValueService = valueService_1.ValueService;
     exports.XmlFactory = xmlFactory_1.XmlFactory;

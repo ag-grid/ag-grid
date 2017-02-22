@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.0.1
+// Type definitions for ag-grid v8.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -77,7 +77,6 @@ export declare class RenderedCell extends Component {
     init(): void;
     private addColumnHoverListener();
     private onColumnHover();
-    private checkHoveringCell();
     private addDomData();
     private onEnterKeyDown();
     private onF2KeyDown();

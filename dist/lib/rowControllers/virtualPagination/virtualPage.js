@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.0.1
+ * @version v8.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -170,25 +170,25 @@ var VirtualPage = (function () {
         var event = { success: true, page: this, lastRow: lastRow };
         this.localEventService.dispatchEvent(VirtualPage.EVENT_LOAD_COMPLETE, event);
     };
-    VirtualPage.EVENT_LOAD_COMPLETE = 'loadComplete';
-    VirtualPage.STATE_DIRTY = 'dirty';
-    VirtualPage.STATE_LOADING = 'loading';
-    VirtualPage.STATE_LOADED = 'loaded';
-    VirtualPage.STATE_FAILED = 'failed';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'), 
-        __metadata('design:type', gridOptionsWrapper_1.GridOptionsWrapper)
-    ], VirtualPage.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('context'), 
-        __metadata('design:type', context_1.Context)
-    ], VirtualPage.prototype, "context", void 0);
-    __decorate([
-        context_1.PostConstruct, 
-        __metadata('design:type', Function), 
-        __metadata('design:paramtypes', []), 
-        __metadata('design:returntype', void 0)
-    ], VirtualPage.prototype, "init", null);
     return VirtualPage;
 }());
+VirtualPage.EVENT_LOAD_COMPLETE = 'loadComplete';
+VirtualPage.STATE_DIRTY = 'dirty';
+VirtualPage.STATE_LOADING = 'loading';
+VirtualPage.STATE_LOADED = 'loaded';
+VirtualPage.STATE_FAILED = 'failed';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], VirtualPage.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], VirtualPage.prototype, "context", void 0);
+__decorate([
+    context_1.PostConstruct,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], VirtualPage.prototype, "init", null);
 exports.VirtualPage = VirtualPage;
