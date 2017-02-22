@@ -1,6 +1,6 @@
 import {Utils as _} from '../utils';
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Bean} from "../context/context";
+import {Bean, Autowired} from "../context/context";
 import {Qualifier} from "../context/context";
 
 /** need to get this class to use the dragService, so no duplication */
@@ -17,9 +17,13 @@ export interface DragServiceParams {
 @Bean('horizontalDragService')
 export class HorizontalDragService {
 
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     public addDragHandling(params: DragServiceParams): void {
         params.eDraggableElement.addEventListener('mousedown', (startEvent: MouseEvent) => {
-            new DragInstance(params, startEvent);
+            let myDocument = this.gridOptionsWrapper.getDocument();
+            let eBody = <HTMLElement> myDocument.querySelector('body');
+            new DragInstance(params, startEvent, eBody);
         });
     }
 }
@@ -43,10 +47,10 @@ class DragInstance {
     private params: DragServiceParams;
     private draggingStarted: boolean;
 
-    constructor(params: DragServiceParams, startEvent: MouseEvent) {
+    constructor(params: DragServiceParams, startEvent: MouseEvent, eBody: HTMLElement) {
 
         this.params = params;
-        this.eDragParent = <HTMLElement> document.querySelector('body');
+        this.eDragParent = eBody;
 
         this.dragStartX = startEvent.clientX;
         this.startEvent = startEvent;
