@@ -48,6 +48,19 @@
         }
     }]);
 
+    module.controller('GettingStartedController', ['$scope', function ($scope) {
+        $scope.jsOpen = false;
+        $scope.angularJsOpen = false;
+        $scope.vueOpen = false;
+        $scope.reactOpen = false;
+        $scope.aureliaOpen = false;
+        $scope.webcomponentsOpen = false;
+
+        $scope.toggleDiv = function(attribute) {
+            $scope[attribute] = !$scope[attribute];
+        }
+    }]);
+
     /*
      * Show Example directive
      */

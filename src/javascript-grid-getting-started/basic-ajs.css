@@ -1,0 +1,28 @@
+
+.ag-basic .ag-cell {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+label {
+    font-weight: normal !important;
+}
+
+.div-percent-bar {
+    display: inline-block;
+    height: 100%;
+    position: absolute;
+}
+
+.div-percent-value {
+    position: absolute;
+    padding-left: 4px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.div-outer-div {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+}

@@ -114,6 +114,47 @@ h4 {
 
 }
 
+/* collapsable normal doc items */
+.collapsableDocs {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.collapsableDocs-header{
+    cursor: pointer;
+    display: block;
+    position: relative;
+    padding: 5px;
+}
+.collapsableDocs-header .fa {
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    font-size: 12px;
+    transition: all .3s ease-in-out;
+    color: #999;
+}
+.collapsableDocs-header.active .fa {
+    transform: rotate(90deg)
+}
+.collapsableDocs-header + div{
+    max-height: 0;
+    overflow: hidden;
+    transition: all .5s ease-in-out;
+}
+.collapsableDocs-header.active + div{
+    max-height: 7000px;
+}
+.collapsableDocs-header.collapsableDocs-header_feature.active + div{
+    max-height: 7000px;
+    border: 1px solid lightgrey;
+}
+.collapsableDocs-content {
+    padding: 5px;
+}
+
 #documentationSearch {
     margin-bottom: 10px;
 }
@@ -125,6 +166,12 @@ h4 {
 .header-row .documentation-h2 {
     font-size: 20px;
     margin-bottom: 5px;
+}
+
+.contentBlock {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 /*

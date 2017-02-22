@@ -117,65 +117,30 @@ if (strcmp($version , 'latest') == 0) {
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-getting-started/">Getting Started</a>
                     <?php } ?>
 
-                    <?php if ($key == "Getting Started Javascript") { ?>
-                        <span class="sidebarLinkSelected childItem"><img inline src="/images/javascript_small.png" width="20px"> Javascript</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/"><img inline src="/images/javascript_small.png" width="20px"> Javascript</a>
-                    <?php } ?>
 
-                    <?php if ($key == "Getting Started React") { ?>
-                        <span ng-if="isFramework('react')" class="sidebarLinkSelected childItem"><img inline src="/images/react_small.png" width="20px"> React</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('react')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/"><img inline src="/images/react_small.png" width="20px"> React</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Getting Started ng1") { ?>
-                        <span ng-if="isFramework('angularjs')" class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('angularjs')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Getting Started ng2") { ?>
+<!--                    <?php /*if ($key == "Getting Started ng2") { */?>
                         <span ng-if="isFramework('angular')" class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular</a>
-                    <?php } ?>
+                    <?php /*} else { */?>
+                        <a ng-if="isFramework('angular')" class="sidebarLink childItem" href="<?php /*print($rootFolder) */?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular</a>
+                    <?php /*} */?>
 
-                    <?php if ($key == "Angular SystemJS") { ?>
+                    <?php /*if ($key == "Angular SystemJS") { */?>
                         <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">SystemJS</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-systemjs/" style="padding-left: 15px">SystemJS</a>
-                    <?php } ?>
+                    <?php /*} else { */?>
+                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */?>ag-grid-angular-systemjs/" style="padding-left: 15px">SystemJS</a>
+                    <?php /*} */?>
 
-                    <?php if ($key == "Angular Webpack") { ?>
+                    <?php /*if ($key == "Angular Webpack") { */?>
                         <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">Webpack</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-webpack/" style="padding-left: 15px">Webpack</a>
-                    <?php } ?>
+                    <?php /*} else { */?>
+                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */?>ag-grid-angular-webpack/" style="padding-left: 15px">Webpack</a>
+                    <?php /*} */?>
 
-                    <?php if ($key == "Angular CLI") { ?>
+                    <?php /*if ($key == "Angular CLI") { */?>
                         <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">Angular CLI</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-angularcli/" style="padding-left: 15px">Angular CLI</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Getting Started VueJS") { ?>
-                        <span ng-if="isFramework('vue')" class="sidebarLinkSelected childItem"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('vue')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-vuejs-data-grid/"><img inline src="/images/vue_small.png"width="20px"> VueJS</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Getting Started Web Components") { ?>
-                        <span ng-if="isFramework('webcomponents')" class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('webcomponents')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Getting Started Aurelia") { ?>
-                        <span ng-if="isFramework('aurelia')" class="sidebarLinkSelected childItem"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                    <?php } else { ?>
-                        <a ng-if="isFramework('aurelia')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-aurelia-data-grid/"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                    <?php } ?>
+                    <?php /*} else { */?>
+                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */?>ag-grid-angular-angularcli/" style="padding-left: 15px">Angular CLI</a>
+                    --><?php /*} */?>
 
                     <?php if ($key == "Width & Height") { ?>
                         <span class="sidebarLinkSelected">Width & Height</span>
