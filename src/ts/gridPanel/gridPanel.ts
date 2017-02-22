@@ -1447,6 +1447,11 @@ export class GridPanel extends BeanStub {
         var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         var numberOfRowsInHeader = this.columnController.getHeaderRowCount();
         var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
+
+        if (this.gridOptionsWrapper.isFloatingFilter()) {
+            totalHeaderHeight += 20;
+        }
+
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
 
         // padding top covers the header and the floating rows on top

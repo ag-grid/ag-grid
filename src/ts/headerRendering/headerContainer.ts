@@ -6,7 +6,7 @@ import {ColumnController} from "../columnController/columnController";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {HeaderRowComp} from "./headerRowComp";
+import {HeaderRowComp, HeaderRowType} from "./headerRowComp";
 import {BodyDropTarget} from "./bodyDropTarget";
 import {Column} from "../entities/column";
 import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
@@ -116,7 +116,15 @@ export class HeaderContainer {
         
         for (var dept = 0; dept<rowCount; dept++) {
             var groupRow = dept !== (rowCount - 1);
-            var headerRowComp = new HeaderRowComp(dept, groupRow, this.pinned, this.eRoot, this.dropTarget);
+            let type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
+            var headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
+            this.context.wireBean(headerRowComp);
+            this.headerRowComps.push(headerRowComp);
+            this.eContainer.appendChild(headerRowComp.getGui());
+        }
+
+        if (this.gridOptionsWrapper.isFloatingFilter()) {
+            var headerRowComp = new HeaderRowComp(rowCount-1, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());
