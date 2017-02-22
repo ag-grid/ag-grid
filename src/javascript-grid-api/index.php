@@ -586,9 +586,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>destroy()</th>
             <td>Gets the grid to destroy and release resources. If you are using Angular (version 1 or 2)
-            you do not need to call this, as the grid links in with the AngularJS lifecycle. However if you
-            are using Web Components or native Javascript, you do need to call this, to avoid a memory
-            leak in your application.</td>
+                you do not need to call this, as the grid links in with the AngularJS 1.x lifecycle. However if you
+                are using Web Components or native Javascript, you do need to call this, to avoid a memory
+                leak in your application.
+            </td>
         </tr>
         <tr>
             <th>showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterMouseClick(colKey, mouseEvent)</th>
