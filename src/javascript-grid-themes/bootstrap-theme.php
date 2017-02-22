@@ -3,7 +3,7 @@ $key = "Bootstrap Theme";
 $pageTitle = "ag-Grid Bootstrap Theme Data Grid";
 $pageDescription = "ag-Grid Bootstrap Theme Data Grid";
 $pageKeyboards = "ag-Grid Bootstrap Theme Data Grid";
-$pageGroup = "feature";
+$pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
 

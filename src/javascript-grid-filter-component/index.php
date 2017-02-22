@@ -3,6 +3,7 @@ $key = "Filter Component";
 $pageTitle = "JavaScript Grid Filtering";
 $pageDescription = "Describes how to implement customer filters for ag-Grid";
 $pageKeyboards = "JavaScript Grid Filtering";
+$pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -146,5 +147,21 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <show-example example="exampleCustomFilter"></show-example>
+
+<div ng-if="isFramework('angular')">
+    <?php include './angular.php';?>
+</div>
+
+<div ng-if="isFramework('aurelia')">
+    <?php include './aurelia.php';?>
+</div>
+
+<div ng-if="isFramework('react')">
+    <?php include './react.php';?>
+</div>
+
+<div ng-if="isFramework('vue')">
+    <?php include './vue.php';?>
+</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

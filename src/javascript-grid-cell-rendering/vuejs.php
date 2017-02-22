@@ -1,11 +1,3 @@
-<?php
-$key = "Cell Rendering VueJS";
-$pageTitle = "ag-Grid Cell Rendering VueJS";
-$pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
-$pageKeyboards = "ag-Grid Cell Renderers VueJS";
-include '../documentation-main/documentation_header.php';
-?>
-
 <!-- vuejs from here -->
 <h2 id="vueCellRendering">
     <img src="../images/vue_large.png" style="width: 60px;"/>
@@ -148,5 +140,3 @@ the grid will know the framework to use is VueJS.
 
 <note>The full <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using VueJS Components with both CellEditors and Filters</note>
-
-<?php include '../documentation-main/documentation_footer.php';?>

@@ -106,39 +106,39 @@ if (strcmp($version , 'latest') == 0) {
 
 
                 <div class="docsMenu-header<?php if ($pageGroup == "basics") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
-                    <h4>The Basics</h4>
+                    <h4>Getting Started</h4>
                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-content">
                     <?php if ($key == "Getting Started") { ?>
-                        <span class="sidebarLinkSelected">Getting Started</span>
+                        <span class="sidebarLinkSelected">Overview</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-getting-started/">Getting Started</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-getting-started/">Overview</a>
                     <?php } ?>
 
                     <?php if ($key == "Getting Started Javascript") { ?>
-                        <span class="sidebarLinkSelected childItem"><img inline src="/images/javascript_small.png" width="20px"> Javascript</span>
+                        <span class="sidebarLinkSelected childItem"><img inline src="/images/javascript_small.png" class="framworkIcon-small"> Javascript</span>
                     <?php } else { ?>
-                        <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/"><img inline src="/images/javascript_small.png" width="20px"> Javascript</a>
+                        <a class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-javascript-data-grid/"><img inline src="/images/javascript_small.png" class="framworkIcon-small"> Javascript</a>
                     <?php } ?>
 
                     <?php if ($key == "Getting Started React") { ?>
-                        <span ng-if="isFramework('react')" class="sidebarLinkSelected childItem"><img inline src="/images/react_small.png" width="20px"> React</span>
+                        <span ng-if="isFramework('react')" class="sidebarLinkSelected childItem"><img inline src="/images/react_small.png" class="framworkIcon-small"> React</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('react')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/"><img inline src="/images/react_small.png" width="20px"> React</a>
+                        <a ng-if="isFramework('react')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-react-data-grid/"><img inline src="/images/react_small.png" class="framworkIcon-small"> React</a>
                     <?php } ?>
 
                     <?php if ($key == "Getting Started ng1") { ?>
-                        <span ng-if="isFramework('angularjs')" class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</span>
+                        <span ng-if="isFramework('angularjs')" class="sidebarLinkSelected childItem"><img inline src="/images/angularjs_small.png" class="framworkIcon-small"> Angular 1.x</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('angularjs')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" width="20px"> Angular 1.x</a>
+                        <a ng-if="isFramework('angularjs')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angularjs-data-grid/"><img inline src="/images/angularjs_small.png" class="framworkIcon-small"> Angular 1.x</a>
                     <?php } ?>
 
                     <?php if ($key == "Getting Started ng2") { ?>
-                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
+                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" class="framworkIcon-small"> Angular</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular</a>
+                        <a ng-if="isFramework('angular')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"class="framworkIcon-small"> Angular</a>
                     <?php } ?>
 
                     <?php if ($key == "Angular SystemJS") { ?>
@@ -160,21 +160,21 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
 
                     <?php if ($key == "Getting Started VueJS") { ?>
-                        <span ng-if="isFramework('vue')" class="sidebarLinkSelected childItem"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
+                        <span ng-if="isFramework('vue')" class="sidebarLinkSelected childItem"><img inline src="/images/vue_small.png" class="framworkIcon-small"> VueJS</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('vue')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-vuejs-data-grid/"><img inline src="/images/vue_small.png"width="20px"> VueJS</a>
+                        <a ng-if="isFramework('vue')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-vuejs-data-grid/"><img inline src="/images/vue_small.png"class="framworkIcon-small"> VueJS</a>
                     <?php } ?>
 
                     <?php if ($key == "Getting Started Web Components") { ?>
-                        <span ng-if="isFramework('webcomponents')" class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</span>
+                        <span ng-if="isFramework('webcomponents')" class="sidebarLinkSelected childItem"><img inline src="/images/webComponents_small.png" class="framworkIcon-small"> Web Components</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('webcomponents')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/"><img inline src="/images/webComponents_small.png" width="20px"> Web Components</a>
+                        <a ng-if="isFramework('webcomponents')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-web-component-data-grid/"><img inline src="/images/webComponents_small.png" class="framworkIcon-small"> Web Components</a>
                     <?php } ?>
 
                     <?php if ($key == "Getting Started Aurelia") { ?>
-                        <span ng-if="isFramework('aurelia')" class="sidebarLinkSelected childItem"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
+                        <span ng-if="isFramework('aurelia')" class="sidebarLinkSelected childItem"><img inline src="/images/aurelia_small.png" class="framworkIcon-small"> Aurelia</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('aurelia')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-aurelia-data-grid/"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
+                        <a ng-if="isFramework('aurelia')" class="sidebarLink childItem" href="<?php print($rootFolder) ?>best-aurelia-data-grid/"><img inline src="/images/aurelia_small.png" class="framworkIcon-small"> Aurelia</a>
                     <?php } ?>
 
                     <?php if ($key == "Width & Height") { ?>
@@ -239,6 +239,13 @@ if (strcmp($version , 'latest') == 0) {
                 </div>
 
                 <div class="docsMenu-content">
+
+                    <?php if ($key == "Features") { ?>
+                        <span class="sidebarLinkSelected">Overview</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-features/">Overview</a>
+                    <?php } ?>
+
                     <?php if ($key == "Sorting") { ?>
                         <span class="sidebarLinkSelected">Sorting</span>
                     <?php } else { ?>
@@ -311,12 +318,6 @@ if (strcmp($version , 'latest') == 0) {
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-styling/">Cell Styling</a>
                     <?php } ?>
 
-                    <?php if ($key == "Cell Editing") { ?>
-                        <span class="sidebarLinkSelected">Cell Editing</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editing/">Cell Editing</a>
-                    <?php } ?>
-
                     <?php if ($key == "Context") { ?>
                         <span class="sidebarLinkSelected">Context</span>
                     <?php } else { ?>
@@ -381,38 +382,6 @@ if (strcmp($version , 'latest') == 0) {
                         <span class="sidebarLinkSelected">CSV Export</span>
                     <?php } else { ?>
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">CSV Export</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Styling") { ?>
-                        <span class="sidebarLinkSelected">Layout & Styling</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-styling/">Layout & Styling</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Fresh Theme") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px">Fresh Theme</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php">Fresh Theme</a>
-                    <?php } ?>
-                    <?php if ($key == "Blue Theme") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px">Blue Theme</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/blue-theme.php" style="padding-left: 15px">Blue Theme</a>
-                    <?php } ?>
-                    <?php if ($key == "Dark Theme") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px">Dark Theme</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/dark-theme.php" style="padding-left: 15px">Dark Theme</a>
-                    <?php } ?>
-                    <?php if ($key == "Material Theme") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px">Material Theme</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/material-theme.php" style="padding-left: 15px">Material Theme</a>
-                    <?php } ?>
-                    <?php if ($key == "Bootstrap Theme") { ?>
-                        <span class="sidebarLinkSelected" style="padding-left: 15px">Bootstrap Theme</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php" style="padding-left: 15px">Bootstrap Theme</a>
                     <?php } ?>
 
                     <?php if ($key == "RTL") { ?>
@@ -526,41 +495,64 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
                 </div>
 
+                <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
+                    <h4>Themes</h4>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                </div>
+
+                <div class="docsMenu-content">
+                    <?php if ($key == "Styling") { ?>
+                        <span class="sidebarLinkSelected">Overview</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-styling/">Overview</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Fresh Theme") { ?>
+                        <span class="sidebarLinkSelected">Fresh Theme</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php">Fresh Theme</a>
+                    <?php } ?>
+                    <?php if ($key == "Blue Theme") { ?>
+                        <span class="sidebarLinkSelected">Blue Theme</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/blue-theme.php">Blue Theme</a>
+                    <?php } ?>
+                    <?php if ($key == "Dark Theme") { ?>
+                        <span class="sidebarLinkSelected">Dark Theme</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/dark-theme.php">Dark Theme</a>
+                    <?php } ?>
+                    <?php if ($key == "Material Theme") { ?>
+                        <span class="sidebarLinkSelected">Material Theme</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/material-theme.php">Material Theme</a>
+                    <?php } ?>
+                    <?php if ($key == "Bootstrap Theme") { ?>
+                        <span class="sidebarLinkSelected">Bootstrap Theme</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php">Bootstrap Theme</a>
+                    <?php } ?>
+                </div>
+
+
                 <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                     <h4>Components</h4>
                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-content">
+
+                    <?php if ($key == "Components") { ?>
+                        <span class="sidebarLinkSelected">Overview</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-components/">Overview</a>
+                    <?php } ?>
+
                     <?php if ($key == "Cell Rendering") { ?>
                         <span class="sidebarLinkSelected">Cell Renderer</span>
                     <?php } else { ?>
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/">Cell Renderer</a>
                     <?php } ?>
-
-                        <?php if ($key == "Cell Rendering Angular") { ?>
-                            <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Cell Rendering Aurelia") { ?>
-                            <span ng-if="isFramework('aurelia')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('aurelia')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Cell Rendering React") { ?>
-                            <span ng-if="isFramework('react')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('react')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Cell Rendering VueJS") { ?>
-                            <span ng-if="isFramework('vue')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('vue')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                        <?php } ?>
 
                     <?php if ($key == "Cell Editor") { ?>
                         <span class="sidebarLinkSelected">Cell Editor</span>
@@ -568,59 +560,11 @@ if (strcmp($version , 'latest') == 0) {
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/">Cell Editor</a>
                     <?php } ?>
 
-                        <?php if ($key == "Cell Editing Angular") { ?>
-                            <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Cell Editing Aurelia") { ?>
-                            <span ng-if="isFramework('aurelia')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('aurelia')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Cell Editing React") { ?>
-                            <span ng-if="isFramework('react')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('react')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Cell Editing VueJS") { ?>
-                            <span ng-if="isFramework('vue')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('vue')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                        <?php } ?>
-
                     <?php if ($key == "Filter Component") { ?>
                         <span class="sidebarLinkSelected">Filter Components</span>
                     <?php } else { ?>
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/">Filter Components</a>
                     <?php } ?>
-
-                        <?php if ($key == "Filtering Angular") { ?>
-                            <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Filtering Aurelia") { ?>
-                            <span ng-if="isFramework('aurelia')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('aurelia')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Filtering React") { ?>
-                            <span ng-if="isFramework('react')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('react')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Filtering VueJS") { ?>
-                            <span ng-if="isFramework('vue')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('vue')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                        <?php } ?>
 
                     <?php if ($key == "Header Rendering") { ?>
                         <span class="sidebarLinkSelected">Header Components</span>
@@ -628,29 +572,6 @@ if (strcmp($version , 'latest') == 0) {
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/">Header Components</a>
                     <?php } ?>
 
-                        <?php if ($key == "Header Rendering Angular") { ?>
-                            <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/angular.php" style="padding-left: 15px"><img inline src="/images/angular2_small.png" width="20px"> Angular</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Header Rendering Aurelia") { ?>
-                            <span ng-if="isFramework('aurelia')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('aurelia')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/aurelia.php" style="padding-left: 15px"><img inline src="/images/aurelia_small.png" width="20px"> Aurelia</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Header Rendering React") { ?>
-                            <span ng-if="isFramework('react')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('react')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/react.php" style="padding-left: 15px"><img inline="" src="/images/react_small.png" width="20px"> React</a>
-                        <?php } ?>
-
-                        <?php if ($key == "Header Rendering VueJS") { ?>
-                            <span ng-if="isFramework('vue')" class="sidebarLinkSelected" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</span>
-                        <?php } else { ?>
-                            <a ng-if="isFramework('vue')" class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/vuejs.php" style="padding-left: 15px"><img inline src="/images/vue_small.png" width="20px"> VueJS</a>
-                        <?php } ?>
                 </div>
 
                 <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
@@ -660,9 +581,9 @@ if (strcmp($version , 'latest') == 0) {
 
                 <div class="docsMenu-content">
                     <?php if ($key == "Row Models") { ?>
-                        <span class="sidebarLinkSelected">Introduction</span>
+                        <span class="sidebarLinkSelected">Overview</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-models/">Introduction</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-models/">Overview</a>
                     <?php } ?>
 
                     <?php if ($key == "Datasource") { ?>
@@ -709,21 +630,8 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
                 </div>
 
-                <div class="docsMenu-header<?php if ($pageGroup == "tutorials") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
-                    <h4>Tutorials</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
-
-                <div class="docsMenu-content">
-                    <?php if ($key == "Intermediate Tutorial") { ?>
-                        <span class="sidebarLinkSelected">Intermediate</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-tutorials/">Intermediate</a>
-                    <?php } ?>
-                </div>
-
                 <?php if ($version=='latest') { ?>
-                    <div class="docsMenu-header<?php if ($pageGroup == "tutorials") { ?> misc<?php } ?>" onclick="javascript: this.classList.toggle('active');">
+                    <div class="docsMenu-header<?php if ($pageGroup == "misc") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                         <h4>Misc</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
@@ -738,6 +646,11 @@ if (strcmp($version , 'latest') == 0) {
                             <span class="sidebarLinkSelected">Feature Roadmap</span>
                         <?php } else { ?>
                             <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-roadmap/">Feature Roadmap</a>
+                        <?php } ?>
+                        <?php if ($key == "Intermediate Tutorial") { ?>
+                            <span class="sidebarLinkSelected">Tutorials</span>
+                        <?php } else { ?>
+                            <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-tutorials/">Tutorials</a>
                         <?php } ?>
                         <a class="sidebarLink" href="/archive/">Archive Docs</a>
                     </div>

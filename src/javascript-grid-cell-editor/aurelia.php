@@ -1,14 +1,4 @@
-<?php
-$key = "Cell Editing Aurelia";
-$pageTitle = "ag-Grid Cell Editing Aurelia";
-$pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
-$pageKeyboards = "ag-Grid Cell Editors Aurelia";
-include '../documentation-main/documentation_header.php';
-?>
-
-<div>
-
-    <!-- start of aurelia -->    
+    <!-- start of aurelia -->
     <h2 id="aureliaCellEditing">
         <img src="../images/aurelia_large.png" style="width: 60px;"/>
         Aurelia Cell Editing
@@ -123,6 +113,3 @@ export class NumericEditor extends BaseAureliaEditor {
     <show-example example="../aurelia-example/#/editor/true"
                   jsfile="../aurelia-example/components/editor-example/editor-example.ts"
                   html="../aurelia-example/components/editor-example/editor-example.html"></show-example>
-</div>
-
-<?php include '../documentation-main/documentation_footer.php';?>

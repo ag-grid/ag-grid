@@ -1,11 +1,3 @@
-<?php
-$key = "Cell Rendering Aurelia";
-$pageTitle = "ag-Grid Cell Rendering Aurelia";
-$pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
-$pageKeyboards = "ag-Grid Cell Renderers Aurelia";
-include '../documentation-main/documentation_header.php';
-?>
-
 <!-- Aurelia from here -->
 <h2 id="aureliaCellRendering">
     <img src="../images/aurelia_large.png" style="width: 60px;"/>
@@ -84,5 +76,3 @@ include '../documentation-main/documentation_header.php';
 
 <br/>
 <note>The full <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>
-
-<?php include '../documentation-main/documentation_footer.php';?>

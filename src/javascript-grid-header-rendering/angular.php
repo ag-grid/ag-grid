@@ -1,11 +1,3 @@
-<?php
-$key = "Header Rendering Angular";
-$pageTitle = "ag-Grid Cell Editing Angular";
-$pageDescription = "";
-$pageKeyboards = "ag-Grid Cell Editors Angular";
-include '../documentation-main/documentation_header.php';
-?>
-
 <h2 id="angular-header-component">
     <img src="../images/angular2_large.png" style="width: 60px;"/>
     Angular Header Component
@@ -64,5 +56,3 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// no getGui() or destroy(), all handled by Angular</span>
 }</pre>
-
-<?php include '../documentation-main/documentation_footer.php';?>

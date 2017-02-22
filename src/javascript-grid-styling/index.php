@@ -3,13 +3,15 @@ $key = "Styling";
 $pageTitle = "ag-Grid Styling";
 $pageDescription = "ag-Grid Styling";
 $pageKeyboards = "ag-Grid Styling";
-$pageGroup = "feature";
+$pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2 id="styling">Styling</h2>
+    <h2>Themes Overview</h2>
+
+    <h3 id="styling">Styling</h3>
 
     ag-Grid is designed to have it's look and feel derived from a theme.
 

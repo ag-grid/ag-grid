@@ -1,13 +1,3 @@
-<?php
-$key = "Cell Editing React";
-$pageTitle = "ag-Grid Cell Editing React";
-$pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
-$pageKeyboards = "ag-Grid Cell Editors React";
-include '../documentation-main/documentation_header.php';
-?>
-
-<div>
-
     <h2 id="reactCellEditing">
         <img src="../images/react_large.png" style="width: 60px;"/>
         React Cell Editing
@@ -98,7 +88,3 @@ colDef = {
         All of the other methods (<i>isPopup(), isCancelBeforeStart(), isCancelAfterEnd(), afterGuiAttached()</i> etc)
         should be put onto your React component and will work as normal.
     </p>
-
-</div>
-
-<?php include '../documentation-main/documentation_footer.php';?>
