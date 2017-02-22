@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         via api.addEventListener(eventName, handler).
     </p>
 
-    <note ng-if="isFramework('angularjs')">For AngularJS - ag-Grid does not not fire events inside an Angular JS digest
+    <note ng-if="isFramework('angularjs')">For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest
         cycle. This is done on purpose
         for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
         cycle

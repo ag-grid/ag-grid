@@ -75,7 +75,6 @@ if (strcmp($version , 'latest') == 0) {
                             </a>
                         </h2>
                     </div>
-                    <h2 class="documentation-h2">Documentation</h2>
                     <div id="documentationSearch">
                         <img src="/images/spinner.svg" class="documentationSearch-spinner active" width="24" height="24" />
                         <gcse:searchbox enableAutoComplete="true" enableHistory="true" autoCompleteMaxCompletions="5" autoCompleteMatchType="any"></gcse:searchbox>
@@ -98,7 +97,7 @@ if (strcmp($version , 'latest') == 0) {
                     <option value="all">All</option>
                     <option value="javascript">JavaScript</option>
                     <option value="angular">Angular</option>
-                    <option value="angularjs">AngularJS</option>
+                    <option value="angularjs">AngularJS 1.x</option>
                     <option value="react">ReactJS</option>
                     <option value="vue">VueJS</option>
                     <option value="aurelia">AureliaJS</option>
@@ -108,7 +107,7 @@ if (strcmp($version , 'latest') == 0) {
 
                 <div class="docsMenu-header<?php if ($pageGroup == "basics") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                     <h4>The Basics</h4>
-                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-content">
@@ -187,7 +186,7 @@ if (strcmp($version , 'latest') == 0) {
 
                  <div class="docsMenu-header<?php if ($pageGroup == "interfacing") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                      <h4>Interfacing</h4>
-                     <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                  </div>
 
                 <div class="docsMenu-content">
@@ -234,9 +233,9 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
                 </div>
 
-                <div class="docsMenu-header<?php if ($pageGroup == "free") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
-                    <h4>Free Features</h4>
-                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
+                    <h4>Features</h4>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-content">
@@ -439,11 +438,97 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } else { ?>
                         <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-for-print/">For Print</a>
                     <?php } ?>
+
+                    <? /* BEGIN ENTERPRISE FEATURES */ ?>
+
+                    <?php if ($key == "Excel Export") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Excel Export</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/"><i class="fa fa-star" aria-hidden="true"></i> Excel Export</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Viewport") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Viewport</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/"><i class="fa fa-star" aria-hidden="true"></i> Viewport</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Data Functions") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Data Functions</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-data-functions/"><i class="fa fa-star" aria-hidden="true"></i> Data Functions</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Grouping") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Grouping Rows</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/"><i class="fa fa-star" aria-hidden="true"></i> Grouping Rows</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Aggregation") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Aggregation</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/"><i class="fa fa-star" aria-hidden="true"></i> Aggregation</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Pivoting") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Pivoting</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/"><i class="fa fa-star" aria-hidden="true"></i> Pivoting</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Tool Panel") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Tool Panel</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tool-panel/"><i class="fa fa-star" aria-hidden="true"></i> Tool Panel</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Clipboard") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Clipboard</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-clipboard/"><i class="fa fa-star" aria-hidden="true"></i> Clipboard</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Column Menu") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Column Menu</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-menu/"><i class="fa fa-star" aria-hidden="true"></i> Column Menu</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Context Menu") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Context Menu</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context-menu/"><i class="fa fa-star" aria-hidden="true"></i> Context Menu</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Range Selection") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Range Selection</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-range-selection/"><i class="fa fa-star" aria-hidden="true"></i> Range Selection</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Status Bar") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Status Bar</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-status-bar/"><i class="fa fa-star" aria-hidden="true"></i> Status Bar</a>
+                    <?php } ?>
+
+                    <?php if ($key == "Set Filtering") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Set Filtering</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-filtering/"><i class="fa fa-star" aria-hidden="true"></i> Set Filtering</a>
+                    <?php } ?>
+
+                    <?php if ($key == "License Key") { ?>
+                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> License Key</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-license/"><i class="fa fa-star" aria-hidden="true"></i> License Key</a>
+                    <?php } ?>
                 </div>
 
                 <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                     <h4>Components</h4>
-                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-content">
@@ -570,7 +655,7 @@ if (strcmp($version , 'latest') == 0) {
 
                 <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                     <h4>Row Models</h4>
-                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-content">
@@ -599,100 +684,9 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
                 </div>
 
-                <div class="docsMenu-header<?php if ($pageGroup == "enterprise") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
-                    <h4>Enterprise Features</h4>
-                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
-                </div>
-
-                <div class="docsMenu-content">
-                    <?php if ($key == "Excel Export") { ?>
-                        <span class="sidebarLinkSelected">Excel Export</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/">Excel Export</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Viewport") { ?>
-                        <span class="sidebarLinkSelected">Viewport</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/">Viewport</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Data Functions") { ?>
-                        <span class="sidebarLinkSelected">Data Functions</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-data-functions/">Data Functions</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Grouping") { ?>
-                        <span class="sidebarLinkSelected">&nbsp; Grouping Rows</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/">&nbsp; Grouping Rows</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Aggregation") { ?>
-                        <span class="sidebarLinkSelected">&nbsp; Aggregation</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/">&nbsp; Aggregation</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Pivoting") { ?>
-                        <span class="sidebarLinkSelected">&nbsp; Pivoting</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/">&nbsp; Pivoting</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Tool Panel") { ?>
-                        <span class="sidebarLinkSelected">Tool Panel</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tool-panel/">Tool Panel</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Clipboard") { ?>
-                        <span class="sidebarLinkSelected">Clipboard</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-clipboard/">Clipboard</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Column Menu") { ?>
-                        <span class="sidebarLinkSelected">Column Menu</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-menu/">Column Menu</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Context Menu") { ?>
-                        <span class="sidebarLinkSelected">Context Menu</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context-menu/">Context Menu</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Range Selection") { ?>
-                        <span class="sidebarLinkSelected">Range Selection</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-range-selection/">Range Selection</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Status Bar") { ?>
-                        <span class="sidebarLinkSelected">Status Bar</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-status-bar/">Status Bar</a>
-                    <?php } ?>
-
-                    <?php if ($key == "Set Filtering") { ?>
-                        <span class="sidebarLinkSelected">Set Filtering</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-filtering/">Set Filtering</a>
-                    <?php } ?>
-
-                    <?php if ($key == "License Key") { ?>
-                        <span class="sidebarLinkSelected">License Key</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-license/">License Key</a>
-                    <?php } ?>
-                </div>
-
                 <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                     <h4>Examples</h4>
-                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-examples">
@@ -717,7 +711,7 @@ if (strcmp($version , 'latest') == 0) {
 
                 <div class="docsMenu-header<?php if ($pageGroup == "tutorials") { ?> active<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                     <h4>Tutorials</h4>
-                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
                 <div class="docsMenu-content">
@@ -731,7 +725,7 @@ if (strcmp($version , 'latest') == 0) {
                 <?php if ($version=='latest') { ?>
                     <div class="docsMenu-header<?php if ($pageGroup == "tutorials") { ?> misc<?php } ?>" onclick="javascript: this.classList.toggle('active');">
                         <h4>Misc</h4>
-                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
 
                     <div class="docsMenu-content">

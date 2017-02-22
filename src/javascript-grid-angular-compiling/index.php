@@ -1,8 +1,8 @@
 <?php
 $key = "Angular Compiling";
-$pageTitle = "AngularJS Data Grid - Angular Compiling";
-$pageDescription = "Documentation on how to Angular Compile for Angular AngularJS Data Grid";
-$pageKeyboards = "AngularJS Angular Data Grid Angular Compiling";
+$pageTitle = "AngularJS 1.x Data Grid - Angular Compiling";
+$pageDescription = "Documentation on how to Angular Compile for Angular AngularJS 1.x Data Grid";
+$pageKeyboards = "AngularJS 1.x Angular Data Grid Angular Compiling";
 include '../documentation-main/documentation_header.php';
 ?>
 

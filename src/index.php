@@ -4,7 +4,7 @@
     <head lang="en">
     <meta charset="UTF-8">
         <title>Javascript Datagrid</title>
-        <meta name="description" content="ag-Grid - The JavaScript Datagrid for Enterprise. Supporting Plain Javascript, React, AngularJS 1 & 2, Web Components and Aurelia.">
+        <meta name="description" content="ag-Grid - The JavaScript Datagrid for Enterprise. Supporting Plain Javascript, React, AngularJS 1.x & 2, Web Components and Aurelia.">
         <meta name="keywords" content="javascript data grid react angularjs angular 2 web components aurelia"/>
         <meta property="og:image" content="https://www.ag-grid.com/images/ag-Grid2-200.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -3,7 +3,7 @@ $key = "Grouping";
 $pageTitle = "ag-Grid Grouping and Aggregation";
 $pageDescription = "ag-Grid Grouping and Aggregation";
 $pageKeyboards = "ag-Grid Grouping and Aggregation";
-$pageGroup = "enterprise";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

@@ -3,7 +3,7 @@ $key = "Internationalisation";
 $pageTitle = "ag-Grid Internationalisation";
 $pageDescription = "You can change text used in different parts of the grid for Internationalisation. This page explains how to change languages via the grid options.";
 $pageKeyboards = "ag-Grid Internationalisation";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -136,8 +136,8 @@ include '../documentation-main/documentation_header.php';
         <span class="codeComment">// to avoid key clash with external keys, we add 'grid' to the start of each key.</span>
         var gridKey = 'grid.' + key;
 
-        <span class="codeComment">// look the value up. here we use the AngularJS $filter service, however you can use whatever</span>
-        <span class="codeComment">// service you want, AngularJS or otherwise.</span>
+        <span class="codeComment">// look the value up. here we use the AngularJS 1.x $filter service, however you can use whatever</span>
+        <span class="codeComment">// service you want, AngularJS 1.x or otherwise.</span>
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }

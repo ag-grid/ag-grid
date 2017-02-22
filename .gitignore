@@ -7,4 +7,4 @@ node_modules/
 .DS_Store
 ag-grid-docs.iml
 *.map
-idea
+.idea

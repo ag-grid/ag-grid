@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created
         using open Web technology. They are part of the browser and so they do not depend on external libraries
-        such as AngularJS or JQuery.
+        such as AngularJS 1.x or JQuery.
     </p>
     <p>
         Web Components are of particular interest to ag-Grid as I see them as the future for reusable components.

@@ -3,7 +3,7 @@ $key = "Icons";
 $pageTitle = "ag-Grid Icons";
 $pageDescription = "ag-Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.";
 $pageKeyboards = "ag-Grid Pinning";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

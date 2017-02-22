@@ -406,7 +406,7 @@ include 'documentation_header.php';
     Then follow on to the section on the framework that interests you (one of
     <a href="../best-javascript-data-grid/">Javascript</a>,
     <a href="../best-react-data-grid/">React</a>,
-    <a href="../best-angularjs-data-grid/">AngularJS</a>,
+    <a href="../best-angularjs-data-grid/">AngularJS 1.x</a>,
     <a href="../best-angular-2-data-grid/">Angular</a>,
     <a href="../best-vuejs-data-grid/">VueJS</a>,
     <a href="../best-web-component-data-grid/">Web Components</a> or

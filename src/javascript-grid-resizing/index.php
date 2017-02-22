@@ -3,7 +3,7 @@ $key = "Resizing";
 $pageTitle = "ag-Grid Resizing";
 $pageDescription = "ag-Grid Resizing";
 $pageKeyboards = "ag-Grid Resizing";
-$pageGroup = "free";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

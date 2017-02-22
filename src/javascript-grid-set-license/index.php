@@ -3,7 +3,7 @@ $key = "License Key";
 $pageTitle = "ag-Grid JavaScript Data Grid Set License Key";
 $pageDescription = "How to set the License Key in ag-Grid Enterprise";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel License Key";
-$pageGroup = "enterprise";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

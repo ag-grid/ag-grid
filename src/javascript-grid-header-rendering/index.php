@@ -534,7 +534,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
         </p>
 
         <p>
-            You have the option to use AngularJS for the custom renderer. If you require AngularJS for header
+            You have the option to use AngularJS 1.x for the custom renderer. If you require AngularJS 1.x for header
             rendering, then set the grid option value 'angularCompileHeaders' to true.
         </p>
 
