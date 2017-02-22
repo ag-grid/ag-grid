@@ -99,6 +99,7 @@ import {XmlFactory} from "./xmlFactory";
 import {BeanStub} from "./context/beanStub";
 import {GridSerializer, BaseGridSerializingSession, RowType} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
+import {BaseFilter} from "./filter/baseFilter";
 
 export function populateClientExports(exports: any): void {
 
@@ -143,6 +144,7 @@ export function populateClientExports(exports: any): void {
     exports.RowNode = RowNode;
 
     // filter
+    exports.BaseFilter = BaseFilter;
     exports.FilterManager = FilterManager;
     exports.NumberFilter = NumberFilter;
     exports.TextFilter = TextFilter;

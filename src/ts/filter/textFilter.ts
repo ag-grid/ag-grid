@@ -1,52 +1,43 @@
 import {Utils as _} from "../utils";
-import {IFilterParams, IDoesFilterPassParams, IFilterComp} from "../interfaces/iFilter";
-import {Autowired} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {IFilterParams, IDoesFilterPassParams} from "../interfaces/iFilter";
+import {ComparableBaseFilter, BaseFilter} from "./baseFilter";
+import {QuerySelector} from "../widgets/componentAnnotations";
 
-export class TextFilter implements IFilterComp {
+export interface SerializedTextFilter {
+    filter:string
+    type:string
+}
 
-    public static CONTAINS = 'contains';//1;
-    public static NOT_CONTAINS = 'notContains';//1;
-    public static EQUALS = 'equals';//2;
-    public static NOT_EQUALS = 'notEquals';//3;
-    public static STARTS_WITH = 'startsWith';//4;
-    public static ENDS_WITH = 'endsWith';//5;
-
-    private filterParams: IFilterParams;
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+export class TextFilter extends ComparableBaseFilter <string, IFilterParams, SerializedTextFilter> {
+    @QuerySelector('#filterText')
+    private eFilterTextField: HTMLInputElement;
 
     private filterText: string;
-    private filterType: string;
 
-    private applyActive: boolean;
-    private newRowsActionKeep: boolean;
-
-    private eGui: HTMLElement;
-    private eFilterTextField: HTMLInputElement;
-    private eTypeSelect: HTMLSelectElement;
-    private eApplyButton: HTMLButtonElement;
-
-    public init(params: IFilterParams): void {
-        this.filterParams = params;
-        this.applyActive = (<any>params).apply === true;
-        this.newRowsActionKeep = (<any>params).newRowsAction === 'keep';
-
-        this.filterText = null;
-        this.filterType = TextFilter.CONTAINS;
-
-        this.createGui();
+    public getApplicableFilterTypes ():string[]{
+        return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.STARTS_WITH, BaseFilter.ENDS_WITH,
+            BaseFilter.CONTAINS, BaseFilter.NOT_CONTAINS];
     }
 
-    public onNewRowsLoaded() {
-        if (!this.newRowsActionKeep) {
-            this.setType(TextFilter.CONTAINS);
-            this.setFilter(null);
-        }
+    public bodyTemplate(): string {
+        let translate = this.translate.bind(this);
+        return `<div class="ag-filter-body">
+            <input class="ag-filter-filter" id="filterText" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+        </div>`;
     }
+
+    public initialiseFilterBodyUi() {
+        this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextFieldChanged.bind(this))
+    }
+
+    public refreshFilterBodyUi() {}
 
     public afterGuiAttached() {
         this.eFilterTextField.focus();
+    }
+
+    public filterValues ():string {
+        return this.filterText;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams) {
@@ -55,7 +46,7 @@ export class TextFilter implements IFilterComp {
         }
         var value = this.filterParams.valueGetter(params.node);
         if (!value) {
-            if (this.filterType === TextFilter.NOT_EQUALS) {
+            if (this.filter === BaseFilter.NOT_EQUAL) {
                 // if there is no value, but the filter type was 'not equals',
                 // then it should pass, as a missing value is not equal whatever
                 // the user is filtering on
@@ -68,14 +59,14 @@ export class TextFilter implements IFilterComp {
         }
         var filterTextLoweCase = this.filterText.toLowerCase();
         var valueLowerCase = value.toString().toLowerCase();
-        switch (this.filterType) {
+        switch (this.filter) {
             case TextFilter.CONTAINS:
                 return valueLowerCase.indexOf(filterTextLoweCase) >= 0;
             case TextFilter.NOT_CONTAINS:
                 return valueLowerCase.indexOf(filterTextLoweCase) === -1;
             case TextFilter.EQUALS:
                 return valueLowerCase === filterTextLoweCase;
-            case TextFilter.NOT_EQUALS:
+            case TextFilter.NOT_EQUAL:
                 return valueLowerCase != filterTextLoweCase;
             case TextFilter.STARTS_WITH:
                 return valueLowerCase.indexOf(filterTextLoweCase) === 0;
@@ -84,69 +75,12 @@ export class TextFilter implements IFilterComp {
                 return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
             default:
                 // should never happen
-                console.warn('invalid filter type ' + this.filterType);
+                console.warn('invalid filter type ' + this.filter);
                 return false;
         }
     }
 
-    public getGui() {
-        return this.eGui;
-    }
-
-    public isFilterActive() {
-        return this.filterText !== null;
-    }
-
-    private createTemplate() {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        return `<div>
-                    <div>
-                        <select class="ag-filter-select" id="filterType">
-                        <option value="${TextFilter.CONTAINS}">${translate('contains', 'Contains')}</option>
-                        <option value="${TextFilter.NOT_CONTAINS}">${translate('notContains', 'Not contains')}</option>
-                        <option value="${TextFilter.EQUALS}">${translate('equals', 'Equals')}</option>
-                        <option value="${TextFilter.NOT_EQUALS}">${translate('notEquals', 'Not equals')}</option>
-                        <option value="${TextFilter.STARTS_WITH}">${translate('startsWith', 'Starts with')}</option>
-                        <option value="${TextFilter.ENDS_WITH}">${translate('endsWith', 'Ends with')}</option>
-                        </select>
-                    </div>
-                    <div>
-                        <input class="ag-filter-filter" id="filterText" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
-                    </div>
-                    <div class="ag-filter-apply-panel" id="applyPanel">
-                        <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
-                    </div>
-                </div>`;
-    }
-
-    private createGui() {
-        this.eGui = _.loadTemplate(this.createTemplate());
-        this.eFilterTextField = <HTMLInputElement> this.eGui.querySelector("#filterText");
-        this.eTypeSelect = <HTMLSelectElement> this.eGui.querySelector("#filterType");
-
-        _.addChangeListener(this.eFilterTextField, this.onFilterChanged.bind(this));
-        this.eTypeSelect.addEventListener("change", this.onTypeChanged.bind(this));
-        this.setupApply();
-    }
-
-    private setupApply() {
-        if (this.applyActive) {
-            this.eApplyButton = <HTMLInputElement> this.eGui.querySelector('#applyButton');
-            this.eApplyButton.addEventListener('click', () => {
-                this.filterParams.filterChangedCallback();
-            });
-        } else {
-            _.removeElement(this.eGui, '#applyPanel');
-        }
-    }
-
-    private onTypeChanged() {
-        this.filterType = this.eTypeSelect.value;
-        this.filterChanged();
-    }
-
-    private onFilterChanged() {
+    private onFilterTextFieldChanged() {
         var filterText = _.makeNull(this.eFilterTextField.value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
@@ -157,21 +91,9 @@ export class TextFilter implements IFilterComp {
             let previousLowerCase = this.filterText ? this.filterText.toLowerCase() : null;
             this.filterText = filterText;
             if (previousLowerCase !== newLowerCase) {
-                this.filterChanged();
+                this.onFilterChanged();
             }
         }
-    }
-
-    private filterChanged() {
-        this.filterParams.filterModifiedCallback();
-        if (!this.applyActive) {
-            this.filterParams.filterChangedCallback();
-        }
-    }
-
-    public setType(type: string): void {
-        this.filterType = type;
-        this.eTypeSelect.value = type;
     }
 
     public setFilter(filter: string): void {
@@ -186,32 +108,30 @@ export class TextFilter implements IFilterComp {
         }
     }
 
-    public getType(): string {
-        return this.filterType;
-    }
-
     public getFilter(): string {
         return this.filterText;
     }
 
-    public getModel(): any {
-        if (this.isFilterActive()) {
-            return {
-                type: this.filterType,
-                filter: this.filterText
-            };
-        } else {
-            return null;
+
+    public resetState(): void{
+        this.setFilter(null);
+        this.setFilterType(BaseFilter.CONTAINS);
+    }
+
+    public serialize(): SerializedTextFilter{
+        return {
+            type: this.filter,
+            filter: this.filterText
         }
     }
 
-    public setModel(model: any): void {
-        if (model) {
-            this.setType(model.type);
-            this.setFilter(model.filter);
-        } else {
-            this.setFilter(null);
-        }
+    public parse(model:SerializedTextFilter): void{
+        this.setFilterType(model.type);
+        this.setFilter(model.filter);
+    }
+
+    public setType (filterType:string):void{
+        this.setFilterType(filterType);
     }
 
 }
