@@ -3,7 +3,7 @@ import {MasterSlaveService} from "../masterSlaveService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
-import {FloatingRowModel} from "../rowControllers/floatingRowModel";
+import {FloatingRowModel} from "../rowModels/floatingRowModel";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy} from "../context/context";

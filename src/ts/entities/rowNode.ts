@@ -10,7 +10,7 @@ import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
-import {InMemoryRowModel} from "../rowControllers/inMemory/inMemoryRowModel";
+import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to

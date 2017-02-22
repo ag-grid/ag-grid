@@ -2,7 +2,7 @@ import {Bean, Autowired} from "./context/context";
 import {Constants} from "./constants";
 import {ColumnController} from "./columnController/columnController";
 import {IRowModel} from "./interfaces/iRowModel";
-import {FloatingRowModel} from "./rowControllers/floatingRowModel";
+import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {Utils as _} from "./utils";
 import {GridRow} from "./entities/gridRow";
 import {GridCell, GridCellDef} from "./entities/gridCell";

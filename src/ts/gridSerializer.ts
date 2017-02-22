@@ -4,7 +4,7 @@ import {ColumnController} from "./columnController/columnController";
 import {Constants} from "./constants";
 import {IRowModel} from "./interfaces/iRowModel";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
-import {FloatingRowModel} from "./rowControllers/floatingRowModel";
+import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./entities/gridOptions";
 import {Utils as _} from "./utils";
 import {RowNode} from "./entities/rowNode";

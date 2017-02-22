@@ -108,9 +108,9 @@ export * from './dist/lib/rowControllers/inMemory/inMemoryRowModel';
 export * from './dist/lib/rowControllers/inMemory/inMemoryNodeManager';
 export * from './dist/lib/rowControllers/inMemory/sortStage';
 
-export * from './dist/lib/rowControllers/virtualPagination/virtualPageRowModel';
-export * from './dist/lib/rowControllers/virtualPagination/virtualPageCache';
-export * from './dist/lib/rowControllers/virtualPagination/virtualPage';
+export * from './dist/lib/rowControllers/infinateScrolling/virtualPageRowModel';
+export * from './dist/lib/rowControllers/infinateScrolling/virtualPageCache';
+export * from './dist/lib/rowControllers/infinateScrolling/virtualPage';
 
 export * from './dist/lib/rowControllers/floatingRowModel';
 export * from './dist/lib/rowControllers/paginationController';

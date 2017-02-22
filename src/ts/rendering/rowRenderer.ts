@@ -5,7 +5,7 @@ import {ExpressionService} from "../expressionService";
 import {TemplateService} from "../templateService";
 import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
-import {FloatingRowModel} from "../rowControllers/floatingRowModel";
+import {FloatingRowModel} from "../rowModels/floatingRowModel";
 import {RenderedRow} from "./renderedRow";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";

@@ -21,7 +21,7 @@ import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
-import {IDatasource} from "./rowControllers/iDatasource";
+import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 
 var DEFAULT_ROW_HEIGHT = 25;
