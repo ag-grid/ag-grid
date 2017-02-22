@@ -448,9 +448,9 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
 
                     <?php if ($key == "Viewport") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Viewport</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Viewport</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/"><i class="fa fa-star" aria-hidden="true"></i> Viewport</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/"><img src="../images/enterprise.png"/> Viewport</a>
                     <?php } ?>
 
                     <?php if ($key == "Data Functions") { ?>
