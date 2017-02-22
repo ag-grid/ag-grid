@@ -1,14 +1,14 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150,
         filter: 'text',
-        filterParams: { apply: true }
+        filterParams: { applyButton: true, clearButton:true }
     },
     {headerName: "Age", field: "age", width: 90,
         filter: 'number',
         filterParams: { apply: true }
     },
     {headerName: "Country", field: "country", width: 120,
-        filterParams: { apply: true }
+        filterParams: { applyButton: true }
     },
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
@@ -29,7 +29,7 @@ var columnDefs = [
                 return 1;
             }
         },
-        apply: true
+        clearButton:true
     }},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
