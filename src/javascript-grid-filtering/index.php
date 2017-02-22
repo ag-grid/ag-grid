@@ -3,6 +3,7 @@ $key = "Filtering";
 $pageTitle = "ag-Grid Filtering";
 $pageDescription = "ag-Grid Filtering";
 $pageKeyboards = "ag-Grid Filtering";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

@@ -1,7 +1,7 @@
 <?php
 
 $pageTitle = "Building Components for Javascript, React, Angular and Everything Else";
-$pageDescription = "ag-Grid is a reusable component that is used in many frameworks including AngularJS and JavaReact. This article describes the build process that was used.";
+$pageDescription = "ag-Grid is a reusable component that is used in many frameworks including AngularJS 1.x and JavaReact. This article describes the build process that was used.";
 $pageKeyboards = "javascript build gulp typescript react angularjs";
 
 include('../includes/mediaHeader.php');
@@ -23,7 +23,7 @@ include('../includes/mediaHeader.php');
             </span>
             is an enterprise JavaScript data grid with zero library dependencies.
             The grid is intended to be used either by plain Javascript or alongside a
-            JavaScript application frameworks such as React or AngularJS.
+            JavaScript application frameworks such as React or AngularJS 1.x.
         </p>
 
         <p>
@@ -155,7 +155,7 @@ function tscTask() {
             <ul>
             <li><b>commonjs:</b> This will allow our application to work with today's CommonJS (yeay for React and
                 other people using CommonJS) and the future ECMA 6 is also able to work with CommonJS files
-                (yeay for AngularJS 2 and SystemX).</li>
+                (yeay for AngularJS 1.x 2 and SystemX).</li>
             <li><b>amd:</b> This is used for Require.js. However, the popularity of Require.js is diminishing
             and you can use commonjs inside Require.js anyway, so we don't care.</li>
             <li><b>umd:</b> Stands for Universal Module Definition. It's a combination of the two above. However

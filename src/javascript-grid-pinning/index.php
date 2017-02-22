@@ -3,6 +3,7 @@ $key = "Pinning";
 $pageTitle = "ag-Grid Pinning";
 $pageDescription = "ag-Grid Pinning";
 $pageKeyboards = "ag-Grid Pinning";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

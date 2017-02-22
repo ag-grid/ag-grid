@@ -3,6 +3,7 @@ $key = "Cell Styling";
 $pageTitle = "ag-Grid Cell Styling";
 $pageDescription = "You can change the CSS style in ag-Grid. This is done by providing style and class callbacks in the column definition.";
 $pageKeyboards = "ag-Grid Cell Styling CSS";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -126,7 +127,7 @@ gridOptions.getRowClass = function(params) {
     <h3 id="cellClassRules">Column Definition cellClassRules</h3>
 
     <p>
-        ag-Grid allows rules to be applied to include certain classes. If you use AngularJS, then
+        ag-Grid allows rules to be applied to include certain classes. If you use AngularJS 1.x, then
         this is similar to ng-class, where you specify classes as Javascript object keys, and rules
         as object values.
     </p>

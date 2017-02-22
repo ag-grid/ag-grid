@@ -3,6 +3,7 @@ $key = "Full Width";
 $pageTitle = "ag-Grid JavaScript Master Detail DataGrid";
 $pageDescription = "ag-Grid allows to use one component to span the entire width of the grid. This can be used to achieve a master detail datagrid, or grids inside grids.";
 $pageKeyboards = "ag-Grid full width master detail javascript datagrid";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

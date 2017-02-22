@@ -3,6 +3,7 @@ $key = "Data Functions";
 $pageTitle = "ag-Grid Data Functions";
 $pageDescription = "With ag-Grid you can group, pivot and aggregate your data. The terms all relate to each other so here are the overview details you need to know to understand them.";
 $pageKeyboards = "ag-Grid Data Functions Grouping Pivot Aggregation";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

@@ -1,9 +1,9 @@
-
 <?php
 $key = "Intermediate Tutorial";
 $pageTitle = "ag-Grid Intermediate Tutorials and Examples";
 $pageDescription = "This page has step by step videos on building up ag-Grid. Follow the videos to learn how the examples are build.";
 $pageKeyboards = "ag-Grid tutorials";
+$pageGroup = "tutorial";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The tutorial uses the grid without any dependencies. The concepts can be used with AngularJS or any
+        The tutorial uses the grid without any dependencies. The concepts can be used with AngularJS 1.x or any
         other framework, you just need to follow the 'getting started' section for the relevant framework.
     </p>
 

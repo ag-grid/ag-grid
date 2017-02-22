@@ -3,6 +3,7 @@ $key = "Getting Started Javascript";
 $pageTitle = "Javascript Datagrid";
 $pageDescription = "How to set up the Best Javascript Datagrid. Shows how to use ag-Grid to build a Javascript grid using only Javascript and without using any framework";
 $pageKeyboards = "Best Javascript Datagrid";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 

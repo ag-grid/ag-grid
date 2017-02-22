@@ -3,6 +3,7 @@ $key = "Getting Started ng2";
 $pageTitle = "Angular Datagrid";
 $pageDescription = "Demonstrate the best Angular datagrid. Shows and example of a datagrid for using with Angular.";
 $pageKeyboards = "Angular Grid";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -140,7 +141,7 @@ include '../documentation-main/documentation_header.php';
             Grid API and Column API buttons use this variable to access the grids
             API (the API's are attributes on the controller).
         </li>
-        <li><b>Changing Properties:</b> When a property changes value, AngularJS
+        <li><b>Changing Properties:</b> When a property changes value, AngularJS 1.x
             automatically passes the new value onto the grid. This is used in
             the following locations in the "feature rich grid example" above:<br/>
             a) The 'quickFilter' on the top right updates the quick filter of

@@ -3,6 +3,7 @@ $key = "Material Theme";
 $pageTitle = "ag-Grid Material Design Data Grid";
 $pageDescription = "ag-Grid Material Design Data Grid";
 $pageKeyboards = "ag-Grid Material Design Data Grid";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

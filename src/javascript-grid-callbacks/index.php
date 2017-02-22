@@ -3,6 +3,7 @@ $key = "Callbacks";
 $pageTitle = "ag-Grid Callbacks";
 $pageDescription = "Learn how each callbacks impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid Callbacks";
+$pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -15,15 +16,19 @@ include '../documentation-main/documentation_header.php';
         It is not intended to inform your application of anything.
     <p>
 
+<div ng-if="isFramework(['javascript','angularjs'])">
     <h4 id="javascript-angularjs">
         <img src="/images/javascript.png" height="20"/>
-        <img src="/images/angularjs.png" height="20px"/>
-        Javascript and AngularJS 1.x
+        <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
+        Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
     </h4>
     <p>
         Add callbacks to the gridOptions.
     </p>
 
+</div>
+
+<div ng-if="isFramework('react')">
     <h4>
         <img src="/images/react.png" height="20px"/>
         React
@@ -32,14 +37,20 @@ include '../documentation-main/documentation_header.php';
         Add callbacks to the gridOptions or set as React JSX props.
     </p>
 
+</div>
+
+<div ng-if="isFramework('angular')">
     <h4>
         <img src="/images/angular2.png" height="20px"/>
         Angular
     </h4>
     <p>
-        Add callbacks to the gridOptions or set as AngularJS properties.
+        Add callbacks to the gridOptions or set as AngularJS 1.x properties.
     </p>
 
+</div>
+
+<div ng-if="isFramework('vue')">
     <h4>
         <img src="/images/vue_large.png" height="20px"/>
         VueJS
@@ -48,6 +59,9 @@ include '../documentation-main/documentation_header.php';
         Add callbacks to the gridOptions or set as VueJS properties.
     </p>
 
+</div>
+
+<div ng-if="isFramework('webcomponents')">
     <h4>
         <img src="/images/webComponents.png" height="20px"/>
         Web Components
@@ -56,6 +70,9 @@ include '../documentation-main/documentation_header.php';
         Add callbacks to the gridOptions or set as component properties.
     </p>
 
+</div>
+
+<div ng-if="isFramework('aurelia')">
     <h4>
         <img src="/images/aurelia.png" height="20px"/>
         Aurelia Components
@@ -64,14 +81,10 @@ include '../documentation-main/documentation_header.php';
         Add callbacks to the gridOptions or set as component properties.
     </p>
 
+</div>
     <h2 id="list-of-callbacks">List of Callbacks</h2>
 
     <table class="table">
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-        </tr>
-
         <tr>
             <th>isExternalFilterPresent()</th>
             <td>Grid calls this method to know if external filter is present.</td>
@@ -152,19 +165,6 @@ include '../documentation-main/documentation_header.php';
             <td>Allows overriding what document is used. Currently used by Drag and Drop (may extend to other places
                 in the future). Use this when you want the grid to use a different document than the one available
                 on the global scope. This can happen if docking out components (something which Electron supports).</td>
-        </tr>
-    </table>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        The callbacks below are available in the Enterprise version of ag-Grid.
-    </p>
-
-    <table class="table">
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
         </tr>
         <tr>
             <th>getContextMenuItems(params)</th>

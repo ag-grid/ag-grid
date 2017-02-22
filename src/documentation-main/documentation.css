@@ -49,10 +49,11 @@
 }
 
 .sidebarLink {
-    padding: 2px 4px 2px 4px;
-    border-bottom: 1px solid #e8e8e8;
+    padding: 2px 4px 2px 10px;
+    /* border-bottom: 1px solid #e8e8e8; */
     display: block;
     color: #888;
+    font-size: 14px;
 }
 
 .sidebarLink:hover {
@@ -61,11 +62,12 @@
 }
 
 .sidebarLinkSelected {
-    padding: 2px 4px 2px 4px;
+    padding: 2px 4px 2px 10px;
     /*border-bottom: 1px solid #e8e8e8;*/
     display: block;
     background-color: #eee;
     color: #333;
+    font-size: 14px;
 }
 
 .codeComment {
@@ -73,6 +75,103 @@
 }
 
 h4 {
-    margin-top: 30px;
+    margin: 0;
 }
 
+/* collapsable sidebar items */
+.docsMenu-header{
+    cursor: pointer;
+    display: block;
+    position: relative;
+    border: 1px solid #e8e8e8;
+    border-radius: 3px;
+    padding: 10px 30px 10px 10px;
+    margin-top: 10px;
+}
+.docsMenu-header .fa {
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    font-size: 12px;
+    transition: all .3s ease-in-out;
+    color: #999;
+}
+.docsMenu-header.active .fa {
+    transform: rotate(90deg)
+}
+.docsMenu-header + div{
+    max-height: 0;
+    overflow: hidden;
+    transition: all .5s ease-in-out;
+}
+.docsMenu-header.active + div{
+    max-height: 500px;
+}
+.docsMenu-header.docsMenu-header_feature.active + div{
+    max-height: 2000px;
+}
+.docsMenu-content {
+
+}
+
+#documentationSearch {
+    margin-bottom: 10px;
+}
+
+#frameworkContext {
+  width: 100%;
+}
+
+.header-row .documentation-h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+/*
+* === Google Custom search in docs ===
+*/
+
+@media only screen and (min-width : 992px) {
+    #documentationSearch {
+        width: 250px;
+        height: 25px;
+        padding: 11px 0 0 0px;
+    }
+}
+
+/*
+#documentationSearch .gsc-search-button {
+    display: none;
+}
+*/
+
+#documentationSearch .gsc-search-box-tools .gsc-search-box .gsc-input {
+    font-size: 13px;
+    color: #333;
+}
+
+#documentationSearch .documentationSearch-spinner {
+    display: none;
+}
+
+#documentationSearch .documentationSearch-spinner.active {
+    display: block;
+}
+
+cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
+    width: auto !important;
+    height: auto !important;
+    border-color: #474747;
+    background-color: #474747;
+    background-image: none;
+    filter: none;
+}
+
+.gsc-search-box-tools .gsc-search-box .gsc-input {
+    padding-right: 5px !important;
+}
+
+.cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
+    margin-top: 5px !important;
+    padding: 5px 27px 6px 27px; !important;
+}

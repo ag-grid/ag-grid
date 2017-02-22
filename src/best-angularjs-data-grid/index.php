@@ -1,22 +1,23 @@
 <?php
 $key = "Getting Started ng1";
-$pageTitle = "AngularJS Datagrid";
-$pageDescription = "Shows an example of the best Javascript Datagrid. Explains how to set up the Best AngularJS Grid grid, ag-Grid, inside your browser.";
-$pageKeyboards = "Best AngularJS Grid Datagrid";
+$pageTitle = "AngularJS 1.x Datagrid";
+$pageDescription = "Shows an example of the best Javascript Datagrid. Explains how to set up the Best AngularJS 1.x Grid grid, ag-Grid, inside your browser.";
+$pageKeyboards = "Best AngularJS 1.x Grid Datagrid";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h1 id="implementing-the-angularjs-datagrid">Implementing the AngularJS Datagrid</h1>
+    <h1 id="implementing-the-angularjs-datagrid">Implementing the AngularJS 1.x Datagrid</h1>
 
     <p>
-        When using AngularJS, you have the choice of using the bundled version of ag-Grid
+        When using AngularJS 1.x, you have the choice of using the bundled version of ag-Grid
         or the CommonJS version.
     </p>
     <p>
-        When the ag-Grid script loads, it does not register with AngularJS. This is because
-        AngularJS is an optional part of ag-Grid and you need to tell ag-Grid you
+        When the ag-Grid script loads, it does not register with AngularJS 1.x. This is because
+        AngularJS 1.x is an optional part of ag-Grid and you need to tell ag-Grid you
         want to use it.
     </p>
 
@@ -64,7 +65,7 @@ include '../documentation-main/documentation_header.php';
 &lt;/head>
 </pre>
 </p>
-    <h3 id="creating-the-angularjs-module">Creating the AngularJS Module</h3>
+    <h3 id="creating-the-angularjs-module">Creating the AngularJS 1.x Module</h3>
     Include ag-Grid as a dependency of your module like this:
     <p/>
     <pre>
@@ -157,7 +158,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
     <ul>
         <li><b>angularCompileRows:</b> Whether to compile the rows for Angular.</li>
         <li><b>angularCompileFilters:</b> Whether to compile provided custom filters.</li>
-        <li><b>angularCompileHeaders:</b> Whether to compile the customer headers for AngularJS.</li>
+        <li><b>angularCompileHeaders:</b> Whether to compile the customer headers for AngularJS 1.x.</li>
     </ul>
 
     <p>The default is always to have Angular compiling off for performance reasons.</p>
@@ -186,7 +187,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 
     <p>
         Cell Templates allow you to specify templates to use to render your cells. This is handy
-        if you want to put JavaScript markup with AngularJS bindings as the cells.
+        if you want to put JavaScript markup with AngularJS 1.x bindings as the cells.
         Cell templates are specified in the column definition by providing a template as a
         string or a templateUrl to load the template from the server.
     </p>
@@ -202,7 +203,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
         <li><b>Col 1 - </b> The first column uses a static template. Pretty pointless as you can't change
             the content between rows.
         </li>
-        <li><b>Col 2 - </b> The second column uses an inline template. AngularJS is then used to fetch
+        <li><b>Col 2 - </b> The second column uses an inline template. AngularJS 1.x is then used to fetch
             the content from the scope via ng-bind.
         </li>
         <li><b>Col 3 - </b> The third column is similar to the second, with the difference that it loads
@@ -212,8 +213,8 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
     </p>
 
     <note>
-        In the example, as you scroll up and down, the redraw on the AngularJS columns has a lag.
-        This is waiting for the AngularJS digest cycle to kick in to populate the values into these rows.
+        In the example, as you scroll up and down, the redraw on the AngularJS 1.x columns has a lag.
+        This is waiting for the AngularJS 1.x digest cycle to kick in to populate the values into these rows.
     </note>
 
     <show-example example="exampleCellTemplates"></show-example>
@@ -222,7 +223,7 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
     <h2 id="destroy">Destroy</h2>
 
     <p>
-        You do not need to manually clean up the grid. The grid ties in with the AngularJS 1 lifecycle
+        You do not need to manually clean up the grid. The grid ties in with the AngularJS 1.x lifecycle
         and releases all resources when the directive is destroyed.
     </p>
 

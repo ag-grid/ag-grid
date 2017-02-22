@@ -3,6 +3,7 @@ $key = "Getting Started Web Components";
 $pageTitle = "Web Component Datagrid";
 $pageDescription = "Demonstrates the best Web Component Datagrid. Shows how to use ag-Grid to build a Javascript grid using Web Components and without using any framework";
 $pageKeyboards = "Best Javascript Web Component Datagrid";
+$pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -13,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created
         using open Web technology. They are part of the browser and so they do not depend on external libraries
-        such as AngularJS or JQuery.
+        such as AngularJS 1.x or JQuery.
     </p>
     <p>
         Web Components are of particular interest to ag-Grid as I see them as the future for reusable components.

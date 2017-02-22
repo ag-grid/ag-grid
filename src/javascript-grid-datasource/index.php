@@ -3,6 +3,7 @@ $key = "Datasource";
 $pageTitle = "ag-Grid Datasource";
 $pageDescription = "To do pagination or virtual paging, you need to set up a datasource. This page explains how to create an ag-Grid datasource.";
 $pageKeyboards = "ag-Grid Datasource";
+$pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
