@@ -1,4 +1,4 @@
-import {Bean, Autowired, PostConstruct} from 'ag-grid/main';
+import {Bean, Autowired} from 'ag-grid/main';
 import {Utils} from 'ag-grid/main';
 import {MD5} from './license/md5';
 
@@ -10,19 +10,17 @@ export class LicenseManager {
     @Autowired('md5') private md5:MD5;
 
     public validateLicense():void {
-        var gridReleaseDate = LicenseManager.getGridReleaseDate();
-        var valid:boolean = false;
-        var current:boolean = false;
+        const gridReleaseDate = LicenseManager.getGridReleaseDate();
+        let valid: boolean = false;
+        let current: boolean = false;
+        let expiry: Date = null;
 
         if (!Utils.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
-            var hashStart = LicenseManager.licenseKey.length - 32;
-            var md5 = LicenseManager.licenseKey.substring(hashStart);
-            var license = LicenseManager.licenseKey.substring(0, hashStart);
+            const {md5, license} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
 
             if (md5 === this.md5.md5(license)) {
 
-                var restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
-                var expiry = new Date(parseInt(LicenseManager.decode(restrictionHashed)));
+                expiry = LicenseManager.extractExpiry(license);
 
                 if(!isNaN(expiry.getTime())) {
                     valid = true;
@@ -35,11 +33,40 @@ export class LicenseManager {
             LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
                 '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
         } else if(!current) {
-            var formattedExpiryDate= LicenseManager.formatDate(expiry);
-            var formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
+            const formattedExpiryDate = LicenseManager.formatDate(expiry);
+            const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
             LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
                 `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. Please ` +
                             'contact accounts@ag-grid.com to renew your license');
+        }
+    }
+
+    private static extractExpiry(license: string) {
+        const restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
+        return new Date(parseInt(LicenseManager.decode(restrictionHashed)));
+    }
+
+    private static extractLicenseComponents(licenseKey:string) {
+        const hashStart = licenseKey.length - 32;
+        const md5 = licenseKey.substring(hashStart);
+        const license = licenseKey.substring(0, hashStart);
+        return {md5, license};
+    }
+
+    public getLicenseDetails(licenseKey:string) {
+        const {md5, license} = LicenseManager.extractLicenseComponents(licenseKey);
+        let valid = (md5 === this.md5.md5(license));
+
+        let expiry:Date;
+        if(valid) {
+            expiry = LicenseManager.extractExpiry(license);
+            valid = !isNaN(expiry.getTime());
+        }
+
+        return {
+            licenseKey,
+            valid,
+            expiry: valid ? LicenseManager.formatDate(expiry) : null
         }
     }
 
@@ -53,16 +80,16 @@ export class LicenseManager {
     }
 
     private static formatDate(date:any):string {
-        var monthNames:[string] = [
+        const monthNames: [string] = [
             'January', 'February', 'March',
             'April', 'May', 'June', 'July',
             'August', 'September', 'October',
             'November', 'December'
         ];
 
-        var day = date.getDate();
-        var monthIndex = date.getMonth();
-        var year = date.getFullYear();
+        const day = date.getDate();
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
 
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
     }
@@ -73,12 +100,12 @@ export class LicenseManager {
     };
 
     private static decode(input:string):string {
-        var keystr:string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-        var t = '';
-        var n:any, r:any, i:any;
-        var s:any, o:any, u:any, a:any;
-        var f:number = 0;
-        var e:string = input.replace(/[^A-Za-z0-9+/=]/g, '');
+        const keystr: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        let t = '';
+        let n:any, r:any, i:any;
+        let s:any, o:any, u:any, a:any;
+        let f:number = 0;
+        let e:string = input.replace(/[^A-Za-z0-9+/=]/g, '');
         while (f < e.length) {
             s = keystr.indexOf(e.charAt(f++));
             o = keystr.indexOf(e.charAt(f++));
@@ -102,9 +129,9 @@ export class LicenseManager {
 
     private static utf8_decode(input:string):string {
         input = input.replace(/rn/g, 'n');
-        var t = '';
-        for (var n = 0; n < input.length; n++) {
-            var r = input.charCodeAt(n);
+        let t = '';
+        for (let n = 0; n < input.length; n++) {
+            const r = input.charCodeAt(n);
             if (r < 128) {
                 t += String.fromCharCode(r)
             } else if (r > 127 && r < 2048) {
