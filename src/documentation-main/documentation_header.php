@@ -411,9 +411,9 @@ if (strcmp($version , 'latest') == 0) {
                     <? /* BEGIN ENTERPRISE FEATURES */ ?>
 
                     <?php if ($key == "Excel Export") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Excel Export</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Excel Export</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/"><i class="fa fa-star" aria-hidden="true"></i> Excel Export</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/"><img src="../images/enterprise.png"/> Excel Export</a>
                     <?php } ?>
 
                     <?php if ($key == "Viewport") { ?>
@@ -423,75 +423,75 @@ if (strcmp($version , 'latest') == 0) {
                     <?php } ?>
 
                     <?php if ($key == "Data Functions") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Data Functions</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Data Functions</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-data-functions/"><i class="fa fa-star" aria-hidden="true"></i> Data Functions</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-data-functions/"><img src="../images/enterprise.png"/> Data Functions</a>
                     <?php } ?>
 
                     <?php if ($key == "Grouping") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Grouping Rows</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Grouping Rows</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/"><i class="fa fa-star" aria-hidden="true"></i> Grouping Rows</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/"><img src="../images/enterprise.png"/> Grouping Rows</a>
                     <?php } ?>
 
                     <?php if ($key == "Aggregation") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Aggregation</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Aggregation</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/"><i class="fa fa-star" aria-hidden="true"></i> Aggregation</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/"><img src="../images/enterprise.png"/> Aggregation</a>
                     <?php } ?>
 
                     <?php if ($key == "Pivoting") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Pivoting</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Pivoting</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/"><i class="fa fa-star" aria-hidden="true"></i> Pivoting</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/"><img src="../images/enterprise.png"/> Pivoting</a>
                     <?php } ?>
 
                     <?php if ($key == "Tool Panel") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Tool Panel</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Tool Panel</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tool-panel/"><i class="fa fa-star" aria-hidden="true"></i> Tool Panel</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tool-panel/"><img src="../images/enterprise.png"/> Tool Panel</a>
                     <?php } ?>
 
                     <?php if ($key == "Clipboard") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Clipboard</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Clipboard</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-clipboard/"><i class="fa fa-star" aria-hidden="true"></i> Clipboard</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-clipboard/"><img src="../images/enterprise.png"/> Clipboard</a>
                     <?php } ?>
 
                     <?php if ($key == "Column Menu") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Column Menu</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Column Menu</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-menu/"><i class="fa fa-star" aria-hidden="true"></i> Column Menu</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-menu/"><img src="../images/enterprise.png"/> Column Menu</a>
                     <?php } ?>
 
                     <?php if ($key == "Context Menu") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Context Menu</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Context Menu</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context-menu/"><i class="fa fa-star" aria-hidden="true"></i> Context Menu</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context-menu/"><img src="../images/enterprise.png"/> Context Menu</a>
                     <?php } ?>
 
                     <?php if ($key == "Range Selection") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Range Selection</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Range Selection</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-range-selection/"><i class="fa fa-star" aria-hidden="true"></i> Range Selection</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-range-selection/"><img src="../images/enterprise.png"/> Range Selection</a>
                     <?php } ?>
 
                     <?php if ($key == "Status Bar") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Status Bar</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Status Bar</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-status-bar/"><i class="fa fa-star" aria-hidden="true"></i> Status Bar</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-status-bar/"><img src="../images/enterprise.png"/> Status Bar</a>
                     <?php } ?>
 
                     <?php if ($key == "Set Filtering") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> Set Filtering</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Set Filtering</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-filtering/"><i class="fa fa-star" aria-hidden="true"></i> Set Filtering</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-filtering/"><img src="../images/enterprise.png"/> Set Filtering</a>
                     <?php } ?>
 
                     <?php if ($key == "License Key") { ?>
-                        <span class="sidebarLinkSelected"><i class="fa fa-star" aria-hidden="true"></i> License Key</span>
+                        <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> License Key</span>
                     <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-license/"><i class="fa fa-star" aria-hidden="true"></i> License Key</a>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-license/"><img src="../images/enterprise.png"/> License Key</a>
                     <?php } ?>
                 </div>
 
