@@ -58,10 +58,6 @@ include '../documentation-main/documentation_header.php';
 
     <table class="table">
         <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-        </tr>
-        <tr>
             <th>headerName</th>
             <td>The name to render in the column header</td>
         </tr>
@@ -87,10 +83,6 @@ include '../documentation-main/documentation_header.php';
 
     <table class="table">
         <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-        </tr>
-        <tr>
             <th>field</th>
             <td>The field of the row to get the cells data from</td>
         </tr>
@@ -101,8 +93,12 @@ include '../documentation-main/documentation_header.php';
                 the column in the API for sorting, filtering etc.</td>
         </tr>
         <tr>
-            <th>headerCellTemplate</th>
-            <td>Can be string of HTML or a function function returning a string of HTML or a DOM Element.</td>
+            <th>width, minWidth, maxWidth</th>
+            <td>Initial width, min width and max width for the cell. Always stated in pixels (never percentage values).</td>
+        </tr>
+        <tr>
+            <th>filter<br/>filterFramework</th>
+            <td>Filter component to use for this column.</td>
         </tr>
         <tr>
             <th>hide</th>
@@ -115,9 +111,15 @@ include '../documentation-main/documentation_header.php';
             <td>Set to 'left' or 'right' to pin.</td>
         </tr>
         <tr>
-            <th>filter<br/>filterFramework</th>
-            <td>Filter component to use for this column.</td>
+            <th>sort</th>
+            <td>Set to 'asc' or 'desc' to sort by this column by default.</td>
         </tr>
+        <tr>
+            <th>sortedAt</th>
+            <td>If doing multi sort by default, this column should say when the sort for each column was done
+                in milliseconds, so the grid knows which order to execute the sort.</td>
+        </tr>
+
         <tr>
             <th>headerTooltip</th>
             <td>Tooltip for the column header</td>
@@ -127,29 +129,8 @@ include '../documentation-main/documentation_header.php';
             <td>The field of the tooltip to apply to the cell.</td>
         </tr>
         <tr>
-            <th>valueGetter(params)</th>
-            <td>Expression or function to get the cells value.</td>
-        </tr>
-        <tr>
-            <th>keyCreator(params)</th>
-            <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
-                want to a) use set filter on this field or b) group by this field.</td>
-        </tr>
-        <tr>
-            <th>headerValueGetter(params)</th>
-            <td>Expression or function to get the cells value.</td>
-        </tr>
-        <tr>
-            <th>width</th>
-            <td>Initial width, in pixels, of the cell</td>
-        </tr>
-        <tr>
-            <th>minWidth</th>
-            <td>The minimum width of the column while resizing.</td>
-        </tr>
-        <tr>
-            <th>maxWidth</th>
-            <td>The maximum width of the column while resizing.</td>
+            <th>checkboxSelection</th>
+            <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
         </tr>
         <tr>
             <th>cellClass</th>
@@ -160,12 +141,21 @@ include '../documentation-main/documentation_header.php';
             <td>An object of css values. Or a function returning an object of css values.</td>
         </tr>
         <tr>
-            <th>cellRenderer<br/>cellRendererFramework</th>
-            <td>cellRenderer to use for this column.</td>
+            <th>editable</th>
+            <td>Set to true if this col is editable, otherwise false. Can also be a function
+                to have different rows editable.</td>
         </tr>
         <tr>
-            <th>cellFormatter</th>
-            <td>A function for formatting a cell.</td>
+            <th>newValueHandler(params)<br/>onCellValueChanged(params)</th>
+            <td>Callbacks for editing. See editing section for further details.</td>
+        </tr>
+        <tr>
+            <th>volatile</th>
+            <td>If true, this cell gets refreshed when api.softRefreshView() gets called.</td>
+        </tr>
+        <tr>
+            <th>cellRenderer<br/>cellRendererFramework</th>
+            <td>cellRenderer to use for this column.</td>
         </tr>
         <tr>
             <th>floatingCellRenderer<br/>floatingCellRendererFramework</th>
@@ -173,26 +163,35 @@ include '../documentation-main/documentation_header.php';
                 if not then cellRenderer.</td>
         </tr>
         <tr>
+            <th>cellEditor<br/>cellEditorFramework</th>
+            <td>cellEditor to use for this column.</td>
+        </tr>
+        <tr>
+            <th>cellFormatter</th>
+            <td>A function for formatting a cell.</td>
+        </tr>
+        <tr>
             <th>floatingCellFormatter</th>
             <td>A function for formatting a floating cell. Floating cells will use floatingCellRenderer if available,
                 if not then cellFormatter.</td>
         </tr>
         <tr>
+            <th>valueGetter(params)</th>
+            <td>Expression or function to get the cells value.</td>
+        </tr>
+        <tr>
+            <th>headerValueGetter(params)</th>
+            <td>Expression or function to get the cells value.</td>
+        </tr>
+        <tr>
+            <th>keyCreator(params)</th>
+            <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
+                want to a) use set filter on this field or b) group by this field.</td>
+        </tr>
+        <tr>
             <th>getQuickFilterText</th>
             <td>A function to tell the grid what quick filter text to use for this column if you don't want
                 to use the default (which is calling toString on the value).</td>
-        </tr>
-        <tr>
-            <th>onCellClicked(params)</th>
-            <td>Function callback, gets called when a cell is clicked.</td>
-        </tr>
-        <tr>
-            <th>onCellDoubleClicked(params)</th>
-            <td>Function callback, gets called when a cell is double clicked.</td>
-        </tr>
-        <tr>
-            <th>onCellContextMenu(params)</th>
-            <td>Function callback, gets called when a cell is right clicked.</td>
         </tr>
         <tr>
             <th>aggFunc</th>
@@ -205,6 +204,11 @@ include '../documentation-main/documentation_header.php';
             If grouping by multiple columns, set this to where you want this column to be in the group (eg 0 for first, 1 for second, and so on).</td>
         </tr>
         <tr>
+            <th>pivotIndex</th>
+            <td>Set this in columns you want to pivot by. If only pivoting by one column, set this to any number (eg 0).
+            If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (eg 0 for first, 1 for second, and so on).</td>
+        </tr>
+        <tr>
             <th>comparator(valueA, valueB, nodeA, nodeB, isInverted)</th>
             <td>Comparator function for custom sorting.</td>
         </tr>
@@ -214,72 +218,8 @@ include '../documentation-main/documentation_header.php';
             always be strings, as the pivot service uses strings as keys for the pivot groups.</td>
         </tr>
         <tr>
-            <th>checkboxSelection</th>
-            <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
-        </tr>
-        <tr>
-            <th>suppressMenu</th>
-            <td>Set to true if no menu should be shown for this column header.</td>
-        </tr>
-        <tr>
-            <th>suppressSorting</th>
-            <td>Set to true if no sorting should be done for this column.</td>
-        </tr>
-        <tr>
             <th>unSortIcon</th>
             <td>Set to true if you want the unsorted icon to be shown when no sort is applied to this column.</td>
-        </tr>
-        <tr>
-            <th>sort</th>
-            <td>Set to 'asc' or 'desc' to sort by this column by default.</td>
-        </tr>
-        <tr>
-            <th>sortedAt</th>
-            <td>If doing multi sort by default, this column should say when the sort for each column was done
-                in milliseconds, so the grid knows which order to execute the sort.</td>
-        </tr>
-        <tr>
-            <th>suppressSizeToFit</th>
-            <td>Set to true if you want this columns width to be fixed during 'size to fit' operation.</td>
-        </tr>
-        <tr>
-            <th>suppressMovable</th>
-            <td>Set to true if you do not want this column to be movable via dragging.</td>
-        </tr>
-        <tr>
-            <th>suppressFilter</th>
-            <td>Set to true to not allow filter on this column.</td>
-        </tr>
-        <tr>
-            <th>suppressResize</th>
-            <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
-        </tr>
-        <tr>
-            <th>editable</th>
-            <td>Set to true if this col is editable, otherwise false. Can also be a function
-                to have different rows editable.</td>
-        </tr>
-        <tr>
-            <th>suppressNavigable</th>
-            <td>Set to true if this col is not navigable (ie cannot be tabbed into), otherwise false.
-                Can also be a function to have different rows navigable.</td>
-        </tr>
-        <tr>
-            <th>cellEditor<br/>cellEditorFramework</th>
-            <td>cellEditor to use for this column.</td>
-        </tr>
-        <tr>
-            <th>newValueHandler(params)<br/>onCellValueChanged(params)</th>
-            <td>Callbacks for editing. See editing section for further details.</td>
-        </tr>
-        <tr>
-            <th>volatile</th>
-            <td>If true, this cell gets refreshed when api.softRefreshView() gets called.</td>
-        </tr>
-        <tr>
-            <th>template<br/>templateUrl</th>
-            <td>Cell template (or specify URL to load template from) to use for cell.
-                Useful for AngularJS 1.x cells only.</td>
         </tr>
         <tr>
             <th>enableRowGroup</th>
@@ -300,15 +240,52 @@ include '../documentation-main/documentation_header.php';
             <th>enableCellChangeFlash</th>
             <td>Set to true to get grid to flash the cell when it's refreshed.</td>
         </tr>
+        <tr>
+            <th>suppressMenu</th>
+            <td>Set to true if no menu should be shown for this column header.</td>
+        </tr>
+        <tr>
+            <th>suppressSorting</th>
+            <td>Set to true if no sorting should be done for this column.</td>
+        </tr>
+        <tr>
+            <th>suppressSizeToFit</th>
+            <td>Set to true if you want this columns width to be fixed during 'size to fit' operation.</td>
+        </tr>
+        <tr>
+            <th>suppressMovable</th>
+            <td>Set to true if you do not want this column to be movable via dragging.</td>
+        </tr>
+        <tr>
+            <th>suppressFilter</th>
+            <td>Set to true to not allow filter on this column.</td>
+        </tr>
+        <tr>
+            <th>suppressResize</th>
+            <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
+        </tr>
+        <tr>
+            <th>suppressNavigable</th>
+            <td>Set to true if this col is not navigable (ie cannot be tabbed into), otherwise false.
+                Can also be a function to have different rows navigable.</td>
+        </tr>
+        <tr>
+            <th>onCellClicked(params)</th>
+            <td>Function callback, gets called when a cell is clicked.</td>
+        </tr>
+        <tr>
+            <th>onCellDoubleClicked(params)</th>
+            <td>Function callback, gets called when a cell is double clicked.</td>
+        </tr>
+        <tr>
+            <th>onCellContextMenu(params)</th>
+            <td>Function callback, gets called when a cell is right clicked.</td>
+        </tr>
     </table>
 
     <h2 id="properties-for-column-groups">Properties for Column Groups</h2>
 
     <table class="table">
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-        </tr>
         <tr>
             <th>groupId</th>
             <td>The unique ID to give the column. This is optional. If missing, a unique ID will be generated.
