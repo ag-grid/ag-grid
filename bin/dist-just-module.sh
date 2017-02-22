@@ -45,6 +45,9 @@ do
         "ag-grid-angular-example/systemjs_aot")
             npm run clean-build:aot
             ;;
+        "ag-grid-angular-example/angular-cli")
+            npm build --prod
+            ;;
         "ag-grid-angular-example/webpack")
             npm run build
             ;;
