@@ -93,7 +93,7 @@ h4 {
     top: 14px;
     right: 10px;
     font-size: 12px;
-    transition: all .5s ease-in-out;
+    transition: all .3s ease-in-out;
     color: #999;
 }
 .docsMenu-header.active .fa {
@@ -102,7 +102,7 @@ h4 {
 .docsMenu-header + div{
     max-height: 0;
     overflow: hidden;
-    transition: max-height 1s;
+    transition: all .5s ease-in-out;
 }
 .docsMenu-header.active + div{
     max-height: 500px;
