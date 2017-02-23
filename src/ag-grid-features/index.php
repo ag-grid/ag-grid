@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h2 id="features">Features Overview</h2>
-
+    <p>Features content goes here</p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
