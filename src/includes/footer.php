@@ -29,13 +29,7 @@
 		                <ul class="list-unstyled">
 		                    <li><h2 class="Footer-h2">Documentation</h2></li>
 		                    <li><a href="/javascript-grid-getting-started/">Getting Started</a></li>
-		                    <li><a href="/best-javascript-data-grid/">JavaScript</a></li>
-		                    <li><a href="/best-react-data-grid/">React</a></li>
-		                    <li><a href="/best-angularjs-data-grid/">Angular 1.x</a></li>
-		                    <li><a href="/best-angular-2-data-grid/">Angular</a></li>
-		                    <li><a href="/best-vuejs-data-grid//">VueJS</a></li>
-		                    <li><a href="/best-web-component-data-grid/">Web Components</a></li>
-		                </ul>
+                        </ul>
 		            </div>
 		            <div class="col-xs-12 col-md-2">
 		                <ul class="list-unstyled">

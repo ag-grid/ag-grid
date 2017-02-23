@@ -1,294 +1,292 @@
 <?php
 $key = "Getting Started";
 $pageTitle = "Getting Started";
-$pageDescription = "Getting Started Angular JS 1";
-$pageKeyboards = "Getting Started Angular JS 1";
+$pageDescription = "Getting Started ag-Grid and ag-Grid Enterprise";
+$pageKeyboards = "Getting Started ag-Grid Enterprise";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
-<!--include '../documentation-main/documentation_header.php';-->
-<div>
+<div ng-controller="GettingStartedController">
 
-    <h2>Getting Started</h2>
+    <div ng-if="isFramework(['javascript','all'])">
+        <div ng-class="{collapsableDocs: isFramework('all')}">
+            <div ng-if="isFramework('all')"
+                 ng-click="toggleDiv('jsOpen')"
+                 class="collapsableDocs-header"
+                 onclick="javascript: this.classList.toggle('active');">
+                <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Getting Started - JavaScript</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 
-    <h3>Download ag-Grid Project</h3>
+            <div ng-if="jsOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php include './javascript.php'; ?>
+            </div>
+        </div>
+    </div>
 
-    <table>
-        <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                bower install ag-grid
-            </td>
+    <div ng-if="isFramework(['angularjs','all'])">
+        <div ng-class="{collapsableDocs: isFramework('all')}">
+            <div ng-if="isFramework('all')"
+                 ng-click="toggleDiv('angularJsOpen')"
+                 class="collapsableDocs-header"
+                 onclick="javascript: this.classList.toggle('active');">
+                <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Getting Started - AngularJS 1.x</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 
-            <td style="width: 20px;"/>
+            <div ng-if="angularJsOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php include './angularjs.php'; ?>
+            </div>
+        </div>
+    </div>
 
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
-            <td>
-                <b>NPM</b><br/>
-                npm install ag-grid
-            </td>
+    <div ng-if="isFramework(['vue','all'])">
+        <div ng-class="{collapsableDocs: isFramework('all')}">
+            <div ng-if="isFramework('all')"
+                 ng-click="toggleDiv('vueOpen')"
+                 class="collapsableDocs-header"
+                 onclick="javascript: this.classList.toggle('active');">
+                <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Getting Started - VueJS</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 
-            <td style="width: 20px;"/>
+            <div ng-if="vueOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php include './vue.php'; ?>
+            </div>
+        </div>
+    </div>
 
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
-            <td>
-                <b>Github</b><br/>
-                Download from <a href="https://github.com/ceolter/ag-grid">Github</a>
-            </td>
-        </tr>
-    </table>
+    <div ng-if="isFramework(['react','all'])">
+        <div ng-class="{collapsableDocs: isFramework('all')}">
+            <div ng-if="isFramework('all')"
+                 ng-click="toggleDiv('reactOpen')"
+                 class="collapsableDocs-header"
+                 onclick="javascript: this.classList.toggle('active');">
+                <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Getting Started - ReactJS</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 
-    <h3>Referencing ag-Grid Files</h3>
+            <div ng-if="reactOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php include './react.php'; ?>
+            </div>
+        </div>
+    </div>
 
-    <p>
-        ag-Grid is distributed as both a self contained bundle (that places ag-Grid on the global scope)
-        and also via a CommonJS package.
-    </p>
+    <div ng-if="isFramework(['aurelia','all'])">
+        <div ng-class="{collapsableDocs: isFramework('all')}">
+            <div ng-if="isFramework('all')"
+                 ng-click="toggleDiv('aureliaOpen')"
+                 class="collapsableDocs-header"
+                 onclick="javascript: this.classList.toggle('active');">
+                <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Getting Started - Aurelia</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 
-    <h4>Self Contained Bundle</h4>
+            <div ng-if="aureliaOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php include './aurelia.php'; ?>
+            </div>
+        </div>
+    </div>
 
-    <p>Using the bundled version is the quickest way to get going, you just put the reference into your
-        HTML page and it works.</p>
+    <div ng-if="isFramework(['webcomponents','all'])">
+        <div ng-class="{collapsableDocs: isFramework('all')}">
+            <div ng-if="isFramework('all')"
+                 ng-click="toggleDiv('webcomponentsOpen')"
+                 class="collapsableDocs-header"
+                 onclick="javascript: this.classList.toggle('active');">
+                <h4><img style="vertical-align: middle" src="/images/webcomponents.png"
+                         height="20px"/> Getting Started - Web Components</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 
-        <pre>&lt;script src="pathToGrid/ag-grid.js">&lt;/script></pre>
+            <div ng-if="webcomponentsOpen"  ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php include './webcomponents.php'; ?>
+            </div>
+        </div>
+    </div>
 
-    <p>
-        There are four bundle files in the distribution:
-        <ul>
-        <li>dist/ag-grid.js -> standard bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid.min.js -> minified bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid.noStyle.js -> standard bundle containing JavaScript without CSS</li>
-        <li>dist/ag-grid.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
-    </ul>
-    </p>
+    <div ng-if="isFramework(['javascript','all'])">
+        <div class="collapsableDocs">
+            <div class="collapsableDocs-header"
+                 onclick="javascript: this.classList.toggle('active');">
+                <h4>Additional Framework Projects</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 
-    <h4>CommonJS</h4>
+            <div class="collapsableDocs-content">
 
-    <p>
-        To use CommonJS, it's best to download the packages via NPM and then either <i>require</i> (ECMA 5) or <i>import</i> (ECMA 6)
-        them into your project.
-    </p>
 
-    <pre>// ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid');
+                <p>If using React or Angular, you will also need to reference the additional ag-Grid project for that
+                    framework. Details are provided the documentation for those frameworks.</p>
 
-// ECMA 6 - using the system import method
-import {Grid} from 'ag-grid/main';
-</pre>
+                <h4>Bundled vs CommonJS & Frameworks Summary</h4>
 
-    <p>Most single page web-apps use CommonJS and Bundling, so will use the CommonJS version of ag-Grid.</p>
+                <p>
+                    If you want to use the Angular or React component of ag-Grid, then you have to
+                    use the commonjs distribution (not the bundled). You will also need to include
+                    the additional ag-Grid project for these components.
+                </p>
 
-    <h2>Getting ag-Grid-Enterprise</h2>
+                <p>
+                    If you are using the plain Javascript, Angular 1 or Web Components version
+                    of ag-Grid, you can use the bundled version or the commonjs version.
+                </p>
 
-    <h3>Download ag-Grid-Enterprise Project</h3>
+                <p>
+                    The table below summarises these details.
+                </p>
 
-    <table>
-        <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                bower install ag-grid-enterprise
-            </td>
+                <style>
+                    .blog-main td {
+                        padding: 2px 10px 2px 10px;
+                    }
 
-            <td style="width: 20px;"/>
+                    .blog-main th {
+                        padding: 2px 10px 2px 10px;
+                    }
 
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
-            <td>
-                <b>NPM</b><br/>
-                npm install ag-grid-enterprise
-            </td>
+                    .blog-main table {
+                        margin-bottom: 10px;
+                    }
+                </style>
 
-            <td style="width: 20px;"/>
+                <table style="background-color: beige">
+                    <tr style="background-color: blanchedalmond">
+                        <th>Framework</th>
+                        <th>Works with Bundled</th>
+                        <th>Works with CommonJS</th>
+                        <th>Extra Project</th>
+                    </tr>
+                    <tr>
+                        <td>Pure JavaScript</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>React</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                        <td>ag-grid-react</td>
+                    </tr>
+                    <tr>
+                        <td>Angular 1</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Angular</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                        <td>ag-grid-angular</td>
+                    </tr>
+                    <tr>
+                        <td>VueJS</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                        <td>ag-grid-vue</td>
+                    </tr>
+                    <tr>
+                        <td>Web Components</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                        <td>-</td>
+                    </tr>
+                </table>
 
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
-            <td>
-                <b>Github</b><br/>
-                Download from <a href="https://github.com/ceolter/ag-grid-enterprise">Github</a>
-            </td>
-        </tr>
-    </table>
+                <p>
+                    <b>Warning:</b> if you are using the bundled version of the grid (/dist/ag-grid-js) then you must
+                    specify
+                    this directly,
+                    the main files specified in package.json and bower.json point to the commonjs versions of ag-Grid.
+                </p>
 
-    <h3>Referencing ag-Grid-Enterprise Files</h3>
+                <h3>List of Loading / Building Examples</h3>
 
-    <p>
-        ag-Grid-Enterprise is also distributed as both a self contained bundle and also via a CommonJS package.
-    </p>
+                <p>
+                    Below is a list of the examples demonstrating the different build tools, loading mechanisms and
+                    frameworks.
+                    You may not see the exact stack you want, but you can grab information from all the examples. Eg you
+                    might
+                    want to program React and Typescript, below you can see examples of React and Typescript, just not
+                    together.
+                </p>
+                <ul>
+                    <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a>
+                        -
+                        Project on Github
+                    </li>
+                    <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project
+                        on
+                        Github
+                    </li>
+                    <li><a href="https://github.com/ceolter/ag-grid-angular-example">Angular & Typescript - with
+                            examples
+                            using
+                            SystemJS, Webpack and Angular-CLI</a> - Project on Github
+                    </li>
+                </ul>
 
-    <h4>Self Contained Bundle</h4>
+                <h3>Choosing a Framework and What Next</h3>
 
-    <p>Do <b>not</b> include both ag-Grid and ag-Grid-Enterprise self contained bundles. The ag-Grid-Enterprise
-    contains ag-Grid (that's the nature of Webpack bundles, they have no external dependencies).</p>
+                <p>
+                    ag-Grid does not favor any framework. It's agnostic. It doesn't have a preference for what framework
+                    you
+                    use.
+                    ag-Grid supports 7 flavours: Angular, AngularJS 1.x, React, VueJS, Aurelia, Web Components and
+                    Native
+                    Javascript.
+                    Every ag-Grid feature is fully available in each framework, there is no bias. You choose which
+                    framework
+                    you
+                    want. So continue now to the section on the framework you are interested in, then jump to the
+                    details of how to use the grid.
+                </p>
+            </div>
+        </div>
+    </div>
 
-    <p>
-        Reference the ag-Grid-Enterprise bundle as follows:
-    </p>
+    <div class="collapsableDocs">
+        <div class="collapsableDocs-header"
+             onclick="javascript: this.classList.toggle('active');">
+            <h4>Documentation Examples</h4>
+            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </div>
 
-    <pre>&lt;script src="pathToGrid/ag-grid-enterprise.js">&lt;/script></pre>
+        <div class="collapsableDocs-content">
+            <p>
+                Almost all the examples in the online documentation use the self contained bundle of ag-Grid and do
+                not use
+                any framework. This is to make the examples as easy to follow (focusing only on what the example
+                is about) and easy to copy and run locally.
+            </p>
 
-    <p>
-        Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
-    <ul>
-        <li>dist/ag-grid-enterprise.js -> standard bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid-enterprise.min.js -> minified bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid-enterprise.noStyle.js -> standard bundle containing JavaScript without CSS</li>
-        <li>dist/ag-grid-enterprise.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
-    </ul>
-    </p>
-
-    <p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need to do.
-    Any grid you create will be an enterprise grid once you load the library.</p>
-
-    <h4>CommonJS</h4>
-
-    <p>
-        If using CommonJS, you one need to include ag-Grid-Enterprise into your project. You do not need to
-        execute any code inside it. When ag-Grid-Enterprise loads, it will register with ag-Grid such that the
-        enterprise features are available when you use ag-Grid.
-    </p>
-
-    <pre>// ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid');
-// only include this line if you want to use ag-grid-enterprise
-require('ag-grid-enterprise');
-
-// ECMA 6 - using the system import method
-import {Grid} from 'ag-grid/main';
-// only include this line if you want to use ag-grid-enterprise
-import 'ag-grid-enterprise/main';
-</pre>
-
-    <h2>Additional Framework Projects</h2>
-
-    <p>If using React or Angular, you will also need to reference the additional ag-Grid project for that
-    framework. Details are provided the documentation for those frameworks.</p>
-
-    <h4>Bundled vs CommonJS & Frameworks Summary</h4>
-
-    <p>
-        If you want to use the Angular or React component of ag-Grid, then you have to
-        use the commonjs distribution (not the bundled). You will also need to include
-        the additional ag-Grid project for these components.
-    </p>
-
-    <p>
-        If you are using the plain Javascript, Angular 1 or Web Components version
-        of ag-Grid, you can use the bundled version or the commonjs version.
-    </p>
-
-    <p>
-        The table below summarises these details.
-    </p>
-
-    <style>
-        .blog-main td {
-            padding: 2px 10px 2px 10px;
-        }
-        .blog-main th {
-            padding: 2px 10px 2px 10px;
-        }
-        .blog-main table {
-            margin-bottom: 10px;
-        }
-    </style>
-
-    <table style="background-color: beige">
-        <tr style="background-color: blanchedalmond">
-            <th>Framework</th>
-            <th>Works with Bundled</th>
-            <th>Works with CommonJS</th>
-            <th>Extra Project</th>
-        </tr>
-        <tr>
-            <td>Pure JavaScript</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>React</td>
-            <td>No</td>
-            <td>Yes</td>
-            <td>ag-grid-react</td>
-        </tr>
-        <tr>
-            <td>Angular 1</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>Angular</td>
-            <td>No</td>
-            <td>Yes</td>
-            <td>ag-grid-angular</td>
-        </tr>
-        <tr>
-            <td>VueJS</td>
-            <td>No</td>
-            <td>Yes</td>
-            <td>ag-grid-vue</td>
-        </tr>
-        <tr>
-            <td>Web Components</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>-</td>
-        </tr>
-    </table>
-
-    <p>
-        <b>Warning:</b> if you are using the bundled version of the grid (/dist/ag-grid-js) then you must specify this directly,
-        the main files specified in package.json and bower.json point to the commonjs versions of ag-Grid.
-    </p>
-
-    <h3>List of Loading / Building Examples</h3>
-
-    <p>
-        Below is a list of the examples demonstrating the different build tools, loading mechanisms and frameworks.
-        You may not see the exact stack you want, but you can grab information from all the examples. Eg you might
-        want to program React and Typescript, below you can see examples of React and Typescript, just not together.
-    </p>
-    <ul>
-        <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> - Project on Github</li>
-        <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> - Project on Github</li>
-        <li><a href="https://github.com/ceolter/ag-grid-angular-example">Angular & Typescript - with examples using SystemJS, Webpack and Angular-CLI</a> - Project on Github</li>
-    </ul>
-
-    <h3>Documentation Examples</h3>
-    <p>
-        Almost all the examples in the online documentation use the self contained bundle of ag-Grid and do not use
-        any framework. This is to make the examples as easy to follow (focusing only on what the example
-        is about) and easy to copy and run locally.
-    </p>
-
-    <p>
-        Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>. If you are using
-        the self contained bundle <b>you do not need to include this extra parameter</b>. It's purpose is as a dummy parameter, which the documentation
-        changes every time there is a grid release, to trick the browser in getting the latest version rather than using a cached version.
-        <br/>
-    </p>
-    <p>
-        So eg, the example has this:<br/>
-    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused40"><br/></pre>
-    But all you need is this:<br/>
-    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
-    </p>
-
-    <h3>Choosing a Framework and What Next</h3>
-
-    <p>
-        ag-Grid does not favor any framework. It's agnostic. It doesn't have a preference what framework you use. ag-Grid supports
-        5 flavours: React, AngularJS 1.x, Angular, VueJS, Web Components and Native Javascript. Every ag-Grid
-        feature is fully available in each framework, there is no bias. You choose which framework you
-        want. So continue now to the section on the framework you are interested in, then jump to the
-        details of how to use the grid.
-    </p>
-
+            <p>
+                Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>. If you
+                are
+                using
+                the self contained bundle <b>you do not need to include this extra parameter</b>. It's purpose is as
+                a dummy
+                parameter, which the documentation
+                changes every time there is a grid release, to trick the browser in getting the latest version
+                rather than
+                using
+                a cached version.
+                <br/>
+            </p>
+            <p>
+                So eg, the example has this:<br/>
+            <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused40"><br/></pre>
+            But all you need is this:<br/>
+            <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
+            </p>
+        </div>
+    </div>
     <h2>Browser Support/Compatibility</h2>
 
     <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

@@ -9,9 +9,22 @@ include 'documentation_header.php';
 <div style="margin-left: 10px; width: 260px; float: right;">
 
     <style>
-        .news-box { border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin-bottom: 10px;}
-        .news-header { font-weight: bold; text-align: center; margin-bottom: 10px; }
-        .separator { text-align: center; }
+        .news-box {
+            border: 1px solid darkgrey;
+            background-color: #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .news-header {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .separator {
+            text-align: center;
+        }
     </style>
 
 
@@ -76,11 +89,11 @@ include 'documentation_header.php';
         <a href="https://www.ng-conf.org/">
             <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
                 <div style="font-weight: bold;">ng-conf</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
+                <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+                </div>
                 <div style="font-weight: bold;">April 5th - 7th</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
+                <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+                </div>
                 <div style="font-weight: bold;">Salt Late City, UT</div>
             </div>
         </a>
@@ -96,11 +109,11 @@ include 'documentation_header.php';
         <a href="https://ngvikings.org/">
             <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
                 <div style="font-weight: bold;">ngVikings</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
+                <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+                </div>
                 <div style="font-weight: bold;">February 11th</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
+                <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+                </div>
                 <div style="font-weight: bold;">Copenhagen</div>
             </div>
         </a>
@@ -114,7 +127,7 @@ include 'documentation_header.php';
         <div class="news-header">17th January 2017</div>
         <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
             <img src="../images/smiley.png"/>
-                <span style="font-weight: bold;">ag-Grid v7.2 Released</span>
+            <span style="font-weight: bold;">ag-Grid v7.2 Released</span>
             <img src="../images/smiley.png"/>
         </div>
         <div>
@@ -154,7 +167,8 @@ include 'documentation_header.php';
     <div class="news-box">
         <div class="news-header">5th December 2016</div>
         <div>
-            v7.0.2 patch released, see <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+            v7.0.2 patch released, see <a href="../change-log/changeLogIndex.php">Change Log</a> for full release
+            details.
         </div>
     </div>
 
@@ -180,7 +194,8 @@ include 'documentation_header.php';
         <div class="news-header">11th November 2016</div>
         <div class="news-header">ag-Grid 6.4.x Released</div>
         <div style="padding-top: 10px;">
-            ag-Grid 6.4.x released with Reordering Pivot and Group Columns, as well as lots of smaller feature and bug fixes.
+            ag-Grid 6.4.x released with Reordering Pivot and Group Columns, as well as lots of smaller feature and bug
+            fixes.
             See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>
@@ -188,7 +203,7 @@ include 'documentation_header.php';
     <div class="news-box">
         <div class="news-header">9th November 2016</div>
         <div style="background-color: #122b40; padding: 6px; text-align: center;">
-            <a href="http://angular-up.com/" >
+            <a href="http://angular-up.com/">
                 <img src="http://angular-up.com/img/sprites/angularup-light.png" style="width: 200px;"/>
             </a>
         </div>
@@ -222,8 +237,10 @@ include 'documentation_header.php';
         <div class="news-header">ag-Grid 6.2.x Released</div>
         <div style="padding-top: 10px;">
             ag-Grid 6.2.x released with <a href="../javascript-grid-touch/">Touch support.</a>,
-            <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group definitions</a>,
-            <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a> and many other Enhancements and Bug Fixes.
+            <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group
+                definitions</a>,
+            <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a> and many other
+            Enhancements and Bug Fixes.
             See <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
         </div>
     </div>
@@ -237,7 +254,7 @@ include 'documentation_header.php';
         </div>
         <div style="padding-top: 10px;">
             ag-Grid sponsored
-            <a href="https://ngeurope.org/#platinum-sprs" >
+            <a href="https://ngeurope.org/#platinum-sprs">
                 ng-Europe
             </a>
             on 25th & 26th October 2016.
@@ -301,9 +318,9 @@ include 'documentation_header.php';
     .backgroundGradient {
         background: #539bd6; /* Old browsers */
         background: -moz-linear-gradient(top, #539bd6 0%, #c3d6e5 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #539bd6 0%,#c3d6e5 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #539bd6 0%,#c3d6e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#539bd6', endColorstr='#c3d6e5',GradientType=0 );
+        background: -webkit-linear-gradient(top, #539bd6 0%, #c3d6e5 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #539bd6 0%, #c3d6e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#539bd6', endColorstr='#c3d6e5', GradientType=0);
         margin-right: 280px;
         padding: 20px;
         border-top: 1px solid black;
@@ -317,10 +334,12 @@ include 'documentation_header.php';
         <img width="50px" src="../images/github100.png"/>
     </div>
     <div style="float: right;">
-        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large"
+                frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
     </div>
     <div style="text-align: center;">
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">If you like ag-Grid, star us on Github</div>
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">If you like ag-Grid, star us on Github
+        </div>
     </div>
 </div>
 
@@ -331,24 +350,34 @@ include 'documentation_header.php';
 
     <div style="display: inline-block">
 
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">For information and releases of ag-Grid only - never spam</div>
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">For information and releases of ag-Grid
+            only - never spam
+        </div>
 
         <!-- Begin MailChimp Signup Form -->
         <link href="//cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
         <style type="text/css">
-            #mc_embed_signup{clear:left; font:14px Helvetica,Arial,sans-serif; }
+            #mc_embed_signup {
+                clear: left;
+                font: 14px Helvetica, Arial, sans-serif;
+            }
+
             /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
                We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
         </style>
 
         <div id="mc_embed_signup">
             <form action="//angulargrid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=8b9aa91988"
-                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate
+                  method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+                  target="_blank" novalidate
                   style="padding: 0px">
                 <div id="mc_embed_signup_scroll">
-                    <input style="width: 140px" placeholder="Email Address..." type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
-                    <input style="width: 140px" placeholder="First Name" type="text" value="" name="FNAME" class="" id="mce-FNAME">
-                    <input style="width: 140px" placeholder="Last Name" type="text" value="" name="LNAME" class="" id="mce-LNAME">
+                    <input style="width: 140px" placeholder="Email Address..." type="email" value="" name="EMAIL"
+                           class="required email" id="mce-EMAIL">
+                    <input style="width: 140px" placeholder="First Name" type="text" value="" name="FNAME" class=""
+                           id="mce-FNAME">
+                    <input style="width: 140px" placeholder="Last Name" type="text" value="" name="LNAME" class=""
+                           id="mce-LNAME">
                     <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"
                            style="padding-left: 10px; padding-right: 10px; margin: 0px; height: 20px; line-height: 20px;">
                     <div id="mce-responses" class="clear">
@@ -356,11 +385,24 @@ include 'documentation_header.php';
                         <div class="response" id="mce-success-response" style="display:none"></div>
                     </div>
                     <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-                    <div style="position: absolute; left: -5000px;"><input type="text" name="b_9b44b788c97fa5b498fbbc9b5_8b9aa91988" tabindex="-1" value=""></div>
+                    <div style="position: absolute; left: -5000px;"><input type="text"
+                                                                           name="b_9b44b788c97fa5b498fbbc9b5_8b9aa91988"
+                                                                           tabindex="-1" value=""></div>
                 </div>
             </form>
         </div>
-        <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script>
+        <script type='text/javascript'>(function ($) {
+                window.fnames = new Array();
+                window.ftypes = new Array();
+                fnames[0] = 'EMAIL';
+                ftypes[0] = 'email';
+                fnames[1] = 'FNAME';
+                ftypes[1] = 'text';
+                fnames[2] = 'LNAME';
+                ftypes[2] = 'text';
+            }(jQuery));
+            var $mcj = jQuery.noConflict(true);</script>
         <!--End mc_embed_signup-->
 
     </div>
@@ -402,18 +444,23 @@ include 'documentation_header.php';
 </h2>
 
 <p>
-    If you are introducing yourself to ag-Grid, then you should read <a href="../javascript-grid-getting-started/">Getting Started</a>.
-    Then follow on to the section on the framework that interests you (one of
-    <a href="../best-javascript-data-grid/">Javascript</a>,
-    <a href="../best-react-data-grid/">React</a>,
-    <a href="../best-angularjs-data-grid/">AngularJS 1.x</a>,
-    <a href="../best-angular-2-data-grid/">Angular</a>,
-    <a href="../best-vuejs-data-grid/">VueJS</a>,
-    <a href="../best-web-component-data-grid/">Web Components</a> or
-    <a href="../best-aurelia-data-grid/">Aurelia</a>) and try and get a simple example working
-    yourself (you don't need to understand the grid, just how to install it into your application).
-    Then cover the <a href="../javascript-grid-interfacing-overview/">Interfacing Overview</a>.
-    After that, you then have the foundations of ag-Grid and can jump to whatever section of the documentation
+    If you are introducing yourself to ag-Grid, then you should read the documentation under <span
+            style="font-style: italic">The Basics</span> (top left),
+    starting with <a href="../javascript-grid-installation/">Installation</a>.
+</p>
+<p>
+    If you are interested in a particular framework then please select it from the dropdown on the top left - the
+    documentation
+    will only show information pertinent to your chosen framework.
+
+</p>
+<p>
+    Once you have <span style="font-style: italic">The Basics</span> covered, we suggest you take a look at the
+    <a href="../javascript-grid-interfacing-overview/">Interfacing Overview</a> next.
+
+</p>
+<p>
+    After this you will then have the foundations of ag-Grid and can jump to whatever section of the documentation
     you need to the feature you are trying to implement.
 </p>
 
@@ -426,7 +473,9 @@ include 'documentation_header.php';
 <ul>
     <li><b>The Basics: </b> Learn how to set up ag-Grid with the framework that you have chosen.</li>
     <li><b>Interfacing: </b> A quick reference guide detailing all the configuration options for ag-Grid.</li>
-    <li><b>ag-Grid Free Features: </b> A detailed look at all the core features available in the Free and Enterprise versions.</li>
+    <li><b>ag-Grid Free Features: </b> A detailed look at all the core features available in the Free and Enterprise
+        versions.
+    </li>
     <li><b>Row Models: </b> A detailed look at all the row models available.</li>
     <li><b>Enterprise Features: </b> A detailed look at all the enterprise features.</li>
     <li><b>Examples: </b> Some examples combining different features.</li>
@@ -440,7 +489,8 @@ include 'documentation_header.php';
 
 <p>
     ag-Grid is a fast moving project. It has gone from zero to huge in a very short space of time. To keep
-    up to date, check back regularly to the website, follow Ceolter (core author) on Twitter and join the ag-Grid mailing
+    up to date, check back regularly to the website, follow Ceolter (core author) on Twitter and join the ag-Grid
+    mailing
     list.
 </p>
 
@@ -448,7 +498,15 @@ include 'documentation_header.php';
 
 <div>
     <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <script>!function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+            if (!d.getElementById(id)) {
+                js = d.createElement(s);
+                js.id = id;
+                js.src = p + '://platform.twitter.com/widgets.js';
+                fjs.parentNode.insertBefore(js, fjs);
+            }
+        }(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<?php include 'documentation_footer.php';?>
+<?php include 'documentation_footer.php'; ?>
