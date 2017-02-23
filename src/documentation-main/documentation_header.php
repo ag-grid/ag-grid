@@ -39,6 +39,7 @@
 </head>
 
 <?php
+
 $version = 'latest';
 
 $rootFolder;
@@ -47,6 +48,15 @@ if (strcmp($version, 'latest') == 0) {
 } else {
     $rootFolder = '/archive/' . $version . '/';
 }
+
+function menuItem($key, $rootFolder, $localKey, $name) {
+    if ($key == $localKey) {
+        print('<span class="sidebarLinkSelected">'.$name.'</span>');
+    } else {
+        print('<a class="sidebarLink" href="'.$rootFolder.'ag-grid-features/">'.$name.'</a>');
+    }
+}
+
 ?>
 
 <body ng-app="documentation" ng-controller="DocumentationController">
@@ -221,23 +231,9 @@ if (strcmp($version, 'latest') == 0) {
 
             <div class="docsMenu-content">
 
-                <?php if ($key == "Features") { ?>
-                    <span class="sidebarLinkSelected">Overview</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-features/">Overview</a>
-                <?php } ?>
-
-                <?php if ($key == "Sorting") { ?>
-                    <span class="sidebarLinkSelected">Sorting</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-sorting/">Sorting</a>
-                <?php } ?>
-
-                <?php if ($key == "Filtering") { ?>
-                    <span class="sidebarLinkSelected">Filtering</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filtering/">Filtering</a>
-                <?php } ?>
+                <?php menuItem($key, $rootFolder, 'Features', 'Overview'); ?>
+                <?php menuItem($key, $rootFolder, 'Sorting', 'Sorting'); ?>
+                <?php menuItem($key, $rootFolder, 'Filtering', 'Filtering'); ?>
 
                 <?php if ($key == "Selection") { ?>
                     <span class="sidebarLinkSelected">Selection</span>
