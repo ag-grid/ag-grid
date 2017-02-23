@@ -1,21 +1,22 @@
 <?php
-$key = "Virtual Paging / Infinite Scrolling";
-$pageTitle = "ag-Grid Virtual Paging";
+$key = "Infinite Scrolling";
+$pageTitle = "ag-Grid Infinite Scrolling";
 $pageDescription = "ag-Grid allows the data to stay on the server and only load data for what is currently visible in the GUI.";
-$pageKeyboards = "ag-Grid Virtual Paging";
+$pageKeyboards = "ag-Grid Infinite Scrolling";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2 id="virtual-paging-infinite-scrolling">Virtual Paging / Infinite Scrolling</h2>
+    <h2 id="virtual-paging-infinite-scrolling">Infinite Scrolling</h2>
 
     <p>
-        Virtual paging allows the grid to lazy load rows from the server depending on what the scroll position is of the grid.
+        Infinite scrolling allows the grid to lazy load rows from the server depending on what the scroll position is of the grid.
     </p>
     <p>
-        To enable virtual paging, set the grid property <i>rowModelType='virtual'</i>.
+        To enable infinite scrolling, set the grid property <i>rowModelType='virtual'</i> (the feature
+        used to be called Virtual Pagination, hence the name).
     </p>
     <p>
         If the grid knows how many pages in total at the start, the scroll will be sized to match the entire data set
@@ -23,7 +24,6 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         If the grid does not know how many pages at the start, the scroll will extend automatically until the last row is reached.
-        This feature is known in other grids as <b>infinite scrolling</b>.
     </p>
 
     <h3 id="how-it-works">How it Works</h3>
@@ -43,10 +43,10 @@ include '../documentation-main/documentation_header.php';
         the datasource is getting the rows from a database in a remote server.
     </p>
 
-    <h3 id="turning-on-virtual-paging">Turning On Virtual Paging</h3>
+    <h3 id="turning-on-virtual-paging">Turning On Infinite Scrolling</h3>
 
     <p>
-        To turn on virtual paging, you must a) set the grid property rowModelType to virtual and b) provide a datasource.
+        To turn on infinite scrolling, you must a) set the grid property rowModelType to virtual and b) provide a datasource.
     </p>
 
     <pre>
@@ -60,14 +60,14 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
 
     <p>
-        Aggregation and grouping are not available in virtual paging. This is because to do such would require the grid knowing
+        Aggregation and grouping are not available in infinite scrolling. This is because to do such would require the grid knowing
         the entire data set, which is not possible when virtualising the pages.
     </p>
 
     <h3 id="sorting-filtering">Sorting & Filtering</h3>
 
     <p>
-        Client side sorting & filtering does not make sense in virtual paging and is just not supported.
+        Client side sorting & filtering does not make sense in infinite scrolling and is just not supported.
     </p>
 
     <p>
@@ -76,14 +76,14 @@ gridOptions.api.setDatasource(myDataSource);</pre>
 
     <h3 id="simple-example-no-sorting-or-filtering">Simple Example - No Sorting or Filtering</h3>
 
-    The example below shows virtual paging. The example makes use of infinite scrolling and caching.
+    The example below shows infinite scrolling. The example makes use of infinite scrolling and caching.
 
     <show-example example="virtualPaging"></show-example>
 
     <h3 id="selection">Selection</h3>
 
     <p>
-        Selection works on the rows in virtual pagination by using the ID of the row node. If you do not
+        Selection works on the rows in infinite scrolling by using the ID of the row node. If you do not
         provide ID's for the row nodes, the index of the row node will be used. Using the index of the
         row breaks down when (server side) filtering or sorting, as these change the index of the rows.
         For this reason, if you do not provide your own id's, then selection is cleared if sort or
@@ -131,7 +131,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
 
     <p>
         (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side filtering,
-        ag-Grid-Enterprise is not required for virtual paging)
+        ag-Grid-Enterprise is not required for infinite scrolling)
     </p>
 
     <show-example example="virtualPagingServerSide"></show-example>
@@ -168,7 +168,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <h3 id="more-control-via-properties-and-api">More Control via Properties and API</h3>
 
     <p>
-        Virtual pagination has a cache working behind the scenes. The following properties and API are provided
+        Infinite scrolling has a cache working behind the scenes. The following properties and API are provided
         to allow you control of the cache.
     </p>
 
@@ -251,7 +251,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     </p>
 
     <p>
-        Inserting rows into the virtual pagination row model allows for your grid to be out of sync with the
+        Inserting rows into the infinite scrolling row model allows for your grid to be out of sync with the
         underlying data store and hence can either cause synchronisation issues, or simply difficult code to
         maintain even if you get it right, especially in multi-user environments. It is strongly suggested you
         don't use the insertItemsAtIndex() method, rather you update the source and then refresh the cache.
@@ -259,22 +259,22 @@ gridOptions.api.setDatasource(myDataSource);</pre>
 
     <h4 id="api-remove-items">&#8226; API removeItems(rowNodes)</h4>
     <p>
-        This method is not supported by virtual pagination. It is not supported as the grid has no way of knowing
+        This method is not supported by infinite scrolling. It is not supported as the grid has no way of knowing
         the index of the rowNodes to be removed if the data is not currently loaded into the cache.
     </p>
 
     <h4 id="api-add-items">&#8226; API addItems(dataItems)</h4>
     <p>
-        This method is not supported by virtual pagination. It is not supported as the grid has no way of knowing
+        This method is not supported by infinite scrolling. It is not supported as the grid has no way of knowing
         the end of the data dataset to be appended to if the data is not currently loaded into the cache.
     </p>
 
     <h4 id="adding-removing-summary">&#8226; Adding / Removing Summary</h4>
 
     <p>
-        Adding / removing rows directly in the grid for virtual pagination is in general bad news as you are
+        Adding / removing rows directly in the grid for infinite scrolling is in general bad news as you are
         giving a viewport and scrolling through data that resides on the server. It is better to update the
-        data on the server and refresh the virtual page cache.
+        data on the server and refresh the page cache.
     </p>
 
     <h3 id="example-using-cache-api-methods">Example - Using Cache API Methods</h3>

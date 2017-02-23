@@ -9,14 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Column Menu</h2>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Column menu is available in ag-Grid Enterprise. For standard ag-Grid, the menu will always only show
-        the column's filter.
-    </p>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Column Menu</h2>
 
     <h3>Showing the Column Menu</h3>
 

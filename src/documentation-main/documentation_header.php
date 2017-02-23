@@ -49,21 +49,22 @@ if (strcmp($version, 'latest') == 0) {
     $rootFolder = '/archive/' . $version . '/';
 }
 
-function normalItem($key, $rootFolder, $localKey, $name, $url) {
-    menuItem($key, $rootFolder, $localKey, $name, $url, false);
+function normalItem($key, $rootFolder, $indent, $localKey, $name, $url) {
+    menuItem($key, $rootFolder, $indent, $localKey, $name, $url, false);
 }
 
-function menuItem($key, $rootFolder, $localKey, $name, $url, $enterprise) {
-    $enterpriseIcon = $enterprise ? '<img src="../images/enterprise.png"/> ' : '';
+function menuItem($key, $rootFolder, $indent, $localKey, $name, $url, $enterprise) {
+    $enterpriseIcon = $enterprise ? '<img class="enterprise-icon" src="../images/enterprise.png"/> ' : '';
+    $padding = ($indent==1) ? '&nbsp;&nbsp;' : '';
     if ($key == $localKey) {
-        print('<span class="sidebarLinkSelected">'.$name.'</span>');
+        print('<span class="sidebarLinkSelected">'.$padding.$enterpriseIcon.$name.'</span>');
     } else {
-        print('<a class="sidebarLink" href="'.$rootFolder.$url.'">'.$enterpriseIcon.$name.'</a>');
+        print('<a class="sidebarLink" href="'.$rootFolder.$url.'">'.$padding.$enterpriseIcon.$name.'</a>');
     }
 }
 
-function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
-    menuItem($key, $rootFolder, $localKey, $name, $url, true);
+function enterpriseItem($key, $rootFolder, $indent, $localKey, $name, $url) {
+    menuItem($key, $rootFolder, $indent, $localKey, $name, $url, true);
 }
 
 ?>
@@ -182,13 +183,13 @@ function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php normalItem($key, $rootFolder, 'Interfacing Overview"', 'Overview', 'javascript-grid-interfacing-overview/'); ?>
-                <?php normalItem($key, $rootFolder, 'Properties"', 'Properties', 'javascript-grid-properties/'); ?>
-                <?php normalItem($key, $rootFolder, 'columnDefs"', 'Columns', 'javascript-grid-column-definitions/'); ?>
-                <?php normalItem($key, $rootFolder, 'Events', 'Events', 'javascript-grid-events/'); ?>
-                <?php normalItem($key, $rootFolder, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/'); ?>
-                <?php normalItem($key, $rootFolder, 'Grid API', 'Grid API', 'javascript-grid-callbacks/'); ?>
-                <?php normalItem($key, $rootFolder, 'Column API', 'Column API', 'javascript-grid-column-api/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Interfacing Overview"', 'Overview', 'javascript-grid-interfacing-overview/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Properties"', 'Properties', 'javascript-grid-properties/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'columnDefs"', 'Columns', 'javascript-grid-column-definitions/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Events', 'Events', 'javascript-grid-events/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Grid API', 'Grid API', 'javascript-grid-callbacks/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Column API', 'Column API', 'javascript-grid-column-api/'); ?>
             </div>
 
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>"
@@ -198,53 +199,50 @@ function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php normalItem($key, $rootFolder, 'Features', 'Overview', 'javascript-grid-features/'); ?>
-                <?php normalItem($key, $rootFolder, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/'); ?>
-                <?php normalItem($key, $rootFolder, 'Sorting', 'Sorting', 'javascript-grid-sorting/'); ?>
-                <?php normalItem($key, $rootFolder, 'Filtering', 'Filtering', 'javascript-grid-filtering/'); ?>
-                <?php normalItem($key, $rootFolder, 'Selection', 'Selection', 'javascript-grid-selection/'); ?>
-                <?php normalItem($key, $rootFolder, 'Resizing', 'Resizing', 'javascript-grid-resizing/'); ?>
-                <?php normalItem($key, $rootFolder, 'Pinning', 'Pinning', 'javascript-grid-pinning/'); ?>
-                <?php normalItem($key, $rootFolder, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/'); ?>
-                <?php normalItem($key, $rootFolder, 'Tree Data', 'Tree Data', 'javascript-grid-tree/'); ?>
-                <?php normalItem($key, $rootFolder, 'Row Height', 'Row Height', 'javascript-grid-row-height/'); ?>
-                <?php normalItem($key, $rootFolder, 'Floating Rows', 'Floating Rows', 'javascript-grid-floating/'); ?>
-                <?php normalItem($key, $rootFolder, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/'); ?>
-                <?php normalItem($key, $rootFolder, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/'); ?>
-                <?php normalItem($key, $rootFolder, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/'); ?>
-                <?php normalItem($key, $rootFolder, 'Context', 'Context', 'javascript-grid-context/'); ?>
-                <?php normalItem($key, $rootFolder, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/'); ?>
-                <?php normalItem($key, $rootFolder, 'Refresh', 'Refresh', 'javascript-grid-refresh/'); ?>
-                <?php normalItem($key, $rootFolder, 'Animation', 'Animation', 'javascript-grid-animation/'); ?>
-                <?php normalItem($key, $rootFolder, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/'); ?>
-                <?php normalItem($key, $rootFolder, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/'); ?>
-                <?php normalItem($key, $rootFolder, 'Full Width', 'Full Width Rows & Master Detail', 'javascript-grid-master-detail/'); ?>
-                <?php normalItem($key, $rootFolder, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/'); ?>
-                <?php normalItem($key, $rootFolder, 'Touch', 'Touch', 'javascript-grid-touch/'); ?>
-                <?php normalItem($key, $rootFolder, 'Row Model', 'Row Model', 'javascript-grid-model/'); ?>
-                <?php normalItem($key, $rootFolder, 'Data Export', 'CSV Export', 'javascript-grid-export/'); ?>
-                <?php normalItem($key, $rootFolder, 'RTL', 'RTL', 'javascript-grid-rtl/'); ?>
-                <?php normalItem($key, $rootFolder, 'Icons', 'Icons', 'javascript-grid-icons/'); ?>
-                <?php normalItem($key, $rootFolder, 'Overlays', 'Overlays', 'javascript-grid-overlays/'); ?>
-                <?php normalItem($key, $rootFolder, 'For Print', 'For Print', 'javascript-grid-for-print/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Features', 'Overview', 'javascript-grid-features/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Sorting', 'Sorting', 'javascript-grid-sorting/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Filtering', 'Filtering', 'javascript-grid-filtering/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Set Filtering', 'Set Filtering', 'javascript-grid-set-filtering/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Selection', 'Selection', 'javascript-grid-selection/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Resizing', 'Resizing', 'javascript-grid-resizing/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Pinning', 'Pinning', 'javascript-grid-pinning/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Row Height', 'Row Height', 'javascript-grid-row-height/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Floating Rows', 'Floating Rows', 'javascript-grid-floating/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Context', 'Context', 'javascript-grid-context/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Refresh', 'Refresh', 'javascript-grid-refresh/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Animation', 'Animation', 'javascript-grid-animation/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Full Width', 'Full Width Rows & Master Detail', 'javascript-grid-master-detail/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Touch', 'Touch', 'javascript-grid-touch/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Row Model', 'Row Model', 'javascript-grid-model/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Data Export', 'CSV Export', 'javascript-grid-export/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'RTL', 'RTL', 'javascript-grid-rtl/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Icons', 'Icons', 'javascript-grid-icons/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Overlays', 'Overlays', 'javascript-grid-overlays/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'For Print', 'For Print', 'javascript-grid-for-print/'); ?>
 
+                <?php enterpriseItem($key, $rootFolder, 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 1, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 1, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/'); ?>
 
-                <? /* BEGIN ENTERPRISE FEATURES */ ?>
-
-                <?php enterpriseItem($key, $rootFolder, 'Excel Export', 'Excel Export', 'javascript-grid-excel/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Viewport', 'Viewport', 'javascript-grid-viewport/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'Set Filtering', 'Set Filtering', 'javascript-grid-set-filtering/'); ?>
-                <?php enterpriseItem($key, $rootFolder, 'License Key', 'License Key', 'javascript-grid-set-license/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'License Key', 'License Key', 'javascript-grid-set-license/'); ?>
  
             </div>
 
@@ -255,12 +253,12 @@ function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php normalItem($key, $rootFolder, 'Styling', 'Overview', 'javascript-grid-styling/'); ?>
-                <?php normalItem($key, $rootFolder, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php'); ?>
-                <?php normalItem($key, $rootFolder, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php'); ?>
-                <?php normalItem($key, $rootFolder, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php'); ?>
-                <?php normalItem($key, $rootFolder, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php'); ?>
-                <?php normalItem($key, $rootFolder, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Styling', 'Overview', 'javascript-grid-styling/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php'); ?>
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>"
@@ -270,11 +268,11 @@ function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php normalItem($key, $rootFolder, 'Components', 'Overview', 'ag-grid-components/'); ?>
-                <?php normalItem($key, $rootFolder, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/'); ?>
-                <?php normalItem($key, $rootFolder, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/'); ?>
-                <?php normalItem($key, $rootFolder, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/'); ?>
-                <?php normalItem($key, $rootFolder, 'Header Rendering', 'Header Components', 'javascript-grid-header-rendering/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Components', 'Overview', 'javascript-grid-components/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Header Rendering', 'Header Components', 'javascript-grid-header-rendering/'); ?>
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>"
@@ -284,10 +282,11 @@ function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php normalItem($key, $rootFolder, 'Row Models', 'Overview', 'javascript-grid-row-models/'); ?>
-                <?php normalItem($key, $rootFolder, 'Datasource', 'Datasource', 'javascript-grid-datasource/'); ?>
-                <?php normalItem($key, $rootFolder, 'Pagination', 'Pagination', 'javascript-grid-pagination/'); ?>
-                <?php normalItem($key, $rootFolder, 'Virtual Paging / Infinite Scrolling', 'Virtual Paging & Infinite Scrolling', 'javascript-grid-virtual-paging/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Row Models', 'Overview', 'javascript-grid-row-models/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Datasource', 'Datasource', 'javascript-grid-datasource/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Pagination', 'Pagination', 'javascript-grid-pagination/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-virtual-paging/'); ?>
+                <?php enterpriseItem($key, $rootFolder, 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/'); ?>
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>"
@@ -297,9 +296,9 @@ function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-examples">
-                <?php normalItem($key, $rootFolder, 'Styled Report', 'Styled Report', 'example-account-report/'); ?>
-                <?php normalItem($key, $rootFolder, 'File Browser', 'File Browser', 'example-file-browser/'); ?>
-                <?php normalItem($key, $rootFolder, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Styled Report', 'Styled Report', 'example-account-report/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'File Browser', 'File Browser', 'example-file-browser/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/'); ?>
             </div>
 
             <?php if ($version == 'latest') { ?>
@@ -310,9 +309,9 @@ function enterpriseItem($key, $rootFolder, $localKey, $name, $url) {
                 </div>
 
                 <div class="docsMenu-content">
-                    <?php normalItem($key, $rootFolder, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php'); ?>
-                    <?php normalItem($key, $rootFolder, 'Roadmap', 'Roadmap', 'change-log/changeLogIndex.php'); ?>
-                    <?php normalItem($key, $rootFolder, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/'); ?>
+                    <?php normalItem($key, $rootFolder, 0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php'); ?>
+                    <?php normalItem($key, $rootFolder, 0, 'Roadmap', 'Roadmap', 'change-log/changeLogIndex.php'); ?>
+                    <?php normalItem($key, $rootFolder, 0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/'); ?>
                     <a class="sidebarLink" href="/archive/">Archive Docs</a>
                 </div>
             <?php } ?>

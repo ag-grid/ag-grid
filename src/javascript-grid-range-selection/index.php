@@ -9,13 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Range Selection</h2>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Range selection is available in ag-Grid Enterprise.
-    </p>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Range Selection</h2>
 
     <p>
         Range selection allows Excel-like range selection of cells. Once enabled, you can drag the mouse over

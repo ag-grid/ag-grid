@@ -9,13 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
 
-    <h1>JavaScript Excel Export in ag-Grid</h1>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Javascript Excel Export is available in ag-Grid Enterprise.
-    </p>
+    <h1><img src="../images/enterprise_50.png" title="Enterprise Feature"/> JavaScript Excel Export in ag-Grid</h1>
 
     <p>
         Excel Export allows exporting ag-Grid data to Excel using Excel's own XML format. Using this format

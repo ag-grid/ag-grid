@@ -9,13 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Grouping Rows</h2>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Grouping rows is available in ag-Grid Enterprise.
-    </p>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Grouping Rows</h2>
 
     <p>
         To group, mark the column definitions you want to group by with a rowGroupIndex.

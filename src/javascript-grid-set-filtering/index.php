@@ -9,13 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Set Filtering</h2>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Set filtering is available in ag-Grid Enterprise.
-    </p>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Set Filtering</h2>
 
     <p>
         A set filter, influenced by how filters work in Microsoft Excel. Set filters can be provided with

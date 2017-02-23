@@ -9,13 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Pivoting</h2>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Pivoting rows is available in ag-Grid Enterprise.
-    </p>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Pivoting</h2>
 
     <p>
         Pivoting allows you to take a columns values and turn them into columns. For example you can pivot on Country

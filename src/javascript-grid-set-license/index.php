@@ -9,15 +9,8 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Set License</h2>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Set License</h2>
 
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Setting of License Key is required when using ag-Grid Enterprise.
-    </p>
-
-    <h3>Setting the License Key</h3>
     <p>
         Set the license key via the JavaScript method as described below.
         ag-Grid checks the license key without making any network calls.

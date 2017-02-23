@@ -3,7 +3,7 @@ $key = "Width & Height";
 $pageTitle = "ag-Grid Width and Height";
 $pageDescription = "ag-Grid Resizing";
 $pageKeyboards = "ag-Grid Resizing";
-$pageGroup = "features";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 

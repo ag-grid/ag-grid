@@ -9,13 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Aggregation</h2>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Aggregation rows is available in ag-Grid Enterprise.
-    </p>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Aggregation</h2>
 
     <h3>Grouping with Aggregation</h3>
 

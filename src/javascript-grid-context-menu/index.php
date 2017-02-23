@@ -9,13 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Context Menu</h2>
-
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Context menu is available in ag-Grid Enterprise.
-    </p>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Context Menu</h2>
 
     <p>
         The user can bring up the context menu by right clicking on a cell.

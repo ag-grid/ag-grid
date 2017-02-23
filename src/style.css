@@ -3,6 +3,10 @@
 .code-highlight-green {color: #a5c261}
 .code-highlight-purple {color: #977582}
 
+.enterprise-icon {
+    padding-bottom: 2px;
+}
+
 .transition-width {
     -webkit-transition: width 3s;
     -moz-transition: width 3s;
