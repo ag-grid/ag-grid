@@ -306,6 +306,9 @@ somePointLater() {
 
 </div>
 
-<script type="text/javascript" src="bundle-react.js" charset="utf-8"></script>
+<!--<script type="text/javascript-lazy" src="test.js"></script>-->
+<script type="text/javascript-lazy" src="bundle-react.js"></script>
+<!--<script type="text/javascript" src="bundle-react.js" charset="utf-8"></script>-->
+
 <!-- Example uses font awesome icons -->
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">

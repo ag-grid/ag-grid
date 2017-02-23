@@ -16,6 +16,10 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular-cookies.min.js"></script>
+    <script src="../documentation-main/documentation.js"></script>
+
     <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
     <script>
         (function (h, o, t, j, a, r) {
@@ -120,33 +124,36 @@ if (strcmp($version, 'latest') == 0) {
                 <?php if ($key == "Getting Started") { ?>
                     <span class="sidebarLinkSelected">Overview</span>
                 <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-getting-started/">Overview</a>
+                    <a class="sidebarLink"
+                       href="<?php print($rootFolder) ?>javascript-grid-getting-started/">Overview</a>
                 <?php } ?>
 
+                <div ng-if="frameworkContext==='angular'" ng-show="docsControllerReady" class="ng-hide">
+                    <?php if ($key == "Angular SystemJS") { ?>
+                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected"
+                              style="padding-left: 20px">SystemJS</span>
+                    <?php } else { ?>
+                        <a ng-if="isFramework('angular')" class="sidebarLink"
+                           href="<?php print($rootFolder) ?>ag-grid-angular-systemjs/"
+                           style="padding-left: 20px">SystemJS</a>
+                    <?php } ?>
 
-                <!--                    <?php /*if ($key == "Getting Started ng2") { */ ?>
-                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected childItem"><img inline src="/images/angular2_small.png" width="20px"> Angular</span>
-                    <?php /*} else { */ ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink childItem" href="<?php /*print($rootFolder) */ ?>best-angular-2-data-grid/"><img inline src="/images/angular2_small.png"width="20px"> Angular</a>
-                    <?php /*} */ ?>
+                    <?php if ($key == "Angular Webpack") { ?>
+                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected"
+                              style="padding-left: 20px">Webpack</span>
+                    <?php } else { ?>
+                        <a ng-if="isFramework('angular')" class="sidebarLink"
+                           href="<?php print($rootFolder) ?>ag-grid-angular-webpack/"
+                           style="padding-left: 20px">Webpack</a>
+                    <?php } ?>
 
-                    <?php /*if ($key == "Angular SystemJS") { */ ?>
-                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">SystemJS</span>
-                    <?php /*} else { */ ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */ ?>ag-grid-angular-systemjs/" style="padding-left: 15px">SystemJS</a>
-                    <?php /*} */ ?>
+                    <?php if ($key == "Next Steps") { ?>
+                        <span class="sidebarLinkSelected">Next Steps</span>
+                    <?php } else { ?>
+                        <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-next-steps/">Next Steps</a>
+                    <?php } ?>
 
-                    <?php /*if ($key == "Angular Webpack") { */ ?>
-                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">Webpack</span>
-                    <?php /*} else { */ ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */ ?>ag-grid-angular-webpack/" style="padding-left: 15px">Webpack</a>
-                    <?php /*} */ ?>
-
-                    <?php /*if ($key == "Angular CLI") { */ ?>
-                        <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">Angular CLI</span>
-                    <?php /*} else { */ ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */ ?>ag-grid-angular-angularcli/" style="padding-left: 15px">Angular CLI</a>
-                    --><?php /*} */ ?>
+                </div>
 
                 <?php if ($key == "Width & Height") { ?>
                     <span class="sidebarLinkSelected">Width & Height</span>

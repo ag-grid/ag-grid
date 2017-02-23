@@ -46,6 +46,8 @@
             $scope.frameworkContext = frameworkContext;
             return $scope.frameworkContext;
         }
+
+        $scope.docsControllerReady = true;
     }]);
 
     module.controller('GettingStartedController', ['$scope', function ($scope) {
@@ -56,7 +58,9 @@
         $scope.aureliaOpen = false;
         $scope.webcomponentsOpen = false;
 
-        $scope.toggleDiv = function(attribute) {
+        $scope.showGettingStarted = true;
+
+        $scope.toggleDiv = function (attribute) {
             $scope[attribute] = !$scope[attribute];
         }
     }]);
@@ -97,10 +101,10 @@
             $scope.extraPages = $attrs.extraPages.split(',');
             $scope.extraPageContent = {};
             $scope.extraPages.forEach(function (page) {
-                $http.get("./" + page).success(function (data, status, headers, config) {
-                    $scope.extraPageContent[page] = data;
-                }).error(function (data, status, headers, config) {
-                    $scope.extraPageContent[page] = data;
+                $http.get("./" + page).then(function (response) {
+                    $scope.extraPageContent[page] = response.data;
+                }).catch(function (response) {
+                    $scope.extraPageContent[page] = response.data;
                 });
             });
         }
@@ -112,16 +116,16 @@
         }
 
         if ($scope.showHtmlTab) {
-            $http.get($scope.htmlFile).success(function (data, status, headers, config) {
-                $scope.html = data;
-            }).error(function (data, status, headers, config) {
-                $scope.html = data;
+            $http.get($scope.htmlFile).then(function (response) {
+                $scope.html = response.data;
+            }).catch(function (response) {
+                $scope.html = response.data;
             });
         }
-        $http.get("./" + $scope.jsfile + $scope.exeExtension).success(function (data, status, headers, config) {
-            $scope.javascript = data;
-        }).error(function (data, status, headers, config) {
-            $scope.javascript = data;
+        $http.get("./" + $scope.jsfile + $scope.exeExtension).then(function (response) {
+            $scope.javascript = response.data;
+        }).catch(function (response) {
+            $scope.javascript = response.data;
         });
 
         $scope.isActive = function (item) {
@@ -178,5 +182,28 @@
             return $scope.selectedTab == theme
         };
     }
+
+    module.directive('script', function () {
+        return {
+            restrict: 'E',
+            scope: false,
+            link: function (scope, elem, attr) {
+                if (attr.type === 'text/javascript-lazy') {
+                    var s = document.createElement("script");
+                    s.type = "text/javascript";
+                    var src = elem.attr('src');
+                    if (src !== undefined) {
+                        s.src = src;
+                    }
+                    else {
+                        var code = elem.text();
+                        s.text = code;
+                    }
+                    document.head.appendChild(s);
+                    elem.remove();
+                }
+            }
+        };
+    });
 
 })();
