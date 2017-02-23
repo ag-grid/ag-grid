@@ -36,7 +36,7 @@ do
             ;;
 
         "ag-grid-react-example")
-            cp dist/bundle.js ../ag-grid-docs/src/best-react-data-grid/bundle.js
+            cp dist/bundle.js ../ag-grid-docs/src/javascript-grid-getting-started/bundle-react.js
     esac
 
 
